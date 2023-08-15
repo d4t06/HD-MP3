@@ -1,0 +1,1 @@
+export const generateSlug = (str: string):string => str.toLocaleLowerCase().replaceAll(" ", '').replaceAll("'","_")
