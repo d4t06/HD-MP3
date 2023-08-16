@@ -4,7 +4,7 @@ import Playlist from "../pages/Playlist";
 import Favorite from "../pages/Favorite";
 
 const publicRoutes = [
-   {path: '/', component: HomePage},
+   {path: '/React-Zingmp3', component: HomePage},
    {path: '/songs', component: SongsPage},
    {path: '/playlist', component: Playlist},
    {path: '/favorite', component: Favorite},
