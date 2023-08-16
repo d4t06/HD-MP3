@@ -25,15 +25,14 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
 
          const needToScroll = Math.abs(lefDiff - rightDiff) / 2;
 
-         console.log("need to scroll, node", needToScroll, node);
-         
+         // console.log("need to scroll, node", needToScroll, node);
 
+
+         // if element not in screen
          if (Math.abs(lefDiff) > windowWidth ||
             Math.abs(rightDiff) > windowWidth) {
 
             containerEle.style.scrollBehavior = 'auto';
-         } else {
-            containerEle.style.scrollBehavior = 'smooth';
          }
 
          // on the left side
@@ -41,12 +40,16 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
 
             setTimeout(() => {
                containerEle.scrollLeft = containerEle.scrollLeft - needToScroll;
+               containerEle.style.scrollBehavior = 'smooth';
+
             }, 300);
 
             // on the right side
          } else if (rightDiff < lefDiff) {
             setTimeout(() => {
                containerEle.scrollLeft = containerEle.scrollLeft + needToScroll;
+               containerEle.style.scrollBehavior = 'smooth';
+
             }, 300);
          }
       }

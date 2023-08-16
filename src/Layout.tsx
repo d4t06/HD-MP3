@@ -11,8 +11,8 @@ const Layout: FC<Props> = ({ children }) => {
       <div className="h-screen w-screen bg-black flex">
          <Sidebar />
          <div className="w-full overflow-auto h-[calc(100vh-90px)]">
-            <div className="h-[15rem] bg-gradient-to-b from-indigo-600 to-black w-full"></div>
-            <div className="px-[40px]">{children}</div>
+            <div className="h-[15rem] max-[549px]:h-[200px] bg-gradient-to-b from-indigo-600 to-black w-full"></div>
+            <div className="px-[40px] max-[549px]:px-[10px]">{children}</div>
          </div>
          
          <Player />

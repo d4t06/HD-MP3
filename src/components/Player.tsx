@@ -4,7 +4,6 @@ import BottomPlayer from "./BottomPlayer";
 import FullScreenPlayer from "./FullScreenPlayer";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
-import useMouseMove from "../hooks/useMouseMove";
 
 interface Props { }
 

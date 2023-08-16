@@ -26,7 +26,7 @@ const SongsPage: FC<Props> = () => {
          <div className="flex flex-row flex-wrap mt-[30px] -mx-[8px]">
             {songs.map((song, index) => {
                return (
-                  <div key={index} className="w-1/2 px-[8px]">
+                  <div key={index} className="w-1/2 px-[8px] max-[549px]:w-full">
                      <SongListItem onClick={() => handleSetSong(song, index)} active={song.path === songInStore.path} key={index} data={song} />
                   </div>
                );

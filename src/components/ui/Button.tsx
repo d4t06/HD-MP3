@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, FC, MouseEventHandler } from "react";
+import { ButtonHTMLAttributes, FC, MouseEventHandler, ReactNode } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
@@ -23,7 +23,7 @@ const buttonVariant = cva("inline-flex items-center justify-center", {
 interface Props
    extends ButtonHTMLAttributes<HTMLButtonElement>,
       VariantProps<typeof buttonVariant> {
-   // children: any;
+   children: ReactNode;
    // classNames: any;
    isLoading?: boolean;
    onClick?:MouseEventHandler,

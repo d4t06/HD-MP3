@@ -1,5 +1,5 @@
-import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import { Dispatch, FC, ForwardRefRenderFunction, RefObject, SetStateAction, forwardRef, useEffect, useMemo, useRef, useState } from "react";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { Dispatch, FC, SetStateAction, forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import Button from "./ui/Button";
 import { songs } from "../utils/songs";
 import SongThumbnail from "./ui/SongThumbnail";
@@ -43,12 +43,21 @@ const FullScreenPlayer: FC<Props> = ({
       dispatch(setSong({ ...song, currentIndex: index }));
    };
 
+   const handleClickToScroll = (direction: string) => {
+      const containerEle = containerRef.current as HTMLElement
+      if (direction === 'next') {
+         containerEle.scrollLeft = containerEle.scrollLeft + 500
+      } else if (direction === 'previous') {
+         containerEle.scrollLeft = containerEle.scrollLeft - 500
+      }
+   }
+
    // update background image
    useEffect(() => {
       if (songInStore.image) {
          const node = bgRef.current as HTMLElement;
          node.style.backgroundImage = `url(${songInStore.image})`;
-      }            
+      }
    }, [songInStore])
 
    const renderSongThumbnail = useMemo(() => {
@@ -94,7 +103,7 @@ const FullScreenPlayer: FC<Props> = ({
          <div className="h-[calc(100vh-90px)]">
 
             {/* header */}
-            <div className="px-10 py-[20px] relative h-[75px]">
+            <div className="px-10 py-[20px] relative h-[75px] max-[549px]:px-[10px]">
                {/* left */}
                <div className={`relative h-full ${idle ? "" : "hidden"
                   }`}>
@@ -130,7 +139,7 @@ const FullScreenPlayer: FC<Props> = ({
                </ul>
                {/* right */}
                <div
-                  className={`flex items-center absolute right-10 top-0 h-full ${idle ? "hidden" : ""
+                  className={`flex items-center absolute right-10 max-[549px]:right-[10px] top-0 h-full ${idle ? "hidden" : ""
                      }`}
                >
                   <Button
@@ -146,19 +155,31 @@ const FullScreenPlayer: FC<Props> = ({
 
             {/* content */}
             <div className="h-[calc(100%-75px)] relative overflow-auto">
-               <div ref={containerRef} className={` ${activeTab !== 'songs' ? 'opacity-0' : ''} relative h-full no-scrollbar flex items-center flex-row overflow-auto px-[500px]`}>
+               <div ref={containerRef} className={` ${activeTab !== 'songs' ? 'opacity-0' : ''} relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[500px] max-[459px]:px-0`}>
                   {containerRef && renderSongThumbnail}
+
+                  <Button onClick={() => handleClickToScroll('previous')} variant={"circle"} size={"large"}
+                     className="p-[8px] bg-gray-500 bg-opacity-50 text-xl fixed top-1/2 -translate-y-1/2 left-[20px] max-[549px]:hidden">
+                     <ChevronLeftIcon />
+                  </Button>
+
+                  <Button onClick={() => handleClickToScroll('next')} variant={"circle"} size={"large"}
+                     className="p-[8px] bg-gray-500 bg-opacity-50 text-xl fixed top-1/2 -translate-y-1/2 right-[20px] max-[549px]:hidden">
+                     <ChevronRightIcon />
+                  </Button>
                </div>
 
 
                {activeTab === 'lyric' &&
                   <div className="absolute inset-0 z-20  ">
-                     <div className="px-[40px] h-full w-full flex items-center justify-center flex-row h-[calc(100%-75px)]">
+                     <div className="lyric-container px-[40px] h-full w-full flex items-center justify-center flex-row h-[calc(100%-75px)]">
                         {/* left */}
-                        <SongThumbnail active data={songInStore} />
+                        <div className="max-[459px]:hidden">
+                           <SongThumbnail active data={songInStore} />
+                        </div>
 
                         {/* right */}
-                        <div className="flex-1 max-w-[700px] ml-[50px] h-full overflow-auto no-scrollbar pb-[30%]">
+                        <div className="flex-1 max-w-[700px] ml-[50px] max-[549px]:ml-0 h-full overflow-auto no-scrollbar pb-[30%]">
                            {songWithLyric.lyrics ?
                               <LyricsList audioEle={audioEle} lyrics={songWithLyric.lyrics} />
                               : <h1 className="text-[40px] text-center">...</h1>

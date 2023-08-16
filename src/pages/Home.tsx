@@ -37,7 +37,7 @@ const HomePage: FC<Props> = ({ ...props }) => {
             {songs.map((song, index) => {
                if (index > 5) return;
                return (
-                  <div key={song.path} className="w-1/2 px-4">
+                  <div key={song.path} className="w-1/2 px-4 max-[549px]:w-full">
                      <SongItem
                         song={song}
                         active={song.path === songInStore.path}
