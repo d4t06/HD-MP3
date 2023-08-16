@@ -9,7 +9,7 @@ export interface Song {
    singer: string;
    path: string;
    image: string;
-   currentIndex: number;
+   currentIndex?: number;
 }
 
 export interface Playlist {
