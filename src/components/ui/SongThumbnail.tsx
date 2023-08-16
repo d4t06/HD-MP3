@@ -31,7 +31,6 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
          // if element not in screen
          if (Math.abs(lefDiff) > windowWidth ||
             Math.abs(rightDiff) > windowWidth) {
-
             containerEle.style.scrollBehavior = 'auto';
          }
 
@@ -58,9 +57,9 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
    return (
       <div ref={thumbnail} className={`flex flex-col `}>
          <div
-            className={`h-[350px] w-[350px] flex justify-center`}
+            className={`h-[350px] w-[350px] flex justify-center max-[549px]:h-[250px] max-[549px]:w-[250px]`}
          >
-            <div className={`group relative ${active ? "w-[350px]" : "w-[250px]"
+            <div className={`group relative ${active ? "w-[350px] max-[549px]:w-[250px]" : "w-[250px] max-[549px]:w-[200px]"
                } transition-[width] duration-300 origin-top self-end`}>
                <img
                   className={`select-none object-cover object-center`}
@@ -69,7 +68,7 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
                />
                <div
                   className="absolute inset-0 bg-black bg-opacity-60 
-             items-center justify-center group-hover:flex hidden"
+             items-center justify-center hidden max-[549px]:hidden group-hover:flex"
                >
                   <Button
                      onClick={onClick}
@@ -93,7 +92,7 @@ const SongThumbnail: FC<Props> = ({ data, active, onClick, containerEle }) => {
 
          </div>
          <div className={``}>
-            <h2 className="text-3xl text-center font-bold mt-[14px]">{data.name}</h2>
+            <h2 className="text-3xl text-center font-bold mt-[14px] max-[549px]:text-xl">{data.name}</h2>
             <p className="text-center text-lg mt-[7px] text-gray-500">{data.singer}</p>
          </div>
       </div>

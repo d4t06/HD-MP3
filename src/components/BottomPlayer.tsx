@@ -9,9 +9,6 @@ import {
 } from "react";
 import {
    ArrowPathIcon,
-   ArrowPathRoundedSquareIcon,
-   ArrowTrendingUpIcon,
-   BackwardIcon,
    ChevronUpIcon,
    ForwardIcon,
    PauseCircleIcon,
@@ -20,39 +17,48 @@ import {
    SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong } from "../store/SongSlice";
+import {
+   selectAllSongStore,
+   setSong,
+} from "../store/SongSlice";
 import { songs } from "../utils/songs";
 import useLocalStorage from "../hooks/useLocalStorage";
 import handleTimeText from "../utils/handleTimeText";
 import Button from "./ui/Button";
-import { useTheme } from "../store/ThemeContext";
+import PlayerControl from "./ui/PlayerControl";
 
 interface Props {
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
    isOpenFullScreen: boolean;
    idle: boolean;
-   audioEle: HTMLAudioElement,
+   audioEle: HTMLAudioElement;
 }
 
-const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEle }) => {
+const BottomPlayer: FC<Props> = ({
+   isOpenFullScreen,
+   setIsOpenFullScreen,
+   idle,
+   audioEle,
+}) => {
    const SongStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
-   const { theme, setTheme } = useTheme();
    const { song: songInStore } = SongStore;
 
-   console.log("check theme context = ", theme);
-
-
-
-   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+   const [isPlaying, setIsPlaying] =
+      useState<boolean>(false);
    const [duration, setDuration] = useState<number>();
 
-   const [isWaiting, setIsWaiting] = useState<boolean>(false);
-   const [isMute, setIsMute] = useState(false)
+   const [isWaiting, setIsWaiting] =
+      useState<boolean>(false);
+   const [isMute, setIsMute] = useState(false);
 
-   const [isRepeat, setIsRepeat] = useLocalStorage<boolean>("repeat", false);
-   const [isShuffle, setIsShuffle] = useLocalStorage<boolean>("shuffle", false);
+   const [isRepeat, setIsRepeat] = useLocalStorage<boolean>(
+      "repeat",
+      false
+   );
+   const [isShuffle, setIsShuffle] =
+      useLocalStorage<boolean>("shuffle", false);
 
    const durationLineWidth = useRef<number>();
    const durationLine = useRef<HTMLDivElement>(null);
@@ -85,26 +91,34 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
    };
 
    const handleResetForNewSong = () => {
-      const timeProcessLineElement = timeProcessLine.current as HTMLElement;
+      const timeProcessLineElement =
+         timeProcessLine.current as HTMLElement;
 
-      if (timeProcessLineElement && currentTimeRef.current) {
-         currentTimeRef.current.innerText = '00:00'
-         timeProcessLineElement.style.width = '0%';
+      if (
+         timeProcessLineElement &&
+         currentTimeRef.current
+      ) {
+         currentTimeRef.current.innerText = "00:00";
+         timeProcessLineElement.style.width = "0%";
       }
-   }
+   };
 
-   const handleSeek = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+   const handleSeek = (
+      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+   ) => {
       const node = e.target as HTMLElement;
 
       if (durationLineWidth.current && duration) {
          // get boundingRect
          const clientRect = node.getBoundingClientRect();
          // get elements
-         const timeProcessLineElement = timeProcessLine.current as HTMLElement;
+         const timeProcessLineElement =
+            timeProcessLine.current as HTMLElement;
 
          // calculating
          const length = e.clientX - clientRect.left;
-         const lengthRatio = length / durationLineWidth.current;
+         const lengthRatio =
+            length / durationLineWidth.current;
          const newTime = lengthRatio * duration;
 
          if (audioEle && timeProcessLineElement) {
@@ -125,11 +139,13 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       if (newIndex < songs.length) {
          newSong = songs[newIndex];
       } else {
-         newSong = songs[0]
+         newSong = songs[0];
          newIndex = 0;
       }
 
-      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
+      dispatch(
+         setSong({ ...newSong, currentIndex: newIndex })
+      );
    };
 
    const handlePrevious = () => {
@@ -138,11 +154,13 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       if (newIndex >= 0) {
          newSong = songs[newIndex];
       } else {
-         newSong = songs[songs.length - 1]
+         newSong = songs[songs.length - 1];
          newIndex = songs.length - 1;
       }
 
-      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
+      dispatch(
+         setSong({ ...newSong, currentIndex: newIndex })
+      );
    };
 
    const handleSetVolume = (
@@ -152,13 +170,16 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       const clientRect = node.getBoundingClientRect();
 
       if (volumeLineWidth.current) {
-         let newVolume = (e.clientX - clientRect.x) / volumeLineWidth.current;
+         let newVolume =
+            (e.clientX - clientRect.x) /
+            volumeLineWidth.current;
 
          if (newVolume > 0.9) newVolume = 1;
          if (newVolume < 0.1) newVolume = 0;
 
          if (volumeProcessLine.current && audioEle) {
-            volumeProcessLine.current.style.width = newVolume * 100 + "%";
+            volumeProcessLine.current.style.width =
+               newVolume * 100 + "%";
             audioEle.volume = newVolume;
          }
       }
@@ -167,13 +188,12 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
    const handleMute = () => {
       if (audioEle.muted) {
          audioEle.muted = false;
-         setIsMute(false)
+         setIsMute(false);
       } else {
          audioEle.muted = true;
          setIsMute(true);
       }
-   }
-
+   };
 
    // >>> behind the scenes handle
    const handlePlaying = () => {
@@ -183,26 +203,29 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       const currentTime = audioEle?.currentTime;
       const duration = audioEle?.duration;
 
-      const timeProcessLineEle = timeProcessLine.current as HTMLElement;
+      const timeProcessLineEle =
+         timeProcessLine.current as HTMLElement;
 
       if (duration && currentTime) {
          const newWidth = currentTime / (duration / 100);
 
-         timeProcessLineEle.style.width = newWidth.toFixed(1) + "%";
+         timeProcessLineEle.style.width =
+            newWidth.toFixed(1) + "%";
       }
 
       if (currentTimeRef.current) {
-         currentTimeRef.current.innerText = handleTimeText(currentTime!);
+         currentTimeRef.current.innerText = handleTimeText(
+            currentTime!
+         );
       }
    };
 
    const handleWaiting = () => {
       setIsWaiting(true);
-   }
+   };
 
    const handleEnded = () => {
       if (isRepeat) {
-
          console.log("song repeat");
 
          return play();
@@ -210,11 +233,18 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       if (isShuffle) {
          let randomIndex: number = songInStore.currentIndex;
          while (randomIndex === songInStore.currentIndex) {
-            randomIndex = Math.floor(Math.random() * songs.length);
+            randomIndex = Math.floor(
+               Math.random() * songs.length
+            );
          }
 
          const newSong = getNewSong(randomIndex);
-         return dispatch(setSong({ ...newSong, currentIndex: randomIndex }));
+         return dispatch(
+            setSong({
+               ...newSong,
+               currentIndex: randomIndex,
+            })
+         );
       }
 
       return handleNext();
@@ -224,17 +254,21 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       // get element
       // const audioElement = audioEle;
 
-
       // set duration
       setDuration(audioEle?.duration);
 
       // set duration base line width
-      durationLineWidth.current = durationLine.current?.offsetWidth;
-      volumeLineWidth.current = volumeLine.current?.offsetWidth;
+      durationLineWidth.current =
+         durationLine.current?.offsetWidth;
+      volumeLineWidth.current =
+         volumeLine.current?.offsetWidth;
 
       // add event listener
       audioEle?.addEventListener("pause", handlePause);
-      audioEle?.addEventListener("timeupdate", handlePlaying);
+      audioEle?.addEventListener(
+         "timeupdate",
+         handlePlaying
+      );
       audioEle?.addEventListener("ended", handleEnded);
       audioEle?.addEventListener("waiting", handleWaiting);
 
@@ -253,128 +287,116 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
       };
 
       return () => {
-         audioEle?.removeEventListener("timeupdate", handlePlaying);
-         audioEle?.removeEventListener("pause", handlePause);
-         audioEle?.removeEventListener("ended", handleEnded);
-         audioEle?.removeEventListener("waiting", handleWaiting);
+         audioEle?.removeEventListener(
+            "timeupdate",
+            handlePlaying
+         );
+         audioEle?.removeEventListener(
+            "pause",
+            handlePause
+         );
+         audioEle?.removeEventListener(
+            "ended",
+            handleEnded
+         );
+         audioEle?.removeEventListener(
+            "waiting",
+            handleWaiting
+         );
 
          handleResetForNewSong();
-
       };
    }, [songInStore]);
 
-   const buttonClasses = "w-6 h-6 hover:text-indigo-600";
-
    return (
       <div
-         className={`fixed bottom-0 w-full h-[90px] max-[549px]:h-[70px]
-      border-t z-50 text-white px-10 max-[549px]:px-[10px] ${idle ? "hidden" : ""}`}
+         className={`fixed bottom-0 w-full h-[90px] z-50 text-white px-10 max-[549px]:px-[20px]
+            ${isOpenFullScreen
+               ? "max-[549px]:h-[150px]"
+               : "border-t"
+            }
+            ${idle
+               ? "hidden"
+               : ""
+            } `
+         }
       >
-         <div className={`flex flex-row justify-between h-full items-stretch`}>
-            <div onClick={() => setIsOpenFullScreen(true)} className="current-song w-1/3 max-[549px]:flex-grow">
-               {songInStore.path && (
-                  <div
-                     className={`flex flex-row items-center h-full origin-center`}
-                  >
-                     <div className="w-[2.5rem] h-[2.5rem]">
-                        <img
-                           className={`w-full object-cover object-center rounded-full`}
-                           src={songInStore?.image || "https://placehold.co/200x200"}
-                        />
-                     </div>
+         <div
+            className={`flex flex-row justify-between h-full items-stretch`}
+         >
+            <div
+               onClick={() => setIsOpenFullScreen(true)}
+               className={`current-song w-1/3 "
+               ${isOpenFullScreen
+                     ? "max-[549px]:hidden"
+                     : "max-[549px]:flex-grow"
+                  }`}
+            >
+               <div
+                  className={`flex flex-row items-center h-full origin-center`}
+               >
+                  <div className="w-[2.5rem] h-[2.5rem]">
+                     <img
+                        className={`w-full object-cover object-center rounded-full`}
 
-                     <div className="text-gray-100 ml-[10px]">
-                        <h5 className="text-xl mb overflow-hidden leading-[1]">
-                           {songInStore?.name || "name"}
-                        </h5>
-                        <p className="text-md text-gray-400 leading-[1] mt-[5px]">
-                           {songInStore?.singer || "singer"}
-                        </p>
-                     </div>
+                        src={songInStore.image
+                           ? songInStore.image
+                           : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"}
+                     />
                   </div>
-               )}
+
+                  <div className="text-gray-100 ml-[10px]">
+                     {songInStore.path &&
+                        <>
+                           <h5 className="text-xl mb overflow-hidden leading-[1]">
+                              {songInStore?.name || "name"}
+                           </h5>
+                           <p className="text-md text-gray-400 leading-[1] mt-[5px]">
+                              {songInStore?.singer || "singer"}
+                           </p>
+                        </>
+                     }
+                  </div>
+               </div>
             </div>
 
             {/* control */}
-            <div className={`desktop-bottom-player-control flex flex-col max-w-[400px] flex-grow justify-center max-[549px]:hidden ${!songInStore.path ? "pointer-events-none opacity-60" : ""
-               }`}
+            <div
+               className={`desktop-bottom-player-control flex flex-col max-w-[400px] flex-grow justify-center max-[549px]:max-w-[100%]
+            ${!songInStore.path
+                     ? "pointer-events-none opacity-60"
+                     : ""
+                  }
+            ${isOpenFullScreen
+                     ? "max-[549px]:flex-col-reverse gap-[10px]"
+                     : "max-[549px]:hidden"
+                  }
+            `}
             >
-               {/* buttons */}
-               <div
-                  className={`w-full flex flex-row justify-center items-center gap-x-10 h-[40px]`}
-               >
-                  <button onClick={() => setIsRepeat(!isRepeat)}>
-                     <ArrowPathRoundedSquareIcon
-                        className={
-                           buttonClasses + `${isRepeat ? " text-indigo-600" : ""}`
-                        }
-                     />
-                  </button>
-                  <button onClick={() => handlePrevious()}>
-                     <BackwardIcon className={buttonClasses} />
-                  </button>
-                  <button className="w-12" onClick={() => handlePlayPause()}>
-                     {isWaiting ?
-                        <ArrowPathIcon
-                           className={"w-6 mx-auto animate-spin"}
-                        />
-                        : isPlaying ? (
-                           <PauseCircleIcon
-                              className={"w-12 hover:text-indigo-600"}
-                           />
-                        ) : (
-                           <PlayCircleIcon
-                              className={"w-12 h-12 hover:text-indigo-600"}
-                           />
-                        )}
-                  </button>
-                  <button onClick={() => handleNext()}>
-                     <ForwardIcon className={buttonClasses} />
-                  </button>
-                  <button onClick={() => setIsShuffle(!isShuffle)}>
-                     <ArrowTrendingUpIcon
-                        className={
-                           buttonClasses + `${isShuffle ? " text-indigo-600" : ""}`
-                        }
-                     />
-                  </button>
-               </div>
-
-               {/* process */}
-               <div className="flex flex-row items-center h-[30px] gap-x-[5px]">
-                  <div className="w-[43px]">
-                     {audioEle && (
-                        <span ref={currentTimeRef} className="text-gray-500">
-                           00:00
-                        </span>
-                     )}
-                  </div>
-                  <div
-                     ref={durationLine}
-                     onClick={(e) => handleSeek(e)}
-                     className="h-1 hover:h-[0.4rem] bg-gray-300 flex-1 relative cursor-pointer rounded-3xl overflow-hidden"
-                  >
-                     <div
-                        ref={timeProcessLine}
-                        className="absolute left-0 top-0 h-full bg-indigo-600"
-                     ></div>
-                  </div>
-                  <div className="w-[33px]">
-                     {audioEle && (
-                        <span>{handleTimeText(audioEle?.duration!)}</span>
-                     )}
-                  </div>
-               </div>
+               <PlayerControl
+                  audioEle={audioEle}
+                  isWaiting={isWaiting}
+                  isPlaying={isPlaying}
+                  currentTimeRef={currentTimeRef}
+                  timeProcessLine={timeProcessLine}
+                  durationLine={durationLine}
+                  handleNext={handleNext}
+                  handlePrevious={handlePrevious}
+                  handlePlayPause={handlePlayPause}
+                  handleSeek={handleSeek}
+               />
             </div>
 
-
-            <div className={`volume-control w-1/3 flex items-center justify-end gap-5 max-w-[150px] max-[549px]:hidden`}>
-               <div className="flex items-center flex-grow">
+            <div
+               className={`volume-control w-1/3 flex items-center justify-end gap-5  max-[549px]:hidden`}
+            >
+               <div className="flex items-center w-[150px]">
                   <button onClick={() => handleMute()}>
-                     {isMute
-                        ? <SpeakerXMarkIcon className="w-6 h-6" />
-                        : <SpeakerWaveIcon className="w-6 h-6" />
-                     }
+                     {isMute ? (
+                        <SpeakerXMarkIcon className="w-6 h-6" />
+                     ) : (
+                        <SpeakerWaveIcon className="w-6 h-6" />
+                     )}
                   </button>
                   <div
                      onClick={(e) => handleSetVolume(e)}
@@ -391,37 +413,48 @@ const BottomPlayer: FC<Props> = ({ isOpenFullScreen, setIsOpenFullScreen, idle, 
                <Button
                   onClick={() => setIsOpenFullScreen(true)}
                   variant={"circle"}
-                  className={`h-[35px] w-[35px] p-[8px] ${isOpenFullScreen ? 'opacity-0 pointer-events-none' : ''}`}
+                  className={`h-[35px] w-[35px] p-[8px] ${isOpenFullScreen
+                     ? "opacity-0 pointer-events-none"
+                     : ""
+                     }`}
                >
                   <ChevronUpIcon />
                </Button>
             </div>
 
-            <div className={`"mobile-bottom-player items-center h-full pl-[15px] max-[549px]:flex hidden" ${!songInStore.path ? "pointer-events-none opacity-60" : ""}`}>
-               <button className="w-10" onClick={() => handlePlayPause()}>
-                  {isWaiting ?
+            <div
+               className={`mobile-bottom-player items-center h-full pl-[15px] gap-[10px] hidden max- 
+               ${!songInStore.path
+                     ? "pointer-events-none opacity-60"
+                     : ""
+                  }
+               ${isOpenFullScreen
+                     ? ""
+                     : "max-[549px]:flex"
+                  }   
+               `}
+            >
+               <button
+                  className="w-10"
+                  onClick={() => handlePlayPause()}
+               >
+                  {isWaiting ? (
                      <ArrowPathIcon
                         className={"animate-spin"}
                      />
-                     : isPlaying ? (
-                        <PauseCircleIcon
-                           className=""
-                        />
-                     ) : (
-                        <PlayCircleIcon
-                           className=""
-                        />
-                     )}
+                  ) : isPlaying ? (
+                     <PauseCircleIcon className="" />
+                  ) : (
+                     <PlayCircleIcon className="" />
+                  )}
                </button>
                <button className="w-10">
                   <ForwardIcon className="" />
                </button>
             </div>
-
          </div>
       </div>
    );
 };
 
 export default BottomPlayer;
-

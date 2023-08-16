@@ -18,7 +18,7 @@ const LyricItem: FC<Props> = ({ children, active, done, firstTimeRender }) => {
       }
    }, [active])
 
-   return <li ref={lyricRef} className={`px=[20px] text-[40px] max-[549px]:text-[24px] font-bold ${active ? 'text-indigo-600' : ''} ${done ? 'opacity-60' : ''}`}>{children}</li>
+   return <li ref={lyricRef} className={`py-[10px] text-[40px] max-[549px]:text-[24px] max-[549px]:text-center font-bold ${active ? 'text-indigo-600' : ''} ${done ? 'opacity-60' : ''}`}>{children}</li>
 }
 
 export default LyricItem;
