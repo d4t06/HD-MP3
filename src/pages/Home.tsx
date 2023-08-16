@@ -10,7 +10,7 @@ import { selectAllSongStore, setSong } from "../store/SongSlice";
 
 interface Props {}
 
-const HomePage: FC<Props> = ({ ...props }) => {
+const HomePage: FC<Props> = () => {
    const dispatch = useDispatch();
    const songStore = useSelector(selectAllSongStore);
 

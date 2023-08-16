@@ -11,7 +11,7 @@ interface Props {
 }
 
 const SongListItem: FC<Props> = ({ data, active, onClick }) => {
-   const [favorite, setFavorite] = useLocalStorage("favorites", [""]);
+   const [_favorite, setFavorite] = useLocalStorage("favorites", [""]);
 
    const handleAddFavorite = (id: string) => {
       setFavorite((prev) => [...prev, id]);

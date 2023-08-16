@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useReducer, useState } from 'react'
+import { createContext, useCallback, useContext, useReducer } from 'react'
 
 type StateType = {
    theme: string;
@@ -18,7 +18,7 @@ type ReducerAction = {
 
 }
 
-const reducer = (state: StateType,
+const reducer = (_state: StateType,
    action: ReducerAction): StateType => {
 
    switch (action.type) {

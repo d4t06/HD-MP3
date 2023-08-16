@@ -1,4 +1,4 @@
-import { FC, memo, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useRef, useState } from "react";
 
 import BottomPlayer from "./BottomPlayer";
 import FullScreenPlayer from "./FullScreenPlayer";

@@ -134,7 +134,7 @@ const BottomPlayer: FC<Props> = ({
    };
 
    const handleNext = () => {
-      let newIndex = songInStore.currentIndex + 1;
+      let newIndex = songInStore.currentIndex! + 1;
       let newSong;
       if (newIndex < songs.length) {
          newSong = songs[newIndex];
@@ -149,7 +149,7 @@ const BottomPlayer: FC<Props> = ({
    };
 
    const handlePrevious = () => {
-      let newIndex = songInStore.currentIndex - 1;
+      let newIndex = songInStore.currentIndex! - 1;
       let newSong;
       if (newIndex >= 0) {
          newSong = songs[newIndex];
@@ -231,7 +231,7 @@ const BottomPlayer: FC<Props> = ({
          return play();
       }
       if (isShuffle) {
-         let randomIndex: number = songInStore.currentIndex;
+         let randomIndex: number = songInStore.currentIndex!;
          while (randomIndex === songInStore.currentIndex) {
             randomIndex = Math.floor(
                Math.random() * songs.length
@@ -377,6 +377,12 @@ const BottomPlayer: FC<Props> = ({
                   audioEle={audioEle}
                   isWaiting={isWaiting}
                   isPlaying={isPlaying}
+
+                  isRepeat={isRepeat}
+                  setIsRepeat={setIsRepeat}
+                  isShuffle={isShuffle}
+                  setIsShuffle={setIsShuffle}
+
                   currentTimeRef={currentTimeRef}
                   timeProcessLine={timeProcessLine}
                   durationLine={durationLine}

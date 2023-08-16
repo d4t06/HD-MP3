@@ -1,4 +1,4 @@
-import { PlayCircleIcon, PlusCircleIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import Button from "./Button";
 

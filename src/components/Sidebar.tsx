@@ -1,23 +1,20 @@
 import {
    HomeIcon,
-   MagnifyingGlassIcon,
    ClipboardDocumentIcon,
-   PlusCircleIcon,
    HeartIcon,
    Cog6ToothIcon,
    QuestionMarkCircleIcon,
    ClockIcon,
 } from "@heroicons/react/24/outline";
-import { FC, useState } from "react";
+import { FC } from "react";
 import Button from "./ui/Button";
 import Divider from "./ui/Divider";
 import { Link } from "react-router-dom";
-import Modal from "./Modal";
 
 interface Props { }
 
 const Sidebar: FC<Props> = () => {
-   const [isOpenSetting, setIsOpenSetting] = useState(false);
+   // const [isOpenSetting, setIsOpenSetting] = useState(false);
 
    return (
       <div className="text-gray-300 text-md p-4 w-[12rem] border-r border-gray-900 h-screen overflow-y-auto max-[549px]:hidden">
@@ -55,7 +52,7 @@ const Sidebar: FC<Props> = () => {
          <Divider className="border-gray-900 my-4" />
 
          <div className="flex flex-col gap-3 items-start">
-            <Button onClick={() => setIsOpenSetting(true)}>
+            <Button>
                <Cog6ToothIcon className="w-6 h-6 mr-2" />
                Settings
             </Button>

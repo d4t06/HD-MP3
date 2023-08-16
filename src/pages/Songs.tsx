@@ -1,6 +1,4 @@
-import { ChevronRightIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
-import { Link } from "react-router-dom";
 import { songs } from "../utils/songs";
 import SongListItem from "../components/ui/SongListItem";
 import { useDispatch, useSelector } from "react-redux";

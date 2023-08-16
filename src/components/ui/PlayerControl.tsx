@@ -7,14 +7,19 @@ import {
    PauseCircleIcon,
    PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { FC, MouseEventHandler, RefObject } from "react";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import { Dispatch, FC, MouseEventHandler, RefObject, SetStateAction } from "react";
 import handleTimeText from "../../utils/handleTimeText";
 
 type Props = {
    audioEle: HTMLAudioElement;
    isWaiting: boolean;
    isPlaying: boolean;
+
+
+   isRepeat: boolean,
+   setIsRepeat: Dispatch<SetStateAction<boolean>>,
+   isShuffle: boolean,
+   setIsShuffle: Dispatch<SetStateAction<boolean>>,
 
    handleSeek: MouseEventHandler;
    handlePrevious: () => void;
@@ -31,6 +36,11 @@ const PlayerControl: FC<Props> = ({
    isWaiting,
    isPlaying,
 
+   isRepeat,
+   setIsRepeat,
+   isShuffle,
+   setIsShuffle,
+
    handleSeek,
    handlePrevious,
    handlePlayPause,
@@ -40,12 +50,6 @@ const PlayerControl: FC<Props> = ({
    durationLine,
    timeProcessLine,
 }) => {
-   const [isRepeat, setIsRepeat] = useLocalStorage<boolean>(
-      "repeat",
-      false
-   );
-   const [isShuffle, setIsShuffle] =
-      useLocalStorage<boolean>("shuffle", false);
 
    const buttonClasses = "w-6 h-6 hover:text-indigo-600";
 

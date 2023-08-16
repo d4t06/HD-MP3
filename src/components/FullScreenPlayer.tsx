@@ -7,7 +7,6 @@ import {
    Dispatch,
    FC,
    SetStateAction,
-   forwardRef,
    useEffect,
    useMemo,
    useRef,
