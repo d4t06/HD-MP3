@@ -6,7 +6,7 @@ const buttonVariant = cva("inline-flex items-center justify-center", {
    variants: {
       variant: {
          default: "hover:brightness-75",
-         circle: "rounded-full"
+         circle: "rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl"
       },
       size: {
          half: "w-1/2",

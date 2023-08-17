@@ -9,6 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Dispatch, FC, MouseEventHandler, RefObject, SetStateAction } from "react";
 import handleTimeText from "../../utils/handleTimeText";
+import PlayPauseButton from "./PlayPauseButton";
 
 type Props = {
    audioEle: HTMLAudioElement;
@@ -70,28 +71,9 @@ const PlayerControl: FC<Props> = ({
             <button onClick={() => handlePrevious()}>
                <BackwardIcon className={buttonClasses} />
             </button>
-            <button
-               className="w-12"
-               onClick={() => handlePlayPause()}
-            >
-               {isWaiting ? (
-                  <ArrowPathIcon
-                     className={"w-6 mx-auto animate-spin"}
-                  />
-               ) : isPlaying ? (
-                  <PauseCircleIcon
-                     className={
-                        "w-12 hover:text-indigo-600"
-                     }
-                  />
-               ) : (
-                  <PlayCircleIcon
-                     className={
-                        "w-12 h-12 hover:text-indigo-600"
-                     }
-                  />
-               )}
-            </button>
+            
+            <PlayPauseButton isWaiting={isWaiting} isPlaying={isPlaying} handlePlayPause={handlePlayPause}/>
+
             <button onClick={() => handleNext()}>
                <ForwardIcon className={buttonClasses} />
             </button>
@@ -134,7 +116,7 @@ const PlayerControl: FC<Props> = ({
             <div className="w-[33px]">
                {audioEle && (
                   <span>
-                     {handleTimeText(audioEle?.duration!)}
+                     {handleTimeText(audioEle?.duration!) || '00:00'}
                   </span>
                )}
             </div>

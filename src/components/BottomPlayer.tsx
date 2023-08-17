@@ -32,6 +32,8 @@ interface Props {
    isOpenFullScreen: boolean;
    idle: boolean;
    audioEle: HTMLAudioElement;
+   isPlaying:boolean;
+   setIsPlaying: Dispatch<React.SetStateAction<boolean>>;
 }
 
 const BottomPlayer: FC<Props> = ({
@@ -39,14 +41,17 @@ const BottomPlayer: FC<Props> = ({
    setIsOpenFullScreen,
    idle,
    audioEle,
+
+   isPlaying,
+   setIsPlaying
 }) => {
    const SongStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
    const { song: songInStore } = SongStore;
 
-   const [isPlaying, setIsPlaying] =
-      useState<boolean>(false);
+   // const [isPlaying, setIsPlaying] =
+   //    useState<boolean>(false);
    const [duration, setDuration] = useState<number>();
 
    const [isWaiting, setIsWaiting] =
@@ -276,9 +281,8 @@ const BottomPlayer: FC<Props> = ({
       play();
    };
 
+   // run when current song change
    useEffect(() => {
-      // console.log("check player ele", playerEle);
-
       if (!audioEle) return;
       const audioElement = audioEle;
 
@@ -310,10 +314,10 @@ const BottomPlayer: FC<Props> = ({
 
    return (
       <div
-         className={`fixed bottom-0 w-full h-[90px] z-50 text-white px-10 max-[549px]:px-[20px]
+         className={`fixed bottom-0 w-full h-[90px] border-t z-50 text-white px-10 max-[549px]:px-[20px]
             ${isOpenFullScreen
-               ? "max-[549px]:h-[150px]"
-               : "border-t"
+               ? "max-[549px]:h-[150px] border-transparent"
+               : "bg-black"
             }
             ${idle
                ? "hidden"
@@ -368,7 +372,7 @@ const BottomPlayer: FC<Props> = ({
                      : ""
                   }
             ${isOpenFullScreen
-                     ? "max-[549px]:flex-col-reverse gap-[10px]"
+                     ? "max-[549px]:flex-col-reverse max-[549px]:gap-[10px]"
                      : "max-[549px]:hidden"
                   }
             `}
@@ -420,9 +424,8 @@ const BottomPlayer: FC<Props> = ({
                   onClick={() => setIsOpenFullScreen(true)}
                   variant={"circle"}
                   className={`h-[35px] w-[35px] p-[8px] ${isOpenFullScreen
-                     ? "opacity-0 pointer-events-none"
-                     : ""
-                     }`}
+                  ? "opacity-0 pointer-events-none"
+                  : ""}`}
                >
                   <ChevronUpIcon />
                </Button>

@@ -4,50 +4,75 @@ import BottomPlayer from "./BottomPlayer";
 import FullScreenPlayer from "./FullScreenPlayer";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
+import MobileFullScreenPlayer from "./MobileFullScreenPlayer";
+import MobileBottomPlayer from "./MobileBottomPlayer";
 
-interface Props { }
+interface Props {}
 
 const Player: FC<Props> = () => {
-   const songStore = useSelector(selectAllSongStore)
+  const songStore = useSelector(selectAllSongStore);
 
-   const { song: songInStore } = songStore
-   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
+  const { song: songInStore } = songStore;
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
 
-   // const activeSongThumbnail = useRef<HTMLDivElement>(null)
-   const Player = useRef<HTMLDivElement>(null);
-   const audioRef = useRef<HTMLAudioElement>(null)
+  const Player = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-   // const idle = useMouseMove(isOpenFullScreen);
+  const windowWidth = useRef<number>(window.innerWidth);
 
-   const content =
-      <div ref={Player} className="fixed">
-         <audio ref={audioRef} src={songInStore.path} className="hidden"></audio>
+  console.log("check windowWidth", windowWidth);
 
-         <FullScreenPlayer
-            // ref={activeSongThumbnail}
+  const desktopContent = (
+    <>
+      <FullScreenPlayer
+        idle={false}
+        isPlaying={isPlaying}
+        isOpenFullScreen={isOpenFullScreen}
+        audioEle={audioRef.current as HTMLAudioElement}
+        setIsOpenFullScreen={setIsOpenFullScreen}
+      />
 
-            idle={false}
-            isOpenFullScreen={isOpenFullScreen}
-            
-            audioEle={audioRef.current as HTMLAudioElement}
+      <BottomPlayer
+        idle={false && isOpenFullScreen}
+        isPlaying={isPlaying}
+        isOpenFullScreen={isOpenFullScreen}
+        audioEle={audioRef.current as HTMLAudioElement}
+        setIsPlaying={setIsPlaying}
+        setIsOpenFullScreen={setIsOpenFullScreen}
+      />
+    </>
+  );
 
-            setIsOpenFullScreen={setIsOpenFullScreen}
-         />
+  const mobileContent = (
+    <>
+      <MobileFullScreenPlayer
+        idle={false}
+        isPlaying={isPlaying}
+        isOpenFullScreen={isOpenFullScreen}
+        audioEle={audioRef.current as HTMLAudioElement}
+        setIsOpenFullScreen={setIsOpenFullScreen}
+        setIsPlaying={setIsPlaying}
+      />
 
-         <BottomPlayer
-            idle={false && isOpenFullScreen}
-            isOpenFullScreen={isOpenFullScreen}
-            
-            audioEle={audioRef.current as HTMLAudioElement}
-            // activeSongThumbnailEle={activeSongThumbnail.current as HTMLElement}
-            
-            setIsOpenFullScreen={setIsOpenFullScreen}
-         />
+      <MobileBottomPlayer
+        idle={false && isOpenFullScreen}
+        isPlaying={isPlaying}
+        isOpenFullScreen={isOpenFullScreen}
+        audioEle={audioRef.current as HTMLAudioElement}
+        setIsPlaying={setIsPlaying}
+        setIsOpenFullScreen={setIsOpenFullScreen}
+      />
+    </>
+  );
 
-      </div>
+  return (
+    <div ref={Player} className="fixed">
+      <audio ref={audioRef} src={songInStore.path} className="hidden"></audio>
 
-
-   return content;
+      {windowWidth.current >= 550 ? desktopContent : mobileContent}
+    </div>
+  );
 };
 
 export default Player;
