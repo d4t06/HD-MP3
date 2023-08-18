@@ -18,7 +18,6 @@ const Player: FC<Props> = () => {
 
   const Player = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
-
   const windowWidth = useRef<number>(window.innerWidth);
 
   console.log("check windowWidth", windowWidth);
@@ -67,7 +66,7 @@ const Player: FC<Props> = () => {
   );
 
   return (
-    <div ref={Player} className="fixed">
+    <div ref={Player} className="absolute">
       <audio ref={audioRef} src={songInStore.path} className="hidden"></audio>
 
       {windowWidth.current >= 550 ? desktopContent : mobileContent}

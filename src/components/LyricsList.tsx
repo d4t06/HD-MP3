@@ -4,11 +4,16 @@ import LyricItem from "./ui/LyricItem";
 
 interface Props {
    audioEle: HTMLAudioElement,
-   lyrics: Lyric[];
+   lyrics?: Lyric[];
 }
 
 
 const LyricsList: FC<Props> = ({ audioEle, lyrics }) => {
+
+   if (!lyrics) {
+      return <h1 className="text-3xl text-center">...</h1>
+   }
+   
    const [currentTime, setCurrentTime] = useState<number>(0);
    const firstTimeRender = useRef(true)
 
@@ -31,15 +36,15 @@ const LyricsList: FC<Props> = ({ audioEle, lyrics }) => {
 
 
    const renderItem = () => {
-      return lyrics.map((lyric, index) => {
-
-         const inRange = currentTime >= lyric.start && lyric.end > currentTime;
-         return <LyricItem firstTimeRender={firstTimeRender.current} key={index} done={!inRange} active={inRange}>{lyric.text}</LyricItem>
-
-      })
+         return lyrics.map((lyric, index) => {
+   
+            const inRange = currentTime >= lyric.start && lyric.end > currentTime;
+            return <LyricItem firstTimeRender={firstTimeRender.current} key={index} done={!inRange} active={inRange}>{lyric.text}</LyricItem>
+   
+         })
    }
 
-   return <ul>
+   return <ul className="">
 
       {renderItem()}
    </ul>

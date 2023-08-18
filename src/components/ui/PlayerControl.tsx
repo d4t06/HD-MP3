@@ -1,17 +1,16 @@
 import {
-   ArrowPathIcon,
    ArrowPathRoundedSquareIcon,
    ArrowTrendingUpIcon,
    BackwardIcon,
    ForwardIcon,
-   PauseCircleIcon,
-   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Dispatch, FC, MouseEventHandler, RefObject, SetStateAction } from "react";
 import handleTimeText from "../../utils/handleTimeText";
 import PlayPauseButton from "./PlayPauseButton";
 
 type Props = {
+   reverse:boolean;
+
    audioEle: HTMLAudioElement;
    isWaiting: boolean;
    isPlaying: boolean;
@@ -33,6 +32,8 @@ type Props = {
 };
 
 const PlayerControl: FC<Props> = ({
+   reverse,
+
    audioEle,
    isWaiting,
    isPlaying,
@@ -93,7 +94,7 @@ const PlayerControl: FC<Props> = ({
 
          {/* process */}
          <div className="flex flex-row items-center h-[30px] gap-x-[5px]">
-            <div className="w-[43px]">
+            <div className="w-40px]">
                {audioEle && (
                   <span
                      ref={currentTimeRef}
@@ -113,7 +114,7 @@ const PlayerControl: FC<Props> = ({
                   className="absolute left-0 top-0 h-full bg-indigo-600"
                ></div>
             </div>
-            <div className="w-[33px]">
+            <div className="w-[40px]">
                {audioEle && (
                   <span>
                      {handleTimeText(audioEle?.duration!) || '00:00'}
