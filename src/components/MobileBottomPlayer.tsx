@@ -15,7 +15,7 @@ import {
    selectAllSongStore,
    setSong,
 } from "../store/SongSlice";
-import { songs } from "../utils/songs";
+import { useSongs } from "../store/SongsContext";
 
 interface Props {
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
@@ -27,20 +27,23 @@ interface Props {
 }
 
 const MobileBottomPlayer: FC<Props> = ({
-   isOpenFullScreen,
+   // isOpenFullScreen,
    setIsOpenFullScreen,
-   idle,
+   // idle,
    audioEle,
 
    isPlaying,
    setIsPlaying,
 }) => {
+
+   const {songs} = useSongs();
+
    const SongStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
    const { song: songInStore } = SongStore;
 
-   const [isWaiting, setIsWaiting] =
+   const [isWaiting, _setIsWaiting] =
       useState<boolean>(false);
 
    const play = () => {
@@ -48,10 +51,6 @@ const MobileBottomPlayer: FC<Props> = ({
    };
    const pause = () => {
       audioEle?.pause();
-   };
-
-   const getNewSong = (index: number) => {
-      return songs[index];
    };
 
    // >>> click handle
@@ -79,7 +78,7 @@ const MobileBottomPlayer: FC<Props> = ({
 
    return (
       <div
-         className={`fixed bottom-0 w-full h-[90px] border-t z-40 text-white px-[20px]`}
+         className={`fixed bottom-0 w-full h-[90px] border-t z-40  px-[20px]`}
       >
          <div className={`flex flex-row  h-full`}>
             <div
@@ -93,20 +92,20 @@ const MobileBottomPlayer: FC<Props> = ({
                      <img
                         className={`w-full object-cover object-center rounded-full`}
                         src={
-                           songInStore.image
-                              ? songInStore.image
+                           songInStore.image_path
+                              ? songInStore.image_path
                               : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
                         }
                      />
                   </div>
 
                   <div className="right text-gray-100 ml-[10px]">
-                     {songInStore.path && (
+                     {songInStore.song_path && (
                         <>
-                           <h5 className="text-xl mb overflow-hidden leading-[1]">
+                           <h5 className="text-xl mb line-clamp-1">
                               {songInStore?.name || "name"}
                            </h5>
-                           <p className="text-md text-gray-400 leading-[1] mt-[5px]">
+                           <p className="text-md text-gray-400 mt-[5px] line-clamp-1">
                               {songInStore?.singer ||
                                  "singer"}
                            </p>

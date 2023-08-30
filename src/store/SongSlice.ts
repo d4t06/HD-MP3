@@ -4,16 +4,13 @@ import { Song } from "../types";
 const init = {
    song: {
       name: '',
-      singer: '',
-      path: '',
-      image: '',
-      currentIndex: 0,
-   } as Song,
-   status: {
-      playing: '',
-      repeat: '',
-      random: '',
-   }
+    singer: '',
+    image_path: '',
+    song_path: '',
+    by: '',
+    duration: 0,
+    lyric: '',
+   } as Song & {currentIndex: number}
 }
 
 const SongSlice = createSlice({
@@ -21,9 +18,9 @@ const SongSlice = createSlice({
    initialState: init,
    reducers: {
       setSong(state, action) {
-         const actionPayload = action.payload as Song;
-         state.song.image = actionPayload.image
-         state.song.path = actionPayload.path
+         const actionPayload = action.payload as Song & {currentIndex: number};
+         state.song.image_path = actionPayload.image_path
+         state.song.song_path = actionPayload.song_path
          state.song.name = actionPayload.name
          state.song.singer = actionPayload.singer
          state.song.currentIndex = actionPayload.currentIndex
@@ -31,7 +28,7 @@ const SongSlice = createSlice({
    }
 })
 
-export const selectAllSongStore = (state: any) => state.song as {song : Song}
+export const selectAllSongStore = (state: any) => state.song as {song : Song & {currentIndex: number}}
 
 export const {setSong} = SongSlice.actions
 

@@ -5,14 +5,15 @@ type Props = {
   idle: boolean;
   activeTab: string;
   tabs: string[];
+  className?: string,
 };
 
-const Tabs: FC<Props> = ({ tabs, idle, activeTab, setActiveTab }) => {
+const Tabs: FC<Props> = ({ tabs, idle, activeTab, setActiveTab, className }) => {
   return (
     <ul
-      className={`flex px-[2px] flex-row py-[4px] h-full px-[4px] items-center bg-indio-650 mx-auto rounded-full bg-gray-500 bg-opacity-20 ${
+      className={`flex px-[2px] flex-row py-[4px] h-full px-[4px] items-center bg-indio-650 mx-auto rounded-full bg-gray-500 bg-opacity-20  ${
         idle ? "hidden" : ""
-      }`}
+      }` + className}
     >
       {tabs.map((item, index) => {
         return (

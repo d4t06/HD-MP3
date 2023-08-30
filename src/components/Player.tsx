@@ -1,4 +1,4 @@
-import { FC, useRef, useState } from "react";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 
 import BottomPlayer from "./BottomPlayer";
 import FullScreenPlayer from "./FullScreenPlayer";
@@ -10,68 +10,85 @@ import MobileBottomPlayer from "./MobileBottomPlayer";
 interface Props {}
 
 const Player: FC<Props> = () => {
-  const songStore = useSelector(selectAllSongStore);
+   const songStore = useSelector(selectAllSongStore);
 
-  const { song: songInStore } = songStore;
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
+   const { song: songInStore } = songStore;
+   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
 
-  const Player = useRef<HTMLDivElement>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const windowWidth = useRef<number>(window.innerWidth);
+   const [ishasAudioEle, setIsHasAudioEle] = useState(false);
 
-  console.log("check windowWidth", windowWidth);
+   const audioRef = useRef<HTMLAudioElement>(null);
+   const windowWidth = useRef<number>(window.innerWidth);
 
-  const desktopContent = (
-    <>
-      <FullScreenPlayer
-        idle={false}
-        isPlaying={isPlaying}
-        isOpenFullScreen={isOpenFullScreen}
-        audioEle={audioRef.current as HTMLAudioElement}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
+   // console.log("check render");
 
-      <BottomPlayer
-        idle={false && isOpenFullScreen}
-        isPlaying={isPlaying}
-        isOpenFullScreen={isOpenFullScreen}
-        audioEle={audioRef.current as HTMLAudioElement}
-        setIsPlaying={setIsPlaying}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
-    </>
-  );
+   const desktopContent = (
+      <>
+         <FullScreenPlayer
+            idle={false}
+            isPlaying={isPlaying}
+            isOpenFullScreen={isOpenFullScreen}
+            audioEle={audioRef.current as HTMLAudioElement}
+            setIsOpenFullScreen={setIsOpenFullScreen}
+         />
 
-  const mobileContent = (
-    <>
-      <MobileFullScreenPlayer
-        idle={false}
-        isPlaying={isPlaying}
-        isOpenFullScreen={isOpenFullScreen}
-        audioEle={audioRef.current as HTMLAudioElement}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-        setIsPlaying={setIsPlaying}
-      />
+         <BottomPlayer
+            idle={false && isOpenFullScreen}
+            isPlaying={isPlaying}
+            isOpenFullScreen={isOpenFullScreen}
+            audioEle={audioRef.current as HTMLAudioElement}
+            setIsPlaying={setIsPlaying}
+            setIsOpenFullScreen={setIsOpenFullScreen}
+         />
+      </>
+   );
 
-      <MobileBottomPlayer
-        idle={false && isOpenFullScreen}
-        isPlaying={isPlaying}
-        isOpenFullScreen={isOpenFullScreen}
-        audioEle={audioRef.current as HTMLAudioElement}
-        setIsPlaying={setIsPlaying}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
-    </>
-  );
+   const mobileContent = (
+      <>
+         <MobileFullScreenPlayer
+            idle={false}
+            isPlaying={isPlaying}
+            isOpenFullScreen={isOpenFullScreen}
+            audioEle={audioRef.current as HTMLAudioElement}
+            setIsOpenFullScreen={setIsOpenFullScreen}
+            setIsPlaying={setIsPlaying}
+         />
 
-  return (
-    <div ref={Player} className="absolute">
-      <audio ref={audioRef} src={songInStore.path} className="hidden"></audio>
+         <MobileBottomPlayer
+            idle={false && isOpenFullScreen}
+            isPlaying={isPlaying}
+            isOpenFullScreen={isOpenFullScreen}
+            audioEle={audioRef.current as HTMLAudioElement}
+            setIsPlaying={setIsPlaying}
+            setIsOpenFullScreen={setIsOpenFullScreen}
+         />
+      </>
+   );
 
-      {windowWidth.current >= 550 ? desktopContent : mobileContent}
-    </div>
-  );
+   useEffect(() => {
+      if (ishasAudioEle) return;
+      if (audioRef.current) setIsHasAudioEle(true);
+   }, []);
+
+   // console.log("check has audio", ishasAudioEle);
+
+   // console.log("player render");
+
+   return (
+      <div className="absolute">
+         <audio
+            ref={audioRef}
+            src={songInStore.song_path}
+            className="hidden"
+         ></audio>
+         {ishasAudioEle
+            ? windowWidth.current >= 550
+               ? desktopContent
+               : mobileContent
+            : ""}
+      </div>
+   );
 };
 
 export default Player;

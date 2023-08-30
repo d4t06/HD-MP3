@@ -66,19 +66,19 @@ const SongThumbnail: FC<Props> = ({
    return (
       <div ref={thumbnail} className={`flex flex-col`}>
          <div
-            className={`h-[350px] w-[350px] flex justify-center max-[549px]:h-[calc(100vw-30px)] max-[549px]:w-[100%]`}
+            className={`h-[350px] w-[350px] flex justify-center items-center max-[549px]:h-[calc(100vw-30px)] max-[549px]:w-[100%]`}
          >
             <div
                className={`group relative ${
                   active
                      ? "w-[350px] max-[549px]:w-[100%]"
                      : "w-[250px] max-[549px]:w-[80%]"
-               } transition-[width] duration-300 origin-center self-end max-[549px]:self-center`}
+               } transition-[width] duration-300 origin-center`}
             >
-               {data?.image ? (
+               {data?.image_path ? (
                   <img
                      className={`select-none object-cover object-center rounded`}
-                     src={data.image}
+                     src={data.image_path}
                      alt=""
                   />
                ) : (
@@ -113,10 +113,10 @@ const SongThumbnail: FC<Props> = ({
 
          {hasTitle && (
             <div>
-               <h2 className="text-3xl text-center font-bold mt-[14px] max-[549px]:text-xl">
-                  {data?.name || "Some song"}
-               </h2>
-               <p className="text-center text-lg mt-[7px] text-gray-500">
+                  <h2 className={`text-2xl text-white  text-center mt-[10px] font-bold  max-[549px]:text-xl text-ellipsis line-clamp-1 ${active ? "" : ""}`}>
+                     {data?.name || "Some song"}
+                  </h2>
+               <p className="text-center text-md  text-gray-500">
                   {data?.singer || "..."}
                </p>
             </div>

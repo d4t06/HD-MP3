@@ -1,5 +1,4 @@
 import {
-   FC,
    Dispatch,
    SetStateAction,
    useRef,
@@ -7,30 +6,51 @@ import {
    useEffect,
    MouseEvent,
    useMemo,
+   ReactNode,
 } from "react";
-import handleTimeText from "../utils/handleTimeText";
-import useLocalStorage from "../hooks/useLocalStorage";
+import {
+   useFloating,
+   autoUpdate,
+   offset,
+   flip,
+   shift,
+   FloatingFocusManager,
+   useClick,
+   useDismiss,
+   useRole,
+   useInteractions,
+} from "@floating-ui/react";
 
 import {
    ChevronDownIcon,
+   Cog6ToothIcon,
    HeartIcon,
+   SpeakerWaveIcon,
+   SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import {
-   selectAllSongStore,
-   setSong,
-} from "../store/SongSlice";
-import { songs } from "../utils/songs";
+import { selectAllSongStore, setSong } from "../store/SongSlice";
+import { useTheme } from "../store/ThemeContext";
+
+import { generateSlug } from "../utils/generateSlug";
+import { Lyric, Song } from "../types";
+
+import { lyricsStore } from "../lyric";
 
 import SongThumbnail from "./ui/SongThumbnail";
 import Tabs from "./ui/Tabs";
 import Button from "./ui/Button";
-import PlayerControl from "./ui/PlayerControl";
 import SongListItem from "./ui/SongListItem";
-import { Lyric, Song } from "../types";
+import ScrollText from "./ui/ScrollText";
+
 import LyricsList from "./LyricsList";
-import { generateSlug } from "../utils/generateSlug";
-import { lyricsStore } from "../lyric";
+import SettingMenu from "./SettingMenu";
+import Modal from "./Modal";
+import Control from "./Control";
+// import useLocalStorage from "../hooks/useLocalStorage";
+import useVolume from "../hooks/useVolume";
+// import SongItem from "./ui/SongItem";
+import { useSongs } from "../store/SongsContext";
 
 type Props = {
    isOpenFullScreen: boolean;
@@ -41,312 +61,110 @@ type Props = {
    setIsPlaying: Dispatch<SetStateAction<boolean>>;
 };
 
-const MobileFullScreenPlayer: FC<Props> = ({
+export default function MobileFullScreenPlayer({
    isOpenFullScreen,
    setIsOpenFullScreen,
    idle,
    audioEle,
    isPlaying,
    setIsPlaying,
-}) => {
+}: Props) {
+   const {songs} = useSongs()
+
    const songStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
+
    const { song: songInStore } = songStore;
+   const { theme } = useTheme();
 
-   const [activeTab, setActiveTab] =
-      useState<string>("Playing");
-   const [duration, setDuration] = useState<number>();
+   const [isOpenSetting, setIsOpenSetting] = useState(false);
+   const [isClickSetting, setIsClickSetting] = useState(false);
 
-   const [isWaiting, setIsWaiting] =
-      useState<boolean>(false);
-   const [isMute, setIsMute] = useState(false);
-
-   const [isRepeat, setIsRepeat] = useLocalStorage<boolean>(
-      "repeat",
-      false
-   );
-   const [isShuffle, setIsShuffle] =
-      useLocalStorage<boolean>("shuffle", false);
-
-   const durationLineWidth = useRef<number>();
-   const durationLine = useRef<HTMLDivElement>(null);
-   const timeProcessLine = useRef<HTMLDivElement>(null);
+   const [activeTab, setActiveTab] = useState<string>("Playing");
+   const [settingComp, setSettingComp] = useState<ReactNode>();
 
    const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
    const volumeProcessLine = useRef<HTMLDivElement>(null);
-
-   const currentTimeRef = useRef<HTMLDivElement>(null);
    const bgRef = useRef<HTMLDivElement>(null);
 
-   const play = () => {
-      audioEle?.play();
-   };
-   const pause = () => {
-      audioEle?.pause();
-   };
+   const { handleSetVolume, isMute, handleMute } = useVolume(
+      volumeLineWidth,
+      volumeProcessLine,
+      audioEle
+   );
 
-   const getNewSong = (index: number) => {
-      return songs[index];
-   };
+   const { refs, floatingStyles, context } = useFloating({
+      open: isClickSetting,
+      onOpenChange: setIsClickSetting,
+      placement: "bottom-start",
+      middleware: [offset(10), flip(), shift()],
+      whileElementsMounted: autoUpdate,
+   });
 
-   // >>> click handle
-   const handlePlayPause = () => {
-      isPlaying ? pause() : play();
-   };
+   const click = useClick(context);
+   const dismiss = useDismiss(context);
+   const role = useRole(context);
 
-   const handlePause = () => {
-      setIsPlaying(false);
-   };
+   const { getReferenceProps, getFloatingProps } = useInteractions([
+      click,
+      dismiss,
+      role,
+   ]);
 
    const activeSong = (song: Song, index: number) => {
       dispatch(setSong({ ...song, currentIndex: index }));
    };
 
-   const handleResetForNewSong = () => {
-      const timeProcessLineElement =
-         timeProcessLine.current as HTMLElement;
-
-      if (
-         timeProcessLineElement &&
-         currentTimeRef.current
-      ) {
-         currentTimeRef.current.innerText = "00:00";
-         timeProcessLineElement.style.width = "0%";
-      }
-   };
-
-   const handleSeek = (
-      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-   ) => {
-      const node = e.target as HTMLElement;
-
-      if (durationLineWidth.current && duration) {
-         // get boundingRect
-         const clientRect = node.getBoundingClientRect();
-         // get elements
-         const timeProcessLineElement =
-            timeProcessLine.current as HTMLElement;
-
-         // calculating
-         const length = e.clientX - clientRect.left;
-         const lengthRatio =
-            length / durationLineWidth.current;
-         const newTime = lengthRatio * duration;
-
-         if (audioEle && timeProcessLineElement) {
-            // update current time
-            audioEle.currentTime = +newTime.toFixed(1);
-            // update process line width
-            timeProcessLineElement.style.width =
-               (lengthRatio * 100).toFixed(1) + "%";
-
-            if (!isPlaying) play();
-         }
-      }
-   };
-
-   const handleNext = () => {
-      let newIndex = songInStore.currentIndex! + 1;
-      let newSong;
-      if (newIndex < songs.length) {
-         newSong = songs[newIndex];
-      } else {
-         newSong = songs[0];
-         newIndex = 0;
-      }
-
-      dispatch(
-         setSong({ ...newSong, currentIndex: newIndex })
-      );
-   };
-
-   const handlePrevious = () => {
-      let newIndex = songInStore.currentIndex! - 1;
-      let newSong;
-      if (newIndex >= 0) {
-         newSong = songs[newIndex];
-      } else {
-         newSong = songs[songs.length - 1];
-         newIndex = songs.length - 1;
-      }
-
-      dispatch(
-         setSong({ ...newSong, currentIndex: newIndex })
-      );
-   };
-
-   const handleSetVolume = (
-      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-   ) => {
-      const node = e.target as HTMLElement;
-      const clientRect = node.getBoundingClientRect();
-
-      if (volumeLineWidth.current) {
-         let newVolume =
-            (e.clientX - clientRect.x) /
-            volumeLineWidth.current;
-
-         if (newVolume > 0.9) newVolume = 1;
-         if (newVolume < 0.1) newVolume = 0;
-
-         if (volumeProcessLine.current && audioEle) {
-            volumeProcessLine.current.style.width =
-               newVolume * 100 + "%";
-            audioEle.volume = newVolume;
-         }
-      }
-   };
-
-   const handleMute = () => {
-      if (audioEle.muted) {
-         audioEle.muted = false;
-         setIsMute(false);
-      } else {
-         audioEle.muted = true;
-         setIsMute(true);
-      }
-   };
-
-   // >>> behind the scenes handle
-   const handlePlaying = () => {
-      setIsPlaying(true);
-      setIsWaiting(false);
-
-      const currentTime = audioEle?.currentTime;
-      const duration = audioEle?.duration;
-
-      const timeProcessLineEle =
-         timeProcessLine.current as HTMLElement;
-
-      if (duration && currentTime) {
-         const newWidth = currentTime / (duration / 100);
-
-         timeProcessLineEle.style.width =
-            newWidth.toFixed(1) + "%";
-      }
-
-      if (currentTimeRef.current) {
-         currentTimeRef.current.innerText = handleTimeText(
-            currentTime!
-         );
-      }
-   };
-
-   const handleWaiting = () => {
-      setIsWaiting(true);
-   };
-
-   const handleEnded = () => {
-      if (isRepeat) {
-         console.log("song repeat");
-
-         return play();
-      }
-      if (isShuffle) {
-         let randomIndex: number =
-            songInStore.currentIndex!;
-         while (randomIndex === songInStore.currentIndex) {
-            randomIndex = Math.floor(
-               Math.random() * songs.length
-            );
-         }
-
-         const newSong = getNewSong(randomIndex);
-         return dispatch(
-            setSong({
-               ...newSong,
-               currentIndex: randomIndex,
-            })
-         );
-      }
-
-      return handleNext();
-   };
-
-   const handleLoaded = () => {
-      // get element
-      // const audioElement = audioEle;
-
-      // set duration
-      setDuration(audioEle?.duration);
-
-      // set duration base line width
-      durationLineWidth.current =
-         durationLine.current?.offsetWidth;
-      volumeLineWidth.current =
-         volumeLine.current?.offsetWidth;
-
-      // add event listener
-      audioEle?.addEventListener("pause", handlePause);
-      audioEle?.addEventListener(
-         "timeupdate",
-         handlePlaying
-      );
-      audioEle?.addEventListener("ended", handleEnded);
-      audioEle?.addEventListener("waiting", handleWaiting);
-
-      // play song if click it
-      play();
-   };
-
-   useEffect(() => {}, [songInStore]);
-
-   // run when current song change
    useEffect(() => {
-      if (!audioEle) return;
+      volumeLineWidth.current = volumeLine.current?.offsetWidth;
+   }, []);
 
-      if (songInStore.image) {
+   useEffect(() => {
+      if (songInStore.image_path) {
          const node = bgRef.current as HTMLElement;
-         node.style.backgroundImage = `url(${songInStore.image})`;
+         node.style.backgroundImage = `url(${songInStore.image_path})`;
       }
-      const audioElement = audioEle;
-
-      audioElement.onloadedmetadata = () => {
-         handleLoaded();
-      };
-
-      return () => {
-         audioEle?.removeEventListener(
-            "timeupdate",
-            handlePlaying
-         );
-         audioEle?.removeEventListener(
-            "pause",
-            handlePause
-         );
-         audioEle?.removeEventListener(
-            "ended",
-            handleEnded
-         );
-         audioEle?.removeEventListener(
-            "waiting",
-            handleWaiting
-         );
-
-         handleResetForNewSong();
-      };
    }, [songInStore]);
 
-   const renderSongsListItemTab = useMemo(
-      () =>
-         songs.map((song, index) => {
-            return (
-               <SongListItem
-                  data={song}
-                  onClick={() => activeSong(song, index)}
-                  key={index}
-                  active={song.path === songInStore.path}
-               />
-            );
-         }),
-      [songInStore]
-   );
+   const renderSongsListItemTab = useMemo(() => {
+      // if (!songInStore.currentIndex) return '';
+
+      return (
+         <>
+            {songInStore && (
+               <>
+                  <SongListItem
+                     theme={theme}
+                     data={songInStore}
+                     active={false}
+                  />
+                  <h3 className="text-white text-lg ml-[10px] mt-[10px] mb-[7px]">
+                     Playing next
+                  </h3>
+                  <div className="relative h-full no-scrollbar overflow-auto transition-all">
+                     {songs.map((song, index) => {
+                        if (index == songInStore.currentIndex! || index <= songInStore.currentIndex!) return;
+                        return (
+                           <SongListItem
+                              autoScroll
+                              theme={theme}
+                              data={song}
+                              onClick={() => activeSong(song, index)}
+                              key={index}
+                              active={song.song_path === songInStore.song_path}
+                           />
+                        );
+                     })}
+                  </div>
+               </>
+            )}
+         </>
+      );
+   }, [songInStore]);
 
    const renderLyricTab = useMemo(() => {
-      const key = generateSlug(
-         songInStore.name
-      ) as keyof typeof lyricsStore;
+      const key = generateSlug(songInStore.name) as keyof typeof lyricsStore;
       return (
          <LyricsList
             audioEle={audioEle}
@@ -355,12 +173,12 @@ const MobileFullScreenPlayer: FC<Props> = ({
       );
    }, [songInStore]);
 
+   // console.log("mobile fullscreen check audioEle", audioEle);
+
    return (
       <div
-         className={`fixed inset-0 z-50 bg-zinc-900 text-white overflow-hidden  ${
-            isOpenFullScreen
-               ? "translate-y-0"
-               : "translate-y-full"
+         className={`fixed inset-0 z-50 bg-zinc-900  overflow-hidden  ${
+            isOpenFullScreen ? "translate-y-0" : "translate-y-full"
          } transition-[transform] duration-300 ease-in-out delay-150  `}
       >
          <div
@@ -372,22 +190,48 @@ const MobileFullScreenPlayer: FC<Props> = ({
          ></div>
 
          <div className="absolute inset-0 z-10">
-            <div className="header h-[65px] flex justify-center p-[15px]">
+            <div className="header h-[65px] p-[15px]">
+               <button
+                  ref={refs.setReference}
+                  {...getReferenceProps()}
+                  className="inline-flex items-center rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl h-[35px] w-[35px] absolute left-[15px]"
+               >
+                  <Cog6ToothIcon />
+               </button>
+
                <Tabs
-                  idle={idle}
-                  activeTab={activeTab}
+                  className="w-fit"
+                  idle={false}
                   setActiveTab={setActiveTab}
+                  activeTab={activeTab}
                   tabs={["Songs", "Playing", "Lyric"]}
                />
 
                <Button
-                  className="absolute right-[15px]"
+                  className="absolute right-[15px] top-[15px]"
                   variant={"circle"}
                   size={"normal"}
                   onClick={() => setIsOpenFullScreen(false)}
                >
                   <ChevronDownIcon />
                </Button>
+
+               {isClickSetting && (
+                  <FloatingFocusManager context={context} modal={false}>
+                     <div
+                        className="z-[99]"
+                        ref={refs.setFloating}
+                        style={floatingStyles}
+                        {...getFloatingProps()}
+                     >
+                        <SettingMenu
+                           setIsOpenMenu={setIsClickSetting}
+                           setIsOpenSetting={setIsOpenSetting}
+                           setSettingComp={setSettingComp}
+                        />
+                     </div>
+                  </FloatingFocusManager>
+               )}
             </div>
 
             <div className={`relative h-[calc(100vh-65px)] px-[15px]`}>
@@ -395,90 +239,123 @@ const MobileFullScreenPlayer: FC<Props> = ({
                   className={`${
                      activeTab != "Playing"
                         ? "opacity-0 pointer-events-none"
-                        : "Playing tab"
+                        : "Playing tab h-full flex flex-col overflow-auto"
                   }`}
                >
-                  {useMemo(
-                     () => (
-                        <>
+                  <div className="flex flex-col justify-between h-full">
+                     {useMemo(
+                        () => (
                            <SongThumbnail
                               active={isPlaying}
                               data={songInStore}
                            />
-
-                           <div className="flex flex-row justify-between items-center my-[10px]">
-                              <div className="group flex-grow">
-                                 <h2 className="text-2xl font-bold">
-                                    {songInStore.name || "Some song"}
-                                 </h2>
-                                 <p className="text-md opacity-50">
-                                    {songInStore.singer || "..."}
-                                 </p>
-                              </div>
-
-                              <div className="group">
-                                 <Button
-                                    variant={"default"}
-                                    size={"small"}
-                                    className=" text-gray-500"
-                                 >
-                                    <HeartIcon />
-                                 </Button>
-                              </div>
+                        ),
+                        [songInStore, isPlaying]
+                     )}
+                     <div className="player mb-[20px]">
+                        <div className="flex flex-row justify-between items-center my-[10px]">
+                           <div className="group flex-grow overflow-hidden">
+                              {useMemo(
+                                 () => (
+                                    <ScrollText label={songInStore.name} />
+                                 ),
+                                 [songInStore]
+                              )}
+                              <p className="text-md opacity-50">
+                                 {songInStore.singer || "..."}
+                              </p>
                            </div>
 
-                           <div className="flex flex-col-reverse">
-                              <PlayerControl
-                                 reverse
-                                 audioEle={audioEle}
-                                 isWaiting={isWaiting}
-                                 isPlaying={isPlaying}
-                                 isRepeat={isRepeat}
-                                 setIsRepeat={setIsRepeat}
-                                 isShuffle={isShuffle}
-                                 setIsShuffle={setIsShuffle}
-                                 currentTimeRef={
-                                    currentTimeRef
-                                 }
-                                 timeProcessLine={
-                                    timeProcessLine
-                                 }
-                                 durationLine={durationLine}
-                                 handleNext={handleNext}
-                                 handlePrevious={
-                                    handlePrevious
-                                 }
-                                 handlePlayPause={
-                                    handlePlayPause
-                                 }
-                                 handleSeek={handleSeek}
-                              />
+                           <div className="group pl-[20px]">
+                              <Button
+                                 variant={"default"}
+                                 size={"small"}
+                                 className="sm text-gray-500"
+                              >
+                                 <HeartIcon />
+                              </Button>
                            </div>
-                        </>
-                     ),
-                     [isPlaying, songInStore]
-                  )}
+                        </div>
+
+                        <div className="flex flex-col justify-start flex-1">
+                           <div className="flex-col-reverse flex">
+                              {useMemo(
+                                 () => (
+                                    <Control
+                                       audioEle={audioEle}
+                                       isOpenFullScreen={false}
+                                       isPlaying={isPlaying}
+                                       setIsPlaying={setIsPlaying}
+                                       idle={false}
+                                    />
+                                 ),
+                                 [isPlaying]
+                              )}
+                           </div>
+
+                           <div className="flex flex-row items-center gap-[10px]">
+                              <Button
+                                 onClick={() => handleMute()}
+                                 className={`w-[28px] h-[28px] ${
+                                    isMute && theme.content_text
+                                 }`}
+                              >
+                                 <SpeakerXMarkIcon />
+                              </Button>
+                              <div
+                                 ref={volumeLine}
+                                 onClick={(e) => handleSetVolume(e)}
+                                 className={`h-[4px] bg-gray-300 flex-1 relative 
+                                 cursor-pointer rounded-3xl overflow-hidden ${
+                                    theme.type === "light"
+                                       ? "bg-gray-400"
+                                       : "bg-gray-200"
+                                 }`}
+                              >
+                                 <div
+                                    ref={volumeProcessLine}
+                                    className={`absolute left-0 top-0 h-full w-full ${theme.content_bg}`}
+                                 ></div>
+                                 {/* <div className="absolute right-0 h-[15px] w-[15px] rounded-full bg-[#fff]"></div> */}
+                              </div>
+                              <Button className="w-[28px] h-[28px]">
+                                 <SpeakerWaveIcon />
+                              </Button>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
 
                {activeTab === "Songs" && (
                   <div className="songs-list-item-tab absolute inset-0 z-10">
-                     <div className="relative h-full no-scrollbar overflow-auto">
-                        {renderSongsListItemTab}
-                     </div>
+                     {renderSongsListItemTab}
                   </div>
-               )} 
+               )}
 
                {activeTab === "Lyric" && (
                   <div className="lyric-tab absolute  inset-0 z-10">
-                     <div className="relative overflow-auto h-full">
+                     <div className="relative overflow-auto h-full px-[15px]">
                         {renderLyricTab}
                      </div>
                   </div>
                )}
             </div>
          </div>
+
+         {isOpenSetting && (
+            <Modal setOpenModal={setIsOpenSetting}>
+               <div
+                  className={` w-[95vw] [90vh] px-[25px] pb-[25px] overflow-hidden ${
+                     theme.container
+                  } rounded-[8px] ${
+                     theme.type === "light" ? "text-[#333]" : "text-white"
+                  } `}
+               >
+                  {settingComp}
+               </div>
+            </Modal>
+         )}
       </div>
    );
-};
-
-export default MobileFullScreenPlayer;
+}

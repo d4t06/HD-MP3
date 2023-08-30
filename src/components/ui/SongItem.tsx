@@ -1,6 +1,12 @@
 import { FC } from "react";
-import { Song } from "../../types";
-import { VariantProps, cva } from "class-variance-authority";
+import { Song, ThemeKeyType, ThemeType } from "../../types";
+import {
+   VariantProps,
+   cva,
+} from "class-variance-authority";
+import { useTheme } from "../../store/ThemeContext";
+import Button from "./Button";
+import { PauseCircleIcon } from "@heroicons/react/24/outline";
 
 const SongItemVariant = cva("", {
    variants: {
@@ -19,31 +25,59 @@ const SongItemVariant = cva("", {
    },
 });
 
-interface Props extends VariantProps<typeof SongItemVariant> {
-   song?: Song;
+interface Props
+   extends VariantProps<typeof SongItemVariant> {
+   song: Song;
    onClick?: () => void;
    active?: boolean;
+   theme: ThemeType & {alpha : string};
 }
 
-const SongItem: FC<Props> = ({ song, size, style, active, onClick }) => {
+const SongItem: FC<Props> = ({
+   song,
+   size,
+   style,
+   active,
+   theme,
+   onClick,
+}) => {
    return (
       <div
-         className={`p-3 flex flex-row hover:bg-indigo-950 border border-transparent rounded cursor-pointer relative ${
-            active ? "bg-indigo-950" : ""
-         }`}
+         className={`flex flex-row border border-transparent rounded-[8px] hover:bg-${theme.alpha} p-[10px] cursor-pointer relative 
+            `}
          onClick={onClick}
       >
-         <div className={SongItemVariant({ size, style })}>
+         <div className={SongItemVariant({ size, style }) + " group relative rounded-[4px] overflow-hidden"}>
             <img
-               className={`w-full object-cover object-center rounded`}
-               src={song?.image || "https://placehold.co/200x200"}
+               className={`w-full object-cover object-center`}
+               src={
+                  song?.image_path ||
+                  "https://placehold.co/200x200"
+               }
             />
+
+            <div
+               className="absolute  inset-0 bg-black bg-opacity-60 
+             items-center justify-center hidden max-[549px]:hidden group-hover:flex"
+            >
+               <Button
+                  onClick={onClick}
+                  variant={"default"}
+                  className="h-[30px] w-[30px] text-white"
+               >
+                  <PauseCircleIcon />
+               </Button>
+            </div>
          </div>
-         <div className="text-gray-100 ml-5">
-            <h5 className="text-lg mb overflow-hidden">{song?.name || "name"}</h5>
-            <p className="text-md opacity-80">{song?.singer || "singer"}</p>
+         <div className="ml-5">
+            <h5 className="text-md font-medium overflow-hidden">
+               {song?.name || "name"}
+            </h5>
+            <p className="text-sm text-gray-500">
+               {song?.singer || "singer"}
+            </p>
          </div>
-         {active && (
+         {/* {active && (
             <div className="absolute right-[10px] top-1/2 -translate-y-1/2 w-[20px] h-[20px]">
                <img
                   className=""
@@ -51,7 +85,7 @@ const SongItem: FC<Props> = ({ song, size, style, active, onClick }) => {
                   alt=""
                />
             </div>
-         )}
+         )} */}
       </div>
    );
 };

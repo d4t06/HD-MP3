@@ -1,11 +1,12 @@
 import { ButtonHTMLAttributes, FC, MouseEventHandler, ReactNode } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { ReferenceType } from "@floating-ui/react";
 
-const buttonVariant = cva("inline-flex items-center justify-center", {
+const buttonVariant = cva("inline-flex items-center", {
    variants: {
       variant: {
-         default: "hover:brightness-75",
+         default: "hover:brightness-90",
          circle: "rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl"
       },
       size: {
@@ -28,6 +29,7 @@ interface Props
    // classNames: any;
    isLoading?: boolean;
    onClick?:MouseEventHandler,
+   ref?: ((node: ReferenceType | null) => void);
 
 }
 

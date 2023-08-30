@@ -1,83 +1,107 @@
-import { createContext, useCallback, useContext, useReducer } from 'react'
+import { createContext, useCallback, useContext, useReducer } from "react";
+import { ThemeKeyType, ThemeType } from "../types";
+import { themes } from "../config/themes";
 
-type StateType = {
-   theme: string;
-}
+type StateType = { theme: ThemeType & { alpha: string } };
+// type StateType = {
+//    id: string,
+//    type: string,
+//    alpha: string,
+//    bottom_player_bg: string,
+//    side_bar_bg: string,
+//    container_bg: string
+//    content_text: string,
+// };
+
+const localStorageThemeId: ThemeKeyType = JSON.parse(
+   localStorage.getItem("theme")!
+);
+const initTheme = themes[localStorageThemeId] || themes["red"];
 
 const initialState: StateType = {
-   theme: 'indigo'
-}
+   theme: {
+      ...initTheme,
+      alpha: initTheme.type === "light" ? "[#000]/[.1]" : "[#fff]/[.1]",
+   },
+};
 
 const enum REDUCER_ACTION_TYPE {
    SETTHEME,
 }
 
 type ReducerAction = {
-   type: REDUCER_ACTION_TYPE,
-   payload: string,
+   type: REDUCER_ACTION_TYPE;
+   payload: {
+      id: ThemeKeyType;
+   };
+};
 
-}
+const reducer = (_state: StateType, action: ReducerAction): StateType => {
+   // switch (action.type) {
+   // }
+   return {
+      theme: {
+         ...themes[action.payload.id],
+         alpha:
+            themes[action.payload.id].type === "dark"
+               ? "[#fff]/[.1]"
+               : "[#000]/[.1]",
+      },
+   };
+};
 
-const reducer = (_state: StateType,
-   action: ReducerAction): StateType => {
+const useThemeContext = (theme: StateType) => {
+   const [state, dispatch] = useReducer(reducer, theme);
 
-   switch (action.type) {
-      case REDUCER_ACTION_TYPE.SETTHEME:
+   const setTheme = useCallback((id: ThemeKeyType) => {
+      console.log("set theme");
+      
+      dispatch({
+         type: REDUCER_ACTION_TYPE.SETTHEME,
+         payload: { id },
+      });
+   }, []);
 
-         switch (action.payload) {
-            case "light":
-               return { theme: "light" }
+   return { state, setTheme };
+};
 
-            case "dark":
-               return { theme: "dark" }
-
-            default:
-               throw new Error()
-         }
-
-      default:
-         throw new Error()
-   }
-}
-
-const useThemeContext = (initialState: StateType) => {
-   const [state, dispatch] = useReducer(reducer, initialState);
-
-
-   const setTheme = useCallback((theme: string) => {
-      dispatch({ type: REDUCER_ACTION_TYPE.SETTHEME, payload: theme })
-   }, [])
-
-   return { state, setTheme }
-}
-
-type UseThemeContextType = ReturnType<typeof useThemeContext>
+type UseThemeContextType = ReturnType<typeof useThemeContext>;
 
 const initialContextState: UseThemeContextType = {
    state: initialState,
-   setTheme: () => { }
-}
+   setTheme: () => {},
+};
 
-const ThemeContext = createContext<UseThemeContextType>(initialContextState)
+const ThemeContext = createContext<UseThemeContextType>(initialContextState);
 
-const ThemeProvider = ({ children, ...initialState }: { children: any } & StateType) => {
-
-   return <ThemeContext.Provider value={useThemeContext(initialState)}>
-      {children}
-   </ThemeContext.Provider>
-}
+const ThemeProvider = ({
+   children,
+   theme,
+}: {
+   children: any;
+   theme: StateType;
+}) => {
+   return (
+      <ThemeContext.Provider value={useThemeContext(theme)}>
+         {children}
+      </ThemeContext.Provider>
+   );
+};
 
 type UseThemeHookType = {
-   theme: string,
-   setTheme: (theme: string) => void
-}
+   theme: StateType["theme"];
+   setTheme: (id: ThemeKeyType) => void;
+};
 
 const useTheme = (): UseThemeHookType => {
-   const { state: { theme }, setTheme } = useContext(ThemeContext)
+   const {
+      state: { theme },
+      setTheme,
+   } = useContext(ThemeContext);
 
-   return { theme, setTheme }
-}
+   return { theme, setTheme };
+};
 
-export default ThemeProvider
+export default ThemeProvider;
 
 export { ThemeContext, initialState, useTheme };

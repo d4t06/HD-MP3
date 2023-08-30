@@ -7,7 +7,7 @@ interface Props {
 
 
 const Divider:FC<Props> = ({className}) => {
-   return <div className={`border ${className}`}></div>
+   return <div className={`${className}`}></div>
 }
 
 export default Divider

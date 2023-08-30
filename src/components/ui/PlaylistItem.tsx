@@ -3,9 +3,11 @@ import Button from "./Button";
 import { Bars3Icon, PauseCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Playlist } from "../../types";
 
-interface Props {data: Playlist}
+interface Props {data: Playlist, theme?: string}
 
-const PlaylistItem: FC<Props> = ({data}) => {
+const PlaylistItem: FC<Props> = ({data, theme}) => {
+
+  
    return (
       <div className="group">
          <div className="relative overflow-hidden rounded-xl">

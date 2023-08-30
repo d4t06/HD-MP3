@@ -1,32 +1,54 @@
-import { FC } from "react";
-import { Song } from "../../types";
+import { useEffect, useRef } from "react";
+import { Song, ThemeType } from "../../types";
 import Button from "./Button";
-import { Bars3Icon, HeartIcon } from "@heroicons/react/24/outline";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import {
+   Bars3Icon,
+   HeartIcon,
+   PauseCircleIcon,
+} from "@heroicons/react/24/outline";
+import handleTimeText from "../../utils/handleTimeText";
 
 interface Props {
    data: Song;
    active?: boolean;
-   onClick: () => void;
+   autoScroll?: boolean;
+   onClick?: () => void;
+   theme: ThemeType & { alpha: string };
 }
 
-const SongListItem: FC<Props> = ({ data, active, onClick }) => {
-   const [_favorite, setFavorite] = useLocalStorage("favorites", [""]);
+export default function SongListItem({
+   data,
+   active,
+   autoScroll,
+   onClick,
+   theme,
+}: Props) {
+   // const [_favorite, setFavorite] = useLocalStorage("favorites", [""]);
 
-   const handleAddFavorite = (id: string) => {
-      setFavorite((prev) => [...prev, id]);
-   };
+   // const handleAddFavorite = (id: string) => {
+   //    setFavorite((prev) => [...prev, id]);
+   // };
+   const item = useRef<HTMLDivElement>(null);
 
+   useEffect(() => {
+      if (!autoScroll) return;
+
+      // const node = item.current as HTMLElement;
+      // node.scrollIntoView({block:"nearest", behavior: "smooth"})
+
+      console.log("scroll");
+   }, [active]);
+
+   const buttonClasses = "h-[35px] w-[35px] p-[8px] rounded-full";
    return (
       <div
+         ref={item}
          onClick={onClick}
-         className={`group flex flex-row rounded justify-between items-center p-[10px] hover:bg-indigo-950  ${
-            active ? "bg-indigo-950" : ""
-         }`}
+         className={`group/main flex flex-row rounded justify-between items-center p-[10px] hover:bg-${theme?.alpha} `}
       >
          <div className="flex flex-row">
-            <div className="h-[44px] w-[44px] relative">
-               <img className="rounded" src={data.image} alt="" />
+            <div className="h-[54px] w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0">
+               <img className="" src={data.image_path} alt="" />
 
                {active && (
                   <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
@@ -38,28 +60,58 @@ const SongListItem: FC<Props> = ({ data, active, onClick }) => {
                      </div>
                   </div>
                )}
+               {!active && (
+                  <div
+                     className="absolute  inset-0 bg-black bg-opacity-60 
+             items-center justify-center hidden max-[549px]:hidden group-hover/image:flex"
+                  >
+                     <Button
+                        onClick={onClick}
+                        variant={"default"}
+                        className="h-[25px] w-[25px] text-white"
+                     >
+                        <PauseCircleIcon />
+                     </Button>
+                  </div>
+               )}
             </div>
             <div className="ml-[10px]">
-               <h5 className="text-lg">{data.name}</h5>
-               <p className="text-md text-gray-500">{data.singer}</p>
+               <h5 className="text-mg line-clamp-1">{data.name}</h5>
+               <p className="text-xs text-gray-500 line-clamp-1">
+                  {data.singer}
+               </p>
             </div>
          </div>
 
          {/* cta */}
-         <div className="flex flex-row gap-x-[10px]">
+         <div className="flex flex-row gap-x-[5px]">
             <Button
-               onClick={() => handleAddFavorite(data.path)}
-               className="h-[35px] w-[35px] p-[8px] rounded-full hover:bg-indigo-950 text-gray-500"
+               // onClick={() => handleAddFavorite(data.path)}
+               className={`${buttonClasses} ${theme.content_hover_bg} ${
+                  theme.type === "light"
+                     ? "hover:text-[#33]"
+                     : "hover:text-white"
+               }`}
             >
                <HeartIcon />
             </Button>
-            <Button className="h-[35px] w-[35px] p-[8px] rounded-full hover:bg-indigo-950 text-gray-500">
-               <Bars3Icon />
-               <span className="group-hover:hidden">00:00</span>
-            </Button>
+            <div className="w-[40px] flex justify-center items-center">
+               <Button
+                  className={`hidden group-hover/main:block ${buttonClasses} 
+                  ${theme.content_hover_bg}
+                  ${
+                     theme.type === "light"
+                        ? "hover:text-[#33]"
+                        : "hover:text-white"
+                  }`}
+               >
+                  <Bars3Icon />
+               </Button>
+               <span className="pr-[8px] text-xs group-hover/main:hidden">
+                  {handleTimeText(data.duration)}
+               </span>
+            </div>
          </div>
       </div>
    );
-};
-
-export default SongListItem;
+}

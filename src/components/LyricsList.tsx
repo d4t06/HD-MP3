@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Lyric } from "../types";
 import LyricItem from "./ui/LyricItem";
+import { useTheme } from "../store/ThemeContext";
 
 interface Props {
    audioEle: HTMLAudioElement,
@@ -9,6 +10,10 @@ interface Props {
 
 
 const LyricsList: FC<Props> = ({ audioEle, lyrics }) => {
+
+
+   const {theme} = useTheme()
+
 
    if (!lyrics) {
       return <h1 className="text-3xl text-center">...</h1>
@@ -39,7 +44,7 @@ const LyricsList: FC<Props> = ({ audioEle, lyrics }) => {
          return lyrics.map((lyric, index) => {
    
             const inRange = currentTime >= lyric.start && lyric.end > currentTime;
-            return <LyricItem firstTimeRender={firstTimeRender.current} key={index} done={!inRange} active={inRange}>{lyric.text}</LyricItem>
+            return <LyricItem theme={theme} firstTimeRender={firstTimeRender.current} key={index} done={!inRange} active={inRange}>{lyric.text}</LyricItem>
    
          })
    }
