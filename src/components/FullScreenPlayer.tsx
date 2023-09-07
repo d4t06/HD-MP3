@@ -4,7 +4,14 @@ import {
   ChevronRightIcon,
   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
-import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Lyric, Song } from "../types";
@@ -45,7 +52,10 @@ export default function FullScreenPlayer({
   const { song: songInStore } = songStore;
 
   const [activeTab, setActiveTab] = useState<string>("Lyric");
-  const [lyric, setLyric] = useState<Lyric>();
+  const [songLyric, setSongLyric] = useState<Lyric>({
+    base: "",
+    real_time: [],
+  });
 
   const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,26 +112,19 @@ export default function FullScreenPlayer({
   }, [songInStore, songs]);
 
   //   only render when isPlaying, current song and lyric change
-  const renderLyricTab = useMemo(() => {
-
-    return (
-      <div className="lyric-container px-[40px] h-full w-full flex items-center justify-center flex-row">
-        {/* left */}
-        <div className="max-[549px]:hidden">
-          <SongThumbnail active={isPlaying} data={songInStore} />
-        </div>
-
-        {/* right */}
-        <div className="flex-1 max-w-[700px] ml-[50px] max-[549px]:ml-0 h-full overflow-auto no-scrollbar pb-[30%]">
-          {!!lyric ? (
-            <LyricsList audioEle={audioEle} lyric={lyric} />
-          ) : (
-            <h1 className="text-[40px] text-center">...</h1>
-          )}
-        </div>
+  const renderLyricTab = (
+    <div className="lyric-container px-[40px] h-full w-full flex items-center justify-center flex-row">
+      {/* left */}
+      <div className="max-[549px]:hidden">
+        <SongThumbnail active={isPlaying} data={songInStore} />
       </div>
-    );
-  }, [isPlaying, songInStore, lyric]);
+
+      {/* right */}
+      <div className="flex-1 max-w-[700px] ml-[50px] max-[549px]:ml-0 h-full overflow-auto no-scrollbar pb-[30%]">
+        <LyricsList audioEle={audioEle} songLyric={songLyric} />
+      </div>
+    </div>
+  );
 
   // update background image
   useEffect(() => {
@@ -141,7 +144,7 @@ export default function FullScreenPlayer({
       const lyricsData = docSnap.data() as Lyric;
 
       if (lyricsData) {
-        setLyric(lyricsData);
+        setSongLyric(lyricsData);
       }
     };
     getLyric();
@@ -152,6 +155,8 @@ export default function FullScreenPlayer({
   };
 
 
+  // console.log("songInStore", songInStore.by, songInStore.by != 'admin');
+  
   return (
     <div
       className={`fixed inset-0 z-50 bg-zinc-900  overflow-hidden text-white  ${
@@ -192,14 +197,16 @@ export default function FullScreenPlayer({
               idle ? "hidden" : ""
             }`}
           >
-            <Button
-              onClick={() => handleEdit()}
-              variant={"circle"}
-              size={"normal"}
-              className={style.button}
-            >
-              <DocumentTextIcon />
-            </Button>
+            {songInStore.by != "admin" && (
+              <Button
+                onClick={() => handleEdit()}
+                variant={"circle"}
+                size={"normal"}
+                className={style.button}
+              >
+                <DocumentTextIcon />
+              </Button>
+            )}
 
             <Button
               onClick={() => setIsOpenFullScreen(false)}
@@ -248,7 +255,8 @@ export default function FullScreenPlayer({
 
         {isOpenFullScreen && activeTab === "Lyric" && (
           <p className="relative text-center text-white text-[14px] opacity-80">
-            {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
+            {songInStore.name} -{" "}
+            <span className="opacity-30">{songInStore.singer}</span>
           </p>
         )}
       </div>

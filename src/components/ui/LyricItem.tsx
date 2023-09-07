@@ -1,4 +1,4 @@
-import { FC, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { ThemeType } from "../../types";
 
 interface Props {
@@ -17,10 +17,12 @@ export default function LyricItem({
    done,
    firstTimeRender,
    inUpload,
-   theme,
    className
 }: Props) {
    const lyricRef = useRef<HTMLLIElement>(null);
+
+   console.log('check firstTimeRender', firstTimeRender);
+   
 
    useEffect(() => {
       if (active) {
@@ -40,9 +42,12 @@ export default function LyricItem({
          ref={lyricRef}
          className={`${className} py-[10px] max-[549px]:text-[24px] ${inUpload ? 'text-[16px]' : 'text-[40px]'} max-[549px]:text-center font-bold ${
             active ? "opacity-100" : ""
-         } ${done ? "opacity-40" : ""}`}
+         } ${done ? "opacity-40" : ""} ${inUpload && 'flex pl-[20px]'}`}
       >
          {children}
+         {(inUpload && active) && 
+            <span className="ml-[10px] text-[16px]">(Next)</span>
+         }
       </li>
    );
 }

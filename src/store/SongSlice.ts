@@ -20,13 +20,8 @@ const SongSlice = createSlice({
   reducers: {
     setSong(state, action) {
       const actionPayload = action.payload as Song & { currentIndex: number };
-      state.song.image_path = actionPayload.image_path;
-      state.song.song_path = actionPayload.song_path;
-      state.song.name = actionPayload.name;
-      state.song.singer = actionPayload.singer;
-      state.song.currentIndex = actionPayload.currentIndex;
-      state.song.lyric_id = actionPayload.lyric_id;
-      state.song.id = actionPayload.id;
+
+      state.song = { ...actionPayload };
     },
   },
 });

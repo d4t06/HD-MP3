@@ -3,28 +3,25 @@ import { FC } from "react";
 import Button from "./Button";
 
 interface Props {
-   className: string;
-   label: string;
-   onClick: () => void;
+  className: string;
+  label: string;
+  onClick: () => void;
 }
 
 const Empty: FC<Props> = ({ className, label, onClick }) => {
-
-   return (
-      <div
+  return (
+    <div
       onClick={() => onClick()}
-         className={
-            className + " relative rounded-xl border group hover:text-indigo-600 cursor-pointer"
-         }
-      >
-         <div className="flex flex-col justify-center absolute top-1/2 w-full -translate-y-1/2">
-            <Button>
-               <PlusCircleIcon className="h-16 w-16" />
-            </Button>
-            {label && <p className="mt-4 w-full text-xl text-center">{label}</p>}
-         </div>
-      </div>
-   );
+      className={
+        className +
+        " relative rounded-xl border group hover:text-indigo-600 cursor-pointer"
+      }
+    >
+      <Button className="absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
+        <PlusCircleIcon className="h-[40px] w-[40px]" />
+      </Button>
+    </div>
+  );
 };
 
 export default Empty;

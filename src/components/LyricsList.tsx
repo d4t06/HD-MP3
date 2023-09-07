@@ -5,15 +5,13 @@ import { useTheme } from "../store/ThemeContext";
 
 interface Props {
   audioEle: HTMLAudioElement;
-  lyric: Lyric;
+  songLyric: Lyric;
 }
 
-const LyricsList: FC<Props> = ({ audioEle, lyric }) => {
+const LyricsList: FC<Props> = ({ audioEle, songLyric }) => {
   const { theme } = useTheme();
 
-  if (!lyric) {
-    return <h1 className="text-3xl text-center">...</h1>;
-  }
+ 
 
   const [currentTime, setCurrentTime] = useState<number>(0);
   const firstTimeRender = useRef(true);
@@ -31,12 +29,12 @@ const LyricsList: FC<Props> = ({ audioEle, lyric }) => {
     if (currentTime) {
       if (firstTimeRender) firstTimeRender.current = false;
     }
+
+    
   }, [currentTime]);
 
   const renderItem = () => {
-    return lyric.realtime.map((lyricItem, index) => {
-      console.log("check lyric item", lyric);
-
+    return songLyric.real_time.map((lyricItem, index) => {
       const inRange = currentTime >= lyricItem.start && lyricItem.end > currentTime;
       return (
         <LyricItem
@@ -51,7 +49,11 @@ const LyricsList: FC<Props> = ({ audioEle, lyric }) => {
       );
     });
   };
-  console.log("check lyric", lyric);
+  // console.log("check lyric", lyricItem);
+
+  if (!songLyric.real_time.length) {
+    return <h1 className="text-[50px] mt-[30px] text-center">...</h1>;
+  }
 
   return <ul className="">{renderItem()}</ul>;
 };

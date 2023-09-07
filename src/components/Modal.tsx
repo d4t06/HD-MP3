@@ -11,7 +11,7 @@ const Modal: FC<Props> = ({ children, setOpenModal }) => {
       <>
          {createPortal(
             <div className="fixed inset-0 z-[99]">
-               <div onClick={() => setOpenModal(false)} className="absolute bg-black opacity-60 inset-0 z-[90]"></div>
+               <div onClick={(e) =>{ e.stopPropagation; setOpenModal(false)}} className="absolute bg-black opacity-60 inset-0 z-[90]"></div>
                <div className="absolute z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">{children}</div>
             </div>,
             document.getElementById("portals")!

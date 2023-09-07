@@ -30,7 +30,7 @@ export interface Playlist {
 
 export type Lyric = {
   base: string;
-  realtime: RealTimeLyric[];
+  real_time: RealTimeLyric[];
 };
 
 export interface RealTimeLyric {

@@ -25,13 +25,13 @@ const PlaylistPage: FC<Props> = () => {
    };
 
    return (
-      <div className="px-10 text-white">
+      <div className="">
          {/* header */}
 
-         <h1 className="text-3xl font-bold">Playlist</h1>
+         <h1 className="text-[24px] font-bold">Playlist</h1>
 
-         <div className="flex flex-row gap-y-4 mt-10 flex-wrap mb-[30px]">
-            <div className="w-1/4 px-4">
+         <div className="flex flex-row gap-y-4 mt-[10px] flex-wrap mb-[30px]">
+            <div className="w-1/4 max-[549px]:w-[50%]">
                <Empty
                   className="pb-[100%]"
                   label="Create new playlist"

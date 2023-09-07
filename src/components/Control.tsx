@@ -234,7 +234,7 @@ export default function Control({
       audioEle?.addEventListener("waiting", handleWaiting);
 
       // play song if click it
-      // play();
+      play();
    };
 
    // run when current song change

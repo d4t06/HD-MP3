@@ -23,6 +23,7 @@ import {
 import handleTimeText from "../../utils/handleTimeText";
 import {
   FloatingFocusManager,
+  autoPlacement,
   autoUpdate,
   useClick,
   useDismiss,
@@ -35,8 +36,8 @@ import Modal from "../Modal";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db, store } from "../../config/firebase";
 import { deleteObject, ref } from "firebase/storage";
-import { Link, Router, useRoutes } from "react-router-dom";
-import { routes } from "../../routes";
+import { Link } from "react-router-dom";
+import { songItem } from "../../store/songsList";
 
 interface Props {
   data: Song & { id: string };
@@ -67,7 +68,8 @@ export default function SongListItem({
   const { refs, floatingStyles, context } = useFloating({
     open: isOpenPopup,
     onOpenChange: setIsOpenPopup,
-    placement: "left-start",
+    // placement: "left-end",
+    middleware: [autoPlacement()],
     whileElementsMounted: autoUpdate,
   });
 
@@ -120,13 +122,13 @@ export default function SongListItem({
 
   const songCompoent = (
     <>
-      <div className="flex flex-row">
+      <div className={`flex flex-row`} onClick={ () => (window.innerWidth <= 549 && onClick) && onClick()  }>
         <div className="h-[54px] w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0">
           <img className="" src={data?.image_path || "https://placehold.co/100"} alt="" />
 
           {active && (
             <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-              <div className="relative h-[18px] w-[18px]" onClick={onClick}>
+              <div className="relative h-[18px] w-[18px]">
                 <img
                   src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif"
                   alt=""
@@ -196,7 +198,7 @@ export default function SongListItem({
               Lưu
             </Button>
             <Button
-              onClick={() => setIsOpenModal(false)}
+              onClick={(e) => {e.stopPropagation(); setIsOpenModal(false)}}
               className={`${theme.content_bg} rounded-full text-[14px]`}
               variant={"primary"}
             >
@@ -273,25 +275,29 @@ export default function SongListItem({
         >
           <HeartIcon />
         </Button>
+
         <div className="w-[40px] flex justify-center items-center">
           <button
             ref={refs.setReference}
             {...getReferenceProps()}
-            className={`group-hover/main:block ${buttonClasses}  ${
-              isOpenPopup ? "block cursor-default" : "hidden " + theme.content_hover_bg
-            }
-                  ${theme.type === "light" ? "hover:text-[#33]" : "hover:text-white"}`}
+            className={`group-hover/main:block ${buttonClasses}
+            ${isOpenPopup ? "block cursor-default" : "hidden " + theme.content_hover_bg}
+            ${theme.type === "light" ? "hover:text-[#33]" : "hover:text-white"}
+            max-[549px]:block
+            `}
+            
           >
             <Bars3Icon />
           </button>
           <span
             className={`pr-[8px] text-xs group-hover/main:hidden ${
               isOpenPopup && "hidden"
-            }`}
+            } max-[549px]:hidden`}
           >
             {handleTimeText(data.duration)}
           </span>
         </div>
+
       </div>
 
       {isOpenPopup && (
@@ -304,7 +310,9 @@ export default function SongListItem({
           >
             <PopupWrapper theme={theme}>
               <div className="w-[200px]">
-                {songCompoent}
+
+
+                {window.innerWidth > 549 && songCompoent}
 
                 {/* cta */}
 
@@ -316,6 +324,8 @@ export default function SongListItem({
                   Thêm vào playlist
                 </Button>
 
+              {data.by != 'admin' && (
+                <>
                 <Button
                   onClick={() => handleMenu("edit")}
                   className={`${theme.content_hover_text}`}
@@ -351,8 +361,11 @@ export default function SongListItem({
                   <TrashIcon className="w-[18px] mr-[5px]" />
                   Xóa
                 </Button>
+                </>
+              )}
+                
 
-                <p className="opacity-60 text-center text-[13px] mt-[10px]">
+                <p className="opacity-60 text-center text-[13px] mt-[10px">
                   Thêm bởi {data.by}
                 </p>
               </div>
