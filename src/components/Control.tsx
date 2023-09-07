@@ -232,8 +232,9 @@ export default function Control({
       audioEle?.addEventListener("play", handlePlay);
       audioEle?.addEventListener("timeupdate", handlePlaying);
       audioEle?.addEventListener("waiting", handleWaiting);
+
       // play song if click it
-      play();
+      // play();
    };
 
    // run when current song change

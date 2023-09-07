@@ -225,7 +225,7 @@ function App() {
    // console.log("check is can uplaod", isCanUpload);
 
    return (
-      <form className="pb-[100px] " action="" onSubmit={(e) => handleSubmit(e)}>
+      <form className="pb-[100px] mt-[30px]" action="" onSubmit={(e) => handleSubmit(e)}>
          <div className={style.section}>
             <div className="flex gap-[20px] items-center mb-[20px]">
                <input
@@ -296,7 +296,7 @@ function App() {
                </div>
             </div>
          </div>
-         <div className={style.section}>
+         {/* <div className={style.section}>
             {audioRef.current && (
                <LyricEditor
                   lyricResult={lyricResult}
@@ -307,7 +307,7 @@ function App() {
                   disable={typeof songFile === "undefined" ? true : false}
                />
             )}
-         </div>
+         </div> */}
 
          <button
             className={

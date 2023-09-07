@@ -12,7 +12,7 @@ const routes = {
    playlist: "/React-Zingmp3/playlist",
    favorite: "/React-Zingmp3/favorite",
    upload: "/React-Zingmp3/upload",
-   Edit: "/React-Zingmp3/edit",
+   Edit: "/React-Zingmp3/edit/:id",
 }
 
 const publicRoutes = [

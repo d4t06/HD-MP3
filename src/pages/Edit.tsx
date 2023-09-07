@@ -1,83 +1,61 @@
-import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store/SongSlice";
-import LyricEditor from "../components/LyricEditor";
-import { useNavigate } from "react-router-dom";
-import { routes } from "../routes";
+import { Lyric, Song } from "../types";
+import { useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { useTheme } from "../store/ThemeContext";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { Lyric } from "../types";
+import { collection, doc, getDoc } from "firebase/firestore";
+
+// import { songItem } from "../store/songsList";
+import LyricEditor from "../components/LyricEditor";
 
 export default function Edit() {
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { theme } = useTheme();
+  const { theme } = useTheme();
+  const [song, setSong] = useState<Song>();
+  const [lyric, setLyric] = useState<Lyric>({ base: "", realtime: [] });
 
-   const [lyricsData, setLyricsData] = useState<{
-      base: string;
-      realtime: Lyric[];
-   }>({ base: "", realtime: [] });
-   const [lyricResult, setLyricResult] = useState<Lyric[]>([]);
-   const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const params = useParams();
 
-   const navigate = useNavigate();
+  useEffect(() => {
+    const getSong = async () => {
 
-   const handleUpdateLyric = async () => {
       try {
-         console.log("lyric result", lyricResult);
-         
-         await setDoc(doc(db, "lyrics", songInStore.lyric_id as string), {lyric : lyricResult}, {
-            merge: true,
-         });
+        const songDocRef = doc(collection(db, "songs"), params?.id);
+        const songSnapshot = await getDoc(songDocRef);
 
-         alert("added to db")
+        const songData = songSnapshot.data() as Song;
+
+        if (songData.lyric_id) {
+          const lyricSnapshot = await getDoc(doc(db, "lyrics", songData.lyric_id));
+          const lyricData = lyricSnapshot.data() as Lyric;
+
+          setLyric(lyricData);
+        }
+
+        setSong({ ...songData, id: songSnapshot.id });
       } catch (error) {
-         console.log({ message: error });
+        console.log({ message: error });
       }
-   };
+    };
 
-   useEffect(() => {
-      console.log("check song in store", songInStore);
+    getSong();
+  }, []);
 
-      if (!songInStore.name) navigate(routes.home);
-      if (!songInStore.lyric_id) return;
+  console.log("Check song", song);
 
-      const getLyric = async () => {
-         const docRef = doc(db, "lyrics", songInStore.lyric_id);
-         const docSnap = await getDoc(docRef);
+  return (
+    <div className="pt-[30px]">
+      <audio ref={audioRef} src={song && song.song_path} className="hidden" />
 
-         const lyricsData = docSnap.data() as {
-            base: string;
-            realtime: Lyric[];
-         };
-
-         if (lyricsData) {
-            console.log("check lyric data", lyricsData);
-
-            setLyricsData(lyricsData);
-         }
-      };
-      getLyric();
-      if (audioRef.current) {
-      }
-   }, []);
-
-   if (!songInStore.name) return;
-
-   return (
-      <div className="pt-[30px]">
-         <audio ref={audioRef} src={songInStore.song_path} className="hidden" />
-         {audioRef.current && (
-            <LyricEditor
-               setLyricResult={setLyricResult}
-               lyricResult={lyricResult}
-               lyricsData={lyricsData}
-               audioEle={audioRef.current}
-               theme={theme}
-            />
-         )}
-
-         <button onClick={() => handleUpdateLyric()} >save</button>
-      </div>
-   );
+      {/* audio element always visible */}
+      {audioRef.current && song && (
+        <LyricEditor
+          lyric={lyric}
+          audioEle={audioRef.current}
+          theme={theme}
+          song={song}
+        />
+      )}
+    </div>
+  );
 }

@@ -55,9 +55,7 @@ export default function HomePage() {
                });
                
                if (songsList) {
-                  setSongs(songsList);
-// console.log("check song list", songsList);
-            
+                  setSongs(songsList);            
                }
             }
          } catch (error) {
@@ -140,7 +138,7 @@ export default function HomePage() {
                            >
                               <SongListItem
                                  theme={theme}
-                                 data={song  as Song & {id: string}}
+                                 data={song as Song}
                                  active={
                                     song.song_path === songInStore.song_path
                                  }

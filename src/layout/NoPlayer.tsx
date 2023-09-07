@@ -19,7 +19,7 @@ const NoPlayer: FC<Props> = ({ children }) => {
          `}
          >
             <Sidebar />
-            <div className="w-full overflow-auto h-[calc(100vh-90px)]">
+            <div className="w-full overflow-auto h-full">
                <div className="px-[40px] max-[549px]:px-[10px]">{children}</div>
             </div>
          </div>
