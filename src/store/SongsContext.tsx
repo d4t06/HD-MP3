@@ -4,17 +4,7 @@ import { Song } from "../types";
 type StateType = { songs: Song[] };
 
 const initialSongs: StateType = {
-   songs: [
-      {
-         name: "",
-         singer: "",
-         image_path: "",
-         song_path: "",
-         by: "",
-         duration: 0,
-         lyric: "",
-      },
-   ],
+   songs: []
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -45,7 +35,7 @@ const useSongsContext = (songsStore: StateType) => {
    const [state, dispatch] = useReducer(reducer, songsStore);
 
    const setSongs = useCallback((songs: Song[]) => {
-      console.log("set songs payload");
+      // console.log("set songs payload");
       dispatch({
          type: REDUCER_ACTION_TYPE.SETSONGS,
          payload: { songs },

@@ -101,6 +101,9 @@ export default function Control({
    ) => {
       const node = e.target as HTMLElement;
 
+      console.log('check durationLineWidth', durationLineWidth.current);
+      
+
       if (durationLineWidth.current && duration) {
          // get boundingRect
          const clientRect = node.getBoundingClientRect();
@@ -256,13 +259,14 @@ export default function Control({
       // need to render after state change
       if (!audioEle) return;
       audioEle?.addEventListener("ended", handleEnded);
-      console.log("add new handle function when state change");
+      // console.log("add new handle function when state change");
       
       return () => audioEle?.removeEventListener("ended", handleEnded);
    }, [isRepeat, isShuffle])
 
    // update process lines width
    useEffect(() => {
+      
       durationLineWidth.current = durationLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 

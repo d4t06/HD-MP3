@@ -32,10 +32,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 
-import { generateSlug } from "../utils/generateSlug";
 import { Lyric, Song } from "../types";
-
-import { lyricsStore } from "../lyric";
 
 import SongThumbnail from "./ui/SongThumbnail";
 import Tabs from "./ui/Tabs";
@@ -164,13 +161,7 @@ export default function MobileFullScreenPlayer({
    }, [songInStore]);
 
    const renderLyricTab = useMemo(() => {
-      const key = generateSlug(songInStore.name) as keyof typeof lyricsStore;
-      return (
-         <LyricsList
-            audioEle={audioEle}
-            lyrics={lyricsStore[key] as Lyric[] | undefined}
-         />
-      );
+      <h1>Lyric</h1>
    }, [songInStore]);
 
    // console.log("mobile fullscreen check audioEle", audioEle);
@@ -336,7 +327,7 @@ export default function MobileFullScreenPlayer({
                {activeTab === "Lyric" && (
                   <div className="lyric-tab absolute  inset-0 z-10">
                      <div className="relative overflow-auto h-full px-[15px]">
-                        {renderLyricTab}
+                        {/* {renderLyricTab} */}
                      </div>
                   </div>
                )}

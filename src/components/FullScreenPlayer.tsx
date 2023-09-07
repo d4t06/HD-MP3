@@ -2,25 +2,23 @@ import {
    ChevronDownIcon,
    ChevronLeftIcon,
    ChevronRightIcon,
+   DocumentTextIcon,
 } from "@heroicons/react/24/outline";
-import {
-   Dispatch,
-   SetStateAction,
-   useEffect,
-   useMemo,
-   useRef,
-   useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import Button from "./ui/Button";
 import SongThumbnail from "./ui/SongThumbnail";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
-import { Song } from "../types";
-import LyricsList from "./LyricsList";
-import { lyricsStore } from "../lyric";
-import { generateSlug } from "../utils/generateSlug";
+import { Lyric, Song } from "../types";
 import Tabs from "./ui/Tabs";
 import { useSongs } from "../store/SongsContext";
+// import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
+import { useTheme } from "../store/ThemeContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+import LyricsList from "./LyricsList";
+import { Link, useNavigate } from "react-router-dom";
+import { routes } from "../routes";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -38,26 +36,20 @@ export default function FullScreenPlayer({
    audioEle,
    isPlaying,
 }: Props) {
-   const {songs} = useSongs()
+   const { songs } = useSongs();
+   const { theme } = useTheme();
 
    const dispatch = useDispatch();
    const songStore = useSelector(selectAllSongStore);
    const { song: songInStore } = songStore;
 
-
-   const slug = generateSlug(songInStore.name) as keyof typeof lyricsStore;
-
-   const songWithLyric = {
-      ...songInStore,
-      lyrics: lyricsStore[slug],
-   };
-
    const [activeTab, setActiveTab] = useState<string>("Lyric");
+   const [lyric, setLyric] = useState<Lyric[]>([]);
 
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
-
    const timerIdForScroll = useRef<number>();
+   const navigate = useNavigate();
 
    // handleEvent
    const handleSetSongWhenClick = (song: Song, index: number) => {
@@ -77,17 +69,14 @@ export default function FullScreenPlayer({
          //  scrollLelfRef.current -= 500;
          containerEle.scrollLeft -= 500;
       }
+   };
 
-      //    if (timerIdForScroll.current) {
-      //       clearTimeout(timerIdForScroll.current);
-      //    }
-      // }
+   const handleEdit = () => {
+      setIsOpenFullScreen(false);
 
-      // if (!scrollLelfRef.current) {
-      //    timerIdForScroll.current = setTimeout(() => {
-      //       scrollLelfRef.current = 0;
-      //    }, 1000);
-      // }
+      setTimeout(() => {
+         navigate(routes.Edit);
+      }, 300);
    };
 
    // update background image
@@ -98,9 +87,27 @@ export default function FullScreenPlayer({
       }
    }, [songInStore]);
 
+   useEffect(() => {
+      if (!songInStore.lyric_id) return;
+
+      const getLyric = async () => {
+         const docRef = doc(db, "lyrics", "gCEOT1WhJZR6rJAk2m5p");
+         const docSnap = await getDoc(docRef);
+
+         const lyricsData = docSnap.data() as {
+            lyric: Lyric[];
+         };
+
+         if (lyricsData) {
+            setLyric(lyricsData.lyric);
+         }
+      };
+      getLyric();
+   }, [songInStore]);
+
    //   only render when songs list change
    const renderSongsList = useMemo(() => {
-      if (!songs[0].name) return;
+      if (!songs?.length) return;
       return songs.map((song, index) => {
          const isActive = song.song_path === songInStore.song_path;
 
@@ -130,20 +137,23 @@ export default function FullScreenPlayer({
 
             {/* right */}
             <div className="flex-1 max-w-[700px] ml-[50px] max-[549px]:ml-0 h-full overflow-auto no-scrollbar pb-[30%]">
-               {songWithLyric.lyrics ? (
-                  <LyricsList
-                     audioEle={audioEle}
-                     lyrics={songWithLyric.lyrics}
-                  />
+               {lyric.length ? (
+                  <LyricsList audioEle={audioEle} lyrics={lyric} />
                ) : (
                   <h1 className="text-[40px] text-center">...</h1>
                )}
             </div>
          </div>
       );
-   }, [isPlaying, songInStore]);
+   }, [isPlaying, songInStore, lyric]);
 
    // console.log("check idle", idle);
+
+   // console.log("check song in store", songInStore);
+
+   const style = {
+      button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
+   };
 
    return (
       <div
@@ -160,7 +170,7 @@ export default function FullScreenPlayer({
             className={`absolute h-[100vh] w-[100vw] inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`}
          ></div>
 
-         <div className="header h-[calc(100vh-90px)]">
+         <div className="h-[calc(100vh-90px)]">
             <div className="header-left flex px-10 py-[20px] relative h-[75px] max-[549px]:px-[10px]">
                {/* left */}
                <div className={`relative h-full ${idle ? "" : "hidden"}`}>
@@ -181,15 +191,38 @@ export default function FullScreenPlayer({
                />
                {/* right */}
                <div
-                  className={`flex items-center absolute right-10 max-[549px]:right-[10px] top-0 h-full ${
+                  className={`flex items-center absolute right-10 gap-[10px] max-[549px]:right-[10px] top-0 h-full ${
                      idle ? "hidden" : ""
                   }`}
                >
+                  {/* <Link to={routes.Edit}> */}
+                  <Button
+                     onClick={() => handleEdit()}
+                     variant={"circle"}
+                     size={"normal"}
+                     className={style.button}
+                  >
+                     <DocumentTextIcon />
+                  </Button>
+                  {/* </Link> */}
+                  {/* <Tooltip>
+                     <TooltipTrigger>
+                        
+                     </TooltipTrigger>
+                     <TooltipContent>
+                        <div
+                           className={`bg-[#ccc] text-[#333] text-[14px] px-[10px] py-[2px] rounded-[4px]`}
+                        >
+                           Edit lyric
+                        </div>
+                     </TooltipContent>
+                  </Tooltip> */}
+
                   <Button
                      onClick={() => setIsOpenFullScreen(false)}
                      variant={"circle"}
                      size={"normal"}
-                     className="p-[8px] bg-gray-500 bg-opacity-20 text-xl"
+                     className={style.button}
                   >
                      <ChevronDownIcon />
                   </Button>
@@ -225,20 +258,17 @@ export default function FullScreenPlayer({
                   </Button>
                </div>
 
-                {isOpenFullScreen && activeTab === "Lyric" && (
-                 <div className="absolute inset-0 z-20  ">
-                     {renderLyricTab}
-                  </div>
+               {isOpenFullScreen && activeTab === "Lyric" && (
+                  <div className="absolute inset-0 z-20  ">{renderLyricTab}</div>
                )}
             </div>
 
-            {isOpenFullScreen &&
-               activeTab === 'Lyric' &&
+            {isOpenFullScreen && activeTab === "Lyric" && (
                <p className="relative text-center text-white text-[14px] opacity-80">
                   {songInStore.name} -{" "}
                   <span className="opacity-30">{songInStore.singer}</span>
                </p>
-            }
+            )}
          </div>
       </div>
    );

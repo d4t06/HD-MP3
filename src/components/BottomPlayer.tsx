@@ -20,6 +20,7 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import Button from "./ui/Button";
 import Control from "./Control";
 import useVolume from "../hooks/useVolume";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
 
 interface Props {
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
@@ -76,16 +77,10 @@ export default function BottomPlayer({
       >
          <div
             className={`flex flex-row h-full items-stretch ${
-               isOpenFullScreen
-                  ? "justify-center text-white"
-                  : "justify-between"
+               isOpenFullScreen ? "justify-center text-white" : "justify-between"
             }`}
          >
-            <div
-               className={`current-song w-1/3 ${
-                  isOpenFullScreen ? "hidden" : ""
-               }`}
-            >
+            <div className={`current-song w-1/3 ${isOpenFullScreen ? "hidden" : ""}`}>
                <div
                   className={`flex flex-row items-center h-full origin-center ${
                      isOpenFullScreen ? "hidden" : ""
@@ -125,7 +120,7 @@ export default function BottomPlayer({
                      ? "max-w-[600px] flex-col-reverse pb-[10px]"
                      : "flex-col justify-center"
                } flex-grow
-            ${!songInStore.song_path ? "pointer-events-none opacity-60" : ""}`}
+            ${!songInStore.song_path ? "pointer-events-none opacity-20" : ""}`}
             >
                {useMemo(
                   () => (
@@ -137,7 +132,7 @@ export default function BottomPlayer({
                         idle={false}
                      />
                   ),
-                  [isPlaying]
+                  [isPlaying, isOpenFullScreen]
                )}
             </div>
 
@@ -172,11 +167,22 @@ export default function BottomPlayer({
                   onClick={() => setIsOpenFullScreen(true)}
                   variant={"circle"}
                   className={`h-[35px] w-[35px] p-[8px] ${
-                     isOpenFullScreen ? "opacity-0 pointer-events-none" : ""
+                     songInStore.name ? "" : "opacity-20 pointer-events-none"
                   }`}
                >
                   <ChevronUpIcon />
                </Button>
+
+               {/* <Tooltip>
+                  <TooltipTrigger></TooltipTrigger>
+                  <TooltipContent>
+                     <div
+                        className={`bg-[#ccc] text-[#333] text-[14px] px-[10px] py-[2px] rounded-[4px]`}
+                     >
+                        Karaoke
+                     </div>
+                  </TooltipContent>
+               </Tooltip> */}
             </div>
          </div>
       </div>

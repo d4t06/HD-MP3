@@ -19,8 +19,10 @@
       "class-variance-authority": "^0.7.0",
       "firebase": "^10.3.0",
       "gh-pages": "^6.0.0",
+      "id3-parser": "^3.0.0",
       "react": "^18.2.0",
       "react-dom": "^18.2.0",
+      "react-firebase-hooks": "^5.1.1",
       "react-redux": "^8.1.2",
       "react-router-dom": "^6.14.2"
    },

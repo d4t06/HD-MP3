@@ -3,11 +3,13 @@ import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { ReferenceType } from "@floating-ui/react";
 
-const buttonVariant = cva("inline-flex items-center", {
+const buttonVariant = cva("inline-flex items-center hover:brightness-90", {
    variants: {
       variant: {
-         default: "hover:brightness-90",
-         circle: "rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl"
+         default: '',
+         circle: "rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl",
+         list: 'flex items-center py-[4px] w-full text-[14px]',
+         primary: 'px-[20px] py-[5px]'
       },
       size: {
          half: "w-1/2",

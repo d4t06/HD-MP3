@@ -1,4 +1,5 @@
 import {
+   ArrowRightOnRectangleIcon,
    InformationCircleIcon,
    MusicalNoteIcon,
    PaintBrushIcon,
@@ -8,18 +9,23 @@ import Button from "./ui/Button";
 import { Dispatch, ReactNode } from "react";
 import { useTheme } from "../store/ThemeContext";
 import { ThemeKeyType } from "../types";
+import { User, signOut } from "firebase/auth";
+import { auth } from "../config/firebase";
+import PopupWrapper from "./ui/PopupWrapper";
 // import useLocalStorage from "../hooks/useLocalStorage";
 
 type Props = {
    setSettingComp: Dispatch<React.SetStateAction<ReactNode>>;
-   setIsOpenSetting: Dispatch<React.SetStateAction<boolean>>;
    setIsOpenMenu: Dispatch<React.SetStateAction<boolean>>;
+   setIsOpenSetting: Dispatch<React.SetStateAction<boolean>>;
+   loggedInUser?: User | null | undefined;
 };
 
 export default function SettingMenu({
-   setSettingComp,
    setIsOpenSetting,
+   setSettingComp,
    setIsOpenMenu,
+   loggedInUser,
 }: Props) {
    const { theme, setTheme } = useTheme();
 
@@ -32,7 +38,11 @@ export default function SettingMenu({
       return (
          <div className="flex justify-between py-[15px]">
             <h1 className="text-xl font-bold">{title}</h1>
-            <Button size={"normal"} variant={"circle"}>
+            <Button
+               onClick={() => setIsOpenSetting(false)}
+               size={"normal"}
+               variant={"circle"}
+            >
                <XMarkIcon />
             </Button>
          </div>
@@ -41,7 +51,7 @@ export default function SettingMenu({
 
    const infoScreen = (
       <>
-      {renderHeader("Zingmp3 clone")}
+         {renderHeader("Zingmp3 clone")}
          <div className="">
             <h5 className="text-lg font-bold">Các công nghệ sử dụng:</h5>
             <ul>
@@ -91,6 +101,14 @@ export default function SettingMenu({
       </>
    );
 
+   const handleSignOut = async () => {
+      try {
+         await signOut(auth);
+      } catch (error) {
+         console.log("signOut error", { messsage: error });
+      }
+   };
+
    const handleSetComp = (name: string) => {
       setIsOpenMenu(false);
       setIsOpenSetting(true);
@@ -113,23 +131,21 @@ export default function SettingMenu({
    };
 
    return (
-      <div
-         className={`flex flex-col gap-[10px] rounded  px-[20px] py-[10px] w-[150px] ${
-            theme.type === "light" ? "text-[#333]" : "text-white"
-         } ${theme.side_bar_bg} border-[1px] border-${theme.alpha}`}
-      >
+      <PopupWrapper theme={theme}>
          <Button onClick={() => handleSetComp("themes")}>
             <PaintBrushIcon className="w-6 h-6 mr-2" />
             Themes
          </Button>
-         <Button onClick={() => handleSetComp("player")}>
-            <MusicalNoteIcon className="w-6 h-6 mr-2" />
-            Player
-         </Button>
+         {loggedInUser && (
+            <Button onClick={() => handleSignOut()}>
+               <ArrowRightOnRectangleIcon className="w-6 h-6 mr-2" />
+               Log out
+            </Button>
+         )}
          <Button onClick={() => handleSetComp("info")}>
             <InformationCircleIcon className="w-6 h-6 mr-2" />
             Info
          </Button>
-      </div>
+      </PopupWrapper>
    );
 }

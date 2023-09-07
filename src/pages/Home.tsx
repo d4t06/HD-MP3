@@ -4,8 +4,7 @@ import {
    HeartIcon,
    MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
-import { FC, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import {  useEffect } from "react";
 // import { songs } from "../utils/songs";
 import SongItem from "../components/ui/SongItem";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,19 +15,23 @@ import { routes } from "../routes";
 import { useTheme } from "../store/ThemeContext";
 import LinkItem from "../components/ui/LinkItem";
 import SongListItem from "../components/ui/SongListItem";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { auth, db } from "../config/firebase";
 import { useSongs } from "../store/SongsContext";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export default function HomePage() {
    const dispatch = useDispatch();
    const songStore = useSelector(selectAllSongStore);
 
+   const [loggedInUser, _loading, _error] = useAuthState(auth);
+
    const { song: songInStore } = songStore;
-   const { theme, setTheme } = useTheme();
+   const { theme } = useTheme();
 
    const { songs, setSongs } = useSongs();
    const songsColectionRef = collection(db, "songs");
+   const queryGetAdminSongs = query(songsColectionRef, where("by", "==", 'admin'));
 
    const handleSetSong = (song: Song, index: number) => {
       dispatch(setSong({ ...song, currentIndex: index }));
@@ -37,16 +40,24 @@ export default function HomePage() {
    const windowWidth = window.innerWidth;
    const iconClasses = `w-6 h-6 mr-2 inline`;
 
+   // console.log("loggedInUser", loggedInUser)
+
    useEffect(() => {
       const getSongs = async () => {
          try {
-            const songsSnap = await getDocs(songsColectionRef);
+            const songsSnap = await getDocs(queryGetAdminSongs);
 
             if (songsSnap) {
-               const songsList = songsSnap.docs?.map((doc) => doc.data() as Song);
+               const songsList = songsSnap.docs?.map(doc => {
+                  const songsData = doc.data() as Song;
+
+                  return {...songsData, id : doc.id}
+               });
                
                if (songsList) {
-                  setSongs(songsList);                  
+                  setSongs(songsList);
+// console.log("check song list", songsList);
+            
                }
             }
          } catch (error) {
@@ -56,6 +67,10 @@ export default function HomePage() {
 
       getSongs();
    }, []);
+
+   console.log("check songs", songs);
+   
+
 
    return (
       <>
@@ -110,21 +125,22 @@ export default function HomePage() {
             </div>
          )}
          <div className="pb-[30px]">
-            <h3 className="text-xl font-bold mb-[10px]">Last played</h3>
+            <h3 className="text-xl font-bold mb-[10px]">Popular</h3>
 
-            {!!songs[0].name ? (
+            {!!songs.length ? (
                <>
                   <div className="flex flex-row flex-wrap gap-y-5 -mx-4">
                      {songs.map((song, index) => {
-                        if (index > 3) return;
+                        // if (index > 3) return;
+                        
                         return (
                            <div
                               key={index}
-                              className="w-1/3 px-[10px] max-[549px]:w-full"
+                              className="w-full px-[10px] max-[549px]:w-full"
                            >
-                              <SongItem
+                              <SongListItem
                                  theme={theme}
-                                 song={song}
+                                 data={song  as Song & {id: string}}
                                  active={
                                     song.song_path === songInStore.song_path
                                  }
@@ -140,7 +156,7 @@ export default function HomePage() {
             )}
          </div>
 
-         {windowWidth >= 550 && (
+         {/* {windowWidth >= 550 && (
             <div className="pb-[30px]">
                <h3 className="text-xl font-bold mb-[10px]">All songs</h3>
 
@@ -175,7 +191,7 @@ export default function HomePage() {
                   "No songs jet..."
                )}
             </div>
-         )}
+         )} */}
       </>
    );
 }

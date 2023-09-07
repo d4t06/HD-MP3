@@ -1,12 +1,14 @@
 import { FC, useEffect, useRef } from "react";
-import { themes } from "../../config/themes";
+import { ThemeType } from "../../types";
 
 interface Props {
    children: string;
    active: boolean;
    done: boolean;
    firstTimeRender?: boolean;
-   theme: string;
+   inUpload?: boolean;
+   theme?: ThemeType & {alpha: string};
+   className?: string
 }
 
 export default function LyricItem({
@@ -14,18 +16,11 @@ export default function LyricItem({
    active,
    done,
    firstTimeRender,
-   theme
+   inUpload,
+   theme,
+   className
 }: Props) {
    const lyricRef = useRef<HTMLLIElement>(null);
-
-   const themeVariants = {
-      "#4f46e5": "text-[#4f46e5]",
-      "#5a7aa9": "text-[#5a7aa9]",
-      "#cd1818": "text-[#cd1818]",
-      "#91e159": "text-[#91e159]",
-   };
-
-   const key = theme as keyof typeof themeVariants;
 
    useEffect(() => {
       if (active) {
@@ -43,8 +38,8 @@ export default function LyricItem({
    return (
       <li
          ref={lyricRef}
-         className={`py-[10px]  text-[40px] max-[549px]:text-[24px] max-[549px]:text-center font-bold ${
-            active ? themeVariants[key] : ""
+         className={`${className} py-[10px] max-[549px]:text-[24px] ${inUpload ? 'text-[16px]' : 'text-[40px]'} max-[549px]:text-center font-bold ${
+            active ? "opacity-100" : ""
          } ${done ? "opacity-40" : ""}`}
       >
          {children}

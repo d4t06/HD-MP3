@@ -1,7 +1,0 @@
-const initialState = ''
-
-const reducer = () => {
-
-
-
-}

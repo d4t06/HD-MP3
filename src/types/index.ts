@@ -1,7 +1,9 @@
 export type User = {
-   name: string;
+   displayName: string;
    email: string;
-   username: string;
+   photoURL: string;
+   songs: string[];
+   playList: string[]
 };
 
 // export type Song = {
@@ -11,13 +13,20 @@ export type User = {
 //    image: string;
 //    currentIndex?: number;
 // }
+
 export type Song = {
    name: string,
    singer: string,
    image_path: string,
+   file_name: string,
    song_path: string,
    by: string,
    duration: number,
+   lyric_id: string,
+}
+export type ParserSong = {
+   name : string,
+   singer: string,
    lyric: string,
 }
 

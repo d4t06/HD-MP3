@@ -30,33 +30,26 @@ const SongThumbnail: FC<Props> = ({
          const rect = node.getBoundingClientRect();
 
          const lefDiff = rect.left;
-         const rightDiff =
-            windowWidth - (lefDiff + node.offsetWidth);
+         const rightDiff = windowWidth - (lefDiff + node.offsetWidth);
 
-         const needToScroll =
-            Math.abs(lefDiff - rightDiff) / 2;
+         const needToScroll = Math.abs(lefDiff - rightDiff) / 2;
 
          // if element not in screen
-         if (
-            Math.abs(lefDiff) > windowWidth ||
-            Math.abs(rightDiff) > windowWidth
-         ) {
+         if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
             containerEle.style.scrollBehavior = "auto";
          }
 
          // on the left side
          if (rightDiff > lefDiff) {
             setTimeout(() => {
-               containerEle.scrollLeft =
-                  containerEle.scrollLeft - needToScroll;
+               containerEle.scrollLeft = containerEle.scrollLeft - needToScroll;
                containerEle.style.scrollBehavior = "smooth";
             }, 300);
 
             // on the right side
          } else if (rightDiff < lefDiff) {
             setTimeout(() => {
-               containerEle.scrollLeft =
-                  containerEle.scrollLeft + needToScroll;
+               containerEle.scrollLeft = containerEle.scrollLeft + needToScroll;
                containerEle.style.scrollBehavior = "smooth";
             }, 300);
          }
@@ -75,15 +68,11 @@ const SongThumbnail: FC<Props> = ({
                      : "w-[250px] max-[549px]:w-[80%]"
                } transition-[width] duration-300 origin-center`}
             >
-               {data?.image_path ? (
-                  <img
-                     className={`select-none object-cover object-center rounded`}
-                     src={data.image_path}
-                     alt=""
-                  />
-               ) : (
-                  <div className="h-full w-full bg-zinc-900"></div>
-               )}
+               <img
+                  className={`select-none object-cover object-center rounded`}
+                  src={data?.image_path || "https://placehold.co/500x500.png"}
+                  alt=""
+               />
 
                {hasHover && (
                   <div
@@ -113,9 +102,13 @@ const SongThumbnail: FC<Props> = ({
 
          {hasTitle && (
             <div>
-                  <h2 className={`text-2xl text-white  text-center mt-[10px] font-bold  max-[549px]:text-xl text-ellipsis line-clamp-1 ${active ? "" : ""}`}>
-                     {data?.name || "Some song"}
-                  </h2>
+               <h2
+                  className={`text-2xl text-white  text-center mt-[10px] font-bold  max-[549px]:text-xl text-ellipsis line-clamp-1 ${
+                     active ? "" : ""
+                  }`}
+               >
+                  {data?.name || "Some song"}
+               </h2>
                <p className="text-center text-md  text-gray-500">
                   {data?.singer || "..."}
                </p>

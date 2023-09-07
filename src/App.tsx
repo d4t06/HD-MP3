@@ -6,23 +6,30 @@ import {
 
 // import Sidebar from "./components/Sidebar";
 import { publicRoutes } from "./routes";
-import Layout from "./Layout";
+import DefaultLayout from "./layout/DefaultLayout";
+// import Auth from "./components/Auth";
 
 function App() {
    return (
       <Router>
          <Routes>
             {publicRoutes.map((route, index) => {
+               let DynamicLayout;
                const Page = route.component;
-
+               if (route.layout) {
+                  DynamicLayout = route.layout
+               } else {
+                  DynamicLayout = DefaultLayout
+               }
+               
                return (
                   <Route
                      key={index}
                      path={route.path}
                      element={
-                        <Layout>
+                        <DynamicLayout>
                            <Page />
-                        </Layout>
+                        </DynamicLayout>
                      }
                   />
                );

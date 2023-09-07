@@ -29,8 +29,6 @@ const LyricsList: FC<Props> = ({ audioEle, lyrics }) => {
    useEffect(() => {
       if (!firstTimeRender.current) return;
       if (!audioEle) return;
-
-      console.log("check useEffect");
       
       audioEle.addEventListener("timeupdate", handleUpdateTime)
 
