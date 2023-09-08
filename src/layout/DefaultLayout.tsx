@@ -33,7 +33,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
                <div className="px-[40px] max-[549px]:px-[10px]">{children}</div>
             </div>
 
-            <Player />
+            {/* <Player /> */}
          </div>
       </Auth>
    );
