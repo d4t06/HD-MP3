@@ -10,6 +10,7 @@ interface Props {
    containerEle?: HTMLElement;
    hasHover?: boolean;
    hasTitle?: boolean;
+   classNames?: string;
 }
 
 const SongThumbnail: FC<Props> = ({
@@ -19,6 +20,7 @@ const SongThumbnail: FC<Props> = ({
    onClick,
    containerEle,
    hasTitle,
+   classNames,
 }) => {
    const thumbnail = useRef<HTMLDivElement>(null);
    const node = thumbnail.current as HTMLElement;
@@ -59,13 +61,13 @@ const SongThumbnail: FC<Props> = ({
    return (
       <div ref={thumbnail} className={`flex flex-col`}>
          <div
-            className={`h-[350px] w-[350px] flex justify-center items-center max-[549px]:h-[calc(100vw-30px)] max-[549px]:w-[100%]`}
+            className={`h-[350px] w-[350px] flex ${classNames} transition-[height, width] origin-top-left duration-200`}
          >
             <div
                className={`group relative ${
                   active
                      ? "w-[350px] max-[549px]:w-[100%]"
-                     : "w-[250px] max-[549px]:w-[80%]"
+                     : "w-[250px] max-[549px]:w-[75%]"
                } transition-[width] duration-300 origin-center`}
             >
                <img

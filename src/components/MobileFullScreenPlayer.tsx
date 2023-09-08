@@ -4,7 +4,6 @@ import {
    useRef,
    useState,
    useEffect,
-   MouseEvent,
    useMemo,
    ReactNode,
 } from "react";
@@ -40,14 +39,14 @@ import Button from "./ui/Button";
 import SongListItem from "./ui/SongListItem";
 import ScrollText from "./ui/ScrollText";
 
-import LyricsList from "./LyricsList";
 import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
-// import useLocalStorage from "../hooks/useLocalStorage";
 import useVolume from "../hooks/useVolume";
-// import SongItem from "./ui/SongItem";
 import { useSongs } from "../store/SongsContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
+import LyricsList from "./LyricsList";
 
 type Props = {
    isOpenFullScreen: boolean;
@@ -66,7 +65,7 @@ export default function MobileFullScreenPlayer({
    isPlaying,
    setIsPlaying,
 }: Props) {
-   const {songs} = useSongs()
+   const { songs } = useSongs();
 
    const songStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
@@ -74,16 +73,21 @@ export default function MobileFullScreenPlayer({
    const { song: songInStore } = songStore;
    const { theme } = useTheme();
 
+   const [songLyric, setSongLyric] = useState<Lyric>({ base: "", real_time: [] });
    const [isOpenSetting, setIsOpenSetting] = useState(false);
    const [isClickSetting, setIsClickSetting] = useState(false);
 
    const [activeTab, setActiveTab] = useState<string>("Playing");
    const [settingComp, setSettingComp] = useState<ReactNode>();
+   const [scalingImage, setScalingImage] = useState(false);
 
+   const prevTab = useRef(activeTab);
    const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
    const volumeProcessLine = useRef<HTMLDivElement>(null);
    const bgRef = useRef<HTMLDivElement>(null);
+
+   const DURATION = 200;
 
    const { handleSetVolume, isMute, handleMute } = useVolume(
       volumeLineWidth,
@@ -124,24 +128,42 @@ export default function MobileFullScreenPlayer({
       }
    }, [songInStore]);
 
-   const renderSongsListItemTab = useMemo(() => {
-      // if (!songInStore.currentIndex) return '';
+   useEffect(() => {
+      if (
+         !(
+            (prevTab.current === "Songs" && activeTab === "Lyric") ||
+            (prevTab.current === "Lyric" && activeTab === "Songs")
+         )
+      ) {
+         if (prevTab.current != activeTab) setScalingImage(true);
+         setTimeout(() => {
+            setScalingImage(false);
+         }, DURATION + 100);
+      }
 
+      // return here cause clean up function don't run
+      // return;
+
+      return () => {
+         prevTab.current = activeTab;
+      };
+   }, [activeTab]);
+
+   const songsListItemTab = useMemo(() => {
       return (
          <>
             {songInStore && (
                <>
-                  <SongListItem
-                     theme={theme}
-                     data={songInStore}
-                     active={false}
-                  />
-                  <h3 className="text-white text-lg ml-[10px] mt-[10px] mb-[7px]">
+                  <h3 className="text-white text-[16px] mt-[10px] mb-[7px]">
                      Playing next
                   </h3>
                   <div className="relative h-full no-scrollbar overflow-auto transition-all">
                      {songs.map((song, index) => {
-                        if (index == songInStore.currentIndex! || index <= songInStore.currentIndex!) return;
+                        if (
+                           index == songInStore.currentIndex! ||
+                           index <= songInStore.currentIndex!
+                        )
+                           return;
                         return (
                            <SongListItem
                               autoScroll
@@ -160,11 +182,28 @@ export default function MobileFullScreenPlayer({
       );
    }, [songInStore]);
 
-   const renderLyricTab = useMemo(() => {
-      <h1>Lyric</h1>
+   const lyricTab = useMemo(
+      () => <LyricsList className="h-[calc(100vh-165px)] flex-shrink-0 overflow-auto" audioEle={audioEle} songLyric={songLyric} />,
+      [songInStore, songLyric, activeTab]
+   );
+
+   useEffect(() => {
+      if (!songInStore.lyric_id) return;
+
+      const getLyric = async () => {
+         const docRef = doc(db, "lyrics", songInStore.lyric_id);
+         const docSnap = await getDoc(docRef);
+
+         const lyricsData = docSnap.data() as Lyric;
+
+         if (lyricsData) {
+            setSongLyric(lyricsData);
+         }
+      };
+      getLyric();
    }, [songInStore]);
 
-   // console.log("mobile fullscreen check audioEle", audioEle);
+   // console.log("mobile fullscreen check lyric", songLyric);
 
    return (
       <div
@@ -181,7 +220,8 @@ export default function MobileFullScreenPlayer({
          ></div>
 
          <div className="absolute inset-0 z-10">
-            <div className="header h-[65px] p-[15px]">
+            {/* header */}
+            <div className="h-[65px] p-[15px]">
                <button
                   ref={refs.setReference}
                   {...getReferenceProps()}
@@ -225,26 +265,43 @@ export default function MobileFullScreenPlayer({
                )}
             </div>
 
-            <div className={`relative h-[calc(100vh-65px)] px-[15px]`}>
-               <div
-                  className={`${
-                     activeTab != "Playing"
-                        ? "opacity-0 pointer-events-none"
-                        : "Playing tab h-full flex flex-col overflow-auto"
-                  }`}
-               >
-                  <div className="flex flex-col justify-between h-full">
-                     {useMemo(
-                        () => (
-                           <SongThumbnail
-                              active={isPlaying}
-                              data={songInStore}
-                           />
-                        ),
-                        [songInStore, isPlaying]
-                     )}
-                     <div className="player mb-[20px]">
-                        <div className="flex flex-row justify-between items-center my-[10px]">
+            {/* container */}
+            <div className={`relative h-[calc(100vh-65px)] px-[15px] overflow-hidden`}>
+               <div className={`h-full flex flex-col overflow-hidden`}>
+                  <div
+                     className={`flex flex-col h-full ${
+                        activeTab != "Playing" ? "" : "justify-between"
+                     }`}
+                  >
+                     {/* songImage, name and singer */}
+                     <div
+                        className={`${
+                           activeTab != "Playing" && !scalingImage ? "flex" : ""
+                        }`}
+                     >
+                        {/* song image */}
+                        {useMemo(
+                           () => (
+                              <SongThumbnail
+                                 classNames={`flex-shink-0 ${activeTab != "Playing" ? "max-[549px]:w-[100px] max-[549px]:h-[100px]" : "justify-center items-center"
+                                 }`}
+                                 active={activeTab === 'Playing' ?  isPlaying : true}
+                                 data={songInStore}
+                              />
+                           ),
+                           [songInStore, isPlaying, activeTab]
+                        )}
+                        {/* name and singer */}
+                        <div
+                           className={`flex flex-row flex-grow justify-between items-center transition-[opacity] duration-[${
+                              DURATION + 300
+                           }] ${activeTab != "Playing" ? "opacity-0 h-[0px]" : ""} ${
+                              activeTab != "Playing" && !scalingImage
+                                 ? "opacity-100 h-[unset] ml-[10px]"
+                                 : ""
+                           }
+                           `}
+                        >
                            <div className="group flex-grow overflow-hidden">
                               {useMemo(
                                  () => (
@@ -267,7 +324,17 @@ export default function MobileFullScreenPlayer({
                               </Button>
                            </div>
                         </div>
+                     </div>
 
+                     {activeTab === "Lyric" && lyricTab}
+                     {activeTab === "Songs" && songsListItemTab}
+
+                     {/* player */}
+                     <div
+                        className={`mb-[20px] ${
+                           activeTab != "Playing" ? "opacity-0 pointer-events-none h-[0px] mb-[0]" : ""
+                        }`}
+                     >
                         <div className="flex flex-col justify-start flex-1">
                            <div className="flex-col-reverse flex">
                               {useMemo(
@@ -298,16 +365,13 @@ export default function MobileFullScreenPlayer({
                                  onClick={(e) => handleSetVolume(e)}
                                  className={`h-[4px] bg-gray-300 flex-1 relative 
                                  cursor-pointer rounded-3xl overflow-hidden ${
-                                    theme.type === "light"
-                                       ? "bg-gray-400"
-                                       : "bg-gray-200"
+                                    theme.type === "light" ? "bg-gray-400" : "bg-gray-200"
                                  }`}
                               >
                                  <div
                                     ref={volumeProcessLine}
                                     className={`absolute left-0 top-0 h-full w-full ${theme.content_bg}`}
                                  ></div>
-                                 {/* <div className="absolute right-0 h-[15px] w-[15px] rounded-full bg-[#fff]"></div> */}
                               </div>
                               <Button className="w-[28px] h-[28px]">
                                  <SpeakerWaveIcon />
@@ -315,22 +379,9 @@ export default function MobileFullScreenPlayer({
                            </div>
                         </div>
                      </div>
+
                   </div>
                </div>
-
-               {activeTab === "Songs" && (
-                  <div className="songs-list-item-tab absolute inset-0 z-10">
-                     {renderSongsListItemTab}
-                  </div>
-               )}
-
-               {activeTab === "Lyric" && (
-                  <div className="lyric-tab absolute  inset-0 z-10">
-                     <div className="relative overflow-auto h-full px-[15px]">
-                        {/* {renderLyricTab} */}
-                     </div>
-                  </div>
-               )}
             </div>
          </div>
 

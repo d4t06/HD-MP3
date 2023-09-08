@@ -116,7 +116,7 @@ export default function FullScreenPlayer({
     <div className="lyric-container px-[40px] h-full w-full flex items-center justify-center flex-row">
       {/* left */}
       <div className="max-[549px]:hidden">
-        <SongThumbnail active={isPlaying} data={songInStore} />
+        <SongThumbnail classNames="items-center justify-center" active={isPlaying} data={songInStore} />
       </div>
 
       {/* right */}

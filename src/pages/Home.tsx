@@ -1,10 +1,12 @@
 import {
-  ChevronRightIcon,
-  ClipboardDocumentIcon,
-  HeartIcon,
-  MusicalNoteIcon,
+   ArrowPathIcon,
+   ChevronRightIcon,
+   ClipboardDocumentIcon,
+   HeartIcon,
+   MusicalNoteIcon,
+   PlusCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Song } from "../types";
 // import { songs } from "../utils/songs";
 
@@ -14,8 +16,16 @@ import { useSongs } from "../store/SongsContext";
 import { useTheme } from "../store/ThemeContext";
 
 import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { auth, db } from "../config/firebase";
+import {
+   collection,
+   doc,
+   getDoc,
+   getDocs,
+   query,
+   setDoc,
+   where,
+} from "firebase/firestore";
+import { auth, db, store } from "../config/firebase";
 
 import { routes } from "../routes";
 
@@ -23,69 +33,157 @@ import SongListItem from "../components/ui/SongListItem";
 import Button from "../components/ui/Button";
 import LinkItem from "../components/ui/LinkItem";
 import SongItem from "../components/ui/SongItem";
+import { parserImageFile } from "../utils/parserImage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { generateSongId } from "../utils/generateSongId";
+
+type SongWithStatus = Song & { status: string };
 
 export default function HomePage() {
-  const dispatch = useDispatch();
-  const songStore = useSelector(selectAllSongStore);
+   const dispatch = useDispatch();
+   const songStore = useSelector(selectAllSongStore);
 
-  const [loggedInUser, _loading, _error] = useAuthState(auth);
+   const { song: songInStore } = songStore;
+   const { theme } = useTheme();
+   const [loggedInUser, _loading, _error] = useAuthState(auth);
 
-  const { song: songInStore } = songStore;
-  const { theme } = useTheme();
+   const [isUpload, setIsUpload] = useState(false);
+   // const [duration, setDuration] = useState(99)
+   const [tempSongs, setTempSongs] = useState<SongWithStatus[]>([]);
+   const [inProcessIndexs, setInProcessIndexs] = useState<number[]>([]);
 
-  const [signInWithGoogle] = useSignInWithGoogle(auth);
+   const audioRef = useRef<HTMLAudioElement>(null);
+   const duration = useRef(0);
 
-  const { songs, setSongs } = useSongs();
-  const songsColectionRef = collection(db, "songs");
-  const queryGetAdminSongs = query(
-    songsColectionRef,
-    where("by", "==", "admin")
-  );
+   const [signInWithGoogle] = useSignInWithGoogle(auth);
 
-  const handleSetSong = (song: Song, index: number) => {
-    dispatch(setSong({ ...song, currentIndex: index }));
-  };
+   const { songs, setSongs } = useSongs();
+   const songsColectionRef = collection(db, "songs");
+   const queryGetAdminSongs = query(songsColectionRef, where("by", "==", "admin"));
 
-  const windowWidth = window.innerWidth;
-  const iconClasses = `w-6 h-6 mr-2 inline`;
+   const handleSetSong = (song: Song, index: number) => {
+      dispatch(setSong({ ...song, currentIndex: index }));
+   };
 
-  console.log("loggedInUser");
+   const windowWidth = window.innerWidth;
+   const iconClasses = `w-6 h-6 mr-2 inline`;
 
-  const signIn = () => {
-    signInWithGoogle();
-  };
-  useEffect(() => {
-    const getSongs = async () => {
+   console.log("loggedInUser");
+
+   const signIn = () => {
+      signInWithGoogle();
+   };
+
+   const handleUploadSong = async (song: Song) => {
+      console.log("upload song duration", duration.current, "ready", );
+
+
+      // if ()
+
+      let songWithDuration: Song = { ...song, duration: duration.current || 99 };
       try {
-        const songsSnap = await getDocs(queryGetAdminSongs);
+         let id = song.lyric_id || generateSongId(song);
 
-        if (songsSnap) {
-          const songsList = songsSnap.docs?.map((doc) => {
-            const songsData = doc.data() as Song;
+         await setDoc(doc(db, "songs", id), songWithDuration);
 
-            return { ...songsData, id: doc.id };
-          });
+         console.log("add to db");
 
-          if (songsList) {
-            setSongs(songsList);
-          }
-        }
+         // update songs list of loggedInUser
+         // const userDocRef = doc(db, 'users', loggedInUser?.email as string);
+         // const userSnapShot = await getDoc(userDocRef);
+         // const userData = userSnapShot.data() as User;
+         // await setDoc(userDocRef, { songs: userData?.songs ? [...userData.songs, id] : [id] }, {merge: true});
       } catch (error) {
-        console.log({ message: error });
+         console.log({ message: error });
       }
-    };
+   };
 
-    if (!songs.length) {
-      getSongs();
-    }
-  }, []);
+   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+      const target = e.target as HTMLInputElement & { files: FileList };
+      const fileLists = target.files;
 
-  console.log("check songs", songs);
+      let data: Song = {
+         id: "",
+         name: "",
+         singer: "",
+         image_path: "",
+         file_name: "",
+         song_path: "",
+         by: "admin",
+         duration: 0,
+         lyric_id: "",
+      };
 
-  return (
-    <>
-      {/* mobile nav */}
-      {windowWidth <= 549 && (
+      setIsUpload(true);
+      for (let songFile of fileLists) {
+         const songData = await parserImageFile(songFile);
+
+         if (songData) {
+            const songRef = ref(store, `/songs/${songData.name}`);
+            const fileRes = await uploadBytes(songRef, songFile);
+            const songUrl = await getDownloadURL(fileRes.ref);
+
+            const audioEle = audioRef.current as HTMLAudioElement;
+            audioEle.src = URL.createObjectURL(songFile);
+
+            let songItem: Song = {
+               ...data,
+               file_name: fileRes.metadata.fullPath,
+               name: songData?.name,
+               singer: songData.singer,
+               song_path: songUrl,
+            };
+
+            await handleUploadSong(songItem);
+         }
+      }
+      setIsUpload(false);
+
+      // setInProcessIndexs(Array.from(Array(songLists.length).keys()));
+   };
+
+   useEffect(() => {
+      const getSongs = async () => {
+         try {
+            const songsSnap = await getDocs(queryGetAdminSongs);
+
+            if (songsSnap) {
+               const songsList = songsSnap.docs?.map((doc) => {
+                  const songsData = doc.data() as Song;
+
+                  return { ...songsData, id: doc.id };
+               });
+
+               if (songsList) {
+                  setSongs(songsList);
+               }
+            }
+         } catch (error) {
+            console.log({ message: error });
+         }
+      };
+
+      const audioEle = audioRef.current as HTMLAudioElement;
+      audioEle.addEventListener("loadedmetadata", () => {
+         if (audioEle.src) {
+            console.log("loadedmetadata");
+            duration.current = audioEle.duration;
+
+            URL.revokeObjectURL(audioEle.src);
+         }
+      });
+
+      if (!songs.length) {
+         // getSongs();
+      }
+   }, []);
+
+   console.log("check inprocess", inProcessIndexs);
+
+   return (
+      <>
+         {/* mobile nav */}
+         {/* {windowWidth <= 549 && (
         <div className="pb-[20px]">
           <div className="flex flex-col gap-3 items-start ">
             <h1 className="text-[24px] font-bold">Library</h1>
@@ -105,19 +203,6 @@ export default function HomePage() {
                     <ChevronRightIcon className="w-5 h-5 text-gray-500" />
                   }
                 />
-
-                {/* <LinkItem
-                  className="py-[10px] border-b border-[#333]"
-                  to={routes.favorite}
-                  icon={
-                    <HeartIcon className={iconClasses + theme.content_text} />
-                  }
-                  label="Playlist"
-                  arrowIcon={
-                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
-                  }
-                /> */}
-
                 <LinkItem
                   className="py-[10px] border-b border-[#333]"
                   to={routes.allSong}
@@ -143,37 +228,80 @@ export default function HomePage() {
             )}
           </div>
         </div>
-      )}
-      <div className="pb-[30px]">
-        <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
+      )} */}
+         <div className="pb-[30px]">
+            <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
+            <audio ref={audioRef} src=""></audio>
+            <input
+               onChange={handleInputChange}
+               type="file"
+               multiple
+               accept=".mp3"
+               id="file"
+               className="hidden"
+            />
+            <label
+               className={`${theme.content_bg} rounded-full w-fit flex px-[20px] py-[4px] cursor-pointer`}
+               htmlFor="file"
+            >
+               {!isUpload ? (
+                  <>
+                     <PlusCircleIcon className="w-[20px] mr-[5px]" />
+                     Upload
+                  </>
+               ) : (
+                  <ArrowPathIcon className="w-[20px] animate-spin" />
+               )}
+            </label>
 
-        {/* admin song */}
-        {!!songs.length ? (
-          <>
-            <div className="flex flex-row flex-wrap gap-y-5 -mx-4">
-              {songs.map((song, index) => {
-                return (
-                  <div
-                    key={index}
-                    className="w-full px-[10px] max-[549px]:w-full"
-                  >
-                    <SongListItem
-                      theme={theme}
-                      data={song as Song}
-                      active={song.song_path === songInStore.song_path}
-                      onClick={() => handleSetSong(song, index)}
-                    />
+            {/* admin song */}
+            {!!songs.length || !!tempSongs.length ? (
+               <>
+                  <div className="flex flex-row flex-wrap gap-y-5 -mx-4">
+                     {songs.map((song, index) => {
+                        return (
+                           <div
+                              key={index}
+                              className="w-full px-[10px] max-[549px]:w-full"
+                           >
+                              <SongListItem
+                                 theme={theme}
+                                 data={song as Song}
+                                 active={song.song_path === songInStore.song_path}
+                                 onClick={() => handleSetSong(song, index)}
+                              />
+                           </div>
+                        );
+                     })}
+
+                     {tempSongs.map((song, index) => {
+                        return (
+                           <div
+                              key={index}
+                              className="w-full px-[10px] max-[549px]:w-full"
+                           >
+                              <SongListItem
+                                 theme={theme}
+                                 data={song}
+                                 active={false}
+                                 inProcess={
+                                    !!inProcessIndexs.some(
+                                       (inProIndex) => inProIndex + "" === index + ""
+                                    )
+                                 }
+                                 onClick={() => handleSetSong(song, index)}
+                              />
+                           </div>
+                        );
+                     })}
                   </div>
-                );
-              })}
-            </div>
-          </>
-        ) : (
-          "No songs jet..."
-        )}
-      </div>
+               </>
+            ) : (
+               "No songs jet..."
+            )}
+         </div>
 
-      {/* {windowWidth >= 550 && (
+         {/* {windowWidth >= 550 && (
             <div className="pb-[30px]">
                <h3 className="text-xl font-bold mb-[10px]">All songs</h3>
 
@@ -209,6 +337,6 @@ export default function HomePage() {
                )}
             </div>
          )} */}
-    </>
-  );
+      </>
+   );
 }

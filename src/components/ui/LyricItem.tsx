@@ -21,7 +21,7 @@ export default function LyricItem({
 }: Props) {
    const lyricRef = useRef<HTMLLIElement>(null);
 
-   console.log('check firstTimeRender', firstTimeRender);
+   // console.log('check firstTimeRender', firstTimeRender);
    
 
    useEffect(() => {

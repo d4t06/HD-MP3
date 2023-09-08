@@ -6,9 +6,10 @@ import { useTheme } from "../store/ThemeContext";
 interface Props {
   audioEle: HTMLAudioElement;
   songLyric: Lyric;
+  className?: string,
 }
 
-const LyricsList: FC<Props> = ({ audioEle, songLyric }) => {
+const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
   const { theme } = useTheme();
 
  
@@ -49,13 +50,13 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric }) => {
       );
     });
   };
-  // console.log("check lyric", lyricItem);
+  // console.log("check lyric", songLyric);
 
   if (!songLyric.real_time.length) {
     return <h1 className="text-[50px] mt-[30px] text-center">...</h1>;
   }
 
-  return <ul className="">{renderItem()}</ul>;
+  return <ul className={className}>{renderItem()}</ul>;
 };
 
 export default LyricsList;

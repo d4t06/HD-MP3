@@ -40,6 +40,7 @@ function App() {
       by: "",
       duration: 0,
       lyric_id: "",
+      id: '',
    });
 
    const { theme } = useTheme();
