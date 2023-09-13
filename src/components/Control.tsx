@@ -17,43 +17,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 
-
 import useLocalStorage from "../hooks/useLocalStorage";
 import handleTimeText from "../utils/handleTimeText";
 
 import PlayPauseButton from "./ui/PlayPauseButton";
 import { useSongs } from "../store/SongsContext";
 
-
 interface Props {
-   setIsOpenFullScreen?: Dispatch<SetStateAction<boolean>>;
-   isOpenFullScreen: boolean;
-   idle: boolean;
    audioEle: HTMLAudioElement;
+   idle: boolean;
+   isOpenFullScreen: boolean;
    isPlaying: boolean;
+   isWaiting: boolean;
+
+   setIsWaiting: Dispatch<SetStateAction<boolean>>;
    setIsPlaying: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function Control({
-   isOpenFullScreen,
-   idle,
    audioEle,
-
+   // idle,
    isPlaying,
-   setIsPlaying,
-}: Props) {
+   isOpenFullScreen,
+   isWaiting,
 
+   setIsPlaying,
+   setIsWaiting,
+}: Props) {
    const SongStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
    const { song: songInStore } = SongStore;
-   const {songs} = useSongs()
+   const { songs } = useSongs();
    const { theme } = useTheme();
 
    const [duration, setDuration] = useState<number>();
-
-   const [isWaiting, setIsWaiting] = useState<boolean>(false);
-
    const [isRepeat, setIsRepeat] = useLocalStorage<boolean>("repeat", false);
    const [isShuffle, setIsShuffle] = useLocalStorage<boolean>("shuffle", false);
 
@@ -62,6 +60,7 @@ export default function Control({
    const timeProcessLine = useRef<HTMLDivElement>(null);
 
    const currentTimeRef = useRef<HTMLDivElement>(null);
+   const remainingTime = useRef<HTMLDivElement>(null);
 
    const play = () => {
       audioEle?.play();
@@ -85,50 +84,51 @@ export default function Control({
 
    const handlePlay = () => {
       setIsPlaying(true);
+      setIsWaiting(false);
    };
 
    const handleResetForNewSong = useCallback(() => {
       const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
-      if (timeProcessLineElement && currentTimeRef.current) {
-         // currentTimeRef.current.innerText = "00:00";
+      if (timeProcessLineElement && currentTimeRef.current && remainingTime.current) {
+         currentTimeRef.current.innerText = "00:00";
+         remainingTime.current.innerText = "-00:00";
          timeProcessLineElement.style.width = "0%";
       }
-   }, [])
+   }, []);
 
-   const handleSeek = useCallback((
-      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-   ) => {
-      const node = e.target as HTMLElement;
+   const handleSeek = useCallback(
+      (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+         const node = e.target as HTMLElement;
 
-      console.log('check durationLineWidth', durationLineWidth.current);
-      
+         console.log("check durationLineWidth", durationLineWidth.current);
 
-      if (durationLineWidth.current && duration) {
-         // get boundingRect
-         const clientRect = node.getBoundingClientRect();
-         // get elements
-         const timeProcessLineElement = timeProcessLine.current as HTMLElement;
+         if (durationLineWidth.current && duration) {
+            // get boundingRect
+            const clientRect = node.getBoundingClientRect();
+            // get elements
+            const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
-         // calculating
-         const length = e.clientX - clientRect.left;
-         const lengthRatio = length / durationLineWidth.current;
-         const newTime = lengthRatio * duration;
+            // calculating
+            const length = e.clientX - clientRect.left;
+            const lengthRatio = length / durationLineWidth.current;
+            const newTime = lengthRatio * duration;
 
-         if (audioEle && timeProcessLineElement) {
-            // update current time
-            audioEle.currentTime = +newTime.toFixed(1);
-            // update process line width
-            timeProcessLineElement.style.width =
-               (lengthRatio * 100).toFixed(1) + "%";
+            if (audioEle && timeProcessLineElement) {
+               // update current time
+               audioEle.currentTime = +newTime.toFixed(1);
+               // update process line width
+               timeProcessLineElement.style.width = (lengthRatio * 100).toFixed(1) + "%";
 
-            if (!isPlaying) play();
+               if (!isPlaying) play();
+            }
          }
-      }
-   }, [isOpenFullScreen, songInStore, duration]);
+      },
+      [isOpenFullScreen, songInStore, duration]
+   );
 
    const handleNext = useCallback(() => {
-      console.log('check store index', songInStore.currentIndex);
+      console.log("check store index", songInStore.currentIndex);
       let newIndex = songInStore.currentIndex! + 1;
 
       let newSong;
@@ -139,14 +139,13 @@ export default function Control({
          newIndex = 0;
       }
 
-      console.log('check new index', newIndex);
-      
+      console.log("check new index", newIndex);
 
       dispatch(setSong({ ...newSong, currentIndex: newIndex }));
    }, [songInStore]);
 
    const handlePrevious = useCallback(() => {
-      console.log('check store index', songInStore.currentIndex);
+      console.log("check store index", songInStore.currentIndex);
 
       let newIndex = songInStore.currentIndex! - 1;
       let newSong;
@@ -157,12 +156,10 @@ export default function Control({
          newIndex = songs.length - 1;
       }
 
-      console.log('check new index', newIndex);
+      console.log("check new index", newIndex);
 
       dispatch(setSong({ ...newSong, currentIndex: newIndex }));
-   }, [songInStore])
-
-
+   }, [songInStore]);
 
    // >>> behind the scenes handle
    const handlePlaying = useCallback(() => {
@@ -170,6 +167,7 @@ export default function Control({
 
       const currentTime = audioEle?.currentTime;
       const duration = audioEle?.duration;
+      const remaining = duration - currentTime;
 
       const timeProcessLineEle = timeProcessLine.current as HTMLElement;
 
@@ -179,8 +177,9 @@ export default function Control({
          timeProcessLineEle.style.width = newWidth.toFixed(1) + "%";
       }
 
-      if (currentTimeRef.current) {
+      if (currentTimeRef.current && remainingTime.current) {
          currentTimeRef.current.innerText = handleTimeText(currentTime!);
+         remainingTime.current.innerText = "-" + handleTimeText(remaining);
       }
    }, [songInStore, isOpenFullScreen]);
 
@@ -188,10 +187,9 @@ export default function Control({
       setIsWaiting(true);
    };
 
-  
    const handleEnded = useCallback(() => {
       // console.log("isRepeat, isShuffle =", isRepeat, isShuffle);
-      
+
       if (isRepeat) {
          console.log("song repeat");
 
@@ -214,11 +212,8 @@ export default function Control({
          );
       }
 
-      console.log("next song");
-      
       return handleNext();
-
-   }, [isRepeat, isShuffle, songInStore])
+   }, [isRepeat, isShuffle, songInStore]);
 
    const handleLoaded = () => {
       // set duration
@@ -251,9 +246,9 @@ export default function Control({
          audioEle?.removeEventListener("play", handlePlay);
 
          handleResetForNewSong();
+         setIsWaiting(true);
       };
    }, [songInStore]);
-
 
    // add new handle function when state change
    useEffect(() => {
@@ -261,65 +256,52 @@ export default function Control({
       if (!audioEle) return;
       audioEle?.addEventListener("ended", handleEnded);
       // console.log("add new handle function when state change");
-      
+
       return () => audioEle?.removeEventListener("ended", handleEnded);
-   }, [isRepeat, isShuffle])
+   }, [isRepeat, isShuffle, songInStore]);
 
    // update process lines width
    useEffect(() => {
-      
       durationLineWidth.current = durationLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 
-
-   const buttonClasses = `w-[28px] h-[28px]`;   
-
+   const style = {
+      button: "p-[5px]",
+   };
 
    return (
-<>
+      <>
          {/* buttons */}
-         <div
-            className={`w-full flex flex-row justify-center items-center gap-x-[20px] h-[50px]`}
-         >
+         <div className={`w-full flex justify-center items-center gap-x-[20px] h-[50px]`}>
             <button
-               className={`${buttonClasses} ${theme.content_hover_text} ${
-                  isRepeat && theme.content_text
-               }`}
+               className={`${style.button} ${isRepeat && theme.content_text}`}
                onClick={() => setIsRepeat(!isRepeat)}
             >
-               <ArrowPathRoundedSquareIcon />
+               <ArrowPathRoundedSquareIcon className="w-[30px]" />
             </button>
-            <button
-               className={buttonClasses + " " + theme.content_hover_text}
-               onClick={() => handlePrevious()}
-            >
-               <BackwardIcon />
+            <button className={style.button} onClick={() => handlePrevious()}>
+               <BackwardIcon className="w-[30px]" />
             </button>
 
             <PlayPauseButton
-               hoverClasses={theme.content_hover_text}
                isWaiting={isWaiting}
                isPlaying={isPlaying}
                handlePlayPause={handlePlayPause}
             />
 
-            <button onClick={() => handleNext()}>
-               <ForwardIcon
-                  className={buttonClasses + " " + theme.content_hover_text}
-               />
+            <button className={style.button} onClick={() => handleNext()}>
+               <ForwardIcon className="w-[30px]" />
             </button>
             <button
-               className={`${buttonClasses} ${theme.content_hover_text} ${
-                  isShuffle && theme.content_text
-               }`}
+               className={`${style.button} ${isShuffle && theme.content_text}`}
                onClick={() => setIsShuffle(!isShuffle)}
             >
-               <ArrowTrendingUpIcon />
+               <ArrowTrendingUpIcon className="w-[30px]" />
             </button>
          </div>
 
          {/* process */}
-         <div className="flex flex-row items-center h-[30px] gap-x-[5px]">
+         <div className="flex flex-row items-center h-[30px]">
             <div className="w-[45px]">
                {audioEle && (
                   <span
@@ -333,9 +315,7 @@ export default function Control({
             <div
                ref={durationLine}
                onClick={(e) => handleSeek(e)}
-               className={`h-1 hover:h-[0.4rem flex-1 relative cursor-pointer rounded-3xl overflow-hidden 
-                  ${theme.type === "light" ? "bg-gray-400" : "bg-gray-200"}
-                  `}
+               className={`h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden ${theme.type === "light" ? "bg-gray-400" : "bg-gray-200"}`}
             >
                <div
                   ref={timeProcessLine}
@@ -343,14 +323,14 @@ export default function Control({
                   className={"absolute left-0 top-0 h-full " + theme.content_bg}
                ></div>
             </div>
-            <div className="w-[45px]">
+            <div className="w-[55px] pl-[5px]">
                {audioEle && (
-                  <span className="text-[14px] font-semibold">
-                     {handleTimeText(audioEle?.duration!) || "00:00"}
+                  <span ref={remainingTime} className="text-[14px] font-semibold">
+                     "-00:00"
                   </span>
                )}
             </div>
          </div>
       </>
-   )
+   );
 }

@@ -24,8 +24,8 @@ import {
    ChevronDownIcon,
    Cog6ToothIcon,
    HeartIcon,
-   SpeakerWaveIcon,
-   SpeakerXMarkIcon,
+   // SpeakerWaveIcon,
+   // SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
@@ -35,41 +35,45 @@ import { Lyric, Song } from "../types";
 
 import SongThumbnail from "./ui/SongThumbnail";
 import Tabs from "./ui/Tabs";
-import Button from "./ui/Button";
 import SongListItem from "./ui/SongListItem";
 import ScrollText from "./ui/ScrollText";
 
 import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
-import useVolume from "../hooks/useVolume";
+// import useVolume from "../hooks/useVolume";
 import { useSongs } from "../store/SongsContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import LyricsList from "./LyricsList";
 
 type Props = {
-   isOpenFullScreen: boolean;
-   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-   idle: boolean;
    audioEle: HTMLAudioElement;
+   idle: boolean;
    isPlaying: boolean;
+   isOpenFullScreen: boolean;
+   isWaiting: boolean;
+
+   setIsWaiting: Dispatch<SetStateAction<boolean>>;
    setIsPlaying: Dispatch<SetStateAction<boolean>>;
+   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function MobileFullScreenPlayer({
-   isOpenFullScreen,
-   setIsOpenFullScreen,
-   idle,
    audioEle,
+   // idle,
    isPlaying,
-   setIsPlaying,
-}: Props) {
-   const { songs } = useSongs();
+   isWaiting,
+   isOpenFullScreen,
 
+   setIsPlaying,
+   setIsWaiting,
+   setIsOpenFullScreen,
+}: Props) {
    const songStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
+   const { songs: adminSongs } = useSongs();
    const { song: songInStore } = songStore;
    const { theme } = useTheme();
 
@@ -79,21 +83,13 @@ export default function MobileFullScreenPlayer({
 
    const [activeTab, setActiveTab] = useState<string>("Playing");
    const [settingComp, setSettingComp] = useState<ReactNode>();
-   const [scalingImage, setScalingImage] = useState(false);
+   const [scalingImage, _setScalingImage] = useState(false);
 
-   const prevTab = useRef(activeTab);
+   // const prevTab = useRef(activeTab);
    const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
-   const volumeProcessLine = useRef<HTMLDivElement>(null);
    const bgRef = useRef<HTMLDivElement>(null);
-
-   const DURATION = 200;
-
-   const { handleSetVolume, isMute, handleMute } = useVolume(
-      volumeLineWidth,
-      volumeProcessLine,
-      audioEle
-   );
+   const containerRef = useRef<HTMLDivElement>(null);
 
    const { refs, floatingStyles, context } = useFloating({
       open: isClickSetting,
@@ -119,6 +115,9 @@ export default function MobileFullScreenPlayer({
 
    useEffect(() => {
       volumeLineWidth.current = volumeLine.current?.offsetWidth;
+      const containerEle = containerRef.current as HTMLElement
+      containerEle.style.height = `${window.innerHeight - 65}px`
+
    }, []);
 
    useEffect(() => {
@@ -128,26 +127,26 @@ export default function MobileFullScreenPlayer({
       }
    }, [songInStore]);
 
-   useEffect(() => {
-      if (
-         !(
-            (prevTab.current === "Songs" && activeTab === "Lyric") ||
-            (prevTab.current === "Lyric" && activeTab === "Songs")
-         )
-      ) {
-         if (prevTab.current != activeTab) setScalingImage(true);
-         setTimeout(() => {
-            setScalingImage(false);
-         }, DURATION + 100);
-      }
+   // useEffect(() => {
+   //    if (
+   //       !(
+   //          (prevTab.current === "Songs" && activeTab === "Lyric") ||
+   //          (prevTab.current === "Lyric" && activeTab === "Songs")
+   //       )
+   //    ) {
+   //       if (prevTab.current != activeTab) setScalingImage(true);
+   //       setTimeout(() => {
+   //          setScalingImage(false);
+   //       }, DURATION + 100);
+   //    }
 
-      // return here cause clean up function don't run
-      // return;
+   //    // return here cause clean up function don't run
+   //    // return;
 
-      return () => {
-         prevTab.current = activeTab;
-      };
-   }, [activeTab]);
+   //    return () => {
+   //       prevTab.current = activeTab;
+   //    };
+   // }, []);
 
    const songsListItemTab = useMemo(() => {
       return (
@@ -158,7 +157,7 @@ export default function MobileFullScreenPlayer({
                      Playing next
                   </h3>
                   <div className="relative h-full no-scrollbar overflow-auto transition-all">
-                     {songs.map((song, index) => {
+                     {adminSongs.map((song, index) => {
                         if (
                            index == songInStore.currentIndex! ||
                            index <= songInStore.currentIndex!
@@ -183,8 +182,14 @@ export default function MobileFullScreenPlayer({
    }, [songInStore]);
 
    const lyricTab = useMemo(
-      () => <LyricsList className="h-[calc(100vh-165px)] flex-shrink-0 overflow-auto" audioEle={audioEle} songLyric={songLyric} />,
-      [songInStore, songLyric, activeTab]
+      () => (
+         <LyricsList
+            className="h-[calc(100vh-125px)] flex-shrink-0 overflow-auto"
+            audioEle={audioEle}
+            songLyric={songLyric}
+         />
+      ),
+      [songLyric]
    );
 
    useEffect(() => {
@@ -203,17 +208,18 @@ export default function MobileFullScreenPlayer({
       getLyric();
    }, [songInStore]);
 
+   // console.log('check user songs', adminSongs)
    // console.log("mobile fullscreen check lyric", songLyric);
 
    return (
       <div
-         className={`fixed inset-0 z-50 bg-zinc-900  overflow-hidden  ${
+         className={`fixed inset-0 z-50 bg-zinc-900 text-white overflow-hidden  ${
             isOpenFullScreen ? "translate-y-0" : "translate-y-full"
          } transition-[transform] duration-300 ease-in-out delay-150  `}
       >
          <div
             ref={bgRef}
-            className={`absolute  inset-0 bg-no-repeat bg-cover bg-center blur-[99px] transition-[background] duration-100`}
+            className={`absolute  inset-0 bg-no-repeat bg-cover bg-center blur-[99px]`}
          ></div>
          <div
             className={`absolute inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`}
@@ -225,9 +231,9 @@ export default function MobileFullScreenPlayer({
                <button
                   ref={refs.setReference}
                   {...getReferenceProps()}
-                  className="inline-flex items-center rounded-full p-[8px] bg-gray-500 bg-opacity-20 text-xl h-[35px] w-[35px] absolute left-[15px]"
+                  className={`rounded-full p-[5px] bg-gray-500 bg-opacity-20 absolute left-[15px]`}
                >
-                  <Cog6ToothIcon />
+                  <Cog6ToothIcon className="w-[25px]" />
                </button>
 
                <Tabs
@@ -238,14 +244,12 @@ export default function MobileFullScreenPlayer({
                   tabs={["Songs", "Playing", "Lyric"]}
                />
 
-               <Button
-                  className="absolute right-[15px] top-[15px]"
-                  variant={"circle"}
-                  size={"normal"}
+               <button
+                  className="bg-gray-500 bg-opacity-20 rounded-full absolute right-[15px] top-[15px] p-[6px]"
                   onClick={() => setIsOpenFullScreen(false)}
                >
-                  <ChevronDownIcon />
-               </Button>
+                  <ChevronDownIcon className="w-[25px]" />
+               </button>
 
                {isClickSetting && (
                   <FloatingFocusManager context={context} modal={false}>
@@ -266,7 +270,7 @@ export default function MobileFullScreenPlayer({
             </div>
 
             {/* container */}
-            <div className={`relative h-[calc(100vh-65px)] px-[15px] overflow-hidden`}>
+            <div ref={containerRef} className={`relative px-[15px] overflow-hidden`}>
                <div className={`h-full flex flex-col overflow-hidden`}>
                   <div
                      className={`flex flex-col h-full ${
@@ -283,9 +287,12 @@ export default function MobileFullScreenPlayer({
                         {useMemo(
                            () => (
                               <SongThumbnail
-                                 classNames={`flex-shink-0 ${activeTab != "Playing" ? "max-[549px]:w-[100px] max-[549px]:h-[100px]" : "justify-center items-center"
+                                 classNames={`flex-shink-0 transition-[height, width] origin-top-left ${
+                                    activeTab != "Playing"
+                                       ? "max-[549px]:w-[60px] max-[549px]:h-[60px]"
+                                       : "justify-center items-center w-full"
                                  }`}
-                                 active={activeTab === 'Playing' ?  isPlaying : true}
+                                 active={true}
                                  data={songInStore}
                               />
                            ),
@@ -293,35 +300,51 @@ export default function MobileFullScreenPlayer({
                         )}
                         {/* name and singer */}
                         <div
-                           className={`flex flex-row flex-grow justify-between items-center transition-[opacity] duration-[${
-                              DURATION + 300
-                           }] ${activeTab != "Playing" ? "opacity-0 h-[0px]" : ""} ${
-                              activeTab != "Playing" && !scalingImage
-                                 ? "opacity-100 h-[unset] ml-[10px]"
-                                 : ""
-                           }
-                           `}
+                           className={`flex flex-grow justify-between items-center ${
+                              activeTab != "Playing" ? "ml-[10px]" : "mt-[15px]"
+                           }`}
                         >
                            <div className="group flex-grow overflow-hidden">
-                              {useMemo(
-                                 () => (
-                                    <ScrollText label={songInStore.name} />
-                                 ),
-                                 [songInStore]
-                              )}
-                              <p className="text-md opacity-50">
-                                 {songInStore.singer || "..."}
-                              </p>
+                              <div className="h-[30px]">
+                                 {useMemo(
+                                    () => (
+                                       <ScrollText
+                                       songInStore={songInStore}
+                                          autoScroll
+                                          classNames={`${
+                                             activeTab === "Playing"
+                                                ? "text-[24px] leading-[30px]"
+                                                : "text-[20px]"
+                                          } font-[500]`}
+                                          label={songInStore.name || "..."}
+                                       />
+                                    ),
+                                    [songInStore, activeTab]
+                                 )}
+                              </div>
+                              <div className="h-[30px]">
+                                 {useMemo(
+                                    () => (
+                                       <ScrollText
+                                       songInStore={songInStore}
+                                          autoScroll
+                                          classNames={`${
+                                             activeTab === "Playing"
+                                                ? "text-[22px]"
+                                                : "text-[16px] text-gray-500"
+                                          } font-[400]`}
+                                          label={songInStore.singer || "..."}
+                                       />
+                                    ),
+                                    [songInStore, activeTab]
+                                 )}
+                              </div>
                            </div>
 
-                           <div className="group pl-[20px]">
-                              <Button
-                                 variant={"default"}
-                                 size={"small"}
-                                 className="sm text-gray-500"
-                              >
-                                 <HeartIcon />
-                              </Button>
+                           <div className="pl-[20px]">
+                              <button className="p-[5px]">
+                                 <HeartIcon className="w-[25px]" />
+                              </button>
                            </div>
                         </div>
                      </div>
@@ -331,8 +354,10 @@ export default function MobileFullScreenPlayer({
 
                      {/* player */}
                      <div
-                        className={`mb-[20px] ${
-                           activeTab != "Playing" ? "opacity-0 pointer-events-none h-[0px] mb-[0]" : ""
+                        className={`mb-[30px] ${
+                           activeTab != "Playing"
+                              ? "opacity-0 pointer-events-none h-[0px] mb-[0px]"
+                              : ""
                         }`}
                      >
                         <div className="flex flex-col justify-start flex-1">
@@ -343,15 +368,19 @@ export default function MobileFullScreenPlayer({
                                        audioEle={audioEle}
                                        isOpenFullScreen={false}
                                        isPlaying={isPlaying}
+                                       isWaiting={isWaiting}
+
+                                       setIsWaiting={setIsWaiting}
                                        setIsPlaying={setIsPlaying}
                                        idle={false}
                                     />
                                  ),
-                                 [isPlaying]
+                                 [isPlaying, isWaiting]
                               )}
                            </div>
 
-                           <div className="flex flex-row items-center gap-[10px]">
+                           {/* volume */}
+                           {/* <div className="flex flex-row items-center gap-[10px]">
                               <Button
                                  onClick={() => handleMute()}
                                  className={`w-[28px] h-[28px] ${
@@ -376,10 +405,9 @@ export default function MobileFullScreenPlayer({
                               <Button className="w-[28px] h-[28px]">
                                  <SpeakerWaveIcon />
                               </Button>
-                           </div>
+                           </div> */}
                         </div>
                      </div>
-
                   </div>
                </div>
             </div>

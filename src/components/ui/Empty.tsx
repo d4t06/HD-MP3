@@ -8,7 +8,7 @@ interface Props {
   onClick: () => void;
 }
 
-const Empty: FC<Props> = ({ className, label, onClick }) => {
+const Empty: FC<Props> = ({ className, onClick }) => {
   return (
     <div
       onClick={() => onClick()}

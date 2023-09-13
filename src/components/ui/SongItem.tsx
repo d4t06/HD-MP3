@@ -1,10 +1,10 @@
 import { FC } from "react";
-import { Song, ThemeKeyType, ThemeType } from "../../types";
+import { Song, ThemeType } from "../../types";
 import {
    VariantProps,
    cva,
 } from "class-variance-authority";
-import { useTheme } from "../../store/ThemeContext";
+// import { useTheme } from "../../store/ThemeContext";
 import Button from "./Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
 
@@ -37,7 +37,7 @@ const SongItem: FC<Props> = ({
    song,
    size,
    style,
-   active,
+   // active,
    theme,
    onClick,
 }) => {

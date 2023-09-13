@@ -257,6 +257,7 @@ export default function LyricEditor({
     if (baseLyric) {
       const filteredLyric = baseLyric.split(/\r?\n/).filter((lyric) => lyric);
       setBaseLyricArr(filteredLyric);
+
     }
 
     if (baseLyricArr.length && firstTimeRender.current) firstTimeRender.current = false;
@@ -393,7 +394,9 @@ export default function LyricEditor({
           >
             <textarea
               ref={textareaRef}
-              className="w-full rounded-[4px] mb-[10px] min-h-[50vh] bg-transparent border text-white p-[10px]"
+              value={baseLyric}
+              onChange={e => setBaseLyric(e.target.value)}
+              className="w-full rounded-[4px] mb-[10px] min-h-[50vh] bg-transparent border text-[#333] p-[10px]"
             />
             <Button
               variant={"primary"}

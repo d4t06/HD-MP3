@@ -1,5 +1,5 @@
 import { FC, useState } from "react";
-import PlaylistItem from "../components/ui/PlaylistItem";
+// import PlaylistItem from "../components/ui/PlaylistItem";
 import Empty from "../components/ui/Empty";
 import useLocalStorage from "../hooks/useLocalStorage";
 import Modal from "../components/Modal";
@@ -10,14 +10,14 @@ import { Playlist } from "../types";
 interface Props {}
 
 const PlaylistPage: FC<Props> = () => {
-   const [playlists, setPlayLists] = useLocalStorage("playlist", [] as Playlist[]);
+   const [_playlists, setPlayLists] = useLocalStorage("playlist", [] as Playlist[]);
    const [openModal, setOpenModal] = useState(false);
    const [playlistName, setPlayListName] = useState<string>("");
 
    const handleAddPlaylist = () => {
       setPlayLists((prev) => [
          ...prev,
-         { name: playlistName, songs: [1, 2, 3] } as Playlist,
+         { name: playlistName, songs: ['adfad', 'adfasdf', 'adfadf'] } as Playlist,
       ]);
 
       setPlayListName("");
@@ -39,13 +39,12 @@ const PlaylistPage: FC<Props> = () => {
                />
             </div>
 
-            {playlists.map((playlist, index) => {
+            {/* {playlists.map((playlist, index) => {
                return (
                   <div key={index} className="w-1/4 px-4">
-                     <PlaylistItem data={playlist}/>
                   </div>
                );
-            })}
+            })} */}
          </div>
 
          {openModal && (
@@ -68,7 +67,7 @@ const PlaylistPage: FC<Props> = () => {
 
                   <button
                      onClick={() => handleAddPlaylist()}
-                     className={`mt-8 bg-indigo-600 h-[40px] w-full text-white w-full text-xl rounded-full hover:brightness-90 ${
+                     className={`mt-8 bg-indigo-600 h-[40px] w-full text-white text-xl rounded-full hover:brightness-90 ${
                         !playlistName ? "opacity-60 pointer-events-none" : ""
                      }`}
                   >

@@ -1,12 +1,9 @@
-import {
-   BrowserRouter as Router,
-   Routes,
-   Route,
-} from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // import Sidebar from "./components/Sidebar";
-import { publicRoutes } from "./routes";
+import { publicRoutes, routes } from "./routes";
 import DefaultLayout from "./layout/DefaultLayout";
+import Auth from "./components/Auth";
 // import Auth from "./components/Auth";
 
 function App() {
@@ -17,11 +14,24 @@ function App() {
                let DynamicLayout;
                const Page = route.component;
                if (route.layout) {
-                  DynamicLayout = route.layout
+                  DynamicLayout = route.layout;
                } else {
-                  DynamicLayout = DefaultLayout
+                  DynamicLayout = DefaultLayout;
                }
-               
+
+               if (route.path === routes.dashboard)
+                  return (
+                     <Route
+                        key={index}
+                        path={route.path}
+                        element={
+                           <Auth>
+                              <Page />
+                           </Auth>
+                        }
+                     />
+                  );
+
                return (
                   <Route
                      key={index}

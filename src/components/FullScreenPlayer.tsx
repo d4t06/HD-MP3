@@ -12,7 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Lyric, Song } from "../types";
 
@@ -64,6 +64,8 @@ export default function FullScreenPlayer({
 
   // handleEvent
   const handleSetSongWhenClick = (song: Song, index: number) => {
+
+    if (songInStore.id === song.id) return;
     dispatch(setSong({ ...song, currentIndex: index }));
   };
 
@@ -99,6 +101,7 @@ export default function FullScreenPlayer({
       return (
         <div key={index} className="px-[16px]">
           <SongThumbnail
+          classNames="items-center justify-center"
             hasHover
             hasTitle
             containerEle={containerRef.current as HTMLElement}
@@ -137,6 +140,9 @@ export default function FullScreenPlayer({
   useEffect(() => {
     if (!songInStore.lyric_id) return;
 
+    console.log('check lyric_id', songInStore.lyric_id);
+    
+
     const getLyric = async () => {
       const docRef = doc(db, "lyrics", songInStore.lyric_id);
       const docSnap = await getDoc(docRef);
@@ -148,6 +154,8 @@ export default function FullScreenPlayer({
       }
     };
     getLyric();
+
+    return () => setSongLyric({base: '', real_time: []})
   }, [songInStore]);
 
   const style = {
@@ -173,6 +181,7 @@ export default function FullScreenPlayer({
       ></div>
 
       <div className="h-[calc(100vh-90px)]">
+        {/* header */}
         <div className="header-left flex px-10 py-[20px] relative h-[75px] max-[549px]:px-[10px]">
           {/* left */}
           <div className={`relative h-full ${idle ? "" : "hidden"}`}>

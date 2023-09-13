@@ -1,15 +1,14 @@
-import Button from "./Button";
 import {
-  ArrowPathIcon,
   PauseCircleIcon,
   PlayCircleIcon,
+  TruckIcon,
 } from "@heroicons/react/24/outline";
 
 type Props = {
   isWaiting: boolean;
   isPlaying: boolean;
   handlePlayPause: () => void;
-  hoverClasses: string
+  hoverClasses?: string
 };
 
 export default function PlayPauseButton ({
@@ -19,14 +18,16 @@ export default function PlayPauseButton ({
   hoverClasses
 } : Props) {
   return (
-    <Button className={"w-12 " +  hoverClasses}  onClick={() => handlePlayPause()}>
+    <>
+    <button className={`p-[5px] ${hoverClasses && hoverClasses} ${isWaiting && 'pointer-events-none'}`}  onClick={() => handlePlayPause()}>
       {isWaiting ? (
-        <ArrowPathIcon className={"w-6 mx-auto animate-spin"} />
+        <TruckIcon className={"w-[50px] scale-75"} />
       ) : isPlaying ? (
-        <PauseCircleIcon className={"w-12"} />
+        <PauseCircleIcon className={"w-[50px]"} />
       ) : (
-        <PlayCircleIcon className={"w-12 h-12"} />
+        <PlayCircleIcon className={"w-[50px]"} />
       )}
-    </Button>
+    </button>
+    </>
   );
 };

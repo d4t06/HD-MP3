@@ -1,9 +1,14 @@
+import { Timestamp } from "firebase/firestore";
+
 export type User = {
-  displayName: string;
+  display_name: string;
   email: string;
   photoURL: string;
   songs: string[];
-  playList: string[];
+  playlist: string[];
+  role: string;
+  songs_count: number;
+  latest_seen:Timestamp;
 };
 
 export type Song = {
@@ -23,9 +28,14 @@ export type ParserSong = {
   lyric: string;
 };
 
-export interface Playlist {
+export type Playlist = {
+  active: boolean;
   name: string;
-  songs: Array<number>;
+  image_path: string;
+  song_ids: Array<string>;
+  time: number;
+  count: number;
+  by: string;
 }
 
 export type Lyric = {

@@ -1,7 +1,7 @@
 import {
    ArrowRightOnRectangleIcon,
    InformationCircleIcon,
-   MusicalNoteIcon,
+   // MusicalNoteIcon,
    PaintBrushIcon,
    XMarkIcon,
 } from "@heroicons/react/24/outline";

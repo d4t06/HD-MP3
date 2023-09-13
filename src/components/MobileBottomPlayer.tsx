@@ -1,50 +1,39 @@
+import { Dispatch, FC, SetStateAction, useEffect } from "react";
 import {
-   Dispatch,
-   FC,
-   SetStateAction,
-   useState,
-} from "react";
-import {
-   ArrowPathIcon,
    ForwardIcon,
    PauseCircleIcon,
    PlayCircleIcon,
+   TruckIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import {
-   selectAllSongStore,
-   setSong,
-} from "../store/SongSlice";
+import { selectAllSongStore, setSong } from "../store/SongSlice";
+import { useTheme } from "../store/ThemeContext";
 import { useSongs } from "../store/SongsContext";
 
 interface Props {
-   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-   isOpenFullScreen: boolean;
-   idle: boolean;
    audioEle: HTMLAudioElement;
+   idle: boolean;
+   isOpenFullScreen: boolean;
    isPlaying: boolean;
-   setIsPlaying: Dispatch<React.SetStateAction<boolean>>;
+   isWaiting: boolean;
+   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
 }
 
 const MobileBottomPlayer: FC<Props> = ({
-   // isOpenFullScreen,
+   audioEle,
+   isOpenFullScreen,
+   isWaiting,
    setIsOpenFullScreen,
    // idle,
-   audioEle,
 
    isPlaying,
-   setIsPlaying,
 }) => {
-
-   const {songs} = useSongs();
-
-   const SongStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
+   const SongStore = useSelector(selectAllSongStore);
 
+   const { songs } = useSongs();
+   const { theme } = useTheme();
    const { song: songInStore } = SongStore;
-
-   const [isWaiting, _setIsWaiting] =
-      useState<boolean>(false);
 
    const play = () => {
       audioEle?.play();
@@ -53,13 +42,8 @@ const MobileBottomPlayer: FC<Props> = ({
       audioEle?.pause();
    };
 
-   // >>> click handle
    const handlePlayPause = () => {
       isPlaying ? pause() : play();
-   };
-
-   const handlePause = () => {
-      setIsPlaying(false);
    };
 
    const handleNext = () => {
@@ -71,23 +55,38 @@ const MobileBottomPlayer: FC<Props> = ({
          newSong = songs[0];
          newIndex = 0;
       }
-      dispatch(
-         setSong({ ...newSong, currentIndex: newIndex })
-      );
+      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
    };
+
+   useEffect(() => {
+      if (isOpenFullScreen) return;
+      // audioEle?.addEventListener("pause", handlePause);
+      // audioEle?.addEventListener("waiting", handleWaiting);
+      // audioEle?.addEventListener("play", handlePlay);
+
+      return () => {
+         // audioEle?.removeEventListener("pause", handlePause);
+         // audioEle?.removeEventListener("waiting", handleWaiting);
+         // audioEle?.removeEventListener("play", handlePlay);
+
+         // setIsWaiting(true);
+      };
+   }, [songInStore, isOpenFullScreen]);
+
+   // console.log("check wating", isWaiting);
+   
 
    return (
       <div
-         className={`fixed bottom-0 w-full h-[90px] border-t z-40  px-[20px]`}
+         className={`fixed bottom-0 w-full h-[70px] border-t z-40  px-[20px] ${theme.bottom_player_bg}`}
       >
          <div className={`flex flex-row  h-full`}>
             <div
                onClick={() => setIsOpenFullScreen(true)}
                className={`mobile-current-song flex-grow`}
             >
-               <div
-                  className={`left flex flex-row items-center h-full`}
-               >
+               {/* song image, name and singer */}
+               <div className={` flex flex-row items-center flex-grow h-full`}>
                   <div className="w-[40px] h-[40px]">
                      <img
                         className={`w-full object-cover object-center rounded-full`}
@@ -99,15 +98,14 @@ const MobileBottomPlayer: FC<Props> = ({
                      />
                   </div>
 
-                  <div className="right text-gray-100 ml-[10px]">
+                  <div className="flex-grow  ml-[10px]">
                      {songInStore.song_path && (
                         <>
-                           <h5 className="text-xl mb line-clamp-1">
+                           <h5 className="text-[18px] font-[500]">
                               {songInStore?.name || "name"}
                            </h5>
-                           <p className="text-md text-gray-400 mt-[5px] line-clamp-1">
-                              {songInStore?.singer ||
-                                 "singer"}
+                           <p className={`text-[14px] font-[400] line-clamp-1`}>
+                              {songInStore?.singer || "singer"}
                            </p>
                         </>
                      )}
@@ -116,24 +114,21 @@ const MobileBottomPlayer: FC<Props> = ({
             </div>
 
             <div
-               className={`mobile-bottom-player flex items-center h-full pl-[15px] gap-[10px]`}
+               className={`mobile-bottom-player flex items-center h-full pl-[15px] gap-[10px] ${
+                  !songInStore.name && "opacity-60 pointer-events-none"
+               }`}
             >
-               <button
-                  className="w-10"
-                  onClick={() => handlePlayPause()}
-               >
+               <button className="p-[4px]" onClick={() => handlePlayPause()}>
                   {isWaiting ? (
-                     <ArrowPathIcon
-                        className={"animate-spin"}
-                     />
+                     <TruckIcon className={"w-[35px]"} />
                   ) : isPlaying ? (
-                     <PauseCircleIcon />
+                     <PauseCircleIcon className="w-[35px]" />
                   ) : (
-                     <PlayCircleIcon />
+                     <PlayCircleIcon className="w-[35px]" />
                   )}
                </button>
-               <button className="w-10">
-                  <ForwardIcon />
+               <button onClick={handleNext} className="p-[4px]">
+                  <ForwardIcon className="w-[35px]" />
                </button>
             </div>
          </div>

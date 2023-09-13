@@ -25,7 +25,6 @@ import Modal from "./Modal";
 import SettingMenu from "./SettingMenu";
 import { useTheme } from "../store/ThemeContext";
 import { auth } from "../config/firebase";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
 
 export default function Sidebar() {
    const [signInWithGoogle] = useSignInWithGoogle(auth);
@@ -71,37 +70,20 @@ export default function Sidebar() {
          `}
       >
          <div className="px-[10px] flex items-center">
-            <Tooltip>
-               <TooltipTrigger>
-                  <div
-                     className={`w-[36px] h-[36px] flex-shrink-0 rounded-full overflow-hidden 
+            <div
+               className={`w-[36px] h-[36px] flex-shrink-0 rounded-full overflow-hidden 
             ${
-               !loggedInUser?.photoURL
-                  ? "flex items-center justify-center bg-[#ccc]"
-                  : ""
+               !loggedInUser?.photoURL ? "flex items-center justify-center bg-[#ccc]" : ""
             }`}
-                  >
-                     {loggedInUser?.photoURL ? (
-                        <img
-                           src={loggedInUser.photoURL!}
-                           className="w-full"
-                           alt=""
-                        />
-                     ) : (
-                        <h1 className="text-[20px]">
-                           {loggedInUser
-                              ? loggedInUser?.displayName?.charAt(1)
-                              : "Z"}
-                        </h1>
-                     )}
-                  </div>
-               </TooltipTrigger>
-               <TooltipContent>
-                  <div className={`bg-[#ccc] text-[#333] text-[14px] px-[10px] py-[2px] rounded-[4px]`}>
-                  {loggedInUser ? loggedInUser?.displayName : "Zingmp3"}
-                  </div>
-               </TooltipContent>
-            </Tooltip>
+            >
+               {loggedInUser?.photoURL ? (
+                  <img src={loggedInUser.photoURL!} className="w-full" alt="" />
+               ) : (
+                  <h1 className="text-[20px]">
+                     {loggedInUser ? loggedInUser?.displayName?.charAt(1) : "Z"}
+                  </h1>
+               )}
+            </div>
 
             <h3 className="text-[16px] font-[500] ml-[8px] line-clamp-1">
                {loggedInUser ? loggedInUser?.displayName : "Guest"}

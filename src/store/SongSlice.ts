@@ -1,17 +1,33 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { Song } from "../types";
+import { Playlist, Song } from "../types";
 
-const init = {
+type stateType = {
+  song: Song & { currentIndex: number };
+  playlist: Playlist
+}
+
+const init: stateType = {
   song: {
+    id: '',
     name: "",
     singer: "",
+    file_name: '',
     image_path: "",
     song_path: "",
     by: "",
     duration: 0,
     lyric_id: "",
     currentIndex: 0,
-  } as Song & { currentIndex: number },
+  },
+  playlist: {
+    active: false,
+    image_path: '',
+    name: '',
+    song_ids: [],
+    time: 0,
+    count: 0,
+    by: ''
+  }
 };
 
 const SongSlice = createSlice({
@@ -23,12 +39,15 @@ const SongSlice = createSlice({
 
       state.song = { ...actionPayload };
     },
+
+    setPlaylist(state, action: { type: string; payload: Playlist }) {
+      state.playlist = { ...action.payload }
+    }
   },
 });
 
-export const selectAllSongStore = (state: any) =>
-  state.song as { song: Song & { currentIndex: number } };
+export const selectAllSongStore = (state: { song: stateType }) => state.song;
 
-export const { setSong } = SongSlice.actions;
+export const { setSong, setPlaylist } = SongSlice.actions;
 
 export default SongSlice.reducer;

@@ -67,7 +67,7 @@ const SongThumbnail: FC<Props> = ({
       {data && (
         <div ref={thumbnail} className={`flex flex-col`}>
           <div
-            className={`h-[350px] w-[350px] flex ${classNames} transition-[height, width] origin-top-left duration-200`}
+            className={` flex ${classNames && classNames}`}
           >
             <div
               className={`group relative ${
@@ -77,7 +77,7 @@ const SongThumbnail: FC<Props> = ({
               } transition-[width] duration-300 origin-center`}
             >
               <img
-                className={`select-none object-cover object-center rounded`}
+                className={`select-none object-cover object-center rounded w-full`}
                 src={data?.image_path || "https://placehold.co/500x500.png"}
                 alt=""
               />
@@ -97,7 +97,7 @@ const SongThumbnail: FC<Props> = ({
                 </div>
               )}
 
-              {active && (
+              {(active && window.innerWidth >= 550) && (
                 <div className="absolute h-[30px] w-[30px] bottom-[15px] left-[15px]">
                   <img
                     src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif"

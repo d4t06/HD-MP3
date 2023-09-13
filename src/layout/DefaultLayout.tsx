@@ -22,18 +22,18 @@ const DefaultLayout: FC<Props> = ({ children }) => {
          ${theme.container}
          `}
          >
-            <Sidebar />
-            <div className="w-full overflow-auto h-[calc(100vh-90px)]">
+            {window.innerWidth >= 550 && <Sidebar />}
+            <div className="w-full overflow-y-auto overflow-x-hidden h-[calc(100vh-90px)] max-[549px]:h-full">
                <div
                   // style={{
                   //    backgroundImage: `linear-gradient(to bottom, #cd1818 10%, 90%)`,
                   // }}
                   className={`h-[200px]`}
                ></div>
-               <div className="px-[40px] max-[549px]:px-[10px]">{children}</div>
+               <div className="px-[40px] max-[549px]:px-[15px]">{children}</div>
             </div>
 
-            {/* <Player /> */}
+            <Player />
          </div>
       </Auth>
    );

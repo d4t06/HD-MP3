@@ -1,12 +1,4 @@
-import {
-   Dispatch,
-   MouseEvent,
-   SetStateAction,
-   useEffect,
-   useMemo,
-   useRef,
-   useState,
-} from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import {
    ChevronUpIcon,
    SpeakerWaveIcon,
@@ -15,30 +7,36 @@ import {
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
-import useLocalStorage from "../hooks/useLocalStorage";
 
 import Button from "./ui/Button";
 import Control from "./Control";
 import useVolume from "../hooks/useVolume";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
+// import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
+import ScrollText from "./ui/ScrollText";
 
 interface Props {
-   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
    isOpenFullScreen: boolean;
    idle: boolean;
    audioEle: HTMLAudioElement;
    isPlaying: boolean;
+   isWaiting: boolean;
+
+   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
    setIsPlaying: Dispatch<React.SetStateAction<boolean>>;
+   setIsWaiting: Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function BottomPlayer({
-   isOpenFullScreen,
-   setIsOpenFullScreen,
    idle,
    audioEle,
 
+   isOpenFullScreen,
    isPlaying,
+   isWaiting,
+
+   setIsWaiting,
    setIsPlaying,
+   setIsOpenFullScreen,
 }: Props) {
    const SongStore = useSelector(selectAllSongStore);
 
@@ -76,11 +74,12 @@ export default function BottomPlayer({
             ${idle ? "hidden" : ""} `}
       >
          <div
-            className={`flex flex-row h-full items-stretch ${
+            className={`flex flex-row gap-[10px] h-full items-stretch ${
                isOpenFullScreen ? "justify-center text-white" : "justify-between"
             }`}
          >
             <div className={`current-song w-1/3 ${isOpenFullScreen ? "hidden" : ""}`}>
+               {/* song image, name and singer */}
                <div
                   className={`flex flex-row items-center h-full origin-center ${
                      isOpenFullScreen ? "hidden" : ""
@@ -97,17 +96,34 @@ export default function BottomPlayer({
                      />
                   </div>
 
-                  <div className=" ml-[10px]">
-                     {songInStore.song_path && (
-                        <>
-                           <h5 className="text-xl mb overflow-hidden leading-[1]">
-                              {songInStore?.name || "name"}
-                           </h5>
-                           <p className="text-md text-gray-500 leading-[1] mt-[5px]">
-                              {songInStore?.singer || "singer"}
-                           </p>
-                        </>
-                     )}
+                  <div className=" ml-[10px] flex-grow">
+                     <div className="h-[24px] w-full">
+                        {useMemo(
+                           () => (
+                              <ScrollText
+                                 songInStore={songInStore}
+                                 autoScroll
+                                 classNames="text-[18px] font-[500]"
+                                 label={songInStore?.name || "name"}
+                              />
+                           ),
+                           [songInStore]
+                        )}
+                     </div>
+
+                     <div className="h-[20px] w-full">
+                        {useMemo(
+                           () => (
+                              <ScrollText
+                                 songInStore={songInStore}
+                                 autoScroll
+                                 classNames="text-[14px] opacity-60"
+                                 label={songInStore?.singer || "singer"}
+                              />
+                           ),
+                           [songInStore]
+                        )}
+                     </div>
                   </div>
                </div>
             </div>
@@ -126,10 +142,12 @@ export default function BottomPlayer({
                   () => (
                      <Control
                         audioEle={audioEle}
-                        isOpenFullScreen={isOpenFullScreen}
-                        isPlaying={isPlaying}
-                        setIsPlaying={setIsPlaying}
                         idle={false}
+                        isPlaying={isPlaying}
+                        isWaiting={isWaiting}
+                        isOpenFullScreen={isOpenFullScreen}
+                        setIsWaiting={setIsWaiting}
+                        setIsPlaying={setIsPlaying}
                      />
                   ),
                   [isPlaying, isOpenFullScreen]

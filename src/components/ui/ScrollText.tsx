@@ -1,52 +1,115 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Song } from "../../types";
 
 type Props = {
-   label : string;
+   label: string;
    autoScroll?: boolean;
-}
+   classNames: string;
+   songInStore?: Song;
+};
 
-export default function ScrollText({label, autoScroll} : Props) {
+export default function ScrollText({
+   label,
+   classNames,
+   autoScroll,
+   songInStore,
+}: Props) {
+   const textWrapper = useRef<HTMLDivElement>(null);
+   const text = useRef<HTMLDivElement>(null);
 
-   const nameWrapper = useRef<HTMLDivElement>(null)
-   const name = useRef<HTMLDivElement>(null)
+   const autoScrollTimerId = useRef<NodeJS.Timeout>();
+   const unScrollTimerId = useRef<NodeJS.Timeout>();
+   const duration = useRef<number>(0);
+   const innerText = useRef<string>("");
+   const distance = useRef<number>(0);
 
-   const [isScroll, setIsScroll] = useState(false)
+   const [isScroll, setIsScroll] = useState(false);
 
-   const handleScrollText = (e : MouseEvent<HTMLDivElement>) => {
+   const unScroll = () => {
+      const contentNode = text.current as HTMLElement;
+
+      duration.current = 0;
+      distance.current = 0;
+      contentNode.style.transition = `none`;
+      contentNode.style.transform = `translateX(0)`;
+      setIsScroll(false);
+   };
+
+   const scroll = () => {
+      if (!duration.current && !distance.current) return;
+      const contentNode = text.current as HTMLElement;
+
+      console.log("scroll text");
+
+      // duplicate innerText
+      contentNode.innerHTML =
+         innerText.current + "&nbsp; &nbsp; &nbsp;" + innerText.current;
+
+      setIsScroll(true);
+      // add animation
+      contentNode.style.transition = `transform linear ${duration.current}s`;
+      contentNode.style.transform = `translateX(-${distance.current}px)`;
+
+      unScrollTimerId.current = setTimeout(() => {
+         // remove animation
+         unScroll()
+      }, duration.current * 1000);
+   };
+
+   const handleScrollText = () => {
       if (isScroll) return;
 
-      const node = e.target as HTMLElement
-      const wrapperNode = nameWrapper.current as HTMLElement
-      let distance = node.offsetWidth - wrapperNode.offsetWidth
+      const contentNode = text.current as HTMLElement;
+      const wrapperNode = textWrapper.current as HTMLElement;
+      let isOverFlow =
+         contentNode.offsetWidth - wrapperNode.offsetWidth > 0 ? true : false;
 
-      if (distance <= 0) return;
-      setIsScroll(true);
-      const songName = node.innerText;
+      // if innerText less than container
+      if (!isOverFlow) return;
 
-      node.innerHTML = songName + "&nbsp; &nbsp; &nbsp;" + songName
-      distance += node.offsetWidth / 2 ;
+      innerText.current = contentNode.innerText;
 
-      const duration = (distance / 50).toFixed(1)
+      // scroll distance
+      distance.current = contentNode.offsetWidth + 20;
+      duration.current = +(distance.current / 35).toFixed(1);
+   };
 
-      node.style.transition = `transform linear ${duration}s`
-      node.style.transform = `translateX(-${distance}px)`
+   useEffect(() => {
+      handleScrollText();
 
-      setTimeout(() => {
-      node.style.transition = `none`
-      node.style.transform = `translateX(0)`
-      node.innerText = songName;
-      setIsScroll(false)
-      }, +duration * 1000)
-   }
+      if (!distance.current) return;
+      if (autoScroll) {
+         if (duration.current && !isScroll) {
+            setTimeout(() => {
+               scroll();
+            }, 1000);
+
+            autoScrollTimerId.current = setInterval(() => {
+                
+               scroll();
+            }, duration.current * 1000 + 3000 + 1000);
+         }
+      }  
+
+      return () => {
+         clearInterval(autoScrollTimerId.current);
+         clearTimeout(unScrollTimerId.current)
+
+         if (innerText.current) {
+            unScroll();
+         }
+      };
+   }, [songInStore && songInStore]);
 
    return (
-      <div onClick={(e) => handleScrollText(e)} ref={nameWrapper} className="name-container overflow-hidden scroll-smooth relative h-[32px]">
-         <h2
-            ref={name}
-            className="absolute left-0 text-2xl font-bold whitespace-nowrap pr-[20px] line-clamp-1"
+      <div ref={textWrapper} className="overflow-hidden scroll-smooth relative h-full">
+         <div
+            ref={text}
+            onClick={() => !autoScroll && handleScrollText()}
+            className={`${classNames} absolute left-0 whitespace-nowrap line-clamp-1`}
          >
             {label || "Some song"}
-         </h2>
+         </div>
       </div>
    );
 }

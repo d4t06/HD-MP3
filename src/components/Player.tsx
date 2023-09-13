@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 
 import BottomPlayer from "./BottomPlayer";
 import FullScreenPlayer from "./FullScreenPlayer";
@@ -14,6 +14,7 @@ const Player: FC<Props> = () => {
 
    const { song: songInStore } = songStore;
    const [isPlaying, setIsPlaying] = useState<boolean>(false);
+   const [isWaiting, setIsWaiting] = useState<boolean>(false);
    const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
 
    const [ishasAudioEle, setIsHasAudioEle] = useState(false);
@@ -26,19 +27,21 @@ const Player: FC<Props> = () => {
    const desktopContent = (
       <>
          <FullScreenPlayer
+            audioEle={audioRef.current as HTMLAudioElement}
             idle={false}
             isPlaying={isPlaying}
             isOpenFullScreen={isOpenFullScreen}
-            audioEle={audioRef.current as HTMLAudioElement}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
 
          <BottomPlayer
+            audioEle={audioRef.current as HTMLAudioElement}
             idle={false && isOpenFullScreen}
             isPlaying={isPlaying}
+            isWaiting={isWaiting}
             isOpenFullScreen={isOpenFullScreen}
-            audioEle={audioRef.current as HTMLAudioElement}
             setIsPlaying={setIsPlaying}
+            setIsWaiting={setIsWaiting}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
       </>
@@ -47,20 +50,24 @@ const Player: FC<Props> = () => {
    const mobileContent = (
       <>
          <MobileFullScreenPlayer
-            idle={false}
-            isPlaying={isPlaying}
-            isOpenFullScreen={isOpenFullScreen}
             audioEle={audioRef.current as HTMLAudioElement}
-            setIsOpenFullScreen={setIsOpenFullScreen}
+            idle={false}
+
+            isPlaying={isPlaying}
+            isWaiting={isWaiting}
+            isOpenFullScreen={isOpenFullScreen}
+
             setIsPlaying={setIsPlaying}
+            setIsWaiting={setIsWaiting}
+            setIsOpenFullScreen={setIsOpenFullScreen}
          />
 
          <MobileBottomPlayer
+            audioEle={audioRef.current as HTMLAudioElement}
             idle={false && isOpenFullScreen}
             isPlaying={isPlaying}
             isOpenFullScreen={isOpenFullScreen}
-            audioEle={audioRef.current as HTMLAudioElement}
-            setIsPlaying={setIsPlaying}
+            isWaiting={isWaiting}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
       </>
@@ -77,11 +84,7 @@ const Player: FC<Props> = () => {
 
    return (
       <div className="absolute">
-         <audio
-            ref={audioRef}
-            src={songInStore.song_path}
-            className="hidden"
-         ></audio>
+         <audio ref={audioRef} src={songInStore.song_path} className="hidden"></audio>
          {ishasAudioEle
             ? windowWidth.current >= 550
                ? desktopContent
