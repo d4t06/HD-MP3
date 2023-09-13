@@ -45,7 +45,7 @@ export default function Auth({ children }: { children: ReactNode }) {
    }, [loggedInUser]);
 
 
-   console.log('check loading', loading);
+   console.log('check auth loading', loading);
    
    if (loading || updatingUser) return <h1>Loading...</h1>;
    

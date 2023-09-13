@@ -37,7 +37,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, song, theme , onClick}) => {
                      <XMarkIcon className="w-[20px]" />
                   </Button>}
                   {!inDetail ? (
-                     <Link to={`${routes.playlist}/${data.name}`}>
+                     <Link to={`${routes.Playlist}/${data.name}`}>
                         <Button className={classes.button}>
                            <PauseCircleIcon className="w-[35px]" />
                         </Button>

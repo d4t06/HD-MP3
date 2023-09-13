@@ -1,78 +1,82 @@
-import {
-   collection,
-   deleteDoc,
-   doc,
-   documentId,
-   getDoc,
-   getDocs,
-   query,
-   setDoc,
-   where,
-} from "firebase/firestore";
+import { doc, getDoc } from "firebase/firestore";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setPlaylist } from "../store/SongSlice";
-import { Playlist, Song } from "../types";
-import { auth, db } from "../config/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { Playlist } from "../types";
+import { db } from "../config/firebase";
 import { useParams } from "react-router-dom";
-import { useSongs } from "../store/SongsContext";
+import useUserSong from "./useUserSong";
 
 export default function usePlaylistDetail() {
-   const dispatch = useDispatch();
-   const { songs: userSongs } = useSongs();
-   const [loggedInUser] = useAuthState(auth);
-   const { playlist: playlistInStore } = useSelector(selectAllSongStore);
+  const dispatch = useDispatch();
 
-   const [playlistSongs, setPlaylistSongs] = useState<Song[]>([])
-   const [playlistId, setPlaylistId] = useState<string>()
+  const {
+    userData,
+    songs: userSongs,
+    loading: useUserSongLoading,
+    initial,
+  } = useUserSong();
 
-   const params = useParams();
+  const { playlist: playlistInStore } = useSelector(selectAllSongStore);
 
-   const getSongs = useCallback( () => {
-      setPlaylistSongs(userSongs.filter(song => playlistInStore.song_ids.includes(song.id)));
-   }, [playlistInStore]);
+  const [playlistSongIndexes, setPlaylistSongIndexes] = useState<number[]>([]);
 
-   // get playlist data
-   const getPlaylist = useCallback(async () => {
-      try {
-         console.log(playlistId)
-         const playlistSnap = await getDoc(
-            doc(db, "playlist", playlistId as string)
-         );
-         if (playlistSnap) {
-            const playlistData = playlistSnap.data() as Playlist;
+  const [loading, setLoading] = useState(false);
+  const isInitDone = useRef(false);
 
-            console.log("check playlist", playlistData);
+  const params = useParams();
 
-            dispatch(setPlaylist(playlistData));
-         }
-      } catch (error) {
-         console.log({ message: error });
+  // get playlist song indexes
+  const getSongIndexes = useCallback(() => {
+    console.log("getSongIndexes");
+
+    const indexes = playlistInStore.song_ids.map((id) => {
+      return userSongs.findIndex((song) => song.id === id);
+    });
+    setPlaylistSongIndexes(indexes);
+  }, [playlistInStore]);
+
+  // get playlist data
+  const getPlaylist = useCallback(async () => {
+   
+    try {
+      setLoading(true);
+      const playlistSnap = await getDoc(
+        doc(db, "playlist", `${params.name}_${userData.email}` as string)
+      );
+      if (playlistSnap) {
+        const playlistData = playlistSnap.data() as Playlist;
+      console.log('getPlaylist detail', playlistData);
+
+
+        dispatch(setPlaylist(playlistData));
       }
-   }, [params, playlistId]);
+      isInitDone.current = true;
+    } catch (error) {
+      console.log({ message: error });
+    } finally {
+      setLoading(false);
+    }
+  }, [params, userData]);
+
+  useEffect(() => {
+    if (useUserSongLoading) return;
+    if (!userData.email) {
+      initial();
+      return;
+    }
+    if (!isInitDone.current) getPlaylist()
+  }, [playlistInStore, useUserSongLoading]);
 
 
-   useEffect(() => {
-      
-      const handlePlaylist = async () => {
-         if (!playlistInStore.name) {
-            await getPlaylist();
-         }
-         
-         if (playlistInStore.song_ids.length) getSongs();
-      };
-      
-      if (!playlistId) {
-         setPlaylistId(`${params.name}_${loggedInUser?.email}`)
-         return;
-      }
-      
-      handlePlaylist();
-   }, [playlistInStore, playlistId]);
+  console.log("use playlist detail render");
+  
 
-
-
-
-   return {playlistSongs, playlistInStore, playlistId}
+  return {
+    playlistSongIndexes,
+    playlistInStore,
+    playlistId: `${params.name}_${userData.email}`,
+    userSongs,
+    loading,
+  };
 }

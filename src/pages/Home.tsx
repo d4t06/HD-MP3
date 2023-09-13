@@ -55,7 +55,7 @@ export default function HomePage() {
                      <>
                         <LinkItem
                            className="py-[10px] border-b border-[#333]"
-                           to={routes.playlist}
+                           to={routes.Playlist}
                            icon={
                               <ClipboardDocumentIcon
                                  className={iconClasses + theme.content_text}
@@ -68,7 +68,7 @@ export default function HomePage() {
                         />
                         <LinkItem
                            className="py-[10px] border-b border-[#333]"
-                           to={routes.allSong}
+                           to={routes.MySongs}
                            icon={
                               <MusicalNoteIcon
                                  className={iconClasses + theme.content_text}

@@ -5,7 +5,7 @@ export type User = {
   email: string;
   photoURL: string;
   songs: string[];
-  playlist: string[];
+  playlist_ids: string[];
   role: string;
   songs_count: number;
   latest_seen:Timestamp;
@@ -29,7 +29,7 @@ export type ParserSong = {
 };
 
 export type Playlist = {
-  active: boolean;
+  id: string,
   name: string;
   image_path: string;
   song_ids: Array<string>;

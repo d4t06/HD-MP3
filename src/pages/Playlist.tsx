@@ -6,19 +6,16 @@ import Modal from "../components/Modal";
 import Button from "../components/ui/Button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Playlist } from "../types";
+import useUserSong from "../hooks/useUserSong";
 
 interface Props {}
 
 const PlaylistPage: FC<Props> = () => {
-   const [_playlists, setPlayLists] = useLocalStorage("playlist", [] as Playlist[]);
+   const {playlists} = useUserSong()
    const [openModal, setOpenModal] = useState(false);
    const [playlistName, setPlayListName] = useState<string>("");
 
    const handleAddPlaylist = () => {
-      setPlayLists((prev) => [
-         ...prev,
-         { name: playlistName, songs: ['adfad', 'adfasdf', 'adfadf'] } as Playlist,
-      ]);
 
       setPlayListName("");
       setOpenModal(false);
@@ -39,12 +36,13 @@ const PlaylistPage: FC<Props> = () => {
                />
             </div>
 
-            {/* {playlists.map((playlist, index) => {
+            {playlists.map((playlist, index) => {
                return (
                   <div key={index} className="w-1/4 px-4">
+                     {JSON.stringify(playlist)}
                   </div>
                );
-            })} */}
+            })}
          </div>
 
          {openModal && (

@@ -20,7 +20,7 @@ const init: stateType = {
     currentIndex: 0,
   },
   playlist: {
-    active: false,
+    id: '',
     image_path: '',
     name: '',
     song_ids: [],
@@ -40,7 +40,7 @@ const SongSlice = createSlice({
       state.song = { ...actionPayload };
     },
 
-    setPlaylist(state, action: { type: string; payload: Playlist }) {
+    setPlaylist(state, action: { type: string; payload: Playlist }) {      
       state.playlist = { ...action.payload }
     }
   },
