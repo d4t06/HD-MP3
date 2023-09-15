@@ -100,7 +100,7 @@ export default function Sidebar() {
             Discover
           </Button>
         </Link>
-        {loggedInUser ? (
+        {true ? (
           <Link className="w-full" to={routes.MySongs}>
             <Button className={classes.button}>
               <MusicalNoteIcon className={classes.icon} />
