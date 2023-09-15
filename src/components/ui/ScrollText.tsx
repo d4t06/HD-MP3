@@ -28,18 +28,19 @@ export default function ScrollText({
    const unScroll = () => {
       const contentNode = text.current as HTMLElement;
 
-      duration.current = 0;
-      distance.current = 0;
+
       contentNode.style.transition = `none`;
       contentNode.style.transform = `translateX(0)`;
       setIsScroll(false);
    };
 
    const scroll = () => {
+      console.log('check duration, distance', duration.current, distance.current);
+      
       if (!duration.current && !distance.current) return;
       const contentNode = text.current as HTMLElement;
-
       console.log("scroll text");
+
 
       // duplicate innerText
       contentNode.innerHTML =
@@ -85,6 +86,7 @@ export default function ScrollText({
             }, 1000);
 
             autoScrollTimerId.current = setInterval(() => {
+                console.log('scroll');
                 
                scroll();
             }, duration.current * 1000 + 3000 + 1000);
@@ -92,11 +94,14 @@ export default function ScrollText({
       }  
 
       return () => {
+         console.log('run cleanup')
          clearInterval(autoScrollTimerId.current);
          clearTimeout(unScrollTimerId.current)
 
          if (innerText.current) {
             unScroll();
+            duration.current = 0;
+            distance.current = 0;
          }
       };
    }, [songInStore && songInStore]);

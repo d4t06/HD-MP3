@@ -1,26 +1,30 @@
-
 import { auth, db, store } from "../config/firebase";
-import {
-   doc,
-   setDoc,
-} from "firebase/firestore";
+import { FieldPath, addDoc, doc, setDoc } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { ChangeEvent, RefObject, useState } from "react";
+import { ChangeEvent, Dispatch, RefObject, useRef, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Song } from "../types";
 import { parserImageFile } from "../utils/parserImage";
 import { generateSongId } from "../utils/generateSongId";
 import useUserSong from "./useUserSong";
 
+type ModalName = "ADD_PLAYLIST" | "OVERLOAD";
 
-export default function useUploadSongs(audioRef: RefObject<HTMLAudioElement>) {
-
-   const [isUpload, setIsUpload] = useState(false);
+// evenlistenner
+// await promise
+export default function useUploadSongs(
+   audioRef: RefObject<HTMLAudioElement>,
+) {
+   const [status, setStatus] = useState<"uploading" | "finish" | "overload" | "idle">(
+      "idle"
+   );
    const [tempSongs, setTempSongs] = useState<Song[]>([]);
    const [addedSongs, setAddedSongs] = useState<string[]>([]);
 
-   const [loggedInUser] = useAuthState(auth)
-   const { songs: userSongs } = useUserSong()
+   const actuallyFileIds = useRef<number[]>([]);
+   const [loggedInUser] = useAuthState(auth);
+   const LIMIT_UPLOAD = 20;
+   // const { songs: userSongs } = useUserSong()
 
    const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
       const target = e.target as HTMLInputElement & { files: FileList };
@@ -37,114 +41,150 @@ export default function useUploadSongs(audioRef: RefObject<HTMLAudioElement>) {
          lyric_id: "",
       };
 
-      setIsUpload(true);
-      let songsList: Song[] = [];
+      setStatus("uploading");
+      let songsList: Song[] = [...tempSongs] || [];
 
-      // init songsList
-      for (let songFile of fileLists) {
-         const songData = await parserImageFile(songFile);
-         if (songData) {
-            let songItem: Song = {
-               ...data,
-               name: songData.name,
-               singer: songData.singer,
-            };
-            songsList.push(songItem);
-         }
+      if (songsList.length + fileLists.length > 5) {
+         return setStatus("overload");
       }
 
-      // init songsList
-      setTempSongs(prev => [...prev, songsList] as Song[]);
-
+      // handle file change, add tempSongs and upload song
       try {
-         // update songsList after upload each song file
+         // init tempsSongs, push actuallyFileIds
          let i;
          for (i = 0; i <= fileLists.length - 1; i++) {
-            const songFile: File = fileLists[i];
+            const songFile = fileLists[i];
+            const songData = await parserImageFile(songFile);
+            if (songData) {
+               let songFileObject: Song = {
+                  ...data,
+                  name: songData.name,
+                  singer: songData.singer,
+               };
 
-            //  upload song file
-            const fileRef = ref(store, `/songs/${songFile.name}`);
-            const fileRes = await uploadBytes(fileRef, songFile);
-            const fileUrl = await getDownloadURL(fileRes.ref);
+               // if only one file
+               if (!songsList.length) {
+                  songsList.push(songFileObject);
+               } else {
+                  // check duplicate file
+                  const isDuplicate = tempSongs.some(
+                     (song) =>
+                        song.singer === songFileObject.singer &&
+                        song.name === songFileObject.name
+                  );
+                  if (isDuplicate) {
+                     console.log(">>>duplicate");
+                     continue;
+                  }
 
-            console.log("song file uploaded");
+                  songsList.push(songFileObject);
+               }
 
-            const songId = generateSongId(songsList[i]);
-            songsList[i] = {
-               ...songsList[i],
-               id: songId,
-               file_name: fileRes.metadata.fullPath,
-               song_path: fileUrl,
-            };
+               console.log("i =", i, fileLists[i].name);
 
-            //  update audio element src
-            const audioEle = audioRef.current as HTMLAudioElement;
-            audioEle.src = URL.createObjectURL(songFile);
-
-            // upload song doc
-            await handleUploadSong(songsList, i);
+               // add actuallyFileIds, and assign for_song_id to actuallyFile
+               actuallyFileIds.current = [...actuallyFileIds.current, i];
+               Object.assign(songFile, { for_song_id: songsList.length - 1 } as {
+                  for_song_id: number;
+               });
+            }
          }
 
-         // update uploaded songs list of loggedInUser after update list of songs
-         const userDocRef = doc(db, "users", loggedInUser?.email as string);
-         const allUserSongs: string[] = userSongs.map((song) => song.id);
-         await setDoc(
-            userDocRef,
-            {
-               songs: [...allUserSongs, ...addedSongs],
-            },
-            { merge: true }
-         );
+         // if no has new songItem after change songs file return
+         if (!songsList.length) return setStatus("finish");
 
-         setIsUpload(false);
+         // inti songItem to render to view
+         setTempSongs(songsList);
+
+         // update tempSongs data after upload each song file
+
+         for (let fileIndex of actuallyFileIds.current) {
+            console.log("check fileIndex", fileIndex);
+            let newSongFile = fileLists[fileIndex] as File & { for_song_id: number };
+
+            //  upload song file
+            // const fileRef = ref(store, `/songs/${songFile.name}`);
+            // const fileRes = await uploadBytes(fileRef, songFile);
+            // const fileUrl = await getDownloadURL(fileRes.ref);
+
+            // update songItem data
+            const songId = generateSongId(songsList[newSongFile.for_song_id]);
+            songsList[newSongFile.for_song_id] = {
+               ...songsList[newSongFile.for_song_id],
+               id: songId,
+               // file_name: fileRes.metadata.fullPath,
+               // song_path: fileUrl,
+            };
+
+            //  update audio src
+            const audioEle = audioRef.current as HTMLAudioElement;
+            audioEle.src = URL.createObjectURL(newSongFile);
+
+            // upload song doc
+            await handleUploadSong(songsList, newSongFile.for_song_id);
+         }
       } catch (error) {
          console.log(error);
+         setStatus("finish");
+      }
+
+      // upload user data
+      try {
+         console.log("user doc updated");
+         actuallyFileIds.current = [];
+         // update uploaded songs list of loggedInUser after update list of songs
+         // const userDocRef = doc(db, "users", loggedInUser?.email as string);
+         // const allUserSongs: string[] = userSongs.map((song) => song.id);
+
+         // const newUserSongs = [...allUserSongs, ...addedSongs]
+         // await setDoc(
+         //    userDocRef,
+         //    {
+         //       songs: newUserSongs,
+         //       song_count: newUserSongs.length,
+         //    },
+         //    { merge: true }
+         // );
+      } catch (error) {
+         console.log(error);
+      } finally {
+         setStatus("finish");
       }
    };
 
-   const handleUploadSong = async (songsList: Song[], index: number) => {
-      let song = songsList[index];
+   // get song duration and upload song doc
+   const handleUploadSong = (songsList: Song[], index: number) =>
+      new Promise<void>((resolve) => {
+         const audioEle = audioRef.current as HTMLAudioElement;
+         const upload = async () => {
+            setTimeout(async () => {
+               let song = songsList[index];
+               song = {
+                  ...song,
+                  duration: +audioEle.duration.toFixed(1) || 99,
+               };
 
-      const audioEle = audioRef.current as HTMLAudioElement;
+               // await setDoc(doc(db, 'songs', song.id), song)
 
-      const upload = async () => {
-         song = {
-            ...song,
-            duration: +audioEle.duration.toFixed(1) || 99,
+               console.log("set added song");
+               setTempSongs(songsList);
+               setAddedSongs((prev) => [...prev, song.id]);
+
+               console.log("set added song");
+
+               // console.log('song doc added');
+
+               audioEle.removeEventListener("loadedmetadata", upload);
+               URL.revokeObjectURL(audioEle.src);
+
+               resolve();
+            }, 500);
          };
 
-         console.log("song doc = ", song);
-         try {
-            await setDoc(doc(db, "songs", song.id), song);
+         audioEle.addEventListener("loadedmetadata", upload);
+      });
 
-            // update temp songs
-            if (tempSongs.length) {
-               let newTempSongs = tempSongs // old and new song
-               const actuallyIndexOfNewSong = index + (newTempSongs.length - songsList.length)
-               newTempSongs[actuallyIndexOfNewSong] = song;
-               setTempSongs(newTempSongs);
+   // console.log("addedSongs ", addedSongs);
 
-            } else {
-               songsList[index] = song;
-               setTempSongs(songsList)
-            }
-
-            // update in process songs list
-            setAddedSongs((prev) => [...prev, song.id]);
-
-            console.log("song doc added");
-         } catch (error) {
-            console.log({ message: error });
-         } finally {
-            audioEle.removeEventListener("loadedmetadata", upload);
-            URL.revokeObjectURL(audioEle.src);
-         }
-      };
-
-      audioEle.addEventListener("loadedmetadata", upload);
-   };
-
-
-   return { tempSongs, addedSongs, isUpload, handleInputChange }
-
+   return { tempSongs, setTempSongs, addedSongs, status, handleInputChange };
 }

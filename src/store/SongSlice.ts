@@ -3,7 +3,7 @@ import { Playlist, Song } from "../types";
 
 type stateType = {
   song: Song & { currentIndex: number };
-  playlist: Playlist
+  playlist: Playlist;
 }
 
 const init: stateType = {
@@ -27,7 +27,7 @@ const init: stateType = {
     time: 0,
     count: 0,
     by: ''
-  }
+  },
 };
 
 const SongSlice = createSlice({

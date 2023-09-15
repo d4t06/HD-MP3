@@ -56,6 +56,7 @@ export default function SongListItem({
    inProcess,
    inList,
 }: Props) {
+   
    const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
    const [inputFields, setInputFields] = useState({
@@ -310,7 +311,7 @@ export default function SongListItem({
       {!inList && (
          <>
          {inProcess ? (
-            <div className="flex">
+            <div className="flex items-center">
                <span>
                   <ArrowPathIcon className="w-[20px] mr-[10px] animate-spin" />
                </span>
@@ -327,7 +328,7 @@ export default function SongListItem({
                      <HeartIcon />
                   </Button>
 
-                  <div className="w-[40px] flex justify-center songContainers-center">
+                  <div className="w-[80px] flex justify-center songContainers-center">
                      <button
                         ref={refs.setReference}
                         {...getReferenceProps()}
@@ -340,7 +341,7 @@ export default function SongListItem({
                         <Bars3Icon />
                      </button>
                      <span
-                        className={`pr-[8px] text-xs group-hover/main:hidden ${
+                        className={`text-[12px] group-hover/main:hidden ${
                            isOpenPopup && "hidden"
                         } max-[549px]:hidden`}
                      >

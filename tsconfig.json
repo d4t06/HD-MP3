@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
-    "module": "esnext",
     "target": "ESNext",
-    "moduleResolution": "Node",
-
     // "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2021", "DOM", "DOM.Iterable"],
-    // "module": "ESNext",
+    "module": "ESNext",
     "skipLibCheck": true,
 
     /* Bundler mode */
-    // "moduleResolution": "bundler",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
