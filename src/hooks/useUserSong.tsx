@@ -4,27 +4,51 @@ import { collection, doc, getDoc, getDocs, query, where } from "firebase/firesto
 
 import { auth, db } from "../config/firebase";
 import { Playlist, Song, User } from "../types";
-import { useSongs } from "../store/SongsContext";
+import { useSongsStore } from "../store/SongsContext";
 
-export default function useUserSong() {
-   const userCollectionRef = collection(db, "users");
+export default function useSong() {
    const songsCollectionRef = collection(db, "songs");
    const playlistCollectionRef = collection(db, "playlist");
 
-   const [playlistIds, setPlaylistIds] = useState<string[]>([]);
    const [loggedInUser] = useAuthState(auth);
-   const [loading, setLoading] = useState(true);
    const firstTimeRender = useRef(true);
 
-   const { initial, songs, playlists, init, setSongs, setPlaylists } = useSongs();
-   const [userData, setUserData] = useState<{
-      song_ids: string[];
-      playlist_ids: string[];
-      email: string;
-   }>({ song_ids: [], playlist_ids: [], email: "" });
+   const {
+      initial,
+      adminSongs,
+      // adminPlaylists,
+      // userPlaylists,
+      initSongsContext,
+   } = useSongsStore();
 
-   // get all user playlists
-   const getPlaylists = async () => {
+   const [loading, setLoading] = useState(adminSongs.length ? false : true);
+   const [errorMsg, setErrorMsg] = useState<string>("");
+
+
+   const handleErrorMsg = (msg: string) => {
+      setErrorMsg(msg);
+      setLoading(false);
+   };
+
+   // get user data
+   const getUserData = async () => {
+      const userCollectionRef = collection(db, "users");
+      const userDocRef = doc(userCollectionRef, loggedInUser?.email as string);
+
+      // get user data
+      try {
+         const userSnapShot = await getDoc(userDocRef);
+
+         if (userSnapShot.exists()) {
+            return userSnapShot.data() as User;
+         }
+      } catch (error) {
+         console.log(error);
+      }
+   };
+
+   // get playlists
+   const getUserPlaylists = async () => {
       // console.log("run getPlaylists");
       try {
          const queryGetUserPlaylist = query(
@@ -33,75 +57,111 @@ export default function useUserSong() {
          );
 
          const playlistSnap = await getDocs(queryGetUserPlaylist);
-         const userPlaylist = playlistSnap.docs?.map((doc) => {
-            const songData = doc.data() as Playlist;
-            return { ...songData, id: doc.id };
-         });
-
-         return userPlaylist;
+         if (playlistSnap.docs.length) {
+            return playlistSnap.docs?.map((doc) => doc.data() as Playlist);
+         }
       } catch (error) {
-         console.log(error);
+         console.log("getUserPlaylists", error);
       }
    };
 
-   // get all user songs
-   const initSongsAndPlaylists = async () => {
-      console.log('run initial');
-
-      setLoading(true);
-
+   // get admin song
+   const getAdminSongsAndPlaylists = async () => {
       try {
-         const userDocRef = doc(userCollectionRef, loggedInUser?.email as string);
+         const queryGetAdminSongs = query(
+            collection(db, "songs"),
+            where("by", "==", "admin")
+         );
+         const queryGetAdminPlaylist = query(
+            collection(db, "playlists"),
+            where("by", "==", "admin")
+         );
 
-         // get user data
-         const userSnapShot = await getDoc(userDocRef);
+         const songsSnap = await getDocs(queryGetAdminSongs);
+         const playlistsSnap = await getDocs(queryGetAdminPlaylist);
 
-         if (userSnapShot.exists()) {
-            const userData = userSnapShot.data() as User;
-            // get all user songs
-            let songsList: Song[] = [];
-            if (userData?.songs.length) {
-               const queryGetUserSongs = query(
-                  songsCollectionRef,
-                  where("by", "==", loggedInUser?.email)
-               );
-               const songsSnapshot = await getDocs(queryGetUserSongs);
+         const data: { adminSongs: Song[]; adminPlaylists: Playlist[] } = {
+            adminSongs: [],
+            adminPlaylists: [],
+         };
 
-               songsList = songsSnapshot.docs?.map((doc) => {
-                  const songData = doc.data() as Song;
-                  return { ...songData, id: doc.id };
-               });
-            }
+         if (songsSnap.docs || playlistsSnap.docs) {
+            const songs = songsSnap.docs.map((doc) => doc.data() as Song);
+            const playlists = playlistsSnap.docs.map((doc) => doc.data() as Playlist);
 
-            //   get all user playlists
-            let playlists: Playlist[] = [];
-            if (userData?.playlist_ids.length) {
-               const res = await getPlaylists();
-               if (res?.length) playlists = res;
-            }
+            data.adminPlaylists = playlists || [];
+            data.adminSongs = songs || [];
 
-            setUserData({
-               song_ids: userData.songs,
-               playlist_ids: userData.playlist_ids,
-               email: userData.email,
-            });
-            init(songsList, playlists);
+            return data;
          }
-
-         setLoading(false);
       } catch (error) {
          console.log({ message: error });
+         handleErrorMsg("getAdminSongsAndPlaylists error");
       }
    };
 
-   // run initial
-   useEffect(() => {
+   // get user songs
+   const getUserSongsAndPlaylists = async () => {
+      try {
+         const userData = await getUserData() as User;
+         const data: { userSongs: Song[]; userPlaylists: Playlist[] } = {
+            userSongs: [],
+            userPlaylists: [],
+         };
+
+         if (!userData) return;
+
+         // get user songs
+         if (userData?.song_ids.length) {
+            const queryGetUserSongs = query(
+               songsCollectionRef,
+               where("by", "==", loggedInUser?.email)
+            );
+            const songsSnapshot = await getDocs(queryGetUserSongs);
+            if (songsSnapshot.docs.length) {
+               data.userSongs = songsSnapshot.docs.map((doc) => doc.data() as Song);
+            }
+         }
+
+         // if user has playlist
+         if (userData?.playlist_ids.length) {
+            const playlists = await getUserPlaylists();
+            if (playlists?.length) data.userPlaylists = playlists;
+         }
+
+         return {data, userData};
+      } catch (error) {
+         console.log({ message: error });
+         handleErrorMsg("getUserSongsAndPlaylists error");
+      }
+   };
+
+   const initSongsAndPlaylists = async () => {
+      console.log("run initial");
       
-      if (firstTimeRender.current) firstTimeRender.current = false
+      setLoading(true);
+      const adminRes = await getAdminSongsAndPlaylists();
+      const userRes = await getUserSongsAndPlaylists();
+
+      if (adminRes && userRes) {
+
+         const {data, userData} = userRes
+
+         initSongsContext({ ...adminRes, ...data, userData });
+         setLoading(false);
+      }
+   };
+
+   // run initSongsAndPlaylists
+   useEffect(() => {
+      if (firstTimeRender.current) {
+         firstTimeRender.current = false;
+         return;
+      }
       if (!initial) {
          initSongsAndPlaylists();
       } else {
-         setLoading(false)
+         setLoading(false);
       }
    }, []);
 
@@ -121,16 +181,10 @@ export default function useUserSong() {
    // }, [playlistIds]);
 
    // 6 time render
-   
 
    return {
-      userData,
-      songs,
-      playlists,
-      setSongs,
-      setPlaylists,
       initial,
-      setPlaylistIds,
       loading,
+      errorMsg,
    };
 }

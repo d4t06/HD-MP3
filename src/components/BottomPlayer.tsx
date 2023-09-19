@@ -150,7 +150,7 @@ export default function BottomPlayer({
                         setIsPlaying={setIsPlaying}
                      />
                   ),
-                  [isPlaying, isOpenFullScreen]
+                  [isPlaying, isOpenFullScreen, isWaiting]
                )}
             </div>
 

@@ -21,7 +21,9 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import handleTimeText from "../utils/handleTimeText";
 
 import PlayPauseButton from "./ui/PlayPauseButton";
-import { useSongs } from "../store/SongsContext";
+import { useSongsStore } from "../store/SongsContext";
+import { Song } from "../types";
+import { useActuallySongs } from "../components/Player";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -44,12 +46,12 @@ export default function Control({
    setIsPlaying,
    setIsWaiting,
 }: Props) {
-   const SongStore = useSelector(selectAllSongStore);
+   const { theme } = useTheme();
    const dispatch = useDispatch();
+   const SongStore = useSelector(selectAllSongStore);
 
    const { song: songInStore } = SongStore;
-   const { songs } = useSongs();
-   const { theme } = useTheme();
+   const { userSongs, adminSongs, initial } = useSongsStore();
 
    const [duration, setDuration] = useState<number>();
    const [isRepeat, setIsRepeat] = useLocalStorage<boolean>("repeat", false);
@@ -62,6 +64,12 @@ export default function Control({
    const currentTimeRef = useRef<HTMLDivElement>(null);
    const remainingTime = useRef<HTMLDivElement>(null);
 
+   const songLists = useRef<Song[]>([]);
+   const firstTimeRender = useRef(true);
+   const isEndOfList = useRef(false);
+
+   const { actuallySongs } = useActuallySongs();
+
    const play = () => {
       audioEle?.play();
    };
@@ -70,7 +78,7 @@ export default function Control({
    };
 
    const getNewSong = (index: number) => {
-      return songs[index];
+      return userSongs[index];
    };
 
    // >>> click handle
@@ -84,7 +92,7 @@ export default function Control({
 
    const handlePlay = () => {
       setIsPlaying(true);
-      setIsWaiting(false);
+      // setIsWaiting(false);
    };
 
    const handleResetForNewSong = useCallback(() => {
@@ -104,6 +112,8 @@ export default function Control({
          console.log("check durationLineWidth", durationLineWidth.current);
 
          if (durationLineWidth.current && duration) {
+            setIsWaiting(true);
+
             // get boundingRect
             const clientRect = node.getBoundingClientRect();
             // get elements
@@ -128,38 +138,47 @@ export default function Control({
    );
 
    const handleNext = useCallback(() => {
-      console.log("check store index", songInStore.currentIndex);
-      let newIndex = songInStore.currentIndex! + 1;
+      // console.log("check store index", songInStore.currentIndex);
+      console.log("handleNext check actuallySongs", actuallySongs);
 
-      let newSong;
-      if (newIndex < songs.length) {
-         newSong = songs[newIndex];
+      let newIndex = songInStore.currentIndex + 1;
+      // let songLists: Song[];
+      let newSong: Song;
+
+      if (newIndex < songLists.current.length) {
+         console.log("next song");
+
+         newSong = songLists.current[newIndex];
       } else {
-         newSong = songs[0];
+         console.log("end of list");
+
+         isEndOfList.current = true;
+         newSong = songLists.current[0];
          newIndex = 0;
       }
-
-      console.log("check new index", newIndex);
-
-      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
-   }, [songInStore]);
+      dispatch(
+         setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
+      );
+   }, [songInStore, actuallySongs]);
 
    const handlePrevious = useCallback(() => {
-      console.log("check store index", songInStore.currentIndex);
+      // console.log("check store index", songInStore.currentIndex);
 
       let newIndex = songInStore.currentIndex! - 1;
-      let newSong;
+      let newSong: Song;
       if (newIndex >= 0) {
-         newSong = songs[newIndex];
+         newSong = actuallySongs[newIndex];
       } else {
-         newSong = songs[songs.length - 1];
-         newIndex = songs.length - 1;
+         newSong = actuallySongs[actuallySongs.length - 1];
+         newIndex = actuallySongs.length - 1;
       }
 
-      console.log("check new index", newIndex);
+      // console.log("check new index", newIndex);
 
-      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
-   }, [songInStore]);
+      dispatch(
+         setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
+      );
+   }, [songInStore, actuallySongs]);
 
    // >>> behind the scenes handle
    const handlePlaying = useCallback(() => {
@@ -200,20 +219,22 @@ export default function Control({
 
          let randomIndex: number = songInStore.currentIndex!;
          while (randomIndex === songInStore.currentIndex) {
-            randomIndex = Math.floor(Math.random() * songs.length);
+            randomIndex = Math.floor(Math.random() * actuallySongs.length);
          }
 
          const newSong = getNewSong(randomIndex);
+
          return dispatch(
             setSong({
                ...newSong,
                currentIndex: randomIndex,
+               song_in: songInStore.song_in,
             })
          );
       }
 
       return handleNext();
-   }, [isRepeat, isShuffle, songInStore]);
+   }, [isRepeat, isShuffle, songInStore, actuallySongs]);
 
    const handleLoaded = () => {
       // set duration
@@ -226,26 +247,44 @@ export default function Control({
       audioEle?.addEventListener("pause", handlePause);
       audioEle?.addEventListener("play", handlePlay);
       audioEle?.addEventListener("timeupdate", handlePlaying);
-      audioEle?.addEventListener("waiting", handleWaiting);
+      // audioEle?.addEventListener("waiting", handleWaiting);
+
+      if (currentTimeRef.current && remainingTime.current) {
+         remainingTime.current.innerText = "-" + handleTimeText(audioEle.duration);
+      }
 
       // play song if click it
+      if (isEndOfList.current) {
+         isEndOfList.current = false;
+         setIsWaiting(false);
+
+         return;
+      }
       play();
    };
 
    // run when current song change
    useEffect(() => {
       if (!audioEle) return;
-      audioEle.onloadedmetadata = () => {
-         handleLoaded();
-      };
+      audioEle.src = songInStore.song_path;
+      audioEle.onloadedmetadata = () => handleLoaded();
 
       return () => {
+         if (firstTimeRender.current) {
+            firstTimeRender.current = false;
+            return;
+         }
+         console.log("run clean up control");
+
+         audioEle.src = "";
+
          audioEle?.removeEventListener("timeupdate", handlePlaying);
          audioEle?.removeEventListener("pause", handlePause);
          audioEle?.removeEventListener("waiting", handleWaiting);
          audioEle?.removeEventListener("play", handlePlay);
 
          handleResetForNewSong();
+
          setIsWaiting(true);
       };
    }, [songInStore]);
@@ -258,29 +297,58 @@ export default function Control({
       // console.log("add new handle function when state change");
 
       return () => audioEle?.removeEventListener("ended", handleEnded);
-   }, [isRepeat, isShuffle, songInStore]);
+   }, [isRepeat, isShuffle, songInStore, actuallySongs]);
 
    // update process lines width
    useEffect(() => {
       durationLineWidth.current = durationLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 
-   const style = {
-      button: "p-[5px]",
+   // update songs list
+   useEffect(() => {
+      if (!initial) return;
+
+      // songs in playlist
+      if (songInStore.song_in.includes("playlist")) {
+         songLists.current = actuallySongs;
+
+         // admin songs
+      } else if (songInStore.song_in === "admin") {
+         songLists.current = adminSongs;
+
+         // user songs
+      } else {
+         songLists.current = userSongs;
+      }
+   }, [songInStore.song_in, actuallySongs]);
+
+   const classes = {
+      button: `p-[5px] ${
+         songLists.current.length <= 1 && "opacity-20 pointer-events-none"
+      }`,
+      buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
+      processContainer: `flex flex-row items-center h-[30px]`,
+      processLineBase: `h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden ${
+         theme.type === "light" ? "bg-gray-400" : "bg-gray-200"
+      }`,
+      processLineCurrent: `absolute left-0 top-0 h-full ${theme.content_bg}`,
+      currentTime: `text-gray-500 text-[14px] font-semibold`,
+      duration: `text-[14px] font-semibold`,
+      icon: "w-[30px] ",
    };
 
    return (
       <>
          {/* buttons */}
-         <div className={`w-full flex justify-center items-center gap-x-[20px] h-[50px]`}>
+         <div className={`${classes.buttonsContainer}`}>
             <button
-               className={`${style.button} ${isRepeat && theme.content_text}`}
+               className={`${classes.button} ${isRepeat && theme.content_text}`}
                onClick={() => setIsRepeat(!isRepeat)}
             >
-               <ArrowPathRoundedSquareIcon className="w-[30px]" />
+               <ArrowPathRoundedSquareIcon className={classes.icon} />
             </button>
-            <button className={style.button} onClick={() => handlePrevious()}>
-               <BackwardIcon className="w-[30px]" />
+            <button className={classes.button} onClick={() => handlePrevious()}>
+               <BackwardIcon className={classes.icon} />
             </button>
 
             <PlayPauseButton
@@ -289,25 +357,22 @@ export default function Control({
                handlePlayPause={handlePlayPause}
             />
 
-            <button className={style.button} onClick={() => handleNext()}>
-               <ForwardIcon className="w-[30px]" />
+            <button className={`${classes.button}`} onClick={() => handleNext()}>
+               <ForwardIcon className={classes.icon} />
             </button>
             <button
-               className={`${style.button} ${isShuffle && theme.content_text}`}
+               className={`${classes.button} ${isShuffle && theme.content_text}`}
                onClick={() => setIsShuffle(!isShuffle)}
             >
-               <ArrowTrendingUpIcon className="w-[30px]" />
+               <ArrowTrendingUpIcon className={classes.icon} />
             </button>
          </div>
 
          {/* process */}
-         <div className="flex flex-row items-center h-[30px]">
+         <div className={classes.processContainer}>
             <div className="w-[45px]">
                {audioEle && (
-                  <span
-                     ref={currentTimeRef}
-                     className="text-gray-500 text-[14px] font-semibold"
-                  >
+                  <span ref={currentTimeRef} className={`${classes.currentTime}`}>
                      00:00
                   </span>
                )}
@@ -315,17 +380,16 @@ export default function Control({
             <div
                ref={durationLine}
                onClick={(e) => handleSeek(e)}
-               className={`h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden ${theme.type === "light" ? "bg-gray-400" : "bg-gray-200"}`}
+               className={`${classes.processLineBase}`}
             >
                <div
                   ref={timeProcessLine}
-                  // style={{ backgroundColor: color }}
-                  className={"absolute left-0 top-0 h-full " + theme.content_bg}
+                  className={`${classes.processLineCurrent}`}
                ></div>
             </div>
             <div className="w-[55px] pl-[5px]">
                {audioEle && (
-                  <span ref={remainingTime} className="text-[14px] font-semibold">
+                  <span ref={remainingTime} className={classes.duration}>
                      "-00:00"
                   </span>
                )}

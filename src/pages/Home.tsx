@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
    ChevronRightIcon,
    ClipboardDocumentIcon,
@@ -5,34 +7,37 @@ import {
 } from "@heroicons/react/24/outline";
 import { Song } from "../types";
 
-import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
+import { useSongsStore } from "../store/SongsContext";
 
 import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
 
 import { auth } from "../config/firebase";
-
 import { routes } from "../routes";
+
+import useSong from "../hooks/useUserSong";
 
 import SongListItem from "../components/ui/SongListItem";
 import Button from "../components/ui/Button";
 import LinkItem from "../components/ui/LinkItem";
-import useAdminSong from "../hooks/useAdminSongs";
 
 export default function HomePage() {
    const dispatch = useDispatch();
    const [signInWithGoogle] = useSignInWithGoogle(auth);
-   
+
    const { theme } = useTheme();
    const [loggedInUser] = useAuthState(auth);
 
-   const {adminSongs} = useAdminSong()
-   const songStore = useSelector(selectAllSongStore);
+   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { adminSongs } = useSongsStore();
+
+   const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
+   const [isCheckedSong, setIsCheckedSong] = useState(false);
 
    const handleSetSong = (song: Song, index: number) => {
-      if (songStore.song.id === song.id) return;
-      dispatch(setSong({ ...song, currentIndex: index }));
+      if (songInStore.id === song.id) return;
+      dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
    };
 
    const windowWidth = window.innerWidth;
@@ -41,7 +46,6 @@ export default function HomePage() {
    const signIn = () => {
       signInWithGoogle();
    };
-
 
    return (
       <>
@@ -92,29 +96,31 @@ export default function HomePage() {
                </div>
             </div>
          )}
-            {/* admin song */}
+         {/* admin song */}
          <div className="pb-[30px]">
             <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
             {!!adminSongs.length ? (
                <>
                   <div className="flex flex-row flex-wrap gap-[4px] min-[550px]:-mx-[10px]">
                      {adminSongs.map((song, index) => {
+                        const active =
+                           songInStore.id === song.id && songInStore.song_in === "admin";
                         return (
-                           <div
-                              key={index}
-                              className="w-full max-[549px]:w-full"
-                           >
+                           <div key={index} className="w-full max-[549px]:w-full">
                               <SongListItem
+                                 isCheckedSong={isCheckedSong}
+                                 selectedSongList={selectedSongList}
+                                 setIsCheckedSong={setIsCheckedSong}
+                                 setSelectedSongList={setSelectedSongList}
+                                 
                                  theme={theme}
                                  data={song}
-                                 active={songStore.song.id === song.id}
+                                 active={active}
                                  onClick={() => handleSetSong(song, index)}
                               />
                            </div>
                         );
                      })}
-
-                     
                   </div>
                </>
             ) : (

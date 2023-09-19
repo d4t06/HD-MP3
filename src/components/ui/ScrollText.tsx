@@ -28,6 +28,8 @@ export default function ScrollText({
    const unScroll = () => {
       const contentNode = text.current as HTMLElement;
 
+      if (!contentNode) return;
+
 
       contentNode.style.transition = `none`;
       contentNode.style.transform = `translateX(0)`;
@@ -35,11 +37,13 @@ export default function ScrollText({
    };
 
    const scroll = () => {
-      console.log('check duration, distance', duration.current, distance.current);
+      // console.log('check duration, distance', duration.current, distance.current);
       
       if (!duration.current && !distance.current) return;
       const contentNode = text.current as HTMLElement;
-      console.log("scroll text");
+
+      if (!contentNode) return;
+      // console.log("scroll text");
 
 
       // duplicate innerText
@@ -62,6 +66,9 @@ export default function ScrollText({
 
       const contentNode = text.current as HTMLElement;
       const wrapperNode = textWrapper.current as HTMLElement;
+
+      if (!contentNode || !wrapperNode) return;
+
       let isOverFlow =
          contentNode.offsetWidth - wrapperNode.offsetWidth > 0 ? true : false;
 

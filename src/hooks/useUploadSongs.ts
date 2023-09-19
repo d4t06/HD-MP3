@@ -14,14 +14,15 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { Song } from "../types";
 import { parserImageFile } from "../utils/parserImage";
 import { generateSongId } from "../utils/generateSongId";
-import useUserSong from "./useUserSong";
-import { useSongs } from "../store/SongsContext";
+import { useSongsStore } from "../store/SongsContext";
 
 type ModalName = "ADD_PLAYLIST" | "MESSAGE";
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
   message: MutableRefObject<string>;
   handleOpenModal: (name: ModalName) => void;
+  duplicatedFile: MutableRefObject<Song[]>;
+  admin?: boolean
 };
 
 // event listener
@@ -31,15 +32,18 @@ export default function useUploadSongs({
   audioRef,
   message,
   handleOpenModal,
+  duplicatedFile,
+  admin
 }: Props) {
-  const { setSongs, songs: userSongs } = useSongs();
+  const [loggedInUser] = useAuthState(auth)
+  const { setUserSongs, userSongs } = useSongsStore();
+
   const [status, setStatus] = useState<
     "uploading" | "finish" | "idle" | "finish-error"
   >("idle");
   const [tempSongs, setTempSongs] = useState<Song[]>([]);
-  const [addedSongs, setAddedSongs] = useState<string[]>([]);
+  const [addedSongIds, setAddedSongIds] = useState<string[]>([]);
 
-  const [loggedInUser] = useAuthState(auth);
   const actuallyFileIds = useRef<number[]>([]);
   const isDuplicate = useRef(false);
   // const { songs: userSongs } = useUserSong()
@@ -55,20 +59,12 @@ export default function useUploadSongs({
       image_path: "",
       file_name: "",
       song_path: "",
-      by: loggedInUser?.email as string,
+      by: admin ? 'admin' : loggedInUser?.email as string,
       duration: 0,
       lyric_id: "",
     };
 
     let songsList: Song[] = [];
-
-    if (userSongs.length + fileLists.length > 10) {
-      console.log(">>> overload");
-      setStatus("finish-error");
-      message.current = "overload";
-      handleOpenModal("MESSAGE");
-      return;
-    }
 
     // handle file change, add tempSongs and upload song
     try {
@@ -77,6 +73,7 @@ export default function useUploadSongs({
       for (i = 0; i <= fileLists.length - 1; i++) {
         const songFile = fileLists[i];
         const songData = await parserImageFile(songFile);
+
         if (songData) {
           // inti song data
           let songFileObject: Song = {
@@ -95,12 +92,13 @@ export default function useUploadSongs({
           if (checkDuplicate()) {
             console.log(">>>duplicate");
             isDuplicate.current = true;
+            duplicatedFile.current.push(songFileObject)
             continue;
           }
 
           songsList.push(songFileObject);
 
-         //  console.log("i =", i, fileLists[i].name);
+          //  console.log("i =", i, fileLists[i].name);
 
           // add actuallyFileIds, and assign for_song_id to actuallyFile
           actuallyFileIds.current = [...actuallyFileIds.current, i];
@@ -110,9 +108,17 @@ export default function useUploadSongs({
         }
       }
 
+      if (userSongs.length + actuallyFileIds.current.length > 10) {
+        console.log(">>> overload");
+        setStatus("finish-error");
+        message.current = "You have reach the limit of songs";
+        handleOpenModal("MESSAGE");
+        return;
+      }
+
       // if no has new songItem after change songs file =>  open modal, return
       if (!songsList.length) {
-        message.current = "duplicate files upload";
+        message.current = "Duplicated file";
         setStatus("finish-error");
         handleOpenModal("MESSAGE");
 
@@ -125,23 +131,24 @@ export default function useUploadSongs({
       // update tempSongs data after upload each song file
 
       for (let fileIndex of actuallyFileIds.current) {
+
         console.log("check fileIndex", fileIndex);
         let newSongFile = fileLists[fileIndex] as File & {
           for_song_id: number;
         };
 
-        //  upload song file
-        // const fileRef = ref(store, `/songs/${songFile.name}`);
-        // const fileRes = await uploadBytes(fileRef, songFile);
-        // const fileUrl = await getDownloadURL(fileRes.ref);
+        // //  upload song file
+        const fileRef = ref(store, `/songs/${newSongFile.name}`);
+        const fileRes = await uploadBytes(fileRef, newSongFile);
+        const fileUrl = await getDownloadURL(fileRes.ref);
 
-        // update songItem data
-        const songId = generateSongId(songsList[newSongFile.for_song_id]);
+        // generateSongId
+        const songId = generateSongId(songsList[newSongFile.for_song_id], loggedInUser?.email as string);
         songsList[newSongFile.for_song_id] = {
           ...songsList[newSongFile.for_song_id],
           id: songId,
-          // file_name: fileRes.metadata.fullPath,
-          // song_path: fileUrl,
+          file_name: fileRes.metadata.fullPath,
+          song_path: fileUrl,
         };
 
         //  update audio src
@@ -151,6 +158,8 @@ export default function useUploadSongs({
         // upload song doc
         await handleUploadSong(songsList, newSongFile.for_song_id);
       }
+
+      // if (!admin) uploadUserData(songsList)
     } catch (error) {
       console.log(error);
       setStatus("finish");
@@ -158,77 +167,89 @@ export default function useUploadSongs({
 
     // upload user data
     try {
-      console.log("user doc updated");
+      // reset fileList
       actuallyFileIds.current = [];
-      // update uploaded songs list of loggedInUser after update list of songs
-      // const userDocRef = doc(db, "users", loggedInUser?.email as string);
-      // const allUserSongs: string[] = userSongs.map((song) => song.id);
 
-      // const newUserSongs = [...allUserSongs, ...addedSongs]
-      // await setDoc(
-      //    userDocRef,
-      //    {
-      //       songs: newUserSongs,
-      //       song_count: newUserSongs.length,
-      //    },
-      //    { merge: true }
-      // );
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // update songs to context store
 
-      if (songsList.length) {
-        setTempSongs([]);
-        setSongs([...songsList, ...userSongs]);
+      if (!admin) {
+        console.log('upload user data');
+        
+        // update uploaded songs list of loggedInUser after update list of songs
+        const userDocRef = doc(db, "users", loggedInUser?.email as string);
+        const userSongIds: string[] = userSongs.map((song) => song.id);
+        const actuallySongsListIds: string[] = songsList.map(song => song.id)
+        const newUserSongsIds = [...userSongIds, ...actuallySongsListIds]
+
+        // update user doc
+        await setDoc(
+          userDocRef,
+          {
+            song_ids: newUserSongsIds,
+            song_count: newUserSongsIds.length,
+          },
+          { merge: true }
+        );
+
+        // update songs to context store
+        if (songsList.length) {
+          setTempSongs([]);
+          setUserSongs([...songsList, ...userSongs]);
+        }
       }
+
+      setTempSongs([]);
       if (isDuplicate.current) {
-        message.current = "duplicate files upload";
+        message.current = "Duplicate file";
         setStatus("finish-error");
         handleOpenModal("MESSAGE");
       } else {
         setStatus("finish");
       }
+
+    } catch (error) {
+      console.log(error);
     }
   };
 
+  const uploadUserData = () => {
+    console.log('check addedSongIds', addedSongIds)
+  }
+
   // get song duration and upload song doc
-  const handleUploadSong = (songsList: Song[], index: number) =>
-    new Promise<void>((resolve) => {
+  const handleUploadSong = async (songsList: Song[], index: number) => {
+    return new Promise<void>((resolve) => {
       const audioEle = audioRef.current as HTMLAudioElement;
       const upload = async () => {
-        setTimeout(async () => {
-          let song = songsList[index];
-          song = {
-            ...song,
-            duration: +audioEle.duration.toFixed(1) || 99,
-            song_path:
-              "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/songs%2FLet%20Me%20Down%20Slowly?alt=media&token=398f4f56-abdf-414d-9549-6522c7379e7e",
-          };
 
-          songsList[index] = song;
+        let song = songsList[index];
+        const duration = +audioEle.duration.toFixed(1) || 99
+        song = {
+          ...song,
+          duration
+        };
+        songsList[index] = song;
 
-          // await setDoc(doc(db, 'songs', song.id), song)
+        await setDoc(doc(db, 'songs', song.id), song)
+        console.log("Song doc added");
 
-          console.log("set added song");
-          setTempSongs(songsList);
-          setAddedSongs((prev) => [...prev, song.id]);
+        setTempSongs(songsList);
+        setAddedSongIds((prev) => [...prev, song.id]);
 
-          console.log("set added song");
-
-          // console.log('song doc added');
-
-          audioEle.removeEventListener("loadedmetadata", upload);
-          URL.revokeObjectURL(audioEle.src);
-
-          resolve();
-        },1000);
+        audioEle.removeEventListener("loadedmetadata", upload);
+        URL.revokeObjectURL(audioEle.src);
+        // setTimeout(async () => {
+        // }, 1000);
+        resolve();
       };
 
       audioEle.addEventListener("loadedmetadata", upload);
     });
 
-  // console.log("addedSongs ", addedSongs);
+  }
 
-  return { tempSongs, setTempSongs, addedSongs, status, handleInputChange };
+
+
+  // console.log("addedSongIds ", addedSongIds);
+
+  return { tempSongs, setTempSongs, addedSongIds, status, handleInputChange };
 }

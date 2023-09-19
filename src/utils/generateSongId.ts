@@ -1,9 +1,9 @@
 import { Song } from "../types";
 
-export const generateSongId = (song: Song): string => {
+export const generateSongId = (song: Song, email: string): string => {
 
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.
-   const constvertToEn = (str: string) => {
+   const convertToEn = (str: string) => {
       str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ/g, "a");
       str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
       str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
@@ -13,10 +13,7 @@ export const generateSongId = (song: Song): string => {
       str = str.replace(/đ/g, "d");
       return str;
    }
-   const name = constvertToEn(song.name)
-   const singer = constvertToEn(song.singer)
-   const nameAndSinger = name.replaceAll(/[\W_]/g, '') + "_" + singer.replaceAll(/[\W_]/g, '')
-   return nameAndSinger.toLocaleLowerCase()
+   return convertToEn(song.name).toLocaleLowerCase().replaceAll(/[\W_]/g, '') + '_' + email.replace('@gmail.com', '')
 }
 
 

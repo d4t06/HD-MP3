@@ -42,7 +42,7 @@ import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
 // import useVolume from "../hooks/useVolume";
-import { useSongs } from "../store/SongsContext";
+import { useSongsStore } from "../store/SongsContext";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 import LyricsList from "./LyricsList";
@@ -73,7 +73,7 @@ export default function MobileFullScreenPlayer({
    const songStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
-   const { songs: adminSongs } = useSongs();
+   const { adminSongs } = useSongsStore();
    const { song: songInStore } = songStore;
    const { theme } = useTheme();
 
@@ -115,9 +115,8 @@ export default function MobileFullScreenPlayer({
 
    useEffect(() => {
       volumeLineWidth.current = volumeLine.current?.offsetWidth;
-      const containerEle = containerRef.current as HTMLElement
-      containerEle.style.height = `${window.innerHeight - 65}px`
-
+      const containerEle = containerRef.current as HTMLElement;
+      containerEle.style.height = `${window.innerHeight - 65}px`;
    }, []);
 
    useEffect(() => {
@@ -164,14 +163,17 @@ export default function MobileFullScreenPlayer({
                         )
                            return;
                         return (
-                           <SongListItem
-                              autoScroll
-                              theme={theme}
-                              data={song}
-                              onClick={() => activeSong(song, index)}
-                              key={index}
-                              active={song.song_path === songInStore.song_path}
-                           />
+                           <>
+                              <h1>{song.name}</h1>
+                           </>
+                           // <SongListItem
+                           //    autoScroll
+                           //    theme={theme}
+                           //    data={song}
+                           //    onClick={() => activeSong(song, index)}
+                           //    key={index}
+                           //    active={song.song_path === songInStore.song_path}
+                           // />
                         );
                      })}
                   </div>
@@ -309,7 +311,7 @@ export default function MobileFullScreenPlayer({
                                  {useMemo(
                                     () => (
                                        <ScrollText
-                                       songInStore={songInStore}
+                                          songInStore={songInStore}
                                           autoScroll
                                           classNames={`${
                                              activeTab === "Playing"
@@ -326,7 +328,7 @@ export default function MobileFullScreenPlayer({
                                  {useMemo(
                                     () => (
                                        <ScrollText
-                                       songInStore={songInStore}
+                                          songInStore={songInStore}
                                           autoScroll
                                           classNames={`${
                                              activeTab === "Playing"
@@ -369,7 +371,6 @@ export default function MobileFullScreenPlayer({
                                        isOpenFullScreen={false}
                                        isPlaying={isPlaying}
                                        isWaiting={isWaiting}
-
                                        setIsWaiting={setIsWaiting}
                                        setIsPlaying={setIsPlaying}
                                        idle={false}

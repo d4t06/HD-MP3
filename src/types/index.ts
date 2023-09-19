@@ -4,15 +4,16 @@ export type User = {
   display_name: string;
   email: string;
   photoURL: string;
-  songs: string[];
   playlist_ids: string[];
+  song_ids: string[];
   role: string;
   songs_count: number;
-  latest_seen:Timestamp;
+  latest_seen: Timestamp;
 };
 
+
 export type Song = {
-   id: string,
+  id: string,
   name: string;
   singer: string;
   image_path: string;
@@ -35,7 +36,7 @@ export type Playlist = {
   song_ids: Array<string>;
   time: number;
   count: number;
-  by: string;
+  by: 'admin' | string;
 }
 
 export type Lyric = {

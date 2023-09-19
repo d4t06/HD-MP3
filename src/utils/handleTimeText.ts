@@ -8,10 +8,19 @@ const handleTimeText = (duration: number) => {
       minute++;
    }
 
-   if (fixexDuration >= 10) {
-      return `0${minute}:${fixexDuration}`;
+   if (minute < 10) {
+      if (fixexDuration >= 10) {
+         return `0${minute}:${fixexDuration}`;
+      }
+      return `0${minute}:0${fixexDuration}`;
+   } else {
+      if (fixexDuration >= 10) {
+         return `${minute}:${fixexDuration}`;
+      }
+      return `${minute}:0${fixexDuration}`;
    }
-   return `0${minute}:0${fixexDuration}`;
+
+
 };
 
 export default handleTimeText;

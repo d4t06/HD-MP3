@@ -8,7 +8,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
-import { useSongs } from "../store/SongsContext";
+import { useSongsStore } from "../store/SongsContext";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -31,7 +31,7 @@ const MobileBottomPlayer: FC<Props> = ({
    const dispatch = useDispatch();
    const SongStore = useSelector(selectAllSongStore);
 
-   const { songs } = useSongs();
+   const { userSongs } = useSongsStore();
    const { theme } = useTheme();
    const { song: songInStore } = SongStore;
 
@@ -49,10 +49,10 @@ const MobileBottomPlayer: FC<Props> = ({
    const handleNext = () => {
       let newIndex = songInStore.currentIndex! + 1;
       let newSong;
-      if (newIndex < songs.length) {
-         newSong = songs[newIndex];
+      if (newIndex < userSongs.length) {
+         newSong = userSongs[newIndex];
       } else {
-         newSong = songs[0];
+         newSong = userSongs[0];
          newIndex = 0;
       }
       dispatch(setSong({ ...newSong, currentIndex: newIndex }));

@@ -1,8 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { Playlist, Song } from "../types";
 
+type Status = {
+  currentIndex: number,
+  song_in: 'user' | 'admin' | `${'user-playlist-'}${string}` | `${'admin-playlist-'}${string}`
+  
+}
+
 type stateType = {
-  song: Song & { currentIndex: number };
+  song: Song & Status;
   playlist: Playlist;
 }
 
@@ -18,6 +24,7 @@ const init: stateType = {
     duration: 0,
     lyric_id: "",
     currentIndex: 0,
+    song_in: "admin"
   },
   playlist: {
     id: '',
@@ -34,13 +41,11 @@ const SongSlice = createSlice({
   name: "song",
   initialState: init,
   reducers: {
-    setSong(state, action) {
-      const actionPayload = action.payload as Song & { currentIndex: number };
-
-      state.song = { ...actionPayload };
+    setSong(state, action: {type: string; payload: Song & Status }) {
+      state.song = { ...action.payload };
     },
 
-    setPlaylist(state, action: { type: string; payload: Playlist }) {      
+    setPlaylist(state, action: { type: string; payload: Playlist }) {
       state.playlist = { ...action.payload }
     }
   },

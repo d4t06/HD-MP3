@@ -19,6 +19,8 @@ export default {
   safelist: [
     'bg-[#000]/[.1]',
     'bg-[#fff]/[.1]',
+    'text-[#000]/[.1]',
+    'text-[#fff]/[.1]',
     'hover:bg-[#000]/[.1]',
     'hover:bg-[#fff]/[.1]',
     'border-[#fff]/[.1]',

@@ -9,6 +9,9 @@ export const parserImageFile = async (songFile: File) => {
 
    if (!songFile) return;
    const tags = await convertFileToBuffer(songFile).then(parse)
+
+   console.log('check song data', tags)
+
    if (!tags) return;
    // console.log("check tag", tags);
 
