@@ -60,8 +60,7 @@ export default function Sidebar() {
       signInWithGoogle();
    };
 
-   // console.log('sidebar render');
-
+   // define skeleton
    const menuItemSkeletons = [...Array(3).keys()].map((index) => {
       return (
          <div key={index} className="px-[10px] py-[5px] flex items-center">
@@ -70,7 +69,6 @@ export default function Sidebar() {
          </div>
       );
    });
-
    const avatarSkeleton = (
       <div className="flex items-center">
          <Skeleton className="w-[36px] h-[36px] flex-shrink-0 rounded-full" />
@@ -172,7 +170,7 @@ export default function Sidebar() {
 
          {isOpenSetting && (
             <Modal setOpenModal={setIsOpenSetting}>
-               <PopupWrapper theme={theme}>{settingComp}</PopupWrapper>
+               <PopupWrapper classNames="w-[700px] max-w-[90vw]" theme={theme}>{settingComp}</PopupWrapper>
             </Modal>
          )}
       </div>

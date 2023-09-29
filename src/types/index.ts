@@ -11,9 +11,8 @@ export type User = {
   latest_seen: Timestamp;
 };
 
-
 export type Song = {
-  id: string,
+  id: string;
   name: string;
   singer: string;
   image_url: string;
@@ -32,14 +31,16 @@ export type ParserSong = {
 };
 
 export type Playlist = {
-  id: string,
+  id: string;
   name: string;
-  image_path: string;
+  image_by: string;
+  image_url: string;
+  image_file_path: string;
   song_ids: Array<string>;
   time: number;
   count: number;
-  by: 'admin' | string;
-}
+  by: "admin" | string;
+};
 
 export type Lyric = {
   base: string;
@@ -68,10 +69,8 @@ export type ThemeType = {
 
 export type ThemesType = Record<"red" | "green_light" | "deep_blue", ThemeType>;
 
-
-
 export type Toast = {
-  title: "success" | "error" | 'warning',
+  title: "success" | "error" | "warning";
   desc: string;
   id: string;
-}
+};

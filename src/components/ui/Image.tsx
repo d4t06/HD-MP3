@@ -29,7 +29,7 @@ export default function Image({ src }: { src: string }) {
    return (
       <>
          {!imageLoaded && <Skeleton className="w-full pt-[100%]" />}
-         <img className={`${!imageLoaded ? "hidden" : ""}`} src={src} ref={imageRef} />
+         <img className={`${!imageLoaded ? "hidden" : ""}`} src={src || 'https://placehold.co/400'} ref={imageRef} />
       </>
    );
 }

@@ -9,7 +9,7 @@ interface Props {
    autoClose: boolean;
 }
 
-const ToastPortal = ({ time = 5000, autoClose }: Props) => {
+const ToastPortal = ({ time = 10000, autoClose }: Props) => {
    const { setToasts, toasts } = useToast();
    const {theme} = useTheme()
    const [removing, setRemoving] = useState("");

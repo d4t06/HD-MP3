@@ -10,6 +10,8 @@ export const myDeleteDoc = async ({
    collection: "songs" | "playlist" | "lyrics";
    id: string;
 }) => {
+   console.log('delete doc');
+
    await deleteDoc(doc(db, collection, id));
 };
 
@@ -20,8 +22,24 @@ export const myGetDoc = async ({
    collection: "songs" | "playlist" | "lyrics";
    id: string;
 }) => {
+   console.log('get doc');
+   
    return getDoc(doc(db, collection, id));
 };
+
+export const  mySetDoc =async ({
+   collection,
+   id,
+   data
+}: {
+   collection: "songs" | "playlist" | "lyrics";
+   id: string;
+   data: {}
+}) => {
+   console.log('set doc');
+
+   return setDoc(doc(db, collection, id), {...data}, {merge: true})
+}
 
 export const uploadFile = async ({
    file,
@@ -58,7 +76,7 @@ export const deleteSong = async (song: Song) => {
 };
 
 export const updatePlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
-   console.log("delete playlist");
+   console.log("update playlist");
 
    // Delete the playlist doc
    await setDoc(

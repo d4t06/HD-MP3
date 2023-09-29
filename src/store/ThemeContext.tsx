@@ -3,15 +3,6 @@ import { ThemeKeyType, ThemeType } from "../types";
 import { themes } from "../config/themes";
 
 type StateType = { theme: ThemeType & { alpha: string } };
-// type StateType = {
-//    id: string,
-//    type: string,
-//    alpha: string,
-//    bottom_player_bg: string,
-//    side_bar_bg: string,
-//    container_bg: string
-//    content_text: string,
-// };
 
 const localStorageThemeId: ThemeKeyType = JSON.parse(
    localStorage.getItem("theme")!

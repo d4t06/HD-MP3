@@ -28,7 +28,8 @@ export default function useSongItemActions() {
       updatePlaylistsValue(newPlaylist, newUserPlaylists);
 
       // if user playing this playlist, need to update new value
-      if (playlistInStore.name == newPlaylist.name) {
+      
+      if (playlistInStore.name === newPlaylist.name) {
          dispatch(setPlaylist(newPlaylist));
       }
 
