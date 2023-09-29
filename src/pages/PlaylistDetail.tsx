@@ -1,10 +1,12 @@
-import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import {
+   ArrowTrendingUpIcon,
    Bars3Icon,
    PencilSquareIcon,
-   PlayPauseIcon,
+   PlayIcon,
    PlusCircleIcon,
    TrashIcon,
+   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
    MouseEventHandler,
@@ -31,25 +33,28 @@ import { selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
 import { Playlist, Song } from "../types";
 
 import PlaylistItem from "../components/ui/PlaylistItem";
-import SongListItem from "../components/ui/SongListItem";
+import SongListItem from "../components/ui/SongItem";
 import Button from "../components/ui/Button";
 import PopupWrapper from "../components/ui/PopupWrapper";
 import Modal from "../components/Modal";
-import MySongsTabs from "../components/MySongsTabs";
-import handleTimeText from "../utils/handleTimeText";
+import {handleTimeText} from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
 import { useParams } from "react-router-dom";
 import { db } from "../config/firebase";
-import useSong from "../hooks/useUserSong";
-import { countSongList, updatePlaylistsValue } from "../utils/crud";
-// import usePlaylistDetail from "../hooks/usePlaylistDetail";
-// import { db } from "../config/firebase";
+import useSong from "../hooks/useSongs";
+import { generatePlaylistAfterChangeSongs, updatePlaylistsValue } from "../utils/firebaseHelpers";
+import { nanoid } from "nanoid";
+import { useToast } from "../store/ToastContext";
+import MobileSongItem from "../components/ui/MobileSongItem";
+import Skeleton from "../components/skeleton";
+import useSongItemActions from "../hooks/useSongItemActions";
 
 export default function PlaylistDetail() {
    // for store
    const params = useParams();
    const dispatch = useDispatch();
    const { theme } = useTheme();
+   const { setToasts } = useToast();
    const { loading: initialLoading, errorMsg, initial } = useSong();
    const {
       userData,
@@ -62,9 +67,12 @@ export default function PlaylistDetail() {
    const { song: songInStore, playlist: playlistInStore } =
       useSelector(selectAllSongStore);
 
+   // use actions
+   const { updatePlaylistAfterChange } = useSongItemActions();
+
    // component state
    const [getPlaylistLoading, setGetPlaylistLoading] = useState(false);
-   const [playListSongs, setPlaylistSongs] = useState<Song[]>([]);
+   const [PlaylistSongs, setPlaylistSongs] = useState<Song[]>([]);
    const firstTimeRender = useRef(true);
    const [getPlaylistErrorMsg, setGetPlaylistErrorMsg] = useState("");
 
@@ -76,7 +84,7 @@ export default function PlaylistDetail() {
 
    // for add songs to playlist
    const [isOpenPopup, setIsOpenPopup] = useState(false);
-   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
+   // const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
    // for multiselect songListItem
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
@@ -96,14 +104,6 @@ export default function PlaylistDetail() {
    const dismiss = useDismiss(context);
    const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
-   // for page data
-   // const {
-   //    playlistSongIndexes,
-   //    playlistId,
-   //    userSongs,
-   //    loading: usePlaylistLoading,
-   // } = usePlaylistDetail();
-
    const handleSetSong = (song: Song, index: number) => {
       dispatch(
          setSong({
@@ -118,85 +118,99 @@ export default function PlaylistDetail() {
    };
 
    const handlePlayPlaylist = () => {
-      const firstSong = playListSongs[0];
+      const firstSong = PlaylistSongs[0];
+
+      if (songInStore.song_in.includes(params.name as string)) return;
       handleSetSong(firstSong, 0);
    };
 
    const handleAddSongsToPlaylist = useCallback(async () => {
       // eliminate duplicate song
-      const trueSongsList = selectedSongList.filter((song) => {
+      const trueNewSongsList = selectedSongList.filter((song) => {
          const isAdded = playlistInStore.song_ids.find((id) => id === song.id);
          return !isAdded;
       });
 
       // get new songs list
-      const newSongsList = [...playListSongs, ...trueSongsList];
-      const { time, ids } = countSongList(newSongsList);
+      const newPlaylistSongs = [...PlaylistSongs, ...trueNewSongsList];
+      const newPlaylist = generatePlaylistAfterChangeSongs({
+         newPlaylistSongs,
+         existingPlaylist: playlistInStore,
+      });
 
-      // get added playlist
-      const addedPlaylist: Playlist = {
-         ...playlistInStore,
-         song_ids: ids,
-         count: ids.length,
-         time,
-      };
+      await updatePlaylistAfterChange({
+         newPlaylist,
+      });
 
-      // get new user playlists
-      const newUserPlaylists = [...userPlaylists];
-      updatePlaylistsValue(addedPlaylist, newUserPlaylists);
+      setToasts((t) => [
+         ...t,
+         {
+            title: "success",
+            id: nanoid(4),
+            desc: `${trueNewSongsList.length} songs added`,
+         },
+      ]);
 
-      // set playlist in redux
-      dispatch(setPlaylist(addedPlaylist));
-
-      // set playlists in context
-      setUserPlaylists(newUserPlaylists, []);
-
-      try {
-         await setDoc(
-            doc(db, "playlist", playlistInStore.id),
-            { song_ids: ids, count: ids.length, time },
-            { merge: true }
-         );
-
-         handleCloseModal();
-      } catch (error) {
-         console.log(error);
-      }
+      handleCloseModal();
    }, [selectedSongList, isOpenModal]);
 
    const deleteFromPlaylist = async (song: Song) => {
+      setIsOpenPopup(false);
+
       if (!playlistInStore.song_ids) {
          return;
       }
-      const newPlaylistSongs = [...playListSongs];
+      const newPlaylistSongs = [...PlaylistSongs];
       newPlaylistSongs.splice(newPlaylistSongs.indexOf(song), 1);
-      const { time, ids } = countSongList(newPlaylistSongs);
 
-      const addedPlaylist: Playlist = {
-         ...playlistInStore,
-         time,
-         song_ids: ids,
-         count: ids.length,
-      };
-      // update userPlaylist
-      const newUserPlaylists = [...userPlaylists];
+      const newPlaylist = generatePlaylistAfterChangeSongs({
+         newPlaylistSongs,
+         existingPlaylist: playlistInStore,
+      });
 
-      updatePlaylistsValue(addedPlaylist, newUserPlaylists);
+      await updatePlaylistAfterChange({
+         newPlaylist,
+      });
+      setToasts((t) => [
+         ...t,
+         { title: "success", id: nanoid(4), desc: `${song.name} removed` },
+      ]);
+   };
 
-      dispatch(setPlaylist(addedPlaylist));
-      setUserPlaylists(newUserPlaylists, []);
+   const deleteManyFromPlaylist = async () => {
+      setIsOpenPopup(false);
 
-      try {
-         await setDoc(
-            doc(db, "playlist", playlistInStore.id),
-            { song_ids: ids, count: ids.length, time },
-            { merge: true }
-         );
-
-         handleCloseModal();
-      } catch (error) {
-         console.log(error);
+      if (!playlistInStore.song_ids) {
+         return;
       }
+
+      // if need to remove 1 song
+      if (selectedSongList.length === 1) {
+         return deleteFromPlaylist(selectedSongList[0]);
+      }
+
+      const newPlaylistSongs = [...PlaylistSongs];
+      for (let song of selectedSongList) {
+         newPlaylistSongs.splice(newPlaylistSongs.indexOf(song), 1);
+      }
+
+      const newPlaylist = generatePlaylistAfterChangeSongs({
+         newPlaylistSongs,
+         existingPlaylist: playlistInStore,
+      });
+
+      await updatePlaylistAfterChange({
+         newPlaylist,
+      });
+
+      setToasts((t) => [
+         ...t,
+         {
+            title: "success",
+            id: nanoid(4),
+            desc: `${selectedSongList.length} songs removed`,
+         },
+      ]);
    };
 
    const handleDeletePlaylist: MouseEventHandler = async () => {
@@ -215,7 +229,7 @@ export default function PlaylistDetail() {
 
    const handleOpenModal = (name: "edit" | "confirm" | "addSongs") => {
       setModalComponent(name);
-      setSelectedSongList(playListSongs);
+      setSelectedSongList(PlaylistSongs);
       setIsOpenModal(true);
    };
 
@@ -223,6 +237,10 @@ export default function PlaylistDetail() {
       setSelectedSongList([]);
       setIsOpenModal(false);
    };
+
+   const songCount = useMemo(() => PlaylistSongs.length, [PlaylistSongs]);
+
+   const isOnMobile = useMemo(() => window.innerWidth < 550, []);
 
    // get playlist data
    const getPlaylist = useCallback(async () => {
@@ -249,7 +267,6 @@ export default function PlaylistDetail() {
    // // get playlist song
    const getPlaylistSongs = useCallback(() => {
       // console.log("get playlist songs check ids", playlistInStore.song_ids);
-      console.log("get playlist songs");
 
       let newSongs: Song[];
       let i = 0;
@@ -282,7 +299,7 @@ export default function PlaylistDetail() {
             });
       }
 
-      console.log("get playlist songs check new songs", newSongs);
+      // console.log("get playlist songs check new songs", newSongs);
 
       setPlaylistSongs(newSongs);
       // setSelectedSongs(tarGetSongsList);
@@ -290,7 +307,10 @@ export default function PlaylistDetail() {
 
    // for initial playlist data
    useEffect(() => {
-      if (playlistInStore.name) return;
+      if (playlistInStore.name) {
+         setGetPlaylistLoading(false);
+         return;
+      }
       if (!initial) return;
 
       getPlaylist();
@@ -311,14 +331,14 @@ export default function PlaylistDetail() {
    // for update playlist feature image
    useEffect(() => {
       if (firstTimeRender.current) return;
-      if (!playListSongs.length) return;
+      if (!PlaylistSongs.length) return;
 
-      const firstSongHasImage = playListSongs.find((song) => song.image_path);
+      const firstSongHasImage = PlaylistSongs.find((song) => song.image_url);
 
       if (
          !firstSongHasImage ||
          (playlistInStore.image_path &&
-            playlistInStore.image_path === firstSongHasImage.image_path)
+            playlistInStore.image_path === firstSongHasImage.image_url)
       )
          return;
 
@@ -326,16 +346,14 @@ export default function PlaylistDetail() {
 
       const newPlaylist: Playlist = {
          ...playlistInStore,
-         image_path: firstSongHasImage.image_path,
+         image_path: firstSongHasImage.image_url,
       };
 
       const setPlaylistImageToDoc = async () => {
          try {
-            await setDoc(
-               doc(db, "playlist", playlistInStore.id),
-               newPlaylist,
-               { merge: true }
-            );
+            await setDoc(doc(db, "playlist", playlistInStore.id), newPlaylist, {
+               merge: true,
+            });
          } catch (error) {
             console.log("error when set playlist image");
          }
@@ -343,7 +361,7 @@ export default function PlaylistDetail() {
 
       setPlaylistImageToDoc();
 
-      // get new user playlits
+      // get new user playlist
       const newUserPlaylists = [...userPlaylists];
       updatePlaylistsValue(newPlaylist, newUserPlaylists);
 
@@ -353,7 +371,7 @@ export default function PlaylistDetail() {
 
       // update users playlist to context
       setUserPlaylists(newUserPlaylists, []);
-   }, [playListSongs]);
+   }, [PlaylistSongs]);
 
    // for defines jsx
    const addSongsComponent = (
@@ -370,25 +388,19 @@ export default function PlaylistDetail() {
                {userSongs.map((song, index) => {
                   return (
                      <div key={index} className="w-full max-[549px]:w-full">
-                        <SongListItem
+                        <MobileSongItem
                            isCheckedSong={true}
                            selectedSongList={selectedSongList}
                            setIsCheckedSong={setIsCheckedSong}
                            setSelectedSongList={setSelectedSongList}
-                           inList
                            theme={theme}
                            data={song}
-                           active={songInStore.id === song.id}
+                           active={false}
                            onClick={() => {}}
                         />
                      </div>
                   );
                })}
-               {/* <MySongsTabs
-                  inList
-                  selectedSongs={selectedSongs}
-                  setSelectedSongs={setSelectedSongs}
-               /> */}
             </div>
          </div>
       </>
@@ -407,15 +419,7 @@ export default function PlaylistDetail() {
                theme.alpha
             } ${theme.type === "light" ? "text-[#333]" : "text-white"}`}
          />
-         <div className="max-h-[60vh] overflow-auto">
-            <div className="overflow-y-auto overflow-x-hidden no-scrollbar">
-               <MySongsTabs
-                  inList
-                  selectedSongs={selectedSongs}
-                  setSelectedSongs={setSelectedSongs}
-               />
-            </div>
-         </div>
+
          <Button
             onClick={() => handleAddSongsToPlaylist()}
             variant={"primary"}
@@ -456,23 +460,50 @@ export default function PlaylistDetail() {
       [getPlaylistLoading, theme]
    );
 
-   if (errorMsg) return <h1>{errorMsg}</h1>;
+   // for define skeleton
+   const playlistSkeleton = (
+      <div className="flex">
+         <div className="w-1/4 max-[459px]:w-1/2">
+            <Skeleton className="pt-[100%] rounded-[8px]" />
+         </div>
+         <div className="ml-[15px]">
+            <Skeleton className="h-[30px]  w-[100px]" />
+            <Skeleton className="h-[20px] mt-[9px] w-[100px]" />
+            <Skeleton className="h-[20px] mt-[9px] w-[100px]" />
+            <Skeleton className="h-[15px] mt-[9px] w-[200px]" />
+         </div>
+      </div>
+   );
 
-   if (initialLoading) return <h1>Initial running...</h1>;
+   const SongItemSkeleton = [...Array(4).keys()].map((index) => {
+      return (
+         <div className="flex p-[10px]" key={index}>
+            <Skeleton className="h-[54px] w-[54px] ml-[27px] rounded-[4px]" />
+            <div className="ml-[10px]">
+               <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
+               <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
+            </div>
+         </div>
+      );
+   });
 
-   if (getPlaylistLoading) return <h1>Get playlist...</h1>;
+   const classes = {
+      button: `${theme.content_bg} rounded-full`,
+   };
 
    if (getPlaylistErrorMsg) return <h1>{getPlaylistErrorMsg}</h1>;
+   if (errorMsg) return <h1>{errorMsg}</h1>;
 
    return (
       <>
          {/* head */}
-         {!!playlistInStore.name && (
-            <div className="w-full flex mb-[20px] pb-[20px] border-b">
+         {(getPlaylistLoading || initialLoading) && playlistSkeleton}
+         {!getPlaylistLoading && !!playlistInStore.name && (
+            <div className="w-full flex mb-[15px] max-[549px]:flex-col max-[549px]:gap-[12px]">
                {/* image */}
-               <div className="w-1/4">
+               <div className="w-1/4 max-[549px]:w-full">
                   <PlaylistItem
-                     onClick={() => setIsOpenModal(true)}
+                     // onClick={() => {}}
                      data={playlistInStore}
                      inDetail
                      theme={theme}
@@ -483,9 +514,9 @@ export default function PlaylistDetail() {
                </div>
 
                {/* playlist info */}
-               <div className="ml-[15px] flex flex-col justify-between">
-                  <div className="">
-                     <h3 className="text-[20px] font-semibold">
+               <div className="ml-[15px] flex flex-col justify-between max-[549px]:ml-0 max-[549px]:gap-[12px]">
+                  <div className="max-[549px]:flex items-center gap-[12px]">
+                     <h3 className="text-[20px] font-semibold max-[549px]:text-[30px]">
                         {playlistInStore.name}
                         <button
                            onClick={() => handleOpenModal("edit")}
@@ -494,31 +525,43 @@ export default function PlaylistDetail() {
                            <PencilSquareIcon className="w-[20px]" />
                         </button>
                      </h3>
-                     <p className="text-[14px]">{playlistInStore?.count} songs</p>
-                     <p className="text-[14px]">
+                     <p className="text-[16px]">{playlistInStore?.count} songs</p>
+                     <p className="text-[16px]">
                         {handleTimeText(playlistInStore?.time)}
                      </p>
-                     <p className="text-[14px] opacity-60">
+                     <p className="text-[14px] opacity-60 max-[549px]:hidden">
                         create by {playlistInStore.by}
                      </p>
                   </div>
-                  <div className="flex items-center">
+
+                  {/* cta */}
+                  <div className="flex items-center gap-[12px]">
                      <Button
                         onClick={() => handlePlayPlaylist()}
                         variant={"primary"}
                         className={`rounded-full ${theme.content_bg}`}
                      >
                         Play
-                        <PlayPauseIcon className="ml-[5px] w-[20px]" />
+                        <PlayIcon className="ml-[5px] w-[20px]" />
                      </Button>
-
-                     <button
-                        {...getReferenceProps}
-                        ref={refs.setReference}
-                        className={`ml-[10px] p-[6px] rounded-full  bg-${theme.alpha}`}
+                     {/* <Button
+                        onClick={() => handlePlayPlaylist()}
+                        variant={"primary"}
+                        className={`rounded-full ${theme.content_bg}`}
                      >
-                        <Bars3Icon className="w-[20px]" />
-                     </button>
+                        Shuffle
+                        <ArrowTrendingUpIcon className="ml-[5px] w-[20px]" />
+                     </Button> */}
+
+                     {/* {!isOnMobile && (
+                        <button
+                           {...getReferenceProps}
+                           ref={refs.setReference}
+                           className={`ml-[10px] p-[6px] rounded-full  bg-${theme.alpha}`}
+                        >
+                           <Bars3Icon className="w-[20px]" />
+                        </button>
+                     )} */}
                   </div>
                </div>
             </div>
@@ -526,18 +569,84 @@ export default function PlaylistDetail() {
 
          {/* songs list */}
          <div className="pb-[30px]">
-            {!!playListSongs.length &&
-               playListSongs.map((song, index) => {
+            <div
+               className={`flex gap-[20px] max-[549px]:gap-[12px] items-center border-b border-${theme.alpha} h-[50px] mb-[10px]`}
+            >
+               {(getPlaylistLoading || initialLoading) && (
+                  <Skeleton className="h-[20px] w-[150px]" />
+               )}
+
+               {!isCheckedSong ? (
+                  <p className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}>
+                     {songCount + " songs"}
+                  </p>
+               ) : (
+                  <p className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}>
+                     {selectedSongList.length + " selected"}
+                  </p>
+               )}
+               {isCheckedSong && userSongs.length && (
+                  <>
+                     <Button
+                        onClick={() => setSelectedSongList(PlaylistSongs)}
+                        variant={"primary"}
+                        className={classes.button}
+                     >
+                        All
+                     </Button>
+                     <Button
+                        onClick={() => deleteManyFromPlaylist()}
+                        variant={"primary"}
+                        className={classes.button}
+                     >
+                        Remove
+                     </Button>
+                     <Button
+                        onClick={() => {
+                           setIsCheckedSong(false);
+                           setSelectedSongList([]);
+                        }}
+                        className={`p-[5px]`}
+                     >
+                        <XMarkIcon className="w-[20px]" />
+                     </Button>
+                  </>
+               )}
+            </div>
+
+            {(getPlaylistLoading || initialLoading) && SongItemSkeleton}
+            {!getPlaylistLoading &&
+               !!PlaylistSongs.length &&
+               PlaylistSongs.map((song, index) => {
                   const active =
                      song.id === songInStore.id &&
                      songInStore.song_in.includes(playlistInStore.name);
+
+                  if (isOnMobile) {
+                     return (
+                        <div key={index} className="w-full max-[549px]:w-full">
+                           <MobileSongItem
+                              theme={theme}
+                              onClick={() => handleSetSong(song, index)}
+                              active={active}
+                              key={index}
+                              data={song}
+                              isCheckedSong={isCheckedSong}
+                              selectedSongList={selectedSongList}
+                              setIsCheckedSong={setIsCheckedSong}
+                              setSelectedSongList={setSelectedSongList}
+                           />
+                        </div>
+                     );
+                  }
                   return (
-                     <div key={index} className="w-full -mx-[8px] max-[549px]:w-full">
+                     <div key={index} className="w-full max-[549px]:w-full">
                         <SongListItem
                            isCheckedSong={isCheckedSong && !isOpenModal}
-                           selectedSongList={selectedSongList}
                            setIsCheckedSong={setIsCheckedSong}
+                           selectedSongList={selectedSongList}
                            setSelectedSongList={setSelectedSongList}
+
                            deleteFromPlaylist={deleteFromPlaylist}
                            userSongs={userSongs}
                            setUserSongs={setUserSongs}

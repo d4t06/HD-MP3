@@ -100,7 +100,6 @@ const ActuallySongsProvider = ({ children }: ProviderProps) => {
 
       // play in playlist
       if (songInStore.song_in.includes("playlist")) {
-         
          if (songInStore.song_in.includes("admin")) {
             // admin - playlist
             if (i === playlistInStore.song_ids.length) return;
@@ -142,7 +141,7 @@ const ActuallySongsProvider = ({ children }: ProviderProps) => {
       // song in a playli  dt, song in b playlist
       // if (prevPlaylist.current != playlistInStore.name
       //    || prevSongIn.current != songInStore.name)
-      getActuallySongList();      
+      getActuallySongList();
 
       // return () => {
       //    prevPlaylist.current === playlistInStore.name;
@@ -231,7 +230,7 @@ const Player: FC<PlayerProps> = () => {
    return (
       <ActuallySongsProvider>
          <div className="absolute">
-            <audio ref={audioRef} src={songInStore.song_path} className="hidden"></audio>
+            <audio ref={audioRef} src={songInStore.song_url} className="hidden"></audio>
             {ishasAudioEle
                ? windowWidth.current >= 550
                   ? desktopContent

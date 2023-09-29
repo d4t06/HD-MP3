@@ -1,6 +1,6 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
-import { ReactNode, useEffect, useRef, useState } from "react";
+import { ReactNode, useEffect, useRef } from "react";
 // import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 
 export default function Auth({ children }: { children: ReactNode }) {
@@ -8,7 +8,7 @@ export default function Auth({ children }: { children: ReactNode }) {
 
    // Because need to fetch data user in other page
    // so we need to pause all processes until user data updated
-   const [updatingUser, _setUpdatingUser] = useState(false);
+   // const [updatingUser, _setUpdatingUser] = useState(false);
    const isUpdateDone = useRef(true)
 
    useEffect(() => {
@@ -45,9 +45,9 @@ export default function Auth({ children }: { children: ReactNode }) {
    }, [loggedInUser]);
 
 
-   console.log('check auth loading', loading);
+   // console.log('check auth loading', loading);
    
-   if (loading || updatingUser) return <h1>Loading...</h1>;
+   // if (loading || updatingUser) return <h1>Loading...</h1>;
    
-   else return children;   
+   return children;   
 }

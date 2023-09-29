@@ -89,8 +89,8 @@ export default function BottomPlayer({
                      <img
                         className={`w-full object-cover object-center rounded-full`}
                         src={
-                           songInStore.image_path
-                              ? songInStore.image_path
+                           songInStore.image_url
+                              ? songInStore.image_url
                               : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
                         }
                      />
@@ -136,7 +136,7 @@ export default function BottomPlayer({
                      ? "max-w-[600px] flex-col-reverse pb-[10px]"
                      : "flex-col justify-center"
                } flex-grow
-            ${!songInStore.song_path ? "pointer-events-none opacity-20" : ""}`}
+            ${!songInStore.song_url ? "pointer-events-none opacity-20" : ""}`}
             >
                {useMemo(
                   () => (

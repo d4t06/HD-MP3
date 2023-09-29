@@ -18,12 +18,13 @@ import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 
 import useLocalStorage from "../hooks/useLocalStorage";
-import handleTimeText from "../utils/handleTimeText";
+import { handleTimeText } from "../utils/appHelpers";
 
 import PlayPauseButton from "./ui/PlayPauseButton";
 import { useSongsStore } from "../store/SongsContext";
 import { Song } from "../types";
 import { useActuallySongs } from "../components/Player";
+import useGetActuallySongs from "../hooks/useGetActuallySongs";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -51,7 +52,6 @@ export default function Control({
    const SongStore = useSelector(selectAllSongStore);
 
    const { song: songInStore } = SongStore;
-   const { userSongs, adminSongs, initial } = useSongsStore();
 
    const [duration, setDuration] = useState<number>();
    const [isRepeat, setIsRepeat] = useLocalStorage<boolean>("repeat", false);
@@ -64,11 +64,11 @@ export default function Control({
    const currentTimeRef = useRef<HTMLDivElement>(null);
    const remainingTime = useRef<HTMLDivElement>(null);
 
-   const songLists = useRef<Song[]>([]);
    const firstTimeRender = useRef(true);
    const isEndOfList = useRef(false);
 
-   const { actuallySongs } = useActuallySongs();
+   // use hooks
+   const songLists = useGetActuallySongs({ songInStore });
 
    const play = () => {
       audioEle?.play();
@@ -78,7 +78,7 @@ export default function Control({
    };
 
    const getNewSong = (index: number) => {
-      return userSongs[index];
+      return songLists[index];
    };
 
    // >>> click handle
@@ -139,27 +139,27 @@ export default function Control({
 
    const handleNext = useCallback(() => {
       // console.log("check store index", songInStore.currentIndex);
-      console.log("handleNext check actuallySongs", actuallySongs);
+      // console.log("handleNext check actuallySongs", actuallySongs);
 
       let newIndex = songInStore.currentIndex + 1;
       // let songLists: Song[];
       let newSong: Song;
 
-      if (newIndex < songLists.current.length) {
+      if (newIndex < songLists.length) {
          console.log("next song");
 
-         newSong = songLists.current[newIndex];
+         newSong = songLists[newIndex];
       } else {
          console.log("end of list");
 
          isEndOfList.current = true;
-         newSong = songLists.current[0];
+         newSong = songLists[0];
          newIndex = 0;
       }
       dispatch(
          setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
       );
-   }, [songInStore, actuallySongs]);
+   }, [songInStore, songLists]);
 
    const handlePrevious = useCallback(() => {
       // console.log("check store index", songInStore.currentIndex);
@@ -167,10 +167,10 @@ export default function Control({
       let newIndex = songInStore.currentIndex! - 1;
       let newSong: Song;
       if (newIndex >= 0) {
-         newSong = actuallySongs[newIndex];
+         newSong = songLists[newIndex];
       } else {
-         newSong = actuallySongs[actuallySongs.length - 1];
-         newIndex = actuallySongs.length - 1;
+         newSong = songLists[songLists.length - 1];
+         newIndex = songLists.length - 1;
       }
 
       // console.log("check new index", newIndex);
@@ -178,7 +178,7 @@ export default function Control({
       dispatch(
          setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
       );
-   }, [songInStore, actuallySongs]);
+   }, [songInStore, songLists]);
 
    // >>> behind the scenes handle
    const handlePlaying = useCallback(() => {
@@ -219,7 +219,7 @@ export default function Control({
 
          let randomIndex: number = songInStore.currentIndex!;
          while (randomIndex === songInStore.currentIndex) {
-            randomIndex = Math.floor(Math.random() * actuallySongs.length);
+            randomIndex = Math.floor(Math.random() * songLists.length);
          }
 
          const newSong = getNewSong(randomIndex);
@@ -234,7 +234,7 @@ export default function Control({
       }
 
       return handleNext();
-   }, [isRepeat, isShuffle, songInStore, actuallySongs]);
+   }, [isRepeat, isShuffle, songInStore, songLists]);
 
    const handleLoaded = () => {
       // set duration
@@ -257,16 +257,18 @@ export default function Control({
       if (isEndOfList.current) {
          isEndOfList.current = false;
          setIsWaiting(false);
+         setIsPlaying(false);
 
          return;
       }
       play();
    };
 
-   // run when current song change
+   // add and remove audio element event listener
    useEffect(() => {
       if (!audioEle) return;
-      audioEle.src = songInStore.song_path;
+
+      audioEle.src = songInStore.song_url;
       audioEle.onloadedmetadata = () => handleLoaded();
 
       return () => {
@@ -277,19 +279,17 @@ export default function Control({
          console.log("run clean up control");
 
          audioEle.src = "";
-
          audioEle?.removeEventListener("timeupdate", handlePlaying);
          audioEle?.removeEventListener("pause", handlePause);
          audioEle?.removeEventListener("waiting", handleWaiting);
          audioEle?.removeEventListener("play", handlePlay);
 
          handleResetForNewSong();
-
          setIsWaiting(true);
       };
    }, [songInStore]);
 
-   // add new handle function when state change
+   // add new handle when song end function
    useEffect(() => {
       // need to render after state change
       if (!audioEle) return;
@@ -297,35 +297,15 @@ export default function Control({
       // console.log("add new handle function when state change");
 
       return () => audioEle?.removeEventListener("ended", handleEnded);
-   }, [isRepeat, isShuffle, songInStore, actuallySongs]);
+   }, [isRepeat, isShuffle, songInStore, songLists]);
 
    // update process lines width
    useEffect(() => {
       durationLineWidth.current = durationLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 
-   // update songs list
-   useEffect(() => {
-      if (!initial) return;
-
-      // songs in playlist
-      if (songInStore.song_in.includes("playlist")) {
-         songLists.current = actuallySongs;
-
-         // admin songs
-      } else if (songInStore.song_in === "admin") {
-         songLists.current = adminSongs;
-
-         // user songs
-      } else {
-         songLists.current = userSongs;
-      }
-   }, [songInStore.song_in, actuallySongs]);
-
    const classes = {
-      button: `p-[5px] ${
-         songLists.current.length <= 1 && "opacity-20 pointer-events-none"
-      }`,
+      button: `p-[5px] ${songLists.length <= 1 && "opacity-20 pointer-events-none"}`,
       buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
       processContainer: `flex flex-row items-center h-[30px]`,
       processLineBase: `h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden ${

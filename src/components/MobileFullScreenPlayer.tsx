@@ -31,21 +31,20 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 
-import { Lyric, Song } from "../types";
+import { Song } from "../types";
+import useGetSongLyric from "../hooks/useGetSongLyric";
 
-import SongThumbnail from "./ui/SongThumbnail";
 import Tabs from "./ui/Tabs";
-import SongListItem from "./ui/SongListItem";
 import ScrollText from "./ui/ScrollText";
-
+import SongThumbnail from "./ui/SongThumbnail";
 import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
-// import useVolume from "../hooks/useVolume";
-import { useSongsStore } from "../store/SongsContext";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
 import LyricsList from "./LyricsList";
+import MobileSongItem from "./ui/MobileSongItem";
+import useBgImage from "../hooks/useBgImage";
+import useGetActuallySongs from "../hooks/useGetActuallySongs";
+// import useVolume from "../hooks/useVolume";
 
 type Props = {
    audioEle: HTMLAudioElement;
@@ -73,11 +72,12 @@ export default function MobileFullScreenPlayer({
    const songStore = useSelector(selectAllSongStore);
    const dispatch = useDispatch();
 
-   const { adminSongs } = useSongsStore();
    const { song: songInStore } = songStore;
    const { theme } = useTheme();
+   // const { actuallySongs } = useActuallySongs();
+   // const [songLists, setSongLists] = useState<Song[]>([]);
 
-   const [songLyric, setSongLyric] = useState<Lyric>({ base: "", real_time: [] });
+   // const [songLyric, setSongLyric] = useState<Lyric>({ base: "", real_time: [] });
    const [isOpenSetting, setIsOpenSetting] = useState(false);
    const [isClickSetting, setIsClickSetting] = useState(false);
 
@@ -90,6 +90,11 @@ export default function MobileFullScreenPlayer({
    const volumeLine = useRef<HTMLDivElement>(null);
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
+
+   // use hooks
+   useBgImage({ bgRef, songInStore });
+   const songLyric = useGetSongLyric({ songInStore });
+   const songLists = useGetActuallySongs({ songInStore: songInStore });
 
    const { refs, floatingStyles, context } = useFloating({
       open: isClickSetting,
@@ -110,7 +115,7 @@ export default function MobileFullScreenPlayer({
    ]);
 
    const activeSong = (song: Song, index: number) => {
-      dispatch(setSong({ ...song, currentIndex: index }));
+      dispatch(setSong({ ...song, currentIndex: index, song_in: songInStore.song_in }));
    };
 
    useEffect(() => {
@@ -119,33 +124,32 @@ export default function MobileFullScreenPlayer({
       containerEle.style.height = `${window.innerHeight - 65}px`;
    }, []);
 
-   useEffect(() => {
-      if (songInStore.image_path) {
-         const node = bgRef.current as HTMLElement;
-         node.style.backgroundImage = `url(${songInStore.image_path})`;
-      }
-   }, [songInStore]);
-
    // useEffect(() => {
-   //    if (
-   //       !(
-   //          (prevTab.current === "Songs" && activeTab === "Lyric") ||
-   //          (prevTab.current === "Lyric" && activeTab === "Songs")
-   //       )
-   //    ) {
-   //       if (prevTab.current != activeTab) setScalingImage(true);
-   //       setTimeout(() => {
-   //          setScalingImage(false);
-   //       }, DURATION + 100);
+   //    if (songInStore.image_url) {
+   //       const node = bgRef.current as HTMLElement;
+   //       node.style.backgroundImage = `url(${songInStore.image_url})`;
+   //    }
+   // }, [songInStore]);
+
+   // // update songs list
+   // useEffect(() => {
+   //    if (!initial) return;
+
+   //    // songs in playlist
+   //    if (songInStore.song_in.includes("playlist")) {
+   //       setSongLists(actuallySongs);
+
+   //       // admin songs
+   //    } else if (songInStore.song_in === "admin") {
+   //       setSongLists(adminSongs);
+
+   //       // user songs
+   //    } else {
+   //       setSongLists(userSongs);
    //    }
 
-   //    // return here cause clean up function don't run
-   //    // return;
-
-   //    return () => {
-   //       prevTab.current = activeTab;
-   //    };
-   // }, []);
+   //    console.log("check songlist", songLists);
+   // }, [songInStore.song_in, actuallySongs]);
 
    const songsListItemTab = useMemo(() => {
       return (
@@ -156,62 +160,36 @@ export default function MobileFullScreenPlayer({
                      Playing next
                   </h3>
                   <div className="relative h-full no-scrollbar overflow-auto transition-all">
-                     {adminSongs.map((song, index) => {
-                        if (
-                           index == songInStore.currentIndex! ||
-                           index <= songInStore.currentIndex!
-                        )
-                           return;
-                        return (
-                           <>
-                              <h1>{song.name}</h1>
-                           </>
-                           // <SongListItem
-                           //    autoScroll
-                           //    theme={theme}
-                           //    data={song}
-                           //    onClick={() => activeSong(song, index)}
-                           //    key={index}
-                           //    active={song.song_path === songInStore.song_path}
-                           // />
-                        );
+                     {songLists.map((song, index) => {
+                        if (index > songInStore.currentIndex) {
+                           return (
+                              <MobileSongItem
+                                 key={index}
+                                 theme={theme}
+                                 data={song}
+                                 onClick={() => activeSong(song, index)}
+                                 active={song.song_url === songInStore.song_url}
+                              />
+                           );
+                        }
                      })}
                   </div>
                </>
             )}
          </>
       );
-   }, [songInStore]);
+   }, [songInStore, songLists]);
 
    const lyricTab = useMemo(
       () => (
          <LyricsList
-            className="h-[calc(100vh-125px)] flex-shrink-0 overflow-auto"
+            className="flex-shrink-0 overflow-auto"
             audioEle={audioEle}
             songLyric={songLyric}
          />
       ),
       [songLyric]
    );
-
-   useEffect(() => {
-      if (!songInStore.lyric_id) return;
-
-      const getLyric = async () => {
-         const docRef = doc(db, "lyrics", songInStore.lyric_id);
-         const docSnap = await getDoc(docRef);
-
-         const lyricsData = docSnap.data() as Lyric;
-
-         if (lyricsData) {
-            setSongLyric(lyricsData);
-         }
-      };
-      getLyric();
-   }, [songInStore]);
-
-   // console.log('check user songs', adminSongs)
-   // console.log("mobile fullscreen check lyric", songLyric);
 
    return (
       <div
@@ -224,7 +202,7 @@ export default function MobileFullScreenPlayer({
             className={`absolute  inset-0 bg-no-repeat bg-cover bg-center blur-[99px]`}
          ></div>
          <div
-            className={`absolute inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`}
+            className={`absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply`}
          ></div>
 
          <div className="absolute inset-0 z-10">
@@ -296,6 +274,7 @@ export default function MobileFullScreenPlayer({
                                  }`}
                                  active={true}
                                  data={songInStore}
+                                 scroll={false}
                               />
                            ),
                            [songInStore, isPlaying, activeTab]
@@ -379,34 +358,6 @@ export default function MobileFullScreenPlayer({
                                  [isPlaying, isWaiting]
                               )}
                            </div>
-
-                           {/* volume */}
-                           {/* <div className="flex flex-row items-center gap-[10px]">
-                              <Button
-                                 onClick={() => handleMute()}
-                                 className={`w-[28px] h-[28px] ${
-                                    isMute && theme.content_text
-                                 }`}
-                              >
-                                 <SpeakerXMarkIcon />
-                              </Button>
-                              <div
-                                 ref={volumeLine}
-                                 onClick={(e) => handleSetVolume(e)}
-                                 className={`h-[4px] bg-gray-300 flex-1 relative 
-                                 cursor-pointer rounded-3xl overflow-hidden ${
-                                    theme.type === "light" ? "bg-gray-400" : "bg-gray-200"
-                                 }`}
-                              >
-                                 <div
-                                    ref={volumeProcessLine}
-                                    className={`absolute left-0 top-0 h-full w-full ${theme.content_bg}`}
-                                 ></div>
-                              </div>
-                              <Button className="w-[28px] h-[28px]">
-                                 <SpeakerWaveIcon />
-                              </Button>
-                           </div> */}
                         </div>
                      </div>
                   </div>

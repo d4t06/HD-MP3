@@ -55,7 +55,7 @@ const MobileBottomPlayer: FC<Props> = ({
          newSong = userSongs[0];
          newIndex = 0;
       }
-      dispatch(setSong({ ...newSong, currentIndex: newIndex }));
+      dispatch(setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in }));
    };
 
    useEffect(() => {
@@ -91,17 +91,17 @@ const MobileBottomPlayer: FC<Props> = ({
                      <img
                         className={`w-full object-cover object-center rounded-full`}
                         src={
-                           songInStore.image_path
-                              ? songInStore.image_path
+                           songInStore.image_url
+                              ? songInStore.image_url
                               : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
                         }
                      />
                   </div>
 
                   <div className="flex-grow  ml-[10px]">
-                     {songInStore.song_path && (
+                     {songInStore.song_url && (
                         <>
-                           <h5 className="text-[18px] font-[500]">
+                           <h5 className="text-[18px] font-[500] line-clamp-1">
                               {songInStore?.name || "name"}
                            </h5>
                            <p className={`text-[14px] font-[400] line-clamp-1`}>

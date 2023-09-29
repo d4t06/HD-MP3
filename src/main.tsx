@@ -5,14 +5,17 @@ import { Provider } from "react-redux";
 import store from "./store/index.ts";
 import "./index.css";
 import ThemeProvider, { initialState } from "./store/ThemeContext.tsx";
-import SongsProvider, {initialSongs} from "./store/SongsContext.tsx";
+import SongsProvider, { initialSongs } from "./store/SongsContext.tsx";
+import ToastProvider from "./store/ToastContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
    <React.StrictMode>
       <ThemeProvider theme={initialState}>
          <SongsProvider songsStore={initialSongs}>
             <Provider store={store}>
-               <App />
+               <ToastProvider>
+                  <App />
+               </ToastProvider>
             </Provider>
          </SongsProvider>
       </ThemeProvider>

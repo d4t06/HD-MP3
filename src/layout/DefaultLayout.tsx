@@ -3,6 +3,7 @@ import Sidebar from "../components/Sidebar";
 import Player from "../components/Player";
 import { useTheme } from "../store/ThemeContext";
 import Auth from "../components/Auth";
+import ToastPortal from "../components/ToastPortal";
 
 interface Props {
   children: ReactNode;
@@ -14,7 +15,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 
   const classes = {
     container:
-      "w-full overflow-y-auto overflow-x-hidden h-[calc(100vh-90px)] max-[549px]:h-full",
+      "w-full overflow-y-auto overflow-x-hidden h-[calc(100vh-90px)] max-[549px]:h-full max-[549px]:pb-[70px]",
     content: "px-[40px] max-[549px]:px-[15px]",
     page: `min-h-screen flex ${
       theme.type === "dark" ? "text-white" : "text-[#333]"
@@ -31,6 +32,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
         </div>
 
         <Player />
+        <ToastPortal autoClose />
       </div>
     </Auth>
   );

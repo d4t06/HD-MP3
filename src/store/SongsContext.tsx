@@ -125,7 +125,7 @@ const useSongsContext = (songsStore: StateType) => {
          adminPlaylists,
          userData,
       }: {
-         userData: User;
+         userData: User | undefined;
          userSongs: Song[];
          adminSongs: Song[];
          userPlaylists: Playlist[];
@@ -176,7 +176,7 @@ const SongsProvider = ({
    );
 };
 
-type UseSongsHookType = {
+export type UseSongsHookType = {
    userData: StateType["userData"];
    initial: StateType["initial"];
    userSongs: StateType["userSongs"];
@@ -192,7 +192,7 @@ type UseSongsHookType = {
       adminPlaylists,
       userData,
    }: {
-      userData: User;
+      userData: User | undefined;
       userSongs: Song[];
       adminSongs: Song[];
       userPlaylists: Playlist[];

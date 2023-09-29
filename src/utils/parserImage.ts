@@ -10,18 +10,19 @@ export const parserImageFile = async (songFile: File) => {
    if (!songFile) return;
    const tags = await convertFileToBuffer(songFile).then(parse)
 
-   console.log('check song data', tags)
-
+   
    if (!tags) return;
-   // console.log("check tag", tags);
+   // console.log('check song tags', tags)
 
    const { title, artist, lyrics } = tags
    const data: ParserSong = { name: '', singer: '', lyric: '' }
 
-   if (!title || !artist) return;
+   if (!title || !artist) {
+      console.log("song don't have tags")
+   }
 
-   data.name = title;
-   data.singer = artist;
+   data.name = title || songFile.name;
+   data.singer = artist || '...';
 
    if (lyrics?.length) {
       const songLyric = lyrics[0].value

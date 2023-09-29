@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext";
-import { routes } from "../routes";
+// import { routes } from "../routes";
 
 import { auth, db, store } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -10,7 +10,7 @@ import {
    collection,
    deleteDoc,
    doc,
-   getDoc,
+   // getDoc,
    getDocs,
    query,
    where,
@@ -18,14 +18,14 @@ import {
 
 // utils
 import { Song, User } from "../types";
-import { convertTimestampToString } from "../utils/convertTimestampToString";
+import { convertTimestampToString } from "../utils/appHelpers";
 
 // ui
 import { PencilSquareIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Button from "../components/ui/Button";
 import useUploadSongs from "../hooks/useUploadSongs";
 
-type ModalName = "ADD_PLAYLIST" | "MESSAGE";
+// type ModalName = "ADD_PLAYLIST" | "MESSAGE";
 
 // 2 time render
 export default function DashBoard() {
@@ -41,23 +41,23 @@ export default function DashBoard() {
    const [selectedList, setSelectedList] = useState<Song[]>([]);
 
    // for upload song
-   const [openModal, setOpenModal] = useState(false);
-   const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
+   // const [openModal, setOpenModal] = useState(false);
+   // const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
    const audioRef = useRef<HTMLAudioElement>(null);
    const message = useRef<string>("");
-   const duplicatedFile = useRef<Song[]>([]);
+   // const duplicatedFile = useRef<Song[]>([]);
 
-   const handleOpenModal = (name: ModalName) => {
-      setModalName(name);
-      setOpenModal(true);
-   };
+   // const handleOpenModal = (name: ModalName) => {
+   //    setModalName(name);
+   //    setOpenModal(true);
+   // };
 
-   const { addedSongIds, handleInputChange, setTempSongs, status, tempSongs } =
-      useUploadSongs({ audioRef, message, duplicatedFile, handleOpenModal, admin: true });
+   const { addedSongIds, handleInputChange, status, tempSongs } =
+      useUploadSongs({ audioRef, message, admin: true });
 
    const selectAllBtnRef = useRef<HTMLInputElement>(null);
 
-   const navigate = useNavigate();
+   // const navigate = useNavigate();
 
    const getSongs = async () => {
       try {
@@ -153,7 +153,7 @@ export default function DashBoard() {
          for (let song of selectedList) {
             // await handleDeleted(song);
 
-            const songFileRef = ref(store, song.file_name);
+            const songFileRef = ref(store, song.song_file_path);
 
             // Delete the file
             await deleteObject(songFileRef);
@@ -196,7 +196,7 @@ export default function DashBoard() {
                <td className={classes.td}>
                   <div className="h-[44px] w-[44px]">
                      <img
-                        src={song.image_path || "https://placehold.co/100x100/png"}
+                        src={song.image_url || "https://placehold.co/100x100/png"}
                         alt=""
                      />
                   </div>
@@ -232,7 +232,7 @@ export default function DashBoard() {
                <td className={classes.td}>
                   <div className="h-[44px] w-[44px]">
                      <img
-                        src={song.image_path || "https://placehold.co/100x100/png"}
+                        src={song.image_url || "https://placehold.co/100x100/png"}
                         alt=""
                      />
                   </div>
@@ -291,24 +291,24 @@ export default function DashBoard() {
    }, [songs, tempSongs]);
 
    useEffect(() => {
-      const auth = async () => {
-         try {
-            // get loggedInUser data
-            const userSnapshot = await getDoc(
-               doc(db, "users", loggedInUser?.email as string)
-            );
-            const userData = userSnapshot.data() as User;
+      // const auth = async () => {
+      //    try {
+      //       // get loggedInUser data
+      //       const userSnapshot = await getDoc(
+      //          doc(db, "users", loggedInUser?.email as string)
+      //       );
+      //       const userData = userSnapshot.data() as User;
 
-            console.log(userData);
+      //       console.log(userData);
 
-            // if loggeedInUser not an admin user
-            if (userData.role !== "admin") return navigate(routes.Home);
+      //       // if loggeedInUser not an admin user
+      //       if (userData.role !== "admin") return navigate(routes.Home);
 
-            if (tab === "songs") getSongs();
-         } catch (error) {
-            console.log(error);
-         }
-      };
+      //       if (tab === "songs") getSongs();
+      //    } catch (error) {
+      //       console.log(error);
+      //    }
+      // };
 
       // first render still loading and no has loggedInUser
       if (loading) return;

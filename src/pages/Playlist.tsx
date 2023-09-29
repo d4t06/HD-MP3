@@ -1,17 +1,19 @@
 import { FC, useState } from "react";
 // import PlaylistItem from "../components/ui/PlaylistItem";
 import Empty from "../components/ui/Empty";
-import useLocalStorage from "../hooks/useLocalStorage";
 import Modal from "../components/Modal";
 import Button from "../components/ui/Button";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Playlist } from "../types";
-import useUserSong from "../hooks/useUserSong";
+// import { Playlist } from "../types";
+import { useSongsStore } from "../store/SongsContext";
+import { useTheme } from "../store/ThemeContext";
 
 interface Props {}
 
 const PlaylistPage: FC<Props> = () => {
-   const {playlists} = useUserSong()
+   const {theme} = useTheme();
+
+   const {userPlaylists} = useSongsStore()
    const [openModal, setOpenModal] = useState(false);
    const [playlistName, setPlayListName] = useState<string>("");
 
@@ -31,12 +33,12 @@ const PlaylistPage: FC<Props> = () => {
             <div className="w-1/4 max-[549px]:w-[50%]">
                <Empty
                   className="pb-[100%]"
-                  label="Create new playlist"
                   onClick={() => setOpenModal(true)}
+                  theme={theme}
                />
             </div>
 
-            {playlists.map((playlist, index) => {
+            {userPlaylists.map((playlist, index) => {
                return (
                   <div key={index} className="w-1/4 px-4">
                      {JSON.stringify(playlist)}

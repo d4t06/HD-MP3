@@ -18,7 +18,7 @@ const Empty: FC<Props> = ({ className, onClick, theme }) => {
          <Button
             className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] `}
          >
-            <PlusCircleIcon className="h-[40px] w-[40px]" />
+            <PlusCircleIcon className="w-[40px] max-[549px]:w-[30px]" />
          </Button>
       </div>
    );

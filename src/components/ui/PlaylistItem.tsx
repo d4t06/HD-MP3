@@ -1,12 +1,18 @@
-import { FC } from "react";
-import Button from "./Button";
 import { Bars3Icon, PauseCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { Playlist, ThemeType, User } from "../../types";
-// import { deleteDoc } from "firebase/firestore";
-// import { db } from "../../config/firebase";
-import { delePlaylist, setUserPlaylistIdsDoc } from "../../utils/crud";
+import { FC, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { nanoid } from "nanoid";
 import { routes } from "../../routes";
+import { Playlist, ThemeType, User } from "../../types";
+
+import { myDeleteDoc, setUserPlaylistIdsDoc } from "../../utils/firebaseHelpers";
+import { useToast } from "../../store/ToastContext";
+
+import Modal from "../Modal";
+import Button from "./Button";
+import PopupWrapper from "./PopupWrapper";
+import Image from "./Image";
 
 interface Props {
    data: Playlist;
@@ -16,7 +22,6 @@ interface Props {
    userData: User;
    setUserPlaylists: (playlist: Playlist[], adminPlaylists: Playlist[]) => void;
    onClick?: () => void;
-   // handleOpenModal: () => void
 }
 
 const PlaylistItem: FC<Props> = ({
@@ -29,66 +34,139 @@ const PlaylistItem: FC<Props> = ({
    onClick,
 }) => {
    const navigate = useNavigate();
+   const { setToasts } = useToast();
+
+   const [fBaseLoading, setFBaseLoading] = useState(false);
+   const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
+   // const [isOnMobile, setIsOnMobile] = useState(false)
 
    const handleDeletePlaylist = async () => {
-      // delete playlist doc
-      await delePlaylist(data);
+      setFBaseLoading(true);
 
-      const newPlaylists = [...userPlaylists];
+      try {
+         // delete playlist doc
+         await myDeleteDoc({ collection: "playlist", id: data.id });
 
-      // eliminate 1 element from playlists
-      newPlaylists.splice(newPlaylists.indexOf(data), 1);
+         const newUserPlaylists = [...userPlaylists];
 
-      // update user doc
-      await setUserPlaylistIdsDoc(newPlaylists, userData);
+         // eliminate 1 element from playlists
+         newUserPlaylists.splice(newUserPlaylists.indexOf(data), 1);
 
-      // update user playlists context
-      setUserPlaylists(newPlaylists, []);
+         // update user doc
+         await setUserPlaylistIdsDoc(newUserPlaylists, userData);
 
-      if (inDetail) {
-         navigate(`${routes.Playlist}`);
+         // update user playlists context
+         setUserPlaylists(newUserPlaylists, []);
+
+         setToasts((t) => [
+            ...t,
+            { title: "success", id: nanoid(4), desc: `Playlist '${data.name}' deleted` },
+         ]);
+
+         setFBaseLoading(false);
+         setIsOpenModal(false);
+
+         if (inDetail) {
+            navigate(`${routes.Playlist}`);
+         }
+      } catch (error) {
+         setToasts((t) => [
+            ...t,
+            {
+               title: "error",
+               id: nanoid(4),
+               desc: `Playlist '${data.name}' Somethings went wrong`,
+            },
+         ]);
       }
    };
+
+   const confirmComponent = useMemo(
+      () => (
+         <>
+            <div className="w-[30vw]">
+               <h1 className="text-[20px] font-semibold">Chắc chưa ?</h1>
+               <p className="text-[red]">This action cannot be undone</p>
+
+               <div className="flex gap-[10px] mt-[20px]">
+                  <Button
+                     isLoading={fBaseLoading}
+                     className={`${theme.content_bg} rounded-full text-[14px]`}
+                     variant={"primary"}
+                     onClick={handleDeletePlaylist}
+                  >
+                     Xóa mẹ nó đi !
+                  </Button>
+                  <Button
+                     onClick={() => setIsOpenModal(false)}
+                     className={`bg-${theme.alpha} rounded-full text-[14px]`}
+                     variant={"primary"}
+                  >
+                     Khoan từ từ
+                  </Button>
+               </div>
+            </div>
+         </>
+      ),
+      [fBaseLoading, theme]
+   );
 
    const classes = {
       button: `rounded-full p-[4px] hover:bg-${theme.alpha}`,
    };
 
+   const isOnMobile = useMemo(() => {
+      return window.innerWidth < 550;
+   }, [window.innerWidth]);
+
    return (
-      <div className="group">
-         <div className="relative overflow-hidden rounded-xl">
-            <img
-               className="transition group-hover:scale-105"
-               src={data.image_path || "https://placehold.co/400x400"}
-               alt=""
-            />
+      <>
+         <div className="group" onClick={() => isOnMobile && onClick && onClick()}>
+            <div className="relative overflow-hidden rounded-xl">
+               <Image src={data.image_path} />
 
-            <div className="absolute hidden inset-0 group-hover:block">
-               <div className="absolute inset-0 bg-black opacity-60"></div>
-               <div className="flex flex-row justify-center items-center h-full gap-4 relative z-10">
-                  {!inDetail && (
-                     <Button
-                        onClick={() => handleDeletePlaylist()}
-                        className={classes.button}
-                     >
-                        <XMarkIcon className="w-[20px]" />
-                     </Button>
-                  )}
+               {/* <img src={data.image_path} alt="" /> */}
 
-                  <Button onClick={() => onClick && onClick()} className={classes.button}>
-                     <PauseCircleIcon className="w-[35px]" />
-                  </Button>
+               {!isOnMobile && (
+                  <div className="absolute hidden inset-0 group-hover:block">
+                     <div className="absolute inset-0 bg-black opacity-60"></div>
+                     <div className="flex flex-row justify-center items-center h-full gap-4 relative z-10">
+                        {!inDetail && (
+                           <>
+                              <Button
+                                 onClick={() => setIsOpenModal(true)}
+                                 className={classes.button}
+                              >
+                                 <XMarkIcon className="w-[20px]" />
+                              </Button>
 
-                  {!inDetail && (
-                     <Button className={classes.button}>
-                        <Bars3Icon className="w-[20px] text-white" />
-                     </Button>
-                  )}
-               </div>
+                              <Button
+                                 onClick={() => onClick && onClick()}
+                                 className={classes.button}
+                              >
+                                 <PauseCircleIcon className="w-[35px]" />
+                              </Button>
+
+                              <Button className={classes.button}>
+                                 <Bars3Icon className="w-[20px] text-white" />
+                              </Button>
+                           </>
+                        )}
+                     </div>
+                  </div>
+               )}
             </div>
+            {!inDetail && (
+               <h5 className="text-[20px] font-[500] mt-[5px]">{data.name}</h5>
+            )}
          </div>
-         {!inDetail && <h5 className="text-[20px] mt-[5px]">{data.name}</h5>}
-      </div>
+
+         {isOpenModal && (
+            <Modal setOpenModal={setIsOpenModal}>
+               <PopupWrapper theme={theme}>{confirmComponent}</PopupWrapper>
+            </Modal>
+         )}
+      </>
    );
 };
 

@@ -1,54 +1,64 @@
 import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { FC, ReactNode, useEffect, useRef, useState, useCallback } from "react";
+import { ReactNode, useRef, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { nanoid } from "nanoid";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Playlist, Song } from "../types";
 
-import { db, store } from "../config/firebase";
-import { deleteDoc, doc, setDoc } from "firebase/firestore";
-
-// import { routes } from "../routes";
-// import { useNavigate } from "react-router-dom";
-
+// store
 import { useTheme } from "../store/ThemeContext";
+import { selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
+import { useSongsStore } from "../store/SongsContext";
+import { useToast } from "../store/ToastContext";
 
+// utils
+import { routes } from "../routes";
+import { db } from "../config/firebase";
+import { doc, setDoc } from "firebase/firestore";
+import { generateId } from "../utils/appHelpers";
+import {
+   deleteSong,
+   setUserPlaylistIdsDoc,
+   setUserSongIdsAndCountDoc,
+} from "../utils/firebaseHelpers";
+
+// hooks
+import useUploadSongs from "../hooks/useUploadSongs";
+import useSongItemActions from "../hooks/useSongItemActions";
+
+// components
+import Empty from "../components/ui/Empty";
+import Skeleton from "../components/skeleton";
+import MobileSongItem from "../components/ui/MobileSongItem";
 import Modal from "../components/Modal";
 import PopupWrapper from "../components/ui/PopupWrapper";
 import PlaylistItem from "../components/ui/PlaylistItem";
 import Button from "../components/ui/Button";
-import useSongs from "../hooks/useUserSong";
-import SongListItem from "../components/ui/SongListItem";
-import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
-import useUploadSongs from "../hooks/useUploadSongs";
-import Empty from "../components/ui/Empty";
-import { useSongsStore } from "../store/SongsContext";
-import { deleteObject, ref } from "firebase/storage";
-import { useNavigate } from "react-router-dom";
-import { routes } from "../routes";
-import { updatePlaylistsValue, setUserPlaylistIdsDoc } from "../utils/crud";
+import useSongs from "../hooks/useSongs";
+import SongListItem from "../components/ui/SongItem";
 
-interface Props {}
-type ModalName = "ADD_PLAYLIST" | "MESSAGE";
+type ModalName = "ADD_PLAYLIST" | "MESSAGE" | "CONFIRM";
 
-const SongsPage: FC<Props> = () => {
+export default function MySongsPage() {
+   // use store
    const dispatch = useDispatch();
-
    const { theme } = useTheme();
-
-   const { loading, errorMsg } = useSongs();
+   const { setToasts } = useToast();
+   const { loading: useSongsloading, errorMsg, initial } = useSongs();
+   const { updatePlaylistAfterChange } = useSongItemActions();
 
    const { song: songInStore, playlist: playlistInStore } =
       useSelector(selectAllSongStore);
+
    const { userData, userSongs, userPlaylists, setUserSongs, setUserPlaylists } =
       useSongsStore();
 
+   // define state
+   const [loading, setLoading] = useState(false);
    const [openModal, setOpenModal] = useState(false);
    const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
-
    const [playlistName, setPlayListName] = useState<string>("");
-   // const [playlistIds, setPlaylistIds] = useState<string[]>([]);
-
-   const [songCount, setSongCount] = useState(0);
-   const [isHasSong, setIsHasSong] = useState(false);
 
    const navigate = useNavigate();
 
@@ -59,92 +69,88 @@ const SongsPage: FC<Props> = () => {
    // useUploadSong
    const audioRef = useRef<HTMLAudioElement>(null);
    const message = useRef<string>("");
-   const duplicatedFile = useRef<Song[]>([]);
+   const { tempSongs, addedSongIds, status, handleInputChange } = useUploadSongs({
+      audioRef,
+      message,
+   });
 
+   // define callback functions
    const handleOpenModal = (name: ModalName) => {
       setModalName(name);
       setOpenModal(true);
    };
 
-   const { tempSongs, addedSongIds, status, handleInputChange } = useUploadSongs({
-      audioRef,
-      message,
-      handleOpenModal,
-      duplicatedFile,
-   });
-
    const handleSetSong = (song: Song, index: number) => {
-      dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
+      if (songInStore.name != song.name) {
+         dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
+      }
    };
 
-   const checkIsHasSong = useCallback(() => {
-      // console.log("call has song");
-      // setIsHasSong(!!tempSongs.length || !!userSongs.length);
-      return !!tempSongs.length || !!userSongs.length;
-   }, [tempSongs, userSongs]);
-
-   const countSong = useCallback(() => {
-      // setSongCount(tempSongs.length + userSongs.length);
+   const songCount = useMemo(() => {
+      if (useSongsloading || !initial) return;
+      // console.log("count song");
       return tempSongs.length + userSongs.length;
    }, [tempSongs, userSongs]);
 
+   const isOnMobile = useMemo(() => {
+      return window.innerWidth < 550;
+   }, []);
+
+   const resetCheckedList = () => {
+      setSelectedSongList([]);
+      setIsCheckedSong(false);
+   };
+
+   const closeModal = () => {
+      setLoading(false);
+      setOpenModal(false);
+   };
+
    const handleDeleteSongs = async () => {
       const newUserSongs = [...userSongs];
-
       try {
+         setLoading(true);
          // loop each selected song
-         const deletedSongList: string[] = [];
-
-         // delete songfile, song doc and playlist doc
          for (let song of selectedSongList) {
-            // create song ref
-            const songFileRef = ref(store, song.file_name);
-
-            // Delete the file
-            await deleteObject(songFileRef);
-
-            // Delete the song doc
-            await deleteDoc(doc(db, "songs", song.id));
-
+            await deleteSong(song);
             newUserSongs.splice(newUserSongs.indexOf(song), 1);
-
-            if (song.lyric_id) {
-               // Delete lyric doc
-               await deleteDoc(doc(db, "lyrics", song.lyric_id));
-            }
-
-            deletedSongList.push(song.id);
          }
 
          // update song_ids, song_count to user doc
-         const userDocRef = doc(db, "users", userData?.email as string);
          const userSongIds: string[] = newUserSongs.map((song) => song.id);
+         setUserSongIdsAndCountDoc({ songIds: userSongIds, userData });
 
-         await setDoc(
-            userDocRef,
+         setUserSongs(newUserSongs);
+
+         resetCheckedList();
+         closeModal();
+
+         setToasts((t) => [
+            ...t,
             {
-               song_ids: userSongIds,
-               song_count: userSongIds.length,
+               title: "success",
+               id: nanoid(4),
+               desc: `${selectedSongList.length} songs deleted`,
             },
-            { merge: true }
-         );
-         // const index = songs.indexOf(song);
-         // newSongs.splice(index, 1);
-
-         const newSongs = userSongs.filter(
-            (song) => deletedSongList.indexOf(song.id) === -1
-         );
-         setUserSongs(newSongs);
-         setSelectedSongList([]);
-         setIsCheckedSong(false);
-         // console.log("set songs");
+         ]);
       } catch (error) {
-         console.log({ message: error });
+         setToasts((t) => [
+            ...t,
+            { title: "error", id: nanoid(4), desc: `Somethings went wrong` },
+         ]);
       }
    };
 
    const handleAddPlaylist = async () => {
-      const playlistId = `${playlistName}_${userData?.email as string}`;
+      const playlistId = generateId(playlistName, userData.email);
+
+      if (!playlistId || !playlistName || !userData) {
+         setToasts((t) => [
+            ...t,
+            { title: "error", id: nanoid(4), desc: `Somethings went wrong` },
+         ]);
+         return;
+      }
 
       const addedPlaylist: Playlist = {
          by: userData?.email || "users",
@@ -159,15 +165,29 @@ const SongsPage: FC<Props> = () => {
       // insert new playlist to users playlist
       const newPlaylists = [...userPlaylists, addedPlaylist];
 
-      // add to playlist collection
-      await setDoc(doc(db, "playlist", playlistId), addedPlaylist);
+      try {
+         setLoading(true);
+         // add to playlist collection
+         await setDoc(doc(db, "playlist", playlistId), addedPlaylist);
 
-      // update user doc
-      await setUserPlaylistIdsDoc(newPlaylists, userData);
+         // update user doc
+         await setUserPlaylistIdsDoc(newPlaylists, userData);
 
-      // update context store user playlists
-      setUserPlaylists(newPlaylists, []);
-      setOpenModal(false);
+         // update context store user playlists
+         setUserPlaylists(newPlaylists, []);
+         closeModal();
+         setPlayListName("");
+
+         setToasts((t) => [
+            ...t,
+            { title: "success", id: nanoid(4), desc: `'${playlistName}' created` },
+         ]);
+      } catch (error) {
+         setToasts((t) => [
+            ...t,
+            { title: "error", id: nanoid(4), desc: `Somethings went wrong` },
+         ]);
+      }
    };
 
    const handleOpenPlaylist = (playlist: Playlist) => {
@@ -177,42 +197,23 @@ const SongsPage: FC<Props> = () => {
       navigate(`${routes.Playlist}/${playlist.name}`);
    };
 
-   const addSongToPlaylist = async (song: Song, playList: Playlist) => {
-      const newSongIds = [...playList.song_ids, song.id];
-      const time = playList.time + song.duration;
+   const handleAddSongToPlaylist = (song: Song, playlist: Playlist) => {
+      if (!song || !playlist) return;
 
-      const addedPlaylist: Playlist = {
-         ...playList,
+      const newSongIds = [...playlist.song_ids, song.id];
+      const time = playlist.time + song.duration;
+
+      const newPlaylist: Playlist = {
+         ...playlist,
          time,
          song_ids: newSongIds,
          count: newSongIds.length,
       };
 
-      const newUserPlaylists = [...userPlaylists];
-
-      updatePlaylistsValue(addedPlaylist, newUserPlaylists);
-
-      try {
-         // update to database
-         // await setDoc(
-         //    doc(db, "playlist", playList.id),
-         //    { song_ids: newSongIds, count: newSongIds.length, time },
-         //    { merge: true }
-         // );
-
-         // update users playlist to context
-         setUserPlaylists(newUserPlaylists, []);
-
-         // if user is playing this playlist
-         // need to update playlist in store to get actually song
-         if (playlistInStore.name === playList.name) {
-            dispatch(setPlaylist(addedPlaylist));
-         }
-      } catch (error) {
-         console.log(error);
-      }
+      updatePlaylistAfterChange({ newPlaylist });
    };
 
+   // render content
    const renderTempSongs = () => {
       return tempSongs.map((song, index) => {
          const isAdded = addedSongIds.some((id) => {
@@ -231,6 +232,24 @@ const SongsPage: FC<Props> = () => {
    const renderUserSongs = () => {
       return userSongs.map((song, index) => {
          const active = song.id === songInStore.id && songInStore.song_in === "user";
+
+         if (isOnMobile) {
+            return (
+               <div key={index} className="w-full max-[549px]:w-full">
+                  <MobileSongItem
+                     theme={theme}
+                     onClick={() => handleSetSong(song, index)}
+                     active={active}
+                     key={index}
+                     data={song}
+                     isCheckedSong={isCheckedSong}
+                     selectedSongList={selectedSongList}
+                     setIsCheckedSong={setIsCheckedSong}
+                     setSelectedSongList={setSelectedSongList}
+                  />
+               </div>
+            );
+         }
          return (
             <div key={index} className="w-full max-[549px]:w-full">
                <SongListItem
@@ -247,17 +266,51 @@ const SongsPage: FC<Props> = () => {
                   setUserSongs={setUserSongs}
                   setIsCheckedSong={setIsCheckedSong}
                   setSelectedSongList={setSelectedSongList}
-                  addSongToPlaylist={addSongToPlaylist}
+                  addSongToPlaylist={handleAddSongToPlaylist}
+                  handleOpenParentModal={handleOpenModal}
                />
             </div>
          );
       });
    };
 
+   // define classes
    const classes = {
       button: `${theme.content_bg} rounded-full`,
    };
 
+   // define modals
+   const confirmModal = useMemo(
+      () => (
+         <>
+            <div className="w-[30vw]">
+               <h1 className="text-[20px] font-semibold">
+                  Are you sure (delete {selectedSongList.length} songs) ?
+               </h1>
+               <p className="text-[red] text-[18px]">This action cannot be undone</p>
+
+               <div className="flex gap-[10px] mt-[20px]">
+                  <Button
+                     isLoading={loading}
+                     className={`${theme.content_bg} rounded-full text-[14px]`}
+                     variant={"primary"}
+                     onClick={handleDeleteSongs}
+                  >
+                     Xóa mẹ nó đi !
+                  </Button>
+                  <Button
+                     onClick={() => setOpenModal(false)}
+                     className={`bg-${theme.alpha} rounded-full text-[14px]`}
+                     variant={"primary"}
+                  >
+                     Khoan từ từ
+                  </Button>
+               </div>
+            </div>
+         </>
+      ),
+      [loading, theme, selectedSongList]
+   );
    const addPlaylistModal = (
       <div className="w-[300px]">
          <Button
@@ -276,6 +329,7 @@ const SongsPage: FC<Props> = () => {
          />
 
          <Button
+            isLoading={loading}
             onClick={() => handleAddPlaylist()}
             variant={"primary"}
             className={`${classes.button} mt-[15px]`}
@@ -284,35 +338,37 @@ const SongsPage: FC<Props> = () => {
          </Button>
       </div>
    );
-   const messageModal = (
-      <div className="w-[300px]">
-         {message.current}
-         {!!duplicatedFile.current.length &&
-            duplicatedFile.current.map((song) => (
-               <p className="text-[14px]">- {song.name}</p>
-            ))}
-      </div>
-   );
+   const messageModal = <div className="w-[300px]">{message.current}</div>;
 
    const ModalPopup: Record<ModalName, ReactNode> = {
       ADD_PLAYLIST: addPlaylistModal,
       MESSAGE: messageModal,
+      CONFIRM: confirmModal,
    };
 
-   useEffect(() => {
-      if (duplicatedFile.current.length) {
-         duplicatedFile.current = [];
-      }
-   }, [openModal]);
+   // define skeleton
+   const playlistSkeleton = [...Array(2).keys()].map((index) => {
+      return (
+         <div key={index} className="w-1/4 p-[8px] max-[459px]:w-1/2">
+            <Skeleton className="pt-[100%] rounded-[8px]" />
+            <Skeleton className="h-[20px] mt-[9px] w-[50%]" />
+         </div>
+      );
+   });
 
-   // useEffect(() => {
-   // checkIsHasSong();
-   // if (userSongs.length || tempSongs.length) {
-   //    countSong();
-   // }
-   // }, [userSongs, tempSongs]);
+   const SongItemSkeleton = [...Array(5).keys()].map((index) => {
+      return (
+         <div key={index} className="flex items-center p-[10px]">
+            <Skeleton className="h-[18px] w-[18px]" />
 
-   if (loading) return <h1>...Loading</h1>;
+            <Skeleton className="h-[54px] w-[54px] ml-[10px] rounded-[4px]" />
+            <div className="ml-[10px]">
+               <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
+               <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
+            </div>
+         </div>
+      );
+   });
 
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
@@ -321,10 +377,11 @@ const SongsPage: FC<Props> = () => {
          {/* playlist */}
          <div className="pb-[30px] ">
             <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
-            <div className="flex flex-row -mx-[8px]">
+            <div className="flex flex-row -mx-[8px] flex-wrap">
                {!!userPlaylists.length &&
+                  !useSongsloading &&
                   userPlaylists.map((playList, index) => (
-                     <div key={index} className="w-1/4 p-[8px]">
+                     <div key={index} className="w-1/4 p-[8px] max-[459px]:w-1/2">
                         <PlaylistItem
                            onClick={() => handleOpenPlaylist(playList)}
                            theme={theme}
@@ -335,18 +392,21 @@ const SongsPage: FC<Props> = () => {
                         />
                      </div>
                   ))}
-               <div className="w-1/4 p-[8px]">
-                  <Empty
-                     theme={theme}
-                     className="pt-[100%]"
-                     onClick={() => handleOpenModal("ADD_PLAYLIST")}
-                  />
-               </div>
+               {!useSongsloading && (
+                  <div className="w-1/4 p-[8px] max-[459px]:w-1/2 mb-[25px]">
+                     <Empty
+                        theme={theme}
+                        className="pt-[100%]"
+                        onClick={() => handleOpenModal("ADD_PLAYLIST")}
+                     />
+                  </div>
+               )}
+               {useSongsloading && playlistSkeleton}
             </div>
          </div>
 
          {/* song list */}
-         <div className="pb-[30px] ">
+         <div className="pb-[30px] max-[549px]:pb-[80px]">
             {/* title */}
             <div className="flex justify-between mb-[10px]">
                <h3 className="text-2xl font-bold">Songs</h3>
@@ -360,39 +420,42 @@ const SongsPage: FC<Props> = () => {
                />
                <audio ref={audioRef} className="hidden" />
                <div className="flex items-center">
-                  {checkIsHasSong() && (
-                     <label
-                        className={`${theme.content_bg} ${
-                           status === "uploading" ? "opacity-60 pointer-events-none" : ""
-                        } rounded-full flex px-[20px] py-[4px] text-white cursor-pointer`}
-                        htmlFor="file"
-                     >
-                        <PlusCircleIcon className="w-[20px] mr-[5px]" />
-                        Upload
-                     </label>
-                  )}
-                  <Button
-                     onClick={() => setUserSongs([])}
-                     variant={"primary"}
-                     className={`ml-[15px] ${theme.content_bg} rounded-full`}
+                  <label
+                     className={`${theme.content_bg} ${
+                        status === "uploading" || useSongsloading
+                           ? "opacity-60 pointer-events-none"
+                           : ""
+                     } rounded-full flex px-[20px] py-[4px] text-white cursor-pointer`}
+                     htmlFor="file"
                   >
-                     Clear
-                  </Button>
+                     <PlusCircleIcon className="w-[20px] mr-[5px]" />
+                     Upload
+                  </label>
                </div>
             </div>
 
             {/* song list */}
             <div
-               className={`flex gap-[20px] items-center border-b border-${theme.alpha} h-[50px] mb-[10px]`}
+               className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[50px] mb-[10px]`}
             >
-               {!isCheckedSong ? (
-                  <p className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}>
-                     {countSong() + " songs"}
-                  </p>
-               ) : (
-                  <p className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}>
-                     {selectedSongList.length + " selected"}
-                  </p>
+               {useSongsloading && <Skeleton className="h-[20px] w-[150px]" />}
+
+               {!useSongsloading && (
+                  <>
+                     {!isCheckedSong ? (
+                        <p
+                           className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}
+                        >
+                           {songCount + " songs"}
+                        </p>
+                     ) : (
+                        <p
+                           className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}
+                        >
+                           {selectedSongList.length + " selected"}
+                        </p>
+                     )}
+                  </>
                )}
                {isCheckedSong && userSongs.length && (
                   <>
@@ -401,10 +464,10 @@ const SongsPage: FC<Props> = () => {
                         variant={"primary"}
                         className={classes.button}
                      >
-                        Select all
+                        All
                      </Button>
                      <Button
-                        onClick={() => handleDeleteSongs()}
+                        onClick={() => handleOpenModal("CONFIRM")}
                         variant={"primary"}
                         className={classes.button}
                      >
@@ -415,31 +478,24 @@ const SongsPage: FC<Props> = () => {
                            setIsCheckedSong(false);
                            setSelectedSongList([]);
                         }}
-                        variant={"primary"}
-                        className={classes.button}
+                        className={`px-[5px]`}
                      >
-                        <XMarkIcon className="w-[20px]" />
+                        <XMarkIcon className="w-[25px]" />
                      </Button>
                   </>
                )}
             </div>
             <div className="-mx-[8px] min-h-[50vh]">
-               {checkIsHasSong() ? (
+               {songCount && !useSongsloading ? (
                   <>
                      {!!tempSongs.length && renderTempSongs()}
                      {!!userSongs.length && renderUserSongs()}
                   </>
                ) : (
-                  <div className="text-left mt-[30px]">
-                     <label
-                        className={`${theme.content_bg} rounded-full inline-flex px-[20px] py-[4px] text-white cursor-pointer`}
-                        htmlFor="file"
-                     >
-                        <PlusCircleIcon className="w-[20px] mr-[5px]" />
-                        Upload song
-                     </label>
-                  </div>
+                  <></>
                )}
+
+               {useSongsloading && SongItemSkeleton}
             </div>
          </div>
 
@@ -451,6 +507,4 @@ const SongsPage: FC<Props> = () => {
          )}
       </>
    );
-};
-
-export default SongsPage;
+}

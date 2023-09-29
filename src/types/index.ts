@@ -16,13 +16,15 @@ export type Song = {
   id: string,
   name: string;
   singer: string;
-  image_path: string;
-  file_name: string;
-  song_path: string;
+  image_url: string;
+  image_file_path: string;
+  song_url: string;
+  song_file_path: string;
   by: string;
   duration: number;
   lyric_id: string;
 };
+
 export type ParserSong = {
   name: string;
   singer: string;
@@ -65,3 +67,11 @@ export type ThemeType = {
 };
 
 export type ThemesType = Record<"red" | "green_light" | "deep_blue", ThemeType>;
+
+
+
+export type Toast = {
+  title: "success" | "error" | 'warning',
+  desc: string;
+  id: string;
+}

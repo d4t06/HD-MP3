@@ -1,255 +1,276 @@
-import { auth, db, store } from "../config/firebase";
-import { FieldPath, addDoc, doc, setDoc } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { auth, db } from "../config/firebase";
+import { doc, setDoc } from "firebase/firestore";
 import {
-  ChangeEvent,
-  Dispatch,
-  RefObject,
-  ReactNode,
-  useRef,
-  useState,
-  MutableRefObject,
+   ChangeEvent,
+   RefObject,
+   useRef,
+   useState,
+   MutableRefObject,
 } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Song } from "../types";
 import { parserImageFile } from "../utils/parserImage";
-import { generateSongId } from "../utils/generateSongId";
+import { generateId } from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
+import { useToast } from "../store/ToastContext";
+import { nanoid } from "nanoid";
+import { initSongObject, setUserSongIdsAndCountDoc, uploadFile } from "../utils/firebaseHelpers";
 
 type ModalName = "ADD_PLAYLIST" | "MESSAGE";
 type Props = {
-  audioRef: RefObject<HTMLAudioElement>;
-  message: MutableRefObject<string>;
-  handleOpenModal: (name: ModalName) => void;
-  duplicatedFile: MutableRefObject<Song[]>;
-  admin?: boolean
+   audioRef: RefObject<HTMLAudioElement>;
+   message: MutableRefObject<string>;
+   handleOpenModal?: (name: ModalName) => void;
+   admin?: boolean;
 };
 
 // event listener
 // await promise
 // object assign
 export default function useUploadSongs({
-  audioRef,
-  message,
-  handleOpenModal,
-  duplicatedFile,
-  admin
+   audioRef,
+   admin,
 }: Props) {
-  const [loggedInUser] = useAuthState(auth)
-  const { setUserSongs, userSongs } = useSongsStore();
+   const { setToasts } = useToast();
+   const [loggedInUser] = useAuthState(auth);
+   const { setUserSongs, userSongs, userData } = useSongsStore();
 
-  const [status, setStatus] = useState<
-    "uploading" | "finish" | "idle" | "finish-error"
-  >("idle");
-  const [tempSongs, setTempSongs] = useState<Song[]>([]);
-  const [addedSongIds, setAddedSongIds] = useState<string[]>([]);
+   const [status, setStatus] = useState<"uploading" | "finish" | "idle" | "finish-error">(
+      "idle"
+   );
+   const [tempSongs, setTempSongs] = useState<Song[]>([]);
+   const [addedSongIds, setAddedSongIds] = useState<string[]>([]);
 
-  const actuallyFileIds = useRef<number[]>([]);
-  const isDuplicate = useRef(false);
-  // const { songs: userSongs } = useUserSong()
+   const duplicatedFile = useRef<Song[]>([]);
+   const actuallyFileIds = useRef<number[]>([]);
+   const isDuplicate = useRef(false);
+   // const { songs: userSongs } = useUserSong()
 
-  const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    setStatus("uploading");
-    const target = e.target as HTMLInputElement & { files: FileList };
-    const fileLists = target.files;
-    let data: Song = {
-      id: "",
-      name: "",
-      singer: "",
-      image_path: "",
-      file_name: "",
-      song_path: "",
-      by: admin ? 'admin' : loggedInUser?.email as string,
-      duration: 0,
-      lyric_id: "",
-    };
+   const showToastError = () => {
+      setToasts((t) => [
+         ...t,
+         { id: nanoid(4), title: "error", desc: "Some thing went wrong" },
+      ]);
+   };
 
-    let songsList: Song[] = [];
+   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
+      setStatus("uploading");
+      const target = e.target as HTMLInputElement & { files: FileList };
+      const fileLists = target.files;
 
-    // handle file change, add tempSongs and upload song
-    try {
-      // init tempsSongs, push actuallyFileIds
-      let i;
-      for (i = 0; i <= fileLists.length - 1; i++) {
-        const songFile = fileLists[i];
-        const songData = await parserImageFile(songFile);
+      if (!fileLists.length) {
+         setStatus("finish");
+         return;
+      }
 
-        if (songData) {
-          // inti song data
-          let songFileObject: Song = {
-            ...data,
-            name: songData.name,
-            singer: songData.singer,
-          };
+      // init song object
+      let data = initSongObject({by:admin ? "admin" : (loggedInUser?.email as string)})
 
-          // check duplicate file
-          const checkDuplicate = () =>
-            userSongs.some(
-              (song) =>
-                song.singer === songFileObject.singer &&
-                song.name === songFileObject.name
+      let songsList: Song[] = [];
+
+      // handle file change, add tempSongs and upload song
+      try {
+         // init tempsSongs, push actuallyFileIds
+         let i;
+         for (i = 0; i <= fileLists.length - 1; i++) {
+            const songFile = fileLists[i];
+            const songData = await parserImageFile(songFile);
+
+            // console.log("check song data", songData);
+
+            if (songData) {
+               // inti song data
+               let songFileObject: Song = {
+                  ...data,
+                  name: songData.name,
+                  singer: songData.singer,
+               };
+
+               // check duplicate file
+               const checkDuplicate = () =>
+                  userSongs.some(
+                     (song) =>
+                        song.singer === songFileObject.singer &&
+                        song.name === songFileObject.name
+                  );
+
+               if (checkDuplicate()) {
+                  console.log(">>>duplicate");
+                  isDuplicate.current = true;
+                  duplicatedFile.current.push(songFileObject);
+                  continue;
+               }
+
+               songsList.push(songFileObject);
+
+               // add actuallyFileIds, and assign for_song_id to actuallyFile
+               actuallyFileIds.current = [...actuallyFileIds.current, i];
+               Object.assign(songFile, { for_song_id: songsList.length - 1 } as {
+                  for_song_id: number;
+               });
+            }
+         }
+
+         if (userSongs.length + actuallyFileIds.current.length > 20) {
+            setStatus("finish-error");
+            setToasts((t) => [
+               ...t,
+               { id: nanoid(4), title: "error", desc: "You have reach the upload limit" },
+            ]);
+            return;
+         }
+
+         // forget case song upload by user can't parse
+         // if no has new songItem after change songs file =>  open modal, return
+         if (!songsList.length) {
+            setStatus("finish-error");
+            setToasts((t) => [
+               ...t,
+               { id: nanoid(4), title: "error", desc: "Duplicated song files" },
+            ]);
+            return;
+         }
+
+         // inti songItem to render to view
+         setTempSongs(songsList);
+
+         // upload song file to fire base
+         for (let fileIndex of actuallyFileIds.current) {
+            let newSongFile = fileLists[fileIndex] as File & {
+               for_song_id: number;
+            };
+            //  upload song file
+            const { fileURL, filePath } = await uploadFile({
+               file: newSongFile,
+               folder: "/songs/",
+            });
+
+            // generateSongId
+            const songId = generateId(
+               songsList[newSongFile.for_song_id].name,
+               loggedInUser?.email as string
             );
-          if (checkDuplicate()) {
-            console.log(">>>duplicate");
-            isDuplicate.current = true;
-            duplicatedFile.current.push(songFileObject)
-            continue;
-          }
 
-          songsList.push(songFileObject);
+            // upload song list
+            const idInSongsList = newSongFile.for_song_id;
+            songsList[idInSongsList] = {
+               ...songsList[idInSongsList],
+               id: songId,
+               song_file_path: filePath,
+               song_url: fileURL,
+            };
 
-          //  console.log("i =", i, fileLists[i].name);
+            //  update audio src
+            const audioEle = audioRef.current as HTMLAudioElement;
+            audioEle.src = URL.createObjectURL(newSongFile);
 
-          // add actuallyFileIds, and assign for_song_id to actuallyFile
-          actuallyFileIds.current = [...actuallyFileIds.current, i];
-          Object.assign(songFile, { for_song_id: songsList.length - 1 } as {
-            for_song_id: number;
-          });
-        }
+            // upload song doc
+            await handleUploadSong(songsList, idInSongsList);
+         }
+
+         if (songsList.length > 1) {
+            setToasts((t) => [
+               ...t,
+               { id: nanoid(4), title: "success", desc: "Song upload successful" },
+            ]);
+         }
+
+         // if (!admin) uploadUserData(songsList)
+      } catch (error) {
+         console.log(error);
+         setStatus("finish");
+         // setToasts(t => [...t, { id: nanoid(4), title: "error", desc: 'Some thing went wrong' }])
+         showToastError();
       }
 
-      if (userSongs.length + actuallyFileIds.current.length > 10) {
-        console.log(">>> overload");
-        setStatus("finish-error");
-        message.current = "You have reach the limit of songs";
-        handleOpenModal("MESSAGE");
-        return;
+      // upload user data
+      try {
+         // reset fileList
+         actuallyFileIds.current = [];
+
+         // case user
+         if (!admin) {
+            const actuallySongsListIds: string[] = songsList.map((song) => song.id);
+            const userSongIds: string[] = userSongs.map((song) => song.id);
+            const newUserSongsIds = [...userSongIds, ...actuallySongsListIds];
+            // update user doc
+            await setUserSongIdsAndCountDoc({
+               songIds: newUserSongsIds,
+               userData: userData,
+            });
+
+            // update songs to context store
+            if (songsList.length) {
+               setUserSongs([...songsList, ...userSongs]);
+            }
+         }
+
+         setTempSongs([]);
+         if (isDuplicate.current) {
+            setStatus("finish-error");
+            setToasts((t) => [
+               ...t,
+               { id: nanoid(4), title: "warning", desc: "Song duplicate" },
+            ]);
+         } else {
+            setStatus("finish");
+
+            // if upload gather than 1 file
+            if (songsList.length > 1) {
+               setToasts((t) => [
+                  ...t,
+                  {
+                     id: nanoid(4),
+                     title: "success",
+                     desc: `${songsList.length} songs uploaded`,
+                  },
+               ]);
+            }
+         }
+      } catch (error) {
+         console.log(error);
+         // setToasts(t => [...t, { id: nanoid(4), title: "error", desc: 'Some thing went wrong' }])
+         showToastError();
       }
+   };
 
-      // if no has new songItem after change songs file =>  open modal, return
-      if (!songsList.length) {
-        message.current = "Duplicated file";
-        setStatus("finish-error");
-        handleOpenModal("MESSAGE");
+   // get song duration and upload song doc
+   const handleUploadSong = async (songsList: Song[], index: number) => {
+      return new Promise<void>((resolve) => {
+         const audioEle = audioRef.current as HTMLAudioElement;
+         const upload = async () => {
+            let song = songsList[index];
+            // update songList
+            const duration = +audioEle.duration.toFixed(1) || 99;
+            song = {
+               ...song,
+               duration,
+            };
+            songsList[index] = song;
 
-        return;
-      }
+            // add to firebase
+            await setDoc(doc(db, "songs", song.id), song);
 
-      // inti songItem to render to view
-      setTempSongs(songsList);
+            // update songsList to render to view
+            setTempSongs(songsList);
+            setAddedSongIds((prev) => [...prev, song.id]);
 
-      // update tempSongs data after upload each song file
+            // final
+            audioEle.removeEventListener("loadedmetadata", upload);
+            URL.revokeObjectURL(audioEle.src);
+            setToasts((t) => [
+               ...t,
+               { title: "success", id: nanoid(4), desc: `'${song.name}' uploaded` },
+            ]);
 
-      for (let fileIndex of actuallyFileIds.current) {
+            resolve();
+         };
 
-        console.log("check fileIndex", fileIndex);
-        let newSongFile = fileLists[fileIndex] as File & {
-          for_song_id: number;
-        };
+         audioEle.addEventListener("loadedmetadata", upload);
+      });
+   };
 
-        // //  upload song file
-        const fileRef = ref(store, `/songs/${newSongFile.name}`);
-        const fileRes = await uploadBytes(fileRef, newSongFile);
-        const fileUrl = await getDownloadURL(fileRes.ref);
+   // console.log("addedSongIds ", addedSongIds);
 
-        // generateSongId
-        const songId = generateSongId(songsList[newSongFile.for_song_id], loggedInUser?.email as string);
-        songsList[newSongFile.for_song_id] = {
-          ...songsList[newSongFile.for_song_id],
-          id: songId,
-          file_name: fileRes.metadata.fullPath,
-          song_path: fileUrl,
-        };
-
-        //  update audio src
-        const audioEle = audioRef.current as HTMLAudioElement;
-        audioEle.src = URL.createObjectURL(newSongFile);
-
-        // upload song doc
-        await handleUploadSong(songsList, newSongFile.for_song_id);
-      }
-
-      // if (!admin) uploadUserData(songsList)
-    } catch (error) {
-      console.log(error);
-      setStatus("finish");
-    }
-
-    // upload user data
-    try {
-      // reset fileList
-      actuallyFileIds.current = [];
-
-
-      if (!admin) {
-        console.log('upload user data');
-        
-        // update uploaded songs list of loggedInUser after update list of songs
-        const userDocRef = doc(db, "users", loggedInUser?.email as string);
-        const userSongIds: string[] = userSongs.map((song) => song.id);
-        const actuallySongsListIds: string[] = songsList.map(song => song.id)
-        const newUserSongsIds = [...userSongIds, ...actuallySongsListIds]
-
-        // update user doc
-        await setDoc(
-          userDocRef,
-          {
-            song_ids: newUserSongsIds,
-            song_count: newUserSongsIds.length,
-          },
-          { merge: true }
-        );
-
-        // update songs to context store
-        if (songsList.length) {
-          setTempSongs([]);
-          setUserSongs([...songsList, ...userSongs]);
-        }
-      }
-
-      setTempSongs([]);
-      if (isDuplicate.current) {
-        message.current = "Duplicate file";
-        setStatus("finish-error");
-        handleOpenModal("MESSAGE");
-      } else {
-        setStatus("finish");
-      }
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const uploadUserData = () => {
-    console.log('check addedSongIds', addedSongIds)
-  }
-
-  // get song duration and upload song doc
-  const handleUploadSong = async (songsList: Song[], index: number) => {
-    return new Promise<void>((resolve) => {
-      const audioEle = audioRef.current as HTMLAudioElement;
-      const upload = async () => {
-
-        let song = songsList[index];
-        const duration = +audioEle.duration.toFixed(1) || 99
-        song = {
-          ...song,
-          duration
-        };
-        songsList[index] = song;
-
-        await setDoc(doc(db, 'songs', song.id), song)
-        console.log("Song doc added");
-
-        setTempSongs(songsList);
-        setAddedSongIds((prev) => [...prev, song.id]);
-
-        audioEle.removeEventListener("loadedmetadata", upload);
-        URL.revokeObjectURL(audioEle.src);
-        // setTimeout(async () => {
-        // }, 1000);
-        resolve();
-      };
-
-      audioEle.addEventListener("loadedmetadata", upload);
-    });
-
-  }
-
-
-
-  // console.log("addedSongIds ", addedSongIds);
-
-  return { tempSongs, setTempSongs, addedSongIds, status, handleInputChange };
+   return { tempSongs, setTempSongs, addedSongIds, status, handleInputChange };
 }

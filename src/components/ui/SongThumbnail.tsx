@@ -1,16 +1,18 @@
-import { FC, useEffect, useRef } from "react";
+import { FC, RefObject, useEffect, useRef } from "react";
 import { Song } from "../../types";
 import Button from "./Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
+import useScrollSong from "../../hooks/useScrollSong";
 
 interface Props {
    data?: Song;
    active: boolean;
    onClick?: () => void;
-   containerEle?: HTMLElement;
+   containerRef?: RefObject<HTMLDivElement>;
    hasHover?: boolean;
    hasTitle?: boolean;
    classNames?: string;
+   scroll: boolean
 }
 
 const SongThumbnail: FC<Props> = ({
@@ -18,53 +20,64 @@ const SongThumbnail: FC<Props> = ({
    active,
    hasHover,
    onClick,
-   containerEle,
+   containerRef,
    hasTitle,
    classNames,
+   scroll
 }) => {
    const thumbnail = useRef<HTMLDivElement>(null);
-   const node = thumbnail.current as HTMLElement;
+   const firstTimeRender = useRef(true);
+
+   // use hooks
+   useScrollSong({active, containerRef, songItemRef: thumbnail, scroll, firstTimeRender})
 
    useEffect(() => {
-      if (!data) return;
-      if (containerEle && active) {
-         const windowWidth = window.innerWidth;
+      console.log('check first time render', firstTimeRender.current);
 
-         if (!node) return;
+   }, [])
+
+   // useEffect(() => {
+   //    if (!data) return;
+   //    if (containerEle && active) {
+   //       const windowWidth = window.innerWidth;
+
+   //       if (!node) return;
          
-         const rect = node.getBoundingClientRect();
+   //       const rect = node.getBoundingClientRect();
 
-         const lefDiff = rect.left;
-         const rightDiff = windowWidth - (lefDiff + node.offsetWidth);
+   //       const lefDiff = rect.left;
+   //       const rightDiff = windowWidth - (lefDiff + node.offsetWidth);
 
-         const needToScroll = Math.abs(lefDiff - rightDiff) / 2;
+   //       const needToScroll = Math.abs(lefDiff - rightDiff) / 2;
 
-         // if element not in screen
-         if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
-            containerEle.style.scrollBehavior = "auto";
-         }
+   //       // console.log('song thumbnail check scroll, left ', lefDiff, 'right ', rightDiff )
 
-         // on the left side
-         if (rightDiff > lefDiff) {
-            setTimeout(() => {
-               containerEle.scrollLeft = containerEle.scrollLeft - needToScroll;
-               containerEle.style.scrollBehavior = "smooth";
-            }, 300);
+   //       // if element not in screen
+   //       if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
+   //          containerEle.style.scrollBehavior = "auto";
+   //       }
 
-            // on the right side
-         } else if (rightDiff < lefDiff) {
-            setTimeout(() => {
-               containerEle.scrollLeft = containerEle.scrollLeft + needToScroll;
-               containerEle.style.scrollBehavior = "smooth";
-            }, 300);
-         }
-      }
-   }, [active]);
+   //       // on the left side
+   //       if (rightDiff > lefDiff) {
+   //          setTimeout(() => {
+   //             containerEle.scrollLeft = containerEle.scrollLeft - needToScroll;
+   //             containerEle.style.scrollBehavior = "smooth";
+   //          }, 300);
+
+   //          // on the right side
+   //       } else if (rightDiff < lefDiff) {
+   //          setTimeout(() => {
+   //             containerEle.scrollLeft = containerEle.scrollLeft + needToScroll;
+   //             containerEle.style.scrollBehavior = "smooth";
+   //          }, 300);
+   //       }
+   //    }
+   // }, [active]);
 
    return (
       <>
          {data && (
-            <div ref={thumbnail} className={`flex flex-col`}>
+            <div ref={thumbnail} className={`flex flex-col delay-3000 ${active && 'transition-transform '}`}>
                <div className={` flex ${classNames && classNames}`}>
                   <div
                      className={`group relative ${
@@ -75,7 +88,7 @@ const SongThumbnail: FC<Props> = ({
                   >
                      <img
                         className={`select-none object-cover object-center rounded w-full`}
-                        src={data?.image_path || "https://placehold.co/500x500.png"}
+                        src={data?.image_url || "https://placehold.co/500x500.png"}
                         alt=""
                      />
 

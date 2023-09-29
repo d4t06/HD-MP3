@@ -27,7 +27,7 @@ export default function Edit() {
         const songData = songSnapshot.data() as Song;
 
         // if song upload by admin
-        if (songData.by === 'admin') navigate(routes.home)
+        if (songData.by === 'admin') navigate(routes.Home)
 
         // if song already had lyric, get it and pass to children component
         if (songData.lyric_id) {
@@ -50,7 +50,7 @@ export default function Edit() {
 
   return (
     <div className="pt-[30px]">
-      <audio ref={audioRef} src={song && song.song_path} className="hidden" />
+      <audio ref={audioRef} src={song && song.song_url} className="hidden" />
 
       {/* audio element always visible */}
       {audioRef.current && song && (
