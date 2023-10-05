@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
-import { Song, ThemeType } from "../../types";
+import { Song, ThemeType } from "../types";
 import { CheckIcon, PauseCircleIcon, StopIcon, } from "@heroicons/react/24/outline";
 
 type Props = {

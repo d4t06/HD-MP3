@@ -13,9 +13,9 @@ import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 
 import LyricsList from "./LyricsList";
-import Tabs from "./ui/Tabs";
+import Tabs from "./Tabs";
 import Button from "./ui/Button";
-import SongThumbnail from "./ui/SongThumbnail";
+import SongThumbnail from "./SongThumbnail";
 import useBgImage from "../hooks/useBgImage";
 import useSongLyric from "../hooks/useGetSongLyric";
 import { useSongsStore } from "../store/SongsContext";

@@ -18,11 +18,11 @@ import { routes } from "../routes";
 
 import useSong from "../hooks/useSongs";
 
-import SongItem from "../components/ui/SongItem";
+import SongItem from "../components/SongItem";
 import Button from "../components/ui/Button";
 import LinkItem from "../components/ui/LinkItem";
 import Skeleton from "../components/skeleton";
-import MobileSongItem from "../components/ui/MobileSongItem";
+import MobileSongItem from "../components/MobileSongItem";
 import useSongItemActions from "../hooks/useSongItemActions";
 
 // song item actions

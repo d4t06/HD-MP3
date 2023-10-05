@@ -12,7 +12,7 @@ import Button from "./ui/Button";
 import Control from "./Control";
 import useVolume from "../hooks/useVolume";
 // import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
-import ScrollText from "./ui/ScrollText";
+import ScrollText from "./ScrollText";
 
 interface Props {
    isOpenFullScreen: boolean;

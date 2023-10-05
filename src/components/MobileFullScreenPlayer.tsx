@@ -34,14 +34,14 @@ import { useTheme } from "../store/ThemeContext";
 import { Song } from "../types";
 import useGetSongLyric from "../hooks/useGetSongLyric";
 
-import Tabs from "./ui/Tabs";
-import ScrollText from "./ui/ScrollText";
-import SongThumbnail from "./ui/SongThumbnail";
+import Tabs from "./Tabs";
+import ScrollText from "./ScrollText";
+import SongThumbnail from "./SongThumbnail";
 import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
 import LyricsList from "./LyricsList";
-import MobileSongItem from "./ui/MobileSongItem";
+import MobileSongItem from "./MobileSongItem";
 import useBgImage from "../hooks/useBgImage";
 // import useGetActuallySongs from "../hooks/useGetActuallySongs";
 // import useVolume from "../hooks/useVolume";

@@ -1,8 +1,8 @@
 import { FC, RefObject, useEffect, useRef } from "react";
-import { Song } from "../../types";
-import Button from "./Button";
+import { Song } from "../types";
+import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
-import useScrollSong from "../../hooks/useScrollSong";
+import useScrollSong from "../hooks/useScrollSong";
 
 interface Props {
    data?: Song;

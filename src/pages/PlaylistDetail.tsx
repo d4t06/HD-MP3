@@ -32,12 +32,12 @@ import usePlaylistDetail from "../hooks/usePlaylistDetail";
 import { myDeleteDoc } from "../utils/firebaseHelpers";
 import { handleTimeText, generatePlaylistAfterChangeSongs } from "../utils/appHelpers";
 
-import PlaylistItem from "../components/ui/PlaylistItem";
-import SongListItem from "../components/ui/SongItem";
+import PlaylistItem from "../components/PlaylistItem";
+import SongListItem from "../components/SongItem";
 import Button from "../components/ui/Button";
 import PopupWrapper from "../components/ui/PopupWrapper";
 import Modal, { confirmModal } from "../components/Modal";
-import MobileSongItem from "../components/ui/MobileSongItem";
+import MobileSongItem from "../components/MobileSongItem";
 import Skeleton from "../components/skeleton";
 import { useActuallySongs } from "../store/ActuallySongsContext";
 

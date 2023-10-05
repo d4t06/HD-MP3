@@ -39,6 +39,7 @@ const ActuallySongsProvider = ({ children }: {children: ReactNode}) => {
    );
 };
 
+
 const useActuallySongs = () => {
    const {
       setActuallySongs,
@@ -51,6 +52,8 @@ const useActuallySongs = () => {
    // user uploads songs
    // user play song in many playist
    // user play admin
+
+   // actuallySongs, userSongs, songInStore
    const songLists = useMemo(() => {
       return songInStore.song_in.includes("playlist")
          ? actuallySongs

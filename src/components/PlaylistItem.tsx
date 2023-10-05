@@ -3,16 +3,16 @@ import { FC, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { nanoid } from "nanoid";
-import { routes } from "../../routes";
-import { Playlist, ThemeType, User } from "../../types";
+import { routes } from "../routes";
+import { Playlist, ThemeType, User } from "../types";
 
-import { myDeleteDoc, setUserPlaylistIdsDoc } from "../../utils/firebaseHelpers";
-import { useToast } from "../../store/ToastContext";
+import { myDeleteDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+import { useToast } from "../store/ToastContext";
 
-import Modal, { confirmModal } from "../Modal";
-import Button from "./Button";
-import PopupWrapper from "./PopupWrapper";
-import Image from "./Image";
+import Modal, { confirmModal } from "./Modal";
+import Button from "./ui/Button";
+import PopupWrapper from "./ui/PopupWrapper";
+import Image from "./ui/Image";
 
 interface Props {
    data: Playlist;
@@ -113,7 +113,7 @@ const PlaylistItem: FC<Props> = ({
       <>
          <div className="group h-full flex flex-col" onClick={() => isOnMobile && onClick && onClick()}>
             <div className={classes.imageContainer}>
-               <Image src={data.image_url} />
+               <Image classNames=" w-full aspect-square object-cover object-center" src={data.image_url} />
 
                {!isOnMobile && !inDetail && (
                   <div className={classes.absoluteContainer}>
@@ -138,7 +138,7 @@ const PlaylistItem: FC<Props> = ({
                )}
             </div>
             {!inDetail && (
-               <h5 className="text-[20px] font-[500] mt-[5px]">{data.name}</h5>
+               <h5 className="text-[20px] font-[500]">{data.name}</h5>
             )}
          </div>
 

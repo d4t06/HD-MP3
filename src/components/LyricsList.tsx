@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react";
 import { Lyric } from "../types";
-import LyricItem from "./ui/LyricItem";
+import LyricItem from "./child/LyricItem";
 import { useTheme } from "../store/ThemeContext";
 
 interface Props {

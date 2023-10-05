@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Song } from "../../types";
+import { Song } from "../types";
 
 type Props = {
    label: string;
@@ -118,7 +118,7 @@ export default function ScrollText({
          <div
             ref={text}
             onClick={() => !autoScroll && handleScrollText()}
-            className={`${classNames} absolute left-0 whitespace-nowrap line-clamp-1`}
+            className={`${classNames} absolute left-0 whitespace-nowrap line-clamp-1 pl-[3px]`}
          >
             {label || "Some song"}
          </div>

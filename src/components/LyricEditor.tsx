@@ -15,7 +15,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 import Modal from "./Modal";
-import LyricItem from "./ui/LyricItem";
+import LyricItem from "./child/LyricItem";
 import Button from "./ui/Button";
 
 import PopupWrapper from "./ui/PopupWrapper";
