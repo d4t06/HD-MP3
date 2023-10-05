@@ -7,11 +7,10 @@ import { useToast } from "../store/ToastContext";
 import { setPlaylist } from "../store/SongSlice";
 import { useSongsStore } from "../store/SongsContext";
 
-import { generateId } from "../utils/appHelpers";
+import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
 import {
   myGetDoc,
   mySetDoc,
-  updatePlaylistsValue,
 } from "../utils/firebaseHelpers";
 
 type Props = {

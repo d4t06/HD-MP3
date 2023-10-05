@@ -31,13 +31,13 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
       }
    }, [currentTime]);
 
-   useEffect(() => {
-      if (!songLyric.real_time.length) return;
-      const node = containerRef.current as HTMLElement;
-      if (node) {
-         node.style.height = window.innerHeight - 125 + "px";
-      }
-   }, []);
+   // useEffect(() => {
+   //    if (!songLyric.real_time.length) return;
+   //    const node = containerRef.current as HTMLElement;
+   //    if (node) {
+   //       node.style.height = window.innerHeight - 125 + "px";
+   //    }
+   // }, []);
 
    const renderItem = () => {
       return songLyric.real_time.map((lyricItem, index) => {
@@ -62,7 +62,7 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
    }
 
    return (
-      <ul ref={containerRef} className={className}>
+      <ul ref={containerRef} className={`${className && className} overflow-y-auto overflow-x-hidden no-scrollbar h-full max-h-[500px] mask-image`}>
          {renderItem()}
       </ul>
    );

@@ -4,6 +4,7 @@ import {
    SetStateAction,
    useCallback,
    useEffect,
+   useMemo,
    useRef,
    useState,
 } from "react";
@@ -23,8 +24,8 @@ import { handleTimeText } from "../utils/appHelpers";
 import PlayPauseButton from "./ui/PlayPauseButton";
 import { useSongsStore } from "../store/SongsContext";
 import { Song } from "../types";
-import { useActuallySongs } from "../components/Player";
-import useGetActuallySongs from "../hooks/useGetActuallySongs";
+import useSong from "../hooks/useSongs";
+import { useActuallySongs } from "../store/ActuallySongsContext";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -47,16 +48,21 @@ export default function Control({
    setIsPlaying,
    setIsWaiting,
 }: Props) {
-   const { theme } = useTheme();
+   // use store
    const dispatch = useDispatch();
-   const SongStore = useSelector(selectAllSongStore);
+   const { theme } = useTheme();
+   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { songLists } = useActuallySongs();
 
-   const { song: songInStore } = SongStore;
-
-   const [duration, setDuration] = useState<number>();
+   // component statte
+   const [error, setError] = useState(false);
+   const [isLoaded, setIsLoaded] = useState(false);
+   // const [duration, setDuration] = useState<number>();
    const [isRepeat, setIsRepeat] = useLocalStorage<boolean>("repeat", false);
    const [isShuffle, setIsShuffle] = useLocalStorage<boolean>("shuffle", false);
 
+   // component ref
+   const durationRef = useRef(0);
    const durationLineWidth = useRef<number>();
    const durationLine = useRef<HTMLDivElement>(null);
    const timeProcessLine = useRef<HTMLDivElement>(null);
@@ -67,14 +73,13 @@ export default function Control({
    const firstTimeRender = useRef(true);
    const isEndOfList = useRef(false);
 
-   // use hooks
-   const songLists = useGetActuallySongs({ songInStore });
-
    const play = () => {
       audioEle?.play();
+      // console.log("play");
    };
    const pause = () => {
       audioEle?.pause();
+      // console.log("pause");
    };
 
    const getNewSong = (index: number) => {
@@ -90,17 +95,25 @@ export default function Control({
       setIsPlaying(false);
    };
 
-   const handlePlay = () => {
+   const handlePlaying = () => {
       setIsPlaying(true);
-      // setIsWaiting(false);
+      setIsWaiting(false);
+      setError(false);
+   };
+
+   const handleWaiting = () => {
+      setIsWaiting(true);
    };
 
    const handleResetForNewSong = useCallback(() => {
+      pause();
+      setIsWaiting(true);
+      setIsLoaded(false);
+
       const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
       if (timeProcessLineElement && currentTimeRef.current && remainingTime.current) {
          currentTimeRef.current.innerText = "00:00";
-         remainingTime.current.innerText = "-00:00";
          timeProcessLineElement.style.width = "0%";
       }
    }, []);
@@ -109,9 +122,9 @@ export default function Control({
       (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
          const node = e.target as HTMLElement;
 
-         console.log("check durationLineWidth", durationLineWidth.current);
+         // console.log("check durationLineWidth", durationLineWidth.current);
 
-         if (durationLineWidth.current && duration) {
+         if (durationLineWidth.current && durationRef.current) {
             setIsWaiting(true);
 
             // get boundingRect
@@ -122,7 +135,7 @@ export default function Control({
             // calculating
             const length = e.clientX - clientRect.left;
             const lengthRatio = length / durationLineWidth.current;
-            const newTime = lengthRatio * duration;
+            const newTime = lengthRatio * durationRef.current;
 
             if (audioEle && timeProcessLineElement) {
                // update current time
@@ -134,31 +147,21 @@ export default function Control({
             }
          }
       },
-      [isOpenFullScreen, songInStore, duration]
+      [isOpenFullScreen, songInStore]
    );
 
    const handleNext = useCallback(() => {
-      // console.log("check store index", songInStore.currentIndex);
-      // console.log("handleNext check actuallySongs", actuallySongs);
-
       let newIndex = songInStore.currentIndex + 1;
       // let songLists: Song[];
       let newSong: Song;
 
       if (newIndex < songLists.length) {
-         console.log("next song");
-
          newSong = songLists[newIndex];
       } else {
-         console.log("end of list");
-
-         isEndOfList.current = true;
          newSong = songLists[0];
          newIndex = 0;
       }
-      dispatch(
-         setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
-      );
+      dispatch(setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in }));
    }, [songInStore, songLists]);
 
    const handlePrevious = useCallback(() => {
@@ -175,36 +178,25 @@ export default function Control({
 
       // console.log("check new index", newIndex);
 
-      dispatch(
-         setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
-      );
+      dispatch(setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in }));
    }, [songInStore, songLists]);
 
-   // >>> behind the scenes handle
-   const handlePlaying = useCallback(() => {
-      setIsWaiting(false);
+   const handleTimeUpdate = useCallback(() => {
+      if (!audioEle) return;
 
       const currentTime = audioEle?.currentTime;
-      const duration = audioEle?.duration;
-      const remaining = duration - currentTime;
-
       const timeProcessLineEle = timeProcessLine.current as HTMLElement;
 
-      if (duration && currentTime) {
-         const newWidth = currentTime / (duration / 100);
+      if (durationRef.current && currentTime) {
+         const newWidth = currentTime / (durationRef.current / 100);
 
          timeProcessLineEle.style.width = newWidth.toFixed(1) + "%";
       }
 
-      if (currentTimeRef.current && remainingTime.current) {
-         currentTimeRef.current.innerText = handleTimeText(currentTime!);
-         remainingTime.current.innerText = "-" + handleTimeText(remaining);
+      if (currentTimeRef.current) {
+         currentTimeRef.current.innerText = handleTimeText(currentTime!) || "00:00";
       }
    }, [songInStore, isOpenFullScreen]);
-
-   const handleWaiting = () => {
-      setIsWaiting(true);
-   };
 
    const handleEnded = useCallback(() => {
       // console.log("isRepeat, isShuffle =", isRepeat, isShuffle);
@@ -233,25 +225,25 @@ export default function Control({
          );
       }
 
+      if (songInStore.currentIndex === songLists.length - 1) isEndOfList.current = true;
+
       return handleNext();
    }, [isRepeat, isShuffle, songInStore, songLists]);
 
-   const handleLoaded = () => {
+   const handleLoaded = useCallback(() => {
+      if (!audioEle) return;
+
       // set duration
-      setDuration(audioEle?.duration);
+      // setDuration(audioEle?.duration);
+      durationRef.current = audioEle.duration;
+      setIsLoaded(true);
 
       // set duration base line width
       durationLineWidth.current = durationLine.current?.offsetWidth;
 
-      // just need to run 1 time
-      audioEle?.addEventListener("pause", handlePause);
-      audioEle?.addEventListener("play", handlePlay);
-      audioEle?.addEventListener("timeupdate", handlePlaying);
-      // audioEle?.addEventListener("waiting", handleWaiting);
-
-      if (currentTimeRef.current && remainingTime.current) {
-         remainingTime.current.innerText = "-" + handleTimeText(audioEle.duration);
-      }
+      // if (currentTimeRef.current && remainingTime.current) {
+      //    remainingTime.current.innerText = "-" + handleTimeText(audioEle.duration);
+      // }
 
       // play song if click it
       if (isEndOfList.current) {
@@ -261,31 +253,48 @@ export default function Control({
 
          return;
       }
-      play();
-   };
+      firstTimeRender.current && !isEndOfList ? "" : play();
+   }, []);
 
-   // add and remove audio element event listener
+   const handleError = useCallback(() => {
+      setError(true);
+      setIsWaiting(false);
+   }, []);
+
+   // add events listener
+   useEffect(() => {
+      if (!audioEle) return;
+
+      audioEle.addEventListener("loadedmetadata", handleLoaded);
+      audioEle.addEventListener("error", handleError);
+      audioEle.addEventListener("pause", handlePause);
+      audioEle.addEventListener("playing", handlePlaying);
+      audioEle.addEventListener("timeupdate", handleTimeUpdate);
+      audioEle.addEventListener("waiting", handleWaiting);
+
+      return () => {
+         audioEle.removeEventListener("loadedmetadata", handleLoaded);
+         audioEle.removeEventListener("error", handleError);
+         audioEle.removeEventListener("pause", handlePause);
+         audioEle.removeEventListener("playing", handlePlaying);
+         audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+         audioEle.removeEventListener("waiting", handleWaiting);
+      };
+   }, []);
+
+   // update date audio src
    useEffect(() => {
       if (!audioEle) return;
 
       audioEle.src = songInStore.song_url;
-      audioEle.onloadedmetadata = () => handleLoaded();
 
       return () => {
          if (firstTimeRender.current) {
             firstTimeRender.current = false;
             return;
          }
-         console.log("run clean up control");
-
-         audioEle.src = "";
-         audioEle?.removeEventListener("timeupdate", handlePlaying);
-         audioEle?.removeEventListener("pause", handlePause);
-         audioEle?.removeEventListener("waiting", handleWaiting);
-         audioEle?.removeEventListener("play", handlePlay);
 
          handleResetForNewSong();
-         setIsWaiting(true);
       };
    }, [songInStore]);
 
@@ -317,6 +326,8 @@ export default function Control({
       icon: "w-[30px] ",
    };
 
+   // console.log('control check actuallySongs', actuallySongs);
+
    return (
       <>
          {/* buttons */}
@@ -332,6 +343,7 @@ export default function Control({
             </button>
 
             <PlayPauseButton
+               isError={error}
                isWaiting={isWaiting}
                isPlaying={isPlaying}
                handlePlayPause={handlePlayPause}
@@ -360,17 +372,16 @@ export default function Control({
             <div
                ref={durationLine}
                onClick={(e) => handleSeek(e)}
-               className={`${classes.processLineBase}`}
+               className={`${classes.processLineBase} ${
+                  !isLoaded && "opacity-20 pointer-events-none"
+               }`}
             >
-               <div
-                  ref={timeProcessLine}
-                  className={`${classes.processLineCurrent}`}
-               ></div>
+               <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
             </div>
             <div className="w-[55px] pl-[5px]">
                {audioEle && (
                   <span ref={remainingTime} className={classes.duration}>
-                     "-00:00"
+                     {handleTimeText(durationRef.current) || "00:00"}
                   </span>
                )}
             </div>

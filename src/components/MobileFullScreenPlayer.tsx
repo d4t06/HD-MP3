@@ -43,7 +43,7 @@ import Control from "./Control";
 import LyricsList from "./LyricsList";
 import MobileSongItem from "./ui/MobileSongItem";
 import useBgImage from "../hooks/useBgImage";
-import useGetActuallySongs from "../hooks/useGetActuallySongs";
+// import useGetActuallySongs from "../hooks/useGetActuallySongs";
 // import useVolume from "../hooks/useVolume";
 
 type Props = {
@@ -94,7 +94,7 @@ export default function MobileFullScreenPlayer({
    // use hooks
    useBgImage({ bgRef, songInStore });
    const songLyric = useGetSongLyric({ songInStore });
-   const songLists = useGetActuallySongs({ songInStore: songInStore });
+   // const songLists = useGetActuallySongs({ songInStore: songInStore });
 
    const { refs, floatingStyles, context } = useFloating({
       open: isClickSetting,
@@ -160,7 +160,7 @@ export default function MobileFullScreenPlayer({
                      Playing next
                   </h3>
                   <div className="relative h-full no-scrollbar overflow-auto transition-all">
-                     {songLists.map((song, index) => {
+                     {/* {songLists.map((song, index) => {
                         if (index > songInStore.currentIndex) {
                            return (
                               <MobileSongItem
@@ -172,13 +172,13 @@ export default function MobileFullScreenPlayer({
                               />
                            );
                         }
-                     })}
+                     })} */}
                   </div>
                </>
             )}
          </>
       );
-   }, [songInStore, songLists]);
+   }, [songInStore]);
 
    const lyricTab = useMemo(
       () => (

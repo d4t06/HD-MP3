@@ -11,16 +11,15 @@ import { Song } from "../types";
 
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
-import { useActuallySongs } from "../components/Player";
 
 import LyricsList from "./LyricsList";
 import Tabs from "./ui/Tabs";
 import Button from "./ui/Button";
 import SongThumbnail from "./ui/SongThumbnail";
-import { useSongsStore } from "../store/SongsContext";
 import useBgImage from "../hooks/useBgImage";
 import useSongLyric from "../hooks/useGetSongLyric";
-import useGetActuallySongs from "../hooks/useGetActuallySongs";
+import { useSongsStore } from "../store/SongsContext";
+import { useActuallySongs } from "../store/ActuallySongsContext";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -42,6 +41,7 @@ export default function FullScreenPlayer({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
+   const {songLists} = useActuallySongs()
 
    // component state
    const [activeTab, setActiveTab] = useState<string>("Lyric");
@@ -54,8 +54,10 @@ export default function FullScreenPlayer({
 
    // use hooks
    useBgImage({ bgRef, songInStore });
+
    const songLyric = useSongLyric({ songInStore });
-   const songLists = useGetActuallySongs({ songInStore });
+   
+   // const songLists = useGetActuallySongs({ songInStore });
 
    // define callback functions
    const handleSetSongWhenClick = (song: Song, index: number) => {
@@ -84,48 +86,6 @@ export default function FullScreenPlayer({
       }, 300);
    };
 
-   // define jsx
-   const renderSongsList = useMemo(() => {
-      if (!songLists.length) return;
-
-      return songLists.map((song, index) => {
-         const isActive = index === songInStore.currentIndex;
-
-         return (
-            <div key={index} className="px-[20px]">
-               <SongThumbnail
-                  classNames="items-center justify-center flex-shrink-0 w-[350px]"
-                  hasHover
-                  hasTitle
-                  containerRef={containerRef}
-                  onClick={() => handleSetSongWhenClick(song, index)}
-                  active={isActive}
-                  data={song}
-                  scroll
-               />
-            </div>
-         );
-      });
-   }, [songInStore, songLists]);
-   const renderLyricTab = (
-      <div className="lyric-container px-[40px] h-full w-full flex items-center justify-center flex-row">
-         {/* left */}
-         <div className="max-[549px]:hidden">
-            <SongThumbnail
-               classNames="items-center justify-center"
-               active={isPlaying}
-               data={songInStore}
-               scroll={false}
-            />
-         </div>
-
-         {/* right */}
-         <div className="flex-1 max-w-[700px] ml-[50px] max-[549px]:ml-0 h-full overflow-auto no-scrollbar pb-[30%]">
-            <LyricsList audioEle={audioEle} songLyric={songLyric} />
-         </div>
-      </div>
-   );
-
    const classes = {
       button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
       mainContainer: `fixed inset-0 z-50 bg-zinc-900  overflow-hidden text-white  ${
@@ -141,11 +101,48 @@ export default function FullScreenPlayer({
       contentContainer: `h-[calc(100%-100px)] max-[549px]:h-[calc(100%-150px)] relative overflow-hidden`,
       songsListTab: `${
          activeTab !== "Songs" ? "opacity-0" : ""
-      } relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth max-[549px]:px-[150px]`,
+      } relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth max-[549px]:px-[150px] px-[calc(50%-390px/2)]`,
 
       absoluteButton: `p-[8px] bg-gray-500 bg-opacity-50 text-xl fixed top-1/2 -translate-y-1/2 max-[549px]:hidden`,
       songNameSinger: "relative text-center text-white text-[14px] opacity-80",
+      lyricTabContainer:
+         "px-[40px] h-full w-full flex items-center justify-center flex-row",
+      lyricContainer: "flex-grow ml-[50px] max-[549px]:ml-0 h-full overflow-hidden",
    };
+
+   // define jsx
+   const renderSongsList = useMemo(() => {
+      if (!songLists.length) return;
+
+      return songLists.map((song, index) => {
+         const isActive = index === songInStore.currentIndex;
+
+         return (
+            <SongThumbnail
+               key={index}
+               classNames="items-end justify-center flex-shrink-0 w-[350px] h-[350px]"
+               hasHover
+               hasTitle
+               containerRef={containerRef}
+               onClick={() => handleSetSongWhenClick(song, index)}
+               active={isActive}
+               data={song}
+               scroll
+            />
+         );
+      });
+   }, [songInStore, songLists]);
+   const renderLyricTab = (
+      <div className={classes.lyricTabContainer}>
+         {/* left */}
+         <SongThumbnail active={true} data={songInStore} scroll={false} />
+
+         {/* right */}
+         <div className={classes.lyricContainer}>
+            <LyricsList audioEle={audioEle} songLyric={songLyric} />
+         </div>
+      </div>
+   );
 
    return (
       <div className={`${classes.mainContainer}`}>

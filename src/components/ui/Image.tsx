@@ -1,15 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import Skeleton from "../skeleton";
 
-export default function Image({ src }: { src: string }) {
+export default function Image({ src, classNames }: { src?: string, classNames?: string }) {
    const [imageLoaded, setImageLoaded] = useState(false);
    const imageRef = useRef<HTMLImageElement>(null);
 
    useEffect(() => {
+      // if no have image (use default placeholder png)
+      if (!src) {
+         setImageLoaded(true);
+         return;
+      }
+
       const imageEle = imageRef.current as HTMLImageElement;
 
       const handleLoadImage = () => {
-         // console.log("image loaded");
+
+         console.log('image loaded');
          setImageLoaded(true);
       };
 
@@ -22,14 +29,13 @@ export default function Image({ src }: { src: string }) {
             imageEle.removeEventListener("load", handleLoadImage);
          }
       };
-   }, []);
 
-   // console.log("check imageLoaed", imageLoaded);
+   }, []);
 
    return (
       <>
          {!imageLoaded && <Skeleton className="w-full pt-[100%]" />}
-         <img className={`${!imageLoaded ? "hidden" : ""}`} src={src || 'https://placehold.co/400'} ref={imageRef} />
+         <img className={`${classNames && classNames} w-full ${!imageLoaded ? "hidden" : ""}`} src={src || "https://placehold.co/100"} ref={imageRef} />
       </>
    );
 }

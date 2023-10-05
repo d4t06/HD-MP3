@@ -7,7 +7,7 @@ export type User = {
   playlist_ids: string[];
   song_ids: string[];
   role: string;
-  songs_count: number;
+  song_count: number;
   latest_seen: Timestamp;
 };
 
@@ -22,6 +22,7 @@ export type Song = {
   by: string;
   duration: number;
   lyric_id: string;
+  in_playlist: string[];
 };
 
 export type ParserSong = {

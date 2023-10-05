@@ -1,28 +1,32 @@
-
 import { Timestamp } from "firebase/firestore";
+import { Playlist, Song } from "../types";
 
-export const convertTimestampToString = (timeStamp : Timestamp) => {
+export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
-}
+};
 
 export const generateId = (name: string, email: string): string => {
-
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.
    const convertToEn = (str: string) => {
-      str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ/g, "a");
-      str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-      str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-      str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ/g, "o");
-      str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-      str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-      str = str.replace(/đ/g, "d");
-      return str;
-   }
-   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, '') + '_' + email.replace('@gmail.com', '')
-}
+      const newString = str
+         .replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ/g, "a")
+         .replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e")
+         .replace(/ì|í|ị|ỉ|ĩ/g, "i")
+         .replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ/g, "o")
+         .replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u")
+         .replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y")
+         .replace(/đ/g, "d");
+      return newString;
+   };
+   return (
+      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") +
+      "_" +
+      email.replace("@gmail.com", "")
+   );
+};
 
 export const handleTimeText = (duration: number) => {
-   if (!duration) return '';
+   if (!duration) return "";
 
    let minute = 0;
    let fixexDuration = +duration.toFixed(0);
@@ -42,6 +46,63 @@ export const handleTimeText = (duration: number) => {
       }
       return `${minute}:0${fixexDuration}`;
    }
+};
 
+export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
+   const index = userSongs.findIndex((songItem) => songItem.id === song.id);
+   userSongs[index] = song;
+};
 
+export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) => {
+   const index = playlists.findIndex((playlistItem) => playlistItem.id === playlist.id);
+   playlists[index] = playlist;
+};
+
+export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: string[] } => {
+   let time: number = 0;
+   let ids: string[] = [];
+
+   songsList.forEach((song) => {
+      time += song.duration;
+      ids.push(song.id);
+   });
+
+   return { time, ids };
+};
+export const generatePlaylistAfterChangeSongs = ({
+   newPlaylistSongs,
+   existingPlaylist,
+}: {
+   newPlaylistSongs: Song[];
+   existingPlaylist: Playlist;
+}) => {
+   const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
+   const newPlaylist: Playlist = {
+      ...existingPlaylist,
+      time,
+      song_ids: ids,
+      count: ids.length,
+   };
+
+   return newPlaylist;
+};
+
+export const initSongObject = ({ ...value }: Partial<Song>) => {
+   const song: Song = {
+      name: "",
+      singer: "",
+      image_url: "",
+      song_url: "",
+      by: "admin",
+      duration: 0,
+      lyric_id: "",
+      image_file_path: "",
+      song_file_path: "",
+      id: "",
+      in_playlist: [],
+   };
+   return {
+      ...song,
+      ...value,
+   } as Song;
 };

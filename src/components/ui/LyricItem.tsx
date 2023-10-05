@@ -40,7 +40,7 @@ export default function LyricItem({
    return (
       <li
          ref={lyricRef}
-         className={`${className} py-[10px] max-[549px]:text-[24px] ${inUpload ? 'text-[16px]' : 'text-[40px]'} max-[549px]:text-center font-bold ${
+         className={`${className && className} py-[10px] max-[549px]:text-[24px] ${inUpload ? 'text-[16px]' : 'text-[40px]'} max-[549px]:text-center font-bold ${
             active ? "opacity-100" : ""
          } ${done ? "opacity-40" : ""} ${inUpload && 'flex pl-[20px]'}`}
       >

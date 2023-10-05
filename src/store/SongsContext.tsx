@@ -30,7 +30,7 @@ const initialSongs: StateType = {
       playlist_ids: [],
       song_ids: [],
       role: "",
-      songs_count: 0,
+      song_count: 0,
       latest_seen: new Timestamp(0, 0),
    },
 

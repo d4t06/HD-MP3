@@ -8,6 +8,7 @@ import { useSongsStore } from "../store/SongsContext";
 // import { testSongs } from "./songs";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
+import { testPlaylists, testSongs } from "./songs";
 
 export default function useSong() {
    const { setToasts } = useToast();
@@ -145,7 +146,6 @@ export default function useSong() {
       setLoading(true);
 
       // const userData = (await getUserData()) as User;
-
       // await new Promise<void>((rs) => {
       //    setTimeout(() => {
       //       initSongsContext({
@@ -153,7 +153,7 @@ export default function useSong() {
       //          adminSongs: testSongs,
       //          adminPlaylists: [],
       //          userPlaylists: [],
-      //          userData,
+      //          userData: {} as User,
       //       });
       //       setLoading(false);
 
@@ -166,7 +166,7 @@ export default function useSong() {
 
       if (adminRes && userRes) {
          const { data, userData } = userRes;
-         console.log("check user songs", data.userSongs);
+         console.log("check userPlaylists", data.userPlaylists);
 
          initSongsContext({ ...data, ...adminRes, userData });
       }

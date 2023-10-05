@@ -1,74 +1,72 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useSongsStore } from "../store/SongsContext";
+import { useToast } from "../store/ToastContext";
 import { selectAllSongStore, setPlaylist } from "../store/SongSlice";
 import { Playlist, Song } from "../types";
-import {
-   updatePlaylistDoc,
-   updatePlaylistsValue,
-} from "../utils/firebaseHelpers";
-import { useToast } from "../store/ToastContext";
-import { nanoid } from "nanoid";
+import { setPlaylistDoc } from "../utils/firebaseHelpers";
+import { updatePlaylistsValue } from "../utils/appHelpers";
+import { useCallback } from "react";
 
-export default function useSongItemActions() {
+const useSongItemActions = () => {
    const dispatch = useDispatch();
-
-   const { setToasts } = useToast();
-
-   const { userPlaylists, setUserPlaylists, userSongs, setUserSongs } =
-      useSongsStore();
+   const { setErrorToast } = useToast();
+   const { userPlaylists, setUserPlaylists, userSongs, setUserSongs } = useSongsStore();
    const { playlist: playlistInStore } = useSelector(selectAllSongStore);
 
-   const updatePlaylistAfterChange = async ({
-      newPlaylist,
-   }: {
-      newPlaylist: Playlist;
-   }) => {
-      // update userPlaylist
-      const newUserPlaylists = [...userPlaylists];
-      updatePlaylistsValue(newPlaylist, newUserPlaylists);
+   const setPlaylistDocAndSetUserPlaylists = useCallback(
+      async ({ newPlaylist }: { newPlaylist: Playlist }) => {
+         // update userPlaylist
+         const newUserPlaylists = [...userPlaylists];
+         updatePlaylistsValue(newPlaylist, newUserPlaylists);
 
-      // if user playing this playlist, need to update new value
-      
-      if (playlistInStore.name === newPlaylist.name) {
-         dispatch(setPlaylist(newPlaylist));
-      }
+         // if user playing this playlist, need to update new
+         if (playlistInStore.name === newPlaylist.name) {
+            dispatch(setPlaylist(newPlaylist));
+         }
 
-      setUserPlaylists(newUserPlaylists, []);
+         setUserPlaylists(newUserPlaylists, []);
 
-      try {
-         await updatePlaylistDoc({ playlist: newPlaylist });
-      } catch (error) {
-         console.log(error);
-         setToasts((t) => [
-            ...t,
-            {
-               title: "error",
-               id: nanoid(4),
-               desc: `Something went wrong`,
-            },
-         ]);
-      }
-   };
+         try {
+            await setPlaylistDoc({ playlist: newPlaylist });
+         } catch (error) {
+            console.log(error);
+            setErrorToast({});
+         }
+      },
+      [userPlaylists, playlistInStore]
+   );
 
-   const updateSongsListAfterChange = async ({ song }: { song: Song }) => {
+   const updateAndSetUserSongs = useCallback(
+      async ({ song }: { song: Song }) => {
+         // reference copy newUserSongIds = userSongIds;
+         // const newUserSongIds = [...userSongIds];
+         let newUserSongs = [...userSongs];
 
-      // reference copy newUserSongIds = userSongIds;
-      // const newUserSongIds = [...userSongIds];
-      const newUserSongs = [...userSongs];
+         console.log('check prev usersongs', newUserSongs.map(song => song.name));
+         
 
-      // get index of deleted song in userSongs
-      const index = newUserSongs.indexOf(song);
-      newUserSongs.splice(index, 1);
+         // get index of deleted song in userSongs
+         const index = newUserSongs.indexOf(song);
+         newUserSongs.splice(index, 1);
+         // console.log('delete index', song.name, index + 1);
+         
 
-      const newUserSongIds = newUserSongs.map((songItem) => songItem.id);
+         const newUserSongIds = newUserSongs.map((songItem) => songItem.id);
 
-      // update user songs
-      setUserSongs(newUserSongs);
+         console.log('current', newUserSongs.map(song => song.name));
+         // update user songs
+         setUserSongs(newUserSongs);
 
-      return newUserSongIds
-      // update user doc
-      // await setUserSongIdsAndCountDoc(newUserSongIds, userData);
-   };
+         return newUserSongIds;
+      },
+      [userSongs]
+   );
 
-   return { updatePlaylistAfterChange, updateSongsListAfterChange };
+   console.log('use songitem action render, check user songs', userSongs);
+   
+
+   return { setPlaylistDocAndSetUserPlaylists, updateAndSetUserSongs };
 }
+
+
+export default useSongItemActions

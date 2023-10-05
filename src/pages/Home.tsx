@@ -18,7 +18,7 @@ import { routes } from "../routes";
 
 import useSong from "../hooks/useSongs";
 
-import SongListItem from "../components/ui/SongItem";
+import SongItem from "../components/ui/SongItem";
 import Button from "../components/ui/Button";
 import LinkItem from "../components/ui/LinkItem";
 import Skeleton from "../components/skeleton";
@@ -40,7 +40,7 @@ export default function HomePage() {
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    // use hooks
-   const { updatePlaylistAfterChange } = useSongItemActions();
+   // const { setPlaylistDocAndSetUserPlaylists } = useSongItemActions();
 
    // component states
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
@@ -70,7 +70,7 @@ export default function HomePage() {
          song_ids: newSongIds,
          count: newSongIds.length,
       };
-      updatePlaylistAfterChange({ newPlaylist });
+      // setPlaylistDocAndSetUserPlaylists({ newPlaylist });
    };
 
    // define skeleton
@@ -116,7 +116,7 @@ export default function HomePage() {
          }
          return (
             <div key={index} className="w-full max-[549px]:w-full">
-               <SongListItem
+               <SongItem
                   theme={theme}
                   onClick={() => handleSetSong(song, index)}
                   active={active}
@@ -127,7 +127,7 @@ export default function HomePage() {
                   selectedSongList={selectedSongList}
                   setIsCheckedSong={setIsCheckedSong}
                   setSelectedSongList={setSelectedSongList}
-                  addSongToPlaylist={handleAddSongToPlaylist}
+                  
                />
             </div>
          );

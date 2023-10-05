@@ -9,10 +9,14 @@ interface Props {
    autoClose: boolean;
 }
 
-const ToastPortal = ({ time = 10000, autoClose }: Props) => {
+const ToastPortal = ({ time = 3000, autoClose }: Props) => {
    const { setToasts, toasts } = useToast();
    const {theme} = useTheme()
    const [removing, setRemoving] = useState("");
+
+   const removeToast = (id: string) => {
+      setToasts((t) => t.filter((toast) => toast.id != id));
+   }
 
    useEffect(() => {
       if (removing) {
@@ -31,7 +35,7 @@ const ToastPortal = ({ time = 10000, autoClose }: Props) => {
 
       const id = toasts[toasts.length - 1].id;
       setTimeout(() => {
-         console.log("run time out check id ", id);
+         // console.log("run time out check id ", id);
          setRemoving(id);
       }, time);
    }, [toasts]);
@@ -47,7 +51,7 @@ const ToastPortal = ({ time = 10000, autoClose }: Props) => {
                <div className="flex flex-col gap-[10px]">
                   {!!toasts.length &&
                      toasts.map((toast, index) => (
-                        <ToastItem key={index} theme={theme} toast={toast} />
+                        <ToastItem onClick={removeToast} key={index} theme={theme} toast={toast} />
                      ))}
                </div>
             </div>,

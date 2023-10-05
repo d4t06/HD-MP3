@@ -97,7 +97,7 @@ export default function BottomPlayer({
                   </div>
 
                   <div className=" ml-[10px] flex-grow">
-                     <div className="h-[24px] w-full">
+                     <div className="h-[24px] w-full mask-image-horizontal">
                         {useMemo(
                            () => (
                               <ScrollText
@@ -111,7 +111,7 @@ export default function BottomPlayer({
                         )}
                      </div>
 
-                     <div className="h-[20px] w-full">
+                     <div className="h-[20px] w-full mask-image-horizontal">
                         {useMemo(
                            () => (
                               <ScrollText
