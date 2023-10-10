@@ -11,15 +11,13 @@ import { nanoid } from "nanoid";
 import { testPlaylists, testSongs } from "./songs";
 
 export default function useSong() {
-   const { setToasts } = useToast();
+   const { setErrorToast } = useToast();
 
    const [loggedInUser, userLoading] = useAuthState(auth);
    const { initial, adminSongs, initSongsContext, userSongs } = useSongsStore();
 
    const [errorMsg, setErrorMsg] = useState<string>("");
-   const [loading, setLoading] = useState(
-      adminSongs.length || userSongs.length ? false : true
-   );
+   const [loading, setLoading] = useState(adminSongs.length || userSongs.length ? false : true);
 
    const songsCollectionRef = collection(db, "songs");
    const playlistCollectionRef = collection(db, "playlist");
@@ -27,7 +25,7 @@ export default function useSong() {
    const handleErrorMsg = (msg: string) => {
       setLoading(false);
       setErrorMsg(msg);
-      setToasts((t) => [...t, { title: "error", desc: msg, id: nanoid(4) }]);
+      setErrorToast({})
    };
 
    // get user data
@@ -65,16 +63,14 @@ export default function useSong() {
          }
       } catch (error) {
          console.log("getUserPlaylists", error);
+         handleErrorMsg("Get users playlist error")
       }
    };
 
    // get admin song
    const getAdminSongsAndPlaylists = async () => {
       try {
-         const queryGetAdminSongs = query(
-            collection(db, "songs"),
-            where("by", "==", "admin")
-         );
+         const queryGetAdminSongs = query(collection(db, "songs"), where("by", "==", "admin"));
          const queryGetAdminPlaylist = query(
             collection(db, "playlists"),
             where("by", "==", "admin")
@@ -135,8 +131,7 @@ export default function useSong() {
          return { data, userData };
       } catch (error) {
          console.log({ message: error });
-
-         // handleErrorMsg("GetUserSongsAndPlaylists error");
+         handleErrorMsg("GetUserSongsAndPlaylists error");
       }
    };
 
@@ -145,42 +140,39 @@ export default function useSong() {
 
       setLoading(true);
 
-      // const userData = (await getUserData()) as User;
-      // await new Promise<void>((rs) => {
-      //    setTimeout(() => {
-      //       initSongsContext({
-      //          userSongs: testSongs || [],
-      //          adminSongs: testSongs,
-      //          adminPlaylists: [],
-      //          userPlaylists: [],
-      //          userData: {} as User,
-      //       });
-      //       setLoading(false);
+      const userData = (await getUserData()) as User;
+      await new Promise<void>((rs) => {
+         setTimeout(() => {
+            initSongsContext({
+               userSongs: testSongs || [],
+               adminSongs: testSongs,
+               adminPlaylists: [],
+               userPlaylists: testPlaylists,
+               userData: userData as User,
+            });
+            setLoading(false);
 
-      //       rs();
-      //    }, 500);
-      // });
+            rs(); 
+         }, 500);
+      });
 
-      const adminRes = await getAdminSongsAndPlaylists();
-      const userRes = await getUserSongsAndPlaylists();
+      // const adminRes = await getAdminSongsAndPlaylists();
+      // const userRes = await getUserSongsAndPlaylists();
 
-      if (adminRes && userRes) {
-         const { data, userData } = userRes;
-         console.log("check userPlaylists", data.userPlaylists);
+      // if (adminRes && userRes) {
+      //    const { data, userData } = userRes;
+      //    console.log("check user", data);
 
-         initSongsContext({ ...data, ...adminRes, userData });
-      }
-      setLoading(false);
+      //    initSongsContext({ ...data, ...adminRes, userData });
+      // }
+      // setLoading(false);
    };
 
    // run initSongsAndPlaylists
    useEffect(() => {
       if (userLoading) return;
 
-      if (adminSongs.length || userSongs.length) {
-         // console.log("initial return cause have songs in context");
-         return;
-      }
+      if (adminSongs.length || userSongs.length) return;
 
       if (!initial) {
          initSongsAndPlaylists();
@@ -189,9 +181,11 @@ export default function useSong() {
       }
    }, [userLoading]);
 
-   // console.log("check render useSongs");
+   // console.log("use song render", loading);
 
-   // 5 time render
+   // user loading x1
+   // loading x2
+   // 3 time re-render
 
    return {
       initial,

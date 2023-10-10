@@ -113,7 +113,8 @@ const PlaylistItem: FC<Props> = ({
       <>
          <div className="group h-full flex flex-col" onClick={() => isOnMobile && onClick && onClick()}>
             <div className={classes.imageContainer}>
-               <Image classNames=" w-full aspect-square object-cover object-center" src={data.image_url} />
+               {/* <Image classNames="h-full w-full aspect-square object-cover object-center" src={data.image_url} /> */}
+               <img className="h-full w-full aspect-square object-cover object-center" src={'https://placehold.co/100'} alt="" />
 
                {!isOnMobile && !inDetail && (
                   <div className={classes.absoluteContainer}>

@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Skeleton from "../skeleton";
 
-export default function Image({ src, classNames }: { src?: string, classNames?: string }) {
+type Props = {
+   src?: string;
+   classNames?: string;
+   onError?: () => void;
+};
+
+export default function Image({ src, classNames, onError }: Props) {
    const [imageLoaded, setImageLoaded] = useState(false);
    const imageRef = useRef<HTMLImageElement>(null);
 
@@ -15,13 +21,16 @@ export default function Image({ src, classNames }: { src?: string, classNames?: 
       const imageEle = imageRef.current as HTMLImageElement;
 
       const handleLoadImage = () => {
-
-         console.log('image loaded');
          setImageLoaded(true);
+      };
+
+      const hanleError = () => {
+         onError && onError();
       };
 
       if (imageEle) {
          imageEle.addEventListener("load", handleLoadImage);
+         imageEle.addEventListener("error", hanleError);
       }
 
       return () => {
@@ -29,13 +38,16 @@ export default function Image({ src, classNames }: { src?: string, classNames?: 
             imageEle.removeEventListener("load", handleLoadImage);
          }
       };
-
    }, []);
 
    return (
       <>
          {!imageLoaded && <Skeleton className="w-full pt-[100%]" />}
-         <img className={`${classNames && classNames} w-full ${!imageLoaded ? "hidden" : ""}`} src={src || "https://placehold.co/100"} ref={imageRef} />
+         <img
+            className={`${classNames && classNames} w-full ${!imageLoaded ? "hidden" : ""}`}
+            src={src || "https://placehold.co/100"}
+            ref={imageRef}
+         />
       </>
    );
 }

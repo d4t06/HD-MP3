@@ -1,4 +1,12 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useMemo, useState } from "react";
+import {
+   Dispatch,
+   ReactNode,
+   SetStateAction,
+   createContext,
+   useContext,
+   useEffect,
+   useState,
+} from "react";
 import { Song } from "../types";
 import { useSongsStore } from "./SongsContext";
 import { useSelector } from "react-redux";
@@ -27,18 +35,44 @@ const initialContext: ContextType = {
 // create context
 const ActuallySongsContext = createContext(initialContext);
 
-
 // define provider
-const ActuallySongsProvider = ({ children }: {children: ReactNode}) => {
+const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
+   const { adminSongs, userSongs, initial } = useSongsStore();
+   const { song: songInStore } = useSelector(selectAllSongStore);
+
    const [actuallySongs, setActuallySongs] = useState<Song[]>([]);
+   const [songsList, setSongsList] = useState<Song[]>([]);
+
+   // play in songs then play in playlist
+   // play in playlist then add song to playlis
+   // play in songs then user add new song
+   useEffect(() => {
+      if (!initial) return;
+
+      if (!songInStore.name) return;
+
+      if (songInStore.song_in.includes("playlist")) {
+         console.log("set actually songs");
+         setSongsList(actuallySongs);
+         return;
+      }
+
+      if (songInStore.song_in === "admin") {
+         setSongsList(adminSongs);
+      } else {
+         setSongsList(userSongs);
+      }
+      console.log("set actually songs");
+   }, [songInStore.song_in, initial, actuallySongs, userSongs]);
 
    return (
-      <ActuallySongsContext.Provider value={{ state: { actuallySongs }, setActuallySongs }}>
+      <ActuallySongsContext.Provider
+         value={{ state: { actuallySongs: songsList }, setActuallySongs }}
+      >
          {children}
       </ActuallySongsContext.Provider>
    );
 };
-
 
 const useActuallySongs = () => {
    const {
@@ -46,24 +80,8 @@ const useActuallySongs = () => {
       state: { actuallySongs },
    } = useContext(ActuallySongsContext);
 
-   const {adminSongs, userSongs} = useSongsStore();
-   const {song: songInStore} = useSelector(selectAllSongStore);
-
-   // user uploads songs
-   // user play song in many playist
-   // user play admin
-
-   // actuallySongs, userSongs, songInStore
-   const songLists = useMemo(() => {
-      return songInStore.song_in.includes("playlist")
-         ? actuallySongs
-         : songInStore.song_in === "admin"
-            ? adminSongs
-            : userSongs;
-   }, [songInStore.song_in, actuallySongs, userSongs]);
-   
-   return { songLists, setActuallySongs };
+   return { actuallySongs, setActuallySongs };
 };
 
-export default ActuallySongsProvider
-export {useActuallySongs}
+export default ActuallySongsProvider;
+export { useActuallySongs };

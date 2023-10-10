@@ -1,180 +1,187 @@
 import { Playlist, Song } from "../types";
-import { useEffect, useState, MutableRefObject, useCallback } from "react";
+import { useEffect, useState, MutableRefObject, useCallback, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { useToast } from "../store/ToastContext";
-import { setPlaylist } from "../store/SongSlice";
+import { Status, selectAllSongStore, setPlaylist } from "../store/SongSlice";
 import { useSongsStore } from "../store/SongsContext";
 
 import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
-import {
-  myGetDoc,
-  mySetDoc,
-} from "../utils/firebaseHelpers";
+import useSong from "./useSongs";
+import { mySetDoc } from "../utils/firebaseHelpers";
+import { useActuallySongs } from "../store/ActuallySongsContext";
 
 type Props = {
-  playlistInStore: Playlist;
-  initial: boolean;
-  firstTimeRender: MutableRefObject<boolean>;
+   playlistInStore: Playlist;
+   songInStore: Song & Status;
+   firstTimeRender: MutableRefObject<boolean>;
 };
 
 export default function usePlaylistDetail({
-  firstTimeRender,
-  initial,
-  playlistInStore,
-}: Props) {
-  // use store
-  const dispatch = useDispatch();
-  const { setErrorToast } = useToast();
-  const { userData, adminSongs, userSongs, userPlaylists, setUserPlaylists } =
-    useSongsStore();
-  const params = useParams();
+   firstTimeRender,
+}: // playlistInStore,
+Props) {
+   // use store
+   const dispatch = useDispatch();
+   const { setErrorToast } = useToast();
 
-  // hook state
-  const [loading, setLoading] = useState(false);
-  const [PlaylistSongs, setPlaylistSongs] = useState<Song[]>([]);
-  const [errorMsg, setErrorMsg] = useState("");
+   const params = useParams();
+   const { setActuallySongs } = useActuallySongs();
+   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
+   const { loading: useSongLoading, errorMsg: useSongErrorMsg, initial } = useSong();
+   const { userData, adminSongs, userSongs, userPlaylists, setUserPlaylists } = useSongsStore();
 
-  // get playlist data
-  const getPlaylist = useCallback(async () => {
-    console.log("run getPlaylist after initial");
+   // hook state
+   const [loading, setLoading] = useState(useSongLoading);
+   const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
+   const [errorMsg, setErrorMsg] = useState("");
+   const firstRunGetPlaylistSongs = useRef(true);
 
-    try {
-      setLoading(true);
-
+   const getAndSetPlaylist = useCallback(async () => {
+      if (!userData.email || !params.name) return;
       const playlistId = generateId(params.name as string, userData.email);
-      const playlistSnap = await myGetDoc({
-        collection: "playlist",
-        id: playlistId,
+      const playList = userPlaylists.find((playlist) => playlist.id === playlistId);
+
+      if (playList) {
+         console.log("set playlist after init");
+         dispatch(setPlaylist(playList));
+         setLoading(false);
+      } else {
+         setErrorMsg("No playlist found");
+         setErrorToast({ message: "No playlist found" });
+      }
+   }, [params, userData]);
+
+   const getPlaylistSongs = useCallback(() => {
+      let playlistSongs: Song[] = [];
+      let targetSongs: Song[];
+
+      if (!playlistInStore.song_ids.length) {
+         setPlaylistSongs([]);
+         return;
+      }
+
+      switch (playlistInStore.by) {
+         case "admin":
+            targetSongs = adminSongs;
+            break;
+         default:
+            targetSongs = userSongs;
+      }
+
+      playlistInStore.song_ids.forEach((songId) => {
+         const song = targetSongs.find((song) => song.id === songId);
+         if (song) {
+            playlistSongs.push(song);
+         }
       });
 
-      if (playlistSnap.exists()) {
-        const playlistData = playlistSnap.data() as Playlist;
+      console.log("get playlist songs", playlistSongs.map(s => s.name));
+      setPlaylistSongs(playlistSongs);
+   }, [playlistInStore.song_ids, userSongs]);
 
-        dispatch(setPlaylist(playlistData));
-      } else {
-        setErrorMsg("Playlist not found");
-        setErrorToast({});
+   // get playlist after initial
+   useEffect(() => {
+      // console.log("useEffect 1");
+
+      if (firstTimeRender.current) return;
+
+      if (!initial || useSongErrorMsg) return;
+
+      if (playlistInStore.name) {
+         setLoading(false);
+         return;
       }
-    } catch (error) {
-      console.log({ message: error });
-    } finally {
-      setLoading(false);
-    }
-  }, [params, userData]);
 
-  // // get playlist song
-  const getPlaylistSongs = useCallback(() => {
-    // console.log("get playlist songs check ids", playlistInStore.song_ids);
+      getAndSetPlaylist();
+   }, [initial]);
 
-    if (!playlistInStore.song_ids.length) {
-      setPlaylistSongs([]);
-      return;
-    }
+   // get playlist songs, run after get playlist
+   useEffect(() => {
+      // console.log("useEffect 2");
 
-    let newSongs: Song[];
-    let i = 0;
-    switch (playlistInStore.by) {
-      case "admin":
-        const tarGetSongsList = [...adminSongs];
+      if (firstTimeRender.current) return;
 
-        newSongs = tarGetSongsList.filter((adminSong) => {
-          if (i === playlistInStore.song_ids.length) return;
+      if (!playlistInStore.name || useSongErrorMsg) return;
 
-          const condition = playlistInStore.song_ids.find(
-            (songId) => songId === adminSong.id
-          );
+      getPlaylistSongs();
+   }, [playlistInStore.song_ids]);
 
-          if (condition) i += 1;
-          return condition;
-        });
+   // for update playlist feature image
+   // useEffect(() => {
+   //    if (firstTimeRender.current) return;
 
-        break;
-      default:
-        newSongs = userSongs.filter((useSong) => {
-          if (i === playlistInStore.song_ids.length) return;
+   //    if (!initial) return;
 
-          const condition = playlistInStore.song_ids.find(
-            (songId) => songId === useSong.id
-          );
+   //    if (!playlistSongs.length) return;
 
-          if (condition) i += 1;
-          return condition;
-        });
-    }
+   //    const firstSongHasImage = playlistSongs.find((song) => song.image_url);
 
-    setPlaylistSongs(newSongs);
-  }, [playlistInStore.song_ids, userSongs]);
+   //    if (
+   //       !firstSongHasImage ||
+   //       (playlistInStore.image_url && playlistInStore.image_url === firstSongHasImage.image_url)
+   //    )
+   //       return;
 
-  useEffect(() => {
-    if (playlistInStore.name) {
-      setLoading(false);
-      return;
-    }
-    if (!initial) return;
+   //    console.log("get playlist feature image");
 
-    getPlaylist();
-  }, [initial]);
+   //    const newPlaylist: Playlist = {
+   //       ...playlistInStore,
+   //       image_url: firstSongHasImage.image_url,
+   //    };
 
-  // for get playlist songs
-  useEffect(() => {
-    if (!playlistInStore) return;
+   //    const setPlaylistImageToDoc = async () => {
+   //       try {
+   //          await mySetDoc({
+   //             collection: "playlist",
+   //             id: playlistInStore.id,
+   //             data: newPlaylist,
+   //          });
+   //       } catch (error) {
+   //          console.log("error when set playlist image");
+   //          setErrorToast({});
+   //       }
+   //    };
 
-    if (firstTimeRender.current) {
-      firstTimeRender.current = false;
-      return;
-    }
-    getPlaylistSongs();
-  }, [playlistInStore.song_ids]);
+   //    setPlaylistImageToDoc();
+   //    // get new user playlist
+   //    const newUserPlaylists = [...userPlaylists];
+   //    updatePlaylistsValue(newPlaylist, newUserPlaylists);
 
-  // for update playlist feature image
-  useEffect(() => {
-    if (firstTimeRender.current) return;
+   //    // update playlistInStore first
+   //    // because the user can be in playlist detail page
+   //    dispatch(setPlaylist(newPlaylist));
 
-    if (!PlaylistSongs.length) return;
+   //    // update users playlist to context
+   //    setUserPlaylists(newUserPlaylists, []);
+   // }, [playlistSongs]);
 
-    const firstSongHasImage = PlaylistSongs.find((song) => song.image_url);
+   // for actually song after user add or remove song from playlist
+   // only run when after play song in playlist then playlist songs change
+   useEffect(() => {
+      console.log("useEffevct 3");
 
-    if (
-      !firstSongHasImage ||
-      (playlistInStore.image_url &&
-        playlistInStore.image_url === firstSongHasImage.image_url)
-    )
-      return;
-
-    console.log("get playlist feature image");
-
-    const newPlaylist: Playlist = {
-      ...playlistInStore,
-      image_url: firstSongHasImage.image_url,
-    };
-
-    const setPlaylistImageToDoc = async () => {
-      try {
-        await mySetDoc({
-          collection: "playlist",
-          id: playlistInStore.id,
-          data: newPlaylist,
-        });
-      } catch (error) {
-        console.log("error when set playlist image");
-        setErrorToast({});
+      if (firstTimeRender.current) {
+         firstTimeRender.current = false;
+         return;
       }
-    };
 
-    setPlaylistImageToDoc();
-    // get new user playlist
-    const newUserPlaylists = [...userPlaylists];
-    updatePlaylistsValue(newPlaylist, newUserPlaylists);
+      if (!initial) return;
 
-    // update playlistInStore first
-    // because the user can be in playlist detail page
-    dispatch(setPlaylist(newPlaylist));
+      console.log("check firstRunGetSongs", firstRunGetPlaylistSongs.current);
+      if (firstRunGetPlaylistSongs.current) {
+         firstRunGetPlaylistSongs.current = false;
+         return;
+      }
 
-    // update users playlist to context
-    setUserPlaylists(newUserPlaylists, []);
-  }, [PlaylistSongs]);
+      if (!songInStore.song_in.includes(playlistInStore.name)) return;
 
-  return { PlaylistSongs, loading, errorMsg };
+
+      console.log("set actually song 2");
+
+      setActuallySongs(playlistSongs);
+   }, [playlistSongs]);
+
+   return { playlistSongs, loading, errorMsg };
 }

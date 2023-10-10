@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useCallback } from "react";
 import { Song, ThemeType } from "../types";
-import { CheckIcon, PauseCircleIcon, StopIcon, } from "@heroicons/react/24/outline";
+import { CheckIcon, PauseCircleIcon, StopIcon } from "@heroicons/react/24/outline";
 
 type Props = {
    data: Song;
@@ -33,11 +33,14 @@ export default function MobileSongItem({
 
    const handleSelect = (song: Song) => {
       console.log("check selected");
-      if (!setSelectedSongList || !selectedSongList || !setIsCheckedSong) {
+      if (!setSelectedSongList || !selectedSongList) {
          console.log("songlistitem lack of props");
          return;
       }
-      setIsCheckedSong(true);
+
+      if (!isCheckedSong) {
+         setIsCheckedSong && setIsCheckedSong(true);
+      }
 
       let list = [...selectedSongList];
       const index = list.indexOf(song);
@@ -51,7 +54,9 @@ export default function MobileSongItem({
          list.splice(index, 1);
       }
       setSelectedSongList(list);
-      if (!list.length) setIsCheckedSong(false);
+      if (!list.length) {
+         setIsCheckedSong && setIsCheckedSong(true);
+      }
    };
 
    const classes = {
@@ -99,26 +104,23 @@ export default function MobileSongItem({
                {/* song image */}
                <div className="flex-grow flex" onClick={() => onClick()}>
                   <div className={`${classes.imageFrame}`}>
-                     <img
-                        className=""
-                        src={data?.image_url || "https://placehold.co/100"}
-                        alt=""
-                     />
+                     <img className="" src={data?.image_url || "https://placehold.co/100"} alt="" />
 
                      {/* hidden when in process and in list */}
                      {active && (
                         <div className="absolute inset-0 bg-black bg-opacity-60 flex songContainers-center items-center justify-center">
                            <div className="relative">
-                              <PauseCircleIcon className="w-[28px]"/>
+                              <PauseCircleIcon className="w-[28px]" />
                            </div>
                         </div>
                      )}
-
                   </div>
 
                   {/* song info */}
                   <div className="ml-[10px]">
-                     <h5 className={`text-mg line-clamp-1 ${active && theme.content_text}`}>{data.name}</h5>
+                     <h5 className={`text-mg line-clamp-1 ${active && theme.content_text}`}>
+                        {data.name}
+                     </h5>
                      <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
                   </div>
                </div>

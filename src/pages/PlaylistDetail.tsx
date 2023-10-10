@@ -1,36 +1,25 @@
-import {
-   PencilSquareIcon,
-   PlayIcon,
-   PlusCircleIcon,
-   TrashIcon,
-   XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { MouseEventHandler, useCallback, useMemo, useState, useRef } from "react";
-import {
-   FloatingFocusManager,
-   autoPlacement,
-   autoUpdate,
-   useClick,
-   useDismiss,
-   useFloating,
-   useInteractions,
-} from "@floating-ui/react";
+import { PencilSquareIcon, PlayIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useCallback, useMemo, useState, useRef } from "react";
+
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
 import { useTheme } from "../store/ThemeContext";
-import { Status, selectAllSongStore, setSong } from "../store/SongSlice";
+import { Status, selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 
 import { Song } from "../types";
 
-import useSong from "../hooks/useSongs";
 import useSongItemActions from "../hooks/useSongItemActions";
 import usePlaylistDetail from "../hooks/usePlaylistDetail";
 
-import { myDeleteDoc } from "../utils/firebaseHelpers";
-import { handleTimeText, generatePlaylistAfterChangeSongs } from "../utils/appHelpers";
+import { myDeleteDoc, mySetDoc } from "../utils/firebaseHelpers";
+import {
+   handleTimeText,
+   generatePlaylistAfterChangeSongs,
+   updateSongsListValue,
+} from "../utils/appHelpers";
 
 import PlaylistItem from "../components/PlaylistItem";
 import SongListItem from "../components/SongItem";
@@ -39,26 +28,23 @@ import PopupWrapper from "../components/ui/PopupWrapper";
 import Modal, { confirmModal } from "../components/Modal";
 import MobileSongItem from "../components/MobileSongItem";
 import Skeleton from "../components/skeleton";
+import AddSongToPlaylistModal from "../components/child/AddSongToPlaylistModal";
 import { useActuallySongs } from "../store/ActuallySongsContext";
+import {
+   handleSongWhenAddToPlaylist,
+   handleSongWhenDeleteFromPlaylist,
+} from "../utils/songItemHelper";
 
 export default function PlaylistDetail() {
    // for store
-   const params = useParams();
    const dispatch = useDispatch();
+   const params = useParams();
    const { theme } = useTheme();
-   const { setSuccessToast } = useToast();
+   const { setSuccessToast, setErrorToast } = useToast();
    const { setActuallySongs } = useActuallySongs();
-   const { loading: initialLoading, errorMsg: useSongErrorMsg, initial } = useSong();
-   const {
-      userData,
-      userSongs,
-      userPlaylists,
-      setUserPlaylists,
-      setUserSongs,
-      adminSongs,
-   } = useSongsStore();
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+   const { userData, userSongs, userPlaylists, setUserPlaylists, setUserSongs, adminSongs } =
+      useSongsStore();
+   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
 
    // component state
    const [loading, setLoading] = useState(false);
@@ -67,19 +53,14 @@ export default function PlaylistDetail() {
    //   use hooks
    const { setPlaylistDocAndSetUserPlaylists } = useSongItemActions();
    const {
-      PlaylistSongs,
+      playlistSongs,
       errorMsg: usePlaylistErrorMsg,
       loading: usePlaylistLoading,
-   } = usePlaylistDetail({ firstTimeRender, initial, playlistInStore });
+   } = usePlaylistDetail({ firstTimeRender, playlistInStore, songInStore });
 
    // for modal
    const [isOpenModal, setIsOpenModal] = useState(false);
-   const [modalComponent, setModalComponent] = useState<
-      "edit" | "confirm" | "addSongs"
-   >();
-
-   // for add songs to playlist
-   const [isOpenPopup, setIsOpenPopup] = useState(false);
+   const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
 
    // for multiselect songListItem
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
@@ -88,30 +69,13 @@ export default function PlaylistDetail() {
    // for edit playlist
    const [playlistName, setPlaylistName] = useState<string>(playlistInStore.name);
 
-   // for floating-ui
-   const { refs, floatingStyles, context } = useFloating({
-      open: isOpenPopup,
-      onOpenChange: setIsOpenPopup,
-      middleware: [autoPlacement()],
-      whileElementsMounted: autoUpdate,
-   });
-   const click = useClick(context);
-   const dismiss = useDismiss(context);
-   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
-
    const handleSetSong = (song: Song, index: number) => {
-      if (songInStore.id !== song.id) {
-
+      // case user play user songs then play playlist song
+      if (songInStore.id !== song.id || !songInStore.song_in.includes(playlistInStore.name)) {
          const newSongIn: Status["song_in"] =
             playlistInStore.by === "admin"
                ? `admin-playlist-${playlistInStore.name as string}`
                : `user-playlist-${playlistInStore.name as string}`;
-
-         if (songInStore.song_in !== newSongIn) {
-            // console.log('playlist check songs', PlaylistSongs);
-            
-         }
-         setActuallySongs(PlaylistSongs);
 
          dispatch(
             setSong({
@@ -120,84 +84,195 @@ export default function PlaylistDetail() {
                song_in: newSongIn,
             })
          );
+
+         if (!songInStore.song_in.includes(playlistInStore.name)) {
+            console.log(
+               "check newPlaylist songs",
+               playlistSongs.map((s) => s.name)
+            );
+            setActuallySongs(playlistSongs);
+         }
       }
    };
 
    const handlePlayPlaylist = () => {
-      const firstSong = PlaylistSongs[0];
+      const firstSong = playlistSongs[0];
 
       if (songInStore.song_in.includes(params.name as string)) return;
       handleSetSong(firstSong, 0);
    };
 
-   const handleAddSongsToPlaylist = useCallback(async () => {
-      // eliminate duplicate song
-      const trueNewSongsList = selectedSongList.filter((song) => {
-         const isAdded = playlistInStore.song_ids.find((id) => id === song.id);
-         return !isAdded;
-      });
+   const handleAddSongsToPlaylist = useCallback(
+      async (selectSongs: Song[]) => {
+         const newPlaylistSongs = [...playlistSongs, ...selectSongs];
+         const newUserSongs = [...userSongs];
+         const songsNeedToUpdateDoc: Song[] = [];
 
-      // get new songs list
-      const newPlaylistSongs = [...PlaylistSongs, ...trueNewSongsList];
-      const newPlaylist = generatePlaylistAfterChangeSongs({
-         newPlaylistSongs,
-         existingPlaylist: playlistInStore,
-      });
+         // >>> handle song
+         for (let song of selectSongs) {
+            const { error, newSong } = handleSongWhenAddToPlaylist(song, playlistInStore);
 
-      await setPlaylistDocAndSetUserPlaylists({
-         newPlaylist,
-      });
+            // check valid song after change
+            if (error) {
+               setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
+               return;
+            } else if (newSong) {
+               songsNeedToUpdateDoc.push(newSong);
+               updateSongsListValue(newSong, newUserSongs);
+            }
+         }
 
-      setSuccessToast({ message: `${trueNewSongsList.length} songs added` });
+         // handle playlist
+         const newPlaylist = generatePlaylistAfterChangeSongs({
+            newPlaylistSongs,
+            existingPlaylist: playlistInStore,
+         });
 
-      closeModal();
-   }, [selectedSongList, isOpenModal]);
+         // check valid playlist data after change
+         if (
+            newPlaylist.count < 0 ||
+            newPlaylist.time < 0 ||
+            newPlaylist.song_ids.length === playlistInStore.song_ids.length
+         ) {
+            setErrorToast({ message: "New playlist data error" });
+            return;
+         }
+
+         // local
+         setUserSongs(newUserSongs);
+
+         // >>> local and api
+         await setPlaylistDocAndSetUserPlaylists({
+            newPlaylist,
+         });
+
+         songsNeedToUpdateDoc.forEach(async (song) => {
+            console.log("update doc", song.name, song.in_playlist);
+            // await mySetDoc({ collection: "songs", data: song, id: song.id });
+         });
+
+         // finish
+         closeModal();
+         setSuccessToast({ message: `${selectSongs.length} songs added` });
+      },
+      [selectedSongList, isOpenModal]
+   );
 
    const deleteFromPlaylist = async (song: Song) => {
-      setIsOpenPopup(false);
-
       if (!playlistInStore.song_ids) {
+         setErrorToast({});
          return;
       }
-      const newPlaylistSongs = [...PlaylistSongs];
-      newPlaylistSongs.splice(newPlaylistSongs.indexOf(song), 1);
+
+      const newUserSongs = [...userSongs];
+      const newPlaylistSongs = [...playlistSongs];
+
+      // >>> handle song
+      const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
+
+      if (error) {
+         setErrorToast({ message: "Handle song when delete from playlist error" });
+         return;
+      } else if (newSong) {
+         updateSongsListValue(newSong, newUserSongs);
+      }
+
+      // >>> handle playlist
+      // eliminate 1 song
+      const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
+      newPlaylistSongs.splice(index, 1);
 
       const newPlaylist = generatePlaylistAfterChangeSongs({
          newPlaylistSongs,
          existingPlaylist: playlistInStore,
       });
 
+      // check valid playlist after change
+      if (
+         newPlaylist.count < 0 ||
+         newPlaylist.time < 0 ||
+         newPlaylist.song_ids.length === playlistInStore.song_ids.length
+      ) {
+         setErrorToast({ message: "New playlist data error" });
+         return;
+      }
+
+      // >>> local
+      setUserSongs(newUserSongs);
+
+      // >>> api
+      // await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
       await setPlaylistDocAndSetUserPlaylists({
          newPlaylist,
       });
 
+      // finish
       setSuccessToast({ message: `'${song.name}' removed` });
    };
 
    const deleteManyFromPlaylist = async () => {
-      setIsOpenPopup(false);
-
-      if (!playlistInStore.song_ids) return;
+      if (!playlistInStore.song_ids) {
+         setErrorToast({});
+         return;
+      }
 
       // if need to remove 1 song
       if (selectedSongList.length === 1) {
          return deleteFromPlaylist(selectedSongList[0]);
       }
 
-      const newPlaylistSongs = [...PlaylistSongs];
+      const newPlaylistSongs = [...playlistSongs];
+      const newUserSongs = [...userSongs];
+      const songsNeedToUpdateDoc: Song[] = [];
+
+      // >>> handle song
       for (let song of selectedSongList) {
-         newPlaylistSongs.splice(newPlaylistSongs.indexOf(song), 1);
+         // eliminate 1 song
+         const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
+         newPlaylistSongs.splice(index, 1);
+
+         const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
+
+         // update user songs
+         if (error) {
+            setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
+            
+         } else if (newSong) {
+            songsNeedToUpdateDoc.push(newSong);
+            updateSongsListValue(newSong, newUserSongs);
+         }
       }
 
+      // >>> handle playlist
       const newPlaylist = generatePlaylistAfterChangeSongs({
          newPlaylistSongs,
          existingPlaylist: playlistInStore,
+      });
+
+      // check valid playlist data after change
+      if (
+         newPlaylist.count < 0 ||
+         newPlaylist.time < 0 ||
+         newPlaylist.song_ids.length === playlistInStore.song_ids.length
+      ) {
+         setErrorToast({ message: "New playlist data error" });
+         return;
+      }
+
+      // >>> local
+      setUserSongs(newUserSongs);
+
+      // >>> api
+      songsNeedToUpdateDoc.forEach(async (song) => {
+         console.log("update doc", song.name, song.in_playlist);
+         // await mySetDoc({ collection: "songs", data: song, id: song.id });
       });
 
       await setPlaylistDocAndSetUserPlaylists({
          newPlaylist,
       });
 
+      // finish
       setSuccessToast({ message: `${selectedSongList.length} songs removed` });
    };
 
@@ -221,9 +296,11 @@ export default function PlaylistDetail() {
 
    const closeModal = () => {
       setIsOpenModal(false);
+      setIsCheckedSong(false);
+      setSelectedSongList([]);
    };
 
-   const songCount = useMemo(() => PlaylistSongs.length, [PlaylistSongs]);
+   const songCount = useMemo(() => playlistSongs.length, [playlistSongs]);
    const isOnMobile = useMemo(() => window.innerWidth < 550, []);
 
    const classes = {
@@ -243,12 +320,13 @@ export default function PlaylistDetail() {
       buttonAddSongContainer: "w-full text-center mt-[15px]",
    };
 
-   // for defines jsx
+   // playlistSongs, songInStore, isCheckedSong, selectedSongList, isOpenModal
    const renderPlaylistSongs = useMemo(() => {
-      return PlaylistSongs.map((song, index) => {
+      // console.log('render playlist songs', playlistSongs.map(s => s.name));
+
+      return playlistSongs.map((song, index) => {
          const active =
-            song.id === songInStore.id &&
-            songInStore.song_in.includes(playlistInStore.name);
+            song.id === songInStore.id && songInStore.song_in.includes(playlistInStore.name);
 
          if (isOnMobile) {
             return (
@@ -286,43 +364,7 @@ export default function PlaylistDetail() {
             </div>
          );
       });
-   }, [PlaylistSongs, songInStore]);
-
-   const addSongsComponent = (
-      <>
-         <div className={classes.addSongContainer}>
-            <div className={classes.addSongContent}>
-               <Button
-                  onClick={() => handleAddSongsToPlaylist()}
-                  variant={"primary"}
-                  className={`rounded-full ${theme.content_bg} absolute bottom-0 right-15px`}
-               >
-                  Save
-               </Button>
-               {userSongs.map((song, index) => {
-                  const isDifference = PlaylistSongs.indexOf(song) == -1;
-
-                  if (isDifference) {
-                     return (
-                        <div key={index} className={classes.songItem}>
-                           <MobileSongItem
-                              isCheckedSong={true}
-                              selectedSongList={selectedSongList}
-                              setIsCheckedSong={setIsCheckedSong}
-                              setSelectedSongList={setSelectedSongList}
-                              theme={theme}
-                              data={song}
-                              active={false}
-                              onClick={() => {}}
-                           />
-                        </div>
-                     );
-                  }
-               })}
-            </div>
-         </div>
-      </>
-   );
+   }, [playlistInStore.name, songInStore, playlistSongs, isCheckedSong, selectedSongList]);
 
    const editComponent = (
       <div className={classes.editContainer}>
@@ -339,7 +381,7 @@ export default function PlaylistDetail() {
          />
 
          <Button
-            onClick={() => handleAddSongsToPlaylist()}
+            // onClick={() => handleAddSongsToPlaylist()}
             variant={"primary"}
             className={`${theme.content_bg} rounded-full self-end mt-[15px]`}
          >
@@ -388,20 +430,18 @@ export default function PlaylistDetail() {
    });
 
    if (usePlaylistErrorMsg) return <h1>{usePlaylistErrorMsg}</h1>;
-   if (useSongErrorMsg) return <h1>{useSongErrorMsg}</h1>;
 
-   // console.log("check user songs", userSongs);
+   // console.log("playlist detail render", playlistSongs.map(s => s.name), usePlaylistLoading);
 
    return (
       <>
          {/* head */}
-         {(usePlaylistLoading || initialLoading) && playlistSkeleton}
+         {usePlaylistLoading && playlistSkeleton}
          {!usePlaylistLoading && !!playlistInStore.name && (
             <div className={classes.playListTop}>
                {/* image */}
                <div className="w-1/4 max-[549px]:w-full">
                   <PlaylistItem
-                     // onClick={() => {}}
                      data={playlistInStore}
                      inDetail
                      theme={theme}
@@ -421,9 +461,7 @@ export default function PlaylistDetail() {
                         </button>
                      </h3>
                      <p className="text-[16px]">{playlistInStore?.count} songs</p>
-                     <p className="text-[16px]">
-                        {handleTimeText(playlistInStore?.time)}
-                     </p>
+                     <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
                      <p className="text-[14px] opacity-60 max-[549px]:hidden">
                         create by {playlistInStore.by}
                      </p>
@@ -435,8 +473,7 @@ export default function PlaylistDetail() {
                         onClick={() => handlePlayPlaylist()}
                         variant={"primary"}
                         className={`rounded-full ${theme.content_bg} ${
-                           !playlistInStore.song_ids.length &&
-                           "opacity-60 pointer-events-none"
+                           !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
                         }`}
                      >
                         Play
@@ -450,21 +487,17 @@ export default function PlaylistDetail() {
          {/* songs list */}
          <div className="pb-[50px]">
             <div className={`${classes.songListContainer} border-${theme.alpha}`}>
-               {(usePlaylistLoading || initialLoading) && (
-                  <Skeleton className="h-[20px] w-[150px]" />
-               )}
+               {usePlaylistLoading && <Skeleton className="h-[20px] w-[150px]" />}
 
                {!isCheckedSong ? (
                   <p className={classes.countSongText}>{songCount + " songs"}</p>
                ) : (
-                  <p className={classes.countSongText}>
-                     {selectedSongList.length + " selected"}
-                  </p>
+                  <p className={classes.countSongText}>{selectedSongList.length + " selected"}</p>
                )}
                {isCheckedSong && userSongs.length && (
                   <>
                      <Button
-                        onClick={() => setSelectedSongList(PlaylistSongs)}
+                        onClick={() => setSelectedSongList(playlistSongs)}
                         variant={"primary"}
                         className={classes.button}
                      >
@@ -490,8 +523,9 @@ export default function PlaylistDetail() {
                )}
             </div>
 
-            {(usePlaylistLoading || initialLoading) && SongItemSkeleton}
-            {!usePlaylistLoading && !!PlaylistSongs.length && renderPlaylistSongs}
+            {usePlaylistLoading && SongItemSkeleton}
+
+            {!usePlaylistLoading && !!playlistSongs.length && renderPlaylistSongs}
 
             {(!!userSongs.length || !!adminSongs.length) && (
                <div className={classes.buttonAddSongContainer}>
@@ -501,14 +535,14 @@ export default function PlaylistDetail() {
                      variant={"primary"}
                   >
                      <PlusCircleIcon className="w-[30px] mr-[5px]" />
-                     Thêm bài hát
+                     Add song
                   </Button>
                </div>
             )}
          </div>
 
          {/* popup */}
-         {isOpenPopup && (
+         {/* {isOpenPopup && (
             <FloatingFocusManager modal={false} context={context}>
                <div
                   className="z-[99]"
@@ -538,7 +572,7 @@ export default function PlaylistDetail() {
                   </PopupWrapper>
                </div>
             </FloatingFocusManager>
-         )}
+         )} */}
 
          {/* modal */}
          {isOpenModal && (
@@ -546,7 +580,13 @@ export default function PlaylistDetail() {
                <PopupWrapper theme={theme}>
                   {modalComponent === "edit" && editComponent}
                   {modalComponent === "confirm" && confirmComponent}
-                  {modalComponent === "addSongs" && addSongsComponent}
+                  {modalComponent === "addSongs" && (
+                     <AddSongToPlaylistModal
+                        theme={theme}
+                        handleAddSongsToPlaylist={handleAddSongsToPlaylist}
+                        playlistSongs={playlistSongs}
+                     />
+                  )}
                </PopupWrapper>
             </Modal>
          )}

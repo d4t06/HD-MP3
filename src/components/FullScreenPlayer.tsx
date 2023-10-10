@@ -41,7 +41,7 @@ export default function FullScreenPlayer({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const {songLists} = useActuallySongs()
+   const {actuallySongs} = useActuallySongs()
 
    // component state
    const [activeTab, setActiveTab] = useState<string>("Lyric");
@@ -57,7 +57,7 @@ export default function FullScreenPlayer({
 
    const songLyric = useSongLyric({ songInStore });
    
-   // const songLists = useGetActuallySongs({ songInStore });
+   // const actuallySongs = useGetActuallySongs({ songInStore });
 
    // define callback functions
    const handleSetSongWhenClick = (song: Song, index: number) => {
@@ -112,9 +112,9 @@ export default function FullScreenPlayer({
 
    // define jsx
    const renderSongsList = useMemo(() => {
-      if (!songLists.length) return;
+      if (!actuallySongs.length) return;
 
-      return songLists.map((song, index) => {
+      return actuallySongs.map((song, index) => {
          const isActive = index === songInStore.currentIndex;
 
          return (
@@ -131,7 +131,7 @@ export default function FullScreenPlayer({
             />
          );
       });
-   }, [songInStore, songLists]);
+   }, [songInStore, actuallySongs]);
    const renderLyricTab = (
       <div className={classes.lyricTabContainer}>
          {/* left */}

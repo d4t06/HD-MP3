@@ -9,3 +9,5 @@
    - Play my song
    - Play playlist
 
+### update thứ 7 7/10
+- useRef như là biến global, có thể cập nhật giá trị trong một lần render xem usePlaylistDetail Hook

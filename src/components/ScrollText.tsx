@@ -93,7 +93,7 @@ export default function ScrollText({
             }, 1000);
 
             autoScrollTimerId.current = setInterval(() => {
-                console.log('scroll');
+               //  console.log('scroll');
                 
                scroll();
             }, duration.current * 1000 + 3000 + 1000);
@@ -101,7 +101,7 @@ export default function ScrollText({
       }  
 
       return () => {
-         console.log('run cleanup')
+         // console.log('run cleanup')
          clearInterval(autoScrollTimerId.current);
          clearTimeout(unScrollTimerId.current)
 

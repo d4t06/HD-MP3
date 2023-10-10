@@ -49,7 +49,7 @@ export default function Control({
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { song: songInStore } = useSelector(selectAllSongStore);
-  const { songLists } = useActuallySongs();
+  const { actuallySongs } = useActuallySongs();
 
   // component statte
   const [error, setError] = useState(false);
@@ -80,7 +80,7 @@ export default function Control({
   };
 
   const getNewSong = (index: number) => {
-    return songLists[index];
+    return actuallySongs[index];
   };
 
   // >>> click handle
@@ -157,14 +157,14 @@ export default function Control({
     // let songLists: Song[];
     let newSong: Song;
 
-    if (newIndex < songLists.length) {
-      newSong = songLists[newIndex];
+    if (newIndex < actuallySongs.length) {
+      newSong = actuallySongs[newIndex];
     } else {
-      newSong = songLists[0];
+      newSong = actuallySongs[0];
       newIndex = 0;
     }
 
-    console.log("check new index", songLists.map(song => song.name));
+    // console.log("check new index", actuallySongs.map(song => song.name));
 
     dispatch(
       setSong({
@@ -173,7 +173,7 @@ export default function Control({
         song_in: songInStore.song_in,
       })
     );
-  }, [songInStore, songLists]);
+  }, [songInStore, actuallySongs]);
 
   // songInStore, songLists
   const handlePrevious = useCallback(() => {
@@ -182,13 +182,13 @@ export default function Control({
 
 
     if (newIndex >= 0) {
-      newSong = songLists[newIndex];
+      newSong = actuallySongs[newIndex];
     } else {
-      newSong = songLists[songLists.length - 1];
-      newIndex = songLists.length - 1;
+      newSong = actuallySongs[actuallySongs.length - 1];
+      newIndex = actuallySongs.length - 1;
     }
 
-    console.log("check new index", songLists.map(song => song.name));
+    // console.log("check new index", actuallySongs.map(song => song.name));
 
     dispatch(
       setSong({
@@ -197,7 +197,7 @@ export default function Control({
         song_in: songInStore.song_in,
       })
     );
-  }, [songInStore, songLists]);
+  }, [songInStore, actuallySongs]);
 
   const handleTimeUpdate = useCallback(() => {
     if (!audioEle) return;
@@ -230,7 +230,7 @@ export default function Control({
 
       let randomIndex: number = songInStore.currentIndex!;
       while (randomIndex === songInStore.currentIndex) {
-        randomIndex = Math.floor(Math.random() * songLists.length);
+        randomIndex = Math.floor(Math.random() * actuallySongs.length);
       }
 
       const newSong = getNewSong(randomIndex);
@@ -244,11 +244,11 @@ export default function Control({
       );
     }
 
-    if (songInStore.currentIndex === songLists.length - 1)
+    if (songInStore.currentIndex === actuallySongs.length - 1)
       isEndOfList.current = true;
 
     return handleNext();
-  }, [isRepeat, isShuffle, songInStore, songLists]);
+  }, [isRepeat, isShuffle, songInStore, actuallySongs]);
 
   const handleLoaded = useCallback(() => {
     if (!audioEle) return;
@@ -326,7 +326,7 @@ export default function Control({
     // console.log("add new handle function when state change");
 
     return () => audioEle?.removeEventListener("ended", handleEnded);
-  }, [isRepeat, isShuffle, songInStore, songLists]);
+  }, [isRepeat, isShuffle, songInStore, actuallySongs]);
 
   // update process lines width
   useEffect(() => {
@@ -335,7 +335,7 @@ export default function Control({
 
   const classes = {
     button: `p-[5px] ${
-      songLists.length <= 1 && "opacity-20 pointer-events-none"
+      actuallySongs.length <= 1 && "opacity-20 pointer-events-none"
     }`,
     buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
     processContainer: `flex flex-row items-center h-[30px]`,
@@ -369,6 +369,7 @@ export default function Control({
           isWaiting={isWaiting}
           isPlaying={isPlaying}
           handlePlayPause={handlePlayPause}
+          songInStore={songInStore}
         />
 
         <button className={`${classes.button}`} onClick={() => handleNext()}>

@@ -49,12 +49,18 @@ export const handleTimeText = (duration: number) => {
 };
 
 export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
+   console.log("update songs list");
+
    const index = userSongs.findIndex((songItem) => songItem.id === song.id);
+   if (index == -1) return;
    userSongs[index] = song;
 };
 
 export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) => {
+   console.log("update playlist value");
+
    const index = playlists.findIndex((playlistItem) => playlistItem.id === playlist.id);
+   if (index == -1) return;
    playlists[index] = playlist;
 };
 
@@ -69,6 +75,7 @@ export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: s
 
    return { time, ids };
 };
+
 export const generatePlaylistAfterChangeSongs = ({
    newPlaylistSongs,
    existingPlaylist,
@@ -76,13 +83,35 @@ export const generatePlaylistAfterChangeSongs = ({
    newPlaylistSongs: Song[];
    existingPlaylist: Playlist;
 }) => {
+   console.log("generate playlist");
    const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
    const newPlaylist: Playlist = {
       ...existingPlaylist,
-      time,
+      time: +time.toFixed(1),
       song_ids: ids,
       count: ids.length,
    };
+
+   return newPlaylist;
+};
+
+export const generatePlaylistAfterChangeSong = ({
+   song,
+   playlist,
+}: {
+   song: Song;
+   playlist: Playlist;
+}) => {
+   console.log("generate playlist");
+
+   const newPlaylist: Playlist = {
+      ...playlist,
+      time: playlist.time + +song.duration.toFixed(1),
+      song_ids: [...playlist.song_ids, song.id],
+      count: playlist.count + 1,
+   };
+
+   // console.log('check newPlaylist', newPlaylist.time);
 
    return newPlaylist;
 };
