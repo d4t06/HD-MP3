@@ -1,12 +1,13 @@
-import { Dispatch, SetStateAction, useCallback } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useCallback } from "react";
 import { Song, ThemeType } from "../types";
 import { CheckIcon, PauseCircleIcon, StopIcon } from "@heroicons/react/24/outline";
+import Image from "./ui/Image";
 
 type Props = {
    data: Song;
    theme: ThemeType & { alpha: string };
    active: boolean;
-   onClick: () => void;
+   onClick: (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => void;
 
    isCheckedSong?: boolean;
    selectedSongList?: Song[];
@@ -15,7 +16,7 @@ type Props = {
    setIsCheckedSong?: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function MobileSongItem({
+const MobileSongItem = ({
    data,
    theme,
    selectedSongList,
@@ -25,7 +26,7 @@ export default function MobileSongItem({
    isCheckedSong,
    setSelectedSongList,
    setIsCheckedSong,
-}: Props) {
+}: Props) => {
    const isSelected = useCallback(() => {
       if (!selectedSongList) return false;
       return selectedSongList?.indexOf(data) != -1;
@@ -34,7 +35,7 @@ export default function MobileSongItem({
    const handleSelect = (song: Song) => {
       console.log("check selected");
       if (!setSelectedSongList || !selectedSongList) {
-         console.log("songlistitem lack of props");
+         console.log("song list item lack of props");
          return;
       }
 
@@ -63,12 +64,12 @@ export default function MobileSongItem({
       button: `${theme.content_bg} rounded-full`,
       textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
       songListButton: `mr-[10px] px-[5px] text-${theme.alpha} group-hover/main:text-[inherit]`,
-      itemContainer: `border-b border-${
+      itemContainer: `item-container transition-all  origin-top duration-[300ms] border-b border-${
          theme.alpha
       } flex flex-row rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
          isSelected() && "bg-" + theme.alpha
       }`,
-      imageFrame: `h-[54px] w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
+      imageFrame: `w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
    };
 
@@ -102,16 +103,14 @@ export default function MobileSongItem({
                </>
 
                {/* song image */}
-               <div className="flex-grow flex" onClick={() => onClick()}>
+               <div className="flex-grow flex" onClick={e => onClick(e)}>
                   <div className={`${classes.imageFrame}`}>
-                     <img className="" src={data?.image_url || "https://placehold.co/100"} alt="" />
+                     <Image src={data.image_url} />
 
                      {/* hidden when in process and in list */}
                      {active && (
-                        <div className="absolute inset-0 bg-black bg-opacity-60 flex songContainers-center items-center justify-center">
-                           <div className="relative">
-                              <PauseCircleIcon className="w-[28px]" />
-                           </div>
+                        <div className="absolute inset-0 bg-black bg-opacity-40 flex songContainers-center items-center justify-center">
+                           <PauseCircleIcon className="w-[28px] text-[#fff]" />
                         </div>
                      )}
                   </div>
@@ -129,3 +128,6 @@ export default function MobileSongItem({
       </>
    );
 }
+
+
+export default MobileSongItem

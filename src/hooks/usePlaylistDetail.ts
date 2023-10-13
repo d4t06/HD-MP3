@@ -1,16 +1,16 @@
 import { Playlist, Song } from "../types";
+import { PlaylistParamsType, routes } from "../routes";
+
 import { useEffect, useState, MutableRefObject, useCallback, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { useToast } from "../store/ToastContext";
 import { Status, selectAllSongStore, setPlaylist } from "../store/SongSlice";
 import { useSongsStore } from "../store/SongsContext";
-
-import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
-import useSong from "./useSongs";
-import { mySetDoc } from "../utils/firebaseHelpers";
 import { useActuallySongs } from "../store/ActuallySongsContext";
+
+import useSong from "./useSongs";
+import { useAuthStore } from "../store/AuthContext";
 
 type Props = {
    playlistInStore: Playlist;
@@ -18,42 +18,45 @@ type Props = {
    firstTimeRender: MutableRefObject<boolean>;
 };
 
-export default function usePlaylistDetail({
-   firstTimeRender,
-}: // playlistInStore,
-Props) {
+export default function usePlaylistDetail({ firstTimeRender }: Props) {
    // use store
    const dispatch = useDispatch();
-   const { setErrorToast } = useToast();
-
-   const params = useParams();
+   const {userInfo} = useAuthStore() 
    const { setActuallySongs } = useActuallySongs();
    const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
    const { loading: useSongLoading, errorMsg: useSongErrorMsg, initial } = useSong();
-   const { userData, adminSongs, userSongs, userPlaylists, setUserPlaylists } = useSongsStore();
+   const { adminSongs, userSongs, userPlaylists } = useSongsStore();
 
-   // hook state
+   // state
    const [loading, setLoading] = useState(useSongLoading);
    const [playlistSongs, setPlaylistSongs] = useState<Song[]>([]);
-   const [errorMsg, setErrorMsg] = useState("");
    const firstRunGetPlaylistSongs = useRef(true);
+   const prevSongsLength = useRef(0);
+
+   // use hook
+   const params = useParams<PlaylistParamsType>();
+   const navigate = useNavigate();
 
    const getAndSetPlaylist = useCallback(async () => {
-      if (!userData.email || !params.name) return;
-      const playlistId = generateId(params.name as string, userData.email);
-      const playList = userPlaylists.find((playlist) => playlist.id === playlistId);
+
+      if (!initial || !params.id) {
+         navigate(routes.Home);
+         return;
+      }
+
+      const playList = userPlaylists.find((playlist) => playlist.id === params.id);
 
       if (playList) {
          console.log("set playlist after init");
          dispatch(setPlaylist(playList));
          setLoading(false);
-      } else {
-         setErrorMsg("No playlist found");
-         setErrorToast({ message: "No playlist found" });
       }
-   }, [params, userData]);
+
+   }, [params, userInfo]);
 
    const getPlaylistSongs = useCallback(() => {
+      console.log("get playlist songs");
+
       let playlistSongs: Song[] = [];
       let targetSongs: Song[];
 
@@ -77,8 +80,9 @@ Props) {
          }
       });
 
-      console.log("get playlist songs", playlistSongs.map(s => s.name));
+      // console.log("get playlist songs", playlistSongs.map(s => s.name));
       setPlaylistSongs(playlistSongs);
+      if (!prevSongsLength.current) prevSongsLength.current = playlistSongs.length;
    }, [playlistInStore.song_ids, userSongs]);
 
    // get playlist after initial
@@ -89,7 +93,7 @@ Props) {
 
       if (!initial || useSongErrorMsg) return;
 
-      if (playlistInStore.name) {
+      if (playlistInStore.name === params.id) {
          setLoading(false);
          return;
       }
@@ -160,28 +164,34 @@ Props) {
    // for actually song after user add or remove song from playlist
    // only run when after play song in playlist then playlist songs change
    useEffect(() => {
-      console.log("useEffevct 3");
-
       if (firstTimeRender.current) {
          firstTimeRender.current = false;
+         console.log("useEffect 3 first time render,  do nothing");
          return;
       }
-
-      if (!initial) return;
-
-      console.log("check firstRunGetSongs", firstRunGetPlaylistSongs.current);
       if (firstRunGetPlaylistSongs.current) {
+         console.log("useEffect 3 first run get songs,  do nothing");
          firstRunGetPlaylistSongs.current = false;
          return;
       }
 
-      if (!songInStore.song_in.includes(playlistInStore.name)) return;
+      const isPlayingPlaylist = songInStore.song_in.includes(playlistInStore.name);
+      if (!isPlayingPlaylist) {
+         console.log("useEffect 3 no longer play, do nothing");
+         return;
+      }
 
+      const isSecondTimesOpenPlaylist =
+         params.id === playlistInStore.name && prevSongsLength.current === playlistSongs.length;
 
-      console.log("set actually song 2");
+      if (isSecondTimesOpenPlaylist) {
+         console.log("useEffect 3 second times open, do nothing");
+         return;
+      }
 
+      prevSongsLength.current = playlistSongs.length;
       setActuallySongs(playlistSongs);
    }, [playlistSongs]);
 
-   return { playlistSongs, loading, errorMsg };
+   return { playlistSongs, loading };
 }

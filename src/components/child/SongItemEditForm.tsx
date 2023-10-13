@@ -14,6 +14,7 @@ import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outli
 import Button from "../ui/Button";
 import { useToast } from "../../store/ToastContext";
 import { initSongObject } from "../../utils/appHelpers";
+import { useAuthStore } from "../../store/AuthContext";
 
 type Props = {
    data: Song;
@@ -36,6 +37,7 @@ export default function SongItemEditForm({
 }: Props) {
    // use store
    const { setErrorToast, setSuccessToast } = useToast();
+   const {userInfo} = useAuthStore()
 
    const [loading, setLoading] = useState(false);
    const [stockImageURL, setStockImageURL] = useState(data.image_url);
@@ -47,7 +49,7 @@ export default function SongItemEditForm({
       image_url: "",
    });
 
-   const isImageFileFieldChange = useRef(false);
+   const isHasImpactOnSongImage = useRef(false);
 
    // for validate
    const [validName, setValidName] = useState(!!data.name);
@@ -61,7 +63,7 @@ export default function SongItemEditForm({
          inputFields.name !== data.name ||
          inputFields.singer !== data.singer ||
          inputFields.image_url !== data.image_url ||
-         isImageFileFieldChange.current
+         isHasImpactOnSongImage.current
       ) {
          return true;
       }
@@ -106,7 +108,7 @@ export default function SongItemEditForm({
       // main case 2: user never upload image before
       setStockImageURL("");
 
-      isImageFileFieldChange.current = true;
+      isHasImpactOnSongImage.current = true;
 
       const inputEle = inputFileRef.current as HTMLInputElement;
       if (inputEle) {
@@ -120,14 +122,9 @@ export default function SongItemEditForm({
       const imageFile = target.files[0];
       setLocalImageURL(URL.createObjectURL(imageFile));
 
-      isImageFileFieldChange.current = true;
+      isHasImpactOnSongImage.current = true;
       setImageFile(imageFile);
    }, []);
-
-   const unsetImage = () => {
-      setImageFile(undefined);
-      setLocalImageURL("");
-   };
 
    const closeModal = () => {
       setLoading(false);
@@ -141,54 +138,97 @@ export default function SongItemEditForm({
    };
 
    // inputFields, imageFile, userSongs, data
-   // don't need isChaneInEdit cause inputFields change => isChangeInEdit change
+   // don't need isChangeInEdit cause inputFields change => isChangeInEdit change
    const handleEditSong = useCallback(async () => {
+      // check props
       if (!userSongs || !setUserSongs) {
-         console.log("edit fail usersongs not found");
+         setErrorToast({ message: "Lack of props" });
+         return;
+      }
+
+      if (!data.id) {
          setErrorToast({});
          return;
       }
+
       try {
-         // if user change image
-         if (isImageFileFieldChange.current) {
-            const filePath = data.image_file_path;
-            if (filePath) {
-               deleteFile({ filePath });
-            }
-         }
+         let newUserSongs: Song[] = [];
+         let newSong: Song = { ...data };
 
          if (isChangeInEdit) {
-            console.log("change in edit");
+            // check valid input
+            if (!inputFields.name || !inputFields.singer) {
+               setErrorToast({});
+               return;
+            }
+
+            const songImageUrl = isHasImpactOnSongImage.current
+               ? ""
+               : inputFields.image_url && validURL
+               ? inputFields.image_url
+               : newSong.image_url;
 
             setLoading(true);
-            let newSong: Song = { ...data, ...inputFields };
+            newSong = {
+               ...newSong,
+               name: inputFields.name,
+               singer: inputFields.singer,
+               image_url: songImageUrl,
+            };
+
+            // check valid
+            if (newSong.name !== inputFields.name || newSong.singer !== inputFields.singer) {
+               setErrorToast({});
+               return;
+            }
 
             // user upload song from local
-            if (imageFile && isImageFileFieldChange.current) {
+            if (imageFile && isHasImpactOnSongImage.current) {
                const { filePath, fileURL } = await uploadFile({
                   file: imageFile,
                   folder: "/images/",
+                  email: userInfo.email
                });
                newSong.image_file_path = filePath;
                newSong.image_url = fileURL;
 
                // if user remove image
-            } else if (isImageFileFieldChange.current) {
+            } else if (isHasImpactOnSongImage.current) {
                newSong.image_file_path = "";
-               newSong.image_url = "";
             }
 
-            await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
+            console.log("check new song", newSong);
 
-            let newUserSongs = [...userSongs];
+            // update user songs
+            newUserSongs = [...userSongs];
             const index = newUserSongs.findIndex((song) => song.id === newSong.id);
-            newUserSongs[index] = newSong;
+            if (index === -1) {
+               setErrorToast({ message: "No index found" });
+               return;
+            }
 
-            setUserSongs(newUserSongs);
-            setSuccessToast({ message: `${newSong.name} edited` });
+            newUserSongs[index] = newSong;
          }
+
+         // if user upload image or unset image
+         if (isHasImpactOnSongImage.current) {
+            if (data.image_file_path) {
+               // >>> api
+               deleteFile({ filePath: data.image_file_path });
+            }
+         }
+
+         // >>> local
+         setUserSongs(newUserSongs);
+
+         // >>> api
+         await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
+
+         // >>> finish
+         setSuccessToast({ message: `${newSong.name} edited` });
       } catch (error) {
          setErrorToast({});
+         console.log(error);
       } finally {
          closeModal();
       }
@@ -217,9 +257,8 @@ export default function SongItemEditForm({
          setValidURL(true);
          return;
       }
-      const test1 = URL_REGEX.test(inputFields.image_url);     
-      setValidURL(test1)
-      
+      const test1 = URL_REGEX.test(inputFields.image_url);
+      setValidURL(test1);
    }, [inputFields.image_url]);
 
    // define style
@@ -261,7 +300,9 @@ export default function SongItemEditForm({
                   )}
                </div>
 
-               <p className={`text-[12px] ${classes.textColor} mt-[10px]`}>* Image from URL will not be apply until you remove current image</p>
+               <p className={`text-[12px] ${classes.textColor} mt-[10px]`}>
+                  * Image from URL will not be apply until you remove current image
+               </p>
             </div>
             <div className="ml-[20px] w-full flex flex-col gap-[10px]">
                <div className="flex flex-col gap-[5px]">
@@ -321,21 +362,22 @@ export default function SongItemEditForm({
 
                <div className="flex gap-[10px] mt-[10px]">
                   <Button
+                     onClick={handleCloseEditForm}
+                     className={`bg-${theme.alpha} rounded-full text-[14px]`}
+                     variant={"primary"}
+                  >
+                     <XMarkIcon className="w-[20px]" />
+                  </Button>
+
+                  <Button
                      isLoading={loading}
                      onClick={() => handleEditSong()}
-                     className={`bg-${theme.alpha} rounded-full text-[14px] ${
+                     className={`${theme.content_bg} rounded-full text-[14px] ${
                         !isAbleToSubmit && "pointer-events-none opacity-60"
                      }`}
                      variant={"primary"}
                   >
                      Save
-                  </Button>
-                  <Button
-                     onClick={handleCloseEditForm}
-                     className={`${theme.content_bg} rounded-full text-[14px]`}
-                     variant={"primary"}
-                  >
-                     Close
                   </Button>
                </div>
             </div>

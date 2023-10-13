@@ -16,21 +16,22 @@ const routes = {
    MobileMySongs: "/React-Zingmp3/mobile-mysongs",
    Playlist: "/React-Zingmp3/mysongs/playlist",
    Edit: "/React-Zingmp3/edit/:id",
-}
+};
+
+export type PlaylistParamsType = {
+   id: string;
+};
 
 const publicRoutes = [
-   { path: routes.Home, component: HomePage, layout: '' },
+   { path: routes.Home, component: HomePage, layout: "" },
 
-   { path: routes.dashboard, component: DashBoard, layout: '' },
+   { path: routes.dashboard, component: DashBoard, layout: "" },
 
-   { path: routes.MySongs, component: SongsPage, layout: '' },
-   { path: routes.Playlist, component: Playlist, layout: '' },
-   { path: `${routes.Playlist}/:name`, component: PlaylistDetail, layout: '' },
-
-
+   { path: routes.MySongs, component: SongsPage, layout: "" },
+   { path: routes.Playlist, component: Playlist, layout: "" },
+   { path: `${routes.Playlist}/:id`, component: PlaylistDetail, layout: "" },
 
    { path: routes.Edit, component: Edit, layout: NoPlayer },
+];
 
-]
-
-export { publicRoutes, routes }
+export { publicRoutes, routes };

@@ -57,7 +57,7 @@ export const handlePlaylistWhenDeleteManySongs = (
             return { error: true };
          }
          targetPlaylist = playlist;
-      }      
+      }
 
       const { error: newPlaylistError, newPlaylist } = removeSongFromPlaylist(song, targetPlaylist);
 
@@ -67,7 +67,6 @@ export const handlePlaylistWhenDeleteManySongs = (
 
       // update playlist to existingPlaylists
       if (isOnExistingPlaylist) {
-
          console.log("update to existing list ");
          updatePlaylistsValue(newPlaylist, playlistsNeedToUpdate);
       }
@@ -86,16 +85,14 @@ export const handlePlaylistWhenDeleteSong = async (song: Song, newUserPlaylists:
    let playlistsNeedToUpdateDoc: Playlist[] = [];
 
    for (let playlistId of song.in_playlist) {
-
       // determine target playlist in user playlist
       const playlist = newUserPlaylists.find((playlist) => playlist.id === playlistId);
       if (!playlist) return { error: true, playlistsNeedToUpdateDoc };
-      
 
       // calculate
       const { error, newPlaylist } = removeSongFromPlaylist(song, playlist);
       if (error) return { error: true, playlistsNeedToUpdateDoc };
-      
+
       playlistsNeedToUpdateDoc.push(newPlaylist);
    }
 
@@ -146,4 +143,53 @@ export const handleSongWhenAddToPlaylist = (song: Song, playlist: Playlist) => {
    if (newPlaylistIdsOfSong.length === song.in_playlist.length) return { error: true, newSong };
 
    return { error: false, newSong };
+};
+
+export const handleSongWhenDeletePlaylist = (playlist: Playlist, playlistSongs: Song[]) => {
+   const songsNeedToUpdate: Song[] = [];
+   console.log('delete playlist');
+   
+   if (!playlist) {
+      console.log('no playlist');
+      return { error: true, songsNeedToUpdate };
+   }
+
+   for (let song of playlistSongs) {
+      // check valid
+      if (!song.in_playlist.includes(playlist.id)) {
+
+         console.log('not in playlist');
+         
+         return {
+            error: true,
+            songsNeedToUpdate,
+         };
+      }
+      const newPlaylistIdsOfSong = [...song.in_playlist];
+
+      // eliminate 1 playlist id
+      const index = newPlaylistIdsOfSong.findIndex((id) => id === playlist.id);
+      newPlaylistIdsOfSong.splice(index, 1);
+
+      let newSong = {
+         ...song,
+         in_playlist: newPlaylistIdsOfSong,
+      };
+
+      console.log('check new songs', newSong);
+
+      
+
+      // check valid after change
+      if (newSong.in_playlist.length === song.in_playlist.length) {
+         console.log('new song error');
+         return { error: true, songsNeedToUpdate };
+      }
+
+      songsNeedToUpdate.push(newSong);
+   }
+
+   if (songsNeedToUpdate.length === 0) return { error: true, songsNeedToUpdate };
+
+   return { error: false, songsNeedToUpdate };
 };

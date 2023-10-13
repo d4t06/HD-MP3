@@ -11,9 +11,7 @@ type Props = {
 export default function PopupWrapper({ children, theme, classNames }: Props) {
    return (
       <div
-         className={`flex flex-col gap-[15px] rounded  px-[20px] py-[10px] ${
-            theme.type === "light" ? "text-[#333]" : "text-white"
-         } ${theme.side_bar_bg} border-[1px] border-${theme.alpha} ${classNames}`}
+         className={`rounded  px-[20px] py-[10px] ${theme.type === "light" ? "text-[#333]" : "text-white"} ${theme.side_bar_bg} border-[1px] border-${theme.alpha} ${classNames}`}
       >{children}</div>
    );
 }

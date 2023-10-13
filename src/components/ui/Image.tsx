@@ -24,13 +24,18 @@ export default function Image({ src, classNames, onError }: Props) {
          setImageLoaded(true);
       };
 
-      const hanleError = () => {
-         onError && onError();
+      const defaultHandleError = () => {
+         const imageEle = imageRef.current as HTMLImageElement;
+         imageEle.src = "https://placehold.co/100";
+      };
+
+      const handleError = () => {
+         onError ? onError() : defaultHandleError();
       };
 
       if (imageEle) {
          imageEle.addEventListener("load", handleLoadImage);
-         imageEle.addEventListener("error", hanleError);
+         imageEle.addEventListener("error", handleError);
       }
 
       return () => {

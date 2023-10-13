@@ -8,7 +8,7 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
 export const generateId = (name: string, email: string): string => {
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.
    const convertToEn = (str: string) => {
-      const newString = str
+      const newString = str.toLocaleLowerCase()
          .replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ/g, "a")
          .replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e")
          .replace(/ì|í|ị|ỉ|ĩ/g, "i")
@@ -122,7 +122,7 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
       singer: "",
       image_url: "",
       song_url: "",
-      by: "admin",
+      by: "",
       duration: 0,
       lyric_id: "",
       image_file_path: "",

@@ -27,7 +27,7 @@ export default function PlayPauseButton({
 
    const renderIcon = useMemo(() => {
       if (isWaiting) {
-         return <ArrowPathIcon className={"w-[30px] animate-spin"} />;
+         return <ArrowPathIcon className={"w-[36px] animate-spin"} />;
       } else if (isError && songInStore.name) {
          return <ExclamationCircleIcon className="w-[30px]" />;
       }

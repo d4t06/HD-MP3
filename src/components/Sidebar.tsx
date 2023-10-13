@@ -27,12 +27,15 @@ import { useTheme } from "../store/ThemeContext";
 import { auth } from "../config/firebase";
 import PopupWrapper from "./ui/PopupWrapper";
 import Skeleton from "./skeleton";
+import { useAuthStore } from "../store/AuthContext";
+import Image from "./ui/Image";
 
 export default function Sidebar() {
    const [signInWithGoogle] = useSignInWithGoogle(auth);
 
    const { theme } = useTheme();
-   const [loggedInUser, userLoading] = useAuthState(auth);
+   const { userInfo } = useAuthStore();
+   const [loggedInUser, loading] = useAuthState(auth);
 
    const [isOpenMenu, setIsOpenMenu] = useState(false);
    const [isOpenSetting, setIsOpenSetting] = useState(false);
@@ -50,11 +53,7 @@ export default function Sidebar() {
    const dismiss = useDismiss(context);
    const role = useRole(context);
 
-   const { getReferenceProps, getFloatingProps } = useInteractions([
-      click,
-      dismiss,
-      role,
-   ]);
+   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
    const signIn = () => {
       signInWithGoogle();
@@ -91,21 +90,21 @@ export default function Sidebar() {
    return (
       <div className={`${classes.container} + ${classes.text}`}>
          <div className="px-[10px] flex items-center">
-            {userLoading ? (
+            {loading ? (
                avatarSkeleton
             ) : (
                <>
                   <div className={classes.imageFrame}>
                      {loggedInUser?.photoURL ? (
-                        <img src={loggedInUser.photoURL!} className="w-full" alt="" />
+                        <Image src={loggedInUser.photoURL!} classNames="w-full" />
                      ) : (
                         <h1 className="text-[20px]">
-                           {loggedInUser ? loggedInUser?.displayName?.charAt(1) : "Z"}
+                           {loggedInUser?.email ? loggedInUser?.displayName?.charAt(1) : "Z"}
                         </h1>
                      )}
                   </div>
                   <h3 className={classes.userName}>
-                     {loggedInUser ? loggedInUser?.displayName : "Guest"}
+                     {loggedInUser?.email ? loggedInUser?.displayName : "Guest"}
                   </h3>
                </>
             )}
@@ -113,9 +112,9 @@ export default function Sidebar() {
          <div className={classes.divide}></div>
 
          <div className="flex flex-col gap-[15px] items-start">
-            {userLoading && menuItemSkeletons }
+            {loading && menuItemSkeletons}
 
-            {!userLoading && (
+            {!loading && (
                <>
                   <Link className="w-full" to={routes.Home}>
                      <Button className={classes.button}>
@@ -123,7 +122,7 @@ export default function Sidebar() {
                         Discover
                      </Button>
                   </Link>
-                  {loggedInUser ? (
+                  {loggedInUser?.email ? (
                      <Link className="w-full" to={routes.MySongs}>
                         <Button className={classes.button}>
                            <MusicalNoteIcon className={classes.icon} />
@@ -139,9 +138,9 @@ export default function Sidebar() {
                   <button
                      ref={refs.setReference}
                      {...getReferenceProps()}
-                     className={`flex items-center hover:brightness-75 ${
-                        classes.button
-                     } ${isOpenMenu && theme.content_text}`}
+                     className={`flex items-center hover:brightness-75 ${classes.button} ${
+                        isOpenMenu && theme.content_text
+                     }`}
                   >
                      <Cog6ToothIcon className={classes.icon} />
                      Settings
@@ -159,7 +158,7 @@ export default function Sidebar() {
                   {...getFloatingProps()}
                >
                   <SettingMenu
-                     loggedInUser={loggedInUser}
+                     loggedIn={!!userInfo.email}
                      setIsOpenMenu={setIsOpenMenu}
                      setIsOpenSetting={setIsOpenSetting}
                      setSettingComp={setSettingComp}
@@ -170,7 +169,9 @@ export default function Sidebar() {
 
          {isOpenSetting && (
             <Modal setOpenModal={setIsOpenSetting}>
-               <PopupWrapper classNames="w-[700px] max-w-[90vw]" theme={theme}>{settingComp}</PopupWrapper>
+               <PopupWrapper theme={theme}>
+                  {settingComp}
+               </PopupWrapper>
             </Modal>
          )}
       </div>

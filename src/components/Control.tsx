@@ -339,9 +339,7 @@ export default function Control({
     }`,
     buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
     processContainer: `flex flex-row items-center h-[30px]`,
-    processLineBase: `h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden ${
-      theme.type === "light" ? "bg-gray-400" : "bg-gray-200"
-    }`,
+    processLineBase: `h-[4px] hover:h-[6px] flex-1 relative cursor-pointer rounded-3xl overflow-hidden bg-[#fff]`,
     processLineCurrent: `absolute left-0 top-0 h-full ${theme.content_bg}`,
     currentTime: `text-gray-500 text-[14px] font-semibold`,
     duration: `text-[14px] font-semibold`,

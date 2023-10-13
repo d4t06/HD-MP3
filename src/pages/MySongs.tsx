@@ -1,6 +1,6 @@
-import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { ReactNode, useRef, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { ChevronLeftIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ReactNode, useRef, useState, useMemo, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Playlist, Song } from "../types";
@@ -12,7 +12,6 @@ import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 
 // utils
-import { routes } from "../routes";
 import { db } from "../config/firebase";
 import { doc, setDoc } from "firebase/firestore";
 import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
@@ -38,6 +37,8 @@ import useSongs from "../hooks/useSongs";
 import SongItem from "../components/SongItem";
 import useSongItemActions from "../hooks/useSongItemActions";
 import { handlePlaylistWhenDeleteManySongs } from "../utils/songItemHelper";
+import { useAuthStore } from "../store/AuthContext";
+import { routes } from "../routes";
 
 type ModalName = "ADD_PLAYLIST" | "CONFIRM";
 
@@ -45,11 +46,12 @@ export default function MySongsPage() {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
+   const { userInfo } = useAuthStore();
    const { setErrorToast, setSuccessToast } = useToast();
-   const { loading: useSongsloading, errorMsg, initial } = useSongs();
+   const { loading: initialLoading, errorMsg, initial } = useSongs();
 
    const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
-   const { userData, userPlaylists, setUserSongs, setUserPlaylists, userSongs } = useSongsStore();
+   const { userPlaylists, setUserSongs, setUserPlaylists, userSongs } = useSongsStore();
    const songItemActions = useSongItemActions();
 
    // define state
@@ -58,15 +60,15 @@ export default function MySongsPage() {
    const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
    const [playlistName, setPlayListName] = useState<string>("");
 
-   const navigate = useNavigate();
-
    //  for delete song
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
    const [isCheckedSong, setIsCheckedSong] = useState(false);
 
-   // useUploadSong
    const audioRef = useRef<HTMLAudioElement>(null);
    const message = useRef<string>("");
+
+   // use hooks
+   const navigate = useNavigate();
    const { tempSongs, addedSongIds, status, handleInputChange } = useUploadSongs({
       audioRef,
       message,
@@ -87,7 +89,7 @@ export default function MySongsPage() {
    };
 
    const songCount = useMemo(() => {
-      if (useSongsloading || !initial) return;
+      if (initialLoading || !initial) return;
       return tempSongs.length + userSongs.length;
    }, [tempSongs, userSongs]);
 
@@ -113,13 +115,11 @@ export default function MySongsPage() {
       try {
          setLoading(true);
 
-         // loop each selected song
+         // loop each selected song, update playlist need to update
          const playlistsNeedToUpdate: Playlist[] = [];
          for (let song of selectedSongList) {
-            // if some song added in some playlist
-
-            console.log(">> delete ", song.name);
             
+            // if some song added in some playlist
             if (song.in_playlist.length) {
                isOneSongInPlaylist = true;
                // problem, this is just for one song
@@ -148,32 +148,29 @@ export default function MySongsPage() {
                dispatch(setPlaylist(playlist));
             }
 
-            // api
-            console.log("set playlist doc", playlist.name, playlist.song_ids);
-            // await mySetDoc({
-            //    collection: "playlist",
-            //    data: playlist,
-            //    id: playlist.id,
-            // });
+            // >>> api
+            await mySetDoc({
+               collection: "playlist",
+               data: playlist,
+               id: playlist.id,
+            });
          }
 
          // >>> local
          if (isOneSongInPlaylist) {
-            console.log(
-               "check newUserPlaylists",
-               newUserPlaylists.map((pl) => pl)
-            );
+            setUserPlaylists(newUserPlaylists, []);
+         }
+         setUserSongs(newUserSongs);
 
-            // setUserPlaylists(newUserPlaylists, []);
+         // >>> api
+         for (let song of selectedSongList) {
+            await deleteSong(song);
          }
 
-         // setUserSongs(newUserSongs);
-         // >>> api
-         // await deleteSong(song);
-         // update song_ids, song_count to user doc
-         // const userSongIds: string[] = newUserSongs.map((song) => song.id);
-         // setUserSongIdsAndCountDoc({ songIds: userSongIds, userData });
+         const userSongIds: string[] = newUserSongs.map((song) => song.id);
+         setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
 
+         // >>> finish
          resetCheckedList();
          closeModal();
          setSuccessToast({ message: `${selectedSongList.length} songs deleted` });
@@ -183,9 +180,9 @@ export default function MySongsPage() {
    };
 
    const handleAddPlaylist = async () => {
-      const playlistId = generateId(playlistName, userData.email);
+      const playlistId = generateId(playlistName, userInfo.email);
 
-      if (!playlistId || !playlistName || !userData) {
+      if (!playlistId || !playlistName || !userInfo) {
          setErrorToast({});
          return;
       }
@@ -195,7 +192,7 @@ export default function MySongsPage() {
          image_by: "",
          image_file_path: "",
          image_url: "",
-         by: userData?.email || "users",
+         by: userInfo?.email || "users",
          name: playlistName,
          song_ids: [],
          count: 0,
@@ -211,7 +208,7 @@ export default function MySongsPage() {
          await setDoc(doc(db, "playlist", playlistId), addedPlaylist);
 
          // update user doc
-         await setUserPlaylistIdsDoc(newPlaylists, userData);
+         await setUserPlaylistIdsDoc(newPlaylists, userInfo);
 
          // update context store user playlists
          setUserPlaylists(newPlaylists, []);
@@ -222,13 +219,6 @@ export default function MySongsPage() {
       } catch (error) {
          setErrorToast({});
       }
-   };
-
-   const handleOpenPlaylist = (playlist: Playlist) => {
-      // if this playlist current in store
-      if (playlistInStore.name != playlist.name) dispatch(setPlaylist(playlist));
-
-      navigate(`${routes.Playlist}/${playlist.name}`);
    };
 
    // define jsx
@@ -251,7 +241,7 @@ export default function MySongsPage() {
       });
    }, [tempSongs, addedSongIds, theme]);
 
-   //   theme, userData, userSongs, songInStore, selectedSongList, isCheckedSong, userPlaylists
+   //   theme, userInfo, userSongs, songInStore, selectedSongList, isCheckedSong, userPlaylists
    const renderUserSongs = useMemo(() => {
       if (!userSongs.length) return;
 
@@ -282,7 +272,7 @@ export default function MySongsPage() {
                   active={active}
                   key={index}
                   data={song}
-                  userData={userData}
+                  userInfo={userInfo}
                   userSongs={userSongs}
                   userPlaylists={userPlaylists}
                   setUserSongs={setUserSongs}
@@ -297,7 +287,7 @@ export default function MySongsPage() {
             </div>
          );
       });
-   }, [theme, userData, userSongs, songInStore, selectedSongList, isCheckedSong, userPlaylists]);
+   }, [theme, userInfo, userSongs, songInStore, selectedSongList, isCheckedSong, userPlaylists]);
 
    // define classes
    const classes = {
@@ -371,6 +361,14 @@ export default function MySongsPage() {
       );
    });
 
+   useEffect(() => {
+      if (!userInfo.email) {
+         navigate(routes.Home);
+
+         return;
+      }
+   }, [userInfo]);
+
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
    // console.log("my songs render");
@@ -380,24 +378,41 @@ export default function MySongsPage() {
       <>
          {/* playlist */}
          <div className="pb-[30px] ">
+            {/* mobile nav */}
+            {isOnMobile && (
+               <Link
+                  to={routes.Home}
+                  className="inline-flex items-center mb-[30px] hover:opacity-75"
+               >
+                  <button className="">
+                     <ChevronLeftIcon className="w-[25px]" />
+                  </button>
+                  <span className="text-[20px] font-semibold leading-1">Home</span>
+               </Link>
+            )}
+
             <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
-            <div className="flex flex-row -mx-[8px] flex-wrap">
+            <div className="flex flex-row flex-wrap">
                {!!userPlaylists.length &&
-                  !useSongsloading &&
+                  !initialLoading &&
                   userPlaylists.map((playList, index) => (
-                     <div key={index} className="w-1/4 p-[8px] max-[459px]:w-1/2">
-                        <PlaylistItem
-                           onClick={() => handleOpenPlaylist(playList)}
-                           theme={theme}
-                           data={playList}
-                           userPlaylists={userPlaylists}
-                           userData={userData}
-                           setUserPlaylists={setUserPlaylists}
-                        />
+                     <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                        {isOnMobile ? (
+                           <Link to={`${routes.Playlist}/${playList.id}`}>
+                              <PlaylistItem
+                                 data={playList}
+                              />
+                           </Link>
+                        ) : (
+                           <PlaylistItem
+                              theme={theme}
+                              data={playList}
+                           />
+                        )}
                      </div>
                   ))}
-               {!useSongsloading && (
-                  <div className="w-1/4 p-[8px] max-[459px]:w-1/2 mb-[25px]">
+               {!initialLoading && (
+                  <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
                      <Empty
                         theme={theme}
                         className="pt-[100%]"
@@ -405,7 +420,7 @@ export default function MySongsPage() {
                      />
                   </div>
                )}
-               {useSongsloading && playlistSkeleton}
+               {initialLoading && playlistSkeleton}
             </div>
          </div>
 
@@ -426,7 +441,7 @@ export default function MySongsPage() {
                <div className="flex items-center">
                   <label
                      className={`${theme.content_bg} ${
-                        status === "uploading" || useSongsloading
+                        status === "uploading" || initialLoading
                            ? "opacity-60 pointer-events-none"
                            : ""
                      } rounded-full flex px-[20px] py-[4px] text-white cursor-pointer`}
@@ -442,10 +457,10 @@ export default function MySongsPage() {
             <div
                className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[50px] mb-[10px]`}
             >
-               {useSongsloading && <Skeleton className="h-[20px] w-[150px]" />}
+               {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
 
                {/* checked song */}
-               {!useSongsloading && (
+               {!initialLoading && (
                   <>
                      {!isCheckedSong ? (
                         <p className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}>
@@ -487,16 +502,16 @@ export default function MySongsPage() {
                )}
             </div>
             <div className="-mx-[8px] min-h-[50vh]">
-               {!!songCount && !useSongsloading ? (
+               {!!songCount && !initialLoading ? (
                   <>
                      {!!userSongs.length && renderUserSongs}
                      {!!tempSongs.length && renderTempSongs}
                   </>
                ) : (
-                  !useSongsloading && <p>No songs jet...</p>
+                  !initialLoading && <p>No songs jet...</p>
                )}
 
-               {useSongsloading && SongItemSkeleton}
+               {initialLoading && SongItemSkeleton}
             </div>
          </div>
 

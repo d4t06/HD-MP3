@@ -3,11 +3,7 @@ import { Playlist, Song } from "../types";
 
 export type Status = {
    currentIndex: number;
-   song_in:
-      | "user"
-      | "admin"
-      | `${"user-playlist-"}${string}`
-      | `${"admin-playlist-"}${string}`;
+   song_in: "user" | "admin" | `${"user-playlist-"}${string}` | `${"admin-playlist-"}${string}` | '';
 };
 
 type stateType = {
@@ -28,16 +24,19 @@ const init: stateType = {
       duration: 0,
       lyric_id: "",
       currentIndex: 0,
-      song_in: "admin",
+      song_in: '',
+      in_playlist: [],
    },
    playlist: {
       id: "",
-      image_path: "",
       name: "",
       song_ids: [],
       time: 0,
       count: 0,
       by: "",
+      image_by: "",
+      image_file_path: "",
+      image_url: "",
    },
 };
 

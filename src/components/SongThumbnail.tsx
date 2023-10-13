@@ -1,41 +1,28 @@
-import { FC, RefObject, useEffect, useRef } from "react";
-import { Song } from "../types";
+import { ForwardedRef   , forwardRef } from "react";
+import { Song, ThemeType } from "../types";
 import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
-import useScrollSong from "../hooks/useScrollSong";
+import Image from "./ui/Image";
 
 interface Props {
    data?: Song;
    active: boolean;
    onClick?: () => void;
-   containerRef?: RefObject<HTMLDivElement>;
    hasHover?: boolean;
    hasTitle?: boolean;
    classNames?: string;
-   scroll: boolean;
+   theme: ThemeType
 }
 
-const SongThumbnail: FC<Props> = ({
+const SongThumbnail = ({
    data,
    active,
    hasHover,
    onClick,
-   containerRef,
    hasTitle,
    classNames,
-   scroll,
-}) => {
-   const thumbnail = useRef<HTMLDivElement>(null);
-   const firstTimeRender = useRef(true);
-
-   // use hooks
-   useScrollSong({
-      active,
-      containerRef,
-      songItemRef: thumbnail,
-      scroll,
-      firstTimeRender,
-   });
+   theme,
+} : Props, ref : ForwardedRef<any>) => {
 
    const classes = {
       container: "flex flex-col min-[549px]:px-[20px]",
@@ -52,21 +39,18 @@ const SongThumbnail: FC<Props> = ({
    }`;
 
    return (
-      <div ref={thumbnail} className={classes.container}>
+      <div  ref={ref} className={classes.container}>
          <div className={`flex ${classNames && classNames}`}>
             <div className={`${classes.imageFrame} ${classWhenActive}`}>
-               <img
-                  className={classes.image}
-                  src={data?.image_url || "https://placehold.co/500x500.png"}
-                  alt=""
-               />
+
+               <Image classNames="rounded-[6px]" src={data?.image_url} />
 
                {hasHover && (
                   <div className={classes.overlay}>
                      <Button
                         onClick={onClick}
                         variant={"circle"}
-                        className="h-[50px] w-[50px] text-white"
+                        className={`h-[50px] w-[50px] text-white ${theme.content_hover_text}`}
                      >
                         <PauseCircleIcon />
                      </Button>
@@ -88,7 +72,7 @@ const SongThumbnail: FC<Props> = ({
          {hasTitle && (
             <div>
                <h2 className={classes.title}>{data?.name || "Some song"}</h2>
-               <p className="text-center text-md  text-gray-500">
+               <p className="text-center text-md  text-gray-500 line-clamp-1">
                   {data?.singer || "..."}
                </p>
             </div>
@@ -97,4 +81,4 @@ const SongThumbnail: FC<Props> = ({
    );
 };
 
-export default SongThumbnail;
+export default forwardRef(SongThumbnail);

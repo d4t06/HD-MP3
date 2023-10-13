@@ -1,7 +1,5 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
 import { Playlist, Song, User } from "../types";
-import { Timestamp } from "firebase/firestore";
-
 // only change user song, user playlist
 
 type StateType = {
@@ -11,7 +9,7 @@ type StateType = {
    userPlaylists: Playlist[];
    adminPlaylists: Playlist[];
 
-   userData: User;
+   // userInfo: User;
 
    initial: boolean;
 };
@@ -23,16 +21,16 @@ const initialSongs: StateType = {
    adminSongs: [],
    adminPlaylists: [],
 
-   userData: {
-      display_name: "",
-      email: "",
-      photoURL: "",
-      playlist_ids: [],
-      song_ids: [],
-      role: "",
-      song_count: 0,
-      latest_seen: new Timestamp(0, 0),
-   },
+   // userInfo: {
+   //    display_name: "",
+   //    email: "",
+   //    photoURL: "",
+   //    playlist_ids: [],
+   //    song_ids: [],
+   //    role: "",
+   //    song_count: 0,
+   //    latest_seen: new Timestamp(0, 0),
+   // },
 
    initial: false,
 };
@@ -52,7 +50,7 @@ type ReducerAction = {
       adminSongs?: Song[];
       adminPlaylists?: Playlist[];
 
-      userData?: User;
+      userInfo?: User;
    };
 };
 
@@ -67,8 +65,8 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
             userPlaylists: action.payload.userPlaylists || [],
             adminPlaylists: action.payload.adminPlaylists || [],
 
-            userData: action.payload.userData || state.userData,
-            initial: true,
+            // userInfo: action.payload.userInfo || state.userInfo,
+            initial: action.payload.adminSongs ? true : false,
          };
       case REDUCER_ACTION_TYPE.SETUSERSONGS:
          return {
@@ -78,7 +76,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
             userPlaylists: state.userPlaylists,
             adminPlaylists: state.adminPlaylists,
 
-            userData: state.userData,
+            // userInfo: state.userInfo,
             initial: state.initial,
          };
       case REDUCER_ACTION_TYPE.SETUSERPLAYLISTS:
@@ -89,7 +87,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
             userPlaylists: action.payload.userPlaylists || [],
             adminPlaylists: state.adminPlaylists,
 
-            userData: state.userData,
+            // userInfo: state.userInfo,
             initial: state.initial,
          };
       default:
@@ -100,7 +98,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
             userPlaylists: state.userPlaylists,
             adminPlaylists: state.adminPlaylists,
 
-            userData: state.userData,
+            // userInfo: state.userInfo,
             initial: state.initial,
          };
    }
@@ -123,18 +121,18 @@ const useSongsContext = (songsStore: StateType) => {
          adminSongs,
          userPlaylists,
          adminPlaylists,
-         userData,
+         // userInfo,
       }: {
-         userData: User | undefined;
-         userSongs: Song[];
-         adminSongs: Song[];
-         userPlaylists: Playlist[];
-         adminPlaylists: Playlist[];
+         // userInfo: User | undefined;
+         userSongs?: Song[];
+         adminSongs?: Song[];
+         userPlaylists?: Playlist[];
+         adminPlaylists?: Playlist[];
       }) => {
          // console.log("set songs payload");
          dispatch({
             type: REDUCER_ACTION_TYPE.INIT,
-            payload: { userSongs, adminSongs, userPlaylists, adminPlaylists, userData },
+            payload: { userSongs, adminSongs, userPlaylists, adminPlaylists },
          });
       },
       []
@@ -162,22 +160,14 @@ const initialContextState: UseSongsContextType = {
 
 const SongsContext = createContext<UseSongsContextType>(initialContextState);
 
-const SongsProvider = ({
-   children,
-   songsStore,
-}: {
-   children: any;
-   songsStore: StateType;
-}) => {
+const SongsProvider = ({ children, songsStore }: { children: any; songsStore: StateType }) => {
    return (
-      <SongsContext.Provider value={useSongsContext(songsStore)}>
-         {children}
-      </SongsContext.Provider>
+      <SongsContext.Provider value={useSongsContext(songsStore)}>{children}</SongsContext.Provider>
    );
 };
 
 export type UseSongsHookType = {
-   userData: StateType["userData"];
+   // userInfo: StateType["userInfo"];
    initial: StateType["initial"];
    userSongs: StateType["userSongs"];
    adminSongs: StateType["adminSongs"];
@@ -190,26 +180,26 @@ export type UseSongsHookType = {
       adminSongs,
       userPlaylists,
       adminPlaylists,
-      userData,
+      // userInfo,
    }: {
-      userData: User | undefined;
-      userSongs: Song[];
-      adminSongs: Song[];
-      userPlaylists: Playlist[];
-      adminPlaylists: Playlist[];
+      // userInfo: User | undefined;
+      userSongs?: Song[];
+      adminSongs?: Song[];
+      userPlaylists?: Playlist[];
+      adminPlaylists?: Playlist[];
    }) => void;
 };
 
 const useSongsStore = (): UseSongsHookType => {
    const {
-      state: { userData, adminPlaylists, adminSongs, initial, userPlaylists, userSongs },
+      state: { adminPlaylists, adminSongs, initial, userPlaylists, userSongs },
       initSongsContext,
       setUserSongs,
       setUserPlaylists,
    } = useContext(SongsContext);
 
    return {
-      userData,
+      // userInfo,
       adminPlaylists,
       adminSongs,
       initial,

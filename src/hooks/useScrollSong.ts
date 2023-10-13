@@ -1,27 +1,32 @@
 import { MutableRefObject, RefObject, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { selectAllSongStore } from "../store/SongSlice";
 
 type Props = {
    containerRef?: RefObject<HTMLDivElement>;
-   songItemRef: RefObject<HTMLDivElement>;
+   songItemRef?: RefObject<HTMLDivElement>;
    firstTimeRender: MutableRefObject<Boolean>
-   active: boolean;
-   scroll: boolean;
+   isOpenFullScreen?: boolean;
 };
 
-export default function useScrollSong({ active, containerRef, songItemRef, firstTimeRender}: Props) {
+export default function useScrollSong({ containerRef, songItemRef, firstTimeRender, isOpenFullScreen}: Props) {
+   const {song: songInStore} = useSelector(selectAllSongStore)
    if (!scroll || !containerRef || !songItemRef) return;
 
    useEffect(() => {
-      // if (!data) return;
       if (firstTimeRender.current) {
          firstTimeRender.current = false;
          return;
       }
 
-      // console.log('check first time render', firstTimeRender.current);
+      if (!songInStore.name) return;
       
+      if (!isOpenFullScreen) {
+         console.log('useEffect no open full screen, do nothing');
+         return;
+      }      
 
-      if (containerRef && active && songItemRef) {
+      if (containerRef && songItemRef) {
 
          const windowWidth = window.innerWidth;
 
@@ -56,6 +61,9 @@ export default function useScrollSong({ active, containerRef, songItemRef, first
                containerEle.style.scrollBehavior = "smooth";
             }, 300);
          }
+      } else {
+         console.log('element undefined');
+         
       }
-   }, [active]);
+   }, [songInStore, isOpenFullScreen]);
 }

@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
    ChevronRightIcon,
-   ClipboardDocumentIcon,
    MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
 import { Playlist, Song } from "../types";
@@ -11,19 +10,19 @@ import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useSongsStore } from "../store/SongsContext";
 
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 
 import { auth } from "../config/firebase";
 import { routes } from "../routes";
 
-import useSong from "../hooks/useSongs";
+import useSongs from "../hooks/useSongs";
 
 import SongItem from "../components/SongItem";
 import Button from "../components/ui/Button";
 import LinkItem from "../components/ui/LinkItem";
 import Skeleton from "../components/skeleton";
 import MobileSongItem from "../components/MobileSongItem";
-import useSongItemActions from "../hooks/useSongItemActions";
+import { useAuthStore } from "../store/AuthContext";
 
 // song item actions
 // import { addSongToPlaylist } from "../utils/SongItemActions";
@@ -32,11 +31,10 @@ export default function HomePage() {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
+   const { userInfo } = useAuthStore();
+   const { loading: useSongLoading } = useSongs();
    const [signInWithGoogle] = useSignInWithGoogle(auth);
-   const [loggedInUser, userLoading] = useAuthState(auth);
-   const { loading: useSongLoading } = useSong();
    const { adminSongs, userPlaylists } = useSongsStore();
-
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    // use hooks
@@ -58,20 +56,20 @@ export default function HomePage() {
       signInWithGoogle();
    };
 
-   const handleAddSongToPlaylist = (song: Song, playlist: Playlist) => {
-      if (!song || !playlist) return;
+   // const handleAddSongToPlaylist = (song: Song, playlist: Playlist) => {
+   //    if (!song || !playlist) return;
 
-      const newSongIds = [...playlist.song_ids, song.id];
-      const time = playlist.time + song.duration;
+   //    const newSongIds = [...playlist.song_ids, song.id];
+   //    const time = playlist.time + song.duration;
 
-      const newPlaylist: Playlist = {
-         ...playlist,
-         time,
-         song_ids: newSongIds,
-         count: newSongIds.length,
-      };
-      // setPlaylistDocAndSetUserPlaylists({ newPlaylist });
-   };
+   //    const newPlaylist: Playlist = {
+   //       ...playlist,
+   //       time,
+   //       song_ids: newSongIds,
+   //       count: newSongIds.length,
+   //    };
+   //    // setPlaylistDocAndSetUserPlaylists({ newPlaylist });
+   // };
 
    // define skeleton
    const menuItemSkeletons = [...Array(1).keys()].map((index) => {
@@ -127,12 +125,11 @@ export default function HomePage() {
                   selectedSongList={selectedSongList}
                   setIsCheckedSong={setIsCheckedSong}
                   setSelectedSongList={setSelectedSongList}
-                  
                />
             </div>
          );
       });
-   }, []);
+   }, [adminSongs]);
 
    // define styles
    const classes = {
@@ -146,13 +143,13 @@ export default function HomePage() {
             <div className="pb-[20px]">
                <div className="flex flex-col gap-3 items-start ">
                   <h1 className="text-[24px] font-bold">Library</h1>
-                  {userLoading ? (
+                  {userInfo.status === "loading" ? (
                      menuItemSkeletons
                   ) : (
                      <>
-                        {loggedInUser ? (
+                        {userInfo.email ? (
                            <>
-                              <LinkItem
+                              {/* <LinkItem
                                  className="py-[10px] border-b border-[#333]"
                                  to={routes.Playlist}
                                  icon={
@@ -161,10 +158,8 @@ export default function HomePage() {
                                     />
                                  }
                                  label="Playlist"
-                                 arrowIcon={
-                                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
-                                 }
-                              />
+                                 arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                              /> */}
                               <LinkItem
                                  className="py-[10px] border-b border-[#333]"
                                  to={routes.MySongs}
@@ -174,9 +169,7 @@ export default function HomePage() {
                                     />
                                  }
                                  label="All songs"
-                                 arrowIcon={
-                                    <ChevronRightIcon className="w-5 h-5 text-gray-500" />
-                                 }
+                                 arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
                               />
                            </>
                         ) : (
@@ -198,9 +191,7 @@ export default function HomePage() {
             <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
             {useSongLoading && SongItemSkeleton}
 
-            {!useSongLoading && (
-               <>{!!adminSongs.length ? renderAdminSongs : "No songs jet..."}</>
-            )}
+            {!useSongLoading && <>{!!adminSongs.length ? renderAdminSongs : "No songs jet..."}</>}
          </div>
       </>
    );

@@ -49,7 +49,7 @@ export const testSongs: Song[] = [
    {
       duration: 38.8,
       song_file_path: "songs/Tuesday - Burak Yeter_ Danelle Sandoval (mp3cut.net).mp3",
-      singer: "Burak Yeter; Danelle Sandoval",
+      singer: "Burak Yeter; Danelle Sandoval, Burak Yeter; Danelle Sandoval, Burak Yeter; Danelle Sandoval",
       image_url: "",
       by: "huudat01234560@gmail.com",
       in_playlist: [],
@@ -59,6 +59,34 @@ export const testSongs: Song[] = [
       name: "Tuesday",
       song_url:
          "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/songs%2FTuesday%20-%20Burak%20Yeter_%20Danelle%20Sandoval%20(mp3cut.net).mp3?alt=media&token=e54ca1ba-cd5a-4d06-90e2-1a263052d34a",
+   },
+   {
+      image_url: "",
+      lyric_id: "",
+      by: "huudat01234560@gmail.com",
+      id: "youi_huudat01234560",
+      name: "You & I",
+      image_file_path: "",
+      singer: "One Direction",
+      song_file_path: "songs/You & I (mp3cut.net).mp3",
+      song_url:
+         "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/songs%2FYou%20%26%20I%20(mp3cut.net).mp3?alt=media&token=6108db2a-bd0b-401f-b4e7-c2191c03f0bd",
+      in_playlist: [],
+      duration: 56.9,
+   },
+   {
+      image_url: "",
+      lyric_id: "",
+      by: "huudat01234560@gmail.com",
+      id: "youi_huudat01234560",
+      name: "You & I",
+      image_file_path: "",
+      singer: "One Direction",
+      song_file_path: "songs/You & I (mp3cut.net).mp3",
+      song_url:
+         "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/songs%2FYou%20%26%20I%20(mp3cut.net).mp3?alt=media&token=6108db2a-bd0b-401f-b4e7-c2191c03f0bd",
+      in_playlist: [],
+      duration: 56.9,
    },
    {
       image_url: "",

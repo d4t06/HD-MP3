@@ -46,14 +46,18 @@ export const mySetDoc = async ({
 export const uploadFile = async ({
    file,
    folder,
+   email,
 }: {
    file: File;
    folder: "/images/" | "/songs/";
+   email: string;
 }) => {
-   console.log('upload file');
-   
+   console.log("upload file");
+
    // define ref
-   const fileRef = ref(store, `${folder + file.name}`);
+   const fileName =
+      file.name.replaceAll(" ", "").toLowerCase() + "_" + email.replace("@gmail.com", "");
+   const fileRef = ref(store, `${folder + fileName}`);
    const fileRes = await uploadBytes(fileRef, file);
    const fileURL = await getDownloadURL(fileRes.ref);
 
@@ -61,21 +65,21 @@ export const uploadFile = async ({
 };
 
 export const deleteFile = async ({ filePath }: { filePath: string }) => {
-   console.log('delete file');
-   
+   console.log("delete file");
+
    const fileRef = ref(store, filePath);
    await deleteObject(fileRef);
 };
 
 export const deleteSong = async (song: Song) => {
-   deleteFile({ filePath: song.song_file_path });
-
-   // Delete the song doc
    await deleteDoc(doc(db, "songs", song.id));
 
    if (song.lyric_id) {
-      // Delete lyric doc
       await deleteDoc(doc(db, "lyrics", song.lyric_id));
+   }
+
+   if (song.image_file_path) {
+      await deleteFile({ filePath: song.image_file_path });
    }
 };
 
@@ -83,25 +87,25 @@ export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
    await mySetDoc({ collection: "playlist", data: playlist, id: playlist.id });
 };
 
-export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userData: User) => {   
+export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userInfo: User) => {
    const newPlaylistIds = playlists.map((playlist) => playlist.id);
    await mySetDoc({
       collection: "users",
       data: { playlist_ids: newPlaylistIds } as Partial<User>,
-      id: userData.email,
+      id: userInfo.email,
    });
 };
 
 export const setUserSongIdsAndCountDoc = async ({
    songIds,
-   userData,
+   userInfo,
 }: {
    songIds: string[];
-   userData: User;
+   userInfo: User;
 }) => {
    await mySetDoc({
       collection: "users",
       data: { song_ids: songIds, song_count: songIds.length } as Partial<User>,
-      id: userData.email,
+      id: userInfo.email,
    });
 };

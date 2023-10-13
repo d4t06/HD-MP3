@@ -1,8 +1,15 @@
-import { PencilSquareIcon, PlayIcon, PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+   ChevronLeftIcon,
+   PencilSquareIcon,
+   PlayIcon,
+   PlusCircleIcon,
+   TrashIcon,
+   XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { useCallback, useMemo, useState, useRef } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { useTheme } from "../store/ThemeContext";
 import { Status, selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
@@ -14,7 +21,7 @@ import { Song } from "../types";
 import useSongItemActions from "../hooks/useSongItemActions";
 import usePlaylistDetail from "../hooks/usePlaylistDetail";
 
-import { myDeleteDoc, mySetDoc } from "../utils/firebaseHelpers";
+import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
 import {
    handleTimeText,
    generatePlaylistAfterChangeSongs,
@@ -33,30 +40,35 @@ import { useActuallySongs } from "../store/ActuallySongsContext";
 import {
    handleSongWhenAddToPlaylist,
    handleSongWhenDeleteFromPlaylist,
+   handleSongWhenDeletePlaylist,
 } from "../utils/songItemHelper";
+import { routes } from "../routes";
+import { useAuthStore } from "../store/AuthContext";
 
 export default function PlaylistDetail() {
    // for store
    const dispatch = useDispatch();
    const params = useParams();
    const { theme } = useTheme();
+   const { userInfo } = useAuthStore();
    const { setSuccessToast, setErrorToast } = useToast();
    const { setActuallySongs } = useActuallySongs();
-   const { userData, userSongs, userPlaylists, setUserPlaylists, setUserSongs, adminSongs } =
-      useSongsStore();
+   const { userSongs, userPlaylists, setUserPlaylists, setUserSongs, adminSongs } = useSongsStore();
    const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
 
    // component state
    const [loading, setLoading] = useState(false);
    const firstTimeRender = useRef(true);
 
-   //   use hooks
+   //  use hooks
+   const navigate = useNavigate();
+   const { playlistSongs, loading: usePlaylistLoading } = usePlaylistDetail({
+      firstTimeRender,
+      playlistInStore,
+      songInStore,
+   });
+
    const { setPlaylistDocAndSetUserPlaylists } = useSongItemActions();
-   const {
-      playlistSongs,
-      errorMsg: usePlaylistErrorMsg,
-      loading: usePlaylistLoading,
-   } = usePlaylistDetail({ firstTimeRender, playlistInStore, songInStore });
 
    // for modal
    const [isOpenModal, setIsOpenModal] = useState(false);
@@ -86,10 +98,10 @@ export default function PlaylistDetail() {
          );
 
          if (!songInStore.song_in.includes(playlistInStore.name)) {
-            console.log(
-               "check newPlaylist songs",
-               playlistSongs.map((s) => s.name)
-            );
+            // console.log(
+            //    "set Songs",
+            //    playlistSongs.map((s) => s.name)
+            // );
             setActuallySongs(playlistSongs);
          }
       }
@@ -236,7 +248,6 @@ export default function PlaylistDetail() {
          // update user songs
          if (error) {
             setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
-            
          } else if (newSong) {
             songsNeedToUpdateDoc.push(newSong);
             updateSongsListValue(newSong, newUserSongs);
@@ -264,7 +275,7 @@ export default function PlaylistDetail() {
 
       // >>> api
       songsNeedToUpdateDoc.forEach(async (song) => {
-         console.log("update doc", song.name, song.in_playlist);
+         console.log("update doc", song.name);
          // await mySetDoc({ collection: "songs", data: song, id: song.id });
       });
 
@@ -279,13 +290,73 @@ export default function PlaylistDetail() {
    const handleDeletePlaylist = async () => {
       try {
          setLoading(true);
+         const newUserPlaylists = [...userPlaylists];
 
-         await myDeleteDoc({ collection: "lyrics", id: playlistInStore.id });
+         let songsResult: Song[] = [];
+         let newUserSongs: Song[] = [];
 
+         if (playlistSongs.length) {
+            newUserSongs = [...userSongs];
+            const { error, songsNeedToUpdate } = handleSongWhenDeletePlaylist(
+               playlistInStore,
+               playlistSongs
+            );
+
+            if (error) {
+               closeModal();
+               setErrorToast({});
+               return;
+            }
+
+            songsResult = songsNeedToUpdate;
+         }
+
+         // update song doc and update user song
+         if (songsResult.length) {
+            for (let song of songsResult) {
+               updateSongsListValue(song, newUserSongs);
+
+               // api
+               console.log("set doc", song.name);
+               await mySetDoc({collection: "songs", data: song, id: song.id})
+            }
+         }
+
+         // eliminate 1 playlists
+         const index = newUserPlaylists.findIndex((item) => item.id === playlistInStore.id);
+         newUserPlaylists.splice(index, 1);
+
+         // >>> local
+         setUserPlaylists(newUserPlaylists, []);
+         if (songsResult.length) {
+            setUserSongs(newUserSongs);
+         }
+
+         // >>> api
+         await myDeleteDoc({collection: "playlist", id: playlistInStore.id})
+         await setUserPlaylistIdsDoc(newUserPlaylists, userInfo);
+
+         // >>> finish
          setLoading(false);
          setIsOpenModal(false);
+         dispatch(
+            setPlaylist({
+               id: "",
+               name: "",
+               song_ids: [],
+               time: 0,
+               count: 0,
+               by: "",
+               image_by: "",
+               image_file_path: "",
+               image_url: "",
+            })
+         );
+         setSuccessToast({ message: `${playlistInStore.name} deleted` });
+
+         navigate(`${routes.Playlist}`);
       } catch (error) {
-         console.log({ message: error });
+         setErrorToast({});
       }
    };
 
@@ -295,6 +366,7 @@ export default function PlaylistDetail() {
    };
 
    const closeModal = () => {
+      setLoading(false);
       setIsOpenModal(false);
       setIsCheckedSong(false);
       setSelectedSongList([]);
@@ -310,14 +382,14 @@ export default function PlaylistDetail() {
       editContainer: "w-[700px] max-w-[90vw] max-h-[90vh]",
       input: "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
       button: `${theme.content_bg} rounded-full`,
-      playListTop: "w-full flex mb-[15px] max-[549px]:flex-col max-[549px]:gap-[12px]",
+      playListTop: "w-full flex max-[549px]:flex-col max-[549px]:gap-[12px]",
       playlistInfoContainer:
-         "ml-[15px] flex flex-col justify-between max-[549px]:ml-0 max-[549px]:gap-[12px]",
+         "ml-[15px] flex flex-col justify-between max-[549px]:ml-0 max-[549px]:mb-[30px] max-[549px]:gap-[12px]",
       songListContainer:
          "h-[50px] mb-[10px] flex gap-[20px] max-[549px]:gap-[12px] items-center border-b",
       countSongText: "text-[14px]] font-semibold text-gray-500 w-[100px]",
 
-      buttonAddSongContainer: "w-full text-center mt-[15px]",
+      buttonAddSongContainer: "w-full text-center mt-[30px]",
    };
 
    // playlistSongs, songInStore, isCheckedSong, selectedSongList, isOpenModal
@@ -394,7 +466,7 @@ export default function PlaylistDetail() {
       () =>
          confirmModal({
             loading: loading,
-            label: "Wait a minute",
+            label: "Delete playlist ?",
             theme: theme,
             callback: handleDeletePlaylist,
             setOpenModal: setIsOpenModal,
@@ -404,15 +476,20 @@ export default function PlaylistDetail() {
 
    // for define skeleton
    const playlistSkeleton = (
-      <div className="flex">
-         <div className="w-1/4 max-[459px]:w-1/2">
+      <div className="flex max-[549px]:flex-col max-[549px]:gap-[12px]">
+         <div className="w-1/4 max-[549px]:w-full max-[549px]:px-[20px]">
             <Skeleton className="pt-[100%] rounded-[8px]" />
          </div>
-         <div className="ml-[15px]">
+         <div className="min-[550px]:ml-[15px] max-[549px]:flex max-[549px]:mb-[30px] justify-between">
             <Skeleton className="h-[30px]  w-[100px]" />
             <Skeleton className="h-[20px] mt-[9px] w-[100px]" />
-            <Skeleton className="h-[20px] mt-[9px] w-[100px]" />
-            <Skeleton className="h-[15px] mt-[9px] w-[200px]" />
+
+            {!isOnMobile && (
+               <>
+                  <Skeleton className="h-[20px] mt-[9px] w-[100px]" />
+                  <Skeleton className="h-[15px] mt-[9px] w-[200px]" />
+               </>
+            )}
          </div>
       </div>
    );
@@ -420,7 +497,7 @@ export default function PlaylistDetail() {
    const SongItemSkeleton = [...Array(4).keys()].map((index) => {
       return (
          <div className="flex p-[10px]" key={index}>
-            <Skeleton className="h-[54px] w-[54px] ml-[27px] rounded-[4px]" />
+            <Skeleton className="h-[54px] w-[54px] ml-[33px] rounded-[4px]" />
             <div className="ml-[10px]">
                <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
                <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
@@ -429,60 +506,61 @@ export default function PlaylistDetail() {
       );
    });
 
-   if (usePlaylistErrorMsg) return <h1>{usePlaylistErrorMsg}</h1>;
-
-   // console.log("playlist detail render", playlistSongs.map(s => s.name), usePlaylistLoading);
-
    return (
       <>
+         {isOnMobile && (
+            <Link to={routes.Home} className="inline-flex items-center mb-[30px] hover:opacity-75">
+               <button className="">
+                  <ChevronLeftIcon className="w-[25px]" />
+               </button>
+               <span className="text-[20px] font-semibold leading-1">My songs</span>
+            </Link>
+         )}
          {/* head */}
          {usePlaylistLoading && playlistSkeleton}
          {!usePlaylistLoading && !!playlistInStore.name && (
             <div className={classes.playListTop}>
                {/* image */}
-               <div className="w-1/4 max-[549px]:w-full">
-                  <PlaylistItem
-                     data={playlistInStore}
-                     inDetail
-                     theme={theme}
-                     setUserPlaylists={setUserPlaylists}
-                     userData={userData}
-                     userPlaylists={userPlaylists}
-                  />
+               <div className="w-1/4 max-[549px]:w-full max-[549px]:px-[20px]">
+                  <PlaylistItem data={playlistInStore} inDetail theme={theme} />
                </div>
 
                {/* playlist info */}
                <div className={classes.playlistInfoContainer}>
-                  <div className="max-[549px]:flex items-center gap-[12px]">
-                     <h3 className="text-[20px] font-semibold max-[549px]:text-[30px]">
+                  <div className="max-[549px]:flex justify-between items-center gap-[12px]">
+                     <h3 className="text-[20px] font-semibold max-[549px]:text-[30px] leading-1">
                         {playlistInStore.name}
                         <button onClick={() => openModal("edit")} className="p-[5px]">
                            <PencilSquareIcon className="w-[20px]" />
                         </button>
                      </h3>
-                     <p className="text-[16px]">{playlistInStore?.count} songs</p>
                      <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
                      <p className="text-[14px] opacity-60 max-[549px]:hidden">
                         create by {playlistInStore.by}
                      </p>
                   </div>
-
-                  {/* cta */}
-                  <div className="flex items-center gap-[12px]">
-                     <Button
-                        onClick={() => handlePlayPlaylist()}
-                        variant={"primary"}
-                        className={`rounded-full ${theme.content_bg} ${
-                           !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
-                        }`}
-                     >
-                        Play
-                        <PlayIcon className="ml-[5px] w-[20px]" />
-                     </Button>
-                  </div>
                </div>
             </div>
          )}
+
+         {/* cta */}
+         <div className="flex items-center gap-[12px] max-[549px]:justify-center">
+            <Button
+               onClick={() => handlePlayPlaylist()}
+               className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
+                  !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
+               }`}
+            >
+               Play
+               <PlayIcon className="ml-[5px] w-[25px]" />
+            </Button>
+            <Button
+               onClick={() => openModal("confirm")}
+               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+            >
+               <TrashIcon className="w-[25px]" />
+            </Button>
+         </div>
 
          {/* songs list */}
          <div className="pb-[50px]">
@@ -540,39 +618,6 @@ export default function PlaylistDetail() {
                </div>
             )}
          </div>
-
-         {/* popup */}
-         {/* {isOpenPopup && (
-            <FloatingFocusManager modal={false} context={context}>
-               <div
-                  className="z-[99]"
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  {...getFloatingProps()}
-               >
-                  <PopupWrapper {...getFloatingProps} theme={theme}>
-                     <div className="w-[150px]">
-                        <Button
-                           onClick={() => openModal("edit")}
-                           className={`${theme.content_hover_text}`}
-                           variant={"list"}
-                        >
-                           <PencilSquareIcon className="w-[18px] mr-[5px]" />
-                           Edit playlist
-                        </Button>
-                        <Button
-                           onClick={() => openModal("confirm")}
-                           className={`${theme.content_hover_text}`}
-                           variant={"list"}
-                        >
-                           <TrashIcon className="w-[18px] mr-[5px]" />
-                           Trash
-                        </Button>
-                     </div>
-                  </PopupWrapper>
-               </div>
-            </FloatingFocusManager>
-         )} */}
 
          {/* modal */}
          {isOpenModal && (

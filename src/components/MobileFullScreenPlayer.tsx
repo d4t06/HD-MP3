@@ -6,6 +6,7 @@ import {
    useEffect,
    useMemo,
    ReactNode,
+   MouseEvent,
 } from "react";
 import {
    useFloating,
@@ -41,8 +42,11 @@ import SettingMenu from "./SettingMenu";
 import Modal from "./Modal";
 import Control from "./Control";
 import LyricsList from "./LyricsList";
-import MobileSongItem from "./MobileSongItem";
 import useBgImage from "../hooks/useBgImage";
+import { useAuthStore } from "../store/AuthContext";
+import PopupWrapper from "./ui/PopupWrapper";
+import { useActuallySongs } from "../store/ActuallySongsContext";
+import MobileSongItem from "./MobileSongItem";
 // import useGetActuallySongs from "../hooks/useGetActuallySongs";
 // import useVolume from "../hooks/useVolume";
 
@@ -69,12 +73,12 @@ export default function MobileFullScreenPlayer({
    setIsWaiting,
    setIsOpenFullScreen,
 }: Props) {
-   const songStore = useSelector(selectAllSongStore);
+   // use store
    const dispatch = useDispatch();
-
-   const { song: songInStore } = songStore;
    const { theme } = useTheme();
-   // const { actuallySongs } = useActuallySongs();
+   const { userInfo } = useAuthStore();
+   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { actuallySongs } = useActuallySongs();
    // const [songLists, setSongLists] = useState<Song[]>([]);
 
    // const [songLyric, setSongLyric] = useState<Lyric>({ base: "", real_time: [] });
@@ -90,6 +94,7 @@ export default function MobileFullScreenPlayer({
    const volumeLine = useRef<HTMLDivElement>(null);
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
+   const songListContainer = useRef<HTMLDivElement>(null);
 
    // use hooks
    useBgImage({ bgRef, songInStore });
@@ -108,14 +113,55 @@ export default function MobileFullScreenPlayer({
    const dismiss = useDismiss(context);
    const role = useRole(context);
 
-   const { getReferenceProps, getFloatingProps } = useInteractions([
-      click,
-      dismiss,
-      role,
-   ]);
+   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
-   const activeSong = (song: Song, index: number) => {
-      dispatch(setSong({ ...song, currentIndex: index, song_in: songInStore.song_in }));
+   const findParent = (ele: HTMLDivElement) => {
+      let i = 0;
+      let parent = ele.parentElement as HTMLDivElement;
+      while (!parent.classList.contains("item-container") && i < 5) {
+         parent = parent.parentElement as HTMLDivElement;
+         i++;
+      }
+      return parent;
+   };
+
+
+   const hideSongItemStyle = {
+      height : "0px",
+      opacity : "0",
+      padding : "0px 5px",
+      border : "none",
+      // marginTop: "-5px"
+
+   }
+
+   const findPrevSibling = (ele: HTMLDivElement) => {
+      let i = 0;
+      let node = ele.previousElementSibling as HTMLElement | null;
+      while (node && i < 20) {
+
+         Object.assign(node.style, hideSongItemStyle)
+         i++;
+         node = node.previousElementSibling as HTMLElement;
+      }
+   };
+
+   const activeSong = (
+      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
+      song: Song,
+      index: number
+   ) => {
+      const ele = e.target as HTMLDivElement;
+      const parent = findParent(ele);
+
+      const prevSiblingList = findPrevSibling(parent);
+      Object.assign(parent.style, hideSongItemStyle)
+
+      console.log("check previousSibling", prevSiblingList);
+
+      setTimeout(() => {
+         dispatch(setSong({ ...song, currentIndex: index, song_in: songInStore.song_in }));
+      }, 250);
    };
 
    useEffect(() => {
@@ -131,54 +177,39 @@ export default function MobileFullScreenPlayer({
    //    }
    // }, [songInStore]);
 
-   // // update songs list
-   // useEffect(() => {
-   //    if (!initial) return;
-
-   //    // songs in playlist
-   //    if (songInStore.song_in.includes("playlist")) {
-   //       setSongLists(actuallySongs);
-
-   //       // admin songs
-   //    } else if (songInStore.song_in === "admin") {
-   //       setSongLists(adminSongs);
-
-   //       // user songs
-   //    } else {
-   //       setSongLists(userSongs);
-   //    }
-
-   //    console.log("check songlist", songLists);
-   // }, [songInStore.song_in, actuallySongs]);
-
    const songsListItemTab = useMemo(() => {
       return (
          <>
             {songInStore && (
                <>
-                  <h3 className="text-white text-[16px] mt-[10px] mb-[7px]">
-                     Playing next
-                  </h3>
-                  <div className="relative h-full no-scrollbar overflow-auto transition-all">
-                     {/* {songLists.map((song, index) => {
-                        if (index > songInStore.currentIndex) {
-                           return (
-                              <MobileSongItem
-                                 key={index}
-                                 theme={theme}
-                                 data={song}
-                                 onClick={() => activeSong(song, index)}
-                                 active={song.song_url === songInStore.song_url}
-                              />
-                           );
-                        }
-                     })} */}
-                  </div>
+                  <h3 className="text-white text-[16px] mt-[10px] mb-[7px]">Playing next</h3>
+                  {songInStore.currentIndex === actuallySongs.length - 1 ? (
+                     <p>...</p>
+                  ) : (
+                     <div
+                        ref={songListContainer}
+                        className="relative h-full no-scrollbar overflow-auto transition-transform duration-200"
+                     >
+                        {actuallySongs.map((song, index) => {
+                           if (index > songInStore.currentIndex) {
+                              return (
+                                 <MobileSongItem
+                                    key={index}
+                                    theme={theme}
+                                    data={song}
+                                    onClick={(e) => activeSong(e, song, index)}
+                                    active={song.song_url === songInStore.song_url}
+                                 />
+                              );
+                           }
+                        })}
+                     </div>
+                  )}
                </>
             )}
          </>
       );
-   }, [songInStore]);
+   }, [songInStore, actuallySongs]);
 
    const lyricTab = useMemo(
       () => (
@@ -201,9 +232,7 @@ export default function MobileFullScreenPlayer({
             ref={bgRef}
             className={`absolute  inset-0 bg-no-repeat bg-cover bg-center blur-[99px]`}
          ></div>
-         <div
-            className={`absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply`}
-         ></div>
+         <div className={`absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply`}></div>
 
          <div className="absolute inset-0 z-10">
             {/* header */}
@@ -240,6 +269,7 @@ export default function MobileFullScreenPlayer({
                         {...getFloatingProps()}
                      >
                         <SettingMenu
+                           loggedIn={!!userInfo.email}
                            setIsOpenMenu={setIsClickSetting}
                            setIsOpenSetting={setIsOpenSetting}
                            setSettingComp={setSettingComp}
@@ -251,113 +281,114 @@ export default function MobileFullScreenPlayer({
 
             {/* container */}
             <div ref={containerRef} className={`relative px-[15px] overflow-hidden`}>
-               <div className={`h-full flex flex-col overflow-hidden`}>
-                  <div
-                     className={`flex flex-col h-full ${
-                        activeTab != "Playing" ? "" : "justify-between"
-                     }`}
-                  >
-                     {/* songImage, name and singer */}
+               <div className={`relative h-full flex flex-col overflow-hidden`}>
+                  <div className=""></div>
+                  {/* songImage, name and singer */}
+                  <div className={`${activeTab != "Playing" && !scalingImage ? "flex" : ""}`}>
+                     {/* song image */}
+                     {useMemo(
+                        () => (
+                           <SongThumbnail
+                              theme={theme}
+                              classNames={`flex-shrink-0 transition-[height, width] origin-top-left ${
+                                 activeTab != "Playing"
+                                    ? "max-[549px]:w-[60px] max-[549px]:h-[60px]"
+                                    : "justify-center items-center w-full px-[20px]"
+                              }`}
+                              active={true}
+                              data={songInStore}
+                           />
+                        ),
+                        [songInStore, isPlaying, activeTab]
+                     )}
+                     {/* name and singer */}
                      <div
-                        className={`${
-                           activeTab != "Playing" && !scalingImage ? "flex" : ""
+                        className={`flex flex-grow justify-between items-center ${
+                           activeTab != "Playing" ? "ml-[10px]" : "mt-[15px]"
                         }`}
                      >
-                        {/* song image */}
-                        {useMemo(
-                           () => (
-                              <SongThumbnail
-                                 classNames={`flex-shink-0 transition-[height, width] origin-top-left ${
-                                    activeTab != "Playing"
-                                       ? "max-[549px]:w-[60px] max-[549px]:h-[60px]"
-                                       : "justify-center items-center w-full"
-                                 }`}
-                                 active={true}
-                                 data={songInStore}
-                                 scroll={false}
-                              />
-                           ),
-                           [songInStore, isPlaying, activeTab]
-                        )}
-                        {/* name and singer */}
-                        <div
-                           className={`flex flex-grow justify-between items-center ${
-                              activeTab != "Playing" ? "ml-[10px]" : "mt-[15px]"
-                           }`}
-                        >
-                           <div className="group flex-grow overflow-hidden">
-                              <div className="h-[30px]">
-                                 {useMemo(
-                                    () => (
-                                       <ScrollText
-                                          songInStore={songInStore}
-                                          autoScroll
-                                          classNames={`${
-                                             activeTab === "Playing"
-                                                ? "text-[24px] leading-[30px]"
-                                                : "text-[20px]"
-                                          } font-[500]`}
-                                          label={songInStore.name || "..."}
-                                       />
-                                    ),
-                                    [songInStore, activeTab]
-                                 )}
-                              </div>
-                              <div className="h-[30px]">
-                                 {useMemo(
-                                    () => (
-                                       <ScrollText
-                                          songInStore={songInStore}
-                                          autoScroll
-                                          classNames={`${
-                                             activeTab === "Playing"
-                                                ? "text-[22px]"
-                                                : "text-[16px] text-gray-500"
-                                          } font-[400]`}
-                                          label={songInStore.singer || "..."}
-                                       />
-                                    ),
-                                    [songInStore, activeTab]
-                                 )}
-                              </div>
-                           </div>
-
-                           <div className="pl-[20px]">
-                              <button className="p-[5px]">
-                                 <HeartIcon className="w-[25px]" />
-                              </button>
-                           </div>
-                        </div>
-                     </div>
-
-                     {activeTab === "Lyric" && lyricTab}
-                     {activeTab === "Songs" && songsListItemTab}
-
-                     {/* player */}
-                     <div
-                        className={`mb-[30px] ${
-                           activeTab != "Playing"
-                              ? "opacity-0 pointer-events-none h-[0px] mb-[0px]"
-                              : ""
-                        }`}
-                     >
-                        <div className="flex flex-col justify-start flex-1">
-                           <div className="flex-col-reverse flex">
+                        <div className="group flex-grow overflow-hidden">
+                           <div className="h-[30px]">
                               {useMemo(
                                  () => (
-                                    <Control
-                                       audioEle={audioEle}
-                                       isOpenFullScreen={false}
-                                       isPlaying={isPlaying}
-                                       isWaiting={isWaiting}
-                                       setIsWaiting={setIsWaiting}
-                                       setIsPlaying={setIsPlaying}
-                                       idle={false}
+                                    <ScrollText
+                                       songInStore={songInStore}
+                                       autoScroll
+                                       classNames={`${
+                                          activeTab === "Playing"
+                                             ? "text-[24px] leading-[30px]"
+                                             : "text-[20px]"
+                                       } font-[500]`}
+                                       label={songInStore.name || "..."}
                                     />
                                  ),
-                                 [isPlaying, isWaiting]
+                                 [songInStore, activeTab]
                               )}
                            </div>
+                           <div className="h-[30px]">
+                              {useMemo(
+                                 () => (
+                                    <ScrollText
+                                       songInStore={songInStore}
+                                       autoScroll
+                                       classNames={`${
+                                          activeTab === "Playing"
+                                             ? "text-[22px]"
+                                             : "text-[16px] text-gray-500"
+                                       } font-[400]`}
+                                       label={songInStore.singer || "..."}
+                                    />
+                                 ),
+                                 [songInStore, activeTab]
+                              )}
+                           </div>
+                        </div>
+
+                        <div className="pl-[20px]">
+                           <button className="p-[5px]">
+                              <HeartIcon className="w-[25px]" />
+                           </button>
+                        </div>
+                     </div>
+                  </div>
+
+                  <div
+                     className={`absolute h-full top-[60px] w-full opacity-0 ${
+                        activeTab === "Lyric" && "opacity-100"
+                     }`}
+                  >
+                     <div className={`relative h-full`}>{lyricTab}</div>
+                  </div>
+                  <div
+                     className={`absolute h-full top-[60px] w-full opacity-0 ${
+                        activeTab === "Songs" && "opacity-100"
+                     }`}
+                  >
+                     <div className={`relative`}>{songsListItemTab}</div>
+                  </div>
+
+                  {/* player */}
+                  <div
+                     className={`absolute bottom-[30px] w-[100%] ${
+                        activeTab !== "Playing" && "opacity-0 pointer-events-none h-[0px] mb-[0px]"
+                     }`}
+                  >
+                     <div className="flex flex-col justify-start flex-1">
+                        <div className="flex-col-reverse flex">
+                           {useMemo(
+                              () => (
+                                 <Control
+                                    audioEle={audioEle}
+                                    isOpenFullScreen={false}
+                                    isPlaying={isPlaying}
+                                    isWaiting={isWaiting}
+                                    setIsWaiting={setIsWaiting}
+                                    setIsPlaying={setIsPlaying}
+                                    idle={false}
+                                 />
+                              ),
+                              [isPlaying, isWaiting]
+                           )}
                         </div>
                      </div>
                   </div>
@@ -367,15 +398,7 @@ export default function MobileFullScreenPlayer({
 
          {isOpenSetting && (
             <Modal setOpenModal={setIsOpenSetting}>
-               <div
-                  className={` w-[95vw] [90vh] px-[25px] pb-[25px] overflow-hidden ${
-                     theme.container
-                  } rounded-[8px] ${
-                     theme.type === "light" ? "text-[#333]" : "text-white"
-                  } `}
-               >
-                  {settingComp}
-               </div>
+               <PopupWrapper theme={theme}>{settingComp}</PopupWrapper>
             </Modal>
          )}
       </div>

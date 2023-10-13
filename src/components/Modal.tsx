@@ -4,69 +4,75 @@ import Button from "./ui/Button";
 import { ThemeType } from "../types";
 
 interface Props {
-  children: ReactNode;
-  setOpenModal: Dispatch<SetStateAction<boolean>>;
+   children: ReactNode;
+   setOpenModal: Dispatch<SetStateAction<boolean>>;
 }
 
 const confirmModal = ({
-  loading,
-  theme,
-  callback,
-  label,
-  setOpenModal,
+   loading,
+   theme,
+   callback,
+   label,
+   setOpenModal,
+   buttonLabel,
+   desc,
+   className,
 }: {
-  callback: () => void;
-  label: string;
-  loading: boolean;
-  theme: ThemeType & { alpha: string };
-  setOpenModal: Dispatch<SetStateAction<boolean>>;
+   callback: () => void;
+   label?: string;
+   desc?: string;
+   buttonLabel?: string;
+   loading: boolean;
+   theme: ThemeType & { alpha: string };
+   className?: string,
+   setOpenModal?: Dispatch<SetStateAction<boolean>>;
 }) => {
-  return (
-    <div className="w-[30vw]">
-      <h1 className="text-[20px] font-semibold">{label}</h1>
-      <p className="text-[red] text-[18px]">This action cannot be undone</p>
+   return (
+      <div className={className || 'w-[30vw]'}>
+         <h1 className="text-[20px] text-red-500 font-semibold">{label || "Wait a minute"}</h1>
+         <p className=" text-[16px]">{desc}</p>
 
-      <div className="flex gap-[10px] mt-[20px]">
-        <Button
-          isLoading={loading}
-          className={`${theme.content_bg} rounded-full text-[14px]`}
-          variant={"primary"}
-          onClick={() => callback()}
-        >
-          Xóa mẹ nó đi !
-        </Button>
-        <Button
-          onClick={() => setOpenModal(false)}
-          className={`bg-${theme.alpha} rounded-full text-[14px]`}
-          variant={"primary"}
-        >
-          Khoan từ từ
-        </Button>
+         <div className="flex gap-[10px] mt-[20px]">
+            <Button
+               isLoading={loading}
+               className={` bg-${theme.alpha} hover:bg-red-500 rounded-full text-[14px]`}
+               variant={"primary"}
+               onClick={() => callback()}
+            >
+               {buttonLabel || "Yes please"}
+            </Button>
+            <Button
+               onClick={() => setOpenModal && setOpenModal(false)}
+               className={`${theme.content_bg} rounded-full text-[14px]`}
+               variant={"primary"}
+            >
+               Close
+            </Button>
+         </div>
       </div>
-    </div>
-  );
+   );
 };
 
 const Modal: FC<Props> = ({ children, setOpenModal }) => {
-  return (
-    <>
-      {createPortal(
-        <div className="fixed inset-0 z-[99]">
-          <div
-            onClick={(e) => {
-              e.stopPropagation;
-              setOpenModal(false);
-            }}
-            className="absolute bg-black opacity-60 inset-0 z-[90]"
-          ></div>
-          <div className="absolute z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            {children}
-          </div>
-        </div>,
-        document.getElementById("portals")!
-      )}
-    </>
-  );
+   return (
+      <>
+         {createPortal(
+            <div className="fixed inset-0 z-[99]">
+               <div
+                  onClick={(e) => {
+                     e.stopPropagation;
+                     setOpenModal(false);
+                  }}
+                  className="absolute bg-black opacity-60 inset-0 z-[90]"
+               ></div>
+               <div className="absolute z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                  {children}
+               </div>
+            </div>,
+            document.getElementById("portals")!
+         )}
+      </>
+   );
 };
 
 export default Modal;

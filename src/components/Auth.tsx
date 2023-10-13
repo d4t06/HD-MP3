@@ -1,53 +1,81 @@
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
-import { ReactNode, useEffect, useRef } from "react";
-// import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { ReactNode, useEffect } from "react";
+import { serverTimestamp } from "firebase/firestore";
+import { mySetDoc } from "../utils/firebaseHelpers";
+import { useAuthStore } from "../store/AuthContext";
+import { useSongsStore } from "../store/SongsContext";
 
 export default function Auth({ children }: { children: ReactNode }) {
    const [loggedInUser, loading] = useAuthState(auth);
+   const { initial, initSongsContext } = useSongsStore();
+
+   const { setUserInfo, userInfo } = useAuthStore();
 
    // Because need to fetch data user in other page
    // so we need to pause all processes until user data updated
-   // const [updatingUser, _setUpdatingUser] = useState(false);
-   const isUpdateDone = useRef(true)
-
    useEffect(() => {
-      // console.log("useEffect in Auth");
+      const handleUserLogged = async () => {
+         try {
+            await mySetDoc({
+               collection: "users",
+               data: {
+                  email: loggedInUser?.email,
+                  latest_seen: serverTimestamp(),
+                  photoURL: loggedInUser?.photoURL,
+               },
+               id: loggedInUser?.email as string,
+            });
 
-      // const storageUser = async () => {
-      //    console.log("update done", isUpdateDone.current);
+            // when user log in to web site
+            if (initial) {
+               console.log("user login in");
+               initSongsContext({});
+            }
 
-      //    try {
-      //       await setDoc(
-      //          doc(db, "users", loggedInUser?.email as string),
-      //          {
-      //             email: loggedInUser?.email,
-      //             latest_seen: serverTimestamp(),
-      //             photoURL: loggedInUser?.photoURL,
-      //          },
-      //          {
-      //             merge: true,
-      //          }
-      //       );
+            setUserInfo({
+               status: "finish",
+               email: loggedInUser?.email as string,
+               display_name: loggedInUser?.displayName as string,
+               photoURL: loggedInUser?.photoURL as string,
+            });
 
-      //       setUpdatingUser(false);
-      //       isUpdateDone.current = true;
+            // await new Promise<void>((rs) => [
+            //    setTimeout(() => {
+            //       setUserInfo({
+            //          status: "finish",
+            //          email: loggedInUser?.email as string,
+            //          display_name: loggedInUser?.displayName as string,
+            //          photoURL: loggedInUser?.photoURL as string,
+            //       });
 
+            //       rs();
+            //       console.log("update user finish");
+            //    }, 2000),
+            // ]);
+         } catch (error) {
+            console.log(error);
+         }
+      };
 
-      //    } catch (error) {}
-      // };
+      if (loading) return;
 
-      // if has loggedInUser and no update done
-      if (loggedInUser && !isUpdateDone.current) {
-         // storageUser();
+      if (!loggedInUser) {
+         console.log("auth no user");
+
+         if (userInfo.status !== "finish") {
+            setUserInfo({
+               status: "finish",
+            });
+         }
+         return;
       }
 
-   }, [loggedInUser]);
+      handleUserLogged();
 
+      // loading for login
+      // loggedInUser for logout
+   }, [loggedInUser, loading]);
 
-   // console.log('check auth loading', loading);
-   
-   // if (loading || updatingUser) return <h1>Loading...</h1>;
-   
-   return children;   
+   return children;
 }

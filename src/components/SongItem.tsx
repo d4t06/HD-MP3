@@ -21,6 +21,7 @@ import {
    generatePlaylistAfterChangeSong,
    generatePlaylistAfterChangeSongs,
    handleTimeText,
+   initSongObject,
    updatePlaylistsValue,
    updateSongsListValue,
 } from "../utils/appHelpers";
@@ -40,7 +41,7 @@ import { deleteFile, deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useToast } from "../store/ToastContext";
 import Image from "./ui/Image";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setPlaylist } from "../store/SongSlice";
+import { selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
 
 import SongItemEditForm from "./child/SongItemEditForm";
 import { UseSongItemActionsType } from "../hooks/useSongItemActions";
@@ -58,7 +59,7 @@ interface Props {
 
    songItemActions?: UseSongItemActionsType;
 
-   userData?: User;
+   userInfo?: User;
    userSongs?: Song[];
    userPlaylists?: Playlist[];
    setUserSongs?: (userSongs: Song[]) => void;
@@ -83,7 +84,7 @@ export default function SongListItem({
    inPlaylist,
 
    // song context
-   userData,
+   userInfo,
    userSongs,
    userPlaylists,
    setUserSongs,
@@ -146,11 +147,8 @@ export default function SongListItem({
 
    // songInStore, data, userSongs
    const handleDeleteSong = useCallback(async () => {
-      // remove song from playlist
-      // delete song
-
       if (
-         !userData ||
+         !userInfo ||
          !userSongs ||
          !userPlaylists ||
          !setUserSongs ||
@@ -163,11 +161,6 @@ export default function SongListItem({
 
       try {
          setLoading(true);
-
-         if (songInStore.id === data.id) {
-            setErrorToast({});
-            return;
-         }
 
          // if song added in some playlist
          let newUserPlaylists: Playlist[] | undefined;
@@ -189,26 +182,24 @@ export default function SongListItem({
             }
 
             if (playlistsNeedToUpdateDoc.length) {
+               console.log('in playlist');
+               
                for (let playlist of playlistsNeedToUpdateDoc) {
                   updatePlaylistsValue(playlist, newUserPlaylists);
-                  
+
                   //  if user is playing this playlist
                   if (playlist.id === playlistInStore.id) {
                      dispatch(setPlaylist(playlist));
                   }
 
-                  // api
-                  console.log('set doc');
-                  
-                  // await mySetDoc({
-                  //    collection: "playlist",
-                  //    data: newPlaylist,
-                  //    id: newPlaylist.id,
-                  // });
+                  // >>> api
+                  await mySetDoc({
+                     collection: "playlist",
+                     data: playlist,
+                     id: playlist.id,
+                  });
                }
-
             } else {
-               
                setErrorToast({ message: "Error when handle playlist" });
                return;
             }
@@ -218,23 +209,27 @@ export default function SongListItem({
          if (newUserPlaylists) {
             setUserPlaylists(newUserPlaylists, []);
          }
+         if (songInStore.id === data.id) {
+            const emptySong = initSongObject({});
+            dispatch(setSong({ ...emptySong, song_in: "user", currentIndex: 0 }));
+         }
 
          const newUserSongIds = await songItemActions.updateAndSetUserSongs({ song: data });
 
          // >>> api
-         // if song has image upload by user
-         // if (data.image_file_path) {
-         //    await deleteFile({ filePath: data.image_file_path });
-         // }
+         // if song has upload image
+         if (data.image_file_path) {
+            await deleteFile({ filePath: data.image_file_path });
+         }
 
          // delete file, song doc and lyric doc
-         // await deleteSong(data);
+         await deleteSong(data);
 
-         // await mySetDoc({
-         //    collection: "users",
-         //    data: { song_ids: newUserSongIds, song_count: newUserSongIds.length } as Partial<User>,
-         //    id: userData.email,
-         // });
+         await mySetDoc({
+            collection: "users",
+            data: { song_ids: newUserSongIds, song_count: newUserSongIds.length } as Partial<User>,
+            id: userInfo.email,
+         });
 
          // >>> finish
          setSuccessToast({ message: `'${data.name}' deleted` });
@@ -328,96 +323,100 @@ export default function SongListItem({
    };
 
    // data, isCheckedSong, isSelected, inProcess, active
-   const songComponent = useMemo(
-      () => (
+   // const songComponent = useMemo(
+   //    () => (
+   //       <>
+
+   //       </>
+   //    ),
+   //    [isCheckedSong, isSelected, selectedSongList, inProcess, active, data, songInStore.song_in]
+   // );
+
+   const songComponent = (
+      <div className={`flex flex-row ${inProcess ? "opacity-60" : ""}`}>
          <>
-            <div className={`flex flex-row ${inProcess ? "opacity-60" : ""}`}>
+            {/* check box */}
+            {!inProcess ? (
                <>
-                  {/* check box */}
-                  {!inProcess ? (
+                  {!isCheckedSong ? (
                      <>
-                        {!isCheckedSong ? (
-                           <>
-                              <button
-                                 onClick={() => handleSelect(data)}
-                                 className={`${classes.songListButton} hidden group-hover/main:block`}
-                              >
-                                 <StopIcon className="w-[18px] " />
-                              </button>
-                              <button
-                                 className={`${classes.songListButton} group-hover/main:hidden group-hover/main:mr-[0px]`}
-                              >
-                                 <MusicalNoteIcon className="w-[18px]" />
-                              </button>
-                           </>
-                        ) : (
-                           <button
-                              onClick={() => handleSelect(data)}
-                              className={`${classes.songListButton} text-[inherit]`}
-                           >
-                              {!isSelected ? (
-                                 <StopIcon className="w-[18px]" />
-                              ) : (
-                                 <CheckIcon className="w-[18px]" />
-                              )}
-                           </button>
-                        )}
+                        <button
+                           onClick={() => handleSelect(data)}
+                           className={`${classes.songListButton} hidden group-hover/main:block`}
+                        >
+                           <StopIcon className="w-[18px] " />
+                        </button>
+                        <button
+                           className={`${classes.songListButton} group-hover/main:hidden group-hover/main:mr-[0px]`}
+                        >
+                           <MusicalNoteIcon className="w-[18px]" />
+                        </button>
                      </>
                   ) : (
-                     <button className={`${classes.songListButton}`}>
-                        <MusicalNoteIcon className="w-[18px]" />
+                     <button
+                        onClick={() => handleSelect(data)}
+                        className={`${classes.songListButton} text-[inherit]`}
+                     >
+                        {!isSelected ? (
+                           <StopIcon className="w-[18px]" />
+                        ) : (
+                           <CheckIcon className="w-[18px]" />
+                        )}
                      </button>
                   )}
                </>
-
-               {/* song image */}
-               <div className={`${classes.imageFrame}`}>
-                  <Image src={data.image_url} />
-
-                  {/* hidden when in process and in list */}
-
-                  {!inProcess && (
-                     <>
-                        {active ? (
-                           <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
-                              <div className="relative h-[18px] w-[18px]">
-                                 <img
-                                    src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif"
-                                    alt=""
-                                 />
-                              </div>
-                           </div>
-                        ) : (
-                           <div
-                              className="absolute  inset-0 bg-black bg-opacity-60 
-    songContainers-center justify-center items-center hidden group-hover/image:flex"
-                           >
-                              <Button
-                                 onClick={onClick}
-                                 variant={"default"}
-                                 className="h-[25px] w-[25px] text-white"
-                              >
-                                 <PauseCircleIcon />
-                              </Button>
-                           </div>
-                        )}
-                     </>
-                  )}
-               </div>
-
-               {/* song info */}
-               <div className="ml-[10px]">
-                  <h5 className="text-mg line-clamp-1">{data.name}</h5>
-                  <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
-               </div>
-            </div>
+            ) : (
+               <button className={`${classes.songListButton}`}>
+                  <MusicalNoteIcon className="w-[18px]" />
+               </button>
+            )}
          </>
-      ),
-      [isCheckedSong, isSelected, selectedSongList, inProcess, active, data, songInStore.song_in]
+
+         {/* song image */}
+         <div className={`${classes.imageFrame}`}>
+            <Image src={data.image_url} />
+
+            {/* hidden when in process and in list */}
+
+            {!inProcess && (
+               <>
+                  {active ? (
+                     <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center">
+                        <div className="relative h-[18px] w-[18px]">
+                           <img
+                              src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif"
+                              alt=""
+                           />
+                        </div>
+                     </div>
+                  ) : (
+                     <div
+                        className="absolute  inset-0 bg-black bg-opacity-60 
+songContainers-center justify-center items-center hidden group-hover/image:flex"
+                     >
+                        <Button
+                           onClick={onClick}
+                           variant={"default"}
+                           className="h-[25px] w-[25px] text-white"
+                        >
+                           <PauseCircleIcon />
+                        </Button>
+                     </div>
+                  )}
+               </>
+            )}
+         </div>
+
+         {/* song info */}
+         <div className="ml-[10px]">
+            <h5 className="text-mg line-clamp-1">{data.name}</h5>
+            <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
+         </div>
+      </div>
    );
 
    //   theme, active, userPlaylists, data, handleAddSongToPlaylist, deleteFromPlaylist
-   const menuComoponent = useMemo(
+   const menuComponent = useMemo(
       () => (
          <div className="w-[200px]">
             {!isOnMobile && (
@@ -502,7 +501,6 @@ export default function SongListItem({
                      <PencilSquareIcon className="w-[18px] mr-[5px]" />
                      Edit
                   </Button>
-
                   {data.lyric_id ? (
                      <Button
                         className={`${theme.content_hover_text}`}
@@ -521,16 +519,14 @@ export default function SongListItem({
                      </Link>
                   )}
 
-                  {!active && (
-                     <Button
-                        onClick={() => handleOpenModal("confirm")}
-                        className={`${theme.content_hover_text}`}
-                        variant={"list"}
-                     >
-                        <TrashIcon className="w-[18px] mr-[5px]" />
-                        Delete
-                     </Button>
-                  )}
+                  <Button
+                     onClick={() => handleOpenModal("confirm")}
+                     className={`${theme.content_hover_text}`}
+                     variant={"list"}
+                  >
+                     <TrashIcon className="w-[18px] mr-[5px]" />
+                     Delete
+                  </Button>
                </>
             )}
 
@@ -545,7 +541,8 @@ export default function SongListItem({
       () =>
          confirmModal({
             loading: loading,
-            label: "Wait a minute",
+            label: `Delete '${data.name}'`,
+            desc:"This action cannot be undone", 
             theme: theme,
             callback: handleDeleteSong,
             setOpenModal: setIsOpenModal,
@@ -615,7 +612,7 @@ export default function SongListItem({
                   style={floatingStyles}
                   {...getFloatingProps()}
                >
-                  <PopupWrapper theme={theme}>{menuComoponent}</PopupWrapper>
+                  <PopupWrapper theme={theme}>{menuComponent}</PopupWrapper>
                </div>
             </FloatingFocusManager>
          )}
