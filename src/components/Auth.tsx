@@ -8,7 +8,7 @@ import { useSongsStore } from "../store/SongsContext";
 
 export default function Auth({ children }: { children: ReactNode }) {
    const [loggedInUser, loading] = useAuthState(auth);
-   const { initial, initSongsContext } = useSongsStore();
+   const { initial } = useSongsStore();
 
    const { setUserInfo, userInfo } = useAuthStore();
 
@@ -29,8 +29,8 @@ export default function Auth({ children }: { children: ReactNode }) {
 
             // when user log in to web site
             if (initial) {
-               console.log("user login in");
-               initSongsContext({});
+               // console.log("user login in");
+               // initSongsContext({});
             }
 
             setUserInfo({

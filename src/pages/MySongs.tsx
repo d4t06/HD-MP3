@@ -89,9 +89,12 @@ export default function MySongsPage() {
    };
 
    const songCount = useMemo(() => {
-      if (initialLoading || !initial) return;
+      if (initialLoading || !initial) return 0;
+
+      console.log('check user song', userSongs.length);
+      
       return tempSongs.length + userSongs.length;
-   }, [tempSongs, userSongs]);
+   }, [tempSongs, userSongs, initial, initialLoading]);
 
    const isOnMobile = useMemo(() => {
       return window.innerWidth < 550;
@@ -361,6 +364,8 @@ export default function MySongsPage() {
       );
    });
 
+
+   // route guard
    useEffect(() => {
       if (!userInfo.email) {
          navigate(routes.Home);
@@ -371,7 +376,7 @@ export default function MySongsPage() {
 
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
-   // console.log("my songs render");
+   console.log("my songs render check user song", songCount, initialLoading );
    // setToasts
 
    return (

@@ -22,7 +22,6 @@ export default function useScrollSong({ containerRef, songItemRef, firstTimeRend
       if (!songInStore.name) return;
       
       if (!isOpenFullScreen) {
-         console.log('useEffect no open full screen, do nothing');
          return;
       }      
 
