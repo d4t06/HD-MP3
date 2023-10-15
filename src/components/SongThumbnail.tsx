@@ -2,6 +2,7 @@ import { ForwardedRef   , forwardRef } from "react";
 import { Song, ThemeType } from "../types";
 import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
+import playingIcon from '../assets/icon-playing.gif'
 import Image from "./ui/Image";
 
 interface Props {
@@ -45,7 +46,7 @@ const SongThumbnail = ({
 
                <Image classNames="rounded-[6px]" src={data?.image_url} />
 
-               {hasHover && (
+               {hasHover && !active && (
                   <div className={classes.overlay}>
                      <Button
                         onClick={onClick}
@@ -61,7 +62,7 @@ const SongThumbnail = ({
                {active && window.innerWidth >= 550 && (
                   <div className={classes.playingGifFrame}>
                      <img
-                        src="https://zmp3-static.zmdcdn.me/skins/zmp3-v6.1/images/icons/icon-playing.gif"
+                        src={playingIcon}
                         alt=""
                      />
                   </div>

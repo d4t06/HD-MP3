@@ -11,6 +11,7 @@ import { useActuallySongs } from "../store/ActuallySongsContext";
 
 import useSong from "./useSongs";
 import { useAuthStore } from "../store/AuthContext";
+import { useToast } from "../store/ToastContext";
 
 type Props = {
    playlistInStore: Playlist;
@@ -21,7 +22,7 @@ type Props = {
 export default function usePlaylistDetail({ firstTimeRender }: Props) {
    // use store
    const dispatch = useDispatch();
-   const {userInfo} = useAuthStore() 
+   const { userInfo } = useAuthStore();
    const { setActuallySongs } = useActuallySongs();
    const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
    const { loading: useSongLoading, errorMsg: useSongErrorMsg, initial } = useSong();
@@ -34,11 +35,11 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
    const prevSongsLength = useRef(0);
 
    // use hook
+   const { setErrorToast } = useToast();
    const params = useParams<PlaylistParamsType>();
    const navigate = useNavigate();
 
    const getAndSetPlaylist = useCallback(async () => {
-
       if (!initial || !params.id) {
          navigate(routes.Home);
          return;
@@ -51,11 +52,12 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
          dispatch(setPlaylist(playList));
          setLoading(false);
       }
-
    }, [params, userInfo]);
 
    const getPlaylistSongs = useCallback(() => {
       console.log("get playlist songs");
+      
+      // console.log("check playlist songs", playlistInStore.song_ids, adminSongs.map(s => s));
 
       let playlistSongs: Song[] = [];
       let targetSongs: Song[];
@@ -65,22 +67,36 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
          return;
       }
 
-      switch (playlistInStore.by) {
-         case "admin":
-            targetSongs = adminSongs;
-            break;
-         default:
-            targetSongs = userSongs;
+      const isContainAdminSongs = playlistInStore.song_ids.some((songId) =>
+         songId.includes("admin")
+      );
+
+      if (isContainAdminSongs) {
+         targetSongs = [...adminSongs, ...userSongs];
+      } else {
+         switch (playlistInStore.by) {
+            case "admin":
+               targetSongs = adminSongs;
+               break;
+            default:
+               targetSongs = userSongs;
+         }
       }
 
       playlistInStore.song_ids.forEach((songId) => {
-         const song = targetSongs.find((song) => song.id === songId);
+         const song = targetSongs.find((song) => songId === song.id);
          if (song) {
             playlistSongs.push(song);
          }
       });
 
-      // console.log("get playlist songs", playlistSongs.map(s => s.name));
+      if (playlistInStore.song_ids.length !== playlistSongs.length) {
+         console.log('check playlist song ids', playlistInStore.song_ids);
+         
+         setErrorToast({});
+         return;
+      }
+
       setPlaylistSongs(playlistSongs);
       if (!prevSongsLength.current) prevSongsLength.current = playlistSongs.length;
    }, [playlistInStore.song_ids, userSongs]);
@@ -89,11 +105,14 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
    useEffect(() => {
       // console.log("useEffect 1");
 
+      
+
       if (firstTimeRender.current) return;
 
       if (!initial || useSongErrorMsg) return;
 
-      if (playlistInStore.name === params.id) {
+      if (playlistInStore.id === params.id) {
+         console.log('already have playlist');
          setLoading(false);
          return;
       }
@@ -108,6 +127,11 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
       if (firstTimeRender.current) return;
 
       if (!playlistInStore.name || useSongErrorMsg) return;
+
+      if (playlistInStore.id !== params.id) return;
+
+      // console.log('in store', playlistInStore.id,'params', params.id);
+
 
       getPlaylistSongs();
    }, [playlistInStore.song_ids]);
@@ -166,18 +190,18 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
    useEffect(() => {
       if (firstTimeRender.current) {
          firstTimeRender.current = false;
-         console.log("useEffect 3 first time render,  do nothing");
+         // console.log("useEffect 3 first time render,  do nothing");
          return;
       }
       if (firstRunGetPlaylistSongs.current) {
-         console.log("useEffect 3 first run get songs,  do nothing");
+         // console.log("useEffect 3 first run get songs,  do nothing");
          firstRunGetPlaylistSongs.current = false;
          return;
       }
 
       const isPlayingPlaylist = songInStore.song_in.includes(playlistInStore.name);
       if (!isPlayingPlaylist) {
-         console.log("useEffect 3 no longer play, do nothing");
+         // console.log("useEffect 3 no longer play, do nothing");
          return;
       }
 
@@ -185,7 +209,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
          params.id === playlistInStore.name && prevSongsLength.current === playlistSongs.length;
 
       if (isSecondTimesOpenPlaylist) {
-         console.log("useEffect 3 second times open, do nothing");
+         // console.log("useEffect 3 second times open, do nothing");
          return;
       }
 

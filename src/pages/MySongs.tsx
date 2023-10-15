@@ -6,38 +6,41 @@ import { useDispatch, useSelector } from "react-redux";
 import { Playlist, Song } from "../types";
 
 // store
-import { useTheme } from "../store/ThemeContext";
-import { selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
-import { useSongsStore } from "../store/SongsContext";
-import { useToast } from "../store/ToastContext";
+import {
+   useTheme,
+   selectAllSongStore,
+   useSongsStore,
+   useToast,
+   useAuthStore,
+   setPlaylist,
+   setSong,
+} from "../store";
 
 // utils
-import { db } from "../config/firebase";
-import { doc, setDoc } from "firebase/firestore";
-import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
 import {
    deleteSong,
    mySetDoc,
    setUserPlaylistIdsDoc,
    setUserSongIdsAndCountDoc,
 } from "../utils/firebaseHelpers";
+import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
+import { handlePlaylistWhenDeleteManySongs } from "../utils/songItemHelper";
 
 // hooks
-import useUploadSongs from "../hooks/useUploadSongs";
-
+import { useUploadSongs, useSongs, useSongItemActions } from "../hooks";
 // components
-import Empty from "../components/ui/Empty";
-import Skeleton from "../components/skeleton";
-import MobileSongItem from "../components/MobileSongItem";
-import Modal, { confirmModal } from "../components/Modal";
-import PopupWrapper from "../components/ui/PopupWrapper";
-import PlaylistItem from "../components/PlaylistItem";
-import Button from "../components/ui/Button";
-import useSongs from "../hooks/useSongs";
-import SongItem from "../components/SongItem";
-import useSongItemActions from "../hooks/useSongItemActions";
-import { handlePlaylistWhenDeleteManySongs } from "../utils/songItemHelper";
-import { useAuthStore } from "../store/AuthContext";
+import {
+   Empty,
+   MobileSongItem,
+   Modal,
+   Button,
+   SongItem,
+   PopupWrapper,
+   PlaylistItem,
+   Skeleton,
+} from "../components";
+import { confirmModal } from "../components/Modal";
+
 import { routes } from "../routes";
 
 type ModalName = "ADD_PLAYLIST" | "CONFIRM";
@@ -90,9 +93,6 @@ export default function MySongsPage() {
 
    const songCount = useMemo(() => {
       if (initialLoading || !initial) return 0;
-
-      console.log('check user song', userSongs.length);
-      
       return tempSongs.length + userSongs.length;
    }, [tempSongs, userSongs, initial, initialLoading]);
 
@@ -121,7 +121,6 @@ export default function MySongsPage() {
          // loop each selected song, update playlist need to update
          const playlistsNeedToUpdate: Playlist[] = [];
          for (let song of selectedSongList) {
-            
             // if some song added in some playlist
             if (song.in_playlist.length) {
                isOneSongInPlaylist = true;
@@ -183,7 +182,7 @@ export default function MySongsPage() {
    };
 
    const handleAddPlaylist = async () => {
-      const playlistId = generateId(playlistName, userInfo.email);
+      const playlistId = generateId(playlistName) + userInfo.email.replace("@gmail.com", "");
 
       if (!playlistId || !playlistName || !userInfo) {
          setErrorToast({});
@@ -208,7 +207,7 @@ export default function MySongsPage() {
       try {
          setLoading(true);
          // add to playlist collection
-         await setDoc(doc(db, "playlist", playlistId), addedPlaylist);
+         await mySetDoc({ collection: "playlist", data: addedPlaylist, id: playlistId });
 
          // update user doc
          await setUserPlaylistIdsDoc(newPlaylists, userInfo);
@@ -364,7 +363,6 @@ export default function MySongsPage() {
       );
    });
 
-
    // route guard
    useEffect(() => {
       if (!userInfo.email) {
@@ -375,9 +373,6 @@ export default function MySongsPage() {
    }, [userInfo]);
 
    if (errorMsg) return <h1>{errorMsg}</h1>;
-
-   console.log("my songs render check user song", songCount, initialLoading );
-   // setToasts
 
    return (
       <>
@@ -404,15 +399,10 @@ export default function MySongsPage() {
                      <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
                         {isOnMobile ? (
                            <Link to={`${routes.Playlist}/${playList.id}`}>
-                              <PlaylistItem
-                                 data={playList}
-                              />
+                              <PlaylistItem data={playList} />
                            </Link>
                         ) : (
-                           <PlaylistItem
-                              theme={theme}
-                              data={playList}
-                           />
+                           <PlaylistItem theme={theme} data={playList} />
                         )}
                      </div>
                   ))}

@@ -74,6 +74,8 @@ export const deleteFile = async ({ filePath }: { filePath: string }) => {
 export const deleteSong = async (song: Song) => {
    await deleteDoc(doc(db, "songs", song.id));
 
+   await deleteFile({filePath: song.song_file_path})
+
    if (song.lyric_id) {
       await deleteDoc(doc(db, "lyrics", song.lyric_id));
    }

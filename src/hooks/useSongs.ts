@@ -209,7 +209,7 @@ export default function useSong() {
       return;
 
     } else {
-       console.log("already initial");
+      //  console.log("already initial");
        setLoading(false);
       return;
     }

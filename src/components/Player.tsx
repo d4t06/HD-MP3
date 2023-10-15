@@ -1,11 +1,13 @@
 import { FC, useEffect, useMemo, useRef, useState } from "react";
-
-import BottomPlayer from "./BottomPlayer";
-import FullScreenPlayer from "./FullScreenPlayer";
 import { useSelector } from "react-redux";
+
+import {
+   BottomPlayer,
+   FullScreenPlayer,
+   MobileFullScreenPlayer,
+   MobileBottomPlayer,
+} from "../components";
 import { selectAllSongStore } from "../store/SongSlice";
-import MobileFullScreenPlayer from "./MobileFullScreenPlayer";
-import MobileBottomPlayer from "./MobileBottomPlayer";
 
 interface PlayerProps {}
 

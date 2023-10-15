@@ -11,14 +11,9 @@ import {
 } from "@floating-ui/react";
 import { RocketLaunchIcon } from "@heroicons/react/24/outline";
 
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { Modal, LyricItem, Button, PopupWrapper } from "../components";
 
-import Modal from "./Modal";
-import LyricItem from "./child/LyricItem";
-import Button from "./ui/Button";
-
-import PopupWrapper from "./ui/PopupWrapper";
+import { mySetDoc } from "../utils/firebaseHelpers";
 
 type Props = {
    theme: ThemeType & { alpha: string };
@@ -144,21 +139,14 @@ export default function LyricEditor({
       try {
          setLoading(true);
          console.log("lyric result", realTimeLyrics);
-         await setDoc(
-            doc(db, "lyrics", song.id),
-            { real_time: realTimeLyrics, base: baseLyric },
-            {
-               merge: true,
-            }
-         );
 
-         await setDoc(
-            doc(db, "songs", song.id),
-            { lyric_id: song.id },
-            {
-               merge: true,
-            }
-         );
+         await mySetDoc({
+            collection: "lyrics",
+            data: { real_time: realTimeLyrics, base: baseLyric },
+            id: song.id,
+         });
+
+         await mySetDoc({ collection: "songs", data: { lyric_id: song.id }, id: song.id });
 
          setLoading(false);
       } catch (error) {
@@ -180,10 +168,7 @@ export default function LyricEditor({
 
    const ctaComponent = (
       <div className="flex flex-wrap gap-[10px] mb-[20px]">
-         <button
-            onClick={() => setOpenModal(true)}
-            className={style.button}
-         >
+         <button onClick={() => setOpenModal(true)} className={style.button}>
             {baseLyric ? "Change lyric" : "Add lyric"}
          </button>
          <button
@@ -248,7 +233,6 @@ export default function LyricEditor({
       if (baseLyricArr.length && firstTimeRender.current) firstTimeRender.current = false;
 
       console.log("check firstTimeRender", firstTimeRender.current);
-      
    }, [baseLyric]);
 
    useEffect(() => {

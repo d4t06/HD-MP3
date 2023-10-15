@@ -1,10 +1,6 @@
 import { FC, ReactNode } from "react";
-import Sidebar from "../components/Sidebar";
-import Player from "../components/Player";
 import { useTheme } from "../store/ThemeContext";
-import Auth from "../components/Auth";
-import ToastPortal from "../components/ToastPortal";
-import { appConfig } from "../config/app";
+import { Sidebar, Player, Auth, ToastPortal } from "../components";
 
 interface Props {
    children: ReactNode;
@@ -12,7 +8,6 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ children }) => {
    const { theme } = useTheme();
-   // const {color, type} = theme
 
    const classes = {
       container:
@@ -22,20 +17,6 @@ const DefaultLayout: FC<Props> = ({ children }) => {
          theme.container
       }`,
    };
-
-   if (appConfig.isDebug) {
-      return (
-         <div className={classes.page}>
-            <div className={classes.container}>
-               <div className={`h-[200px]`}></div>
-               <div className={classes.content}>{children}</div>
-            </div>
-
-            <Player />
-            <ToastPortal autoClose />
-         </div>
-      );
-   }
 
    return (
       <Auth>

@@ -21,12 +21,15 @@ export default function Image({ src, classNames, onError }: Props) {
       const imageEle = imageRef.current as HTMLImageElement;
 
       const handleLoadImage = () => {
+         console.log('image loadded');
+         
          setImageLoaded(true);
       };
 
       const defaultHandleError = () => {
          const imageEle = imageRef.current as HTMLImageElement;
          imageEle.src = "https://placehold.co/100";
+         setImageLoaded(true);
       };
 
       const handleError = () => {
@@ -41,6 +44,7 @@ export default function Image({ src, classNames, onError }: Props) {
       return () => {
          if (imageEle) {
             imageEle.removeEventListener("load", handleLoadImage);
+            imageEle.removeEventListener("error", handleError);
          }
       };
    }, []);

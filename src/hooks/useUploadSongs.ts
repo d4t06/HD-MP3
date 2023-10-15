@@ -1,13 +1,23 @@
 import { db } from "../config/firebase";
 import { doc, setDoc } from "firebase/firestore";
-import { ChangeEvent, RefObject, useRef, useState, MutableRefObject, useCallback } from "react";
+import {
+   ChangeEvent,
+   RefObject,
+   useRef,
+   useState,
+   MutableRefObject,
+   useCallback,
+   Dispatch,
+   SetStateAction,
+   useMemo,
+} from "react";
 import { Song } from "../types";
 import { parserImageFile } from "../utils/parserImage";
 import { generateId } from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
-import { setUserSongIdsAndCountDoc, uploadFile } from "../utils/firebaseHelpers";
+import { mySetDoc, setUserSongIdsAndCountDoc, uploadFile } from "../utils/firebaseHelpers";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "../store/AuthContext";
 
@@ -17,14 +27,16 @@ type Props = {
    message: MutableRefObject<string>;
    handleOpenModal?: (name: ModalName) => void;
    admin?: boolean;
+   songs?: Song[];
+   setSongs?: Dispatch<SetStateAction<Song[]>>;
 };
 
 // event listener
 // await promise
 // object assign
-export default function useUploadSongs({ audioRef, admin }: Props) {
+export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Props) {
    // use stores
-   const {userInfo} = useAuthStore()
+   const { userInfo } = useAuthStore();
    const { setErrorToast, setSuccessToast, setToasts } = useToast();
    const { setUserSongs, userSongs } = useSongsStore();
 
@@ -59,6 +71,10 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
          });
 
          let songsList: Song[] = [];
+         let targetSongs: Song[] = [];
+
+         if (admin && songs) targetSongs = songs;
+         else targetSongs = userSongs;
 
          // add tempSongs => upload files => add doc
          try {
@@ -80,7 +96,7 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
 
                   // check duplicate file
                   const checkDuplicate = () =>
-                     userSongs.some(
+                     targetSongs.some(
                         (song) =>
                            song.singer === songFileObject.singer &&
                            song.name === songFileObject.name
@@ -124,7 +140,6 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
 
             // upload song file
             for (let fileIndex of actuallyFileIds.current) {
-               
                let newSongFile = fileLists[fileIndex] as File & {
                   for_song_id: number;
                };
@@ -133,14 +148,17 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
                const { fileURL, filePath } = await uploadFile({
                   file: newSongFile,
                   folder: "/songs/",
-                  email: userInfo.email
+                  email: userInfo.email,
                });
 
                // generateSongId
-               const songId = generateId(
-                  songsList[newSongFile.for_song_id].name,
-                  userInfo.email as string
-               );
+               let songId = generateId(songsList[newSongFile.for_song_id].name);
+
+               if (admin) {
+                  songId += "_admin";
+               } else {
+                  songId += "_" + userInfo.email.replace("@gmail.com", "");
+               }
 
                // upload song list
                const idInSongsList = newSongFile.for_song_id;
@@ -158,13 +176,12 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
                // upload song doc
                await handleUploadSong(songsList, idInSongsList);
             }
-
          } catch (error) {
             console.log(error);
             setStatus("finish-error");
-            setErrorToast({message: "error when upload song file"});
+            setErrorToast({ message: "error when upload song file" });
 
-            setTempSongs([])
+            setTempSongs([]);
             return;
          }
 
@@ -192,6 +209,10 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
 
             setTempSongs([]);
 
+            if (setSongs) {
+               setSongs([...targetSongs, ...songsList]);
+            }
+            // case admin
             if (isDuplicate.current) {
                setStatus("finish-error");
                setToasts((t) => [
@@ -215,7 +236,7 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
          }
       },
 
-      [userInfo, userSongs]
+      [userInfo, userSongs, songs]
    );
 
    // get song duration and upload song doc
@@ -233,7 +254,7 @@ export default function useUploadSongs({ audioRef, admin }: Props) {
             songsList[index] = song;
 
             // add to firebase
-            await setDoc(doc(db, "songs", song.id), song);
+            await mySetDoc({ collection: "songs", data: song, id: song.id });
 
             // update new song list (include new song_url....)
             setTempSongs(songsList);

@@ -5,10 +5,11 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
 
-export const generateId = (name: string, email: string): string => {
+export const generateId = (name: string): string => {
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.
    const convertToEn = (str: string) => {
-      const newString = str.toLocaleLowerCase()
+      const newString = str
+         .toLocaleLowerCase()
          .replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ/g, "a")
          .replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e")
          .replace(/ì|í|ị|ỉ|ĩ/g, "i")
@@ -18,33 +19,29 @@ export const generateId = (name: string, email: string): string => {
          .replace(/đ/g, "d");
       return newString;
    };
-   return (
-      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") +
-      "_" +
-      email.replace("@gmail.com", "")
-   );
+   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "");
 };
 
 export const handleTimeText = (duration: number) => {
    if (!duration) return "";
 
    let minute = 0;
-   let fixexDuration = +duration.toFixed(0);
-   while (fixexDuration >= 60) {
-      fixexDuration -= 60;
+   let fixedDuration = +duration.toFixed(0);
+   while (fixedDuration >= 60) {
+      fixedDuration -= 60;
       minute++;
    }
 
    if (minute < 10) {
-      if (fixexDuration >= 10) {
-         return `0${minute}:${fixexDuration}`;
+      if (fixedDuration >= 10) {
+         return `0${minute}:${fixedDuration}`;
       }
-      return `0${minute}:0${fixexDuration}`;
+      return `0${minute}:0${fixedDuration}`;
    } else {
-      if (fixexDuration >= 10) {
-         return `${minute}:${fixexDuration}`;
+      if (fixedDuration >= 10) {
+         return `${minute}:${fixedDuration}`;
       }
-      return `${minute}:0${fixexDuration}`;
+      return `${minute}:0${fixedDuration}`;
    }
 };
 
@@ -106,12 +103,10 @@ export const generatePlaylistAfterChangeSong = ({
 
    const newPlaylist: Playlist = {
       ...playlist,
-      time: playlist.time + +song.duration.toFixed(1),
+      time: +(playlist.time + song.duration).toFixed(1),
       song_ids: [...playlist.song_ids, song.id],
       count: playlist.count + 1,
    };
-
-   // console.log('check newPlaylist', newPlaylist.time);
 
    return newPlaylist;
 };

@@ -75,3 +75,5 @@ export type Toast = {
   desc: string;
   id: string;
 };
+
+export type ModalName = "confirm" |  "edit" | "setting"

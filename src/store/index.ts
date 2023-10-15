@@ -1,10 +1,6 @@
-import { configureStore } from "@reduxjs/toolkit";
-import SongReducer from "./SongSlice";
-
-const store = configureStore({
-   reducer: {
-      song: SongReducer,
-   }
-})
-
-export default store
+export {setSong, setPlaylist, selectAllSongStore} from './SongSlice'
+export {useActuallySongs} from './ActuallySongsContext'
+export {useAuthStore} from './AuthContext'
+export {useSongsStore} from './SongsContext'
+export {useTheme} from './ThemeContext'
+export {useToast} from './ToastContext'

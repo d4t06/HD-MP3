@@ -8,18 +8,9 @@ import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Song } from "../types";
-
-import { selectAllSongStore, setSong } from "../store/SongSlice";
-import { useTheme } from "../store/ThemeContext";
-
-import LyricsList from "./LyricsList";
-import Tabs from "./Tabs";
-import Button from "./ui/Button";
-import SongThumbnail from "./SongThumbnail";
-import useBgImage from "../hooks/useBgImage";
-import useSongLyric from "../hooks/useGetSongLyric";
-import { useActuallySongs } from "../store/ActuallySongsContext";
-import useScrollSong from "../hooks/useScrollSong";
+import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
+import { SongThumbnail, Button, Tabs, LyricsList } from ".";
+import { useScrollSong, useBgImage, useGetSongLyric } from "../hooks";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -40,7 +31,7 @@ export default function FullScreenPlayer({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const {actuallySongs} = useActuallySongs()
+   const { actuallySongs } = useActuallySongs();
 
    // component state
    const [activeTab, setActiveTab] = useState<string>("Lyric");
@@ -49,12 +40,12 @@ export default function FullScreenPlayer({
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const timerIdForScroll = useRef<number>();
-   const activeSongRef = useRef<HTMLDivElement>(null)
-   const firstTimeRender = useRef(true)
-   
+   const activeSongRef = useRef<HTMLDivElement>(null);
+   const firstTimeRender = useRef(true);
+
    // use hooks
    const navigate = useNavigate();
-   const songLyric = useSongLyric({ songInStore });
+   const songLyric = useGetSongLyric({ songInStore });
    useBgImage({ bgRef, songInStore });
    useScrollSong({
       containerRef,
@@ -62,7 +53,7 @@ export default function FullScreenPlayer({
       firstTimeRender,
       isOpenFullScreen: isOpenFullScreen,
    });
-   
+
    // define callback functions
    const handleSetSongWhenClick = (song: Song, index: number) => {
       if (songInStore.id === song.id) return;
@@ -81,7 +72,7 @@ export default function FullScreenPlayer({
          containerEle.scrollLeft -= 500;
       }
 
-      console.log('>>> check scroll left', containerEle.scrollLeft);
+      console.log(">>> check scroll left", containerEle.scrollLeft);
    };
 
    const handleEdit = () => {
@@ -111,8 +102,7 @@ export default function FullScreenPlayer({
 
       absoluteButton: `p-[8px] bg-gray-500 bg-opacity-50 text-xl fixed top-1/2 -translate-y-1/2 max-[549px]:hidden opacity-[.5] hover:opacity-100 ${theme.content_hover_text}`,
       songNameSinger: "relative text-center text-white text-[14px] opacity-80",
-      lyricTabContainer:
-         "px-[40px] h-full w-full flex items-center justify-center flex-row",
+      lyricTabContainer: "px-[40px] h-full w-full flex items-center justify-center flex-row",
       lyricContainer: "flex-grow ml-[50px] max-[549px]:ml-0 h-full overflow-hidden",
    };
 
@@ -125,23 +115,22 @@ export default function FullScreenPlayer({
          if (isActive) {
             return (
                <SongThumbnail
-               theme={theme}
-               key={index}
-               ref={activeSongRef}
-               classNames="items-end justify-center flex-shrink-0 w-[350px] h-[350px]"
-               hasHover
-               hasTitle
-               onClick={() => handleSetSongWhenClick(song, index)}
-               active={isActive}
-               data={song}
-            />
-            )
+                  theme={theme}
+                  key={index}
+                  ref={activeSongRef}
+                  classNames="items-end justify-center flex-shrink-0 w-[350px] h-[350px]"
+                  hasHover
+                  hasTitle
+                  onClick={() => handleSetSongWhenClick(song, index)}
+                  active={isActive}
+                  data={song}
+               />
+            );
          }
 
          return (
             <SongThumbnail
-            theme={theme}
-
+               theme={theme}
                key={index}
                classNames="items-end justify-center flex-shrink-0 w-[350px] h-[350px]"
                hasHover
@@ -157,7 +146,7 @@ export default function FullScreenPlayer({
    const renderLyricTab = (
       <div className={classes.lyricTabContainer}>
          {/* left */}
-               
+
          <SongThumbnail theme={theme} active={true} data={songInStore} />
 
          {/* right */}
@@ -179,11 +168,11 @@ export default function FullScreenPlayer({
                {/* left */}
                <div className={`relative h-full ${idle ? "" : "hidden"}`}>
                   <div className={`absolute left-0 top-0 h-full `}>
-                     <img
+                     {/* <img
                         className="h-full"
                         src="https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
                         alt=""
-                     />
+                     /> */}
                   </div>
                </div>
                {/* tabs */}
@@ -248,8 +237,7 @@ export default function FullScreenPlayer({
 
             {isOpenFullScreen && activeTab === "Lyric" && (
                <p className={classes.songNameSinger}>
-                  {songInStore.name} -{" "}
-                  <span className="opacity-30">{songInStore.singer}</span>
+                  {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
                </p>
             )}
          </div>

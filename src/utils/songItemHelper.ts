@@ -102,7 +102,10 @@ export const handlePlaylistWhenDeleteSong = async (song: Song, newUserPlaylists:
 export const handleSongWhenDeleteFromPlaylist = (song: Song, playlist: Playlist) => {
    let newSong: Song | undefined;
 
-   if (!song.in_playlist.length) return { error: true, newSong };
+   if (!song.in_playlist.length) {
+      console.log("No song in playlist");
+      return { error: true, newSong };
+   }
 
    const newPlaylistIdsOfSong = [...song.in_playlist];
 
@@ -117,6 +120,7 @@ export const handleSongWhenDeleteFromPlaylist = (song: Song, playlist: Playlist)
 
    // check valid song after change
    if (song.in_playlist.length === newPlaylistIdsOfSong.length) {
+      console.log("song in playlist no change");
       return { error: true, newSong };
    }
 
@@ -147,19 +151,18 @@ export const handleSongWhenAddToPlaylist = (song: Song, playlist: Playlist) => {
 
 export const handleSongWhenDeletePlaylist = (playlist: Playlist, playlistSongs: Song[]) => {
    const songsNeedToUpdate: Song[] = [];
-   console.log('delete playlist');
-   
+   console.log("delete playlist");
+
    if (!playlist) {
-      console.log('no playlist');
+      console.log("no playlist");
       return { error: true, songsNeedToUpdate };
    }
 
    for (let song of playlistSongs) {
       // check valid
       if (!song.in_playlist.includes(playlist.id)) {
+         console.log("not in playlist");
 
-         console.log('not in playlist');
-         
          return {
             error: true,
             songsNeedToUpdate,
@@ -176,13 +179,11 @@ export const handleSongWhenDeletePlaylist = (playlist: Playlist, playlistSongs: 
          in_playlist: newPlaylistIdsOfSong,
       };
 
-      console.log('check new songs', newSong);
-
-      
+      console.log("check new songs", newSong);
 
       // check valid after change
       if (newSong.in_playlist.length === song.in_playlist.length) {
-         console.log('new song error');
+         console.log("new song error");
          return { error: true, songsNeedToUpdate };
       }
 

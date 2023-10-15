@@ -20,6 +20,7 @@ type Props = {
    setSettingComp: Dispatch<React.SetStateAction<ReactNode>>;
    setIsOpenMenu: Dispatch<React.SetStateAction<boolean>>;
    setIsOpenSetting: Dispatch<React.SetStateAction<boolean>>;
+   setModalName?: Dispatch<React.SetStateAction<"confirm" | "setting">>;
    loggedIn: boolean;
 };
 
@@ -27,6 +28,7 @@ export default function SettingMenu({
    setIsOpenSetting,
    setSettingComp,
    setIsOpenMenu,
+   setModalName,
    loggedIn,
 }: Props) {
    // use stores
@@ -66,7 +68,6 @@ export default function SettingMenu({
 
    const handleSetComp = (name: string) => {
       setIsOpenMenu(false);
-      setIsOpenSetting(true);
 
       let comp;
       switch (name) {
@@ -84,6 +85,10 @@ export default function SettingMenu({
       }
 
       setSettingComp(comp);
+      if (setModalName) {
+         setModalName("setting")
+      }
+      setIsOpenSetting(true);
    };
 
    const infoScreen = (

@@ -5,6 +5,7 @@ import {
    PlayCircleIcon,
    TruckIcon,
 } from "@heroicons/react/24/outline";
+import zingIcon from '../assets/icon-zing.svg'
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
@@ -93,7 +94,7 @@ const MobileBottomPlayer: FC<Props> = ({
                         src={
                            songInStore.image_url
                               ? songInStore.image_url
-                              : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
+                              : zingIcon
                         }
                      />
                   </div>

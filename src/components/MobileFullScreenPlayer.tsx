@@ -25,30 +25,24 @@ import {
    ChevronDownIcon,
    Cog6ToothIcon,
    HeartIcon,
-   // SpeakerWaveIcon,
-   // SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong } from "../store/SongSlice";
-import { useTheme } from "../store/ThemeContext";
+import { selectAllSongStore, setSong, useTheme, useAuthStore, useActuallySongs } from "../store";
 
 import { Song } from "../types";
-import useGetSongLyric from "../hooks/useGetSongLyric";
+import { useGetSongLyric, useBgImage } from "../hooks";
 
-import Tabs from "./Tabs";
-import ScrollText from "./ScrollText";
-import SongThumbnail from "./SongThumbnail";
-import SettingMenu from "./SettingMenu";
-import Modal from "./Modal";
-import Control from "./Control";
-import LyricsList from "./LyricsList";
-import useBgImage from "../hooks/useBgImage";
-import { useAuthStore } from "../store/AuthContext";
-import PopupWrapper from "./ui/PopupWrapper";
-import { useActuallySongs } from "../store/ActuallySongsContext";
-import MobileSongItem from "./MobileSongItem";
-// import useGetActuallySongs from "../hooks/useGetActuallySongs";
-// import useVolume from "../hooks/useVolume";
+import {
+   Tabs,
+   ScrollText,
+   SongThumbnail,
+   SettingMenu,
+   Modal,
+   Control,
+   LyricsList,
+   MobileSongItem,
+   PopupWrapper,
+} from "../components";
 
 type Props = {
    audioEle: HTMLAudioElement;
@@ -125,22 +119,19 @@ export default function MobileFullScreenPlayer({
       return parent;
    };
 
-
    const hideSongItemStyle = {
-      height : "0px",
-      opacity : "0",
-      padding : "0px 5px",
-      border : "none",
+      height: "0px",
+      opacity: "0",
+      padding: "0px 5px",
+      border: "none",
       // marginTop: "-5px"
-
-   }
+   };
 
    const findPrevSibling = (ele: HTMLDivElement) => {
       let i = 0;
       let node = ele.previousElementSibling as HTMLElement | null;
       while (node && i < 20) {
-
-         Object.assign(node.style, hideSongItemStyle)
+         Object.assign(node.style, hideSongItemStyle);
          i++;
          node = node.previousElementSibling as HTMLElement;
       }
@@ -155,7 +146,7 @@ export default function MobileFullScreenPlayer({
       const parent = findParent(ele);
 
       const prevSiblingList = findPrevSibling(parent);
-      Object.assign(parent.style, hideSongItemStyle)
+      Object.assign(parent.style, hideSongItemStyle);
 
       console.log("check previousSibling", prevSiblingList);
 

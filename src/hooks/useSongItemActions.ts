@@ -4,6 +4,7 @@ import { selectAllSongStore, setPlaylist } from "../store/SongSlice";
 import { Playlist, Song } from "../types";
 import { updatePlaylistsValue } from "../utils/appHelpers";
 import { useCallback } from "react";
+import { mySetDoc } from "../utils/firebaseHelpers";
 
 const useSongItemActions = () => {
    const dispatch = useDispatch();
@@ -20,15 +21,9 @@ const useSongItemActions = () => {
          if (playlistInStore.name === newPlaylist.name) {
             dispatch(setPlaylist(newPlaylist));
          }
-
+         await mySetDoc({ collection:'playlist', data: newPlaylist, id: newPlaylist.id });
+         
          setUserPlaylists(newUserPlaylists, []);
-
-         // try {
-         //    await setPlaylistDoc({ playlist: newPlaylist });
-         // } catch (error) {
-         //    console.log(error);
-         //    setErrorToast({});
-         // }
       },
       [userPlaylists, playlistInStore]
    );
@@ -43,6 +38,10 @@ const useSongItemActions = () => {
          newUserSongs.splice(index, 1);
 
          const newUserSongIds = newUserSongs.map((songItem) => songItem.id);
+
+         if (newUserSongs.length === userSongs.length) {
+            return;
+         }
 
          setUserSongs(newUserSongs);
 

@@ -4,6 +4,7 @@ import {
    SpeakerWaveIcon,
    SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
+import zingIcon from '../assets/icon-zing.svg'
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
@@ -11,7 +12,6 @@ import { useTheme } from "../store/ThemeContext";
 import Button from "./ui/Button";
 import Control from "./Control";
 import useVolume from "../hooks/useVolume";
-// import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/ToolTip";
 import ScrollText from "./ScrollText";
 
 interface Props {
@@ -91,7 +91,7 @@ export default function BottomPlayer({
                         src={
                            songInStore.image_url
                               ? songInStore.image_url
-                              : "https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
+                              : zingIcon
                         }
                      />
                   </div>

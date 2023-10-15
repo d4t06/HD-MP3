@@ -14,15 +14,13 @@ import {
   ForwardIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong } from "../store/SongSlice";
-import { useTheme } from "../store/ThemeContext";
+import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
 
 import useLocalStorage from "../hooks/useLocalStorage";
 import { handleTimeText } from "../utils/appHelpers";
 
 import PlayPauseButton from "./child/PlayPauseButton";
 import { Song } from "../types";
-import { useActuallySongs } from "../store/ActuallySongsContext";
 
 interface Props {
   audioEle: HTMLAudioElement;

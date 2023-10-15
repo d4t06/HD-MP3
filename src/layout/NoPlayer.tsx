@@ -1,8 +1,6 @@
 import { FC, ReactNode } from "react";
-import Sidebar from "../components/Sidebar";
 import { useTheme } from "../store/ThemeContext";
-import Auth from "../components/Auth";
-import ToastPortal from "../components/ToastPortal";
+import { Auth, Sidebar, ToastPortal } from "../components";
 
 interface Props {
    children: ReactNode;
@@ -24,7 +22,7 @@ const NoPlayer: FC<Props> = ({ children }) => {
                <div className="px-[40px] max-[549px]:px-[10px]">{children}</div>
             </div>
          </div>
-        <ToastPortal autoClose />
+         <ToastPortal autoClose />
       </Auth>
    );
 };

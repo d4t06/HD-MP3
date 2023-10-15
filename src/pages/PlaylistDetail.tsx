@@ -6,44 +6,51 @@ import {
    TrashIcon,
    XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { useCallback, useMemo, useState, useRef } from "react";
-
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-
-import { useTheme } from "../store/ThemeContext";
-import { Status, selectAllSongStore, setPlaylist, setSong } from "../store/SongSlice";
-import { useSongsStore } from "../store/SongsContext";
-import { useToast } from "../store/ToastContext";
 
 import { Song } from "../types";
 
-import useSongItemActions from "../hooks/useSongItemActions";
-import usePlaylistDetail from "../hooks/usePlaylistDetail";
+import { useCallback, useMemo, useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+import { Status } from "../store/SongSlice";
+import {
+   useTheme,
+   useSongsStore,
+   useToast,
+   useActuallySongs,
+   useAuthStore,
+   selectAllSongStore,
+   setPlaylist,
+   setSong,
+} from "../store";
+import { useSongItemActions, usePlaylistDetail } from "../hooks";
 import {
    handleTimeText,
    generatePlaylistAfterChangeSongs,
    updateSongsListValue,
 } from "../utils/appHelpers";
+import {
+   PlaylistItem,
+   SongItem,
+   Button,
+   PopupWrapper,
+   MobileSongItem,
+   Skeleton,
+   AddSongToPlaylistModal,
+   Modal,
+} from "../components";
+import { confirmModal } from "../components/Modal";
 
-import PlaylistItem from "../components/PlaylistItem";
-import SongListItem from "../components/SongItem";
-import Button from "../components/ui/Button";
-import PopupWrapper from "../components/ui/PopupWrapper";
-import Modal, { confirmModal } from "../components/Modal";
-import MobileSongItem from "../components/MobileSongItem";
-import Skeleton from "../components/skeleton";
-import AddSongToPlaylistModal from "../components/child/AddSongToPlaylistModal";
-import { useActuallySongs } from "../store/ActuallySongsContext";
 import {
    handleSongWhenAddToPlaylist,
    handleSongWhenDeleteFromPlaylist,
    handleSongWhenDeletePlaylist,
 } from "../utils/songItemHelper";
+
+import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+
 import { routes } from "../routes";
-import { useAuthStore } from "../store/AuthContext";
 
 export default function PlaylistDetail() {
    // for store
@@ -74,7 +81,7 @@ export default function PlaylistDetail() {
    const [isOpenModal, setIsOpenModal] = useState(false);
    const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
 
-   // for multiselect songListItem
+   // for multiselect songItem
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
    const [isCheckedSong, setIsCheckedSong] = useState(false);
 
@@ -159,8 +166,8 @@ export default function PlaylistDetail() {
          });
 
          songsNeedToUpdateDoc.forEach(async (song) => {
-            console.log("update doc", song.name, song.in_playlist);
-            // await mySetDoc({ collection: "songs", data: song, id: song.id });
+            /// >>> api
+            await mySetDoc({ collection: "songs", data: song, id: song.id });
          });
 
          // finish
@@ -182,12 +189,11 @@ export default function PlaylistDetail() {
       // >>> handle song
       const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
 
-      if (error) {
+      if (error || !newSong) {
          setErrorToast({ message: "Handle song when delete from playlist error" });
          return;
-      } else if (newSong) {
-         updateSongsListValue(newSong, newUserSongs);
       }
+      updateSongsListValue(newSong, newUserSongs);
 
       // >>> handle playlist
       // eliminate 1 song
@@ -213,7 +219,7 @@ export default function PlaylistDetail() {
       setUserSongs(newUserSongs);
 
       // >>> api
-      // await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
+      await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
       await setPlaylistDocAndSetUserPlaylists({
          newPlaylist,
       });
@@ -317,8 +323,7 @@ export default function PlaylistDetail() {
                updateSongsListValue(song, newUserSongs);
 
                // api
-               console.log("set doc", song.name);
-               await mySetDoc({collection: "songs", data: song, id: song.id})
+               await mySetDoc({ collection: "songs", data: song, id: song.id });
             }
          }
 
@@ -333,7 +338,7 @@ export default function PlaylistDetail() {
          }
 
          // >>> api
-         await myDeleteDoc({collection: "playlist", id: playlistInStore.id})
+         await myDeleteDoc({ collection: "playlist", id: playlistInStore.id });
          await setUserPlaylistIdsDoc(newUserPlaylists, userInfo);
 
          // >>> finish
@@ -419,12 +424,13 @@ export default function PlaylistDetail() {
          }
          return (
             <div key={index} className="w-full max-[549px]:w-full">
-               <SongListItem
+               <SongItem
                   isCheckedSong={isCheckedSong && !isOpenModal}
                   setIsCheckedSong={setIsCheckedSong}
                   selectedSongList={selectedSongList}
                   setSelectedSongList={setSelectedSongList}
                   deleteFromPlaylist={deleteFromPlaylist}
+                  userInfo={userInfo}
                   userSongs={userSongs}
                   setUserSongs={setUserSongs}
                   onClick={() => handleSetSong(song, index)}
@@ -544,7 +550,7 @@ export default function PlaylistDetail() {
          )}
 
          {/* cta */}
-         <div className="flex items-center gap-[12px] max-[549px]:justify-center">
+         <div className="flex items-center mt-[15px] gap-[12px] max-[549px]:justify-center">
             <Button
                onClick={() => handlePlayPlaylist()}
                className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
