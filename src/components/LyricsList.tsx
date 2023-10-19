@@ -49,13 +49,13 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
                key={index}
                done={!inRange}
                active={inRange}
+               className="mb-[30px]"
             >
                {lyricItem.text}
             </LyricItem>
          );
       });
    };
-   // console.log("check lyric", songLyric);
 
    if (!songLyric.real_time.length) {
       return <h1 className="text-[50px] mt-[30px] text-center">...</h1>;

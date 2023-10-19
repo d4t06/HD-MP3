@@ -190,7 +190,7 @@ export type UseSongsHookType = {
   }) => void;
 };
 
-const useSongsStore = (): UseSongsHookType => {
+const useSongsStore = () :UseSongsHookType  => {
   const {
     state: { adminPlaylists, adminSongs, initial, userPlaylists, userSongs },
     initSongsContext,

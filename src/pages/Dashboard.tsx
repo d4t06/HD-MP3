@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 // import { useNavigate } from "react-router-dom";
 import { useTheme } from "../store/ThemeContext";
 // import { routes } from "../routes";
@@ -7,29 +7,15 @@ import { auth, db } from "../config/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
-import {
-   useFloating,
-   autoUpdate,
-   offset,
-   flip,
-   shift,
-   FloatingFocusManager,
-   useClick,
-   useDismiss,
-   useRole,
-   useInteractions,
-} from "@floating-ui/react";
-
 // utils
 import { Song, User } from "../types";
 import { convertTimestampToString } from "../utils/appHelpers";
 
 // ui
-import { Cog6ToothIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import useUploadSongs from "../hooks/useUploadSongs";
 
-import { Button, Image, SettingMenu, Modal, PopupWrapper, DashboardSongItem, confirmModal } from "../components";
-
+import { Button, Image, Modal, PopupWrapper, DashboardSongItem, confirmModal } from "../components";
 
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
@@ -47,7 +33,6 @@ export default function DashBoard() {
    const [songs, setSongs] = useState<Song[]>([]);
    const [users, setUsers] = useState<User[]>([]);
 
-   const [isOpenMenu, setIsOpenMenu] = useState(false);
    const [isOpenModal, setIsOpenModal] = useState(false);
 
    const [tab, setTab] = useState<"songs" | "users">("songs");
@@ -56,12 +41,12 @@ export default function DashBoard() {
 
    const [errorMsg, setErrorMsg] = useState<string>("");
    const [selectedList, setSelectedList] = useState<Song[]>([]);
-   const [settingComp, setSettingComp] = useState<ReactNode>();
    const [modalName, setModalName] = useState<"confirm" | "setting">("setting");
 
    const audioRef = useRef<HTMLAudioElement>(null);
    const message = useRef<string>("");
    const selectAllBtnRef = useRef<HTMLInputElement>(null);
+   const firstTempSong= useRef<HTMLDivElement>(null)
 
    // use hooks
    const navigate = useNavigate();
@@ -71,20 +56,8 @@ export default function DashBoard() {
       admin: true,
       songs: songs,
       setSongs: setSongs,
+      firstTempSong
    });
-
-   // floating ui
-   const { refs, floatingStyles, context } = useFloating({
-      open: isOpenMenu,
-      onOpenChange: setIsOpenMenu,
-      placement: "bottom-end",
-      middleware: [offset(20), flip(), shift()],
-      whileElementsMounted: autoUpdate,
-   });
-   const click = useClick(context);
-   const dismiss = useDismiss(context);
-   const role = useRole(context);
-   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
    const songCount = useMemo(() => {
       if (userLoading) return 0;
@@ -182,7 +155,7 @@ export default function DashBoard() {
                setSelectedSongList={setSelectedList}
                theme={theme}
             />
-         );
+         ); 
       });
    };
 
@@ -192,6 +165,11 @@ export default function DashBoard() {
             let condition = id === song.id;
             return condition;
          });
+
+         if (index == 0) {
+            return <DashboardSongItem ref={firstTempSong} key={index} data={song} theme={theme} inProcess={!isAdded} />;
+         }
+
          return <DashboardSongItem key={index} data={song} theme={theme} inProcess={!isAdded} />;
       });
    };
@@ -261,13 +239,12 @@ export default function DashBoard() {
       if (tab === "songs" && !songs.length) getSongs();
    }, [tab, isAuthFinish]);
 
-   const text = `${theme.type === "light" ? "text-[#333]" : "text-white"}`;
    const classes = {
-      inActiveBtn: `bg-${theme.alpha} ${text}`,
-      activeBtn: `${theme.content_bg} ${text}`,
+      inActiveBtn: `bg-${theme.alpha}`,
+      activeBtn: `${theme.content_bg}`,
       td: `py-[10px] my-[10px] border-${theme.alpha} border-b-[1px]`,
       th: `py-[5px]`,
-      tableContainer: `border border-${theme.alpha} rounded-[4px] mt-[30px]`,
+      tableContainer: `border border-${theme.alpha} rounded-[4px]`,
       tableHeader: `border-b border-${theme.alpha} ${theme.side_bar_bg} flex items-center h-[50px] gap-[15px]`,
    };
 
@@ -284,184 +261,132 @@ export default function DashBoard() {
          <audio ref={audioRef} className="hidden" />
 
          {!userLoading && (
-            <div className={`${theme.container} ${text} min-h-screen`}>
-               {/* header */}
-               <div className={`${theme.side_bar_bg} `}>
-                  <div className="container mx-auto flex justify-between items-center h-[50px]">
-                     <h1 className="text-[20px] uppercase">Zing dash board</h1>
-
-                     <div className="flex items-center">
-                        {loggedInUser?.displayName && (
-                           <p className="text-[14px] mr-[8px]">{loggedInUser.displayName}</p>
-                        )}
-                        <div
-                           className={`w-[30px] h-[30px] rounded-full overflow-hidden border-[#ccc] border`}
-                        >
-                           {loggedInUser?.photoURL && (
-                              <img src={loggedInUser.photoURL!} className="w-full" alt="" />
-                           )}
-                        </div>
-                        <button
-                           ref={refs.setReference}
-                           {...getReferenceProps()}
-                           className={`flex ml-[12px] justify-center rounded-full items-center h-[30px] w-[30px] hover:brightness-75  ${
-                              isOpenMenu && theme.content_text
-                           } bg-${theme.alpha}`}
-                        >
-                           <Cog6ToothIcon className="w-[24px]" />
-                        </button>
-                     </div>
-                  </div>
-               </div>
+            <div className={`container mx-auto pt-[30px] pb-[60px]`}>
                {/* content */}
-               <div className="container mx-auto mt-[30px] pb-[60px]">
-                  {/* tabs */}
-                  <div className="">
-                     <Button
-                        onClick={() => setTab("songs")}
-                        className={`${
-                           tab === "songs" ? classes.activeBtn : classes.inActiveBtn
-                        }  rounded-full`}
-                        variant={"primary"}
-                     >
-                        Songs
-                     </Button>
-                     <Button
-                        onClick={() => setTab("users")}
-                        className={` ${
-                           tab === "users" ? classes.activeBtn : classes.inActiveBtn
-                        } rounded-full ml-[10px]`}
-                        variant={"primary"}
-                     >
-                        Users
-                     </Button>
-                  </div>
+               {/* tabs */}
+               <div className="mb-[20px]">
+                  <Button
+                     onClick={() => setTab("songs")}
+                     className={`${
+                        tab === "songs" ? classes.activeBtn : classes.inActiveBtn
+                     }  rounded-full`}
+                     variant={"primary"}
+                  >
+                     Songs
+                  </Button>
+                  <Button
+                     onClick={() => setTab("users")}
+                     className={` ${
+                        tab === "users" ? classes.activeBtn : classes.inActiveBtn
+                     } rounded-full ml-[10px]`}
+                     variant={"primary"}
+                  >
+                     Users
+                  </Button>
+               </div>
 
-                  {errorMsg && <p>{errorMsg}</p>}
+               {errorMsg && <p>{errorMsg}</p>}
 
-                  {/* content */}
-                  <div className={classes.tableContainer}>
-                     <div className={classes.tableHeader}>
-                        {!!selectedList.length ? (
-                           <>
-                              <h2 className="ml-[20px]">{selectedList.length} selected</h2>
-                              <div className="flex items-stretch gap-[12px]">
-                                 <Button
-                                    onClick={() => handleOpenModal("confirm")}
-                                    variant={"primary"}
-                                    className={`${classes.activeBtn} rounded-full`}
-                                 >
-                                    Delete
-                                 </Button>
+               {/* content */}
+               <div className={classes.tableContainer}>
+                  <div className={classes.tableHeader}>
+                     {!!selectedList.length ? (
+                        <>
+                           <h2 className="ml-[20px]">{selectedList.length} selected</h2>
+                           <div className="flex items-stretch gap-[12px]">
+                              <Button
+                                 onClick={() => handleOpenModal("confirm")}
+                                 variant={"primary"}
+                                 className={`${classes.activeBtn} rounded-full`}
+                              >
+                                 Delete
+                              </Button>
 
-                                 <Button
-                                    onClick={() => setSelectedList([])}
-                                    variant={"primary"}
-                                    className={`${classes.activeBtn} rounded-full`}
-                                 >
-                                    <XMarkIcon className="w-[20px]" />
-                                 </Button>
-                              </div>
-                           </>
-                        ) : (
-                           <label
-                              className={`${theme.content_bg} ${text} ${
-                                 status === "uploading" ? "opacity-60 pointer-events-none" : ""
-                              } rounded-full ml-[auto] mr-[10px] px-[20px] py-[4px] cursor-pointer`}
-                              htmlFor="file"
-                           >
-                              Upload
-                           </label>
-                        )}
-                     </div>
-
-                     {tab === "songs" && (
-                        <table className="w-full">
-                           <thead className={`${theme.bottom_player_bg} w-full text-[14px]`}>
-                              <tr>
-                                 <th className={`${classes.th} w-[10%]`}>
-                                    <input
-                                       className="scale-[1.2]"
-                                       onChange={() => handleSelectAll()}
-                                       ref={selectAllBtnRef}
-                                       checked={
-                                          songs.length
-                                             ? songs.length === selectedList.length
-                                             : false
-                                       }
-                                       type="checkbox"
-                                    />
-                                 </th>
-                                 <th></th>
-
-                                 <th className={`${classes.th} text-left`}>Name</th>
-                                 <th className={`${classes.th} text-left`}>Singer</th>
-                                 <th className={`${classes.th} text-left`}>Action</th>
-                              </tr>
-                           </thead>
-                           <tbody>
-                              {!!songCount ? (
-                                 <>
-                                    {!!songs.length && renderSongsList()}
-                                    {!!tempSongs.length && renderTempSongsList()}
-                                 </>
-                              ) : loading ? (
-                                 <tr>
-                                    <td colSpan={5} className={`${classes.td} text-center`}>
-                                       <p>...Loading</p>
-                                    </td>
-                                 </tr>
-                              ) : (
-                                 <tr>
-                                    <td colSpan={5} className={`${classes.td} text-center`}>
-                                       <p>No song jet...</p>
-                                    </td>
-                                 </tr>
-                              )}
-                           </tbody>
-                        </table>
-                     )}
-                     {tab === "users" && (
-                        <table className="w-full">
-                           <thead className="text-[14px]">
-                              <tr>
-                                 <th></th>
-                                 <th className="text-left">Name</th>
-                                 <th className="text-left">Email</th>
-                                 <th className="text-left">Latest Seen</th>
-                              </tr>
-                           </thead>
-                           <tbody>{renderUsersList()}</tbody>
-                        </table>
+                              <Button
+                                 onClick={() => setSelectedList([])}
+                                 variant={"primary"}
+                                 className={`${classes.activeBtn} rounded-full`}
+                              >
+                                 <XMarkIcon className="w-[20px]" />
+                              </Button>
+                           </div>
+                        </>
+                     ) : (
+                        <label
+                           className={`${theme.content_bg} ${
+                              status === "uploading" ? "opacity-60 pointer-events-none" : ""
+                           } rounded-full ml-[auto] mr-[10px] px-[20px] py-[4px] cursor-pointer`}
+                           htmlFor="file"
+                        >
+                           Upload
+                        </label>
                      )}
                   </div>
+
+                  {tab === "songs" && (
+                     <table className="w-full">
+                        <thead className={`${theme.bottom_player_bg} w-full text-[14px]`}>
+                           <tr>
+                              <th className={`${classes.th} w-[10%]`}>
+                                 <input
+                                    className="scale-[1.2]"
+                                    onChange={() => handleSelectAll()}
+                                    ref={selectAllBtnRef}
+                                    checked={
+                                       songs.length ? songs.length === selectedList.length : false
+                                    }
+                                    type="checkbox"
+                                 />
+                              </th>
+                              <th></th>
+
+                              <th className={`${classes.th} text-left`}>Name</th>
+                              <th className={`${classes.th} text-left`}>Singer</th>
+                              <th className={`${classes.th} text-left`}>Action</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           {!!songCount ? (
+                              <>
+                                 {!!songs.length && renderSongsList()}
+                                 {!!tempSongs.length && renderTempSongsList()}
+                              </>
+                           ) : loading ? (
+                              <tr>
+                                 <td colSpan={5} className={`${classes.td} text-center`}>
+                                    <p>...Loading</p>
+                                 </td>
+                              </tr>
+                           ) : (
+                              <tr>
+                                 <td colSpan={5} className={`${classes.td} text-center`}>
+                                    <p>No song jet...</p>
+                                 </td>
+                              </tr>
+                           )}
+                        </tbody>
+                     </table>
+                  )}
+                  {tab === "users" && (
+                     <table className="w-full">
+                        <thead className="text-[14px]">
+                           <tr>
+                              <th></th>
+                              <th className="text-left">Name</th>
+                              <th className="text-left">Email</th>
+                              <th className="text-left">Latest Seen</th>
+                           </tr>
+                        </thead>
+                        <tbody>{renderUsersList()}</tbody>
+                     </table>
+                  )}
                </div>
             </div>
-         )}
-
-         {isOpenMenu && (
-            <FloatingFocusManager context={context} modal={false}>
-               <div
-                  className="z-[99]"
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  {...getFloatingProps()}
-               >
-                  <SettingMenu
-                     loggedIn={!!loggedInUser?.email}
-                     setIsOpenMenu={setIsOpenMenu}
-                     setIsOpenSetting={setIsOpenModal}
-                     setSettingComp={setSettingComp}
-                     setModalName={setModalName}
-                  />
-               </div>
-            </FloatingFocusManager>
          )}
 
          {isOpenModal && (
             <Modal setOpenModal={setIsOpenModal}>
                <PopupWrapper theme={theme}>
-                  {modalName === "setting" && settingComp}
                   {modalName === "confirm" && dialogComponent}
                </PopupWrapper>
             </Modal>

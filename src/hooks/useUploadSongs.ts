@@ -1,5 +1,3 @@
-import { db } from "../config/firebase";
-import { doc, setDoc } from "firebase/firestore";
 import {
    ChangeEvent,
    RefObject,
@@ -9,15 +7,19 @@ import {
    useCallback,
    Dispatch,
    SetStateAction,
-   useMemo,
+   useEffect,
 } from "react";
 import { Song } from "../types";
-import { parserImageFile } from "../utils/parserImage";
-import { generateId } from "../utils/appHelpers";
+import { generateId, getBlurhashEncode, parserSong } from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
-import { mySetDoc, setUserSongIdsAndCountDoc, uploadFile } from "../utils/firebaseHelpers";
+import {
+   mySetDoc,
+   setUserSongIdsAndCountDoc,
+   uploadBlob,
+   uploadFile,
+} from "../utils/firebaseHelpers";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "../store/AuthContext";
 
@@ -29,12 +31,21 @@ type Props = {
    admin?: boolean;
    songs?: Song[];
    setSongs?: Dispatch<SetStateAction<Song[]>>;
+   firstTempSong: RefObject<HTMLDivElement>;
+   testImageRef?: RefObject<HTMLImageElement>;
 };
 
 // event listener
 // await promise
 // object assign
-export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Props) {
+export default function useUploadSongs({
+   audioRef,
+   admin,
+   songs,
+   setSongs,
+   firstTempSong,
+   testImageRef,
+}: Props) {
    // use stores
    const { userInfo } = useAuthStore();
    const { setErrorToast, setSuccessToast, setToasts } = useToast();
@@ -57,6 +68,7 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
          }
 
          setStatus("uploading");
+
          const target = e.target as HTMLInputElement & { files: FileList };
          const fileLists = target.files;
 
@@ -76,47 +88,58 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
          if (admin && songs) targetSongs = songs;
          else targetSongs = userSongs;
 
+         const start = Date.now();
          // add tempSongs => upload files => add doc
          try {
             // init tempsSongs, push actuallyFileIds
             let i;
             for (i = 0; i <= fileLists.length - 1; i++) {
                const songFile = fileLists[i];
-               const songData = await parserImageFile(songFile);
+               const songData = await parserSong(songFile);
 
                // console.log("check song data", songData);
-
-               if (songData) {
-                  // inti song data
-                  let songFileObject: Song = {
-                     ...data,
-                     name: songData.name,
-                     singer: songData.singer,
-                  };
-
-                  // check duplicate file
-                  const checkDuplicate = () =>
-                     targetSongs.some(
-                        (song) =>
-                           song.singer === songFileObject.singer &&
-                           song.name === songFileObject.name
-                     );
-
-                  if (checkDuplicate()) {
-                     console.log(">>>duplicate");
-                     isDuplicate.current = true;
-                     duplicatedFile.current.push(songFileObject);
-                     continue;
-                  }
-
-                  songsList.push(songFileObject);
-
-                  // add actuallyFileIds, and assign for_song_id to actuallyFile
-                  actuallyFileIds.current = [...actuallyFileIds.current, i];
-                  Object.assign(songFile, { for_song_id: songsList.length - 1 } as {
-                     for_song_id: number;
-                  });
+               if (!songData) {
+                  setErrorToast({ message: "Error when parser song" });
+                  return;
                }
+
+               // inti song data
+               let songFileObject: Song = {
+                  ...data,
+                  name: songData.name,
+                  singer: songData.singer,
+               };
+
+               // if song have stock image
+               let imageBlob;
+               if (songData.image) {
+                  imageBlob = new Blob([songData.image], { type: "application/octet-stream" });
+                  const url = URL.createObjectURL(imageBlob);
+                  songFileObject.image_url = url;
+               }
+
+               // check duplicate file
+               const checkDuplicate = () =>
+                  targetSongs.some(
+                     (song) =>
+                        song.singer === songFileObject.singer && song.name === songFileObject.name
+                  );
+
+               if (checkDuplicate()) {
+                  console.log(">>>duplicate");
+                  isDuplicate.current = true;
+                  duplicatedFile.current.push(songFileObject);
+                  continue;
+               }
+
+               songsList.push(songFileObject);
+
+               // add actuallyFileIds, and assign for_song_id, imageBlob to actuallyFile
+               actuallyFileIds.current = [...actuallyFileIds.current, i];
+               Object.assign(songFile, { for_song_id: songsList.length - 1, imageBlob } as {
+                  for_song_id: number;
+                  imageBlob: Blob;
+               });
             }
 
             if (userSongs.length + actuallyFileIds.current.length > 20) {
@@ -142,10 +165,11 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
             for (let fileIndex of actuallyFileIds.current) {
                let newSongFile = fileLists[fileIndex] as File & {
                   for_song_id: number;
+                  imageBlob: Blob;
                };
 
                //  upload song file
-               const { fileURL, filePath } = await uploadFile({
+               const uploadSongFileProcess = uploadFile({
                   file: newSongFile,
                   folder: "/songs/",
                   email: userInfo.email,
@@ -162,8 +186,35 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
 
                // upload song list
                const idInSongsList = newSongFile.for_song_id;
+               const songNeedToUpdate = { ...songsList[idInSongsList] };
+
+               // have stock image
+               if (songNeedToUpdate.image_url) {
+                  // const testImageEle = testImageRef.current as HTMLImageElement
+
+                  // get blurhash encode
+                  const { encode } = await getBlurhashEncode(newSongFile.imageBlob);
+                  if (encode) {
+                     songNeedToUpdate.blurhash_encode = encode;
+                  }
+
+                  // upload image file
+                  const { fileURL, filePath } = await uploadBlob({
+                     blob: newSongFile.imageBlob,
+                     folder: "/images/",
+                     songId,
+                  });
+
+                  URL.revokeObjectURL(songNeedToUpdate.image_url);
+
+                  songNeedToUpdate.image_url = fileURL;
+                  songNeedToUpdate.image_file_path = filePath;
+               }
+
+               const { filePath, fileURL } = await uploadSongFileProcess;
+
                songsList[idInSongsList] = {
-                  ...songsList[idInSongsList],
+                  ...songNeedToUpdate,
                   id: songId,
                   song_file_path: filePath,
                   song_url: fileURL,
@@ -227,6 +278,9 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
                   setSuccessToast({ message: `${songsList.length} songs uploaded` });
                }
             }
+
+            const finish = Date.now();
+            console.log("finished after", (finish - start) / 1000);
          } catch (error) {
             console.log(error);
             setErrorToast({ message: "Update user data failed" });
@@ -280,6 +334,15 @@ export default function useUploadSongs({ audioRef, admin, songs, setSongs }: Pro
          audioEle.addEventListener("loadedmetadata", upload);
       });
    }, []);
+
+   useEffect(() => {
+      if (!tempSongs.length) return;
+      const firstTempSongEle = firstTempSong.current as HTMLDivElement;
+
+      if (firstTempSongEle) {
+         firstTempSongEle.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+   }, [tempSongs]);
 
    // console.log("addedSongIds ", addedSongIds);
 

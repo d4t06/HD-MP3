@@ -72,14 +72,14 @@ export default function FullScreenPlayer({
          containerEle.scrollLeft -= 500;
       }
 
-      console.log(">>> check scroll left", containerEle.scrollLeft);
+      // console.log(">>> check scroll left", containerEle.scrollLeft);
    };
 
    const handleEdit = () => {
       setIsOpenFullScreen(false);
 
       setTimeout(() => {
-         navigate(`/React-Zingmp3/edit/${songInStore.id}`);
+         navigate(`/React-Zingmp3/mysongs/edit/${songInStore.id}`);
       }, 300);
    };
 

@@ -179,11 +179,6 @@ export default function SongListItem({
             playlistsNeedToUpdate = playlistsNeedToUpdateDoc;
          }
 
-         if (songInStore.id === data.id) {
-            const emptySong = initSongObject({});
-            dispatch(setSong({ ...emptySong, song_in: "user", currentIndex: 0 }));
-         }
-
          // >>> local
          const newUserSongIds = await songItemActions.updateAndSetUserSongs({ song: data });
 
@@ -228,6 +223,10 @@ export default function SongListItem({
          });
 
          // >>> finish
+         if (songInStore.id === data.id) {
+            const emptySong = initSongObject({});
+            dispatch(setSong({ ...emptySong, song_in: "user", currentIndex: 0 }));
+         }
          setSuccessToast({ message: `'${data.name}' deleted` });
       } catch (error) {
          console.log({ message: error });
@@ -400,7 +399,7 @@ export default function SongListItem({
 
          {/* song image */}
          <div className={`${classes.imageFrame}`}>
-            <Image src={data.image_url} />
+            <Image src={data.image_url} blurHashEncode={data.blurhash_encode}/>
 
             {/* hidden when in process and in list */}
 
@@ -538,7 +537,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         Edit lyric
                      </Button>
                   ) : (
-                     <Link to={`/React-Zingmp3/edit/${data.id}`}>
+                     <Link to={`/React-Zingmp3/mysongs/edit/${data.id}`}>
                         <Button className={`${theme.content_hover_text}`} variant={"list"}>
                            <DocumentPlusIcon className="w-[18px] mr-[5px]" />
                            Add lyric

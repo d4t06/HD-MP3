@@ -1,6 +1,7 @@
 import { Timestamp } from "firebase/firestore";
 import { User } from "../types";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
+import { Auth } from "../components";
 
 // 1 initial state
 type StateType = { userInfo: User & { status: "finish" | "loading" | "error" } };
@@ -34,9 +35,8 @@ type ReducerAction = {
 const reducer = (state: StateType, action: ReducerAction): StateType => {
    switch (action.type) {
       case REDUCER_ACTION_TYPE.SETUSERINFO:
+         console.log("dispatch set user info");
 
-      console.log('dispatch set user info');
-      
          return {
             userInfo: { ...state.userInfo, ...action.payload.userInfo },
          };
@@ -83,16 +83,20 @@ const AuthContext = createContext<ContextType>(initialContext);
 const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
    const { userInfo, setUserInfo } = useAuthContext();
 
-   return <AuthContext.Provider value={{ userInfo, setUserInfo }}>{children}</AuthContext.Provider>;
+   return (
+      <AuthContext.Provider value={{ userInfo, setUserInfo }}>
+         <Auth>
+            {children}
+         </Auth>
+      </AuthContext.Provider>
+   );
 };
-
 
 // 6 hook
 const useAuthStore = () => {
-   const {userInfo, setUserInfo} = useContext(AuthContext)
+   const { userInfo, setUserInfo } = useContext(AuthContext);
 
-
-   return {userInfo, setUserInfo}
-}
+   return { userInfo, setUserInfo };
+};
 export default AuthProvider;
-export { useAuthStore, initialState};
+export { useAuthStore, initialState };

@@ -7,8 +7,8 @@ interface Props {
    done: boolean;
    firstTimeRender?: boolean;
    inUpload?: boolean;
-   theme?: ThemeType & {alpha: string};
-   className?: string
+   theme?: ThemeType & { alpha: string };
+   className?: string;
 }
 
 export default function LyricItem({
@@ -17,37 +17,32 @@ export default function LyricItem({
    done,
    firstTimeRender,
    inUpload,
-   className
+   className,
 }: Props) {
-   const lyricRef = useRef<HTMLLIElement>(null);
-
-   // console.log('check firstTimeRender', firstTimeRender);
-   
+   const lyricRef = useRef<HTMLParagraphElement>(null);
 
    useEffect(() => {
       if (active) {
          const node = lyricRef.current as HTMLElement;
 
          node.scrollIntoView({
-            behavior: firstTimeRender
-               ? "instant"
-               : "smooth",
+            behavior: firstTimeRender ? "instant" : "smooth",
             block: "center",
          });
       }
    }, [active]);
 
    return (
-      <li
+      <p
          ref={lyricRef}
-         className={`${className && className} py-[10px] max-[549px]:text-[24px] ${inUpload ? 'text-[16px]' : 'text-[40px]'} max-[549px]:text-center font-bold ${
-            active ? "opacity-100" : ""
-         } ${done ? "opacity-40" : ""} ${inUpload && 'flex pl-[20px]'}`}
+         className={`${className && className} max-[549px]:text-[20px] ${
+            inUpload ? "text-[16px]" : "text-[30px]"
+         } max-[549px]:text-center font-bold last:pb-[40%] ${active ? "opacity-100" : ""} ${
+            done ? "opacity-40" : ""
+         } ${inUpload && "flex"}`}
       >
          {children}
-         {(inUpload && active) && 
-            <span className="ml-[10px] text-[16px]">(Next)</span>
-         }
-      </li>
+         {inUpload && active && <span className="ml-[10px] text-[16px]"></span>}
+      </p>
    );
 }

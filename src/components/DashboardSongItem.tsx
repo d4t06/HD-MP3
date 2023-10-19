@@ -1,5 +1,5 @@
-import { PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { DocumentIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Dispatch, SetStateAction, forwardRef, useMemo, useState } from "react";
 import { Song, ThemeType } from "../types";
 
 import { Button, Image, PopupWrapper, Modal, SongItemEditForm } from ".";
@@ -11,6 +11,8 @@ import { useSelector } from "react-redux";
 // import { initSongObject } from "../utils/appHelpers";
 
 import { deleteSong } from "../utils/firebaseHelpers";
+import { Link } from "react-router-dom";
+import { routes } from "../routes";
 
 type Props = {
    data: Song;
@@ -25,7 +27,7 @@ type Props = {
    inProcess: boolean;
 };
 
-export default function AdminSongItem({
+const DashboardSongItem = ({
    data,
    theme,
    selectedSongList,
@@ -34,7 +36,7 @@ export default function AdminSongItem({
    adminSongs,
    setAdminSongs,
    inProcess,
-}: Props) {
+}: Props, ref: any) => {
    const [loading, setLoading] = useState(false);
    const [isOpenModal, setIsOpenModal] = useState(false);
    const [modalComponent, setModalComponent] = useState<string>();
@@ -123,7 +125,7 @@ export default function AdminSongItem({
 
    return (
       <>
-         <tr className={``}>
+         <tr ref={ref} className={``}>
             <td className={`${classes.td} text-center`}>
                {!inProcess && (
                   <input
@@ -155,6 +157,11 @@ export default function AdminSongItem({
                      <Button variant={"circle"} onClick={() => handleOpenModal("edit")}>
                         <PencilSquareIcon className="w-[20px]" />
                      </Button>
+                     <Link to={`${routes.Dashboard}/edit/${data.id}`}>
+                     <Button variant={"circle"} onClick={() => handleOpenModal("edit")}>
+                        <DocumentIcon className="w-[20px]" />
+                     </Button>
+                     </Link>
                   </div>
                </td>
             )}
@@ -179,3 +186,6 @@ export default function AdminSongItem({
       </>
    );
 }
+
+
+export default forwardRef(DashboardSongItem)

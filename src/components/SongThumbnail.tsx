@@ -27,7 +27,7 @@ const SongThumbnail = ({
 
    const classes = {
       container: "flex flex-col min-[549px]:px-[20px]",
-      imageFrame: "group relative transition-[width] duration-300 origin-center",
+      imageFrame: "group relative transition-[width] duration-300 origin-center rounded-[6px] overflow-hidden",
       image: "select-none object-cover object-center rounded w-full",
       overlay:
          "absolute inset-0 bg-[#333] bg-opacity-60 items-center justify-center hidden max-[549px]:hidden group-hover:flex",
@@ -36,7 +36,7 @@ const SongThumbnail = ({
    };
 
    const classWhenActive = `${
-      active ? "w-[350px] max-[549px]:w-[100%]" : "w-[280px] max-[549px]:w-[75%]"
+      active ? "w-[320px] max-[549px]:w-[100%]" : "w-[280px] max-[549px]:w-[75%]"
    }`;
 
    return (
@@ -44,7 +44,7 @@ const SongThumbnail = ({
          <div className={`flex ${classNames && classNames}`}>
             <div className={`${classes.imageFrame} ${classWhenActive}`}>
 
-               <Image classNames="rounded-[6px]" src={data?.image_url} />
+               <Image classNames="rounded-[6px]" src={data?.image_url} blurHashEncode={data?.blurhash_encode} />
 
                {hasHover && !active && (
                   <div className={classes.overlay}>

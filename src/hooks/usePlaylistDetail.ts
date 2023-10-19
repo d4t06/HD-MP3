@@ -12,6 +12,8 @@ import { useActuallySongs } from "../store/ActuallySongsContext";
 import useSong from "./useSongs";
 import { useAuthStore } from "../store/AuthContext";
 import { useToast } from "../store/ToastContext";
+import { mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+import { updatePlaylistsValue } from "../utils/appHelpers";
 
 type Props = {
    playlistInStore: Playlist;
@@ -26,7 +28,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
    const { setActuallySongs } = useActuallySongs();
    const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
    const { loading: useSongLoading, errorMsg: useSongErrorMsg, initial } = useSong();
-   const { adminSongs, userSongs, userPlaylists } = useSongsStore();
+   const { adminSongs, userSongs, userPlaylists, setUserPlaylists } = useSongsStore();
 
    // state
    const [loading, setLoading] = useState(useSongLoading);
@@ -137,53 +139,55 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
    }, [playlistInStore.song_ids]);
 
    // for update playlist feature image
-   // useEffect(() => {
-   //    if (firstTimeRender.current) return;
+   useEffect(() => {
+      if (firstTimeRender.current) return;
 
-   //    if (!initial) return;
+      if (!initial) return;
 
-   //    if (!playlistSongs.length) return;
+      if (!playlistSongs.length) return;
 
-   //    const firstSongHasImage = playlistSongs.find((song) => song.image_url);
+      const firstSongHasImage = playlistSongs.find((song) => song.image_url);
 
-   //    if (
-   //       !firstSongHasImage ||
-   //       (playlistInStore.image_url && playlistInStore.image_url === firstSongHasImage.image_url)
-   //    )
-   //       return;
+      if (
+         !firstSongHasImage ||
+         (playlistInStore.image_url && playlistInStore.image_url === firstSongHasImage.image_url)
+      )
+         return;
 
-   //    console.log("get playlist feature image");
+      console.log("get playlist feature image");
 
-   //    const newPlaylist: Playlist = {
-   //       ...playlistInStore,
-   //       image_url: firstSongHasImage.image_url,
-   //    };
+      const newPlaylist: Playlist = {
+         ...playlistInStore,
+         image_url: firstSongHasImage.image_url,
+         blurhash_encode: firstSongHasImage.blurhash_encode || ''
+      };
 
-   //    const setPlaylistImageToDoc = async () => {
-   //       try {
-   //          await mySetDoc({
-   //             collection: "playlist",
-   //             id: playlistInStore.id,
-   //             data: newPlaylist,
-   //          });
-   //       } catch (error) {
-   //          console.log("error when set playlist image");
-   //          setErrorToast({});
-   //       }
-   //    };
+      const setPlaylistImageToDoc = async () => {
+         try {
+            await mySetDoc({
+               collection: "playlist",
+               id: playlistInStore.id,
+               data: newPlaylist,
+            });
+         } catch (error) {
+            console.log("error when set playlist image");
+            setErrorToast({});
+         }
+      };
 
-   //    setPlaylistImageToDoc();
-   //    // get new user playlist
-   //    const newUserPlaylists = [...userPlaylists];
-   //    updatePlaylistsValue(newPlaylist, newUserPlaylists);
+      setPlaylistImageToDoc();
+      // get new user playlist
+      const newUserPlaylists = [...userPlaylists];
+      updatePlaylistsValue(newPlaylist, newUserPlaylists);
+      setUserPlaylists(newUserPlaylists, [])
 
-   //    // update playlistInStore first
-   //    // because the user can be in playlist detail page
-   //    dispatch(setPlaylist(newPlaylist));
+      // update playlistInStore first
+      // because the user can be in playlist detail page
+      dispatch(setPlaylist(newPlaylist));
 
-   //    // update users playlist to context
-   //    setUserPlaylists(newUserPlaylists, []);
-   // }, [playlistSongs]);
+      // update users playlist to context
+      setUserPlaylistIdsDoc(newUserPlaylists, userInfo);
+   }, [playlistSongs]);
 
    // for actually song after user add or remove song from playlist
    // only run when after play song in playlist then playlist songs change

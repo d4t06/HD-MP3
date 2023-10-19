@@ -1,20 +1,11 @@
-import {
-   ChangeEvent,
-   MouseEventHandler,
-   useCallback,
-   useEffect,
-   useMemo,
-   useRef,
-   useState,
-} from "react";
+import { ChangeEvent, MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
 import { Song, ThemeType } from "../../types";
 import { deleteFile, mySetDoc, uploadFile } from "../../utils/firebaseHelpers";
-import Image from "../ui/Image";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import Button from "../ui/Button";
-import { useToast } from "../../store/ToastContext";
-import { initSongObject } from "../../utils/appHelpers";
-import { useAuthStore } from "../../store/AuthContext";
+
+import { Image, Button } from "../../components";
+import { useToast, useAuthStore } from "../../store";
+import { useEditForm } from "../../hooks";
 
 type Props = {
    data: Song;
@@ -26,8 +17,6 @@ type Props = {
 
 // https://e-cdns-images.dzcdn.net/images/cover/a1c402bb54906863dadc4df4325a1627/500x500-000000-80-0-0.jpg
 
-const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-
 export default function SongItemEditForm({
    data,
    setIsOpenModal,
@@ -37,9 +26,12 @@ export default function SongItemEditForm({
 }: Props) {
    // use store
    const { setErrorToast, setSuccessToast } = useToast();
-   const {userInfo} = useAuthStore()
+   const { userInfo } = useAuthStore();
 
+   // state
    const [loading, setLoading] = useState(false);
+   const [isImpactOnImage, setIsImpactOnImage] = useState(false);
+
    const [stockImageURL, setStockImageURL] = useState(data.image_url);
    const [localImageURL, setLocalImageURL] = useState("");
    const [imageFile, setImageFile] = useState<File>();
@@ -49,25 +41,16 @@ export default function SongItemEditForm({
       image_url: "",
    });
 
-   const isHasImpactOnSongImage = useRef(false);
-
-   // for validate
-   const [validName, setValidName] = useState(!!data.name);
-   const [validSinger, setValidSinger] = useState(!!data.singer);
-   const [validURL, setValidURL] = useState(false);
-
    const inputFileRef = useRef<HTMLInputElement>(null);
 
-   const isChangeInEdit = useMemo(() => {
-      if (
-         inputFields.name !== data.name ||
-         inputFields.singer !== data.singer ||
-         inputFields.image_url !== data.image_url ||
-         isHasImpactOnSongImage.current
-      ) {
-         return true;
-      }
-   }, [inputFields, localImageURL]);
+   // use hooks
+   const { isAbleToSubmit, validName, validSinger, validURL, isChangeInEdit, setValidURL } =
+      useEditForm({
+         data,
+         inputFields,
+         isImpactOnImage,
+         localImageURL,
+      });
 
    // priority order
    // - upload image (now => before) (local image url or image file path)
@@ -83,18 +66,13 @@ export default function SongItemEditForm({
       [localImageURL, stockImageURL]
    );
 
-   const isAbleToSubmit = useMemo(
-      () => isChangeInEdit && validName && validName && validURL,
-      [validName, validSinger, validURL, isChangeInEdit]
-   );
-
    const handleInput = (field: keyof typeof inputFields, value: string) => {
       setInputFields({ ...inputFields, [field]: value });
    };
 
    //   trigger only have image from local
    const handleUnsetImage = useCallback(() => {
-      // main case 1: user has upload image before
+      // main case 1: song has image before
       // case 1: user remove current image
       if (data.image_file_path && !localImageURL) {
          setStockImageURL("");
@@ -108,7 +86,7 @@ export default function SongItemEditForm({
       // main case 2: user never upload image before
       setStockImageURL("");
 
-      isHasImpactOnSongImage.current = true;
+      setIsImpactOnImage(true);
 
       const inputEle = inputFileRef.current as HTMLInputElement;
       if (inputEle) {
@@ -122,7 +100,7 @@ export default function SongItemEditForm({
       const imageFile = target.files[0];
       setLocalImageURL(URL.createObjectURL(imageFile));
 
-      isHasImpactOnSongImage.current = true;
+      setIsImpactOnImage(true);
       setImageFile(imageFile);
    }, []);
 
@@ -162,7 +140,7 @@ export default function SongItemEditForm({
                return;
             }
 
-            const songImageUrl = isHasImpactOnSongImage.current
+            const songImageUrl = isImpactOnImage
                ? ""
                : inputFields.image_url && validURL
                ? inputFields.image_url
@@ -183,17 +161,17 @@ export default function SongItemEditForm({
             }
 
             // user upload song from local
-            if (imageFile && isHasImpactOnSongImage.current) {
+            if (imageFile && isImpactOnImage) {
                const { filePath, fileURL } = await uploadFile({
                   file: imageFile,
                   folder: "/images/",
-                  email: userInfo.email
+                  email: userInfo.email,
                });
                newSong.image_file_path = filePath;
                newSong.image_url = fileURL;
 
                // if user remove image
-            } else if (isHasImpactOnSongImage.current) {
+            } else if (isImpactOnImage) {
                newSong.image_file_path = "";
             }
 
@@ -211,7 +189,7 @@ export default function SongItemEditForm({
          }
 
          // if user upload image or unset image
-         if (isHasImpactOnSongImage.current) {
+         if (isImpactOnImage) {
             if (data.image_file_path) {
                // >>> api
                deleteFile({ filePath: data.image_file_path });
@@ -234,33 +212,6 @@ export default function SongItemEditForm({
       }
    }, [inputFields, imageFile, userSongs, data]);
 
-   // validate song name
-   useEffect(() => {
-      if (!inputFields.name) {
-         setValidName(false);
-      } else {
-         setValidName(true);
-      }
-   }, [inputFields.name]);
-
-   // validate song name
-   useEffect(() => {
-      if (!inputFields.singer) {
-         setValidSinger(false);
-      } else {
-         setValidSinger(true);
-      }
-   }, [inputFields.singer]);
-
-   useEffect(() => {
-      if (!inputFields.image_url) {
-         setValidURL(true);
-         return;
-      }
-      const test1 = URL_REGEX.test(inputFields.image_url);
-      setValidURL(test1);
-   }, [inputFields.image_url]);
-
    // define style
    const classes = {
       textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
@@ -279,8 +230,12 @@ export default function SongItemEditForm({
          <h1 className="text-[20px] font-semibold">Edit</h1>
          <div className="flex mt-[10px]">
             <div>
-               <div className="w-[130px] h-[130px] flex-shrink-0 rounded-[5px]">
-                  <Image onError={() => setValidURL(false)} src={imageToDisplay} />
+               <div className="w-[130px] h-[130px] flex-shrink-0 rounded-[5px] overflow-hidden">
+                  <Image
+                     onError={() => setValidURL(false)}
+                     src={imageToDisplay}
+                     blurHashEncode={data.blurhash_encode}
+                  />
                </div>
 
                <div className="flex items-center gap-[12px] mt-[10px]">

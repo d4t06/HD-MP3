@@ -35,7 +35,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
             onClick={() => isOnMobile && onClick && onClick()}
          >
             <div className={classes.imageContainer}>
-               <Image classNames="h-full w-full aspect-square object-cover object-center" src={data.image_url} />
+               <Image classNames="h-full w-full aspect-square object-cover object-center" src={data.image_url} blurHashEncode={data.blurhash_encode}/>
 
                {!isOnMobile && !inDetail && (
                   <div className={classes.absoluteContainer}>

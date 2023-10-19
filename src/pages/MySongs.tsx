@@ -62,6 +62,8 @@ export default function MySongsPage() {
    const [openModal, setOpenModal] = useState(false);
    const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
    const [playlistName, setPlayListName] = useState<string>("");
+   const firstTempSong = useRef<HTMLDivElement>(null);
+   const testImageRef = useRef<HTMLImageElement>(null)
 
    //  for delete song
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
@@ -75,6 +77,8 @@ export default function MySongsPage() {
    const { tempSongs, addedSongIds, status, handleInputChange } = useUploadSongs({
       audioRef,
       message,
+      firstTempSong,
+      testImageRef
    });
 
    // define callback functions
@@ -199,6 +203,7 @@ export default function MySongsPage() {
          song_ids: [],
          count: 0,
          time: 0,
+         blurhash_encode: "",
       };
 
       // insert new playlist to users playlist
@@ -226,8 +231,23 @@ export default function MySongsPage() {
    // define jsx
    const renderTempSongs = useMemo(() => {
       if (!tempSongs.length) return;
+
       return tempSongs.map((tempSong, index) => {
+
          const isAdded = addedSongIds.some((id) => id === tempSong.id);
+         if (index == 0 && !firstTempSong.current) {
+            return (
+               <div ref={firstTempSong} key={index} className="w-full max-[549px]:w-full">
+                  <SongItem
+                     theme={theme}
+                     onClick={() => handleSetSong(tempSong, index)}
+                     inProcess={!isAdded}
+                     key={index}
+                     data={tempSong}
+                  />
+               </div>
+            );
+         }
 
          return (
             <div key={index} className="w-full max-[549px]:w-full">
@@ -240,6 +260,7 @@ export default function MySongsPage() {
                />
             </div>
          );
+
       });
    }, [tempSongs, addedSongIds, theme]);
 
@@ -248,7 +269,10 @@ export default function MySongsPage() {
       if (!userSongs.length) return;
 
       return userSongs.map((song, index) => {
-         const active = song.id === songInStore.id && songInStore.song_in === "user";
+         const active =
+            song.id === songInStore.id &&
+            songInStore.song_in === "user" &&
+            song.singer === songInStore.singer;
          if (isOnMobile) {
             return (
                <div key={index} className="w-full max-[549px]:w-full">
@@ -365,6 +389,7 @@ export default function MySongsPage() {
 
    // route guard
    useEffect(() => {
+      if (userInfo.status === "loading") return;
       if (!userInfo.email) {
          navigate(routes.Home);
 
@@ -376,6 +401,7 @@ export default function MySongsPage() {
 
    return (
       <>
+         <img className="hidden"  ref={testImageRef}/>
          {/* playlist */}
          <div className="pb-[30px] ">
             {/* mobile nav */}

@@ -64,6 +64,26 @@ export const uploadFile = async ({
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
 
+export const uploadBlob = async ({
+   blob,
+   folder,
+   songId,
+}: {
+   blob: Blob;
+   folder: "/images/" | "/songs/";
+   songId: string;
+}) => {
+   console.log("upload file");
+
+   // define ref
+   const fileName = songId + "_stock"
+   const fileRef = ref(store, `${folder + fileName}`);
+   const fileRes = await uploadBytes(fileRef, blob);
+   const fileURL = await getDownloadURL(fileRes.ref);
+
+   return { fileURL, filePath: fileRes.metadata.fullPath };
+};
+
 export const deleteFile = async ({ filePath }: { filePath: string }) => {
    console.log("delete file");
 

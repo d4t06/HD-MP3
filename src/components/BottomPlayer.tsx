@@ -13,6 +13,7 @@ import Button from "./ui/Button";
 import Control from "./Control";
 import useVolume from "../hooks/useVolume";
 import ScrollText from "./ScrollText";
+import { Image } from ".";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -86,14 +87,7 @@ export default function BottomPlayer({
                   }`}
                >
                   <div className="w-[2.5rem] h-[2.5rem]">
-                     <img
-                        className={`w-full object-cover object-center rounded-full`}
-                        src={
-                           songInStore.image_url
-                              ? songInStore.image_url
-                              : zingIcon
-                        }
-                     />
+                     <Image blurHashEncode={songInStore.blurhash_encode} src={songInStore.image_url} classNames="w-full object-cover object-center rounded-full"/>
                   </div>
 
                   <div className=" ml-[10px] flex-grow">

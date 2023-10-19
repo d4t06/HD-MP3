@@ -1,11 +1,15 @@
 import { ReactNode } from "react";
-import { Auth, ToastPortal } from "../components";
+import { DashboardHeader } from "../components";
+import { useTheme } from "../store";
 
-export default function DashBoardLayout({children}: {children: ReactNode}) {
+export default function DashBoardLayout({ children }: { children: ReactNode }) {
+   const { theme } = useTheme();
+   const text = `${theme.type === "light" ? "text-[#333]" : "text-white"}`;
+
    return (
-      <Auth>
-         {children}
-        <ToastPortal autoClose />
-      </Auth>
+      <>
+         <DashboardHeader />
+         <div className={`${theme.container} ${text} min-h-screen`}>{children}</div>
+      </>
    );
 }

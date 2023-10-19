@@ -11,3 +11,11 @@
 
 ### update thứ 7 7/10
 - useRef như là biến global, có thể cập nhật giá trị trong một lần render xem usePlaylistDetail Hook
+
+
+### update thứ 3 17/10
+- dùng id3js thay cho id3parser, thêm thư viện blurhash để load ảnh
+
+### update thứ 4 18/10
+- Thay đổi trình tự cải thiện thời gian upload nhạc,
+- Scroll in to view khi upload nhạc mới

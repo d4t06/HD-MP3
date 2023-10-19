@@ -23,6 +23,7 @@ export type Song = {
   duration: number;
   lyric_id: string;
   in_playlist: string[];
+  blurhash_encode: string;
 };
 
 export type ParserSong = {
@@ -37,6 +38,7 @@ export type Playlist = {
   image_by: string;
   image_url: string;
   image_file_path: string;
+  blurhash_encode: string;
   song_ids: Array<string>;
   time: number;
   count: number;
