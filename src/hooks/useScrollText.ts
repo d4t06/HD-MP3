@@ -95,7 +95,6 @@ export default function useScrollText({ text, textWrapper, autoScroll }: Props) 
             }, 1000);
 
             autoScrollTimerId.current = setInterval(() => {
-               //  console.log('scroll');
 
                scroll();
             }, duration.current * 1000 + 3000 + 1000);
@@ -105,13 +104,17 @@ export default function useScrollText({ text, textWrapper, autoScroll }: Props) 
       return () => {
          if (autoScrollTimerId.current) {
             clearInterval(autoScrollTimerId.current);
+            console.log('clear timer');
+            
          } else {
+            console.log("No timer id");
             setErrorToast({})
          }
          
          if (unScrollTimerId.current) {
             clearTimeout(unScrollTimerId.current);
          } else {
+            console.log("No timer id");
             setErrorToast({})
 
          }

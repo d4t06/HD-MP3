@@ -23,7 +23,7 @@ export default function useSong() {
   const handleErrorMsg = (msg: string) => {
     setLoading(false);
     setErrorMsg(msg);
-    setErrorToast({});
+    setErrorToast({message: "Use song error"});
   };
 
   // admin song
@@ -98,8 +98,6 @@ export default function useSong() {
         userSongs: [],
         userPlaylists: [],
       };
-
-      // console.log("check user ", userInfo);
 
       if (!userInfo?.song_ids) return;
 

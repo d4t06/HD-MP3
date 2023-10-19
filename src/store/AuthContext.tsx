@@ -1,7 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { User } from "../types";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
-import { Auth } from "../components";
 
 // 1 initial state
 type StateType = { userInfo: User & { status: "finish" | "loading" | "error" } };
@@ -85,9 +84,7 @@ const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
 
    return (
       <AuthContext.Provider value={{ userInfo, setUserInfo }}>
-         <Auth>
             {children}
-         </Auth>
       </AuthContext.Provider>
    );
 };

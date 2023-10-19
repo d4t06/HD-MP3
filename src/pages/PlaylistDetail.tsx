@@ -179,6 +179,7 @@ export default function PlaylistDetail() {
 
    const deleteFromPlaylist = async (song: Song) => {
       if (!playlistInStore.song_ids) {
+         console.log("Wrong playlist data");
          setErrorToast({});
          return;
       }
@@ -230,6 +231,7 @@ export default function PlaylistDetail() {
 
    const deleteManyFromPlaylist = async () => {
       if (!playlistInStore.song_ids) {
+         console.log("Wrong playlist data");
          setErrorToast({});
          return;
       }
@@ -310,6 +312,7 @@ export default function PlaylistDetail() {
 
             if (error) {
                closeModal();
+            console.log("Song error when handle delete playlist");
                setErrorToast({});
                return;
             }
@@ -355,12 +358,14 @@ export default function PlaylistDetail() {
                image_by: "",
                image_file_path: "",
                image_url: "",
+               blurhash_encode: '',
             })
          );
          setSuccessToast({ message: `${playlistInStore.name} deleted` });
 
          navigate(`${routes.Playlist}`);
       } catch (error) {
+         console.log(error);
          setErrorToast({});
       }
    };

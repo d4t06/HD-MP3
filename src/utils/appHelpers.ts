@@ -1,6 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { Playlist, Song } from "../types";
-import {fromFile} from 'id3js'
+import { fromFile } from "id3js";
 import { nanoid } from "nanoid";
 export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
@@ -20,51 +20,47 @@ export const generateId = (name: string): string => {
          .replace(/đ/g, "d");
       return newString;
    };
-   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "")+"_"+nanoid(4);
+   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4);
 };
 
 type ParserSong = {
-   name: string,
-   singer: string,
-   image: ArrayBuffer | null
-}
+   name: string;
+   singer: string;
+   image: ArrayBuffer | null;
+};
 export const parserSong = async (songFile: File) => {
-
    if (!songFile) return;
-   const tags = await fromFile(songFile)
-
-   
+   const tags = await fromFile(songFile);
    if (!tags) return;
 
-   const { title, artist, images} = tags
-   const data: ParserSong = { name: '', singer: '', image: null }
+   const { title, artist, images } = tags;
+   const data: ParserSong = { name: "", singer: "", image: null };
 
    if (!title || !artist) {
-      console.log("song don't have tags")
+      console.log("song don't have tags");
    }
 
    data.name = title || songFile.name;
-   data.singer = artist || '...';
+   data.singer = artist || "...";
 
-   if (images?.length) {
+   if (images.length) {
       data.image = images[0].data;
    }
 
    return data;
 };
 
-
 export const getBlurhashEncode = async (blob: Blob) => {
-   console.log('get blurHash encode');
-   
-    const res =  await fetch("https://express-zingmp3.onrender.com/api/image/encode", {method: 'post', body: blob});
-    let encode;
-    if (res.ok) {
-      const data = await res.json() as {encode: string}
-      if (data) encode = data.encode
-    } 
-    return {encode}
-}
+   console.log("get blurHash encode");
+
+   const res = await fetch("https://express-zingmp3.onrender.com/api/image/encode", { method: "post", body: blob });
+   let encode;
+   if (res.ok) {
+      const data = (await res.json()) as { encode: string };
+      if (data) encode = data.encode;
+   }
+   return { encode };
+};
 
 export const handleTimeText = (duration: number) => {
    if (!duration) return "";
@@ -95,6 +91,7 @@ export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
    const index = userSongs.findIndex((songItem) => songItem.id === song.id);
    if (index == -1) return;
    userSongs[index] = song;
+   return index;
 };
 
 export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) => {
@@ -117,13 +114,7 @@ export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: s
    return { time, ids };
 };
 
-export const generatePlaylistAfterChangeSongs = ({
-   newPlaylistSongs,
-   existingPlaylist,
-}: {
-   newPlaylistSongs: Song[];
-   existingPlaylist: Playlist;
-}) => {
+export const generatePlaylistAfterChangeSongs = ({ newPlaylistSongs, existingPlaylist }: { newPlaylistSongs: Song[]; existingPlaylist: Playlist }) => {
    console.log("generate playlist");
    const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
    const newPlaylist: Playlist = {
@@ -136,13 +127,7 @@ export const generatePlaylistAfterChangeSongs = ({
    return newPlaylist;
 };
 
-export const generatePlaylistAfterChangeSong = ({
-   song,
-   playlist,
-}: {
-   song: Song;
-   playlist: Playlist;
-}) => {
+export const generatePlaylistAfterChangeSong = ({ song, playlist }: { song: Song; playlist: Playlist }) => {
    console.log("generate playlist");
 
    const newPlaylist: Playlist = {
@@ -168,7 +153,7 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
       song_file_path: "",
       id: "",
       in_playlist: [],
-      blurhash_encode: ''
+      blurhash_encode: "",
    };
    return {
       ...song,

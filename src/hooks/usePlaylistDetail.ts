@@ -93,8 +93,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
       });
 
       if (playlistInStore.song_ids.length !== playlistSongs.length) {
-         console.log('check playlist song ids', playlistInStore.song_ids);
-         
+         console.log("get playlist song error");
          setErrorToast({});
          return;
       }

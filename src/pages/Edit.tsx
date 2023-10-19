@@ -1,6 +1,6 @@
 import { Lyric, Song } from "../types";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { routes } from "../routes";
 
@@ -8,80 +8,72 @@ import LyricEditor from "../components/LyricEditor";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { selectAllSongStore, useSongsStore, useTheme } from "../store";
 import { useSongs } from "../hooks";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const { userSongs, initial } = useSongsStore();
+   const { userSongs } = useSongsStore();
 
    //  state
    const [targetSong, setTargetSong] = useState<Song>();
    const [lyric, setLyric] = useState<Lyric>({ base: "", real_time: [] });
    const audioRef = useRef<HTMLAudioElement>(null);
    const [loading, setLoading] = useState(false);
+   const firstTimeRun = useRef<boolean>(true);
 
    //  use hooks
-   const { errorMsg, loading: useSongsLoading } = useSongs();
+   const { errorMsg, loading: useSongsLoading, initial } = useSongs();
    const navigate = useNavigate();
    const params = useParams<{ id: string }>();
 
-   useEffect(() => {
-      console.log('useEffect 1', targetSong?.name);
-      
-      if (!userSongs.length || !initial) return;
+   const getLyric = useCallback(async (song: Song) => {
+      console.log("get lyric");
+      try {
+         if (song.lyric_id) {
+            setLoading(true);
+            const lyricSnapshot = await myGetDoc({
+               collection: "lyrics",
+               id: song.lyric_id,
+            });
+            const lyricData = lyricSnapshot.data() as Lyric;
 
-      const getSong = () => {
-         console.log("get song");
-         setLoading(true)
-
-         if (songInStore.name && songInStore.id === params.id) {
-
-            if (songInStore.by === "admin") navigate(routes.Home);
-            else setTargetSong(songInStore);
-
-         } else {
-
-            const song = userSongs.find((song) => song.id === params.id);
-            if (song) {
-               setTargetSong(song);
-            } else navigate(routes.Home);
+            setLyric(lyricData);
          }
-      };
+      } catch (error) {
+         console.log({ message: error });
+      } finally {
+         await new Promise<void>((rs) => {
+            setTimeout(() => {
+               setLoading(false);
 
-      if (!targetSong) getSong();
+               rs();
+            }, 2000);
+         });
+      }
    }, []);
 
+   const getSong = useCallback(async () => {
+      console.log("get song");
+      if (songInStore.name && songInStore.id === params.id) {
+         songInStore.by === "admin" ? navigate(routes.Home) : [setTargetSong(songInStore), await getLyric(songInStore)];
+      } else {
+         const song = userSongs.find((song) => song.id === params.id);
+         if (song) {
+            setTargetSong(song);
+            await getLyric(song);
+         } else navigate(routes.Home);
+      }
+   }, [songInStore, userSongs]);
+
    useEffect(() => {
-      console.log("useEffect 2");
-      const getLyric = async () => {
-         if (!targetSong) return;
-         try {
-            if (targetSong.lyric_id) {
-               const lyricSnapshot = await myGetDoc({
-                  collection: "lyrics",
-                  id: targetSong.lyric_id,
-               });
-               const lyricData = lyricSnapshot.data() as Lyric;
+      if (!initial) return;
 
-               setLyric(lyricData);
-
-               await new Promise<void>((rs) => {
-                  setTimeout(() => {
-                     setLoading(false);
-
-                     rs();
-                  }, 2000);
-               });
-            }
-         } catch (error) {
-            console.log({ message: error });
-         }
-      };
-
-      getLyric();
-   }, [targetSong]);
-
-   console.log("edit page render");
+      if (firstTimeRun.current) {
+         if (!targetSong) getSong();
+         firstTimeRun.current = false;
+      }
+   }, [initial]);
 
    if (useSongsLoading || loading) return <h1>...</h1>;
    if (errorMsg) return <h1>{errorMsg}</h1>;
@@ -91,8 +83,16 @@ export default function Edit() {
          {/* audio element always visible */}
          <audio ref={audioRef} src={targetSong?.song_url} className="hidden" />
 
-         {targetSong  && (
-            <LyricEditor lyric={lyric} audioRef={audioRef} theme={theme} song={targetSong} />
+         {targetSong && (
+            <>
+               <Link to={routes.MySongs} className={`inline-flex text-[20px] font-bold mb-[14px] ${theme.content_hover_text}`}>
+                  <ChevronLeftIcon className="w-[25px]"/>
+                   <span className="ml-[12px]">
+                     {targetSong.name}
+                     </span>
+                   </Link> 
+               <LyricEditor lyric={lyric} audioRef={audioRef} theme={theme} song={targetSong} />
+            </>
          )}
       </div>
    );

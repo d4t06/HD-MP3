@@ -23,13 +23,10 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
       const imageEle = imageRef.current as HTMLImageElement;
 
       const handleLoadImage = () => {
-
          setImageLoaded(true);
       };
 
       const defaultHandleError = () => {
-         console.log('default err');
-         
          const imageEle = imageRef.current as HTMLImageElement;
          imageEle.src = "https://placehold.co/100";
          setImageLoaded(true);
@@ -56,25 +53,8 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
 
    return (
       <>
-         {!imageLoaded && (
-            <>
-               {blurHashEncode ? (
-                  <Blurhash
-                     hash={blurHashEncode}
-                     height={"100%"}
-                     width={"100%"}
-                     className="pt-[100%]"
-                  />
-               ) : (
-                  <Skeleton className="w-full pt-[100%]" />
-               )}
-            </>
-         )}
-         <img
-            className={`${classNames ? classNames : ''} w-full ${!imageLoaded ? "hidden" : ""}`}
-            src={src || "https://placehold.co/100"}
-            ref={imageRef}
-         />
+         {!imageLoaded && <>{blurHashEncode ? <Blurhash hash={blurHashEncode} height={"100%"} width={"100%"} className="pt-[100%]" /> : <Skeleton className="w-full pt-[100%]" />}</>}
+         <img className={`${classNames ? classNames : ""} w-full ${!imageLoaded ? "hidden" : ""}`} src={src || "https://placehold.co/100"} ref={imageRef} />
       </>
    );
 }

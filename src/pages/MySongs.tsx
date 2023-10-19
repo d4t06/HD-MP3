@@ -189,7 +189,7 @@ export default function MySongsPage() {
       const playlistId = generateId(playlistName) + userInfo.email.replace("@gmail.com", "");
 
       if (!playlistId || !playlistName || !userInfo) {
-         setErrorToast({});
+         setErrorToast({message: "Add playlist lack of props"});
          return;
       }
 
@@ -224,7 +224,7 @@ export default function MySongsPage() {
 
          setSuccessToast({ message: `'${playlistName}' created` });
       } catch (error) {
-         setErrorToast({});
+         setErrorToast({message: "Add playlist catch error"});
       }
    };
 

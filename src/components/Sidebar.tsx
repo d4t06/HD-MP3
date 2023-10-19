@@ -32,16 +32,18 @@ import { routes } from "../routes";
 import { useTheme, useAuthStore } from "../store";
 
 export default function Sidebar() {
-   const [signInWithGoogle] = useSignInWithGoogle(auth);
-
+   // use store
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
    const [loggedInUser, loading] = useAuthState(auth);
+   const [signInWithGoogle] = useSignInWithGoogle(auth);
 
+   // state
    const [isOpenMenu, setIsOpenMenu] = useState(false);
    const [isOpenSetting, setIsOpenSetting] = useState(false);
    const [settingComp, setSettingComp] = useState<ReactNode>();
 
+   // floating ui
    const { refs, floatingStyles, context } = useFloating({
       open: isOpenMenu,
       onOpenChange: setIsOpenMenu,
@@ -49,16 +51,16 @@ export default function Sidebar() {
       middleware: [offset(0), flip(), shift()],
       whileElementsMounted: autoUpdate,
    });
-
    const click = useClick(context);
    const dismiss = useDismiss(context);
    const role = useRole(context);
-
    const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
    const signIn = () => {
       signInWithGoogle();
    };
+
+
 
    // define skeleton
    const menuItemSkeletons = [...Array(3).keys()].map((index) => {
@@ -89,7 +91,7 @@ export default function Sidebar() {
    };
 
    return (
-      <div className={`${classes.container} + ${classes.text}`}>
+      <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] flex items-center">
             {loading ? (
                avatarSkeleton

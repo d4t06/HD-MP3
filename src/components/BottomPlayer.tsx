@@ -4,7 +4,6 @@ import {
    SpeakerWaveIcon,
    SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
-import zingIcon from '../assets/icon-zing.svg'
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
@@ -14,6 +13,7 @@ import Control from "./Control";
 import useVolume from "../hooks/useVolume";
 import ScrollText from "./ScrollText";
 import { Image } from ".";
+import { useLocation } from "react-router-dom";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -51,11 +51,14 @@ export default function BottomPlayer({
    const volumeLine = useRef<HTMLDivElement>(null);
    const volumeProcessLine = useRef<HTMLDivElement>(null);
 
+   // use hooks
+   const location = useLocation();
    const { handleSetVolume, isMute, handleMute } = useVolume(
       volumeLineWidth,
       volumeProcessLine,
       audioEle
    );
+   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
    // update process lines width
    useEffect(() => {
@@ -64,15 +67,8 @@ export default function BottomPlayer({
 
    return (
       <div
-         className={`border-${
-            theme.alpha
-         } fixed bottom-0 w-full h-[90px] border-t  z-50 px-10
-            ${
-               isOpenFullScreen
-                  ? "border-transparent bg-transparent"
-                  : theme.bottom_player_bg
-            }
-            ${idle ? "hidden" : ""} `}
+         className={`border-${theme.alpha} fixed bottom-0 w-full h-[90px] border-t transition-transform z-50 px-10
+            ${isOpenFullScreen ? "border-transparent bg-transparent": theme.bottom_player_bg} ${idle ? "hidden" : ""} ${inEdit && "translate-y-[100%] "}`}
       >
          <div
             className={`flex flex-row gap-[10px] h-full items-stretch ${
@@ -184,17 +180,6 @@ export default function BottomPlayer({
                >
                   <ChevronUpIcon />
                </Button>
-
-               {/* <Tooltip>
-                  <TooltipTrigger></TooltipTrigger>
-                  <TooltipContent>
-                     <div
-                        className={`bg-[#ccc] text-[#333] text-[14px] px-[10px] py-[2px] rounded-[4px]`}
-                     >
-                        Karaoke
-                     </div>
-                  </TooltipContent>
-               </Tooltip> */}
             </div>
          </div>
       </div>

@@ -48,10 +48,7 @@ const ToastProvider = ({ children }: { children: ReactNode }) => {
       <ToastContext.Provider
          value={{ state: { toasts }, setToasts, setErrorToast, setSuccessToast }}
       >
-         <>
-            <ToastPortal autoClose />
             {children}
-         </>
       </ToastContext.Provider>
    );
 };

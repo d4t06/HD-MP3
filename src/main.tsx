@@ -9,6 +9,7 @@ import SongsProvider, { initialSongs } from "./store/SongsContext.tsx";
 import ToastProvider from "./store/ToastContext.tsx";
 import ActuallySongsProvider from "./store/ActuallySongsContext.tsx";
 import AuthProvider from "./store/AuthContext.tsx";
+import Auth from "./components/Auth.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
    <React.StrictMode>
@@ -18,7 +19,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
                <Provider store={Store}>
                   <ToastProvider>
                      <ActuallySongsProvider>
-                        <App />
+                        <Auth>
+                           <App />
+                        </Auth>
                      </ActuallySongsProvider>
                   </ToastProvider>
                </Provider>

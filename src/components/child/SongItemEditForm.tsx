@@ -125,7 +125,7 @@ export default function SongItemEditForm({
       }
 
       if (!data.id) {
-         setErrorToast({});
+         setErrorToast({message: "Edit song wrong data id"});
          return;
       }
 
@@ -136,6 +136,7 @@ export default function SongItemEditForm({
          if (isChangeInEdit) {
             // check valid input
             if (!inputFields.name || !inputFields.singer) {
+               console.log('input invalid');
                setErrorToast({});
                return;
             }
@@ -156,6 +157,7 @@ export default function SongItemEditForm({
 
             // check valid
             if (newSong.name !== inputFields.name || newSong.singer !== inputFields.singer) {
+               console.log("input invalid");
                setErrorToast({});
                return;
             }
@@ -205,8 +207,8 @@ export default function SongItemEditForm({
          // >>> finish
          setSuccessToast({ message: `${newSong.name} edited` });
       } catch (error) {
-         setErrorToast({});
          console.log(error);
+         setErrorToast({});
       } finally {
          closeModal();
       }
