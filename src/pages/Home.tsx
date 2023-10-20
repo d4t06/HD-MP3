@@ -11,6 +11,7 @@ import {useSongs, useSongItemActions} from '../hooks'
 // config
 import { routes } from "../routes";
 import { auth } from "../config/firebase";
+import { SongItemSkeleton, mobileLinkSkeleton } from "../components/skeleton";
 
 export default function HomePage() {
    // use store
@@ -42,23 +43,8 @@ export default function HomePage() {
    };
 
    // define skeleton
-   const menuItemSkeletons = [...Array(1).keys()].map((index) => {
-      return <Skeleton key={index} className="w-full h-[40px] mb-[10px]" />;
-   });
 
-   const SongItemSkeleton = [...Array(4).keys()].map((index) => {
-      return (
-         <div className="flex items-center p-[10px]" key={index}>
-            <Skeleton className="h-[18px] w-[18px]" />
 
-            <Skeleton className="h-[54px] w-[54px] ml-[18px] rounded-[4px]" />
-            <div className="ml-[10px]">
-               <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
-               <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
-            </div>
-         </div>
-      );
-   });
 
    // define jsx
    const renderAdminSongs = useMemo(() => {
@@ -101,7 +87,7 @@ export default function HomePage() {
             </div>
          );
       });
-   }, [adminSongs, theme, songInStore]);
+   }, [adminSongs, theme, songInStore, selectedSongList, isCheckedSong]);
 
    // define styles
    const classes = {
@@ -116,13 +102,13 @@ export default function HomePage() {
                <div className="flex flex-col gap-3 items-start ">
                   <h1 className="text-[24px] font-bold">Library</h1>
                   {userInfo.status === "loading" ? (
-                     menuItemSkeletons
+                     mobileLinkSkeleton
                   ) : (
                      <>
                         {userInfo.email ? (
                            <>
                               <LinkItem
-                                 className="py-[10px] border-b border-[#333]"
+                                 className={`py-[10px] border-b border-${theme.alpha}`}
                                  to={routes.MySongs}
                                  icon={
                                     <MusicalNoteIcon

@@ -207,8 +207,10 @@ export default function useSong() {
       return;
 
     } else {
-      //  console.log("already initial");
-       setLoading(false);
+      setLoading(false);
+      // setTimeout(() => {
+      //   console.log("already initial");
+      // }, 1000)
       return;
     }
   }, [userInfo]);

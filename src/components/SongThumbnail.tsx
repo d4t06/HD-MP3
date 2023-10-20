@@ -3,7 +3,7 @@ import { Song, ThemeType } from "../types";
 import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
 import playingIcon from '../assets/icon-playing.gif'
-import Image from "./ui/Image";
+// import Image from "./ui/Image";
 
 interface Props {
    data?: Song;

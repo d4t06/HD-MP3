@@ -102,6 +102,19 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
       if (!prevSongsLength.current) prevSongsLength.current = playlistSongs.length;
    }, [playlistInStore.song_ids, userSongs]);
 
+   const setPlaylistImageToDoc = useCallback( async (newPlaylist: Playlist) => {
+      try {
+         await mySetDoc({
+            collection: "playlist",
+            id: playlistInStore.id,
+            data: {newPlaylist},
+         });
+      } catch (error) {
+         console.log("error when set playlist image");
+         setErrorToast({});
+      }
+   },[])
+
    // get playlist after initial
    useEffect(() => {
       // console.log("useEffect 1");
@@ -161,20 +174,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
          blurhash_encode: firstSongHasImage.blurhash_encode || ''
       };
 
-      const setPlaylistImageToDoc = async () => {
-         try {
-            await mySetDoc({
-               collection: "playlist",
-               id: playlistInStore.id,
-               data: newPlaylist,
-            });
-         } catch (error) {
-            console.log("error when set playlist image");
-            setErrorToast({});
-         }
-      };
-
-      setPlaylistImageToDoc();
+      setPlaylistImageToDoc(newPlaylist);
       // get new user playlist
       const newUserPlaylists = [...userPlaylists];
       updatePlaylistsValue(newPlaylist, newUserPlaylists);

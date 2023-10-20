@@ -51,7 +51,7 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
 
    return (
       <>
-         {imageLoaded && (
+         {!imageLoaded && (
             <>
                {blurHashEncode ? (
                   <Blurhash
@@ -65,7 +65,7 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
             </>
          )}
          <img
-            className={`${classNames ? classNames : ""} w-full ${!imageLoaded ? "hidden" : "hidden"}`}
+            className={`${classNames ? classNames : ""} w-full ${!imageLoaded ? "hidden" : ""}`}
             src={src || "https://placehold.co/100"}
             ref={imageRef}
          />
