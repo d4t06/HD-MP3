@@ -6,6 +6,7 @@ import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outli
 import { Image, Button } from "../../components";
 import { useToast, useAuthStore } from "../../store";
 import { useEditForm } from "../../hooks";
+import { updateSongsListValue } from "../../utils/appHelpers";
 
 type Props = {
    data: Song;
@@ -48,7 +49,6 @@ export default function SongItemEditForm({
       useEditForm({
          data,
          inputFields,
-         isImpactOnImage,
          localImageURL,
       });
 
@@ -81,10 +81,10 @@ export default function SongItemEditForm({
       } else if (localImageURL) {
          setLocalImageURL("");
          setImageFile(undefined);
+      } else {
+         // main case 2: user never upload image before
+         setStockImageURL("");
       }
-
-      // main case 2: user never upload image before
-      setStockImageURL("");
 
       setIsImpactOnImage(true);
 
@@ -92,7 +92,7 @@ export default function SongItemEditForm({
       if (inputEle) {
          inputEle.value = "";
       }
-   }, []);
+   }, [localImageURL, data.image_file_path]);
 
    const uploadImageFromLocal = useCallback((e: ChangeEvent<HTMLInputElement>) => {
       const target = e.target as HTMLInputElement & { files: FileList };
@@ -115,7 +115,7 @@ export default function SongItemEditForm({
       setIsOpenModal(false);
    };
 
-   // inputFields, imageFile, userSongs, data
+   // inputFields, imageFile, userSongs, data, isImpactOnImage
    // don't need isChangeInEdit cause inputFields change => isChangeInEdit change
    const handleEditSong = useCallback(async () => {
       // check props
@@ -125,27 +125,26 @@ export default function SongItemEditForm({
       }
 
       if (!data.id) {
-         setErrorToast({message: "Edit song wrong data id"});
+         setErrorToast({ message: "Edit song wrong data id" });
          return;
       }
 
       try {
-         let newUserSongs: Song[] = [];
+         const newUserSongs: Song[] = [...userSongs];
          let newSong: Song = { ...data };
 
          if (isChangeInEdit) {
+            console.log("is change in edit");
+
             // check valid input
             if (!inputFields.name || !inputFields.singer) {
-               console.log('input invalid');
+               console.log("input invalid");
                setErrorToast({});
                return;
             }
 
-            const songImageUrl = isImpactOnImage
-               ? ""
-               : inputFields.image_url && validURL
-               ? inputFields.image_url
-               : newSong.image_url;
+            const songImageUrl =
+               !!inputFields.image_url && validURL ? inputFields.image_url : newSong.image_url;
 
             setLoading(true);
             newSong = {
@@ -177,25 +176,35 @@ export default function SongItemEditForm({
                newSong.image_file_path = "";
             }
 
-            console.log("check new song", newSong);
-
-            // update user songs
-            newUserSongs = [...userSongs];
-            const index = newUserSongs.findIndex((song) => song.id === newSong.id);
-            if (index === -1) {
-               setErrorToast({ message: "No index found" });
-               return;
+            if (!isImpactOnImage) {
+               // update user songs
+               const index = updateSongsListValue(newSong, newUserSongs);
+               if (index == undefined) {
+                  setErrorToast({ message: "New user song Error" });
+                  return;
+               }
             }
-
-            newUserSongs[index] = newSong;
          }
 
          // if user upload image or unset image
          if (isImpactOnImage) {
+            setLoading(true);
+
+            console.log("isImpactOnImage");
             if (data.image_file_path) {
                // >>> api
-               deleteFile({ filePath: data.image_file_path });
+
+               newSong.image_file_path = "";
+               newSong.image_url = "";
             }
+
+            const index = updateSongsListValue(newSong, newUserSongs);
+            if (index == undefined) {
+               setErrorToast({ message: "New user song Error" });
+               return;
+            }
+
+            await deleteFile({ filePath: data.image_file_path });
          }
 
          // >>> local
@@ -212,7 +221,7 @@ export default function SongItemEditForm({
       } finally {
          closeModal();
       }
-   }, [inputFields, imageFile, userSongs, data]);
+   }, [inputFields, imageFile, userSongs, data, isImpactOnImage]);
 
    // define style
    const classes = {
@@ -330,7 +339,7 @@ export default function SongItemEditForm({
                      isLoading={loading}
                      onClick={() => handleEditSong()}
                      className={`${theme.content_bg} rounded-full text-[14px] ${
-                        !isAbleToSubmit && "pointer-events-none opacity-60"
+                        !isAbleToSubmit ? !isImpactOnImage && "pointer-events-none opacity-60" : ""
                      }`}
                      variant={"primary"}
                   >

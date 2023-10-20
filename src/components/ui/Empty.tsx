@@ -5,21 +5,21 @@ import { ThemeType } from "../../types";
 
 interface Props {
    className?: string;
-   theme: ThemeType;
+   theme: ThemeType & {alpha: string};
    onClick: () => void;
 }
 
 const Empty: FC<Props> = ({ className, onClick, theme }) => {
    return (
-      <div
-         onClick={() => onClick()}
-         className={`${theme?.content_hover_text} ${className} relative rounded-xl border group cursor-pointer`}
-      >
-         <Button
-            className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] `}
+      <div className={`w-full rounded-[8px] border border-[#fff] relative`}>
+         <div
+            onClick={() => onClick()}
+            className={`${theme?.content_hover_text} ${className} cursor-pointer`}
          >
-            <PlusCircleIcon className="w-[40px] max-[549px]:w-[30px]" />
-         </Button>
+            <Button className={`absolute top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] `}>
+               <PlusCircleIcon className="w-[40px] max-[549px]:w-[30px]" />
+            </Button>
+         </div>
       </div>
    );
 };

@@ -62,7 +62,7 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
    }
 
    return (
-      <ul ref={containerRef} className={`${className && className} overflow-y-auto overflow-x-hidden no-scrollbar h-full max-h-[500px] mask-image`}>
+      <ul ref={containerRef} className={`${className && className} overflow-y-auto overflow-x-hidden no-scrollbar h-full max-h-[500px] pt-[30px] mask-image`}>
          {renderItem()}
       </ul>
    );

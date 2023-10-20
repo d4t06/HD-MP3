@@ -18,7 +18,7 @@ interface Props {
 const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
    const classes = {
       button: `rounded-full text-[#fff] p-[4px] hover:bg-${theme?.alpha}`,
-      imageContainer: `relative overflow-hidden rounded-xl flex-grow`,
+      imageContainer: `absolute inset-0 overflow-hidden rounded-[6px]`,
       absoluteContainer: "absolute hidden inset-0 group-hover:block",
       overlay: "absolute inset-0 bg-[#333] opacity-60",
       buttonContainer: "justify-center items-center h-full relative z-10 relative",
@@ -31,11 +31,11 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
    return (
       <>
          <div
-            className="group h-full flex flex-col"
+            className="group relative pt-[100%]"
             onClick={() => isOnMobile && onClick && onClick()}
          >
             <div className={classes.imageContainer}>
-               <Image classNames="h-full w-full aspect-square object-cover object-center" src={data.image_url} blurHashEncode={data.blurhash_encode}/>
+               <Image classNames="" src={data.image_url} blurHashEncode={data.blurhash_encode} />
 
                {!isOnMobile && !inDetail && (
                   <div className={classes.absoluteContainer}>
@@ -51,8 +51,8 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
                   </div>
                )}
             </div>
-            {!inDetail && <h5 className="text-[20px] font-[500]">{data.name}</h5>}
          </div>
+         {!inDetail && <h5 className="text-[20px] font-[500]">{data.name}</h5>}
       </>
    );
 };

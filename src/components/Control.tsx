@@ -1,5 +1,19 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowPathRoundedSquareIcon, ArrowTrendingUpIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
+import {
+   Dispatch,
+   MouseEvent,
+   SetStateAction,
+   useCallback,
+   useEffect,
+   useMemo,
+   useRef,
+   useState,
+} from "react";
+import {
+   ArrowPathRoundedSquareIcon,
+   ArrowTrendingUpIcon,
+   BackwardIcon,
+   ForwardIcon,
+} from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
 
@@ -59,7 +73,7 @@ export default function Control({
    const firstTimeRender = useRef(true);
    const isEndOfList = useRef(false);
 
-   const isInEdit = useMemo(() => location.pathname.includes('edit'), [location])
+   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
    const play = () => {
       audioEle?.play();
@@ -147,8 +161,6 @@ export default function Control({
          newIndex = 0;
       }
 
-      // console.log("check new index", actuallySongs.map(song => song.name));
-
       dispatch(
          setSong({
             ...newSong,
@@ -169,8 +181,6 @@ export default function Control({
          newSong = actuallySongs[actuallySongs.length - 1];
          newIndex = actuallySongs.length - 1;
       }
-
-      // console.log("check new index", actuallySongs.map(song => song.name));
 
       dispatch(
          setSong({
@@ -246,12 +256,15 @@ export default function Control({
          return;
       }
 
-      console.log('handle loaded check inEdit', isInEdit);
-      
-      if (firstTimeRender.current || isInEdit) return;
+      if (firstTimeRender.current || isInEdit) {
+         setIsWaiting(false);
+         setIsPlaying(false);
+
+         return;
+      }
 
       play();
-   }, []);
+   }, [isInEdit]);
 
    const handleError = useCallback(() => {
       setError(true);
@@ -262,7 +275,6 @@ export default function Control({
    useEffect(() => {
       if (!audioEle) return;
 
-      audioEle.addEventListener("loadedmetadata", handleLoaded);
       audioEle.addEventListener("error", handleError);
       audioEle.addEventListener("pause", handlePause);
       audioEle.addEventListener("playing", handlePlaying);
@@ -270,7 +282,6 @@ export default function Control({
       audioEle.addEventListener("waiting", handleWaiting);
 
       return () => {
-         audioEle.removeEventListener("loadedmetadata", handleLoaded);
          audioEle.removeEventListener("error", handleError);
          audioEle.removeEventListener("pause", handlePause);
          audioEle.removeEventListener("playing", handlePlaying);
@@ -311,12 +322,19 @@ export default function Control({
    }, [isOpenFullScreen]);
 
    useEffect(() => {
-    if (!location) return;
+      if (!audioEle) return;
+      if (!location) return;
 
-    if (isInEdit) {
-      if (isPlaying) pause()
-    }    
-   }, [location])
+      if (isInEdit) {
+         if (isPlaying) pause();
+      }
+
+      audioEle.addEventListener("loadedmetadata", handleLoaded);
+
+      return () => {
+         audioEle.removeEventListener("loadedmetadata", handleLoaded);
+      };
+   }, [location]);
 
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
@@ -329,25 +347,35 @@ export default function Control({
       icon: "w-[30px] ",
    };
 
-   // console.log('control check actuallySongs', songLists.map(song =>song.name));
-
    return (
       <>
          {/* buttons */}
          <div className={`${classes.buttonsContainer}`}>
-            <button className={`${classes.button} ${isRepeat && theme.content_text}`} onClick={() => setIsRepeat(!isRepeat)}>
+            <button
+               className={`${classes.button} ${isRepeat && theme.content_text}`}
+               onClick={() => setIsRepeat(!isRepeat)}
+            >
                <ArrowPathRoundedSquareIcon className={classes.icon} />
             </button>
             <button className={classes.button} onClick={() => handlePrevious()}>
                <BackwardIcon className={classes.icon} />
             </button>
 
-            <PlayPauseButton isError={error} isWaiting={isWaiting} isPlaying={isPlaying} handlePlayPause={handlePlayPause} songInStore={songInStore} />
+            <PlayPauseButton
+               isError={error}
+               isWaiting={isWaiting}
+               isPlaying={isPlaying}
+               handlePlayPause={handlePlayPause}
+               songInStore={songInStore}
+            />
 
             <button className={`${classes.button}`} onClick={() => handleNext()}>
                <ForwardIcon className={classes.icon} />
             </button>
-            <button className={`${classes.button} ${isShuffle && theme.content_text}`} onClick={() => setIsShuffle(!isShuffle)}>
+            <button
+               className={`${classes.button} ${isShuffle && theme.content_text}`}
+               onClick={() => setIsShuffle(!isShuffle)}
+            >
                <ArrowTrendingUpIcon className={classes.icon} />
             </button>
          </div>
@@ -361,7 +389,13 @@ export default function Control({
                   </span>
                )}
             </div>
-            <div ref={durationLine} onClick={(e) => handleSeek(e)} className={`${classes.processLineBase} ${!isLoaded && "opacity-20 pointer-events-none"}`}>
+            <div
+               ref={durationLine}
+               onClick={(e) => handleSeek(e)}
+               className={`${classes.processLineBase} ${
+                  !isLoaded && "opacity-20 pointer-events-none"
+               }`}
+            >
                <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
             </div>
             <div className="w-[55px] pl-[5px]">

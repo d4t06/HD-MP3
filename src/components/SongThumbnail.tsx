@@ -39,12 +39,17 @@ const SongThumbnail = ({
       active ? "w-[320px] max-[549px]:w-[100%]" : "w-[280px] max-[549px]:w-[75%]"
    }`;
 
+
+   if (!data) return;
+
    return (
       <div  ref={ref} className={classes.container}>
          <div className={`flex ${classNames && classNames}`}>
             <div className={`${classes.imageFrame} ${classWhenActive}`}>
 
-               <Image classNames="rounded-[6px]" src={data?.image_url} blurHashEncode={data?.blurhash_encode} />
+               {/* <Image classNames="rounded-[6px]" src={data.image_url} /> */}
+
+               <img src={data.image_url || "https://placehold.co/100"} className="w-full" alt="" />
 
                {hasHover && !active && (
                   <div className={classes.overlay}>

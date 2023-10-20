@@ -1,5 +1,5 @@
 import { Lyric, Song } from "../types";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import { useTheme, useAuthStore } from "../store";
@@ -7,6 +7,7 @@ import { useTheme, useAuthStore } from "../store";
 import LyricEditor from "../components/LyricEditor";
 import { routes } from "../routes";
 import { myGetDoc } from "../utils/firebaseHelpers";
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
    const { theme } = useTheme();
@@ -53,14 +54,23 @@ export default function Edit() {
       getSong();
    }, []);
 
-
    return (
       <div className={`container mx-auto pt-[30px]`}>
-            <audio ref={audioRef} src={song && song.song_url} className="hidden" />
-            {/* audio element always visible */}
-            {audioRef.current && song && (
+         <audio ref={audioRef} src={song && song.song_url} className="hidden" />
+         {/* audio element always visible */}
+         {song && (
+            <>
+               <Link
+                  to={routes.Dashboard}
+                  className={`inline-flex text-[20px] font-bold mb-[14px] ${theme.content_hover_text}`}
+               >
+                  <ChevronLeftIcon className="w-[25px]" />
+                  <span className="ml-[12px]">{song.name}</span>
+               </Link>
+
                <LyricEditor lyric={lyric} audioRef={audioRef} theme={theme} song={song} />
-            )}
+            </>
+         )}
       </div>
    );
 }

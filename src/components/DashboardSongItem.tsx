@@ -138,7 +138,7 @@ const DashboardSongItem = ({
             </td>
             <td className={classes.td}>
                <div className="h-[44px] w-[44px]">
-                  <Image classNames="" src={data.image_url} />
+                  <img className="rounded-[4px]" src={data.image_url} />
                </div>
             </td>
             <td className={classes.td}>{data.name}</td>

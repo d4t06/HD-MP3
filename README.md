@@ -19,3 +19,6 @@
 ### update thứ 4 18/10
 - Thay đổi trình tự cải thiện thời gian upload nhạc,
 - Scroll in to view khi upload nhạc mới
+
+### update thứ 5 19/10
+- Sửa lại giao diện thêm lyric

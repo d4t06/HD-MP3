@@ -35,11 +35,8 @@ export default function LyricItem({
    return (
       <p
          ref={lyricRef}
-         className={`${className && className} max-[549px]:text-[20px] ${
-            inUpload ? "text-[16px]" : "text-[30px]"
-         } max-[549px]:text-center font-bold last:pb-[40%] ${active ? "opacity-100" : ""} ${
-            done ? "opacity-40" : ""
-         } ${inUpload && "flex"}`}
+         className={`${className && className} ${inUpload ? "text-[16px]" : "text-[30px]"}  max-[549px]:text-[20px] select-none  max-[549px]:text-center font-bold ${active && "opacity-100"} ${
+            done && "opacity-40"} ${inUpload && "flex"}`}
       >
          {children}
          {inUpload && active && <span className="ml-[10px] text-[16px]"></span>}

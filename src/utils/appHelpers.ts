@@ -53,7 +53,10 @@ export const parserSong = async (songFile: File) => {
 export const getBlurhashEncode = async (blob: Blob) => {
    console.log("get blurHash encode");
 
-   const res = await fetch("https://express-zingmp3.onrender.com/api/image/encode", { method: "post", body: blob });
+   const res = await fetch("https://express-zingmp3.onrender.com/api/image/encode", {
+      method: "post",
+      body: blob,
+   });
    let encode;
    if (res.ok) {
       const data = (await res.json()) as { encode: string };
@@ -88,7 +91,11 @@ export const handleTimeText = (duration: number) => {
 export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
    console.log("update songs list");
 
-   const index = userSongs.findIndex((songItem) => songItem.id === song.id);
+   const index = userSongs.findIndex((songItem) => {
+      // console.log(songItem.id, "===", song.id, songItem.id === song.id);
+      return songItem.id === song.id;
+   });
+   
    if (index == -1) return;
    userSongs[index] = song;
    return index;
@@ -114,7 +121,13 @@ export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: s
    return { time, ids };
 };
 
-export const generatePlaylistAfterChangeSongs = ({ newPlaylistSongs, existingPlaylist }: { newPlaylistSongs: Song[]; existingPlaylist: Playlist }) => {
+export const generatePlaylistAfterChangeSongs = ({
+   newPlaylistSongs,
+   existingPlaylist,
+}: {
+   newPlaylistSongs: Song[];
+   existingPlaylist: Playlist;
+}) => {
    console.log("generate playlist");
    const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
    const newPlaylist: Playlist = {
@@ -127,7 +140,13 @@ export const generatePlaylistAfterChangeSongs = ({ newPlaylistSongs, existingPla
    return newPlaylist;
 };
 
-export const generatePlaylistAfterChangeSong = ({ song, playlist }: { song: Song; playlist: Playlist }) => {
+export const generatePlaylistAfterChangeSong = ({
+   song,
+   playlist,
+}: {
+   song: Song;
+   playlist: Playlist;
+}) => {
    console.log("generate playlist");
 
    const newPlaylist: Playlist = {

@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Song } from "../types";
 
 type Props = {
@@ -9,12 +9,11 @@ type Props = {
       image_url: string;
    };
    localImageURL: string;
-   isImpactOnImage: boolean;
 };
 
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-export default function useEditForm({ data, inputFields, isImpactOnImage, localImageURL }: Props) {
+export default function useEditForm({ data, inputFields, localImageURL }: Props) {
    const [validName, setValidName] = useState(!!data.name);
    const [validSinger, setValidSinger] = useState(!!data.singer);
    const [validURL, setValidURL] = useState(false);
@@ -52,16 +51,16 @@ export default function useEditForm({ data, inputFields, isImpactOnImage, localI
       if (
          inputFields.name !== data.name ||
          inputFields.singer !== data.singer ||
-         inputFields.image_url ||
-         isImpactOnImage
+         inputFields.image_url
       ) {
          setIsChangeInEdit(true);
       }
-   }, [inputFields, localImageURL, isImpactOnImage]);
+   }, [inputFields, localImageURL]);
 
    useEffect(() => {
       setIsAbleToSubmit(validName && validSinger && validURL && isChangeInEdit);
    }, [validName, validSinger, validURL, isChangeInEdit]);
 
+   
    return { validName, validSinger, validURL, isAbleToSubmit, isChangeInEdit, setValidURL };
 }

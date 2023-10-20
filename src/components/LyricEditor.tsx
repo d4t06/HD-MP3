@@ -1,7 +1,15 @@
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Lyric, RealTimeLyric, Song, ThemeType } from "../types";
-import { FloatingFocusManager, autoUpdate, offset, useClick, useDismiss, useFloating, useInteractions } from "@floating-ui/react";
-import { RocketLaunchIcon } from "@heroicons/react/24/outline";
+import {
+   FloatingFocusManager,
+   autoUpdate,
+   offset,
+   useClick,
+   useDismiss,
+   useFloating,
+   useInteractions,
+} from "@floating-ui/react";
+import { ChevronDoubleRightIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 import { Modal, LyricItem, Button, PopupWrapper } from "../components";
 
@@ -33,13 +41,17 @@ export default function LyricEditor({
 
    const [baseLyric, setBaseLyric] = useState<string>(lyric ? lyric.base : "");
    const [baseLyricArr, setBaseLyricArr] = useState<string[]>([]);
-   const [realTimeLyrics, setRealTimeLyrics] = useState<RealTimeLyric[]>(lyric ? lyric.real_time : []);
+   const [realTimeLyrics, setRealTimeLyrics] = useState<RealTimeLyric[]>(
+      lyric ? lyric.real_time : []
+   );
 
    const [openSpeedSetting, setOpenSpeedSetting] = useState(false);
    const [playSpeed, setPlayspeed] = useState(1);
    const [loading, setLoading] = useState(false);
    const [openModal, setOpenModal] = useState(false);
-   const [currentLyricIndex, setCurrentLyricIndex] = useState<number>(realTimeLyrics ? realTimeLyrics.length : 0);
+   const [currentLyricIndex, setCurrentLyricIndex] = useState<number>(
+      realTimeLyrics ? realTimeLyrics.length : 0
+   );
 
    const firstTimeRender = useRef(true);
    const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -49,7 +61,7 @@ export default function LyricEditor({
    const { refs, floatingStyles, context } = useFloating({
       open: openSpeedSetting,
       onOpenChange: setOpenSpeedSetting,
-      placement: "bottom-start",
+      placement: "bottom",
       middleware: [offset(10)],
       whileElementsMounted: autoUpdate,
    });
@@ -65,6 +77,12 @@ export default function LyricEditor({
    const isNearFinish = useMemo(() => {
       return realTimeLyrics.length === baseLyricArr.length - 1;
    }, [baseLyricArr, realTimeLyrics, isClickPlay]);
+
+   const isEnableAddBtn = useMemo(() => {
+      return isClickPlay && !!baseLyricArr.length && !isFinish;
+   }, [isFinish, baseLyricArr, isClickPlay]);
+
+   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
 
    const play = () => {
       const audioEle = audioRef.current;
@@ -118,11 +136,8 @@ export default function LyricEditor({
       // if start time and end time is equal
       if (start.current == +audioEle.currentTime.toFixed(1)) return;
 
-      // when near end, end when update in handleSongEnd
-      if (!audioEle.ended) {
-         if (isNearFinish) end.current = +audioEle.duration.toFixed(1);
-         else end.current = +audioEle.currentTime.toFixed(1);
-      }
+      if (isNearFinish) end.current = +audioEle.duration.toFixed(1);
+      else end.current = +audioEle.currentTime.toFixed(1);
 
       const lyric = baseLyricArr[currentLyricIndex];
 
@@ -156,6 +171,7 @@ export default function LyricEditor({
    const handleSetLyricToDb = async () => {
       try {
          setLoading(true);
+         pause();
 
          await mySetDoc({
             collection: "lyrics",
@@ -167,19 +183,19 @@ export default function LyricEditor({
          const newUserSongs = [...userSongs];
 
          const index = updateSongsListValue(newSong, newUserSongs);
-
-         if (!index) {
+         if (index == undefined) {
             setErrorToast({ message: "No song found" });
+            setLoading(false);
             return;
          }
 
+         // local
          setUserSongs(newUserSongs);
-
+         // api
          await mySetDoc({ collection: "songs", data: { lyric_id: song.id }, id: song.id });
 
-         dispatch(setSong({ ...newSong, currentIndex: index, song_in: "user" }));
-
          // finish
+         dispatch(setSong({ ...newSong, currentIndex: index, song_in: "user" }));
          setSuccessToast({ message: "Add lyric successful" });
          setLoading(false);
       } catch (error) {
@@ -188,28 +204,15 @@ export default function LyricEditor({
    };
 
    const handleSongEnd = () => {
-      const audioEle = audioRef.current as HTMLAudioElement;
-
-
-      
-      console.log("check ", realTimeLyrics.length, baseLyricArr.length);
-
-      if (isFinish) return;
-      // when end song but still one more lyric item
-      if (isNearFinish) {
-         console.log("end add lyric");
-         end.current = +audioEle.duration.toFixed(1);
-         addLyric();
-      }
-
       pause();
+      addLyric();
    };
 
-   const isEnableAddBtn = useMemo(() => {
-      return isClickPlay && !!baseLyricArr.length && !isFinish;
-   }, [isFinish, baseLyricArr, isClickPlay]);
+   const seekSong = () => {
+      const audioEle = audioRef.current as HTMLAudioElement;
 
-   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
+      audioEle.currentTime += 2;
+   };
 
    useEffect(() => {
       if (baseLyric) {
@@ -260,24 +263,58 @@ export default function LyricEditor({
          <button onClick={() => setOpenModal(true)} className={style.button}>
             {baseLyric ? "Change lyric" : "Add lyric"}
          </button>
-         <button ref={refs.setReference} {...getReferenceProps()} className={style.button + "  inline-flex items-center hover:brightness-90 px-[20px] py-[5px] rounded-full text-white text-[14px]"}>
-            <RocketLaunchIcon className="h-[20px] w-[20px] mr-[5px]" />
-            Speed
+         <button
+            ref={refs.setReference}
+            {...getReferenceProps()}
+            className={
+               style.button +
+               "  inline-flex items-center hover:brightness-90 px-[20px] py-[5px] rounded-full text-white text-[14px]"
+            }
+         >
+            {playSpeed}x
          </button>
          {isPlaying ? (
-            <Button variant={"primary"} onClick={pause} className={style.button + (!isClickPlay ? style.disable : "")}>
+            <Button
+               variant={"primary"}
+               onClick={pause}
+               className={style.button + (!isClickPlay ? style.disable : "")}
+            >
                Pause
             </Button>
          ) : (
-            <Button variant={"primary"} onClick={play} className={style.button + (isPlaying || !isCanPlay ? style.disable : "")}>
+            <Button
+               variant={"primary"}
+               onClick={play}
+               className={style.button + (isPlaying || !isCanPlay ? style.disable : "")}
+            >
                Play
             </Button>
          )}
-         <Button variant={"primary"} onClick={addLyric} className={style.button + (!isEnableAddBtn && style.disable)}>
-            Add
+         <Button
+            variant={"primary"}
+            onClick={addLyric}
+            className={style.button + (!isEnableAddBtn && style.disable)}
+         >
+            <PlusIcon className="w-[16px]" />
          </Button>
-         <Button variant={"primary"} onClick={removeLyric} className={style.button + (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")}>
-            Remove
+         <Button
+            variant={"primary"}
+            onClick={removeLyric}
+            className={
+               style.button + (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")
+            }
+         >
+            <MinusIcon className="w-[16px]" />
+         </Button>
+         <Button
+            variant={"primary"}
+            onClick={seekSong}
+            className={
+               style.button + (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")
+            }
+         >
+            2s
+            <ChevronDoubleRightIcon className="w-[16px] ml-[5px]" />
          </Button>
       </div>
    );
@@ -286,12 +323,21 @@ export default function LyricEditor({
       <>
          {ctaComponent}
 
-         <div className={`${style.row} ${style.section} mb-[0] h-[60vh] pb min-h-[200px] overflow-auto`}>
+         <div
+            className={`${style.row} ${style.section} mb-[0] h-[60vh] pb min-h-[200px] overflow-auto`}
+         >
             <div className={style.lyricBox + "min-w-[50%] max-w-[50%] pr-[20px]"}>
                {!!baseLyricArr.length ? (
                   <>
                      {baseLyricArr.map((lyric, index) => (
-                        <LyricItem firstTimeRender={firstTimeRender.current} className="pb-[34px]" key={index} inUpload active={index === currentLyricIndex} done={index != currentLyricIndex}>
+                        <LyricItem
+                           firstTimeRender={firstTimeRender.current}
+                           className="pb-[34px]"
+                           key={index}
+                           inUpload
+                           active={index === currentLyricIndex}
+                           done={index != currentLyricIndex}
+                        >
                            {lyric}
                         </LyricItem>
                      ))}
@@ -305,13 +351,19 @@ export default function LyricEditor({
                {!!realTimeLyrics?.length &&
                   realTimeLyrics.map((lyric, index) => (
                      <div key={index} className="pb-[10px]">
-                        <span className="text-[16px] font-bold">{lyric.text}</span>
+                        <span className="text-[16px] font-bold select-none">{lyric.text}</span>
                         <div className="flex gap-[10px]">
-                           <button className={` ${theme.content_hover_text}`} onClick={() => handleSetTime(lyric.start)}>
+                           <button
+                              className={` ${theme.content_hover_text}`}
+                              onClick={() => handleSetTime(lyric.start)}
+                           >
                               {lyric.start}s
                            </button>
                            <span> - </span>
-                           <button className={` ${theme.content_hover_text}`} onClick={() => handleSetTime(lyric.end)}>
+                           <button
+                              className={` ${theme.content_hover_text}`}
+                              onClick={() => handleSetTime(lyric.end)}
+                           >
                               {lyric.end}s
                            </button>
                         </div>
@@ -320,15 +372,25 @@ export default function LyricEditor({
             </div>
          </div>
 
-         <Button isLoading={loading} className={`${theme.content_bg} text-[14px] rounded-full mt-[20px]`} variant={"primary"} onClick={() => handleSetLyricToDb()}>
+         <Button
+            isLoading={loading}
+            className={`${theme.content_bg} text-[14px] rounded-full mt-[20px]`}
+            variant={"primary"}
+            onClick={() => handleSetLyricToDb()}
+         >
             Save
          </Button>
 
          {openSpeedSetting && (
             <FloatingFocusManager context={context} modal={false}>
-               <div className="z-[99]" ref={refs.setFloating} style={floatingStyles} {...getFloatingProps()}>
+               <div
+                  className="z-[99]"
+                  ref={refs.setFloating}
+                  style={floatingStyles}
+                  {...getFloatingProps()}
+               >
                   <PopupWrapper theme={theme}>
-                     <ul className="w-[100px] text-center text-[14px]">
+                     <ul className="w-[50px] text-center text-[14px]">
                         <li
                            onClick={() => handlePlaySpeed(1)}
                            className={`
@@ -361,9 +423,20 @@ export default function LyricEditor({
 
          {openModal && (
             <Modal setOpenModal={setOpenModal}>
-               <div className={`w-[700px] max-w-[90vw]  rounded-[8px] p-[20px] ${theme.side_bar_bg} ${text}`}>
-                  <textarea ref={textareaRef} value={baseLyric} onChange={(e) => setBaseLyric(e.target.value)} className="w-full rounded-[4px] mb-[10px] min-h-[50vh] bg-transparent border p-[10px]" />
-                  <Button variant={"primary"} onClick={() => handleAddBaseLyric()} className={style.button}>
+               <div
+                  className={`w-[700px] max-w-[90vw]  rounded-[8px] p-[20px] ${theme.side_bar_bg} ${text}`}
+               >
+                  <textarea
+                     ref={textareaRef}
+                     value={baseLyric}
+                     onChange={(e) => setBaseLyric(e.target.value)}
+                     className="w-full rounded-[4px] mb-[10px] min-h-[50vh] bg-transparent border p-[10px]"
+                  />
+                  <Button
+                     variant={"primary"}
+                     onClick={() => handleAddBaseLyric()}
+                     className={style.button}
+                  >
                      Save
                   </Button>
                </div>
