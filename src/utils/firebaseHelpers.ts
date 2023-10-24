@@ -53,6 +53,7 @@ export const uploadFile = async ({
    email: string;
 }) => {
    console.log("upload file");
+   const start = Date.now();
 
    // define ref
    const fileName =
@@ -60,6 +61,9 @@ export const uploadFile = async ({
    const fileRef = ref(store, `${folder + fileName}`);
    const fileRes = await uploadBytes(fileRef, file);
    const fileURL = await getDownloadURL(fileRes.ref);
+
+   const consuming = (Date.now() - start) / 1000
+   console.log("Upload file finished after", consuming);
 
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
@@ -73,13 +77,17 @@ export const uploadBlob = async ({
    folder: "/images/" | "/songs/";
    songId: string;
 }) => {
-   console.log("upload file");
+   console.log("upload blob");
+   const start = Date.now();
 
    // define ref
    const fileName = songId + "_stock"
    const fileRef = ref(store, `${folder + fileName}`);
    const fileRes = await uploadBytes(fileRef, blob);
    const fileURL = await getDownloadURL(fileRes.ref);
+
+   const consuming = (Date.now() - start) / 1000
+   console.log("Upload blob finished after", consuming);
 
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };

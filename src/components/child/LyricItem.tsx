@@ -1,13 +1,12 @@
-import { useEffect, useRef } from "react";
-import { ThemeType } from "../../types";
+import { MutableRefObject, useEffect, useRef } from "react";
 
 interface Props {
    children: string;
    active: boolean;
    done: boolean;
-   firstTimeRender?: boolean;
+   firstTimeRender: MutableRefObject<boolean>;
+   scrollBehavior?: MutableRefObject<ScrollBehavior>;
    inUpload?: boolean;
-   theme?: ThemeType & { alpha: string };
    className?: string;
 }
 
@@ -18,25 +17,45 @@ export default function LyricItem({
    firstTimeRender,
    inUpload,
    className,
+   scrollBehavior,
 }: Props) {
    const lyricRef = useRef<HTMLParagraphElement>(null);
 
+   const scroll = () => {
+      const node = lyricRef.current as HTMLElement;
+
+      console.log('>>> check node', {node});
+      
+
+      node.scrollIntoView({
+         behavior: scrollBehavior?.current || "smooth",
+         block: "center",
+      });
+   };
+
    useEffect(() => {
       if (active) {
-         const node = lyricRef.current as HTMLElement;
+         if (firstTimeRender.current) {
+            firstTimeRender.current = false;
+            return;
+         }
 
-         node.scrollIntoView({
-            behavior: firstTimeRender ? "instant" : "smooth",
-            block: "center",
-         });
+         scroll();
+
+         if (scrollBehavior && scrollBehavior.current != "smooth") {
+            scrollBehavior.current = "smooth";
+         }
       }
    }, [active]);
 
    return (
       <p
          ref={lyricRef}
-         className={`${className && className} ${inUpload ? "text-[16px]" : "text-[30px]"}  max-[549px]:text-[20px] select-none  max-[549px]:text-center font-bold ${active && "opacity-100"} ${
-            done && "opacity-40"} ${inUpload && "flex"}`}
+         className={`${className && className} ${
+            inUpload ? "text-[16px]" : "text-[30px]"
+         }  select-none  max-[549px]:text-center font-bold ${done && "opacity-40"} ${
+            inUpload && "flex"
+         } ${active && "text-[#ffed00]"}`}
       >
          {children}
          {inUpload && active && <span className="ml-[10px] text-[16px]"></span>}

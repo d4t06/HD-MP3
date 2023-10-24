@@ -16,17 +16,12 @@ import {
    useRole,
    useInteractions,
 } from "@floating-ui/react";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
 
-import {Button
-   ,Modal
-   ,SettingMenu
-   ,PopupWrapper
-   ,Image
-   ,Skeleton} from "../components"
+import { Button, SettingMenu, Image, Skeleton } from "../components";
 
-   import { auth } from "../config/firebase";
+import { auth } from "../config/firebase";
 import { Link } from "react-router-dom";
 import { routes } from "../routes";
 import { useTheme, useAuthStore } from "../store";
@@ -40,8 +35,6 @@ export default function Sidebar() {
 
    // state
    const [isOpenMenu, setIsOpenMenu] = useState(false);
-   const [isOpenSetting, setIsOpenSetting] = useState(false);
-   const [settingComp, setSettingComp] = useState<ReactNode>();
 
    // floating ui
    const { refs, floatingStyles, context } = useFloating({
@@ -59,8 +52,6 @@ export default function Sidebar() {
    const signIn = () => {
       signInWithGoogle();
    };
-
-
 
    // define skeleton
    const menuItemSkeletons = [...Array(3).keys()].map((index) => {
@@ -160,22 +151,9 @@ export default function Sidebar() {
                   style={floatingStyles}
                   {...getFloatingProps()}
                >
-                  <SettingMenu
-                     loggedIn={!!userInfo.email}
-                     setIsOpenMenu={setIsOpenMenu}
-                     setIsOpenSetting={setIsOpenSetting}
-                     setSettingComp={setSettingComp}
-                  />
+                  <SettingMenu loggedIn={!!userInfo.email} setIsOpenMenu={setIsOpenMenu} />
                </div>
             </FloatingFocusManager>
-         )}
-
-         {isOpenSetting && (
-            <Modal setOpenModal={setIsOpenSetting}>
-               <PopupWrapper theme={theme}>
-                  {settingComp}
-               </PopupWrapper>
-            </Modal>
          )}
       </div>
    );

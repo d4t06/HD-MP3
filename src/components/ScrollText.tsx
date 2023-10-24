@@ -24,7 +24,7 @@ export default function ScrollText({
       <div ref={textWrapper} className="overflow-hidden scroll-smooth relative h-full">
          <div
             ref={text}
-            className={`${classNames} absolute left-0 whitespace-nowrap line-clamp-1 pl-[3px]`}
+            className={`${classNames} absolute left-0 whitespace-nowrap line-clamp-1`}
          >
             {label || "..."}
          </div>

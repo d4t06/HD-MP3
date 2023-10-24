@@ -4,10 +4,8 @@ import { themes } from "../config/themes";
 
 type StateType = { theme: ThemeType & { alpha: string } };
 
-const localStorageThemeId: ThemeKeyType = JSON.parse(
-   localStorage.getItem("theme")!
-);
-const initTheme = themes[localStorageThemeId] || themes["red"];
+const localStorageThemeId: ThemeKeyType = JSON.parse(localStorage.getItem("theme")!);
+const initTheme = themes.find((theme) => theme.id === localStorageThemeId) || themes[0];
 
 const initialState: StateType = {
    theme: {
@@ -23,20 +21,18 @@ const enum REDUCER_ACTION_TYPE {
 type ReducerAction = {
    type: REDUCER_ACTION_TYPE;
    payload: {
-      id: ThemeKeyType;
+      theme: ThemeType;
    };
 };
 
 const reducer = (_state: StateType, action: ReducerAction): StateType => {
    // switch (action.type) {
    // }
+   const theme = action.payload.theme;
    return {
       theme: {
-         ...themes[action.payload.id],
-         alpha:
-            themes[action.payload.id].type === "dark"
-               ? "[#fff]/[.1]"
-               : "[#000]/[.1]",
+         ...theme,
+         alpha: theme.type === "dark" ? "[#fff]/[.1]" : "[#000]/[.1]",
       },
    };
 };
@@ -44,12 +40,12 @@ const reducer = (_state: StateType, action: ReducerAction): StateType => {
 const useThemeContext = (theme: StateType) => {
    const [state, dispatch] = useReducer(reducer, theme);
 
-   const setTheme = useCallback((id: ThemeKeyType) => {
+   const setTheme = useCallback((theme: ThemeType) => {
       console.log("set theme");
-      
+
       dispatch({
          type: REDUCER_ACTION_TYPE.SETTHEME,
-         payload: { id },
+         payload: { theme },
       });
    }, []);
 
@@ -65,23 +61,13 @@ const initialContextState: UseThemeContextType = {
 
 const ThemeContext = createContext<UseThemeContextType>(initialContextState);
 
-const ThemeProvider = ({
-   children,
-   theme,
-}: {
-   children: any;
-   theme: StateType;
-}) => {
-   return (
-      <ThemeContext.Provider value={useThemeContext(theme)}>
-         {children}
-      </ThemeContext.Provider>
-   );
+const ThemeProvider = ({ children, theme }: { children: any; theme: StateType }) => {
+   return <ThemeContext.Provider value={useThemeContext(theme)}>{children}</ThemeContext.Provider>;
 };
 
 type UseThemeHookType = {
    theme: StateType["theme"];
-   setTheme: (id: ThemeKeyType) => void;
+   setTheme: (theme: ThemeType) => void;
 };
 
 const useTheme = (): UseThemeHookType => {

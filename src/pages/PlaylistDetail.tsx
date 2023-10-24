@@ -312,7 +312,7 @@ export default function PlaylistDetail() {
 
             if (error) {
                closeModal();
-            console.log("Song error when handle delete playlist");
+               console.log("Song error when handle delete playlist");
                setErrorToast({});
                return;
             }
@@ -358,7 +358,7 @@ export default function PlaylistDetail() {
                image_by: "",
                image_file_path: "",
                image_url: "",
-               blurhash_encode: '',
+               blurhash_encode: "",
             })
          );
          setSuccessToast({ message: `${playlistInStore.name} deleted` });
@@ -520,10 +520,11 @@ export default function PlaylistDetail() {
    return (
       <>
          {isOnMobile && (
-            <Link to={routes.Home} className="inline-flex items-center mb-[30px] hover:opacity-75">
-               <button className="">
-                  <ChevronLeftIcon className="w-[25px]" />
-               </button>
+            <Link
+               to={routes.MySongs}
+               className="inline-flex items-center mb-[30px] hover:opacity-75"
+            >
+               <ChevronLeftIcon className="w-[25px]" />
                <span className="text-[20px] font-semibold leading-1">My songs</span>
             </Link>
          )}

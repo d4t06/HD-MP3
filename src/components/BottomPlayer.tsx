@@ -68,7 +68,7 @@ export default function BottomPlayer({
 
     controlWrapper: `flex max-w-[400px] flex-grow`,
     controlWrapperChild_1: `${isOpenFullScreen ? "max-w-[600px] flex-col-reverse pb-[10px]" : "flex-col justify-center"}`,
-    controlWrapperChild_2: `${!songInStore.song_url && "pointer-events-none opacity-20"}`,
+    controlWrapperChild_2: `${!songInStore.song_url && "pointer-events-none opacity-60"}`,
 
     volumeWrapper: `volume-control w-1/3 flex items-center justify-end gap-5`,
     volumeLineBase: `ml-3 w-full relative h-[4px] cursor-pointer rounded-3xl`,
@@ -77,9 +77,10 @@ export default function BottomPlayer({
 
   return (
     <div
-      className={`${classes.wrapper} ${isOpenFullScreen ? "border-transparent bg-transparent" : theme.bottom_player_bg} ${
-        idle && 'hidden'} ${inEdit && "translate-y-[100%] "}`}
+      className={`${classes.wrapper} ${isOpenFullScreen ? "border-transparent" : ''} ${
+        idle && 'hidden'} ${inEdit && "translate-y-[100%] "} bg-transparent`}
     >
+      <div className={`absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1] ${isOpenFullScreen ? "opacity-0" : ''}`}></div>
       <div
         className={`${classes.container} ${ isOpenFullScreen ? "justify-center text-white" : "justify-between"}`}
       >

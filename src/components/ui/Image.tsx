@@ -15,6 +15,12 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
 
    const handleLoadImage = () => {
       setImageLoaded(true);
+
+      if (!src) return;
+      if (src?.includes('blob')) {
+         console.log('revoke');
+         URL.revokeObjectURL(src)
+      }
    };
 
    const defaultHandleError = () => {

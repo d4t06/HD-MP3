@@ -334,17 +334,17 @@ export default function Control({
       return () => {
          audioEle.removeEventListener("loadedmetadata", handleLoaded);
       };
-   }, [location]);
+   }, [isInEdit]);
 
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
       buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
       processContainer: `flex flex-row items-center h-[30px]`,
-      processLineBase: `h-[4px] flex-1 relative cursor-pointer rounded-3xl bg-[#fff]`,
-      processLineCurrent: `absolute rounded-l-full left-0 top-0 h-full ${theme.content_bg}`,
+      processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-400 `,
+      processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
       currentTime: `text-gray-500 text-[14px] font-semibold`,
       duration: `text-[14px] font-semibold`,
-      icon: "w-[30px] ",
+      icon: "w-[30px] max-[549px]:w-[40px]",
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
    };
 

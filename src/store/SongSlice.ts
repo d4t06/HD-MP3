@@ -26,6 +26,7 @@ const init: stateType = {
       currentIndex: 0,
       song_in: '',
       in_playlist: [],
+      blurhash_encode: '',
    },
    playlist: {
       id: "",
@@ -37,6 +38,7 @@ const init: stateType = {
       image_by: "",
       image_file_path: "",
       image_url: "",
+      blurhash_encode: ''
    },
 };
 

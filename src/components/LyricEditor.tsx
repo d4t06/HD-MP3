@@ -9,7 +9,12 @@ import {
    useFloating,
    useInteractions,
 } from "@floating-ui/react";
-import { ChevronDoubleRightIcon, MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import {
+   ChevronDoubleLeftIcon,
+   ChevronDoubleRightIcon,
+   MinusIcon,
+   PlusIcon,
+} from "@heroicons/react/24/outline";
 
 import { Modal, LyricItem, Button, PopupWrapper } from "../components";
 
@@ -208,10 +213,10 @@ export default function LyricEditor({
       addLyric();
    };
 
-   const seekSong = () => {
+   const seekSong = (direction: "next" | "prev") => {
       const audioEle = audioRef.current as HTMLAudioElement;
-
-      audioEle.currentTime += 2;
+      if (direction === "next") audioEle.currentTime += 2;
+      else audioEle.currentTime -= 2;
    };
 
    useEffect(() => {
@@ -308,10 +313,16 @@ export default function LyricEditor({
          </Button>
          <Button
             variant={"primary"}
-            onClick={seekSong}
-            className={
-               style.button + (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")
-            }
+            onClick={() => seekSong("prev")}
+            className={style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")}
+         >
+            <ChevronDoubleLeftIcon className="w-[16px] mr-[5px]" />
+            2s
+         </Button>
+         <Button
+            variant={"primary"}
+            onClick={() => seekSong("next")}
+            className={style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")}
          >
             2s
             <ChevronDoubleRightIcon className="w-[16px] ml-[5px]" />
@@ -331,8 +342,8 @@ export default function LyricEditor({
                   <>
                      {baseLyricArr.map((lyric, index) => (
                         <LyricItem
-                           firstTimeRender={firstTimeRender.current}
-                           className="pb-[34px]"
+                           firstTimeRender={firstTimeRender}
+                           className="pb-[30px] leading-[1.2]"
                            key={index}
                            inUpload
                            active={index === currentLyricIndex}
@@ -351,8 +362,10 @@ export default function LyricEditor({
                {!!realTimeLyrics?.length &&
                   realTimeLyrics.map((lyric, index) => (
                      <div key={index} className="pb-[10px]">
-                        <span className="text-[16px] font-bold select-none">{lyric.text}</span>
-                        <div className="flex gap-[10px]">
+                        <p className="text-[16px] leading-[1.2] font-bold select-none">
+                           {lyric.text}
+                        </p>
+                        <div className="flex gap-[10px] h-[20px]">
                            <button
                               className={` ${theme.content_hover_text}`}
                               onClick={() => handleSetTime(lyric.start)}

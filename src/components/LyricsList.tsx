@@ -1,7 +1,6 @@
-import { FC, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useRef, useState } from "react";
 import { Lyric } from "../types";
 import LyricItem from "./child/LyricItem";
-import { useTheme } from "../store/ThemeContext";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -10,44 +9,26 @@ interface Props {
 }
 
 const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
-   const { theme } = useTheme();
 
    const [currentTime, setCurrentTime] = useState<number>(0);
    const firstTimeRender = useRef(true);
-   const containerRef = useRef<HTMLUListElement>(null);
+   const scrollBehavior = useRef<ScrollBehavior>("instant");
+   const containerRef = useRef<HTMLDivElement>(null);
 
-   const handleUpdateTime = () => {
+   const handleUpdateTime = useCallback(() => {
       setCurrentTime(audioEle.currentTime);
-   };
-
-   useEffect(() => {
-      if (!firstTimeRender.current) return;
-      if (!audioEle) return;
-
-      audioEle.addEventListener("timeupdate", handleUpdateTime);
-
-      if (currentTime) {
-         if (firstTimeRender) firstTimeRender.current = false;
-      }
-   }, [currentTime]);
-
-   // useEffect(() => {
-   //    if (!songLyric.real_time.length) return;
-   //    const node = containerRef.current as HTMLElement;
-   //    if (node) {
-   //       node.style.height = window.innerHeight - 125 + "px";
-   //    }
-   // }, []);
+   }, []);
 
    const renderItem = () => {
       return songLyric.real_time.map((lyricItem, index) => {
-         const inRange = currentTime >= lyricItem.start && lyricItem.end > currentTime;
+         const bounce = 0.3
+         const inRange = currentTime >= lyricItem.start - bounce && lyricItem.end > currentTime + bounce ;
          return (
             <LyricItem
-               theme={theme}
-               firstTimeRender={firstTimeRender.current}
+               firstTimeRender={firstTimeRender}
+               scrollBehavior={scrollBehavior}
                key={index}
-               done={!inRange}
+               done={!inRange && currentTime > lyricItem.end}
                active={inRange}
                className="mb-[30px]"
             >
@@ -57,14 +38,35 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
       });
    };
 
+   useEffect(() => {
+      if (!audioEle) return;
+
+      audioEle.addEventListener("timeupdate", handleUpdateTime);
+
+      return () => {         
+         setCurrentTime(0)
+         firstTimeRender.current = true
+         
+         const containerEle = containerRef.current as HTMLDivElement
+
+         if (containerEle) containerEle.scrollTop = 0
+         if (audioEle) audioEle.removeEventListener("timeupdate", handleUpdateTime);
+      };
+   }, []);
+
    if (!songLyric.real_time.length) {
       return <h1 className="text-[50px] mt-[30px] text-center">...</h1>;
    }
 
    return (
-      <ul ref={containerRef} className={`${className && className} overflow-y-auto overflow-x-hidden no-scrollbar h-full max-h-[500px] mask-image`}>
+      <div
+         ref={containerRef}
+         className={`${
+            className && className
+         } overflow-y-auto overflow-x-hidden no-scrollbar h-full pt-[30px] mask-image`}
+      >
          {renderItem()}
-      </ul>
+      </div>
    );
 };
 

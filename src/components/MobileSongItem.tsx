@@ -69,7 +69,7 @@ const MobileSongItem = ({
       } flex flex-row rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
          isSelected() && "bg-" + theme.alpha
       }`,
-      imageFrame: `w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
+      imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
    };
 

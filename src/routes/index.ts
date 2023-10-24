@@ -1,5 +1,4 @@
 import DashBoardLayout from "../layout/DashBoardLayout";
-import NoPlayer from "../layout/NoPlayer";
 
 import { Home, Edit, Dashboard, PlaylistDetail, MySongs, DashboardEdit } from "../pages";
 

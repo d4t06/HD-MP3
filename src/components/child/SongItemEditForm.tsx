@@ -1,12 +1,14 @@
 import { ChangeEvent, MouseEventHandler, useCallback, useMemo, useRef, useState } from "react";
 import { Song, ThemeType } from "../../types";
-import { deleteFile, mySetDoc, uploadFile } from "../../utils/firebaseHelpers";
+import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "../../utils/firebaseHelpers";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+
+import { parseLegacy } from "id3js/lib/id3Frame";
 
 import { Image, Button } from "../../components";
 import { useToast, useAuthStore } from "../../store";
 import { useEditForm } from "../../hooks";
-import { updateSongsListValue } from "../../utils/appHelpers";
+import { getBlurhashEncode, optimizeImage, updateSongsListValue } from "../../utils/appHelpers";
 
 type Props = {
    data: Song;
@@ -191,11 +193,32 @@ export default function SongItemEditForm({
             setLoading(true);
 
             console.log("isImpactOnImage");
-            if (data.image_file_path) {
-               // >>> api
-
+            // unset image
+            if (!imageFile) {
                newSong.image_file_path = "";
                newSong.image_url = "";
+               // >>> api
+               await deleteFile({ filePath: data.image_file_path });
+               
+               // user upload image
+            } else {
+               const imageBlob = await optimizeImage(imageFile)
+               if (imageBlob == undefined) return;
+
+               const uploadProcess = uploadBlob({
+                  blob: imageBlob,
+                  folder: "/songs/",
+                  songId: newSong.id,
+               });
+
+               const { encode } = await getBlurhashEncode(imageBlob);
+               if (encode) {
+                  newSong.blurhash_encode = encode;
+               }
+
+               const { filePath, fileURL } = await uploadProcess;
+               newSong.image_file_path = filePath;
+               newSong.image_url = fileURL;
             }
 
             const index = updateSongsListValue(newSong, newUserSongs);
@@ -203,8 +226,6 @@ export default function SongItemEditForm({
                setErrorToast({ message: "New user song Error" });
                return;
             }
-
-            await deleteFile({ filePath: data.image_file_path });
          }
 
          // >>> local

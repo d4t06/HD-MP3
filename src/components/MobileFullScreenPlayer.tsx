@@ -5,7 +5,6 @@ import {
   useState,
   useEffect,
   useMemo,
-  ReactNode,
   MouseEvent,
 } from "react";
 import {
@@ -33,11 +32,9 @@ import {
   ScrollText,
   SongThumbnail,
   SettingMenu,
-  Modal,
   Control,
   LyricsList,
   MobileSongItem,
-  PopupWrapper,
 } from "../components";
 
 type Props = {
@@ -69,17 +66,13 @@ export default function MobileFullScreenPlayer({
   const { userInfo } = useAuthStore();
   const { song: songInStore } = useSelector(selectAllSongStore);
   const { actuallySongs } = useActuallySongs();
-  // const [songLists, setSongLists] = useState<Song[]>([]);
 
-  // const [songLyric, setSongLyric] = useState<Lyric>({ base: "", real_time: [] });
-  const [isOpenSetting, setIsOpenSetting] = useState(false);
+  // state
   const [isClickSetting, setIsClickSetting] = useState(false);
-
   const [activeTab, setActiveTab] = useState<string>("Playing");
-  const [settingComp, setSettingComp] = useState<ReactNode>();
   const [scalingImage, _setScalingImage] = useState(false);
 
-  // const prevTab = useRef(activeTab);
+  // ref
   const volumeLineWidth = useRef<number>();
   const volumeLine = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
@@ -90,10 +83,9 @@ export default function MobileFullScreenPlayer({
 
   // use hooks
   useBgImage({ bgRef, songInStore });
-  const songLyric = useGetSongLyric({ songInStore });
+  const songLyric = useGetSongLyric({ songInStore, audioEle });
 
   const windowHeight = useMemo(() => window.innerHeight, [])
-
 
   const { refs, floatingStyles, context } = useFloating({
     open: isClickSetting,
@@ -102,11 +94,9 @@ export default function MobileFullScreenPlayer({
     middleware: [offset(10), flip(), shift()],
     whileElementsMounted: autoUpdate,
   });
-
   const click = useClick(context);
   const dismiss = useDismiss(context);
   const role = useRole(context);
-
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
   const findParent = (ele: HTMLDivElement) => {
@@ -124,7 +114,6 @@ export default function MobileFullScreenPlayer({
     opacity: "0",
     padding: "0px 5px",
     border: "none",
-    // marginTop: "-5px"
   };
 
   const findPrevSibling = (ele: HTMLDivElement) => {
@@ -161,7 +150,7 @@ export default function MobileFullScreenPlayer({
     const lyricContainerEle = lyricContainerRef.current as HTMLElement
 
     containerEle.style.height = `${windowHeight - 65}px`;
-    lyricContainerEle.style.height = `${windowHeight - (65 + 60 + 20)}px`;
+    lyricContainerEle.style.height = `${windowHeight - (65 + 60 + 20) - 120}px`;
 
   }, []);
 
@@ -259,8 +248,6 @@ export default function MobileFullScreenPlayer({
                 <SettingMenu
                   loggedIn={!!userInfo.email}
                   setIsOpenMenu={setIsClickSetting}
-                  setIsOpenSetting={setIsOpenSetting}
-                  setSettingComp={setSettingComp}
                 />
               </div>
             </FloatingFocusManager>
@@ -294,7 +281,7 @@ export default function MobileFullScreenPlayer({
               }`}
             >
               <div className="group flex-grow overflow-hidden">
-                <div className="h-[30px]">
+                <div className="h-[30px] mask-image-horizontal">
                   {useMemo(
                     () => (
                       <ScrollText
@@ -309,7 +296,7 @@ export default function MobileFullScreenPlayer({
                     [songInStore, activeTab]
                   )}
                 </div>
-                <div className="h-[30px]">
+                <div className="h-[30px] mask-image-horizontal">
                   {useMemo(
                     () => (
                       <ScrollText
@@ -336,7 +323,7 @@ export default function MobileFullScreenPlayer({
 
           <div
           ref={lyricContainerRef}
-            className={`fixed bottom-0 overflow-hidden ${
+            className={`fixed bottom-[120px] overflow-hidden right-0 left-0 ${
               activeTab === "Lyric" ? "block" : "hidden"
             }`}
           >
@@ -353,7 +340,7 @@ export default function MobileFullScreenPlayer({
           {/* player */}
           <div
             className={`absolute bottom-[30px] left-[15px] right-[15px] ${
-              activeTab !== "Playing" && "opacity-0 pointer-events-none h-[0px] mb-[0px]"
+              activeTab === "Songs" && "opacity-0 pointer-events-none h-[0px] mb-[0px]"
             }`}
           >
             <div className="flex flex-col justify-start flex-1">
@@ -377,12 +364,6 @@ export default function MobileFullScreenPlayer({
           </div>
         </div>
       </div>
-
-      {isOpenSetting && (
-        <Modal setOpenModal={setIsOpenSetting}>
-          <PopupWrapper theme={theme}>{settingComp}</PopupWrapper>
-        </Modal>
-      )}
     </div>
   );
 }

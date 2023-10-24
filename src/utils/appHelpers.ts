@@ -6,6 +6,9 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
 
+const RENDER_URL = "https://express-zingmp3.onrender.com";
+const LOCAL_URL = "http://localhost:3000";
+
 export const generateId = (name: string): string => {
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.
    const convertToEn = (str: string) => {
@@ -51,9 +54,10 @@ export const parserSong = async (songFile: File) => {
 };
 
 export const getBlurhashEncode = async (blob: Blob) => {
-   console.log("get blurHash encode");
+   console.log("Get blurHash encode");
+   const start = Date.now();
 
-   const res = await fetch("https://express-zingmp3.onrender.com/api/image/encode", {
+   const res = await fetch(LOCAL_URL + "/api/image/encode", {
       method: "post",
       body: blob,
    });
@@ -62,7 +66,30 @@ export const getBlurhashEncode = async (blob: Blob) => {
       const data = (await res.json()) as { encode: string };
       if (data) encode = data.encode;
    }
+
+   const consuming = (Date.now() - start) / 1000;
+   console.log("Get blurHash encode finished after", consuming);
    return { encode };
+};
+
+export const optimizeImage = async (imageFile: File) => {
+   const fd = new FormData();
+   fd.append("file", imageFile);
+   const start = Date.now();
+
+   const res = await fetch(LOCAL_URL + "/api/image/optimize", {
+      method: "post",
+      body: fd,
+   });
+   let imageBlob;
+   if (res.ok) {
+      imageBlob = await res.blob();
+   }
+
+   const consuming = (Date.now() - start) / 1000;
+   console.log("Get blurHash encode finished after", consuming);
+
+   return imageBlob;
 };
 
 export const handleTimeText = (duration: number) => {
@@ -95,7 +122,7 @@ export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
       // console.log(songItem.id, "===", song.id, songItem.id === song.id);
       return songItem.id === song.id;
    });
-   
+
    if (index == -1) return;
    userSongs[index] = song;
    return index;

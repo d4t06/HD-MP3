@@ -6,7 +6,6 @@ import {
    ArrowPathIcon,
    Bars3Icon,
    CheckIcon,
-   DocumentMagnifyingGlassIcon,
    DocumentPlusIcon,
    HeartIcon,
    MinusCircleIcon,

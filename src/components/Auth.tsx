@@ -4,12 +4,9 @@ import { ReactNode, useEffect } from "react";
 import { serverTimestamp } from "firebase/firestore";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { useAuthStore } from "../store/AuthContext";
-import { useSongsStore } from "../store/SongsContext";
 
 export default function Auth({ children }: { children: ReactNode }) {
    const [loggedInUser, loading] = useAuthState(auth);
-   const { initial } = useSongsStore();
-
    const { setUserInfo, userInfo } = useAuthStore();
 
    // Because need to fetch data user in other page
@@ -26,12 +23,6 @@ export default function Auth({ children }: { children: ReactNode }) {
                },
                id: loggedInUser?.email as string,
             });
-
-            // when user log in to web site
-            if (initial) {
-               // console.log("user login in");
-               // initSongsContext({});
-            }
 
             setUserInfo({
                status: "finish",

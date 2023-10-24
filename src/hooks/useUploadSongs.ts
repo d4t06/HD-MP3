@@ -3,7 +3,6 @@ import {
    RefObject,
    useRef,
    useState,
-   MutableRefObject,
    useCallback,
    Dispatch,
    SetStateAction,
@@ -23,16 +22,14 @@ import {
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "../store/AuthContext";
 
-type ModalName = "ADD_PLAYLIST" | "MESSAGE";
 type Props = {
    audioRef: RefObject<HTMLAudioElement>;
-   message: MutableRefObject<string>;
-   handleOpenModal?: (name: ModalName) => void;
    admin?: boolean;
    songs?: Song[];
    setSongs?: Dispatch<SetStateAction<Song[]>>;
    firstTempSong: RefObject<HTMLDivElement>;
    testImageRef?: RefObject<HTMLImageElement>;
+   inputRef: RefObject<HTMLInputElement>;
 };
 
 // event listener
@@ -44,7 +41,7 @@ export default function useUploadSongs({
    songs,
    setSongs,
    firstTempSong,
-   testImageRef,
+   inputRef,
 }: Props) {
    // use stores
    const { userInfo } = useAuthStore();
@@ -59,6 +56,12 @@ export default function useUploadSongs({
    const duplicatedFile = useRef<Song[]>([]);
    const actuallyFileIds = useRef<number[]>([]);
    const isDuplicate = useRef(false);
+
+   const finishAndClear = (sts: typeof status) => {
+      const inputEle = inputRef.current as HTMLInputElement;
+      inputEle.value = "";
+      setStatus(sts);
+   };
 
    const handleInputChange = useCallback(
       async (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,7 +100,7 @@ export default function useUploadSongs({
                const songFile = fileLists[i];
                const songData = await parserSong(songFile);
 
-               // console.log("check song data", songData);
+               console.log("check song data", songData);
                if (!songData) {
                   setErrorToast({ message: "Error when parser song" });
                   return;
@@ -114,6 +117,7 @@ export default function useUploadSongs({
                let imageBlob;
                if (songData.image) {
                   imageBlob = new Blob([songData.image], { type: "application/octet-stream" });
+
                   const url = URL.createObjectURL(imageBlob);
                   songFileObject.image_url = url;
                }
@@ -144,7 +148,7 @@ export default function useUploadSongs({
 
             if (userSongs.length + actuallyFileIds.current.length > 20) {
                if (userInfo.role !== "admin") {
-                  setStatus("finish-error");
+                  finishAndClear("finish-error");
                   setErrorToast({ message: "You have reach the upload limit" });
                   return;
                }
@@ -229,7 +233,7 @@ export default function useUploadSongs({
             }
          } catch (error) {
             console.log(error);
-            setStatus("finish-error");
+            finishAndClear("finish-error");
             setErrorToast({ message: "error when upload song file" });
 
             setTempSongs([]);
@@ -265,14 +269,13 @@ export default function useUploadSongs({
             }
             // case admin
             if (isDuplicate.current) {
-               setStatus("finish-error");
+               finishAndClear("finish-error");
                setToasts((t) => [
                   ...t,
                   { id: nanoid(4), title: "warning", desc: "Song duplicate" },
                ]);
             } else {
-               setStatus("finish");
-
+               finishAndClear("finish");
                // if upload gather than 1 file
                if (songsList.length > 1) {
                   setSuccessToast({ message: `${songsList.length} songs uploaded` });
@@ -284,7 +287,7 @@ export default function useUploadSongs({
          } catch (error) {
             console.log(error);
             setErrorToast({ message: "Update user data failed" });
-            setStatus("finish-error");
+            finishAndClear("finish-error");
 
             return;
          }
@@ -317,7 +320,6 @@ export default function useUploadSongs({
             setAddedSongIds((prev) => [...prev, song.id]);
 
             // when song uploaded
-            audioEle.removeEventListener("loadedmetadata", upload);
             URL.revokeObjectURL(audioEle.src);
             setToasts((t) => [
                ...t,
@@ -328,6 +330,7 @@ export default function useUploadSongs({
                },
             ]);
 
+            audioEle.removeEventListener("loadedmetadata", upload);
             resolve();
          };
 

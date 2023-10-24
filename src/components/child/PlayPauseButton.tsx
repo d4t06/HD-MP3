@@ -27,15 +27,15 @@ export default function PlayPauseButton({
 
    const renderIcon = useMemo(() => {
       if (isWaiting) {
-         return <ArrowPathIcon className={"w-[36px] animate-spin"} />;
+         return <ArrowPathIcon className={"w-[36px] max-[549px]:w-[46px] animate-spin"} />;
       } else if (isError && songInStore.name) {
-         return <ExclamationCircleIcon className="w-[30px]" />;
+         return <ExclamationCircleIcon className="w-[30px] max-[549px]:w-[40px]" />;
       }
 
       return isPlaying ? (
-         <PauseCircleIcon className={"w-[50px]"} />
+         <PauseCircleIcon className={"w-[50px] max-[549px]:w-[60px]"} />
       ) : (
-         <PlayCircleIcon className={"w-[50px]"} />
+         <PlayCircleIcon className={"w-[50px] max-[549px]:w-[60px]"} />
       );
    }, [isWaiting, isError, isPlaying]);
 
@@ -44,7 +44,7 @@ export default function PlayPauseButton({
          <button
             className={`p-[5px] ${hoverClasses && hoverClasses} ${
                isWaiting && "pointer-events-none"
-            } inline-flex items-center justify-center w-[50px]`}
+            } inline-flex items-center justify-center w-[50px] max-[549px]:w-[60px]`}
             onClick={() => handlePlayPause()}
          >
             {renderIcon}

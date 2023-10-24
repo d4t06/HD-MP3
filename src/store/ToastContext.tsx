@@ -3,7 +3,6 @@
 import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useState } from "react";
 import { Toast } from "../types";
 import { nanoid } from "nanoid";
-import { ToastPortal } from "../components";
 
 type StateType = {
    toasts: Toast[];

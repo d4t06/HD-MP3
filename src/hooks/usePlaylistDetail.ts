@@ -117,10 +117,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
 
    // get playlist after initial
    useEffect(() => {
-      // console.log("useEffect 1");
-
-      
-
+      console.log("useEffect 1", firstTimeRender.current);
       if (firstTimeRender.current) return;
 
       if (!initial || useSongErrorMsg) return;
@@ -143,9 +140,6 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
       if (!playlistInStore.name || useSongErrorMsg) return;
 
       if (playlistInStore.id !== params.id) return;
-
-      // console.log('in store', playlistInStore.id,'params', params.id);
-
 
       getPlaylistSongs();
    }, [playlistInStore.song_ids]);

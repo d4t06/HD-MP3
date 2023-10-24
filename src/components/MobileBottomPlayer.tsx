@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useEffect } from "react";
+import { Dispatch, FC, SetStateAction } from "react";
 import {
    ForwardIcon,
    PauseCircleIcon,
@@ -22,7 +22,6 @@ interface Props {
 
 const MobileBottomPlayer: FC<Props> = ({
    audioEle,
-   isOpenFullScreen,
    isWaiting,
    setIsOpenFullScreen,
    // idle,
@@ -59,27 +58,11 @@ const MobileBottomPlayer: FC<Props> = ({
       dispatch(setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in }));
    };
 
-   useEffect(() => {
-      if (isOpenFullScreen) return;
-      // audioEle?.addEventListener("pause", handlePause);
-      // audioEle?.addEventListener("waiting", handleWaiting);
-      // audioEle?.addEventListener("play", handlePlay);
-
-      return () => {
-         // audioEle?.removeEventListener("pause", handlePause);
-         // audioEle?.removeEventListener("waiting", handleWaiting);
-         // audioEle?.removeEventListener("play", handlePlay);
-
-         // setIsWaiting(true);
-      };
-   }, [songInStore, isOpenFullScreen]);
-
-   // console.log("check wating", isWaiting);
-   
+   const textColor =  theme.type === 'light' ? 'text-[#333]' : 'text-[#fff]';
 
    return (
       <div
-         className={`fixed bottom-0 w-full h-[70px] border-t z-40  px-[20px] ${theme.bottom_player_bg}`}
+         className={`fixed bottom-0 w-full h-[70px] border-t border-${theme.alpha} z-40  px-[20px] ${theme.bottom_player_bg}`}
       >
          <div className={`flex flex-row  h-full`}>
             <div
@@ -119,7 +102,7 @@ const MobileBottomPlayer: FC<Props> = ({
                   !songInStore.name && "opacity-60 pointer-events-none"
                }`}
             >
-               <button className="p-[4px]" onClick={() => handlePlayPause()}>
+               <button className={`${textColor} p-[4px]`} onClick={() => handlePlayPause()}>
                   {isWaiting ? (
                      <TruckIcon className={"w-[35px]"} />
                   ) : isPlaying ? (
@@ -128,7 +111,7 @@ const MobileBottomPlayer: FC<Props> = ({
                      <PlayCircleIcon className="w-[35px]" />
                   )}
                </button>
-               <button onClick={handleNext} className="p-[4px]">
+               <button onClick={handleNext} className={`${textColor} p-[4px]`}>
                   <ForwardIcon className="w-[35px]" />
                </button>
             </div>

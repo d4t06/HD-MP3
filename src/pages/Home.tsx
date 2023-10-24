@@ -4,7 +4,7 @@ import { ChevronRightIcon, MusicalNoteIcon } from "@heroicons/react/24/outline";
 import { Song } from "../types";
 
 import { selectAllSongStore, setSong, useTheme, useSongsStore, useAuthStore } from "../store";
-import { SongItem, Button, LinkItem, Skeleton, MobileSongItem } from "../components";
+import { SongItem, Button, LinkItem, MobileSongItem } from "../components";
 // hooks
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import {useSongs, useSongItemActions} from '../hooks'

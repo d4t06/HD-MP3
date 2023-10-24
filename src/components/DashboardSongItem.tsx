@@ -2,7 +2,7 @@ import { DocumentIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/o
 import { Dispatch, SetStateAction, forwardRef, useMemo, useState } from "react";
 import { Song, ThemeType } from "../types";
 
-import { Button, Image, PopupWrapper, Modal, SongItemEditForm } from ".";
+import { Button, PopupWrapper, Modal, SongItemEditForm } from ".";
 import { confirmModal } from "./Modal";
 
 import { useToast } from "../store/ToastContext";

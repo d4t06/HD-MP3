@@ -45,7 +45,7 @@ export default function FullScreenPlayer({
 
    // use hooks
    const navigate = useNavigate();
-   const songLyric = useGetSongLyric({ songInStore });
+   const songLyric = useGetSongLyric({ songInStore, audioEle });
    useBgImage({ bgRef, songInStore });
    useScrollSong({
       containerRef,
@@ -85,9 +85,9 @@ export default function FullScreenPlayer({
 
    const classes = {
       button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
-      mainContainer: `fixed inset-0 z-50 bg-zinc-900  overflow-hidden text-white  ${
+      mainContainer: `fixed inset-0 bg-zinc-900 bottom-[0]  overflow-hidden text-white  ${
          isOpenFullScreen ? "translate-y-0" : "translate-y-full"
-      } transition-[transform] duration-300 ease-in-out delay-300`,
+      } transition-[transform] duration-[.4s] linear delay-100`,
       bg: `absolute h-[100vh] w-[100vw] -z-10 inset-0 bg-no-repeat bg-cover bg-center blur-[99px] transition-[background] duration-100`,
       overplay: `absolute h-[100vh] w-[100vw] inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`,
       header: `header-left flex px-10 py-[20px] relative h-[75px] max-[549px]:px-[10px]`,

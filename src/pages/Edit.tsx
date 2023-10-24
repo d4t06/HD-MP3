@@ -1,6 +1,6 @@
 import { Lyric, Song } from "../types";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { routes } from "../routes";
 
@@ -8,7 +8,7 @@ import LyricEditor from "../components/LyricEditor";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { selectAllSongStore, useSongsStore, useTheme } from "../store";
 import { useSongs } from "../hooks";
-import { ArrowPathIcon, ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
   const { theme } = useTheme();

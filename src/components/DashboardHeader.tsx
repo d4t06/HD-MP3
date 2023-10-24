@@ -14,17 +14,15 @@ import {
    useRole,
    useInteractions,
 } from "@floating-ui/react";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { Modal, PopupWrapper, SettingMenu } from ".";
+import { SettingMenu } from ".";
 
 export default function DashboardHeader() {
    const { theme } = useTheme();
    const [loggedInUser] = useAuthState(auth);
 
-   const [settingComp, setSettingComp] = useState<ReactNode>();
    const [isOpenMenu, setIsOpenMenu] = useState(false);
-   const [isOpenModal, setIsOpenModal] = useState(false);
 
    // floating ui
    const { refs, floatingStyles, context } = useFloating({
@@ -84,17 +82,9 @@ export default function DashboardHeader() {
                   <SettingMenu
                      loggedIn={!!loggedInUser?.email}
                      setIsOpenMenu={setIsOpenMenu}
-                     setIsOpenSetting={setIsOpenModal}
-                     setSettingComp={setSettingComp}
                   />
                </div>
             </FloatingFocusManager>
-         )}
-
-         {isOpenModal && (
-            <Modal setOpenModal={setIsOpenModal}>
-               <PopupWrapper theme={theme}>{settingComp}</PopupWrapper>
-            </Modal>
          )}
       </>
    );
