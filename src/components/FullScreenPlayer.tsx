@@ -88,22 +88,22 @@ export default function FullScreenPlayer({
       mainContainer: `fixed inset-0 bg-zinc-900 bottom-[0]  overflow-hidden text-white  ${
          isOpenFullScreen ? "translate-y-0" : "translate-y-full"
       } transition-[transform] duration-[.4s] linear delay-100`,
-      bg: `absolute h-[100vh] w-[100vw] -z-10 inset-0 bg-no-repeat bg-cover bg-center blur-[99px] transition-[background] duration-100`,
+      bg: `absolute h-[100vh] w-[100vw] -z-10 inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,
       overplay: `absolute h-[100vh] w-[100vw] inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`,
-      header: `header-left flex px-10 py-[20px] relative h-[75px] max-[549px]:px-[10px]`,
-      headerRight: `flex items-center absolute right-10 gap-[10px] max-[549px]:right-[10px] top-0 h-full ${
+      header: `header-left flex px-10 py-[20px] relative h-[75px]`,
+      headerRight: `flex items-center absolute right-10 gap-[10px] top-0 h-full ${
          idle ? "hidden" : ""
       }`,
 
-      contentContainer: `h-[calc(100%-100px)] max-[549px]:h-[calc(100%-150px)] relative overflow-hidden`,
+      contentContainer: `h-[calc(100%-100px)] relative overflow-hidden`,
       songsListTab: `${
          activeTab !== "Songs" ? "opacity-0" : ""
-      } relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth max-[549px]:px-[150px] px-[calc(50%-390px/2)]`,
+      } relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-390px/2)]`,
 
-      absoluteButton: `p-[8px] bg-gray-500 bg-opacity-50 text-xl fixed top-1/2 -translate-y-1/2 max-[549px]:hidden opacity-[.5] hover:opacity-100 ${theme.content_hover_text}`,
+      absoluteButton: `p-[8px] bg-gray-500 text-xl fixed opacity-100 bg-opacity-[.6] ${theme.content_hover_text}`,
       songNameSinger: "relative text-center text-white text-[14px] opacity-80",
       lyricTabContainer: "px-[40px] h-full w-full flex items-center justify-center flex-row",
-      lyricContainer: "flex-grow ml-[50px] max-[549px]:ml-0 h-full overflow-hidden",
+      lyricContainer: "flex-grow ml-[50px] h-full overflow-hidden",
    };
 
    // define jsx
@@ -184,7 +184,7 @@ export default function FullScreenPlayer({
                />
                {/* right */}
                <div className={`${classes.headerRight}`}>
-                  {songInStore.by != "admin" && (
+                  {songInStore.by != "admin" && activeTab === 'Lyric' && (
                      <Button
                         onClick={() => handleEdit()}
                         variant={"circle"}

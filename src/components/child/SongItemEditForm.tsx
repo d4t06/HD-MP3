@@ -3,8 +3,6 @@ import { Song, ThemeType } from "../../types";
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "../../utils/firebaseHelpers";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import { parseLegacy } from "id3js/lib/id3Frame";
-
 import { Image, Button } from "../../components";
 import { useToast, useAuthStore } from "../../store";
 import { useEditForm } from "../../hooks";
@@ -17,8 +15,6 @@ type Props = {
    setUserSongs?: (userSongs: Song[]) => void;
    theme: ThemeType & { alpha: string };
 };
-
-// https://e-cdns-images.dzcdn.net/images/cover/a1c402bb54906863dadc4df4325a1627/500x500-000000-80-0-0.jpg
 
 export default function SongItemEditForm({
    data,
@@ -207,7 +203,7 @@ export default function SongItemEditForm({
 
                const uploadProcess = uploadBlob({
                   blob: imageBlob,
-                  folder: "/songs/",
+                  folder: "/images/",
                   songId: newSong.id,
                });
 

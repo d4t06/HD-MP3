@@ -22,3 +22,7 @@
 
 ### update thứ 5 19/10
 - Sửa lại giao diện thêm lyric
+
+### update thứ 3 24/10
+- Sửa chức năng chỉnh sửa bài hát
+- Issue: blurhash encode chạy tồn nhiều thời gian

@@ -105,10 +105,6 @@ export default function PlaylistDetail() {
          );
 
          if (!songInStore.song_in.includes(playlistInStore.name)) {
-            // console.log(
-            //    "set Songs",
-            //    playlistSongs.map((s) => s.name)
-            // );
             setActuallySongs(playlistSongs);
          }
       }

@@ -63,7 +63,7 @@ const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
          setSongsList(userSongs);
       }
       console.log("set actually songs");
-   }, [songInStore.song_in, initial, actuallySongs, userSongs.length]);
+   }, [songInStore.song_in, initial, actuallySongs, userSongs]);
 
    return (
       <ActuallySongsContext.Provider

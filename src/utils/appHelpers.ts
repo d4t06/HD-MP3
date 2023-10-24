@@ -57,7 +57,7 @@ export const getBlurhashEncode = async (blob: Blob) => {
    console.log("Get blurHash encode");
    const start = Date.now();
 
-   const res = await fetch(LOCAL_URL + "/api/image/encode", {
+   const res = await fetch(RENDER_URL + "/api/image/encode", {
       method: "post",
       body: blob,
    });
@@ -76,8 +76,10 @@ export const optimizeImage = async (imageFile: File) => {
    const fd = new FormData();
    fd.append("file", imageFile);
    const start = Date.now();
+   console.log("Optimize image");
 
-   const res = await fetch(LOCAL_URL + "/api/image/optimize", {
+
+   const res = await fetch(RENDER_URL + "/api/image/optimize", {
       method: "post",
       body: fd,
    });
@@ -87,7 +89,7 @@ export const optimizeImage = async (imageFile: File) => {
    }
 
    const consuming = (Date.now() - start) / 1000;
-   console.log("Get blurHash encode finished after", consuming);
+   console.log("Optimize finished after", consuming);
 
    return imageBlob;
 };

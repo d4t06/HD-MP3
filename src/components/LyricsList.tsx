@@ -27,9 +27,11 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
             <LyricItem
                firstTimeRender={firstTimeRender}
                scrollBehavior={scrollBehavior}
+               containerRef={containerRef}
                key={index}
                done={!inRange && currentTime > lyricItem.end}
                active={inRange}
+               currentTime={currentTime}
                className="mb-[30px]"
             >
                {lyricItem.text}
@@ -40,6 +42,10 @@ const LyricsList: FC<Props> = ({ audioEle, songLyric, className }) => {
 
    useEffect(() => {
       if (!audioEle) return;
+
+      if (!currentTime) {
+         handleUpdateTime();
+      }
 
       audioEle.addEventListener("timeupdate", handleUpdateTime);
 
