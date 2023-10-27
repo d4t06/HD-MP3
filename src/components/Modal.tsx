@@ -27,6 +27,7 @@ const confirmModal = ({
    className?: string,
    setOpenModal?: Dispatch<SetStateAction<boolean>>;
 }) => {
+   
    return (
       <div className={className || 'w-[30vw]'}>
          <h1 className="text-[20px] text-red-500 font-semibold">{label || "Wait a minute"}</h1>

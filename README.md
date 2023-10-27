@@ -26,3 +26,9 @@
 ### update thứ 3 24/10
 - Sửa chức năng chỉnh sửa bài hát
 - Issue: blurhash encode chạy tồn nhiều thời gian
+
+
+### update thứ 6/27/20
+- Thêm hook useDebounce khi click scroll song list
+
+
