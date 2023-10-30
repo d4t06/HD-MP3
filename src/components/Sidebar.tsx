@@ -3,51 +3,70 @@ import {
    Cog6ToothIcon,
    ArrowLeftOnRectangleIcon,
    MusicalNoteIcon,
+   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
    useFloating,
    autoUpdate,
    offset,
-   flip,
-   shift,
    FloatingFocusManager,
    useClick,
    useDismiss,
    useRole,
    useInteractions,
 } from "@floating-ui/react";
-import { useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
 
-import { Button, SettingMenu, Image, Skeleton } from "../components";
+import {
+   Button,
+   SettingMenu,
+   Image,
+   Skeleton,
+   confirmModal,
+   Modal,
+   PopupWrapper,
+} from "../components";
 
 import { auth } from "../config/firebase";
 import { Link } from "react-router-dom";
 import { routes } from "../routes";
-import { useTheme, useAuthStore } from "../store";
+import { useTheme, useAuthStore, useSongsStore } from "../store";
+import { themes } from "../config/themes";
+import ThemeItem from "./child/ThemeItem";
+import { ThemeType } from "../types";
+import { signOut } from "firebase/auth";
+import { initialState } from "../store/AuthContext";
 
 export default function Sidebar() {
    // use store
-   const { theme } = useTheme();
-   const { userInfo } = useAuthStore();
+   const { theme, setTheme } = useTheme();
+   const { userInfo, setUserInfo } = useAuthStore();
    const [loggedInUser, loading] = useAuthState(auth);
    const [signInWithGoogle] = useSignInWithGoogle(auth);
+   const { initSongsContext, adminSongs, adminPlaylists } = useSongsStore();
 
    // state
    const [isOpenMenu, setIsOpenMenu] = useState(false);
+   const [isOpenModal, setIsOpenModal] = useState(false);
+   const modalName = useRef<"theme" | "info" | "confirm">("theme");
 
    // floating ui
    const { refs, floatingStyles, context } = useFloating({
       open: isOpenMenu,
       onOpenChange: setIsOpenMenu,
       placement: "right-start",
-      middleware: [offset(0), flip(), shift()],
+      middleware: [offset(0)],
       whileElementsMounted: autoUpdate,
    });
    const click = useClick(context);
    const dismiss = useDismiss(context);
    const role = useRole(context);
-   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
+   const { getReferenceProps, getFloatingProps } = useInteractions([
+      click,
+      dismiss,
+      role,
+   ]);
 
    const signIn = () => {
       signInWithGoogle();
@@ -69,6 +88,44 @@ export default function Sidebar() {
       </div>
    );
 
+   // modal
+
+   const handleSetTheme = useCallback((theme: ThemeType) => {
+      localStorage.setItem("theme", JSON.stringify(theme.id));
+      setTheme(theme);
+   }, []);
+
+   const handleSignOut = async () => {
+      try {
+         await signOut(auth);
+         // clear auth store
+         setUserInfo({ ...initialState.userInfo, status: "finish" });
+         // clear songs store
+         initSongsContext({ adminSongs, adminPlaylists });
+
+         // closeModal();
+      } catch (error) {
+         console.log("signOut error", { messsage: error });
+      } finally {
+         setIsOpenModal(false);
+      }
+   };
+
+   const renderHeader = (title: string) => {
+      return (
+         <div className="flex justify-between py-[15px]">
+            <h1 className="text-[26px] font-semibold">{title}</h1>
+            <Button
+               onClick={() => setIsOpenModal(false)}
+               size={"normal"}
+               variant={"circle"}
+            >
+               <XMarkIcon />
+            </Button>
+         </div>
+      );
+   };
+
    const classes = {
       container: `pt-[30px] w-[180px] flex-shrink-0 border-r-[1px] h-screen overflow-y-auto ${theme.side_bar_bg} border-${theme.alpha}`,
       button: `px-[10px] py-[5px] w-full text-[14px] font-[500] ${theme.content_hover_text}`,
@@ -79,7 +136,89 @@ export default function Sidebar() {
       imageFrame: `w-[36px] h-[36px] flex-shrink-0 rounded-full overflow-hidden ${
          !loggedInUser?.photoURL ? "flex items-center justify-center bg-[#ccc]" : ""
       }`,
+      popupWrapper: "w-[700px] max-w-[90vw] max-[549px]:w-[85vw]",
+      themeContainer: "overflow-auto no-scrollbar h-[calc(70vh-60px)]  pb-[5vh]",
+      themeList: "flex flex-row -mx-[10px] flex-wrap gap-y-[20px]",
+      themeItem: "w-[25%] px-[10px] max-[549px]:w-[50%]",
    };
+
+   const infoScreen = useMemo(
+      () => (
+         <div className={classes.popupWrapper}>
+            {renderHeader("Zingmp3 clone")}
+            <div className="">
+               <h5 className="text-lg font-bold">Các công nghệ sử dụng:</h5>
+               <ul>
+                  {/* <li className="text-lg my-[10px] ml-[20px]">- React - Vite</li>
+                 <li className="text-lg my-[10px]  ml-[20px]">- Tailwind css</li> */}
+                  {/* <li className="text-lg my-[10px]  ml-[20px]">
+                - Này tui lấy của người ta nên hông biết &#128535; &#128535; &#128535;
+              </li> */}
+               </ul>
+               <a href="asldj" target="_blank" className="text-lg font-bold">
+                  #Github
+               </a>
+            </div>
+         </div>
+      ),
+      []
+   );
+
+   const darkTheme: JSX.Element[] = [];
+   const lightTheme: JSX.Element[] = [];
+
+   useMemo(() => {
+      themes.forEach((themeItem, index) => {
+         const active = themeItem.id === theme.id;
+         if (themeItem.type === "dark")
+            return darkTheme.push(
+               <ThemeItem
+                  active={active}
+                  key={index}
+                  theme={themeItem}
+                  onClick={handleSetTheme}
+               />
+            );
+
+         lightTheme.push(
+            <ThemeItem
+               active={active}
+               key={index}
+               theme={themeItem}
+               onClick={handleSetTheme}
+            />
+         );
+      });
+   }, [theme]);
+
+   const themesScreen = useMemo(
+      () => (
+         <div className={classes.popupWrapper}>
+            {renderHeader("Appearance")}
+            <div className={classes.themeContainer}>
+               <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
+               <div className={classes.themeList}>{darkTheme}</div>
+
+               <h2 className="text-md font-semibold mb-[10px] mt-[30px]">Light</h2>
+               <div className={classes.themeList}>{lightTheme}</div>
+            </div>
+         </div>
+      ),
+      [theme]
+   );
+
+   const logoutModal = useMemo(
+      () =>
+         confirmModal({
+            loading: false,
+            label: "Log out ?",
+            theme: theme,
+            callback: handleSignOut,
+            className: "w-[auto]",
+            setOpenModal: setIsOpenModal,
+         }),
+      [theme]
+   );
 
    return (
       <div className={`${classes.container} ${classes.text}`}>
@@ -93,7 +232,9 @@ export default function Sidebar() {
                         <Image src={loggedInUser.photoURL!} classNames="w-full" />
                      ) : (
                         <h1 className="text-[20px]">
-                           {loggedInUser?.email ? loggedInUser?.displayName?.charAt(1) : "Z"}
+                           {loggedInUser?.email
+                              ? loggedInUser?.displayName?.charAt(1)
+                              : "Z"}
                         </h1>
                      )}
                   </div>
@@ -132,9 +273,9 @@ export default function Sidebar() {
                   <button
                      ref={refs.setReference}
                      {...getReferenceProps()}
-                     className={`flex items-center hover:brightness-75 ${classes.button} ${
-                        isOpenMenu && theme.content_text
-                     }`}
+                     className={`flex items-center hover:brightness-75 ${
+                        classes.button
+                     } ${isOpenMenu && theme.content_text}`}
                   >
                      <Cog6ToothIcon className={classes.icon} />
                      Settings
@@ -146,14 +287,29 @@ export default function Sidebar() {
          {isOpenMenu && (
             <FloatingFocusManager context={context} modal={false}>
                <div
-                  className="z-[99]"
+                  className="z-[99] floating-ui"
                   ref={refs.setFloating}
                   style={floatingStyles}
                   {...getFloatingProps()}
                >
-                  <SettingMenu loggedIn={!!userInfo.email} setIsOpenMenu={setIsOpenMenu} />
+                  <SettingMenu
+                     loggedIn={!!userInfo.email}
+                     setIsOpenMenu={setIsOpenMenu}
+                     setIsOpenModal={setIsOpenModal}
+                     modalName={modalName}
+                  />
                </div>
             </FloatingFocusManager>
+         )}
+
+         {isOpenModal && (
+            <Modal setOpenModal={setIsOpenModal}>
+               <PopupWrapper theme={theme}>
+                  {modalName.current === "confirm" && logoutModal}
+                  {modalName.current === "info" && infoScreen}
+                  {modalName.current === "theme" && themesScreen}
+               </PopupWrapper>
+            </Modal>
          )}
       </div>
    );

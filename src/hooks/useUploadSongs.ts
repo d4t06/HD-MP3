@@ -133,10 +133,13 @@ export default function useUploadSongs({
                   console.log(">>>duplicate");
                   isDuplicate.current = true;
                   duplicatedFile.current.push(songFileObject);
+
                   continue;
                }
 
                songsList.push(songFileObject);
+
+               
 
                // add actuallyFileIds, and assign for_song_id, imageBlob to actuallyFile
                actuallyFileIds.current = [...actuallyFileIds.current, i];
@@ -145,6 +148,8 @@ export default function useUploadSongs({
                   imageBlob: Blob;
                });
             }
+
+
 
             if (userSongs.length + actuallyFileIds.current.length > 20) {
                if (userInfo.role !== "admin") {

@@ -6,7 +6,7 @@ import { ToastPortal } from "./components";
 function App() {
    return (
       <>
-         <Router>
+         <Router basename="React-Zingmp3">
             <Routes>
                {publicRoutes.map((route, index) => {
                   let DynamicLayout;

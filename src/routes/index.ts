@@ -3,14 +3,14 @@ import DashBoardLayout from "../layout/DashBoardLayout";
 import { Home, Edit, Dashboard, PlaylistDetail, MySongs, DashboardEdit } from "../pages";
 
 const routes = {
-   Home: "/React-Zingmp3",
-   Dashboard: "/React-Zingmp3/dashboard",
-   DashboardEdit: "/React-Zingmp3/dashboard/edit/:id",
+   Home: "/",
+   Dashboard: "/dashboard",
+   DashboardEdit: "/dashboard/edit/:id",
 
-   MySongs: "/React-Zingmp3/mysongs",
-   MobileMySongs: "/React-Zingmp3/mobile-mysongs",
-   Playlist: "/React-Zingmp3/mysongs/playlist",
-   Edit: "/React-Zingmp3/mysongs/edit/:id",
+   MySongs: "/mysongs",
+   MobileMySongs: "/mobile-mysongs",
+   Playlist: "/mysongs/playlist",
+   Edit: "/mysongs/edit/:id",
 };
 
 export type PlaylistParamsType = {

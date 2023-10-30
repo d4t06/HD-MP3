@@ -340,7 +340,7 @@ export default function Control({
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
       buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] h-[50px]`,
       processContainer: `flex flex-row items-center h-[30px]`,
-      processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-400 `,
+      processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
       currentTime: `text-gray-500 text-[14px] font-semibold`,
       duration: `text-[14px] font-semibold`,

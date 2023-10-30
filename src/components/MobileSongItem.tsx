@@ -105,7 +105,7 @@ const MobileSongItem = ({
                {/* song image */}
                <div className="flex-grow flex" onClick={e => onClick(e)}>
                   <div className={`${classes.imageFrame}`}>
-                     <Image src={data.image_url} />
+                     <Image blurHashEncode={data.blurhash_encode} src={data.image_url} />
 
                      {/* hidden when in process and in list */}
                      {active && (

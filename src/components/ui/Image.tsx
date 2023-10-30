@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {useRef, useState } from "react";
 import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
 
@@ -17,9 +17,9 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
       setImageLoaded(true);
 
       if (!src) return;
-      if (src?.includes('blob')) {
-         console.log('revoke');
-         URL.revokeObjectURL(src)
+      if (src?.includes("blob")) {
+         console.log("revoke");
+         URL.revokeObjectURL(src);
       }
    };
 
@@ -33,45 +33,45 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
       !!onError ? [onError(), defaultHandleError()] : defaultHandleError();
    };
 
-   useEffect(() => {
-      // if no have image (use default placeholder png)
-      if (!src) {
-         defaultHandleError();
-         return;
-      }
+   // useEffect(() => {
+   //    // if no have image (use default placeholder png)
+   //    if (!src) {
+   //       defaultHandleError();
+   //       return;
+   //    }
 
-      const imageEle = imageRef.current as HTMLImageElement;
+   //    const imageEle = imageRef.current as HTMLImageElement;
 
-      if (imageEle) {
-         imageEle.addEventListener("load", handleLoadImage);
-         imageEle.addEventListener("error", handleError);
-      }
+   //    if (imageEle) {
+   //       imageEle.addEventListener("load", handleLoadImage);
+   //       imageEle.addEventListener("error", handleError);
+   //    }
 
-      return () => {
-         if (imageEle) {
-            imageEle.removeEventListener("load", handleLoadImage);
-            imageEle.removeEventListener("error", handleError);
-         }
-      };
-   }, []);
+   //    return () => {
+   //       if (imageEle) {
+   //          imageEle.removeEventListener("load", handleLoadImage);
+   //          imageEle.removeEventListener("error", handleError);
+   //       }
+   //    };
+   // }, []);
 
    return (
       <>
          {!imageLoaded && (
             <>
                {blurHashEncode ? (
-                  <Blurhash
-                     hash={blurHashEncode}
-                     height={"100%"}
-                     width={"100%"}
-                  />
+                  <Blurhash hash={blurHashEncode} height={"100%"} width={"100%"} />
                ) : (
                   <Skeleton className="w-full h-0" />
                )}
             </>
          )}
          <img
-            className={`${classNames ? classNames : ""} w-full ${!imageLoaded ? "hidden" : ""}`}
+            onLoad={handleLoadImage}
+            onError={handleError}
+            className={`${classNames ? classNames : ""} w-full ${
+               !imageLoaded ? "hidden" : ""
+            }`}
             src={src || "https://placehold.co/100"}
             ref={imageRef}
          />

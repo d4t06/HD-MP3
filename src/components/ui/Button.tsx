@@ -45,7 +45,7 @@ const Button: FC<Props> = ({
    ...props
 }) => {
    return (
-      <button onClick={(e) => onClick ? onClick(e) : ''} {...props} className={buttonVariant({variant, size, className})} disabled={isLoading}>
+      <button type="button" onClick={(e) => onClick ? onClick(e) : ''} {...props} className={buttonVariant({variant, size, className})} disabled={isLoading}>
          {isLoading ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : null}
          {!isLoading && children}
       </button>

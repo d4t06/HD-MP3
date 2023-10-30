@@ -14,13 +14,17 @@ const DefaultLayout: FC<Props> = ({ children }) => {
    const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
    const classes = {
-      container: `w-full overflow-y-auto overflow-x-hidden ${inEdit ? "h-[100vh]" : "h-[calc(100vh)] pb-[90px]"} max-[549px]:h-full max-[549px]:pb-[70px]`,
+      container: `w-full overflow-y-auto overflow-x-hidden ${
+         inEdit ? "h-[100vh]" : "h-[calc(100vh)] pb-[90px]"
+      } max-[549px]:h-full max-[549px]:pb-[70px]`,
       content: "px-[40px] max-[549px]:px-[15px]",
-      page: `min-h-screen flex overflow-hidden ${theme.type === "dark" ? "text-white" : "text-[#333]"} ${theme.container}`,
+      page: `min-h-screen flex overflow-hidden ${
+         theme.type === "dark" ? "text-white" : "text-[#333]"
+      } ${theme.container}`,
    };
 
-   return (
-      <>
+   const content = useMemo(
+      () => (
          <div className={classes.page}>
             {window.innerWidth >= 550 && <Sidebar />}
             <div className={classes.container}>
@@ -30,7 +34,10 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 
             <Player />
          </div>
-      </>
+      ),
+      [theme, location]
    );
+
+   return content;
 };
 export default DefaultLayout;

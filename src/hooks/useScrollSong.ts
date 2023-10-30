@@ -3,34 +3,23 @@ import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 
 type Props = {
-  containerRef?: RefObject<HTMLDivElement>;
-  songItemRef?: RefObject<HTMLDivElement>;
-  firstTimeRender: MutableRefObject<Boolean>;
-  isOpenFullScreen?: boolean;
+   containerRef?: RefObject<HTMLDivElement>;
+   songItemRef?: RefObject<HTMLDivElement>;
+   firstTimeRender: MutableRefObject<Boolean>;
+   isOpenFullScreen?: boolean;
 };
 
 export default function useScrollSong({
-  containerRef,
-  songItemRef,
-  firstTimeRender,
-  isOpenFullScreen,
+   containerRef,
+   songItemRef,
+   firstTimeRender,
+   isOpenFullScreen,
 }: Props) {
-  const { song: songInStore } = useSelector(selectAllSongStore);
-  if (!scroll || !containerRef || !songItemRef) return;
+   const { song: songInStore } = useSelector(selectAllSongStore);
 
-  useEffect(() => {
-    if (firstTimeRender.current) {
-      firstTimeRender.current = false;
-      return;
-    }
+   const scrollToActiveSong = () => {
+      if (!songItemRef || !containerRef) return;
 
-    if (!songInStore.name) return;
-
-    if (!isOpenFullScreen) {
-      return;
-    }
-
-    if (containerRef && songItemRef) {
       const windowWidth = window.innerWidth;
 
       const songItemEle = songItemRef.current as HTMLElement;
@@ -47,25 +36,47 @@ export default function useScrollSong({
 
       // if element not in screen
       if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
-        containerEle.style.scrollBehavior = "auto";
+         containerEle.style.scrollBehavior = "auto";
+      } else {
+         containerEle.style.scrollBehavior = "smooth";
       }
 
       // on the left side
       let newScroll = containerEle.scrollLeft;
-      newScroll -= needToScroll;
       if (rightDiff > lefDiff) {
-        containerEle.style.scrollBehavior = "smooth";
-        containerEle.scrollLeft = newScroll;
+         setTimeout(() => {
+            containerEle.scrollLeft = newScroll - needToScroll;
+         }, 300);
 
-        // on the right side
+         // on the right side
       } else if (rightDiff < lefDiff) {
-        newScroll += needToScroll;
-        containerEle.style.scrollBehavior = "smooth";
-        containerEle.scrollLeft = newScroll;
+         // newScroll += needToScroll;
+         setTimeout(() => {
+            containerEle.scrollLeft = newScroll + needToScroll;
+         }, 300);
+      }
+   };
+
+   useEffect(() => {
+      if (!scroll || !containerRef || !songItemRef) return;
+
+      if (firstTimeRender.current) {
+         firstTimeRender.current = false;
+         return;
       }
 
-    } else {
-      console.log("element undefined");
-    }
-  }, [songInStore, isOpenFullScreen]);
+      if (!songInStore.name) return;
+
+      if (!isOpenFullScreen) {
+         return;
+      }
+
+      if (containerRef) {
+         scrollToActiveSong();
+      } else {
+         console.log("element undefined");
+      }
+   }, [songInStore, isOpenFullScreen]);
+
+   return { scrollToActiveSong };
 }

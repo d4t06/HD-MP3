@@ -1,86 +1,70 @@
 import { MutableRefObject, RefObject, useEffect, useRef } from "react";
 
 interface Props {
-  children: string;
-  active: boolean;
-  done: boolean;
-  firstTimeRender: MutableRefObject<boolean>;
-  scrollBehavior?: MutableRefObject<ScrollBehavior>;
-  containerRef?: RefObject<HTMLDivElement>;
-  inUpload?: boolean;
-  currentTime?: number;
-  className?: string;
+   children: string;
+   active: boolean;
+   done: boolean;
+   firstTimeRender: MutableRefObject<boolean>;
+   scrollBehavior?: MutableRefObject<ScrollBehavior>;
+   containerRef?: RefObject<HTMLDivElement>;
+   inUpload?: boolean;
+   currentTime?: number;
+   className?: string;
 }
 
 export default function LyricItem({
-  children,
-  active,
-  done,
-  firstTimeRender,
-  inUpload,
-  className,
-  scrollBehavior,
-//   currentTime,
+   children,
+   active,
+   done,
+   firstTimeRender,
+   inUpload,
+   className,
+   scrollBehavior,
+}: //   currentTime,
 //   containerRef,
-}: Props) {
-  const lyricRef = useRef<HTMLParagraphElement>(null);
+Props) {
+   const lyricRef = useRef<HTMLParagraphElement>(null);
 
-  const handleScroll = () => {
-    const node = lyricRef.current as HTMLElement;
-    scroll(node);
+   const handleScroll = () => {
+      const node = lyricRef.current as HTMLElement;
+      scroll(node);
+   };
 
-   //  if (inUpload) {
-   //     return;
-   //    }
+   const scroll = (ele: HTMLElement) => {
+      // console.log("scroll");
 
-   //  if (containerRef && currentTime) {
-   //    const containerEle = containerRef.current as HTMLDivElement;
-   //    const rect = node.getBoundingClientRect();
+      ele.scrollIntoView({
+         behavior: scrollBehavior?.current || "smooth",
+         block: "center",
+      });
+   };
 
-   //    const isOverFlow = rect.top > containerEle.offsetHeight;
-   //    const isContain = rect.top > containerEle.offsetHeight / 2;
+   useEffect(() => {
+      if (active) {
+         if (firstTimeRender.current) {
+            firstTimeRender.current = false;
+            return;
+         }
 
-   //    if (isContain && !isOverFlow) {
-   //      scroll(node);
-   //    }
-   //  }
-  };
+         handleScroll();
 
-  const scroll = (ele: HTMLElement) => {
-    console.log("scroll");
-
-    ele.scrollIntoView({
-      behavior: scrollBehavior?.current || "smooth",
-      block: "center",
-    });
-  };
-
-  useEffect(() => {
-    if (active) {
-      if (firstTimeRender.current) {
-        firstTimeRender.current = false;
-        return;
+         if (scrollBehavior && scrollBehavior.current != "smooth") {
+            scrollBehavior.current = "smooth";
+         }
       }
+   }, [active]);
 
-      handleScroll();
-
-      if (scrollBehavior && scrollBehavior.current != "smooth") {
-        scrollBehavior.current = "smooth";
-      }
-    }
-  }, [active]);
-
-  return (
-    <p
-      ref={lyricRef}
-      className={`${className && className} ${
-        inUpload ? "text-[16px]" : "text-[30px]"
-      }  select-none  max-[549px]:text-center font-bold ${done && "opacity-40"} ${
-        inUpload && "flex"
-      } ${active && "text-[#ffed00]"}`}
-    >
-      {children}
-      {inUpload && active && <span className="ml-[10px] text-[16px]"></span>}
-    </p>
-  );
+   return (
+      <p
+         ref={lyricRef}
+         className={`${className && className} ${
+            inUpload ? "text-[16px]" : "text-[30px]"
+         }  select-none  max-[549px]:text-center font-bold ${done && "opacity-40"} ${
+            inUpload && "flex"
+         } ${active && "text-[#ffed00]"}`}
+      >
+         {children}
+         {inUpload && active && <span className="ml-[10px] text-[16px]"></span>}
+      </p>
+   );
 }

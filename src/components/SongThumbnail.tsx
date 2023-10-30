@@ -12,6 +12,7 @@ interface Props {
    hasHover?: boolean;
    hasTitle?: boolean;
    classNames?: string;
+   idleClass?: string
    theme: ThemeType
 }
 
@@ -23,6 +24,7 @@ const SongThumbnail = ({
    hasTitle,
    classNames,
    theme,
+   idleClass
 } : Props, ref : ForwardedRef<any>) => {
 
    const classes = {
@@ -43,7 +45,7 @@ const SongThumbnail = ({
    if (!data) return;
 
    return (
-      <div  ref={ref} className={classes.container}>
+      <div ref={ref} className={`${classes.container} ${idleClass && idleClass}`}>
          <div className={`flex ${classNames && classNames}`}>
             <div className={`${classes.imageFrame} ${classWhenActive}`}>
 

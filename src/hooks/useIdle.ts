@@ -1,31 +1,34 @@
 import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { selectAllSongStore } from "../store";
 
-export default function useIdle() {
+export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullScreen:boolean) {
+   const {song: songInStore} = useSelector(selectAllSongStore)
    const [idle, setIdle] = useState(false);
+   const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
    const timerId = useRef<NodeJS.Timeout>();
 
-   useEffect(() => {
-      timerId.current = setTimeout(() => {
-         setIdle(false);
-      }, 6000);
-
-      return () => {
-         clearTimeout(timerId.current);
-      };
-   }, [idle]);
+   const handleMouseMove = () => {
+      setIdle(false);
+      setSomeThingToTriggerIdle(Math.random());
+      // console.log('mouse move');
+      
+   };
 
    useEffect(() => {
-      const handleMouseMove = () => {
-         setIdle(true);
-      };
-
+      if (isOnMobile || !songInStore.id || !isOpenFullScreen) return;
       window.addEventListener("mousemove", handleMouseMove);
 
       return () => {
          window.removeEventListener("mousemove", handleMouseMove);
-         if (timerId.current) {
-            clearTimeout(timerId.current);
-         }
       };
-   }, []);
+   }, [isOpenFullScreen, songInStore]);
+
+   useEffect(() => {
+      timerId.current = setTimeout(() => setIdle(true), delay);
+
+      return () => clearTimeout(timerId.current);
+   }, [someThingToTrigger]);
+
+   return idle;
 }

@@ -1,4 +1,9 @@
-import { Dispatch, FC, ReactNode, SetStateAction } from "react";
+import {
+   Dispatch,
+   FC,
+   ReactNode,
+   SetStateAction,
+} from "react";
 import { createPortal } from "react-dom";
 import Button from "./ui/Button";
 import { ThemeType } from "../types";
@@ -24,13 +29,14 @@ const confirmModal = ({
    buttonLabel?: string;
    loading: boolean;
    theme: ThemeType & { alpha: string };
-   className?: string,
+   className?: string;
    setOpenModal?: Dispatch<SetStateAction<boolean>>;
 }) => {
-   
    return (
-      <div className={className || 'w-[30vw]'}>
-         <h1 className="text-[20px] text-red-500 font-semibold">{label || "Wait a minute"}</h1>
+      <div className={className || "w-[30vw] relative"}>
+         <h1 className="text-[20px] text-red-500 font-semibold">
+            {label || "Wait a minute"}
+         </h1>
          <p className=" text-[16px]">{desc}</p>
 
          <div className="flex gap-[10px] mt-[20px]">
@@ -38,7 +44,7 @@ const confirmModal = ({
                isLoading={loading}
                className={` bg-${theme.alpha} hover:bg-red-500 rounded-full text-[14px]`}
                variant={"primary"}
-               onClick={() => callback()}
+               onClick={callback}
             >
                {buttonLabel || "Yes please"}
             </Button>
@@ -58,7 +64,7 @@ const Modal: FC<Props> = ({ children, setOpenModal }) => {
    return (
       <>
          {createPortal(
-            <div className="fixed inset-0 z-[99]">
+            <div className="fixed inset-0 z-[1000]">
                <div
                   onClick={(e) => {
                      e.stopPropagation;
@@ -66,7 +72,7 @@ const Modal: FC<Props> = ({ children, setOpenModal }) => {
                   }}
                   className="absolute bg-black opacity-60 inset-0 z-[90]"
                ></div>
-               <div className="absolute z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+               <div className="absolute z-[1000] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                   {children}
                </div>
             </div>,

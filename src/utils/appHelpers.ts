@@ -6,6 +6,7 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
 
+const VERCEL_URL = "https://express-zingmp3-awx6.vercel.app";
 const RENDER_URL = "https://express-zingmp3.onrender.com";
 const LOCAL_URL = "http://localhost:3000";
 
@@ -23,7 +24,9 @@ export const generateId = (name: string): string => {
          .replace(/đ/g, "d");
       return newString;
    };
-   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4);
+   return (
+      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4)
+   );
 };
 
 type ParserSong = {
@@ -57,7 +60,7 @@ export const getBlurhashEncode = async (blob: Blob) => {
    console.log("Get blurHash encode");
    const start = Date.now();
 
-   const res = await fetch(RENDER_URL + "/api/image/encode", {
+   const res = await fetch(VERCEL_URL + "/api/image/encode", {
       method: "post",
       body: blob,
    });
@@ -78,8 +81,7 @@ export const optimizeImage = async (imageFile: File) => {
    const start = Date.now();
    console.log("Optimize image");
 
-
-   const res = await fetch(RENDER_URL + "/api/image/optimize", {
+   const res = await fetch(VERCEL_URL + "/api/image/optimize", {
       method: "post",
       body: fd,
    });
@@ -138,7 +140,9 @@ export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) 
    playlists[index] = playlist;
 };
 
-export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: string[] } => {
+export const countSongsListTimeIds = (
+   songsList: Song[]
+): { time: number; ids: string[] } => {
    let time: number = 0;
    let ids: string[] = [];
 
@@ -207,4 +211,8 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
       ...song,
       ...value,
    } as Song;
+};
+
+export const sleep = async (delay: number) => {
+   await new Promise<void>((rs) => setTimeout(rs, delay));
 };

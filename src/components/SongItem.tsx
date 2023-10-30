@@ -454,14 +454,14 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      Edit
                   </Button>
                   {data.lyric_id ? (
-                     <Link to={`/React-Zingmp3/mysongs/edit/${data.id}`}>
+                     <Link to={`/mysongs/edit/${data.id}`}>
                         <Button className={`${theme.content_hover_text}`} variant={"list"}>
                            <DocumentPlusIcon className="w-[18px] mr-[5px]" />
                            Edit lyric
                         </Button>
                      </Link>
                   ) : (
-                     <Link to={`/React-Zingmp3/mysongs/edit/${data.id}`}>
+                     <Link to={`/mysongs/edit/${data.id}`}>
                         <Button className={`${theme.content_hover_text}`} variant={"list"}>
                            <DocumentPlusIcon className="w-[18px] mr-[5px]" />
                            Add lyric
