@@ -28,7 +28,8 @@
 - Issue: blurhash encode chạy tồn nhiều thời gian
 
 
-### update thứ 6/27/20
+### update thứ 6 27/10
 - Thêm hook useDebounce khi click scroll song list
 
+### update thứ 2 30/10
 

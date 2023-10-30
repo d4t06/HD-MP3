@@ -117,8 +117,7 @@ export default function FullScreenPlayer({
 
    // define jsx
    const renderSongsList = useMemo(() => {
-      console.log("render song list");
-
+      if (!songInStore.id) return;
       if (!actuallySongs.length) return;
 
       return actuallySongs.map((song, index) => {

@@ -68,7 +68,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
         adminSongs: payload.adminSongs || state.adminSongs,
         adminPlaylists: payload.adminPlaylists || state.adminPlaylists,
 
-        initial: payload.adminSongs || payload.userSongs ? true : false,
+        initial: payload.adminSongs?.length || payload.userSongs?.length ? true : false,
       };
 
     case REDUCER_ACTION_TYPE.SETUSERSONGS:
