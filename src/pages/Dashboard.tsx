@@ -3,8 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "../store/ThemeContext";
 // import { routes } from "../routes";
 
-import { auth, db } from "../config/firebase";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { db } from "../config/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 // utils
@@ -15,11 +14,18 @@ import { convertTimestampToString } from "../utils/appHelpers";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import useUploadSongs from "../hooks/useUploadSongs";
 
-import { Button, Image, Modal, PopupWrapper, DashboardSongItem, confirmModal } from "../components";
+import {
+   Button,
+   Image,
+   Modal,
+   DashboardSongItem,
+   confirmModal,
+} from "../components";
 
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
-import { deleteSong } from "../utils/firebaseHelpers";
+import { deleteSong, myGetDoc } from "../utils/firebaseHelpers";
+import { useAuthStore } from "../store";
 
 // type ModalName = "ADD_PLAYLIST" | "MESSAGE";
 
@@ -27,7 +33,7 @@ import { deleteSong } from "../utils/firebaseHelpers";
 export default function DashBoard() {
    // use store
    const { theme } = useTheme();
-   const [loggedInUser, userLoading] = useAuthState(auth);
+   const { userInfo } = useAuthStore();
 
    // state
    const [songs, setSongs] = useState<Song[]>([]);
@@ -36,7 +42,7 @@ export default function DashBoard() {
    const [isOpenModal, setIsOpenModal] = useState(false);
 
    const [tab, setTab] = useState<"songs" | "users">("songs");
-   const [isAuthFinish, setIsAuthFinish] = useState(false);
+   // const [isAuthFinish, setIsAuthFinish] = useState(false);
    const [loading, setLoading] = useState(false);
 
    const [errorMsg, setErrorMsg] = useState<string>("");
@@ -44,23 +50,23 @@ export default function DashBoard() {
    const [modalName, setModalName] = useState<"confirm" | "setting">("setting");
 
    const audioRef = useRef<HTMLAudioElement>(null);
-   const message = useRef<string>("");
    const selectAllBtnRef = useRef<HTMLInputElement>(null);
-   const firstTempSong= useRef<HTMLDivElement>(null)
+   const inputRef = useRef<HTMLInputElement>(null);
+   const firstTempSong = useRef<HTMLDivElement>(null);
 
    // use hooks
    const navigate = useNavigate();
    const { addedSongIds, handleInputChange, status, tempSongs } = useUploadSongs({
       audioRef,
-      message,
       admin: true,
       songs: songs,
       setSongs: setSongs,
-      firstTempSong
+      firstTempSong,
+      inputRef,
    });
 
    const songCount = useMemo(() => {
-      if (userLoading) return 0;
+      if (loading) return 0;
       return tempSongs.length + songs.length;
    }, [tempSongs, songs]);
 
@@ -70,7 +76,10 @@ export default function DashBoard() {
 
          setLoading(true);
 
-         const queryGetAdminSongs = query(collection(db, "songs"), where("by", "==", "admin"));
+         const queryGetAdminSongs = query(
+            collection(db, "songs"),
+            where("by", "==", "admin")
+         );
          const songsSnapshot = await getDocs(queryGetAdminSongs);
 
          if (songsSnapshot.docs) {
@@ -94,7 +103,7 @@ export default function DashBoard() {
          setLoading(true);
          const queryGetUsers = query(
             collection(db, "users"),
-            where("email", "!=", loggedInUser?.email as string)
+            where("email", "!=", userInfo?.email as string)
          );
          const usersSnapshot = await getDocs(queryGetUsers);
 
@@ -155,7 +164,7 @@ export default function DashBoard() {
                setSelectedSongList={setSelectedList}
                theme={theme}
             />
-         ); 
+         );
       });
    };
 
@@ -167,10 +176,25 @@ export default function DashBoard() {
          });
 
          if (index == 0) {
-            return <DashboardSongItem ref={firstTempSong} key={index} data={song} theme={theme} inProcess={!isAdded} />;
+            return (
+               <DashboardSongItem
+                  ref={firstTempSong}
+                  key={index}
+                  data={song}
+                  theme={theme}
+                  inProcess={!isAdded}
+               />
+            );
          }
 
-         return <DashboardSongItem key={index} data={song} theme={theme} inProcess={!isAdded} />;
+         return (
+            <DashboardSongItem
+               key={index}
+               data={song}
+               theme={theme}
+               inProcess={!isAdded}
+            />
+         );
       });
    };
 
@@ -185,14 +209,9 @@ export default function DashBoard() {
                </td>
                <td className={classes.td}>{user.display_name}</td>
                <td className={classes.td}>{user.email}</td>
-               <td className={classes.td}>{convertTimestampToString(user?.latest_seen)}</td>
-               {/* <td className={classes.td}>
-                  <div className="flex items-center gap-[5px]">
-                     <Button variant={"circle"}>
-                        <PencilSquareIcon className="w-[20px]" />
-                     </Button>
-                  </div>
-               </td> */}
+               <td className={classes.td}>
+                  {convertTimestampToString(user?.latest_seen)}
+               </td>
             </tr>
          );
       });
@@ -212,32 +231,33 @@ export default function DashBoard() {
    );
 
    useEffect(() => {
-      if (userLoading) return;
+      if (userInfo.status === "loading") return;
 
       const auth = async () => {
          try {
-            // const userSnapshot = await myGetDoc({ collection: "users", id: loggedInUser?.email as string });
-            // const userData = userSnapshot.data() as User;
+            const userSnapshot = await myGetDoc({
+               collection: "users",
+               id: userInfo?.email as string,
+            });
+            const userData = userSnapshot.data() as User;
 
-            // if (userData.role !== "admin") return navigate(routes.Home);
-
-            setIsAuthFinish(true);
+            if (userData.role !== "admin") return navigate(routes.Home);
          } catch (error) {
             console.log(error);
          }
       };
 
-      if (!loggedInUser) return navigate(routes.Home);
-
+      if (!userInfo.email) return navigate(routes.Home);
       auth();
-   }, [loggedInUser]);
+
+   }, [userInfo]);
 
    useEffect(() => {
-      if (userLoading || !isAuthFinish) return;
+      if (userInfo.status === "loading") return;
 
       if (tab === "users" && !users.length) getUsers();
       if (tab === "songs" && !songs.length) getSongs();
-   }, [tab, isAuthFinish]);
+   }, [tab]);
 
    const classes = {
       inActiveBtn: `bg-${theme.alpha}`,
@@ -257,10 +277,11 @@ export default function DashBoard() {
             accept=".mp3"
             id="file"
             className="hidden"
+            ref={inputRef}
          />
          <audio ref={audioRef} className="hidden" />
 
-         {!userLoading && (
+         {userInfo.status !== "loading" && (
             <div className={`container mx-auto pt-[30px] pb-[60px]`}>
                {/* content */}
                {/* tabs */}
@@ -314,7 +335,9 @@ export default function DashBoard() {
                      ) : (
                         <label
                            className={`${theme.content_bg} ${
-                              status === "uploading" ? "opacity-60 pointer-events-none" : ""
+                              status === "uploading"
+                                 ? "opacity-60 pointer-events-none"
+                                 : ""
                            } rounded-full ml-[auto] mr-[10px] px-[20px] py-[4px] cursor-pointer`}
                            htmlFor="file"
                         >
@@ -333,7 +356,9 @@ export default function DashBoard() {
                                     onChange={() => handleSelectAll()}
                                     ref={selectAllBtnRef}
                                     checked={
-                                       songs.length ? songs.length === selectedList.length : false
+                                       songs.length
+                                          ? songs.length === selectedList.length
+                                          : false
                                     }
                                     type="checkbox"
                                  />
@@ -385,10 +410,8 @@ export default function DashBoard() {
          )}
 
          {isOpenModal && (
-            <Modal setOpenModal={setIsOpenModal}>
-               <PopupWrapper theme={theme}>
-                  {modalName === "confirm" && dialogComponent}
-               </PopupWrapper>
+            <Modal theme={theme} setOpenModal={setIsOpenModal}>
+               {modalName === "confirm" && dialogComponent}
             </Modal>
          )}
       </>

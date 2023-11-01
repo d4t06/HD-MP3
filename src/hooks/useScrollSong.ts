@@ -12,13 +12,15 @@ type Props = {
 export default function useScrollSong({
    containerRef,
    songItemRef,
-   firstTimeRender,
    isOpenFullScreen,
 }: Props) {
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    const scrollToActiveSong = () => {
-      if (!songItemRef || !containerRef) return;
+      if (!songItemRef || !containerRef) {
+         console.log("lack of props");
+         return;
+      }
 
       const windowWidth = window.innerWidth;
 
@@ -32,16 +34,18 @@ export default function useScrollSong({
 
       const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
 
-      // console.log('song thumbnail check scroll, left ', lefDiff, 'right ', rightDiff )
+      // case element position don't change
+      if (needToScroll === 0) return;
 
-      // if element not in screen
+      // case element not in view
       if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
          containerEle.style.scrollBehavior = "auto";
       } else {
          containerEle.style.scrollBehavior = "smooth";
       }
 
-      // on the left side
+      // case in view
+      //on the left side
       let newScroll = containerEle.scrollLeft;
       if (rightDiff > lefDiff) {
          setTimeout(() => {
@@ -58,10 +62,8 @@ export default function useScrollSong({
    };
 
    useEffect(() => {
-      if (!scroll || !containerRef || !songItemRef) return;
-
-      if (firstTimeRender.current) {
-         firstTimeRender.current = false;
+      if (!scroll || !containerRef || !songItemRef) {
+         console.log("lack props");
          return;
       }
 

@@ -57,6 +57,8 @@ type ReducerAction = {
 // reducer
 const reducer = (state: StateType, action: ReducerAction): StateType => {
   const payload = action.payload;
+  console.log('dispatch song context');
+  
 
   switch (action.type) {
 

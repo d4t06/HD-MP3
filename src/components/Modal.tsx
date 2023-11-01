@@ -1,17 +1,8 @@
-import {
-   Dispatch,
-   FC,
-   ReactNode,
-   SetStateAction,
-} from "react";
+import { Dispatch, FC, ReactNode, SetStateAction } from "react";
 import { createPortal } from "react-dom";
 import Button from "./ui/Button";
 import { ThemeType } from "../types";
-
-interface Props {
-   children: ReactNode;
-   setOpenModal: Dispatch<SetStateAction<boolean>>;
-}
+import { PopupWrapper } from ".";
 
 const confirmModal = ({
    loading,
@@ -60,7 +51,14 @@ const confirmModal = ({
    );
 };
 
-const Modal: FC<Props> = ({ children, setOpenModal }) => {
+interface Props {
+   children: ReactNode;
+   setOpenModal: Dispatch<SetStateAction<boolean>>;
+   theme: ThemeType & { alpha: string };
+   classNames?: string;
+}
+
+const Modal: FC<Props> = ({ children, setOpenModal, theme, classNames }) => {
    return (
       <>
          {createPortal(
@@ -73,7 +71,7 @@ const Modal: FC<Props> = ({ children, setOpenModal }) => {
                   className="absolute bg-black opacity-60 inset-0 z-[90]"
                ></div>
                <div className="absolute z-[1000] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                  {children}
+                  <PopupWrapper classNames={classNames} theme={theme}>{children}</PopupWrapper>
                </div>
             </div>,
             document.getElementById("portals")!

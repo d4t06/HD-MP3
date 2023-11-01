@@ -131,7 +131,7 @@ export default function SongListItem({
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
   const isOnMobile = useMemo(() => {
-    return window.innerWidth < 550;
+    return window.innerWidth < 800;
   }, []);
 
   // define call back functions
@@ -655,8 +655,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       )}
 
       {isOpenModal && !inProcess && (
-        <Modal setOpenModal={setIsOpenModal}>
-          <PopupWrapper theme={theme}>
+        <Modal theme={theme} setOpenModal={setIsOpenModal}>
             {modalComponent === "edit" && (
               <SongItemEditForm
                 setIsOpenModal={setIsOpenModal}
@@ -667,7 +666,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
               />
             )}
             {modalComponent === "confirm" && dialogComponent}
-          </PopupWrapper>
         </Modal>
       )}
     </div>

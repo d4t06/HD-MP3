@@ -12,12 +12,10 @@ import PopupWrapper from "./ui/PopupWrapper";
 type Props = {
    modalName: MutableRefObject<"theme" | "info" | "confirm">;
    loggedIn: boolean;
-   setIsOpenMenu: Dispatch<React.SetStateAction<boolean>>;
    setIsOpenModal: Dispatch<React.SetStateAction<boolean>>;
 };
 
 export default function SettingMenu({
-   // setSettingComp,
    modalName,
    setIsOpenModal,
    loggedIn,
@@ -26,12 +24,6 @@ export default function SettingMenu({
    const { theme } = useTheme();
 
    const handleSetComp = (name: "theme" | "info" | "confirm") => {
-      // const map = {
-      //   'theme': themesScreen,
-      //   'info': infoScreen,
-      //   'confirm': logoutModal
-      // }
-
       modalName.current = name;
       setIsOpenModal(true);
    };
@@ -40,17 +32,17 @@ export default function SettingMenu({
       <>
          <PopupWrapper theme={theme}>
             <ul className="flex flex-col gap-[12px]">
-               <li className="flex" onClick={() => handleSetComp("theme")}>
+               <li className={`${theme.content_hover_text} flex cursor-pointer`} onClick={() => handleSetComp("theme")}>
                   <PaintBrushIcon className="w-6 h-6 mr-2" />
                   Themes
                </li>
                {loggedIn && (
-                  <li className="flex" onClick={() => handleSetComp("confirm")}>
+                  <li className={`${theme.content_hover_text} flex cursor-pointer`} onClick={() => handleSetComp("confirm")}>
                      <ArrowRightOnRectangleIcon className="w-6 h-6 mr-2" />
                      Log out
                   </li>
                )}
-               <li className="flex" onClick={() => handleSetComp("info")}>
+               <li className={`${theme.content_hover_text} flex cursor-pointer`} onClick={() => handleSetComp("info")}>
                   <InformationCircleIcon className="w-6 h-6 mr-2" />
                   Info
                </li>

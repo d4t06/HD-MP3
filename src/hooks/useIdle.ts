@@ -11,24 +11,27 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
    const handleMouseMove = () => {
       setIdle(false);
       setSomeThingToTriggerIdle(Math.random());
-      // console.log('mouse move');
-      
    };
 
-   useEffect(() => {
-      if (isOnMobile || !songInStore.id || !isOpenFullScreen) return;
+   useEffect(() => {      
+      if (!isOpenFullScreen) return;
+      if (isOnMobile || !songInStore.id) return;
+
       window.addEventListener("mousemove", handleMouseMove);
 
       return () => {
          window.removeEventListener("mousemove", handleMouseMove);
+         clearTimeout(timerId.current);
       };
    }, [isOpenFullScreen, songInStore]);
 
-   useEffect(() => {
+   useEffect(() => {      
       timerId.current = setTimeout(() => setIdle(true), delay);
 
       return () => clearTimeout(timerId.current);
    }, [someThingToTrigger]);
+
+   if (!isOpenFullScreen) return false
 
    return idle;
 }

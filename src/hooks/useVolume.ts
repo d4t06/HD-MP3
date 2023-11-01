@@ -1,28 +1,25 @@
 import { MouseEvent, MutableRefObject, RefObject, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 
-export default function useVolume(volumeLineWidth: MutableRefObject<number | undefined>
-   , volumeProcessLine: RefObject<HTMLDivElement>, audioEle: HTMLAudioElement) {
+export default function useVolume(
+   volumeLineWidth: MutableRefObject<number | undefined>,
+   volumeProcessLine: RefObject<HTMLDivElement>,
+   audioEle: HTMLAudioElement
+) {
    const [isMute, setIsMute] = useState(false);
    const [volume, setVolume] = useLocalStorage("volume", 1);
 
-
-   const handleSetVolume = (
-      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-   ) => {
+   const handleSetVolume = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
       const node = e.target as HTMLElement;
       const clientRect = node.getBoundingClientRect();
 
-      console.log('handleSetVolume');
-
       if (volumeLineWidth.current) {
-         let newVolume = +(
-            (e.clientX - clientRect.x) /
-            volumeLineWidth.current
-         ).toFixed(2);
+         let newVolume = +((e.clientX - clientRect.x) / volumeLineWidth.current).toFixed(
+            2
+         );
 
          if (newVolume > 0.9) newVolume = 1;
-         else if (newVolume < 0.1) {
+         else if (newVolume < 0.05) {
             newVolume = 0;
             setIsMute(true);
          } else setIsMute(false);
@@ -32,11 +29,9 @@ export default function useVolume(volumeLineWidth: MutableRefObject<number | und
    };
 
    const handleMute = () => {
-      if (audioEle.muted) {
-         audioEle.muted = false;
+      if (isMute) {
          setIsMute(false);
       } else {
-         audioEle.muted = true;
          setIsMute(true);
       }
    };
@@ -48,6 +43,15 @@ export default function useVolume(volumeLineWidth: MutableRefObject<number | und
       }
    }, [volume]);
 
+   useEffect(() => {
+      if (!audioEle) return;
 
-   return { volume, handleSetVolume, isMute, handleMute }
+      if (isMute) {
+         audioEle.muted = true;
+      } else {
+         audioEle.muted = false;
+      }
+   }, [isMute]);
+
+   return { volume, handleSetVolume, isMute, handleMute };
 }

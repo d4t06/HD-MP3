@@ -25,7 +25,7 @@ const Player: FC<PlayerProps> = () => {
 
    const audioRef = useRef<HTMLAudioElement>(null);
    const isOnMobile = useMemo(() => {
-      return window.innerWidth < 550;
+      return window.innerWidth < 800;
    }, []);
    const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
    // console.log("check render");
@@ -81,8 +81,6 @@ const Player: FC<PlayerProps> = () => {
       if (isHasAudioEle) return;
       if (audioRef.current) setIsHasAudioEle(true);
    }, []);
-
-   // console.log("player render", idle);
 
    return (
       <div className="absolute">

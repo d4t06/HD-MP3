@@ -31,7 +31,7 @@ export const mobileLinkSkeleton = [...Array(1).keys()].map((index) => {
 
 export const playlistSkeleton = [...Array(2).keys()].map((index) => {
    return (
-      <div key={index} className="w-1/4 p-[8px] max-[459px]:w-1/2">
+      <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
          <Skeleton className="pt-[100%] rounded-[8px]" />
          <Skeleton className="h-[20px] mt-[9px] w-[50%]" />
       </div>

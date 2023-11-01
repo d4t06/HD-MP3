@@ -62,11 +62,10 @@ const MobileSongItem = ({
 
    const classes = {
       button: `${theme.content_bg} rounded-full`,
-      textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
-      songListButton: `mr-[10px] px-[5px] text-${theme.alpha} group-hover/main:text-[inherit]`,
-      itemContainer: `item-container transition-all  origin-top duration-[300ms] border-b border-${
+      songListButton: `mr-[10px] px-[5px]`,
+      itemContainer: `item-container transition-opacity duration-[.3s] border-b last:border-none border-${
          theme.alpha
-      } flex flex-row rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
+      } flex rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
          isSelected() && "bg-" + theme.alpha
       }`,
       imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
@@ -120,7 +119,7 @@ const MobileSongItem = ({
                      <h5 className={`text-mg line-clamp-1 ${active && theme.content_text}`}>
                         {data.name}
                      </h5>
-                     <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
+                     <p className="text-xs opacity-60 bg-blend-lighten line-clamp-1">{data.singer}</p>
                   </div>
                </div>
             </div>

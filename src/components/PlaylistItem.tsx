@@ -25,7 +25,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
       buttonWrapper: "flex items-center justify-center z-10 h-full w-full relative",
    };
    const isOnMobile = useMemo(() => {
-      return window.innerWidth < 550;
+      return window.innerWidth < 800;
    }, []);
 
    return (

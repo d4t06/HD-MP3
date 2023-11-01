@@ -18,7 +18,7 @@ interface Props {
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
    idle: boolean;
    audioEle: HTMLAudioElement;
-   isPlaying: boolean;
+   isPlaying?: boolean;
    setIsPlaying?: () => void;
 }
 
@@ -56,11 +56,13 @@ export default function FullScreenPlayer({
    const handleClickNext = useDebounce(
       () => handleScroll("next"),
       scrollToActiveSong,
+      isOpenFullScreen,
       300
    );
    const handleClickPrevious = useDebounce(
       () => handleScroll("previous"),
       scrollToActiveSong,
+      isOpenFullScreen,
       300
    );
 
@@ -93,26 +95,27 @@ export default function FullScreenPlayer({
 
    const classes = {
       button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
-      mainContainer: `fixed inset-0 bg-zinc-900 bottom-[0]  overflow-hidden text-white  ${
+      mainContainer: `fixed inset-0 overflow-hidden text-white bg-zinc-900 ${
          isOpenFullScreen ? "translate-y-0" : "translate-y-full"
-      } transition-[transform] duration-[.4s] linear delay-100`,
-      bg: `absolute h-[100vh] w-[100vw] -z-10 inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,
-      overplay: `absolute h-[100vh] w-[100vw] inset-0 bg-zinc-900 bg-opacity-80 bg-blend-multiply`,
-      header: `header-left flex px-10 py-[20px] relative h-[75px]`,
-      headerRight: `flex items-center absolute right-10 gap-[10px] top-0 h-full ${
-         idle ? "hidden" : ""
-      }`,
+      } transition-[transform] duration-[.5s] linear delay-100`,
+      bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,
+      overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,
+      absoluteFull: "absolute h-[100vh] w-[100vw] inset-0",
+
+      headerWrapper: `py-[20px] px-[40px] w-full h-[75px]`,
+      header: "relative flex",
+      headerCta: "absolute h-full flex items-center",
 
       contentContainer: `h-[calc(100%-100px)] relative overflow-hidden`,
-      songsListTab: `${
-         activeTab !== "Songs" ? "opacity-0" : ""
-      } relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-390px/2)]`,
-
+      songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-350px/2)]`,
       absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-[#fff] bg-opacity-[.2] hover:opacity-100 rounded-full ${theme.content_hover_text}`,
       songNameSinger: "relative text-center text-white text-[14px] opacity-80",
       lyricTabContainer:
          "px-[40px] h-full w-full flex items-center justify-center flex-row",
       lyricContainer: "flex-grow ml-[50px] h-full overflow-hidden",
+      songThumbnail: "items-end justify-center flex-shrink-0 w-[350px] h-[350px]",
+
+      fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
    };
 
    // define jsx
@@ -128,12 +131,11 @@ export default function FullScreenPlayer({
                   theme={theme}
                   key={index}
                   ref={activeSongRef}
-                  classNames="items-end justify-center flex-shrink-0 w-[350px] h-[350px]"
-                  hasHover
                   hasTitle
                   onClick={() => handleSetSongWhenClick(song, index)}
                   active={isActive}
                   data={song}
+                  classNames={classes.songThumbnail}
                />
             );
          }
@@ -142,17 +144,12 @@ export default function FullScreenPlayer({
             <SongThumbnail
                theme={theme}
                key={index}
-               classNames={`items-end justify-center flex-shrink-0 w-[350px] h-[350px]`}
-               idleClass={`${
-                  !isActive && idle
-                     ? "opacity-0 transition-opacity duration-[.3s]"
-                     : "opacity-[1]"
-               }`}
-               hasHover
+               classNames={classes.songThumbnail}
+               idleClass={`${!isActive && idle && classes.fadeTransition}`}
                hasTitle
-               onClick={() => handleSetSongWhenClick(song, index)}
                active={isActive}
                data={song}
+               onClick={() => handleSetSongWhenClick(song, index)}
             />
          );
       });
@@ -174,64 +171,72 @@ export default function FullScreenPlayer({
    return (
       <div className={`${classes.mainContainer}`}>
          {/* bg image */}
-         <div ref={bgRef} className={classes.bg}></div>
-         <div className={classes.overplay}></div>
+         <div ref={bgRef} className={`${classes.absoluteFull} ${classes.bg}`}></div>
+         <div className={`${classes.absoluteFull} ${classes.overplay}`}></div>
 
          <div className="h-[calc(100vh-90px)]">
             {/* header */}
-            <div className={classes.header}>
-               {/* left */}
-               <div className={`w-[35px]`}>
-                  <img
-                     className={`${idle ? "w-full" : "hidden"}`}
-                     src="https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
-                     alt=""
+            <div className={classes.headerWrapper}>
+               <div className={classes.header}>
+                  {/* left */}
+                  {idle && activeTab === "Lyric" && (
+                     <div className={`${classes.headerCta} left-0`}>
+                        <img
+                           className={`${idle ? "h-full" : "h-full"} mr-[10px]`}
+                           src="https://zjs.zmdcdn.me/zmp3-desktop/dev/119956/static/media/icon_zing_mp3_60.f6b51045.svg"
+                           alt=""
+                        />
+                        <p className={`${classes.songNameSinger}`}>
+                           {songInStore.name} -{" "}
+                           <span className="opacity-30">{songInStore.singer}</span>
+                        </p>
+                     </div>
+                  )}
+                  {/* tabs */}
+                  <Tabs
+                     activeTab={activeTab}
+                     setActiveTab={setActiveTab}
+                     className={`${idle && classes.fadeTransition}`}
+                     tabs={["Songs", "Lyric"]}
                   />
-                  {/* {idle && activeTab === "Lyric" && (
-                     <p className={`${classes.songNameSinger}`}>
-                        {songInStore.name} -{" "}
-                        <span className="opacity-30">{songInStore.singer}</span>
-                     </p>
-                  )} */}
-               </div>
-               {/* tabs */}
-               <Tabs
-                  activeTab={activeTab}
-                  setActiveTab={setActiveTab}
-                  className={`${idle && "transition-opacity duration-[.3s] opacity-0"}`}
-                  tabs={["Songs", "Lyric"]}
-               />
-               {/* right */}
-               <div
-                  className={`${classes.headerRight} ${
-                     idle && "transition-opacity duration-[.3s] opacity-0"
-                  }`}
-               >
-                  {songInStore.by != "admin" && activeTab === "Lyric" && (
+                  {/* right */}
+                  <div
+                     className={`${classes.headerCta} right-0 gap-[10px] ${
+                        idle && classes.fadeTransition
+                     }`}
+                  >
+                     {songInStore.by != "admin" && activeTab === "Lyric" && (
+                        <Button
+                           onClick={() => handleEdit()}
+                           variant={"circle"}
+                           size={"normal"}
+                           className={classes.button}
+                        >
+                           <DocumentTextIcon className="w-full" />
+                        </Button>
+                     )}
+
                      <Button
-                        onClick={() => handleEdit()}
+                        onClick={() => setIsOpenFullScreen(false)}
                         variant={"circle"}
                         size={"normal"}
                         className={classes.button}
                      >
-                        <DocumentTextIcon />
+                        <ChevronDownIcon />
                      </Button>
-                  )}
-
-                  <Button
-                     onClick={() => setIsOpenFullScreen(false)}
-                     variant={"circle"}
-                     size={"normal"}
-                     className={classes.button}
-                  >
-                     <ChevronDownIcon />
-                  </Button>
+                  </div>
                </div>
             </div>
 
             {/* content */}
             <div className={classes.contentContainer}>
-               <div ref={containerRef} className={` ${classes.songsListTab}`}>
+               {/* song list */}
+               <div
+                  ref={containerRef}
+                  className={` ${classes.songsListTab} ${
+                     activeTab !== "Songs" ? "opacity-0" : "opacity-100"
+                  }`}
+               >
                   {renderSongsList}
                </div>
                {activeTab === "Songs" && !idle && (
@@ -252,15 +257,20 @@ export default function FullScreenPlayer({
                   </>
                )}
 
-               {isOpenFullScreen && activeTab === "Lyric" && (
-                  <div className="absolute inset-0 z-20  ">{renderLyricTab}</div>
-               )}
+               {/* lyric tab */}
+               <div
+                  className={`absolute inset-0 z-20 ${
+                     activeTab === "Lyric" ? "" : "hidden"
+                  }`}
+               >
+                  {renderLyricTab}
+               </div>
             </div>
 
-            {isOpenFullScreen && activeTab === "Lyric" && (
+            {isOpenFullScreen && activeTab === "Lyric" && !idle && (
                <p
                   className={`${classes.songNameSinger} ${
-                     idle && "transition-opacity duration-[.3s] opacity-0"
+                     idle && classes.fadeTransition
                   }`}
                >
                   {songInStore.name} -{" "}

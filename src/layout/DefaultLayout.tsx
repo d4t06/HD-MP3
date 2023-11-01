@@ -26,7 +26,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
    const content = useMemo(
       () => (
          <div className={classes.page}>
-            {window.innerWidth >= 550 && <Sidebar />}
+            {window.innerWidth >= 800 && <Sidebar />}
             <div className={classes.container}>
                <div className={`h-[100px]`}></div>
                <div className={classes.content}>{children}</div>

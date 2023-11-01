@@ -34,7 +34,6 @@ import {
    PlaylistItem,
    SongItem,
    Button,
-   PopupWrapper,
    MobileSongItem,
    Skeleton,
    AddSongToPlaylistModal,
@@ -379,7 +378,7 @@ export default function PlaylistDetail() {
    };
 
    const songCount = useMemo(() => playlistSongs.length, [playlistSongs]);
-   const isOnMobile = useMemo(() => window.innerWidth < 550, []);
+   const isOnMobile = useMemo(() => window.innerWidth < 800, []);
 
    const classes = {
       addSongContainer: "pb-[50px] relative",
@@ -629,8 +628,7 @@ export default function PlaylistDetail() {
 
          {/* modal */}
          {isOpenModal && (
-            <Modal setOpenModal={closeModal}>
-               <PopupWrapper theme={theme}>
+            <Modal theme={theme} setOpenModal={closeModal}>
                   {modalComponent === "edit" && editComponent}
                   {modalComponent === "confirm" && confirmComponent}
                   {modalComponent === "addSongs" && (
@@ -640,7 +638,6 @@ export default function PlaylistDetail() {
                         playlistSongs={playlistSongs}
                      />
                   )}
-               </PopupWrapper>
             </Modal>
          )}
       </>

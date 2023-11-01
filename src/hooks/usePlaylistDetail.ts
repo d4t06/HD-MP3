@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { Status, selectAllSongStore, setPlaylist } from "../store/SongSlice";
 import { useSongsStore } from "../store/SongsContext";
-import { useActuallySongs } from "../store/ActuallySongsContext";
 
 import useSong from "./useSongs";
 import { useAuthStore } from "../store/AuthContext";
@@ -25,7 +24,7 @@ export default function usePlaylistDetail({ firstTimeRender }: Props) {
   // use store
   const dispatch = useDispatch();
   const { userInfo } = useAuthStore();
-  const { setActuallySongs } = useActuallySongs();
+  // const { setActuallySongs } = useActuallySongs();
   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
   const { loading: useSongLoading, errorMsg: useSongErrorMsg, initial } = useSong();
   const { adminSongs, userSongs, userPlaylists, setUserPlaylists } = useSongsStore();

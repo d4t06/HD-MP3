@@ -33,12 +33,14 @@ export const mySetDoc = async ({
    collection,
    id,
    data,
+   msg
 }: {
    collection: collectionVariant;
    id: string;
    data: {};
+   msg?: string
 }) => {
-   console.log("set doc");
+   console.log("set doc", msg ?? '');
 
    return setDoc(doc(db, collection, id), { ...data }, { merge: true });
 };

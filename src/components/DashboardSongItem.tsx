@@ -2,7 +2,7 @@ import { DocumentIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/o
 import { Dispatch, SetStateAction, forwardRef, useMemo, useState } from "react";
 import { Song, ThemeType } from "../types";
 
-import { Button, PopupWrapper, Modal, SongItemEditForm } from ".";
+import { Button, Modal, SongItemEditForm } from ".";
 import { confirmModal } from "./Modal";
 
 import { useToast } from "../store/ToastContext";
@@ -168,8 +168,7 @@ const DashboardSongItem = ({
          </tr>
 
          {isOpenModal && !inProcess && (
-            <Modal setOpenModal={setIsOpenModal}>
-               <PopupWrapper theme={theme}>
+            <Modal theme={theme} setOpenModal={setIsOpenModal}>
                   {modalComponent === "edit" && (
                      <SongItemEditForm
                         setIsOpenModal={setIsOpenModal}
@@ -180,7 +179,6 @@ const DashboardSongItem = ({
                      />
                   )}
                   {modalComponent === "confirm" && dialogComponent}
-               </PopupWrapper>
             </Modal>
          )}
       </>

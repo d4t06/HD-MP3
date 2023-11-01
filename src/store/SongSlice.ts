@@ -3,7 +3,12 @@ import { Playlist, Song } from "../types";
 
 export type Status = {
    currentIndex: number;
-   song_in: "user" | "admin" | `${"user-playlist-"}${string}` | `${"admin-playlist-"}${string}` | '';
+   song_in:
+      | "user"
+      | "admin"
+      | `${"user-playlist-"}${string}`
+      | `${"admin-playlist-"}${string}`
+      | "";
 };
 
 type stateType = {
@@ -24,9 +29,9 @@ const init: stateType = {
       duration: 0,
       lyric_id: "",
       currentIndex: 0,
-      song_in: '',
+      song_in: "",
       in_playlist: [],
-      blurhash_encode: '',
+      blurhash_encode: "",
    },
    playlist: {
       id: "",
@@ -38,7 +43,7 @@ const init: stateType = {
       image_by: "",
       image_file_path: "",
       image_url: "",
-      blurhash_encode: ''
+      blurhash_encode: "",
    },
 };
 
@@ -46,8 +51,8 @@ const SongSlice = createSlice({
    name: "song",
    initialState: init,
    reducers: {
-      setSong(state, action: { type: string; payload: Song & Status }) {
-         state.song = { ...action.payload };
+      setSong(state, action: { type: string; payload: (Song & Status) | undefined }) {
+         state.song = action.payload ? action.payload : init.song;
       },
 
       setPlaylist(state, action: { type: string; payload: Playlist }) {

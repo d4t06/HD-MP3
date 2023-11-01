@@ -7,8 +7,8 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
 };
 
 const VERCEL_URL = "https://express-zingmp3-awx6.vercel.app";
-const RENDER_URL = "https://express-zingmp3.onrender.com";
-const LOCAL_URL = "http://localhost:3000";
+// const RENDER_URL = "https://express-zingmp3.onrender.com";
+// const LOCAL_URL = "http://localhost:3000";
 
 export const generateId = (name: string): string => {
    // Replace all Vietnamese accent characters with their corresponding non-accented characters.

@@ -20,30 +20,19 @@ export default function Auth({ children }: { children: ReactNode }) {
                   email: loggedInUser?.email,
                   latest_seen: serverTimestamp(),
                   photoURL: loggedInUser?.photoURL,
+                  display_name: loggedInUser?.displayName
                },
                id: loggedInUser?.email as string,
             });
 
+            console.log(">>> auth have user, update status = finnish");
+            // await sleep(1000);
             setUserInfo({
                status: "finish",
                email: loggedInUser?.email as string,
                display_name: loggedInUser?.displayName as string,
                photoURL: loggedInUser?.photoURL as string,
             });
-
-            // await new Promise<void>((rs) => [
-            //    setTimeout(() => {
-            //       setUserInfo({
-            //          status: "finish",
-            //          email: loggedInUser?.email as string,
-            //          display_name: loggedInUser?.displayName as string,
-            //          photoURL: loggedInUser?.photoURL as string,
-            //       });
-
-            //       rs();
-            //       console.log("update user finish");
-            //    }, 2000),
-            // ]);
          } catch (error) {
             console.log(error);
          }
@@ -52,7 +41,7 @@ export default function Auth({ children }: { children: ReactNode }) {
       if (loading) return;
 
       if (!loggedInUser) {
-         console.log("auth no user");
+         console.log(">>> auth no user, update status = finnish");
 
          if (userInfo.status !== "finish") {
             setUserInfo({

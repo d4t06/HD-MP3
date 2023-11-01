@@ -22,7 +22,6 @@ import {
   Button,
   LinkItem,
   MobileSongItem,
-  PopupWrapper,
   Modal,
   confirmModal,
 } from "../components";
@@ -63,7 +62,7 @@ export default function HomePage() {
     dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
   };
 
-  const isOnMobile = useMemo(() => window.innerWidth < 550, []);
+  const isOnMobile = useMemo(() => window.innerWidth < 800, []);
 
   //   methods
   const signIn = () => {
@@ -100,10 +99,10 @@ export default function HomePage() {
   const classes = {
     songItemContainer: `w-full border-b border-${theme.alpha} last:border-none`,
     icon: `w-6 h-6 mr-2 inline`,
-    popupWrapper: "w-[300px] max-w-[calc(90vw-40px)]",
+    popupWrapper: "w-[400px] max-w-[calc(90vw-40px)]",
     themeContainer: "overflow-auto no-scrollbar h-[calc(70vh-60px)]  pb-[5vh]",
     themeList: "flex flex-row -mx-[10px] flex-wrap gap-y-[20px]",
-    linkItem: `py-[10px] border-b border-${theme.alpha}`,
+    linkItem: `py-[10px] border-b border-${theme.alpha} last:border-none`,
   };
 
   // define jsx
@@ -306,12 +305,10 @@ export default function HomePage() {
       )}
 
       {isOpenModal && (
-        <Modal setOpenModal={setIsOpenModal}>
-          <PopupWrapper theme={theme}>
+        <Modal theme={theme} setOpenModal={setIsOpenModal}>
             {modalName.current === "confirm" && logoutModal}
             {modalName.current === "info" && infoScreen}
             {modalName.current === "theme" && themesScreen}
-          </PopupWrapper>
         </Modal>
       )}
     </>

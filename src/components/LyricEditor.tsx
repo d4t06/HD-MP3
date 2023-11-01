@@ -435,10 +435,7 @@ export default function LyricEditor({
          )}
 
          {openModal && (
-            <Modal setOpenModal={setOpenModal}>
-               <div
-                  className={`w-[700px] max-w-[90vw]  rounded-[8px] p-[20px] ${theme.side_bar_bg} ${text}`}
-               >
+            <Modal classNames="w-[700px]" theme={theme} setOpenModal={setOpenModal}>
                   <textarea
                      ref={textareaRef}
                      value={baseLyric}
@@ -452,7 +449,6 @@ export default function LyricEditor({
                   >
                      Save
                   </Button>
-               </div>
             </Modal>
          )}
       </>

@@ -31,5 +31,7 @@
 ### update thứ 6 27/10
 - Thêm hook useDebounce khi click scroll song list
 
-### update thứ 2 30/10
+### update thứ 3 31/10
+- Fix đăng xuất, đăng nhập
+- Issue: Code lăp lại nhiều khi dùng setting menu ở nhiều nơi
 
