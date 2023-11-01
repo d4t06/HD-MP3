@@ -268,11 +268,12 @@ export default function SongItemEditForm({
          await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
          // >>> finish
          setSuccessToast({ message: `${newSong.name} edited` });
+         closeModal();
       } catch (error) {
          console.log(error);
          setErrorToast({});
       } finally {
-         closeModal();
+         setLoading(false)
       }
    }, [inputFields, imageFile, userSongs, data, isImpactOnImage]);
 
@@ -296,6 +297,7 @@ export default function SongItemEditForm({
             <div>
                <div className="w-[130px] h-[130px] flex-shrink-0 rounded-[5px] overflow-hidden">
                   <Image
+                     classNames="object-cover object-center w-full h-full"
                      onError={() => setValidURL(false)}
                      src={imageToDisplay}
                      blurHashEncode={data.blurhash_encode}

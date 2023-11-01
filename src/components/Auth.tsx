@@ -9,11 +9,10 @@ export default function Auth({ children }: { children: ReactNode }) {
    const [loggedInUser, loading] = useAuthState(auth);
    const { setUserInfo, userInfo } = useAuthStore();
 
-   // Because need to fetch data user in other page
-   // so we need to pause all processes until user data updated
    useEffect(() => {
       const handleUserLogged = async () => {
          try {
+
             await mySetDoc({
                collection: "users",
                data: {

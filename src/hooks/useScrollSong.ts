@@ -17,15 +17,11 @@ export default function useScrollSong({
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    const scrollToActiveSong = () => {
-      if (!songItemRef || !containerRef) {
-         console.log("lack of props");
-         return;
-      }
-
       const windowWidth = window.innerWidth;
+      const songItemEle = songItemRef?.current as HTMLElement;
+      const containerEle = containerRef?.current as HTMLElement;
 
-      const songItemEle = songItemRef.current as HTMLElement;
-      const containerEle = containerRef.current as HTMLElement;
+      if (!songItemEle || !containerEle) return;
 
       const rect = songItemEle.getBoundingClientRect();
 
@@ -62,7 +58,8 @@ export default function useScrollSong({
    };
 
    useEffect(() => {
-      if (!scroll || !containerRef || !songItemRef) {
+      if (!isOpenFullScreen) return;
+      if (!scroll || !containerRef?.current || !songItemRef?.current) {
          console.log("lack props");
          return;
       }
@@ -73,11 +70,7 @@ export default function useScrollSong({
          return;
       }
 
-      if (containerRef) {
-         scrollToActiveSong();
-      } else {
-         console.log("element undefined");
-      }
+      scrollToActiveSong();
    }, [songInStore, isOpenFullScreen]);
 
    return { scrollToActiveSong };

@@ -382,7 +382,7 @@ export default function MySongsPage() {
 
    return (
       <>
-         <img className="hidden" ref={testImageRef} />
+         <img className="w-[50px]" ref={testImageRef} />
          {/* playlist */}
          <div className="pb-[30px] ">
             {/* mobile nav */}

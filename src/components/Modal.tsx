@@ -62,7 +62,7 @@ const Modal: FC<Props> = ({ children, setOpenModal, theme, classNames }) => {
    return (
       <>
          {createPortal(
-            <div className="fixed inset-0 z-[1000]">
+            <div className="fixed inset-0 z-[99]">
                <div
                   onClick={(e) => {
                      e.stopPropagation;
@@ -70,7 +70,7 @@ const Modal: FC<Props> = ({ children, setOpenModal, theme, classNames }) => {
                   }}
                   className="absolute bg-black opacity-60 inset-0 z-[90]"
                ></div>
-               <div className="absolute z-[1000] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+               <div className="absolute z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                   <PopupWrapper classNames={classNames} theme={theme}>{children}</PopupWrapper>
                </div>
             </div>,

@@ -59,7 +59,7 @@ export default function MobileFullScreenPlayer({
    const [scalingImage, _setScalingImage] = useState(false);
 
    // ref
-   const [isRotate, setIsRotate] = useState(false);
+   const [isLandscape, setIsLandscape] = useState(false);
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const lyricContainerRef = useRef<HTMLDivElement>(null);
@@ -152,16 +152,15 @@ export default function MobileFullScreenPlayer({
    );
 
    useEffect(() => {
-      const handleRotate = () => {
-         if (screen.orientation.angle === 90 || screen.orientation.angle === -90)
-            setIsRotate(true);
-         else setIsRotate(false);
+      const handleResize = () => {
+         if (window.innerWidth > 549 && window.innerWidth < 800) setIsLandscape(true);
+         else setIsLandscape(false)
       };
 
-      handleRotate();
+      handleResize();
 
-      screen.orientation.addEventListener("change", handleRotate);
-      return () => screen.orientation.removeEventListener("change", handleRotate);
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
    }, []);
 
    const classes = {
@@ -172,9 +171,9 @@ export default function MobileFullScreenPlayer({
       nameAndSinger: "flex flex-grow justify-between items-center",
       scrollText: "h-[30px] mask-image-horizontal",
       lyricContainer:
-         "absolute top-[60px] bottom-[110px] overflow-hidden left-[15px] right-[15px]",
+         "absolute top-[60px] bottom-[130px] overflow-hidden left-[15px] right-[15px]",
       playerContainer: "absolute bottom-[30px] left-[15px] right-[15px]",
-      bgImage: "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px]",
+      bgImage: "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
       overlay: "absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply",
       button:
          "bg-gray-500 bg-opacity-20 inline-flex justify-center items-center rounded-full absolute right-0 top-0 h-full w-[35px]",
@@ -215,7 +214,7 @@ export default function MobileFullScreenPlayer({
                   {/* songImage, name and singer */}
                   <div
                      className={`${
-                        (activeTab != "Playing" && !scalingImage) || isRotate
+                        (activeTab != "Playing" && !scalingImage) || isLandscape
                            ? "flex"
                            : ""
                      }`}
@@ -224,16 +223,16 @@ export default function MobileFullScreenPlayer({
                      {useMemo(
                         () => (
                            <MoibleSongThumbnail
-                              active={activeTab === "Playing" && !isRotate}
+                              active={activeTab === "Playing" && !isLandscape}
                               data={songInStore}
                            />
                         ),
-                        [songInStore, isPlaying, activeTab, isRotate]
+                        [songInStore, isPlaying, activeTab, isLandscape]
                      )}
                      {/* name and singer */}
                      <div
                         className={`${classes.nameAndSinger} ${
-                           activeTab != "Playing" || isRotate
+                           activeTab != "Playing" || isLandscape
                               ? "ml-[10px]"
                               : "mt-[15px] min-[549px]:mt-0"
                         }`}
@@ -246,7 +245,7 @@ export default function MobileFullScreenPlayer({
                                        songInStore={songInStore}
                                        autoScroll
                                        classNames={`${
-                                          activeTab === "Playing" || isRotate
+                                          activeTab === "Playing" || isLandscape
                                              ? "text-[24px] leading-[30px]"
                                              : "text-[20px]"
                                        } font-[500]`}
@@ -263,7 +262,7 @@ export default function MobileFullScreenPlayer({
                                        songInStore={songInStore}
                                        autoScroll
                                        classNames={`${
-                                          activeTab === "Playing" || isRotate
+                                          activeTab === "Playing" || isLandscape
                                              ? "text-[22px]"
                                              : "text-[16px] opacity-60"
                                        } font-[400]`}
@@ -295,14 +294,14 @@ export default function MobileFullScreenPlayer({
 
                   {/* song list tab */}
                   <div
-                     className={`absolute ${activeTab === "Songs" ? "block" : "hidden"}`}
+                     className={`absolute left-[15px] right-[15px] ${activeTab === "Songs" ? "block" : "hidden"}`}
                   >
                      <div className="relative">
                         <h3 className="text-white text-[16px] my-[10px]">Playing next</h3>
                         {/* <div
                            className={`absolute h-[calc(100vh-170px)] w-full overflow-auto `}
                         ></div> */}
-                        <div className="h-[calc(100vh-170px)] no-scrollbar overflow-auto">
+                        <div className="h-[calc(100vh-170px)] pb-[30px] no-scrollbar overflow-auto">
                            {songsListItemTab}
                         </div>
                      </div>
@@ -316,7 +315,7 @@ export default function MobileFullScreenPlayer({
                      }`}
                   >
                      <div className="flex flex-col justify-start flex-1">
-                        <div className="flex-col-reverse flex">
+                        <div className="flex-col-reverse flex gap-[16px]">
                            {useMemo(
                               () => (
                                  <Control

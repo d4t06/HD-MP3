@@ -8,23 +8,26 @@ type collectionVariant = "songs" | "playlist" | "lyrics" | "users";
 export const myDeleteDoc = async ({
    collection,
    id,
+   msg
 }: {
    collection: collectionVariant;
    id: string;
+   msg: string
 }) => {
-   console.log("delete doc");
-
+   console.log(msg ?? ">>> api: delete doc");
    await deleteDoc(doc(db, collection, id));
 };
 
 export const myGetDoc = async ({
    collection,
    id,
+   msg
 }: {
    collection: collectionVariant;
    id: string;
+   msg : string;
 }) => {
-   console.log("get doc");
+   console.log(msg ?? ">>> api: get doc");
 
    return getDoc(doc(db, collection, id));
 };
@@ -40,7 +43,7 @@ export const mySetDoc = async ({
    data: {};
    msg?: string
 }) => {
-   console.log("set doc", msg ?? '');
+   console.log(msg ?? ">>> api: set doc");
 
    return setDoc(doc(db, collection, id), { ...data }, { merge: true });
 };
@@ -49,12 +52,14 @@ export const uploadFile = async ({
    file,
    folder,
    email,
+   msg,
 }: {
    file: File;
    folder: "/images/" | "/songs/";
    email: string;
+   msg?: string;
 }) => {
-   console.log("upload file");
+   console.log(msg ?? ">>> api: upload file");
    const start = Date.now();
 
    // define ref
@@ -65,7 +70,7 @@ export const uploadFile = async ({
    const fileURL = await getDownloadURL(fileRes.ref);
 
    const consuming = (Date.now() - start) / 1000
-   console.log("Upload file finished after", consuming);
+   console.log(">>> api: upload file finished after", consuming);
 
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
@@ -74,12 +79,14 @@ export const uploadBlob = async ({
    blob,
    folder,
    songId,
+   msg
 }: {
    blob: Blob;
    folder: "/images/" | "/songs/";
    songId: string;
+   msg?: string;
 }) => {
-   console.log("upload blob");
+   console.log(msg ??"upload blob");
    const start = Date.now();
 
    // define ref
@@ -89,34 +96,34 @@ export const uploadBlob = async ({
    const fileURL = await getDownloadURL(fileRes.ref);
 
    const consuming = (Date.now() - start) / 1000
-   console.log("Upload blob finished after", consuming);
+   console.log(">>> api: upload blob finished after", consuming);
 
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
 
-export const deleteFile = async ({ filePath }: { filePath: string }) => {
-   console.log("delete file");
+export const deleteFile = async ({ filePath, msg }: { filePath: string, msg?: string }) => {
+   console.log(msg ?? ">>> api: delete file");
 
    const fileRef = ref(store, filePath);
    await deleteObject(fileRef);
 };
 
 export const deleteSong = async (song: Song) => {
-   await deleteDoc(doc(db, "songs", song.id));
+   await myDeleteDoc({collection: 'songs', id: song.id, msg: ">>> api: delete song doc"});
 
-   await deleteFile({filePath: song.song_file_path})
+   await deleteFile({filePath: song.song_file_path, msg: '>>> api: delete song file' })
 
    if (song.lyric_id) {
-      await deleteDoc(doc(db, "lyrics", song.lyric_id));
+      await myDeleteDoc({collection: "lyrics", id: song.lyric_id, msg: ">>> api: delete song lyric doc"});
    }
 
    if (song.image_file_path) {
-      await deleteFile({ filePath: song.image_file_path });
+      await deleteFile({ filePath: song.image_file_path, msg: `>>> api: delete song's image file` });
    }
 };
 
 export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
-   await mySetDoc({ collection: "playlist", data: playlist, id: playlist.id });
+   await mySetDoc({ collection: "playlist", data: playlist, id: playlist.id, msg: '>>> api: set playlist' });
 };
 
 export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userInfo: User) => {
@@ -125,6 +132,7 @@ export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userInfo: Use
       collection: "users",
       data: { playlist_ids: newPlaylistIds } as Partial<User>,
       id: userInfo.email,
+      msg: '>>> api: set user playlist_ids'
    });
 };
 
@@ -139,5 +147,6 @@ export const setUserSongIdsAndCountDoc = async ({
       collection: "users",
       data: { song_ids: songIds, song_count: songIds.length } as Partial<User>,
       id: userInfo.email,
+      msg: '>>> api: set user song_ids, song_count'
    });
 };

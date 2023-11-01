@@ -6,12 +6,11 @@ export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
 
-const VERCEL_URL = "https://express-zingmp3-awx6.vercel.app";
+// const VERCEL_URL = "https://express-zingmp3-awx6.vercel.app";
 // const RENDER_URL = "https://express-zingmp3.onrender.com";
-// const LOCAL_URL = "http://localhost:3000";
+const LOCAL_URL = "http://localhost:3000";
 
 export const generateId = (name: string): string => {
-   // Replace all Vietnamese accent characters with their corresponding non-accented characters.
    const convertToEn = (str: string) => {
       const newString = str
          .toLocaleLowerCase()
@@ -39,6 +38,9 @@ export const parserSong = async (songFile: File) => {
    const tags = await fromFile(songFile);
    if (!tags) return;
 
+   console.log('check tag', tags);
+   
+
    const { title, artist, images } = tags;
    const data: ParserSong = { name: "", singer: "", image: null };
 
@@ -57,10 +59,10 @@ export const parserSong = async (songFile: File) => {
 };
 
 export const getBlurhashEncode = async (blob: Blob) => {
-   console.log("Get blurHash encode");
+   console.log(">>> api: get blurHash encode");
    const start = Date.now();
 
-   const res = await fetch(VERCEL_URL + "/api/image/encode", {
+   const res = await fetch(LOCAL_URL + "/api/image/encode", {
       method: "post",
       body: blob,
    });
@@ -71,7 +73,7 @@ export const getBlurhashEncode = async (blob: Blob) => {
    }
 
    const consuming = (Date.now() - start) / 1000;
-   console.log("Get blurHash encode finished after", consuming);
+   console.log(">>> api: get blurHash encode finished after", consuming);
    return { encode };
 };
 
@@ -79,9 +81,9 @@ export const optimizeImage = async (imageFile: File) => {
    const fd = new FormData();
    fd.append("file", imageFile);
    const start = Date.now();
-   console.log("Optimize image");
+   console.log(">>> api: optimize image");
 
-   const res = await fetch(VERCEL_URL + "/api/image/optimize", {
+   const res = await fetch(LOCAL_URL + "/api/image/optimize", {
       method: "post",
       body: fd,
    });
@@ -91,7 +93,7 @@ export const optimizeImage = async (imageFile: File) => {
    }
 
    const consuming = (Date.now() - start) / 1000;
-   console.log("Optimize finished after", consuming);
+   console.log(">>> api: optimize finished after", consuming);
 
    return imageBlob;
 };

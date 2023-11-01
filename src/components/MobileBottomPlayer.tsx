@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useSongsStore } from "../store/SongsContext";
+import { Image } from ".";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -83,10 +84,11 @@ const MobileBottomPlayer: FC<Props> = ({
                {/* song image, name and singer */}
                <div className={classes.songImageWrapper}>
                   <div className={classes.image}>
-                     <img
+                     {/* <img
                         className={`w-full object-cover object-center rounded-full`}
                         src={songInStore.image_url ? songInStore.image_url : zingIcon}
-                     />
+                     /> */}
+                     <Image src={songInStore.image_url} classNames="rounded-full"/>
                   </div>
 
                   <div className="flex-grow  ml-[10px]">

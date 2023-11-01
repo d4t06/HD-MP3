@@ -41,7 +41,7 @@ const ToastPortal = ({ time = 3000, autoClose }: Props) => {
    }, [toasts]);
 
    const classes = {
-      container: `toast-portal fixed z-[99] bottom-[120px] right-[30px] max-[549px]:bottom-[unset] max-[540px]:top-[10px] max-[540px]:right-[10px]`,
+      container: `toast-portal fixed z-[199] bottom-[120px] right-[30px] max-[549px]:bottom-[unset] max-[540px]:top-[10px] max-[540px]:right-[10px]`,
    }
 
    return (

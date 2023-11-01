@@ -34,4 +34,8 @@
 ### update thứ 3 31/10
 - Fix đăng xuất, đăng nhập
 - Issue: Code lăp lại nhiều khi dùng setting menu ở nhiều nơi
+- Error: Khi thêm mới bài hát sau đó play trong playlist detail khi mở full screen player bị lỗi
 
+### update thứ 4 1/11
+- Sửa chức năng upload nhạc
+- Fix lỗi screen undefine trên mobile

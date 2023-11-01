@@ -283,6 +283,10 @@ export default function HomePage() {
       {isOnMobile && (
         <div className="pb-[30px]">
           <h3 className="text-[24px] font-bold mb-[10px]">Setting</h3>
+          <div className="h-[65px] w-[65px]">
+            <img src={userInfo.photoURL} className="w-full rounded-full" alt="" />
+          </div>
+          <p className="text-[18px] font-[500] my-[8px]">{userInfo.display_name}</p>
           <LinkItem
             className={classes.linkItem}
             icon={<PaintBrushIcon className={classes.icon} />}
