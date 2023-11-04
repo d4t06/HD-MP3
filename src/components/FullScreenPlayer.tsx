@@ -45,7 +45,6 @@ export default function FullScreenPlayer({
 
    // use hooks
    const navigate = useNavigate();
-   const songLyric = useGetSongLyric({ songInStore, audioEle });
    useBgImage({ bgRef, songInStore });
    const { scrollToActiveSong } = useScrollSong({
       containerRef,
@@ -163,7 +162,11 @@ export default function FullScreenPlayer({
 
          {/* right */}
          <div className={classes.lyricContainer}>
-            <LyricsList audioEle={audioEle} songLyric={songLyric} />
+            <LyricsList
+               audioEle={audioEle}
+               isOpenFullScreen={isOpenFullScreen}
+               className=""
+            />
          </div>
       </div>
    );

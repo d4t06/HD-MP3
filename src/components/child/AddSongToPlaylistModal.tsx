@@ -22,7 +22,7 @@ export default function AddSongToPlaylistModal ({playlistSongs, theme, handleAdd
       songItem: "w-full max-[549px]:w-full",
    };
 
-   const isAbleToSubmit = useMemo(() => !!selectedSongList.length, [selectedSongList])
+   const isAbleToSubmit = useMemo(() => !!selectedSongList.length, [selectedSongList])   
 
    return (
       <div className={classes.addSongContainer}>

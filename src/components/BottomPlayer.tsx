@@ -7,13 +7,12 @@ import {
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
-
-import Button from "./ui/Button";
-import Control from "./Control";
-import useVolume from "../hooks/useVolume";
-import ScrollText from "./ScrollText";
-import { Image } from ".";
 import { useLocation } from "react-router-dom";
+
+import {ScrollText, Image, Control, Button} from ".";
+
+import useVolume from "../hooks/useVolume";
+import zingIcon from '../assets/icon-zing.svg'
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -43,9 +42,6 @@ export default function BottomPlayer({
 
    const { song: songInStore } = SongStore;
    const { theme } = useTheme();
-
-   // const [isMute, setIsMute] = useState(false);
-   // const [volume, setVolume] = useLocalStorage("volume", 1);
 
    const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
@@ -113,7 +109,7 @@ export default function BottomPlayer({
                   <div className="w-[2.5rem] h-[2.5rem]">
                      <Image
                         blurHashEncode={songInStore.blurhash_encode}
-                        src={songInStore.image_url}
+                        src={songInStore.image_url || zingIcon}
                         classNames="rounded-full"
                      />
                   </div>

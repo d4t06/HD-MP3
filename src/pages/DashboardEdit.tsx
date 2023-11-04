@@ -30,7 +30,7 @@ export default function Edit() {
 
       const getSong = async () => {
          try {
-            const songSnapshot = await myGetDoc({ collection: "songs", id: params?.id as string });
+            const songSnapshot = await myGetDoc({ collection: "songs", id: params?.id as string, msg: ">>> api: get song doc" });
 
             const songData = songSnapshot.data() as Song;
 

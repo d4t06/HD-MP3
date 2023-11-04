@@ -6,8 +6,8 @@ import { Playlist, Song, User } from "../types";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { useAuthStore } from "../store/AuthContext";
-// import { testSongs } from "./songs";
-// import { sleep } from "../utils/appHelpers";
+import { testSongs } from "./songs";
+import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 
 export default function useSong() {

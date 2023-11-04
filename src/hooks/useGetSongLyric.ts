@@ -1,40 +1,91 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Lyric, Song } from "../types";
 import { myGetDoc } from "../utils/firebaseHelpers";
+import { sleep } from "../utils/appHelpers";
 
 export default function useSongLyric({
    songInStore,
    audioEle,
+   isOpenFullScreen,
 }: {
    songInStore: Song;
    audioEle: HTMLAudioElement;
+   isOpenFullScreen: boolean;
 }) {
    const [songLyric, setSongLyric] = useState<Lyric>({
       base: "",
       real_time: [],
    });
 
-   const getLyric = async () => {
-      const lyricsData = (
-         await myGetDoc({ collection: "lyrics", id: songInStore.lyric_id })
-      ).data() as Lyric;
+   const [loading, setLoading] = useState(false);
+   const [isSongLoaded, setIsSongLoaded] = useState(false);
+   // const isSongLoaded = useRef(false)
 
-      if (lyricsData) {
-         setSongLyric(lyricsData);
-      }
+   const handleSongLoaded = async () => {
+      await sleep(1000);
+      console.log("song loaded");
+
+      setIsSongLoaded(true);
+   };
+
+   const getLyric = async () => {
+      console.log(">>> api: run get lyric");
+
+      setLoading(true);
+      await sleep(1000);
+      setSongLyric({ base: "kdafs", real_time: [{ end: 100, start: 0, text: "Test" }] });
+      setLoading(false);
+
+      // try {
+      //    const lyricsData = (
+      //       await myGetDoc({
+      //          collection: "lyrics",
+      //          id: songInStore.lyric_id,
+      //          msg: ">>> api: get lyric doc",
+      //       })
+      //    ).data() as Lyric;
+
+      //    if (lyricsData) {
+      //       setSongLyric(lyricsData);
+      //    }
+      // } catch (error) {
+      //    console.log("[error] get lyric error");
+      // } finally {
+      // }
    };
 
    useEffect(() => {
-      if (!songInStore.lyric_id) return;
-      if (audioEle) audioEle.addEventListener("loadeddata", getLyric);
+      if (audioEle) audioEle.addEventListener("loadeddata", handleSongLoaded);
 
       return () => {
-         console.log("use get lyric clean up");
+         console.log(">>> local: lyric clean up");
+         if (audioEle) audioEle.removeEventListener("loadeddata", handleSongLoaded);
+      };
+   }, []);
 
-         if (audioEle) audioEle.removeEventListener("loadeddata", getLyric);
+   useEffect(() => {
+      // if (!isSongLoaded) return;
+      // if (!songInStore.lyric_id) return;
+
+      // getLyric();
+
+      return () => {
+         setIsSongLoaded(false);
+         setLoading(true)
          setSongLyric({ base: "", real_time: [] });
       };
    }, [songInStore]);
 
-   return songLyric;
+   useEffect(() => {
+      if (!songInStore.lyric_id) {
+         setLoading(false)
+         return;
+      }
+      if (songLyric.real_time.length) return;
+      if (isSongLoaded && isOpenFullScreen) {
+         getLyric();
+      }
+   }, [isSongLoaded, isOpenFullScreen]);
+
+   return { songLyric, loading };
 }

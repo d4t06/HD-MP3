@@ -3,7 +3,6 @@ import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react"
 import { Playlist, Song, ThemeType, User } from "../types";
 import Button from "./ui/Button";
 import {
-   ArrowDownOnSquareIcon,
    ArrowDownTrayIcon,
    ArrowPathIcon,
    Bars3Icon,
@@ -39,9 +38,9 @@ import { selectAllSongStore, setPlaylist, setSong, useToast } from "../store";
 import {
    PopupWrapper,
    Modal,
-   confirmModal,
    Image,
    SongItemEditForm,
+   ConfirmModal,
 } from "../components";
 
 import { Link } from "react-router-dom";
@@ -605,20 +604,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       [theme, active, userPlaylists, data, handleAddSongToPlaylist, deleteFromPlaylist]
    );
 
-   // loading, theme, userSongs, data, songInStore
-   const dialogComponent = useMemo(
-      () =>
-         confirmModal({
-            loading: loading,
-            label: `Delete '${data.name}'`,
-            desc: "This action cannot be undone",
-            theme: theme,
-            callback: handleDeleteSong,
-            setOpenModal: setIsOpenModal,
-         }),
-      [loading, theme, userSongs, data, songInStore]
-   );
-
    return (
       <div
          className={`${
@@ -696,7 +681,14 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      data={data}
                   />
                )}
-               {modalComponent === "confirm" && dialogComponent}
+               {modalComponent === "confirm" && <ConfirmModal 
+                 loading = {loading}
+                 label = {`Delete '${data.name}'`}
+                 desc = {"This action cannot be undone"}
+                 theme = {theme}
+                 callback = {handleDeleteSong}
+                 setOpenModal = {setIsOpenModal}
+               />}
             </Modal>
          )}
       </div>

@@ -39,3 +39,13 @@
 ### update thứ 4 1/11
 - Sửa chức năng upload nhạc
 - Fix lỗi screen undefine trên mobile
+- VITE_VA => import.mete.env.VITE_VARs
+
+
+### update thứ 5 2/11
+- Bắt lỗi chức năng upload nhạc
+- Thêm component modal
+- Sửa function get song lyric, chỉ lấy lyric khi full screen
+
+### update thứ 7 4/11/2023
+- Bỏ trường in_playlist ở bảng songs

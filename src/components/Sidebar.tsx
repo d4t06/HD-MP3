@@ -3,7 +3,6 @@ import {
    Cog6ToothIcon,
    ArrowLeftOnRectangleIcon,
    MusicalNoteIcon,
-   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import {
    useFloating,
@@ -15,38 +14,31 @@ import {
    useRole,
    useInteractions,
 } from "@floating-ui/react";
-import { useMemo, useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuthState, useSignInWithGoogle } from "react-firebase-hooks/auth";
-import { signOut } from "firebase/auth";
-import { useDispatch } from "react-redux";
+import {  useRef, useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
 import { routes } from "../routes";
-import { ThemeType } from "../types";
 import {
    Button,
    SettingMenu,
-   Image,
    Skeleton,
-   confirmModal,
    Modal,
+   AppInfo,
+   Appearance,
+   Avatar,
+   ConfirmModal,
 } from "../components";
-import ThemeItem from "./child/ThemeItem";
 
 import { auth } from "../config/firebase";
-import { themes } from "../config/themes";
 
-import { useTheme, useAuthStore, useSongsStore, setSong } from "../store";
-import { initialState } from "../store/AuthContext";
-import { initialSongs } from "../store/SongsContext";
+import { useTheme, useAuthStore } from "../store";
+import { useAuthActions } from "../store/AuthContext";
 
 export default function Sidebar() {
    // use store
-   const dispatch = useDispatch();
-   const { theme, setTheme } = useTheme();
-   const { userInfo, setUserInfo } = useAuthStore();
+   const { theme } = useTheme();
+   const { userInfo } = useAuthStore();
    const [loggedInUser, loading] = useAuthState(auth);
-   const [signInWithGoogle] = useSignInWithGoogle(auth);
-   const { initSongsContext } = useSongsStore();
 
    // state
    const [isOpenMenu, setIsOpenMenu] = useState(false);
@@ -71,51 +63,27 @@ export default function Sidebar() {
    ]);
 
    //  use hooks
-   const navigate = useNavigate();
+   const { logIn, logOut } = useAuthActions();
 
    //   methods
-   const signIn = async () => {
+   const handleLogIn = async () => {
       try {
-         const userCredential = await signInWithGoogle();
-         //  reset song context
-         if (userCredential) {
-            // reset song redux
-            dispatch(setSong());
-             // reset song context
-            initSongsContext({ adminSongs: [], adminPlaylists: [] });
-            // reset userInfo
-            // after set sign cause trigger auth useEffect and will update status to 'finish'
-            setUserInfo({ status: "loading" });
-
-            navigate(routes.Home);
-         }
+         await logIn();
       } catch (error) {
          console.log(error);
-      }
-   };
-
-   const handleSignOut = async () => {
-      try {
-         await signOut(auth);
-         // reset userInfo
-         // after set sign cause trigger auth useEffect and will update status to 'finish'
-         setUserInfo(initialState.userInfo);
-         // reset song context
-         initSongsContext(initialSongs);
-         // reset song redux
-         dispatch(setSong());
-
-         navigate(routes.Home);
-      } catch (error) {
-         console.log("signOut error", { messsage: error });
       } finally {
          setIsOpenModal(false);
       }
    };
 
-   const handleSetTheme = (theme: ThemeType) => {
-      localStorage.setItem("theme", JSON.stringify(theme.id));
-      setTheme(theme);
+   const handleSignOut = async () => {
+      try {
+         await logOut();
+      } catch (error) {
+         console.log("signOut error", { messsage: error });
+      } finally {
+         setIsOpenModal(false);
+      }
    };
 
    // define skeleton
@@ -127,10 +95,10 @@ export default function Sidebar() {
          </div>
       );
    });
-   const avatarSkeleton = (
+   const AvatarSkeleton = (
       <div className="flex items-center">
          <Skeleton className="w-[36px] h-[36px] flex-shrink-0 rounded-full" />
-         <Skeleton className="w-[104px] h-[16px] ml-[5px]" />
+         <Skeleton className="w-[104px] h-[20px] ml-[5px]" />
       </div>
    );
 
@@ -151,121 +119,18 @@ export default function Sidebar() {
       themeItem: "w-[25%] px-[10px] max-[549px]:w-[50%]",
    };
 
-   // modal
-   const renderHeader = (title: string) => {
-      return (
-         <div className="flex justify-between py-[15px]">
-            <h1 className="text-[26px] font-semibold">{title}</h1>
-            <Button
-               onClick={() => setIsOpenModal(false)}
-               size={"normal"}
-               variant={"circle"}
-            >
-               <XMarkIcon />
-            </Button>
-         </div>
-      );
-   };
-
-   const infoScreen = useMemo(
-      () => (
-         <div className={classes.popupWrapper}>
-            {renderHeader("Zingmp3 clone")}
-            <div className="">
-               <h5 className="text-lg font-bold">Các công nghệ sử dụng:</h5>
-               <ul>
-                  {/* <li className="text-lg my-[10px] ml-[20px]">- React - Vite</li>
-                 <li className="text-lg my-[10px]  ml-[20px]">- Tailwind css</li> */}
-                  {/* <li className="text-lg my-[10px]  ml-[20px]">
-                - Này tui lấy của người ta nên hông biết &#128535; &#128535; &#128535;
-              </li> */}
-               </ul>
-               <a href="asldj" target="_blank" className="text-lg font-bold">
-                  #Github
-               </a>
-            </div>
-         </div>
-      ),
-      []
-   );
-
-   const darkTheme: JSX.Element[] = [];
-   const lightTheme: JSX.Element[] = [];
-
-   useMemo(() => {
-      themes.forEach((themeItem, index) => {
-         const active = themeItem.id === theme.id;
-         if (themeItem.type === "dark")
-            return darkTheme.push(
-               <ThemeItem
-                  active={active}
-                  key={index}
-                  theme={themeItem}
-                  onClick={handleSetTheme}
-               />
-            );
-
-         lightTheme.push(
-            <ThemeItem
-               active={active}
-               key={index}
-               theme={themeItem}
-               onClick={handleSetTheme}
-            />
-         );
-      });
-   }, [theme]);
-
-   const themesScreen = useMemo(
-      () => (
-         <div className={classes.popupWrapper}>
-            {renderHeader("Appearance")}
-            <div className={classes.themeContainer}>
-               <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
-               <div className={classes.themeList}>{darkTheme}</div>
-
-               <h2 className="text-md font-semibold mb-[10px] mt-[30px]">Light</h2>
-               <div className={classes.themeList}>{lightTheme}</div>
-            </div>
-         </div>
-      ),
-      [theme]
-   );
-
-   const logoutModal = useMemo(
-      () =>
-         confirmModal({
-            loading: false,
-            label: "Log out ?",
-            theme: theme,
-            callback: handleSignOut,
-            className: "w-[auto]",
-            setOpenModal: setIsOpenModal,
-         }),
-      [theme]
-   );
 
    return (
       <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] flex items-center">
             {loading ? (
-               avatarSkeleton
+               AvatarSkeleton
             ) : (
                <>
-                  <div className={classes.imageFrame}>
-                     {loggedInUser?.photoURL ? (
-                        <Image src={loggedInUser.photoURL!} classNames="w-full" />
-                     ) : (
-                        <h1 className="text-[20px]">
-                           {loggedInUser?.email
-                              ? loggedInUser?.displayName?.charAt(1)
-                              : "Z"}
-                        </h1>
-                     )}
-                  </div>
-                  {loggedInUser?.email && (
-                     <h3 className={classes.userName}>{loggedInUser?.displayName}</h3>
-                  )}
+                  <Avatar />
+                  <h3 className={classes.userName}>
+                     {loggedInUser?.displayName || "Guest"}
+                  </h3>
                </>
             )}
          </div>
@@ -290,7 +155,7 @@ export default function Sidebar() {
                         </Button>
                      </Link>
                   ) : (
-                     <Button onClick={() => signIn()} className={classes.button}>
+                     <Button onClick={handleLogIn} className={classes.button}>
                         <ArrowLeftOnRectangleIcon className={classes.icon} />
                         Login
                      </Button>
@@ -327,12 +192,21 @@ export default function Sidebar() {
          )}
 
          {isOpenModal && (
-            <Modal theme={theme} setOpenModal={setIsOpenModal}>
-               {/* <PopupWrapper theme={theme}> */}
-               {modalName.current === "confirm" && logoutModal}
-               {modalName.current === "info" && infoScreen}
-               {modalName.current === "theme" && themesScreen}
-               {/* </PopupWrapper> */}
+            <Modal classNames={modalName.current === "theme" ? 'w-[900px] max-w-[90vw]' : ''} theme={theme} setOpenModal={setIsOpenModal}>
+               {modalName.current === "confirm" && (
+                  <ConfirmModal
+                  setOpenModal={setIsOpenModal}
+                     callback={handleSignOut}
+                     loading={false}
+                     theme={theme}
+                  />
+               )}
+               {modalName.current === "info" && (
+                  <AppInfo setIsOpenModal={setIsOpenModal} />
+               )}
+               {modalName.current === "theme" && (
+                  <Appearance setIsOpenModal={setIsOpenModal} />
+               )}
             </Modal>
          )}
       </div>

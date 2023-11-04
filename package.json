@@ -16,6 +16,7 @@
       "@floating-ui/react": "^0.25.1",
       "@heroicons/react": "^2.0.18",
       "@reduxjs/toolkit": "^1.9.5",
+      "axios": "^1.6.0",
       "class-variance-authority": "^0.7.0",
       "firebase": "^10.3.0",
       "gh-pages": "^6.0.0",

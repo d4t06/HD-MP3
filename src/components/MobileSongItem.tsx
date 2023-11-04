@@ -63,7 +63,7 @@ const MobileSongItem = ({
    const classes = {
       button: `${theme.content_bg} rounded-full`,
       songListButton: `mr-[10px] px-[5px]`,
-      itemContainer: `item-container transition-opacity duration-[.3s] border-b last:border-none border-${
+      itemContainer: `hover:bg-${theme.alpha} item-container transition-opacity duration-[.3s] border-b last:border-none border-${
          theme.alpha
       } flex rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
          isSelected() && "bg-" + theme.alpha

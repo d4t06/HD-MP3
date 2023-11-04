@@ -2,13 +2,16 @@ import { Timestamp } from "firebase/firestore";
 import { Playlist, Song } from "../types";
 import { fromFile } from "id3js";
 import { nanoid } from "nanoid";
+import axios from "axios";
+
+const isDev: boolean = !!import.meta.env.DEV;
+
+export const request = axios.create({
+   baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
+});
 export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
-
-// const VERCEL_URL = "https://express-zingmp3-awx6.vercel.app";
-// const RENDER_URL = "https://express-zingmp3.onrender.com";
-const LOCAL_URL = "http://localhost:3000";
 
 export const generateId = (name: string): string => {
    const convertToEn = (str: string) => {
@@ -38,14 +41,11 @@ export const parserSong = async (songFile: File) => {
    const tags = await fromFile(songFile);
    if (!tags) return;
 
-   console.log('check tag', tags);
-   
-
    const { title, artist, images } = tags;
    const data: ParserSong = { name: "", singer: "", image: null };
 
    if (!title || !artist) {
-      console.log("song don't have tags");
+      if (isDev) console.log("song don't have tags");
    }
 
    data.name = title || songFile.name;
@@ -59,17 +59,19 @@ export const parserSong = async (songFile: File) => {
 };
 
 export const getBlurhashEncode = async (blob: Blob) => {
-   console.log(">>> api: get blurHash encode");
+   if (isDev) console.log(">>> api: get blurHash encode");
    const start = Date.now();
 
-   const res = await fetch(LOCAL_URL + "/api/image/encode", {
-      method: "post",
-      body: blob,
-   });
+   // when use fetch {body: blob}
+   // const res = await fetch((import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app") + "/api/image/encodee", {
+   //    method: "post",
+   //    body: blob,
+   // });
+
+   const res = await request.post("/api/image/encode", blob);
    let encode;
-   if (res.ok) {
-      const data = (await res.json()) as { encode: string };
-      if (data) encode = data.encode;
+   if (res) {
+      encode = res.data.encode;
    }
 
    const consuming = (Date.now() - start) / 1000;
@@ -81,15 +83,14 @@ export const optimizeImage = async (imageFile: File) => {
    const fd = new FormData();
    fd.append("file", imageFile);
    const start = Date.now();
-   console.log(">>> api: optimize image");
 
-   const res = await fetch(LOCAL_URL + "/api/image/optimize", {
-      method: "post",
-      body: fd,
-   });
+   if (isDev) console.log(">>> api: optimize image");
+   const res = await request.post("/api/image/optimize", fd, { responseType: "blob" });
+
    let imageBlob;
-   if (res.ok) {
-      imageBlob = await res.blob();
+   if (res) {
+      // if use fetch => await res.blob()
+      imageBlob = res.data;
    }
 
    const consuming = (Date.now() - start) / 1000;
@@ -122,10 +123,10 @@ export const handleTimeText = (duration: number) => {
 };
 
 export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
-   console.log("update songs list");
+   if (isDev) console.log("update songs list");
 
    const index = userSongs.findIndex((songItem) => {
-      // console.log(songItem.id, "===", song.id, songItem.id === song.id);
+      // if (isDev) console.log(songItem.id, "===", song.id, songItem.id === song.id);
       return songItem.id === song.id;
    });
 
@@ -135,7 +136,7 @@ export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
 };
 
 export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) => {
-   console.log("update playlist value");
+   if (isDev) console.log("update playlist value");
 
    const index = playlists.findIndex((playlistItem) => playlistItem.id === playlist.id);
    if (index == -1) return;
@@ -163,7 +164,7 @@ export const generatePlaylistAfterChangeSongs = ({
    newPlaylistSongs: Song[];
    existingPlaylist: Playlist;
 }) => {
-   console.log("generate playlist");
+   if (isDev) console.log("generate playlist");
    const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
    const newPlaylist: Playlist = {
       ...existingPlaylist,
@@ -182,7 +183,7 @@ export const generatePlaylistAfterChangeSong = ({
    song: Song;
    playlist: Playlist;
 }) => {
-   console.log("generate playlist");
+   if (isDev) console.log(">>> local: generate playlist");
 
    const newPlaylist: Playlist = {
       ...playlist,
@@ -213,6 +214,23 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
       ...song,
       ...value,
    } as Song;
+};
+
+export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
+   const playlist: Playlist = {
+      id: "",
+      name: "",
+      song_ids: [],
+      time: 0,
+      count: 0,
+      by: "",
+      image_by: "",
+      image_file_path: "",
+      image_url: "",
+      blurhash_encode: "",
+   };
+
+   return { ...playlist, ...value } as Playlist;
 };
 
 export const sleep = async (delay: number) => {

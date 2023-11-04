@@ -25,11 +25,11 @@ export const SongItemSkeleton = [...Array(4).keys()].map((index) => {
    );
 });
 
-export const mobileLinkSkeleton = [...Array(1).keys()].map((index) => {
+export const MobileLinkSkeleton = [...Array(1).keys()].map((index) => {
    return <Skeleton key={index} className="w-full h-[40px] mb-[10px]" />;
 });
 
-export const playlistSkeleton = [...Array(2).keys()].map((index) => {
+export const PlaylistSkeleton = [...Array(2).keys()].map((index) => {
    return (
       <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
          <Skeleton className="pt-[100%] rounded-[8px]" />

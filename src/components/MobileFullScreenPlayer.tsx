@@ -18,7 +18,7 @@ import { useGetSongLyric, useBgImage } from "../hooks";
 import {
    Tabs,
    ScrollText,
-   MoibleSongThumbnail,
+   MobileSongThumbnail,
    Control,
    LyricsList,
    MobileSongItem,
@@ -38,7 +38,6 @@ type Props = {
 
 export default function MobileFullScreenPlayer({
    audioEle,
-   // idle,
    isPlaying,
    isWaiting,
    isOpenFullScreen,
@@ -66,7 +65,6 @@ export default function MobileFullScreenPlayer({
 
    // use hooks
    useBgImage({ bgRef, songInStore });
-   const songLyric = useGetSongLyric({ songInStore, audioEle });
 
    const findParent = (ele: HTMLDivElement) => {
       let i = 0;
@@ -143,18 +141,18 @@ export default function MobileFullScreenPlayer({
    const lyricTab = useMemo(
       () => (
          <LyricsList
-            className="flex-shrink-0 overflow-auto"
+            className="h-[calc(100vh-60px-65px-130px-20px)]"
             audioEle={audioEle}
-            songLyric={songLyric}
+            isOpenFullScreen={isOpenFullScreen}
          />
       ),
-      [songLyric]
+      [isLandscape]
    );
 
    useEffect(() => {
       const handleResize = () => {
          if (window.innerWidth > 549 && window.innerWidth < 800) setIsLandscape(true);
-         else setIsLandscape(false)
+         else setIsLandscape(false);
       };
 
       handleResize();
@@ -170,14 +168,15 @@ export default function MobileFullScreenPlayer({
       songImage: "flex-shrink-0 transition-[height, width] origin-top-left",
       nameAndSinger: "flex flex-grow justify-between items-center",
       scrollText: "h-[30px] mask-image-horizontal",
-      lyricContainer:
-         "absolute top-[60px] bottom-[130px] overflow-hidden left-[15px] right-[15px]",
+      lyricContainer: "absolute top-[calc(60px+16px)] left-[15px] right-[15px]",
       playerContainer: "absolute bottom-[30px] left-[15px] right-[15px]",
-      bgImage: "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
+      bgImage:
+         "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
       overlay: "absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply",
       button:
          "bg-gray-500 bg-opacity-20 inline-flex justify-center items-center rounded-full absolute right-0 top-0 h-full w-[35px]",
    };
+   
 
    return (
       <>
@@ -220,15 +219,16 @@ export default function MobileFullScreenPlayer({
                      }`}
                   >
                      {/* song image */}
-                     {useMemo(
+                     {/* {useMemo(
                         () => (
-                           <MoibleSongThumbnail
+                           <MobileSongThumbnail
                               active={activeTab === "Playing" && !isLandscape}
                               data={songInStore}
                            />
                         ),
                         [songInStore, isPlaying, activeTab, isLandscape]
-                     )}
+                     )} */}
+
                      {/* name and singer */}
                      <div
                         className={`${classes.nameAndSinger} ${
@@ -289,48 +289,45 @@ export default function MobileFullScreenPlayer({
                         activeTab === "Lyric" ? "block" : "hidden"
                      }`}
                   >
-                     <div className={`relative h-full`}>{lyricTab}</div>
+                     {lyricTab}
                   </div>
 
                   {/* song list tab */}
-                  <div
-                     className={`absolute left-[15px] right-[15px] ${activeTab === "Songs" ? "block" : "hidden"}`}
+                  {/* <div
+                     className={`absolute left-[15px] right-[15px] ${
+                        activeTab === "Songs" ? "block" : "hidden"
+                     }`}
                   >
                      <div className="relative">
                         <h3 className="text-white text-[16px] my-[10px]">Playing next</h3>
-                        {/* <div
-                           className={`absolute h-[calc(100vh-170px)] w-full overflow-auto `}
-                        ></div> */}
                         <div className="h-[calc(100vh-170px)] pb-[30px] no-scrollbar overflow-auto">
                            {songsListItemTab}
                         </div>
                      </div>
-                  </div>
+                  </div> */}
 
-                  {/* player */}
+                  {/* control */}
                   <div
                      className={`${classes.playerContainer} ${
                         activeTab === "Songs" &&
                         "opacity-0 pointer-events-none h-[0px] mb-[0px]"
                      }`}
                   >
-                     <div className="flex flex-col justify-start flex-1">
-                        <div className="flex-col-reverse flex gap-[16px]">
-                           {useMemo(
-                              () => (
-                                 <Control
-                                    audioEle={audioEle}
-                                    isOpenFullScreen={false}
-                                    isPlaying={isPlaying}
-                                    isWaiting={isWaiting}
-                                    setIsWaiting={setIsWaiting}
-                                    setIsPlaying={setIsPlaying}
-                                    idle={false}
-                                 />
-                              ),
-                              [isPlaying, isWaiting]
-                           )}
-                        </div>
+                     <div className="flex flex-col-reverse justify-between h-[100px]">
+                        {useMemo(
+                           () => (
+                              <Control
+                                 audioEle={audioEle}
+                                 isOpenFullScreen={false}
+                                 isPlaying={isPlaying}
+                                 isWaiting={isWaiting}
+                                 setIsWaiting={setIsWaiting}
+                                 setIsPlaying={setIsPlaying}
+                                 idle={false}
+                              />
+                           ),
+                           [isPlaying, isWaiting]
+                        )}
                      </div>
                   </div>
                </div>

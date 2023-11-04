@@ -88,7 +88,7 @@ const MobileBottomPlayer: FC<Props> = ({
                         className={`w-full object-cover object-center rounded-full`}
                         src={songInStore.image_url ? songInStore.image_url : zingIcon}
                      /> */}
-                     <Image src={songInStore.image_url} classNames="rounded-full"/>
+                     <Image src={songInStore.image_url || zingIcon} classNames="rounded-full"/>
                   </div>
 
                   <div className="flex-grow  ml-[10px]">

@@ -224,7 +224,10 @@ export default function SongItemEditForm({
                newSong.image_file_path = "";
                newSong.image_url = "";
                // >>> api
-               await deleteFile({ filePath: data.image_file_path }); //
+               await deleteFile({
+                  filePath: data.image_file_path,
+                  msg: ">>> api: delete song's image file",
+               });
             }
 
             if (imageFile) {
@@ -240,6 +243,7 @@ export default function SongItemEditForm({
                const { encode } = await getBlurhashEncode(imageBlob);
                if (encode) {
                   newSong.blurhash_encode = encode;
+                  console.log("check encode", encode);
                }
 
                const { filePath, fileURL } = await uploadProcess;
@@ -265,15 +269,24 @@ export default function SongItemEditForm({
             );
          }
          // >>> api
-         await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
+         await mySetDoc({
+            collection: "songs",
+            data: newSong,
+            id: newSong.id,
+            msg: ">>> api: update song doc",
+         });
          // >>> finish
          setSuccessToast({ message: `${newSong.name} edited` });
          closeModal();
-      } catch (error) {
+      } catch (error: any) {
          console.log(error);
+
+         if (error.response.data) console.log("[error]: ", error.response.data);
+         else console.log("[error]: Server error");
+
          setErrorToast({});
       } finally {
-         setLoading(false)
+         setLoading(false);
       }
    }, [inputFields, imageFile, userSongs, data, isImpactOnImage]);
 

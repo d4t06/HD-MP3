@@ -2,8 +2,7 @@ import { DocumentIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/o
 import { Dispatch, SetStateAction, forwardRef, useMemo, useState } from "react";
 import { Song, ThemeType } from "../types";
 
-import { Button, Modal, SongItemEditForm } from ".";
-import { confirmModal } from "./Modal";
+import { Button, ConfirmModal, Modal, SongItemEditForm } from ".";
 
 import { useToast } from "../store/ToastContext";
 import { selectAllSongStore } from "../store/SongSlice";
@@ -27,16 +26,19 @@ type Props = {
    inProcess: boolean;
 };
 
-const DashboardSongItem = ({
-   data,
-   theme,
-   selectedSongList,
-   setSelectedSongList,
-   isChecked,
-   adminSongs,
-   setAdminSongs,
-   inProcess,
-}: Props, ref: any) => {
+const DashboardSongItem = (
+   {
+      data,
+      theme,
+      selectedSongList,
+      setSelectedSongList,
+      isChecked,
+      adminSongs,
+      setAdminSongs,
+      inProcess,
+   }: Props,
+   ref: any
+) => {
    const [loading, setLoading] = useState(false);
    const [isOpenModal, setIsOpenModal] = useState(false);
    const [modalComponent, setModalComponent] = useState<string>();
@@ -57,7 +59,7 @@ const DashboardSongItem = ({
    };
 
    const handleDeleteSong = async () => {
-      if (!setAdminSongs ||  !adminSongs) {
+      if (!setAdminSongs || !adminSongs) {
          setErrorToast({ message: "Lack of props" });
          return;
       }
@@ -65,14 +67,14 @@ const DashboardSongItem = ({
       try {
          setLoading(true);
 
-         const newAdminSongs = [...adminSongs]
+         const newAdminSongs = [...adminSongs];
 
          // eliminate 1 song
          const index = newAdminSongs.indexOf(data);
          newAdminSongs.splice(index, 1);
 
          // >>> local
-         setAdminSongs(newAdminSongs)
+         setAdminSongs(newAdminSongs);
 
          // >>> api
          await deleteSong(data);
@@ -104,19 +106,6 @@ const DashboardSongItem = ({
       }
       setSelectedSongList(list);
    };
-
-   const dialogComponent = useMemo(
-      () =>
-         confirmModal({
-            loading: loading,
-            label: `Delete '${data.name}'`,
-            desc: "This action cannot be undone",
-            theme: theme,
-            callback: handleDeleteSong,
-            setOpenModal: setIsOpenModal,
-         }),
-      [loading, theme, adminSongs, songInStore]
-   );
 
    const classes = {
       td: `py-[10px] my-[10px] border-${theme.alpha} border-b-[1px]`,
@@ -151,16 +140,22 @@ const DashboardSongItem = ({
             ) : (
                <td className={classes.td}>
                   <div className="flex items-center gap-[5px]">
-                     <Button variant={"circle"} onClick={() => handleOpenModal("confirm")}>
+                     <Button
+                        variant={"circle"}
+                        onClick={() => handleOpenModal("confirm")}
+                     >
                         <TrashIcon className="w-[20px]" />
                      </Button>
                      <Button variant={"circle"} onClick={() => handleOpenModal("edit")}>
                         <PencilSquareIcon className="w-[20px]" />
                      </Button>
                      <Link to={`${routes.Dashboard}/edit/${data.id}`}>
-                     <Button variant={"circle"} onClick={() => handleOpenModal("edit")}>
-                        <DocumentIcon className="w-[20px]" />
-                     </Button>
+                        <Button
+                           variant={"circle"}
+                           onClick={() => handleOpenModal("edit")}
+                        >
+                           <DocumentIcon className="w-[20px]" />
+                        </Button>
                      </Link>
                   </div>
                </td>
@@ -169,21 +164,29 @@ const DashboardSongItem = ({
 
          {isOpenModal && !inProcess && (
             <Modal theme={theme} setOpenModal={setIsOpenModal}>
-                  {modalComponent === "edit" && (
-                     <SongItemEditForm
-                        setIsOpenModal={setIsOpenModal}
-                        setUserSongs={setAdminSongs}
-                        theme={theme}
-                        userSongs={adminSongs}
-                        data={data}
-                     />
-                  )}
-                  {modalComponent === "confirm" && dialogComponent}
+               {modalComponent === "edit" && (
+                  <SongItemEditForm
+                     setIsOpenModal={setIsOpenModal}
+                     setUserSongs={setAdminSongs}
+                     theme={theme}
+                     userSongs={adminSongs}
+                     data={data}
+                  />
+               )}
+               {modalComponent === "confirm" && (
+                  <ConfirmModal
+                     loading={loading}
+                     label={`Delete '${data.name}'`}
+                     desc={"This action cannot be undone"}
+                     theme={theme}
+                     callback={handleDeleteSong}
+                     setOpenModal={setIsOpenModal}
+                  />
+               )}
             </Modal>
          )}
       </>
    );
-}
+};
 
-
-export default forwardRef(DashboardSongItem)
+export default forwardRef(DashboardSongItem);

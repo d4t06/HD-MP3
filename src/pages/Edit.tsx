@@ -28,13 +28,13 @@ export default function Edit() {
   const params = useParams<{ id: string }>();
 
   const getLyric = useCallback(async (song: Song) => {
-    console.log("get lyric");
     try {
       if (song.lyric_id) {
         setLoading(true);
         const lyricSnapshot = await myGetDoc({
           collection: "lyrics",
           id: song.lyric_id,
+          msg: ">>> api: get lyric doc"
         });
         const lyricData = lyricSnapshot.data() as Lyric;
 

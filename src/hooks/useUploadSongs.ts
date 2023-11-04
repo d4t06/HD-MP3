@@ -9,7 +9,7 @@ import {
    useEffect,
 } from "react";
 import { Song } from "../types";
-import { generateId, getBlurhashEncode, parserSong, sleep } from "../utils/appHelpers";
+import { generateId, getBlurhashEncode, parserSong } from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
@@ -63,7 +63,7 @@ export default function useUploadSongs({
    const finishAndClear = (sts: typeof status) => {
       const inputEle = inputRef.current as HTMLInputElement;
       inputEle.value = "";
-      inputEle
+      inputEle;
       setStatus(sts);
    };
 
@@ -140,7 +140,7 @@ export default function useUploadSongs({
                   console.log(">>>duplicate");
                   isDuplicate.current = true;
                   duplicatedFile.current.push(songFileObject);
-                  
+
                   continue;
                }
 
@@ -169,7 +169,7 @@ export default function useUploadSongs({
             // case all song are duplicate
             if (!songsList.length) {
                setStatus("finish-error");
-               finishAndClear("finish-error")
+               finishAndClear("finish-error");
                setErrorToast({ message: "Duplicate song" });
                return;
             }
@@ -208,18 +208,17 @@ export default function useUploadSongs({
                   );
                }
 
-               console.log("code running...");
+               // console.log("code running...");
                // throw new DOMException();
                // return;
 
                //  upload song file
-               const uploadSongFileProcess = uploadFile({
+               const { filePath, fileURL } = await uploadFile({
                   file: newSongFile,
                   folder: "/songs/",
                   email: userInfo.email,
                   msg: ">>> api: upload song file",
                });
-               const { filePath, fileURL } = await uploadSongFileProcess;
 
                songsList[idInSongsList] = {
                   ...songNeedToUpdate,
@@ -228,6 +227,8 @@ export default function useUploadSongs({
                   song_url: fileURL,
                };
 
+               console.log("code running...");
+
                //  update audio src
                const audioEle = audioRef.current as HTMLAudioElement;
                audioEle.src = URL.createObjectURL(newSongFile);
@@ -235,10 +236,11 @@ export default function useUploadSongs({
                // upload song doc
                await handleUploadSong(songsList, idInSongsList);
             }
-         } catch (error) {
-            console.log(">>> error when upload song");
+         } catch (error: any) {
+            // if (error.response.data) console.log("[error]: ", error.response.data);
+            // else  console.log("[error]: ", error);
             finishAndClear("finish-error");
-            setErrorToast({ message: "error when upload song file" });
+            setErrorToast({ message: "Error when upload song file" });
 
             setTempSongs([]);
             return;
@@ -262,15 +264,13 @@ export default function useUploadSongs({
                   userInfo: userInfo,
                });
 
-               
                // update songs to context store
                setUserSongs([...userSongs, ...songsList]);
             }
 
             setTempSongs([]);
 
-            console.log('>>> check song list after upload', songsList);
-
+            // console.log('>>> check song list after upload', songsList);
 
             if (setSongs) {
                setSongs([...targetSongs, ...songsList]);
@@ -309,38 +309,44 @@ export default function useUploadSongs({
       songId: string,
       songNeedToUpdate: Song
    ) => {
-      return new Promise<void>((rs) => {
+      return new Promise<void>((rs, rj) => {
          const testImageEle = testImageRef.current as HTMLImageElement;
          const imageURL = URL.createObjectURL(imageBlob);
          // assign image url
          testImageEle.src = imageURL;
 
          const uploadImage = async () => {
-            URL.revokeObjectURL(imageURL);
+            try {
+               URL.revokeObjectURL(imageURL);
 
-            const { encode } = await getBlurhashEncode(imageBlob);
-            const { fileURL, filePath } = await uploadBlob({
-               blob: imageBlob,
-               folder: "/images/",
-               songId,
-               msg: `>>> api: upload song's image blob`,
-            });
+               const { encode } = await getBlurhashEncode(imageBlob);
+               const { fileURL, filePath } = await uploadBlob({
+                  blob: imageBlob,
+                  folder: "/images/",
+                  songId,
+                  msg: `>>> api: upload song's image blob`,
+               });
 
-            if (encode) songNeedToUpdate.blurhash_encode = encode;
-            songNeedToUpdate.image_url = fileURL;
-            songNeedToUpdate.image_file_path = filePath;
+               if (encode) songNeedToUpdate.blurhash_encode = encode;
+               songNeedToUpdate.image_url = fileURL;
+               songNeedToUpdate.image_file_path = filePath;
 
-            testImageEle.removeEventListener("load", uploadImage);
-            rs();
+               rs();
+            } catch (error) {
+               console.log("[error]: upload image error");
+               testImageEle.removeEventListener("error", handleError);
+               rj();
+            } finally {
+               testImageEle.removeEventListener("load", uploadImage);
+            }
          };
 
          const handleError = () => {
             console.log("[error]: stock image error");
 
             URL.revokeObjectURL(imageURL);
-            songNeedToUpdate.song_url = ''
+            songNeedToUpdate.song_url = "";
             testImageEle.removeEventListener("error", handleError);
-
             rs();
          };
 
@@ -351,45 +357,51 @@ export default function useUploadSongs({
 
    // get song duration and upload song doc
    const handleUploadSong = useCallback(async (songsList: Song[], index: number) => {
-      return new Promise<void>((resolve) => {
+      return new Promise<void>((resolve, reject) => {
          const audioEle = audioRef.current as HTMLAudioElement;
          const upload = async () => {
-            let song = songsList[index];
-            // update songList
-            const duration = +audioEle.duration.toFixed(1) || 99;
-            song = {
-               ...song,
-               duration,
-            };
-            songsList[index] = song;
+            try {
+               let song = songsList[index];
+               // update songList
+               const duration = +audioEle.duration.toFixed(1) || 99;
+               song = {
+                  ...song,
+                  duration,
+               };
+               songsList[index] = song;
 
-            // add to firebase
-            await mySetDoc({
-               collection: "songs",
-               data: song,
-               id: song.id,
-               msg: ">>> api: set song doc",
-            });
+               // add to firebase
+               await mySetDoc({
+                  collection: "songs",
+                  data: song,
+                  id: song.id,
+                  msg: ">>> api: set song doc",
+               });
 
-            // update new song list (include new song_url....)
-            setTempSongs(songsList);
+               // update new song list (include new song_url....)
+               setTempSongs(songsList);
 
-            // update added song
-            setAddedSongIds((prev) => [...prev, song.id]);
+               // update added song
+               setAddedSongIds((prev) => [...prev, song.id]);
 
-            // when song uploaded
-            URL.revokeObjectURL(audioEle.src);
-            setToasts((t) => [
-               ...t,
-               {
-                  title: "success",
-                  id: nanoid(4),
-                  desc: `'${song.name}' uploaded`,
-               },
-            ]);
+               // when song uploaded
+               URL.revokeObjectURL(audioEle.src);
+               setToasts((t) => [
+                  ...t,
+                  {
+                     title: "success",
+                     id: nanoid(4),
+                     desc: `'${song.name}' uploaded`,
+                  },
+               ]);
 
-            audioEle.removeEventListener("loadedmetadata", upload);
-            resolve();
+               resolve();
+            } catch (error) {
+               console.log("[error]: upload song file error");
+               reject();
+            } finally {
+               audioEle.removeEventListener("loadedmetadata", upload);
+            }
          };
 
          audioEle.addEventListener("loadedmetadata", upload);
@@ -404,8 +416,6 @@ export default function useUploadSongs({
          firstTempSongEle.scrollIntoView({ behavior: "smooth", block: "center" });
       }
    }, [tempSongs]);
-
-   // console.log("addedSongIds ", addedSongIds);
 
    return { tempSongs, setTempSongs, addedSongIds, status, handleInputChange };
 }

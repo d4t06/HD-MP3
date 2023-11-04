@@ -5,29 +5,31 @@ import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
 type collectionVariant = "songs" | "playlist" | "lyrics" | "users";
 
+const isDev: boolean = !!import.meta.env.DEV;
+
 export const myDeleteDoc = async ({
    collection,
    id,
-   msg
+   msg,
 }: {
    collection: collectionVariant;
    id: string;
-   msg: string
+   msg?: string;
 }) => {
-   console.log(msg ?? ">>> api: delete doc");
+   if (isDev) console.log(msg ?? ">>> api: delete doc");
    await deleteDoc(doc(db, collection, id));
 };
 
 export const myGetDoc = async ({
    collection,
    id,
-   msg
+   msg,
 }: {
    collection: collectionVariant;
    id: string;
-   msg : string;
+   msg?: string;
 }) => {
-   console.log(msg ?? ">>> api: get doc");
+   if (isDev) console.log(msg ?? ">>> api: get doc");
 
    return getDoc(doc(db, collection, id));
 };
@@ -36,16 +38,16 @@ export const mySetDoc = async ({
    collection,
    id,
    data,
-   msg
+   msg,
 }: {
    collection: collectionVariant;
    id: string;
    data: {};
-   msg?: string
+   msg?: string;
 }) => {
-   console.log(msg ?? ">>> api: set doc");
+   if (isDev) console.log(msg ?? ">>> api: set doc");
 
-   return setDoc(doc(db, collection, id), { ...data }, { merge: true });
+   return await setDoc(doc(db, collection, id), { ...data }, { merge: true });
 };
 
 export const uploadFile = async ({
@@ -59,71 +61,95 @@ export const uploadFile = async ({
    email: string;
    msg?: string;
 }) => {
-   console.log(msg ?? ">>> api: upload file");
+   if (isDev) console.log(msg ?? ">>> api: upload file");
    const start = Date.now();
 
    // define ref
    const fileName =
       file.name.replaceAll(" ", "").toLowerCase() + "_" + email.replace("@gmail.com", "");
    const fileRef = ref(store, `${folder + fileName}`);
+
    const fileRes = await uploadBytes(fileRef, file);
    const fileURL = await getDownloadURL(fileRes.ref);
-
-   const consuming = (Date.now() - start) / 1000
-   console.log(">>> api: upload file finished after", consuming);
+   const consuming = (Date.now() - start) / 1000;
+   if (isDev) console.log(">>> api: upload file finished after", consuming);
 
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
 
-export const uploadBlob = async ({
+export const uploadBlob =  async ({
    blob,
    folder,
    songId,
-   msg
+   msg,
 }: {
    blob: Blob;
    folder: "/images/" | "/songs/";
    songId: string;
    msg?: string;
 }) => {
-   console.log(msg ??"upload blob");
+   if (isDev) console.log(msg ?? "upload blob");
    const start = Date.now();
 
    // define ref
-   const fileName = songId + "_stock"
-   const fileRef = ref(store, `${folder + fileName}`);
-   const fileRes = await uploadBytes(fileRef, blob);
-   const fileURL = await getDownloadURL(fileRes.ref);
+   // try {
+      const fileName = songId + "_stock";
+      const fileRef = ref(store, `${folder + fileName}`);
+      const fileRes = await uploadBytes(fileRef, blob);
+      const fileURL = await getDownloadURL(fileRes.ref);
 
-   const consuming = (Date.now() - start) / 1000
-   console.log(">>> api: upload blob finished after", consuming);
+      const consuming = (Date.now() - start) / 1000;
+      if (isDev) console.log(">>> api: upload blob finished after", consuming);
 
-   return { fileURL, filePath: fileRes.metadata.fullPath };
+      return { fileURL, filePath: fileRes.metadata.fullPath };
+
 };
 
-export const deleteFile = async ({ filePath, msg }: { filePath: string, msg?: string }) => {
-   console.log(msg ?? ">>> api: delete file");
+export const deleteFile = async ({
+   filePath,
+   msg,
+}: {
+   filePath: string;
+   msg?: string;
+}) => {
+   if (isDev) console.log(msg ?? ">>> api: delete file");
 
    const fileRef = ref(store, filePath);
    await deleteObject(fileRef);
 };
 
 export const deleteSong = async (song: Song) => {
-   await myDeleteDoc({collection: 'songs', id: song.id, msg: ">>> api: delete song doc"});
+   await myDeleteDoc({
+      collection: "songs",
+      id: song.id,
+      msg: ">>> api: delete song doc",
+   });
 
-   await deleteFile({filePath: song.song_file_path, msg: '>>> api: delete song file' })
+   await deleteFile({ filePath: song.song_file_path, msg: ">>> api: delete song file" });
 
    if (song.lyric_id) {
-      await myDeleteDoc({collection: "lyrics", id: song.lyric_id, msg: ">>> api: delete song lyric doc"});
+      await myDeleteDoc({
+         collection: "lyrics",
+         id: song.lyric_id,
+         msg: ">>> api: delete song lyric doc",
+      });
    }
 
    if (song.image_file_path) {
-      await deleteFile({ filePath: song.image_file_path, msg: `>>> api: delete song's image file` });
+      await deleteFile({
+         filePath: song.image_file_path,
+         msg: `>>> api: delete song's image file`,
+      });
    }
 };
 
 export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
-   await mySetDoc({ collection: "playlist", data: playlist, id: playlist.id, msg: '>>> api: set playlist' });
+   await mySetDoc({
+      collection: "playlist",
+      data: playlist,
+      id: playlist.id,
+      msg: ">>> api: set playlist",
+   });
 };
 
 export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userInfo: User) => {
@@ -132,7 +158,7 @@ export const setUserPlaylistIdsDoc = async (playlists: Playlist[], userInfo: Use
       collection: "users",
       data: { playlist_ids: newPlaylistIds } as Partial<User>,
       id: userInfo.email,
-      msg: '>>> api: set user playlist_ids'
+      msg: ">>> api: set user playlist_ids",
    });
 };
 
@@ -147,6 +173,6 @@ export const setUserSongIdsAndCountDoc = async ({
       collection: "users",
       data: { song_ids: songIds, song_count: songIds.length } as Partial<User>,
       id: userInfo.email,
-      msg: '>>> api: set user song_ids, song_count'
+      msg: ">>> api: set user song_ids, song_count",
    });
 };

@@ -11,7 +11,7 @@ import { Song } from "../types";
 
 import { useCallback, useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { Status } from "../store/SongSlice";
 import {
@@ -21,7 +21,6 @@ import {
    useActuallySongs,
    useAuthStore,
    selectAllSongStore,
-   setPlaylist,
    setSong,
 } from "../store";
 import { useSongItemActions, usePlaylistDetail } from "../hooks";
@@ -38,48 +37,37 @@ import {
    Skeleton,
    AddSongToPlaylistModal,
    Modal,
+   ConfirmModal,
 } from "../components";
-import { confirmModal } from "../components/Modal";
 
 import {
    handleSongWhenAddToPlaylist,
    handleSongWhenDeleteFromPlaylist,
-   handleSongWhenDeletePlaylist,
 } from "../utils/songItemHelper";
 
-import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+import { mySetDoc } from "../utils/firebaseHelpers";
 
 import { routes } from "../routes";
+import usePlaylistActions from "../hooks/usePlaylistActions";
 
 export default function PlaylistDetail() {
-   // for store
+   // *** store
    const dispatch = useDispatch();
    const params = useParams();
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
    const { setSuccessToast, setErrorToast } = useToast();
    const { setActuallySongs } = useActuallySongs();
-   const { userSongs, userPlaylists, setUserPlaylists, setUserSongs, adminSongs } = useSongsStore();
-   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
+   const { userSongs, setUserSongs, adminSongs } = useSongsStore();
+   const { song: songInStore, playlist: playlistInStore } =
+      useSelector(selectAllSongStore);
 
-   // component state
-   const [loading, setLoading] = useState(false);
+   // *** state
    const firstTimeRender = useRef(true);
-
-   //  use hooks
-   const navigate = useNavigate();
-   const { playlistSongs, loading: usePlaylistLoading } = usePlaylistDetail({
-      firstTimeRender,
-      playlistInStore,
-      songInStore,
-   });
-
-   const { setPlaylistDocAndSetUserPlaylists } = useSongItemActions();
-
-   // for modal
    const [isOpenModal, setIsOpenModal] = useState(false);
-   const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
-
+   const [modalComponent, setModalComponent] = useState<
+      "edit" | "confirm" | "addSongs"
+   >();
    // for multiselect songItem
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
    const [isCheckedSong, setIsCheckedSong] = useState(false);
@@ -87,9 +75,27 @@ export default function PlaylistDetail() {
    // for edit playlist
    const [playlistName, setPlaylistName] = useState<string>(playlistInStore.name);
 
+   //  *** use hooks
+   const {
+      deletePlaylist,
+      loading: playlistActionLoading,
+      deleteManyFromPlaylist,
+      deleteSongFromPlaylist,
+      addSongToPlaylist,
+   } = usePlaylistActions({});
+   const { setPlaylistDocAndSetUserPlaylists } = useSongItemActions();
+   const { playlistSongs, loading: usePlaylistLoading } = usePlaylistDetail({
+      firstTimeRender,
+      playlistInStore,
+      songInStore,
+   });
+
    const handleSetSong = (song: Song, index: number) => {
       // case user play user songs then play playlist song
-      if (songInStore.id !== song.id || !songInStore.song_in.includes(playlistInStore.name)) {
+      if (
+         songInStore.id !== song.id ||
+         !songInStore.song_in.includes(playlistInStore.name)
+      ) {
          const newSongIn: Status["song_in"] =
             playlistInStore.by === "admin"
                ? `admin-playlist-${playlistInStore.name as string}`
@@ -116,252 +122,222 @@ export default function PlaylistDetail() {
       handleSetSong(firstSong, 0);
    };
 
-   const handleAddSongsToPlaylist = useCallback(
-      async (selectSongs: Song[]) => {
-         const newPlaylistSongs = [...playlistSongs, ...selectSongs];
-         const newUserSongs = [...userSongs];
-         const songsNeedToUpdateDoc: Song[] = [];
+   // const handleAddSongsToPlaylist = useCallback(
+   //    async (selectSongs: Song[]) => {
+   //       const newPlaylistSongs = [...playlistSongs, ...selectSongs];
+   //       const newUserSongs = [...userSongs];
+   //       const songsNeedToUpdateDoc: Song[] = [];
 
-         // >>> handle song
-         for (let song of selectSongs) {
-            const { error, newSong } = handleSongWhenAddToPlaylist(song, playlistInStore);
+   //       // >>> handle song
+   //       for (let song of selectSongs) {
+   //          const { error, newSong } = handleSongWhenAddToPlaylist(song, playlistInStore);
 
-            // check valid song after change
-            if (error) {
-               setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
-               return;
-            } else if (newSong) {
-               songsNeedToUpdateDoc.push(newSong);
-               updateSongsListValue(newSong, newUserSongs);
-            }
-         }
+   //          // check valid song after change
+   //          if (error) {
+   //             setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
+   //             return;
+   //          } else if (newSong) {
+   //             songsNeedToUpdateDoc.push(newSong);
+   //             updateSongsListValue(newSong, newUserSongs);
+   //          }
+   //       }
 
-         // handle playlist
-         const newPlaylist = generatePlaylistAfterChangeSongs({
-            newPlaylistSongs,
-            existingPlaylist: playlistInStore,
-         });
+   //       // handle playlist
+   //       const newPlaylist = generatePlaylistAfterChangeSongs({
+   //          newPlaylistSongs,
+   //          existingPlaylist: playlistInStore,
+   //       });
 
-         // check valid playlist data after change
-         if (
-            newPlaylist.count < 0 ||
-            newPlaylist.time < 0 ||
-            newPlaylist.song_ids.length === playlistInStore.song_ids.length
-         ) {
-            setErrorToast({ message: "New playlist data error" });
-            return;
-         }
+   //       // check valid playlist data after change
+   //       if (
+   //          newPlaylist.count < 0 ||
+   //          newPlaylist.time < 0 ||
+   //          newPlaylist.song_ids.length === playlistInStore.song_ids.length
+   //       ) {
+   //          setErrorToast({ message: "New playlist data error" });
+   //          return;
+   //       }
 
-         // local
-         setUserSongs(newUserSongs);
+   //       // local
+   //       setUserSongs(newUserSongs);
 
-         // >>> local and api
-         await setPlaylistDocAndSetUserPlaylists({
-            newPlaylist,
-         });
+   //       // >>> local and api
+   //       await setPlaylistDocAndSetUserPlaylists({
+   //          newPlaylist,
+   //       });
 
-         songsNeedToUpdateDoc.forEach(async (song) => {
-            /// >>> api
-            await mySetDoc({ collection: "songs", data: song, id: song.id });
-         });
+   //       songsNeedToUpdateDoc.forEach(async (song) => {
+   //          /// >>> api
+   //          await mySetDoc({ collection: "songs", data: song, id: song.id });
+   //       });
 
-         // finish
-         closeModal();
-         setSuccessToast({ message: `${selectSongs.length} songs added` });
-      },
-      [selectedSongList, isOpenModal]
-   );
+   //       // finish
+   //       closeModal();
+   //       setSuccessToast({ message: `${selectSongs.length} songs added` });
+   //    },
+   //    [selectedSongList, isOpenModal]
+   // );
 
-   const deleteFromPlaylist = async (song: Song) => {
-      if (!playlistInStore.song_ids) {
-         console.log("Wrong playlist data");
-         setErrorToast({});
-         return;
-      }
+   // const deleteFromPlaylist = async (song: Song) => {
+   //    if (!playlistInStore.song_ids) {
+   //       console.log("Wrong playlist data");
+   //       setErrorToast({});
+   //       return;
+   //    }
 
-      const newUserSongs = [...userSongs];
-      const newPlaylistSongs = [...playlistSongs];
+   //    const newUserSongs = [...userSongs];
+   //    const newPlaylistSongs = [...playlistSongs];
 
-      // >>> handle song
-      const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
+   //    // >>> handle song
+   //    const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
 
-      if (error || !newSong) {
-         setErrorToast({ message: "Handle song when delete from playlist error" });
-         return;
-      }
-      updateSongsListValue(newSong, newUserSongs);
+   //    if (error || !newSong) {
+   //       setErrorToast({ message: "Handle song when delete from playlist error" });
+   //       return;
+   //    }
+   //    updateSongsListValue(newSong, newUserSongs);
 
-      // >>> handle playlist
-      // eliminate 1 song
-      const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
-      newPlaylistSongs.splice(index, 1);
+   //    // >>> handle playlist
+   //    // eliminate 1 song
+   //    const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
+   //    newPlaylistSongs.splice(index, 1);
 
-      const newPlaylist = generatePlaylistAfterChangeSongs({
-         newPlaylistSongs,
-         existingPlaylist: playlistInStore,
-      });
+   //    const newPlaylist = generatePlaylistAfterChangeSongs({
+   //       newPlaylistSongs,
+   //       existingPlaylist: playlistInStore,
+   //    });
 
-      // check valid playlist after change
-      if (
-         newPlaylist.count < 0 ||
-         newPlaylist.time < 0 ||
-         newPlaylist.song_ids.length === playlistInStore.song_ids.length
-      ) {
-         setErrorToast({ message: "New playlist data error" });
-         return;
-      }
+   //    // check valid playlist after change
+   //    if (
+   //       newPlaylist.count < 0 ||
+   //       newPlaylist.time < 0 ||
+   //       newPlaylist.song_ids.length === playlistInStore.song_ids.length
+   //    ) {
+   //       setErrorToast({ message: "New playlist data error" });
+   //       return;
+   //    }
 
-      // >>> local
-      setUserSongs(newUserSongs);
+   //    // >>> local
+   //    setUserSongs(newUserSongs);
 
-      // >>> api
-      await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
-      await setPlaylistDocAndSetUserPlaylists({
-         newPlaylist,
-      });
+   //    // >>> api
+   //    await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
+   //    await setPlaylistDocAndSetUserPlaylists({
+   //       newPlaylist,
+   //    });
 
-      // finish
-      setSuccessToast({ message: `'${song.name}' removed` });
-   };
+   //    // finish
+   //    setSuccessToast({ message: `'${song.name}' removed` });
+   // };
 
-   const deleteManyFromPlaylist = async () => {
-      if (!playlistInStore.song_ids) {
-         console.log("Wrong playlist data");
-         setErrorToast({});
-         return;
-      }
-
-      // if need to remove 1 song
-      if (selectedSongList.length === 1) {
-         return deleteFromPlaylist(selectedSongList[0]);
-      }
-
-      const newPlaylistSongs = [...playlistSongs];
-      const newUserSongs = [...userSongs];
-      const songsNeedToUpdateDoc: Song[] = [];
-
-      // >>> handle song
-      for (let song of selectedSongList) {
-         // eliminate 1 song
-         const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
-         newPlaylistSongs.splice(index, 1);
-
-         const { error, newSong } = handleSongWhenDeleteFromPlaylist(song, playlistInStore);
-
-         // update user songs
-         if (error) {
-            setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
-         } else if (newSong) {
-            songsNeedToUpdateDoc.push(newSong);
-            updateSongsListValue(newSong, newUserSongs);
-         }
-      }
-
-      // >>> handle playlist
-      const newPlaylist = generatePlaylistAfterChangeSongs({
-         newPlaylistSongs,
-         existingPlaylist: playlistInStore,
-      });
-
-      // check valid playlist data after change
-      if (
-         newPlaylist.count < 0 ||
-         newPlaylist.time < 0 ||
-         newPlaylist.song_ids.length === playlistInStore.song_ids.length
-      ) {
-         setErrorToast({ message: "New playlist data error" });
-         return;
-      }
-
-      // >>> local
-      setUserSongs(newUserSongs);
-
-      // >>> api
-      songsNeedToUpdateDoc.forEach(async (song) => {
-         console.log("update doc", song.name);
-         // await mySetDoc({ collection: "songs", data: song, id: song.id });
-      });
-
-      await setPlaylistDocAndSetUserPlaylists({
-         newPlaylist,
-      });
-
-      // finish
-      setSuccessToast({ message: `${selectedSongList.length} songs removed` });
-   };
-
-   const handleDeletePlaylist = async () => {
+   const handleAddSongsToPlaylist = async (selectedSongListFromModal: Song[]) => {
       try {
-         setLoading(true);
-         const newUserPlaylists = [...userPlaylists];
-
-         let songsResult: Song[] = [];
-         let newUserSongs: Song[] = [];
-
-         if (playlistSongs.length) {
-            newUserSongs = [...userSongs];
-            const { error, songsNeedToUpdate } = handleSongWhenDeletePlaylist(
-               playlistInStore,
-               playlistSongs
-            );
-
-            if (error) {
-               closeModal();
-               console.log("Song error when handle delete playlist");
-               setErrorToast({});
-               return;
-            }
-
-            songsResult = songsNeedToUpdate;
-         }
-
-         // update song doc and update user song
-         if (songsResult.length) {
-            for (let song of songsResult) {
-               updateSongsListValue(song, newUserSongs);
-
-               // api
-               await mySetDoc({ collection: "songs", data: song, id: song.id });
-            }
-         }
-
-         // eliminate 1 playlists
-         const index = newUserPlaylists.findIndex((item) => item.id === playlistInStore.id);
-         newUserPlaylists.splice(index, 1);
-
-         // >>> local
-         setUserPlaylists(newUserPlaylists, []);
-         if (songsResult.length) {
-            setUserSongs(newUserSongs);
-         }
-
-         // >>> api
-         await myDeleteDoc({ collection: "playlist", id: playlistInStore.id });
-         await setUserPlaylistIdsDoc(newUserPlaylists, userInfo);
-
-         // >>> finish
-         setLoading(false);
-         setIsOpenModal(false);
-         dispatch(
-            setPlaylist({
-               id: "",
-               name: "",
-               song_ids: [],
-               time: 0,
-               count: 0,
-               by: "",
-               image_by: "",
-               image_file_path: "",
-               image_url: "",
-               blurhash_encode: "",
-            })
-         );
-         setSuccessToast({ message: `${playlistInStore.name} deleted` });
-
-         navigate(`${routes.Playlist}`);
+         
+         await addSongToPlaylist(selectedSongListFromModal, playlistSongs, playlistInStore);
       } catch (error) {
          console.log(error);
-         setErrorToast({});
+         setErrorToast({ message: "Error when add song to playlist" });
+      } finally {
+         setIsOpenModal(false);
+      }
+   };
+   const handleDeleteFromPlaylist = async (song: Song) => {
+      try {
+         await deleteSongFromPlaylist(playlistSongs, song);
+      } catch (error) {
+         console.log(error);
+         setErrorToast({ message: "Error when delete song" });
+      } finally {
+         setIsOpenModal(false);
+      }
+   };
+
+   // const deleteManyFromPlaylist = async () => {
+   //    if (!playlistInStore.song_ids) {
+   //       console.log("Wrong playlist data");
+   //       setErrorToast({});
+   //       return;
+   //    }
+
+   //    // if need to remove 1 song
+   //    if (selectedSongList.length === 1) {
+   //       return deleteFromPlaylist(selectedSongList[0]);
+   //    }
+
+   //    const newPlaylistSongs = [...playlistSongs];
+   //    const newUserSongs = [...userSongs];
+   //    const songsNeedToUpdateDoc: Song[] = [];
+
+   //    // >>> handle song
+   //    for (let song of selectedSongList) {
+   //       // eliminate 1 song
+   //       const index = newPlaylistSongs.findIndex((item) => item.id === song.id);
+   //       newPlaylistSongs.splice(index, 1);
+
+   //       const { error, newSong } = handleSongWhenDeleteFromPlaylist(
+   //          song,
+   //          playlistInStore
+   //       );
+
+   //       // update user songs
+   //       if (error) {
+   //          setErrorToast({ message: "handleSongWhenDeleteFromPlaylist error" });
+   //       } else if (newSong) {
+   //          songsNeedToUpdateDoc.push(newSong);
+   //          updateSongsListValue(newSong, newUserSongs);
+   //       }
+   //    }
+
+   //    // >>> handle playlist
+   //    const newPlaylist = generatePlaylistAfterChangeSongs({
+   //       newPlaylistSongs,
+   //       existingPlaylist: playlistInStore,
+   //    });
+
+   //    // check valid playlist data after change
+   //    if (
+   //       newPlaylist.count < 0 ||
+   //       newPlaylist.time < 0 ||
+   //       newPlaylist.song_ids.length === playlistInStore.song_ids.length
+   //    ) {
+   //       setErrorToast({ message: "New playlist data error" });
+   //       return;
+   //    }
+
+   //    // >>> local
+   //    setUserSongs(newUserSongs);
+
+   //    // >>> api
+   //    songsNeedToUpdateDoc.forEach(async (song) => {
+   //       console.log("update doc", song.name);
+   //       // await mySetDoc({ collection: "songs", data: song, id: song.id });
+   //    });
+
+   //    await setPlaylistDocAndSetUserPlaylists({
+   //       newPlaylist,
+   //    });
+
+   //    // finish
+   //    setSuccessToast({ message: `${selectedSongList.length} songs removed` });
+   // };
+
+   const handleDeleteManyFromPlaylist = async () => {
+      try {
+         await deleteManyFromPlaylist(selectedSongList, playlistSongs);
+      } catch (error) {
+         console.log(error);
+         setErrorToast({ message: "Error when delete song" });
+      } finally {
+         setIsOpenModal(false);
+      }
+   };
+   const handleDeletePlaylist = async () => {
+      try {
+         await deletePlaylist(playlistInStore, playlistSongs);
+      } catch (error) {
+         console.log(error);
+      } finally {
+         setIsOpenModal(false);
       }
    };
 
@@ -371,7 +347,6 @@ export default function PlaylistDetail() {
    };
 
    const closeModal = () => {
-      setLoading(false);
       setIsOpenModal(false);
       setIsCheckedSong(false);
       setSelectedSongList([]);
@@ -403,7 +378,8 @@ export default function PlaylistDetail() {
 
       return playlistSongs.map((song, index) => {
          const active =
-            song.id === songInStore.id && songInStore.song_in.includes(playlistInStore.name);
+            song.id === songInStore.id &&
+            songInStore.song_in.includes(playlistInStore.name);
 
          if (isOnMobile) {
             return (
@@ -429,7 +405,7 @@ export default function PlaylistDetail() {
                   setIsCheckedSong={setIsCheckedSong}
                   selectedSongList={selectedSongList}
                   setSelectedSongList={setSelectedSongList}
-                  deleteFromPlaylist={deleteFromPlaylist}
+                  deleteFromPlaylist={handleDeleteFromPlaylist}
                   userInfo={userInfo}
                   userSongs={userSongs}
                   setUserSongs={setUserSongs}
@@ -442,7 +418,13 @@ export default function PlaylistDetail() {
             </div>
          );
       });
-   }, [playlistInStore.name, songInStore, playlistSongs, isCheckedSong, selectedSongList]);
+   }, [
+      playlistInStore.name,
+      songInStore,
+      playlistSongs,
+      isCheckedSong,
+      selectedSongList,
+   ]);
 
    const editComponent = (
       <div className={classes.editContainer}>
@@ -466,18 +448,6 @@ export default function PlaylistDetail() {
             Save
          </Button>
       </div>
-   );
-
-   const confirmComponent = useMemo(
-      () =>
-         confirmModal({
-            loading: loading,
-            label: "Delete playlist ?",
-            theme: theme,
-            callback: handleDeletePlaylist,
-            setOpenModal: setIsOpenModal,
-         }),
-      [loading, theme]
    );
 
    // for define skeleton
@@ -541,7 +511,9 @@ export default function PlaylistDetail() {
                            <PencilSquareIcon className="w-[20px]" />
                         </button>
                      </h3>
-                     <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
+                     <p className="text-[16px]">
+                        {handleTimeText(playlistInStore?.time)}
+                     </p>
                      <p className="text-[14px] opacity-60 max-[549px]:hidden">
                         create by {playlistInStore.by}
                      </p>
@@ -577,7 +549,9 @@ export default function PlaylistDetail() {
                {!isCheckedSong ? (
                   <p className={classes.countSongText}>{songCount + " songs"}</p>
                ) : (
-                  <p className={classes.countSongText}>{selectedSongList.length + " selected"}</p>
+                  <p className={classes.countSongText}>
+                     {selectedSongList.length + " selected"}
+                  </p>
                )}
                {isCheckedSong && userSongs.length && (
                   <>
@@ -589,7 +563,7 @@ export default function PlaylistDetail() {
                         All
                      </Button>
                      <Button
-                        onClick={() => deleteManyFromPlaylist()}
+                        onClick={() => handleDeleteManyFromPlaylist()}
                         variant={"primary"}
                         className={classes.button}
                      >
@@ -628,16 +602,24 @@ export default function PlaylistDetail() {
 
          {/* modal */}
          {isOpenModal && (
-            <Modal theme={theme} setOpenModal={closeModal}>
-                  {modalComponent === "edit" && editComponent}
-                  {modalComponent === "confirm" && confirmComponent}
-                  {modalComponent === "addSongs" && (
-                     <AddSongToPlaylistModal
-                        theme={theme}
-                        handleAddSongsToPlaylist={handleAddSongsToPlaylist}
-                        playlistSongs={playlistSongs}
-                     />
-                  )}
+            <Modal classNames="" theme={theme} setOpenModal={closeModal}>
+               {modalComponent === "edit" && editComponent}
+               {modalComponent === "confirm" && (
+                  <ConfirmModal
+                     loading={playlistActionLoading}
+                     label={"Delete playlist ?"}
+                     theme={theme}
+                     callback={handleDeletePlaylist}
+                     setOpenModal={setIsOpenModal}
+                  />
+               )}
+               {modalComponent === "addSongs" && (
+                  <AddSongToPlaylistModal
+                     theme={theme}
+                     handleAddSongsToPlaylist={handleAddSongsToPlaylist}
+                     playlistSongs={playlistSongs}
+                  />
+               )}
             </Modal>
          )}
       </>

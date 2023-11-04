@@ -194,6 +194,8 @@ export default function Control({
    const handleTimeUpdate = useCallback(() => {
       if (!audioEle) return;
 
+      // setIsPlaying(true);
+
       const currentTime = audioEle?.currentTime;
       const timeProcessLineEle = timeProcessLine.current as HTMLElement;
 
@@ -321,10 +323,10 @@ export default function Control({
       durationLineWidth.current = durationLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 
+
+   // prevent song autoplay after edit finish
    useEffect(() => {
       if (!audioEle) return;
-      if (!location) return;
-
       if (isInEdit) {
          if (isPlaying) pause();
       }

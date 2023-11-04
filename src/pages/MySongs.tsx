@@ -20,10 +20,9 @@ import {
 import {
    deleteSong,
    mySetDoc,
-   setUserPlaylistIdsDoc,
    setUserSongIdsAndCountDoc,
 } from "../utils/firebaseHelpers";
-import { generateId, updatePlaylistsValue } from "../utils/appHelpers";
+import { updatePlaylistsValue } from "../utils/appHelpers";
 import { handlePlaylistWhenDeleteManySongs } from "../utils/songItemHelper";
 
 // hooks
@@ -37,11 +36,12 @@ import {
    SongItem,
    PlaylistItem,
    Skeleton,
+   ConfirmModal,
+   AddPlaylist,
 } from "../components";
-import { confirmModal } from "../components/Modal";
 
 import { routes } from "../routes";
-import { SongItemSkeleton, playlistSkeleton } from "../components/skeleton";
+import { SongItemSkeleton, PlaylistSkeleton } from "../components/skeleton";
 
 type ModalName = "ADD_PLAYLIST" | "CONFIRM";
 
@@ -62,7 +62,6 @@ export default function MySongsPage() {
    const [loading, setLoading] = useState(false);
    const [openModal, setOpenModal] = useState(false);
    const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
-   const [playlistName, setPlayListName] = useState<string>("");
 
    // ref
    const inputRef = useRef<HTMLInputElement>(null);
@@ -188,50 +187,6 @@ export default function MySongsPage() {
       }
    };
 
-   const handleAddPlaylist = async () => {
-      const playlistId =
-         generateId(playlistName) + userInfo.email.replace("@gmail.com", "");
-
-      if (!playlistId || !playlistName || !userInfo) {
-         setErrorToast({ message: "Add playlist lack of props" });
-         return;
-      }
-
-      const addedPlaylist: Playlist = {
-         id: playlistId,
-         image_by: "",
-         image_file_path: "",
-         image_url: "",
-         by: userInfo?.email || "users",
-         name: playlistName,
-         song_ids: [],
-         count: 0,
-         time: 0,
-         blurhash_encode: "",
-      };
-
-      // insert new playlist to users playlist
-      const newPlaylists = [...userPlaylists, addedPlaylist];
-
-      try {
-         setLoading(true);
-         // add to playlist collection
-         await mySetDoc({ collection: "playlist", data: addedPlaylist, id: playlistId });
-
-         // update user doc
-         await setUserPlaylistIdsDoc(newPlaylists, userInfo);
-
-         // update context store user playlists
-         setUserPlaylists(newPlaylists, []);
-         closeModal();
-         setPlayListName("");
-
-         setSuccessToast({ message: `'${playlistName}' created` });
-      } catch (error) {
-         setErrorToast({ message: "Add playlist catch error" });
-      }
-   };
-
    // define classes
    const classes = {
       button: `${theme.content_bg} rounded-full`,
@@ -326,46 +281,19 @@ export default function MySongsPage() {
    ]);
 
    // define modals
-   const useConfirmModal = useMemo(
-      () =>
-         confirmModal({
-            loading: loading,
-            label: "Wait a minute",
-            theme: theme,
-            callback: handleDeleteSelectedSong,
-            setOpenModal: setOpenModal,
-         }),
-      [loading, theme, selectedSongList]
-   );
-
-   const addPlaylistModal = (
-      <div className="w-[300px]">
-         <Button className="absolute top-2 right-2" onClick={() => setOpenModal(false)}>
-            <XMarkIcon className="w-6 h-6" />
-         </Button>
-         <h2 className="text-[18px] font-semibold">Add Playlist</h2>
-         <input
-            className={`bg-${theme.alpha} px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
-            type="text"
-            placeholder="name..."
-            value={playlistName}
-            onChange={(e) => setPlayListName(e.target.value)}
-         />
-
-         <Button
-            isLoading={loading}
-            onClick={() => handleAddPlaylist()}
-            variant={"primary"}
-            className={`${classes.button} mt-[15px]`}
-         >
-            Save
-         </Button>
-      </div>
-   );
-
    const ModalPopup: Record<ModalName, ReactNode> = {
-      ADD_PLAYLIST: addPlaylistModal,
-      CONFIRM: useConfirmModal,
+      ADD_PLAYLIST: (
+         <AddPlaylist setIsOpenModal={setOpenModal} theme={theme} userInfo={userInfo} />
+      ),
+      CONFIRM: (
+         <ConfirmModal
+            loading={loading}
+            label={"Wait a minute"}
+            theme={theme}
+            callback={handleDeleteSelectedSong}
+            setOpenModal={setOpenModal}
+         />
+      ),
    };
 
    // route guard
@@ -382,7 +310,7 @@ export default function MySongsPage() {
 
    return (
       <>
-         <img className="w-[50px]" ref={testImageRef} />
+         <img className="hidden" ref={testImageRef} />
          {/* playlist */}
          <div className="pb-[30px] ">
             {/* mobile nav */}
@@ -420,7 +348,7 @@ export default function MySongsPage() {
                      />
                   </div>
                )}
-               {initialLoading && playlistSkeleton}
+               {initialLoading && PlaylistSkeleton}
             </div>
          </div>
 
@@ -429,6 +357,7 @@ export default function MySongsPage() {
             {/* title */}
             <div className="flex justify-between mb-[10px]">
                <h3 className="text-2xl font-bold">Songs</h3>
+               {/* for upload song */}
                <input
                   ref={inputRef}
                   onChange={handleInputChange}

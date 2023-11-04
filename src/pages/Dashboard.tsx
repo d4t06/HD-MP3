@@ -7,20 +7,14 @@ import { db } from "../config/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 // utils
-import { Song, User } from "../types";
+import { Playlist, Song, User } from "../types";
 import { convertTimestampToString } from "../utils/appHelpers";
 
 // ui
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import useUploadSongs from "../hooks/useUploadSongs";
 
-import {
-   Button,
-   Image,
-   Modal,
-   DashboardSongItem,
-   confirmModal,
-} from "../components";
+import { Button, Image, Modal, DashboardSongItem, ConfirmModal } from "../components";
 
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
@@ -38,10 +32,11 @@ export default function DashBoard() {
    // state
    const [songs, setSongs] = useState<Song[]>([]);
    const [users, setUsers] = useState<User[]>([]);
+   const [playlist, setPlaylist] = useState<Playlist[]>([]);
 
    const [isOpenModal, setIsOpenModal] = useState(false);
 
-   const [tab, setTab] = useState<"songs" | "users">("songs");
+   const [tab, setTab] = useState<"songs" | "users" | "playlist">("songs");
    // const [isAuthFinish, setIsAuthFinish] = useState(false);
    const [loading, setLoading] = useState(false);
 
@@ -53,6 +48,7 @@ export default function DashBoard() {
    const selectAllBtnRef = useRef<HTMLInputElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
    const firstTempSong = useRef<HTMLDivElement>(null);
+   const testImageRef = useRef<HTMLImageElement>(null);
 
    // use hooks
    const navigate = useNavigate();
@@ -62,6 +58,7 @@ export default function DashBoard() {
       songs: songs,
       setSongs: setSongs,
       firstTempSong,
+      testImageRef,
       inputRef,
    });
 
@@ -87,6 +84,32 @@ export default function DashBoard() {
                return { ...(doc.data() as Song), id: doc.id };
             });
             setSongs(songsList);
+         }
+      } catch (error) {
+         console.log(error);
+         setErrorMsg("get users list error");
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   const getPlaylist = async () => {
+      try {
+         console.log("get songs");
+
+         setLoading(true);
+
+         const queryGetAdminSongs = query(
+            collection(db, "playlist"),
+            where("by", "==", "admin")
+         );
+         const playlistSnapshot = await getDocs(queryGetAdminSongs);
+
+         if (playlistSnapshot.docs) {
+            const playlists = playlistSnapshot.docs.map((doc) => {
+               return { ...(doc.data() as Playlist), id: doc.id };
+            });
+            setPlaylist(playlists);
          }
       } catch (error) {
          console.log(error);
@@ -217,21 +240,11 @@ export default function DashBoard() {
       });
    };
 
-   const dialogComponent = useMemo(
-      () =>
-         confirmModal({
-            loading: loading,
-            label: `Delete '${selectedList.length} songs'`,
-            desc: "This action cannot be undone",
-            theme: theme,
-            callback: handleDeleteSongs,
-            setOpenModal: setIsOpenModal,
-         }),
-      [loading, theme, selectedList]
-   );
-
    useEffect(() => {
-      if (userInfo.status === "loading") return;
+      if (userInfo.status === "loading") {
+         setLoading(false);
+         return;
+      }
 
       const auth = async () => {
          try {
@@ -249,7 +262,6 @@ export default function DashBoard() {
 
       if (!userInfo.email) return navigate(routes.Home);
       auth();
-
    }, [userInfo]);
 
    useEffect(() => {
@@ -279,6 +291,7 @@ export default function DashBoard() {
             className="hidden"
             ref={inputRef}
          />
+         <img ref={testImageRef} className="hidden" />
          <audio ref={audioRef} className="hidden" />
 
          {userInfo.status !== "loading" && (
@@ -294,6 +307,16 @@ export default function DashBoard() {
                      variant={"primary"}
                   >
                      Songs
+                  </Button>
+
+                  <Button
+                     onClick={() => setTab("playlist")}
+                     className={`${
+                        tab === "playlist" ? classes.activeBtn : classes.inActiveBtn
+                     }  rounded-full ml-[10px]`}
+                     variant={"primary"}
+                  >
+                     Playlist
                   </Button>
                   <Button
                      onClick={() => setTab("users")}
@@ -392,6 +415,7 @@ export default function DashBoard() {
                         </tbody>
                      </table>
                   )}
+                  {tab === 'playlist' && playlist.map(p => p.name)}
                   {tab === "users" && (
                      <table className="w-full">
                         <thead className="text-[14px]">
@@ -410,8 +434,17 @@ export default function DashBoard() {
          )}
 
          {isOpenModal && (
-            <Modal theme={theme} setOpenModal={setIsOpenModal}>
-               {modalName === "confirm" && dialogComponent}
+            <Modal classNames="w-[400px]" theme={theme} setOpenModal={setIsOpenModal}>
+               {modalName === "confirm" && (
+                  <ConfirmModal
+                     loading={loading}
+                     label={`Delete '${selectedList.length} songs'`}
+                     desc={"This action cannot be undone"}
+                     theme={theme}
+                     callback={handleDeleteSongs}
+                     setOpenModal={setIsOpenModal}
+                  />
+               )}
             </Modal>
          )}
       </>
