@@ -23,7 +23,7 @@ import {
    setUserSongIdsAndCountDoc,
 } from "../utils/firebaseHelpers";
 import { updatePlaylistsValue } from "../utils/appHelpers";
-import { handlePlaylistWhenDeleteManySongs } from "../utils/songItemHelper";
+// import {  } from "../utils/songItemHelper";
 
 // hooks
 import { useUploadSongs, useSongs, useSongItemActions } from "../hooks";
@@ -51,7 +51,7 @@ export default function MySongsPage() {
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
    const { setErrorToast, setSuccessToast } = useToast();
-   const { loading: initialLoading, errorMsg, initial } = useSongs();
+   const { loading: initialLoading, errorMsg, initial } = useSongs({});
 
    const { song: songInStore, playlist: playlistInStore } =
       useSelector(selectAllSongStore);
@@ -125,65 +125,68 @@ export default function MySongsPage() {
          setLoading(true);
 
          // loop each selected song, update playlist need to update
-         const playlistsNeedToUpdate: Playlist[] = [];
+         // const playlistsNeedToUpdate: Playlist[] = [];
          for (let song of selectedSongList) {
             // if some song added in some playlist
-            if (song.in_playlist.length) {
-               isOneSongInPlaylist = true;
-               // problem, this is just for one song
-               const { error } = handlePlaylistWhenDeleteManySongs(
-                  song,
-                  playlistsNeedToUpdate,
-                  newUserPlaylists
-               );
+            // if (song.in_playlist.length) {
+            //    isOneSongInPlaylist = true;
+            //    // problem, this is just for one song
+            //    const { error } = handlePlaylistWhenDeleteManySongs(
+            //       song,
+            //       playlistsNeedToUpdate,
+            //       newUserPlaylists
+            //    );
 
-               if (error) {
-                  setLoading(false);
-                  closeModal();
-                  setErrorToast({ message: "Error when handle playlist" });
-                  return;
-               }
-            }
+            //    if (error) {
+            //       setLoading(false);
+            //       closeModal();
+            //       setErrorToast({ message: "Error when handle playlist" });
+            //       return;
+            //    }
+            // }
 
             const index = newUserSongs.findIndex((item) => item.id === song.id);
             newUserSongs.splice(index, 1);
          }
 
-         for (let playlist of playlistsNeedToUpdate) {
-            updatePlaylistsValue(playlist, newUserPlaylists);
+         // for (let playlist of playlistsNeedToUpdate) {
+         //    updatePlaylistsValue(playlist, newUserPlaylists);
 
-            if (playlist.id === playlistInStore.id) {
-               dispatch(setPlaylist(playlist));
-            }
+         //    if (playlist.id === playlistInStore.id) {
+         //       dispatch(setPlaylist(playlist));
+         //    }
 
-            // >>> api
-            await mySetDoc({
-               collection: "playlist",
-               data: playlist,
-               id: playlist.id,
-            });
-         }
-
-         // >>> local
-         if (isOneSongInPlaylist) {
-            setUserPlaylists(newUserPlaylists, []);
-         }
-         setUserSongs(newUserSongs);
+         //    // >>> api
+         //    await mySetDoc({
+         //       collection: "playlist",
+         //       data: playlist,
+         //       id: playlist.id,
+         //    });
+         // }
 
          // >>> api
          for (let song of selectedSongList) {
             await deleteSong(song);
          }
 
+         // >>> local
+         // if (isOneSongInPlaylist) {
+         //    setUserPlaylists(newUserPlaylists, []);
+         // }
+
+         setUserSongs(newUserSongs);
+
          const userSongIds: string[] = newUserSongs.map((song) => song.id);
          setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
 
          // >>> finish
-         resetCheckedList();
-         closeModal();
          setSuccessToast({ message: `${selectedSongList.length} songs deleted` });
       } catch (error) {
+         console.log(error);
          setErrorToast({ message: "Catch error" });
+      } finally {
+         resetCheckedList();
+         closeModal();
       }
    };
 
@@ -339,7 +342,8 @@ export default function MySongsPage() {
                         )}
                      </div>
                   ))}
-               {!initialLoading && (
+               {initialLoading && PlaylistSkeleton}
+               {(
                   <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
                      <Empty
                         theme={theme}
@@ -348,7 +352,6 @@ export default function MySongsPage() {
                      />
                   </div>
                )}
-               {initialLoading && PlaylistSkeleton}
             </div>
          </div>
 

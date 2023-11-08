@@ -189,8 +189,6 @@ export default function useUploadSongs({
 
                if (admin) {
                   songId += "_admin";
-               } else {
-                  songId += "_" + userInfo.email.replace("@gmail.com", "");
                }
 
                // upload song list
@@ -345,7 +343,7 @@ export default function useUploadSongs({
             console.log("[error]: stock image error");
 
             URL.revokeObjectURL(imageURL);
-            songNeedToUpdate.song_url = "";
+            songNeedToUpdate.image_url = "";
             testImageEle.removeEventListener("error", handleError);
             rs();
          };
@@ -363,7 +361,7 @@ export default function useUploadSongs({
             try {
                let song = songsList[index];
                // update songList
-               const duration = +audioEle.duration.toFixed(1) || 99;
+               const duration = Math.ceil(audioEle.duration);
                song = {
                   ...song,
                   duration,

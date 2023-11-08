@@ -1,62 +1,64 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-// import { useNavigate } from "react-router-dom";
-import { useTheme } from "../store/ThemeContext";
-// import { routes } from "../routes";
-
-import { db } from "../config/firebase";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useTheme } from "../store/ThemeContext";
 
-// utils
-import { Playlist, Song, User } from "../types";
-import { convertTimestampToString } from "../utils/appHelpers";
-
-// ui
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import useUploadSongs from "../hooks/useUploadSongs";
-
-import { Button, Image, Modal, DashboardSongItem, ConfirmModal } from "../components";
-
+import { Song, User } from "../types";
+import { db } from "../config/firebase";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
-import { deleteSong, myGetDoc } from "../utils/firebaseHelpers";
-import { useAuthStore } from "../store";
 
-// type ModalName = "ADD_PLAYLIST" | "MESSAGE";
+import {
+   Button,
+   Image,
+   Modal,
+   DashboardSongItem,
+   ConfirmModal,
+   AddPlaylist,
+   PlaylistItem,
+   Empty,
+} from "../components";
+
+import { convertTimestampToString } from "../utils/appHelpers";
+import { deleteSong, myGetDoc } from "../utils/firebaseHelpers";
+import { useAuthStore, useSongsStore } from "../store";
+import useSong from "../hooks/useSongs";
+import useUploadSongs from "../hooks/useUploadSongs";
+import { PlaylistSkeleton } from "../components/skeleton";
 
 // 2 time render
 export default function DashBoard() {
    // use store
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
+   const {
+      loading: initialLoading,
+      initSongsAndPlaylists,
+      initial,
+   } = useSong({ admin: true });
+   const { adminPlaylists, adminSongs, setAdminSongs } = useSongsStore();
 
    // state
-   const [songs, setSongs] = useState<Song[]>([]);
    const [users, setUsers] = useState<User[]>([]);
-   const [playlist, setPlaylist] = useState<Playlist[]>([]);
-
    const [isOpenModal, setIsOpenModal] = useState(false);
-
-   const [tab, setTab] = useState<"songs" | "users" | "playlist">("songs");
-   // const [isAuthFinish, setIsAuthFinish] = useState(false);
    const [loading, setLoading] = useState(false);
-
    const [errorMsg, setErrorMsg] = useState<string>("");
    const [selectedList, setSelectedList] = useState<Song[]>([]);
-   const [modalName, setModalName] = useState<"confirm" | "setting">("setting");
+   const [modalName, setModalName] = useState<"confirm" | "addPlaylist">();
+   const [tab, setTab] = useState<"adminSongs" | "users">("adminSongs");
 
    const audioRef = useRef<HTMLAudioElement>(null);
    const selectAllBtnRef = useRef<HTMLInputElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
    const firstTempSong = useRef<HTMLDivElement>(null);
    const testImageRef = useRef<HTMLImageElement>(null);
+   const firstTimeRun = useRef(true);
 
    // use hooks
    const navigate = useNavigate();
    const { addedSongIds, handleInputChange, status, tempSongs } = useUploadSongs({
       audioRef,
       admin: true,
-      songs: songs,
-      setSongs: setSongs,
       firstTempSong,
       testImageRef,
       inputRef,
@@ -64,63 +66,11 @@ export default function DashBoard() {
 
    const songCount = useMemo(() => {
       if (loading) return 0;
-      return tempSongs.length + songs.length;
-   }, [tempSongs, songs]);
-
-   const getSongs = async () => {
-      try {
-         console.log("get songs");
-
-         setLoading(true);
-
-         const queryGetAdminSongs = query(
-            collection(db, "songs"),
-            where("by", "==", "admin")
-         );
-         const songsSnapshot = await getDocs(queryGetAdminSongs);
-
-         if (songsSnapshot.docs) {
-            const songsList = songsSnapshot.docs.map((doc) => {
-               return { ...(doc.data() as Song), id: doc.id };
-            });
-            setSongs(songsList);
-         }
-      } catch (error) {
-         console.log(error);
-         setErrorMsg("get users list error");
-      } finally {
-         setLoading(false);
-      }
-   };
-
-   const getPlaylist = async () => {
-      try {
-         console.log("get songs");
-
-         setLoading(true);
-
-         const queryGetAdminSongs = query(
-            collection(db, "playlist"),
-            where("by", "==", "admin")
-         );
-         const playlistSnapshot = await getDocs(queryGetAdminSongs);
-
-         if (playlistSnapshot.docs) {
-            const playlists = playlistSnapshot.docs.map((doc) => {
-               return { ...(doc.data() as Playlist), id: doc.id };
-            });
-            setPlaylist(playlists);
-         }
-      } catch (error) {
-         console.log(error);
-         setErrorMsg("get users list error");
-      } finally {
-         setLoading(false);
-      }
-   };
+      return tempSongs.length + adminSongs.length;
+   }, [tempSongs, adminSongs]);
 
    const getUsers = async () => {
-      console.log("get user");
+      console.log(">>> api: get user");
 
       try {
          setLoading(true);
@@ -146,32 +96,32 @@ export default function DashBoard() {
    };
 
    const handleSelectAll = () =>
-      selectedList.length ? setSelectedList([]) : setSelectedList(songs);
+      selectedList.length ? setSelectedList([]) : setSelectedList(adminSongs);
 
    const handleDeleteSongs = async () => {
       try {
-         const newAdminSongs = [...songs];
+         const newAdminSongs = [...adminSongs];
          setLoading(true);
          for (let song of selectedList) {
             await deleteSong(song);
 
-            const index = songs.findIndex((item) => item.id === song.id);
+            const index = adminSongs.findIndex((item) => item.id === song.id);
             newAdminSongs.splice(index, 1);
          }
          setLoading(false);
-         setSongs(newAdminSongs);
+         setAdminSongs(newAdminSongs);
       } catch (error) {
          console.log({ message: error });
       }
    };
 
-   const handleOpenModal = (name: "confirm" | "setting") => {
+   const handleOpenModal = (name: "confirm" | "addPlaylist") => {
       setModalName(name);
       setIsOpenModal(true);
    };
 
-   const renderSongsList = () => {
-      return songs.map((song, index) => {
+   const renderSongs = () => {
+      return adminSongs.map((song, index) => {
          const isChecked = selectedList.length
             ? selectedList.some((selectedSong) => song.name === selectedSong.name)
             : false;
@@ -180,8 +130,8 @@ export default function DashBoard() {
                inProcess={false}
                key={index}
                data={song}
-               adminSongs={songs}
-               setAdminSongs={setSongs}
+               adminSongs={adminSongs}
+               setAdminSongs={setAdminSongs}
                isChecked={isChecked}
                selectedSongList={selectedList}
                setSelectedSongList={setSelectedList}
@@ -251,24 +201,35 @@ export default function DashBoard() {
             const userSnapshot = await myGetDoc({
                collection: "users",
                id: userInfo?.email as string,
+               msg: ">>> api: get auth info",
             });
             const userData = userSnapshot.data() as User;
-
             if (userData.role !== "admin") return navigate(routes.Home);
+
+            if (!initial) initSongsAndPlaylists();
+            else setTimeout(() => setLoading(false), 200);
          } catch (error) {
             console.log(error);
          }
       };
 
       if (!userInfo.email) return navigate(routes.Home);
-      auth();
+
+      if (firstTimeRun.current) {
+         firstTimeRun.current = false;
+
+         // case already run auth
+         if (userInfo.role === "admin") return;
+         else auth();
+      }
    }, [userInfo]);
 
    useEffect(() => {
       if (userInfo.status === "loading") return;
 
-      if (tab === "users" && !users.length) getUsers();
-      if (tab === "songs" && !songs.length) getSongs();
+      if (tab === "users" && !users.length) {
+         getUsers();
+      }
    }, [tab]);
 
    const classes = {
@@ -279,6 +240,12 @@ export default function DashBoard() {
       tableContainer: `border border-${theme.alpha} rounded-[4px]`,
       tableHeader: `border-b border-${theme.alpha} ${theme.side_bar_bg} flex items-center h-[50px] gap-[15px]`,
    };
+
+   if (userInfo.status === "loading") {
+      return;
+   }
+
+   console.log("cekc loading", initialLoading);
 
    return (
       <>
@@ -294,155 +261,196 @@ export default function DashBoard() {
          <img ref={testImageRef} className="hidden" />
          <audio ref={audioRef} className="hidden" />
 
-         {userInfo.status !== "loading" && (
-            <div className={`container mx-auto pt-[30px] pb-[60px]`}>
-               {/* content */}
-               {/* tabs */}
-               <div className="mb-[20px]">
-                  <Button
-                     onClick={() => setTab("songs")}
-                     className={`${
-                        tab === "songs" ? classes.activeBtn : classes.inActiveBtn
-                     }  rounded-full`}
-                     variant={"primary"}
-                  >
-                     Songs
-                  </Button>
+         <div className={`container mx-auto pt-[30px] pb-[60px]`}>
+            {/* tabs */}
+            <div className="mb-[20px]">
+               <Button
+                  onClick={() => setTab("adminSongs")}
+                  className={`${
+                     tab === "adminSongs" ? classes.activeBtn : classes.inActiveBtn
+                  }  rounded-full`}
+                  variant={"primary"}
+               >
+                  Songs
+               </Button>
+               <Button
+                  onClick={() => setTab("users")}
+                  className={` ${
+                     tab === "users" ? classes.activeBtn : classes.inActiveBtn
+                  } rounded-full ml-[10px]`}
+                  variant={"primary"}
+               >
+                  Users
+               </Button>
+            </div>
 
-                  <Button
-                     onClick={() => setTab("playlist")}
-                     className={`${
-                        tab === "playlist" ? classes.activeBtn : classes.inActiveBtn
-                     }  rounded-full ml-[10px]`}
-                     variant={"primary"}
-                  >
-                     Playlist
-                  </Button>
-                  <Button
-                     onClick={() => setTab("users")}
-                     className={` ${
-                        tab === "users" ? classes.activeBtn : classes.inActiveBtn
-                     } rounded-full ml-[10px]`}
-                     variant={"primary"}
-                  >
-                     Users
-                  </Button>
-               </div>
+            {/* content */}
+            <div className="mt-[30px]">
+               {tab === "adminSongs" && (
+                  <>
+                     {/* playlist */}
+                     <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
 
-               {errorMsg && <p>{errorMsg}</p>}
-
-               {/* content */}
-               <div className={classes.tableContainer}>
-                  <div className={classes.tableHeader}>
-                     {!!selectedList.length ? (
-                        <>
-                           <h2 className="ml-[20px]">{selectedList.length} selected</h2>
-                           <div className="flex items-stretch gap-[12px]">
-                              <Button
-                                 onClick={() => handleOpenModal("confirm")}
-                                 variant={"primary"}
-                                 className={`${classes.activeBtn} rounded-full`}
+                     <div className="flex flex-row flex-wrap mb-[30px] -mx-[8px]">
+                        {!initialLoading &&
+                           !!adminPlaylists.length &&
+                           adminPlaylists.map((playList, index) => (
+                              <div
+                                 key={index}
+                                 className="w-1/4 p-[8px] max-[549px]:w-1/2"
                               >
-                                 Delete
-                              </Button>
+                                 <PlaylistItem theme={theme} data={playList} />
+                              </div>
+                           ))}
 
-                              <Button
-                                 onClick={() => setSelectedList([])}
-                                 variant={"primary"}
-                                 className={`${classes.activeBtn} rounded-full`}
-                              >
-                                 <XMarkIcon className="w-[20px]" />
-                              </Button>
-                           </div>
-                        </>
-                     ) : (
-                        <label
-                           className={`${theme.content_bg} ${
-                              status === "uploading"
-                                 ? "opacity-60 pointer-events-none"
-                                 : ""
-                           } rounded-full ml-[auto] mr-[10px] px-[20px] py-[4px] cursor-pointer`}
-                           htmlFor="file"
-                        >
-                           Upload
-                        </label>
-                     )}
-                  </div>
+                        {initialLoading && PlaylistSkeleton}
 
-                  {tab === "songs" && (
-                     <table className="w-full">
-                        <thead className={`${theme.bottom_player_bg} w-full text-[14px]`}>
-                           <tr>
-                              <th className={`${classes.th} w-[10%]`}>
-                                 <input
-                                    className="scale-[1.2]"
-                                    onChange={() => handleSelectAll()}
-                                    ref={selectAllBtnRef}
-                                    checked={
-                                       songs.length
-                                          ? songs.length === selectedList.length
-                                          : false
-                                    }
-                                    type="checkbox"
-                                 />
-                              </th>
-                              <th></th>
+                        <div className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                           <Empty
+                              theme={theme}
+                              className="pt-[100%]"
+                              onClick={() => handleOpenModal("addPlaylist")}
+                           />
+                        </div>
+                     </div>
 
-                              <th className={`${classes.th} text-left`}>Name</th>
-                              <th className={`${classes.th} text-left`}>Singer</th>
-                              <th className={`${classes.th} text-left`}>Action</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           {!!songCount ? (
+                     {/* adminSongs */}
+
+                     <h3 className="text-2xl font-bold mb-[10px]">Songs</h3>
+                     <div className={`${classes.tableContainer}`}>
+                        <div className={classes.tableHeader}>
+                           {!selectedList.length && <h2 className="ml-[20px]">Songs</h2>}
+                           {!!selectedList.length ? (
                               <>
-                                 {!!songs.length && renderSongsList()}
-                                 {!!tempSongs.length && renderTempSongsList()}
+                                 <h2 className="ml-[20px]">
+                                    {selectedList.length} selected
+                                 </h2>
+                                 <div className="flex items-stretch gap-[12px]">
+                                    <Button
+                                       onClick={() => handleOpenModal("confirm")}
+                                       variant={"primary"}
+                                       className={`${classes.activeBtn} rounded-full`}
+                                    >
+                                       Delete
+                                    </Button>
+
+                                    <Button
+                                       onClick={() => setSelectedList([])}
+                                       variant={"primary"}
+                                       className={`${classes.activeBtn} rounded-full`}
+                                    >
+                                       <XMarkIcon className="w-[20px]" />
+                                    </Button>
+                                 </div>
                               </>
-                           ) : loading ? (
-                              <tr>
-                                 <td colSpan={5} className={`${classes.td} text-center`}>
-                                    <p>...Loading</p>
-                                 </td>
-                              </tr>
                            ) : (
-                              <tr>
-                                 <td colSpan={5} className={`${classes.td} text-center`}>
-                                    <p>No song jet...</p>
-                                 </td>
-                              </tr>
+                              <label
+                                 className={`${theme.content_bg} ${
+                                    status === "uploading"
+                                       ? "opacity-60 pointer-events-none"
+                                       : ""
+                                 } rounded-full ml-[auto] mr-[10px] px-[20px] py-[4px] cursor-pointer`}
+                                 htmlFor="file"
+                              >
+                                 Upload
+                              </label>
                            )}
-                        </tbody>
-                     </table>
-                  )}
-                  {tab === 'playlist' && playlist.map(p => p.name)}
-                  {tab === "users" && (
+                        </div>
+                        <table className="w-full">
+                           <thead
+                              className={`${theme.bottom_player_bg} w-full text-[14px]`}
+                           >
+                              <tr>
+                                 <th className={`${classes.th} w-[10%]`}>
+                                    <input
+                                       className="scale-[1.2]"
+                                       onChange={() => handleSelectAll()}
+                                       ref={selectAllBtnRef}
+                                       checked={
+                                          adminSongs.length
+                                             ? adminSongs.length === selectedList.length
+                                             : false
+                                       }
+                                       type="checkbox"
+                                    />
+                                 </th>
+                                 <th></th>
+
+                                 <th className={`${classes.th} text-left`}>Name</th>
+                                 <th className={`${classes.th} text-left`}>Singer</th>
+                                 <th className={`${classes.th} text-left`}>Action</th>
+                              </tr>
+                           </thead>
+                           <tbody>
+                              {!!songCount ? (
+                                 <>
+                                    {!!adminSongs.length && renderSongs()}
+                                    {!!tempSongs.length && renderTempSongsList()}
+                                 </>
+                              ) : loading ? (
+                                 <tr>
+                                    <td
+                                       colSpan={5}
+                                       className={`${classes.td} text-center`}
+                                    >
+                                       <p>...Loading</p>
+                                    </td>
+                                 </tr>
+                              ) : (
+                                 <tr>
+                                    <td
+                                       colSpan={5}
+                                       className={`${classes.td} text-center`}
+                                    >
+                                       <p>No song jet...</p>
+                                    </td>
+                                 </tr>
+                              )}
+                           </tbody>
+                        </table>
+                     </div>
+                  </>
+               )}
+
+               {tab === "users" && (
+                  <div className={classes.tableContainer}>
                      <table className="w-full">
-                        <thead className="text-[14px]">
+                        <thead
+                           className={`${theme.bottom_player_bg} w-full text-[14px] py-[4px]`}
+                        >
                            <tr>
                               <th></th>
-                              <th className="text-left">Name</th>
-                              <th className="text-left">Email</th>
-                              <th className="text-left">Latest Seen</th>
+                              <th className="text-left py-[4px]">Name</th>
+                              <th className="text-left py-[4px]">Email</th>
+                              <th className="text-left py-[4px]">Latest Seen</th>
                            </tr>
                         </thead>
                         <tbody>{renderUsersList()}</tbody>
                      </table>
-                  )}
-               </div>
+                  </div>
+               )}
             </div>
-         )}
+         </div>
 
          {isOpenModal && (
-            <Modal classNames="w-[400px]" theme={theme} setOpenModal={setIsOpenModal}>
+            <Modal theme={theme} setOpenModal={setIsOpenModal}>
                {modalName === "confirm" && (
                   <ConfirmModal
                      loading={loading}
-                     label={`Delete '${selectedList.length} songs'`}
+                     label={`Delete '${selectedList.length} adminSongs'`}
                      desc={"This action cannot be undone"}
                      theme={theme}
                      callback={handleDeleteSongs}
                      setOpenModal={setIsOpenModal}
+                  />
+               )}
+
+               {modalName === "addPlaylist" && (
+                  <AddPlaylist
+                     // cb={handleGetAndSetAdminPlaylists}
+                     setIsOpenModal={setIsOpenModal}
+                     theme={theme}
+                     admin={true}
                   />
                )}
             </Modal>
@@ -450,4 +458,3 @@ export default function DashBoard() {
       </>
    );
 }
-1;

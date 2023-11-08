@@ -45,7 +45,10 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
             {!loading && !error && (
                <>
                   <DashboardHeader />
+                  <div className={`h-[100px]`}></div>
+                  <div className="container mx-[auto]">
                   {children}
+                  </div>
                </>
             )}
             {error && (

@@ -4,7 +4,6 @@ import { FC, useMemo } from "react";
 import { Playlist, ThemeType } from "../types";
 
 import Button from "./ui/Button";
-import { routes } from "../routes";
 import { Link } from "react-router-dom";
 import Image from "./ui/Image";
 
@@ -42,8 +41,8 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
                      <div className={classes.overlay}></div>
 
                      <div className={classes.buttonWrapper}>
-                        <Link to={`${routes.Playlist}/${data.id}`}>
-                           <Button onClick={() => onClick && onClick()} className={classes.button}>
+                        <Link to={`playlist/${data.id}`}>
+                           <Button className={classes.button}>
                               <PauseCircleIcon className="w-[35px]" />
                            </Button>
                         </Link>
@@ -52,7 +51,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
                )}
             </div>
          </div>
-         {!inDetail && <h5 className="text-[20px] font-[500]">{data.name}</h5>}
+         {!inDetail && <h5 className="text-[18px] line-clamp-1 leading-[22px] font-[500] mt-[6px]">{data.name}</h5>}
       </>
    );
 };

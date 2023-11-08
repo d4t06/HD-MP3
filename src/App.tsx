@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { publicRoutes } from "./routes";
 import DefaultLayout from "./layout/DefaultLayout";
 import { ToastPortal } from "./components";
+import { NotFound } from "./pages";
 function App() {
    return (
       <>
@@ -29,6 +30,8 @@ function App() {
                      />
                   );
                })}
+
+               <Route path="*" element={<NotFound />} />
             </Routes>
          </Router>
          <ToastPortal autoClose />

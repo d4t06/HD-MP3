@@ -18,13 +18,7 @@ import {
    TrashIcon,
 } from "@heroicons/react/24/outline";
 import playingIcon from "../assets/icon-playing.gif";
-import {
-   generatePlaylistAfterChangeSong,
-   handleTimeText,
-   initSongObject,
-   updatePlaylistsValue,
-   updateSongsListValue,
-} from "../utils/appHelpers";
+import { handleTimeText, initSongObject } from "../utils/appHelpers";
 import {
    FloatingFocusManager,
    autoPlacement,
@@ -34,7 +28,7 @@ import {
    useFloating,
    useInteractions,
 } from "@floating-ui/react";
-import { selectAllSongStore, setPlaylist, setSong, useToast } from "../store";
+import { selectAllSongStore, setSong, useToast } from "../store";
 import {
    PopupWrapper,
    Modal,
@@ -47,10 +41,7 @@ import { Link } from "react-router-dom";
 import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { UseSongItemActionsType } from "../hooks/useSongItemActions";
-import {
-   handlePlaylistWhenDeleteSong,
-   handleSongWhenAddToPlaylist,
-} from "../utils/songItemHelper";
+import usePlaylistActions from "../hooks/usePlaylistActions";
 
 type ModalName = "ADD_PLAYLIST";
 
@@ -62,6 +53,8 @@ interface Props {
    inProcess?: boolean;
    inPlaylist?: boolean;
 
+   admin?: boolean;
+
    songItemActions?: UseSongItemActionsType;
 
    userInfo?: User;
@@ -69,7 +62,7 @@ interface Props {
    userPlaylists?: Playlist[];
    setUserSongs?: (userSongs: Song[]) => void;
    setUserPlaylists?: (userPlaylists: Playlist[], adminPlaylists: []) => void;
-   deleteFromPlaylist?: (song: Song) => void;
+   deleteFromPlaylist?: (song: Song) => Promise<void>;
 
    isCheckedSong?: boolean;
    selectedSongList?: Song[];
@@ -87,6 +80,7 @@ export default function SongListItem({
    theme,
    inProcess,
    inPlaylist,
+   admin,
 
    // song context
    userInfo,
@@ -120,6 +114,9 @@ export default function SongListItem({
    const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
    const [modalComponent, setModalComponent] = useState<string>();
 
+   // hooks
+   const { addSongToPlaylistSongItem } = usePlaylistActions({});
+
    // floating ui
    const { refs, floatingStyles, context } = useFloating({
       open: isOpenPopup,
@@ -151,6 +148,13 @@ export default function SongListItem({
       setIsOpenModal(false);
    };
 
+   const logger = (type: "[error]" | "[success]") => {
+      return (msg: string) => console.log(`${type} ${msg}`);
+   };
+
+   const errorLogger = logger("[error]");
+   const successLogger = logger("[success]");
+
    // songInStore, data, userSongs
    const handleDeleteSong = useCallback(async () => {
       if (
@@ -167,66 +171,23 @@ export default function SongListItem({
 
       try {
          setLoading(true);
+         let newUserSongs = [...userSongs];
 
-         // if song added in some playlist
-         let newUserPlaylists: Playlist[] | undefined;
-         let playlistsNeedToUpdate: Playlist[] | undefined;
+         // eliminate 1 song
+         const index = newUserSongs.indexOf(data);
+         newUserSongs.splice(index, 1);
 
-         if (data.in_playlist.length) {
-            newUserPlaylists = [...userPlaylists];
-
-            const { error, playlistsNeedToUpdateDoc } =
-               await handlePlaylistWhenDeleteSong(data, newUserPlaylists);
-
-            if (error || !playlistsNeedToUpdateDoc) {
-               closeModal();
-               setErrorToast({ message: "Error when handle playlist" });
-
-               return;
-            }
-            playlistsNeedToUpdate = playlistsNeedToUpdateDoc;
-         }
-
-         // >>> local
-         const newUserSongIds = await songItemActions.updateAndSetUserSongs({
-            song: data,
-         });
-
-         if (!newUserSongIds) {
+         if (newUserSongs.length === userSongs.length) {
+            errorLogger("Error newUserSongIds");
             setErrorToast({ message: "Error when handle user songs" });
             closeModal();
 
             return;
          }
 
-         if (playlistsNeedToUpdate) {
-            if (newUserPlaylists) {
-               for (let playlist of playlistsNeedToUpdate) {
-                  updatePlaylistsValue(playlist, newUserPlaylists);
-
-                  //  if user is playing this playlist
-                  if (playlist.id === playlistInStore.id) {
-                     dispatch(setPlaylist(playlist));
-                  }
-
-                  // >>> api
-                  await mySetDoc({
-                     collection: "playlist",
-                     data: playlist,
-                     id: playlist.id,
-                     msg: ">>> api: update playlist doc",
-                  });
-               }
-
-               // >>> local
-               setUserPlaylists(newUserPlaylists, []);
-            }
-         }
-
+         const newUserSongIds = newUserSongs.map((songItem) => songItem.id);
          // >>> api
-         // delete song file, image file, song doc and lyric doc
          await deleteSong(data);
-
          await mySetDoc({
             collection: "users",
             data: {
@@ -237,12 +198,14 @@ export default function SongListItem({
             msg: ">>> api: update user doc",
          });
 
+         setUserSongs(newUserSongs);
+
          // >>> finish
          if (songInStore.id === data.id) {
             const emptySong = initSongObject({});
             dispatch(setSong({ ...emptySong, song_in: "user", currentIndex: 0 }));
          }
-         console.log("[success]: delete song completed");
+         successLogger("delete song completed");
          setSuccessToast({ message: `'${data.name}' deleted` });
       } catch (error) {
          console.log({ message: error });
@@ -255,78 +218,18 @@ export default function SongListItem({
    // userSongs
    const handleAddSongToPlaylist = useCallback(
       async (song: Song, playlist: Playlist) => {
-         if (!song || !playlist || !songItemActions) {
+         if (!song || !playlist) {
             setErrorToast({ message: "Lack of props" });
             return;
          }
 
          try {
-            // case admin song
-            if (data.by === "admin") {
-               console.log("song by admin");
-
-               const newPlaylist = generatePlaylistAfterChangeSong({ song, playlist });
-               // check valid playlist after change
-               if (
-                  newPlaylist.count < 0 ||
-                  newPlaylist.time < 0 ||
-                  newPlaylist.song_ids.length === playlist.song_ids.length
-               ) {
-                  setErrorToast({ message: "New playlist error" });
-                  return;
-               }
-
-               //  >>>local & api
-               console.log("check new playlist", newPlaylist);
-
-               await songItemActions.setPlaylistDocAndSetUserPlaylists({ newPlaylist });
-               setSuccessToast({ message: `'${song.name}' added to ${playlist.name}` });
-               return;
-            }
-
-            // case user song
-            // check props
-            if (!userSongs || !setUserSongs) {
-               setErrorToast({ message: "Lack of props" });
-               return;
-            }
-
-            const { error, newSong } = handleSongWhenAddToPlaylist(song, playlist);
-            // check valid song after change
-            if (error || !newSong) {
-               setErrorToast({ message: "New song error" });
-               return;
-            }
-
-            const newUserSongs = [...userSongs];
-            updateSongsListValue(newSong as Song, newUserSongs);
-
-            const newPlaylist = generatePlaylistAfterChangeSong({
-               song: newSong as Song,
-               playlist,
-            });
-            // check valid playlist after change
-            if (
-               newPlaylist.count < 0 ||
-               newPlaylist.time < 0 ||
-               newPlaylist.song_ids.length === playlist.song_ids.length
-            ) {
-               setErrorToast({ message: "New playlist error" });
-               return;
-            }
-
-            // >>> local
-            setUserSongs(newUserSongs);
-
-            // >>> api
-            await mySetDoc({ collection: "songs", data: newSong, id: newSong.id });
-            await songItemActions.setPlaylistDocAndSetUserPlaylists({ newPlaylist });
-
-            // finish
-            setSuccessToast({ message: `'${song.name}' added to ${playlist.name}` });
+            setLoading(true);
+            await addSongToPlaylistSongItem(data, playlist);
+            setLoading(false);
          } catch (error) {
             console.log(error);
-            setErrorToast({});
+            setErrorToast({ message: "Error when add song to playlist" });
          } finally {
             setIsOpenPopup(false);
          }
@@ -334,31 +237,43 @@ export default function SongListItem({
       [userSongs, data]
    );
 
+   const handleRemoveSongFromPlaylist = async () => {
+      if (!deleteFromPlaylist) return;
+
+      try {
+         setLoading(true);
+         await deleteFromPlaylist(data);
+      } catch (error) {
+         console.log(error);
+         throw new Error("Error when remove song from playlist ");
+      } finally {
+         setLoading(false);
+         setIsOpenPopup(false);
+      }
+   };
+
    //selectedSongList
-   const handleSelect = useCallback(
-      (song: Song) => {
-         if (!setSelectedSongList || !selectedSongList || !setIsCheckedSong) {
-            setErrorToast({ message: "Selected lack of props" });
-            return;
-         }
-         setIsCheckedSong(true);
+   const handleSelect = (song: Song) => {
+      if (!setSelectedSongList || !selectedSongList || !setIsCheckedSong) {
+         setErrorToast({ message: "Selected lack of props" });
+         return;
+      }
+      setIsCheckedSong(true);
 
-         let list = [...selectedSongList];
-         const index = list.indexOf(song);
+      let list = [...selectedSongList];
+      const index = list.indexOf(song);
 
-         // if no present
-         if (index === -1) {
-            list.push(song);
+      // if no present
+      if (index === -1) {
+         list.push(song);
 
-            // if present
-         } else {
-            list.splice(index, 1);
-         }
-         setSelectedSongList(list);
-         if (!list.length) setIsCheckedSong(false);
-      },
-      [selectedSongList]
-   );
+         // if present
+      } else {
+         list.splice(index, 1);
+      }
+      setSelectedSongList(list);
+      if (!list.length) setIsCheckedSong(false);
+   };
 
    // define style
    const classes = {
@@ -458,15 +373,14 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
    //   theme, active, userPlaylists, data, handleAddSongToPlaylist, deleteFromPlaylist
    const menuComponent = useMemo(
       () => (
-         <div className="w-[200px]">
-            {!isOnMobile && (
+         <div className="w-[200px] relative">
+            {(!isOnMobile || !admin) && (
                <>
                   <h5 className="text-mg line-clamp-1">{data.name}</h5>
                   <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
                </>
             )}
-
-            {userInfo?.email && (
+            {(admin || (userInfo?.email && data.by !== "admin")) && (
                <>
                   {!inPlaylist ? (
                      <Button
@@ -530,9 +444,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                            <Button
                               className={`mt-[15px] ${theme.content_hover_text}`}
                               variant={"list"}
-                              onClick={() =>
-                                 deleteFromPlaylist && deleteFromPlaylist(data)
-                              }
+                              onClick={() => handleRemoveSongFromPlaylist()}
                            >
                               <MinusCircleIcon className="w-[18px] mr-[5px]" />
                               Remove from playlist
@@ -543,10 +455,10 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                </>
             )}
 
-            {data.by != "admin" && (
+            {(admin || data.by != "admin") && (
                <>
                   <a
-                  target="_blank"
+                     target="_blank"
                      download
                      href={data.song_url}
                      className={`${theme.content_hover_text} text-[14px] inline-flex items-center cursor-pointer`}
@@ -601,7 +513,15 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             </p>
          </div>
       ),
-      [theme, active, userPlaylists, data, handleAddSongToPlaylist, deleteFromPlaylist]
+      [
+         theme,
+         active,
+         userPlaylists,
+         data,
+         handleAddSongToPlaylist,
+         deleteFromPlaylist,
+         loading,
+      ]
    );
 
    return (
@@ -626,14 +546,17 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
          ) : (
             <>
                <div className="flex flex-row items-center gap-x-[5px]">
-                  <Button
-                     className={`${classes.button} ${
-                        theme.type === "light" ? "hover:text-[#333]" : "hover:text-white"
-                     }`}
-                  >
-                     <HeartIcon className="w-[20px]" />
-                  </Button>
-
+                  {!admin && (
+                     <Button
+                        className={`${classes.button} ${
+                           theme.type === "light"
+                              ? "hover:text-[#333]"
+                              : "hover:text-white"
+                        }`}
+                     >
+                        <HeartIcon className="w-[20px]" />
+                     </Button>
+                  )}
                   <div className="w-[80px] flex justify-center songContainers-center">
                      <button
                         ref={refs.setReference}
@@ -666,6 +589,13 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                   {...getFloatingProps()}
                >
                   <PopupWrapper theme={theme}>{menuComponent}</PopupWrapper>
+                  {loading && (
+                     <div className="absolute rounded-[6px] flex items-center justify-center inset-0 bg-[#000] bg-opacity-40">
+                        <span>
+                           <ArrowPathIcon className="w-[40px] animate-spin" />
+                        </span>
+                     </div>
+                  )}
                </div>
             </FloatingFocusManager>
          )}
@@ -681,14 +611,16 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      data={data}
                   />
                )}
-               {modalComponent === "confirm" && <ConfirmModal 
-                 loading = {loading}
-                 label = {`Delete '${data.name}'`}
-                 desc = {"This action cannot be undone"}
-                 theme = {theme}
-                 callback = {handleDeleteSong}
-                 setOpenModal = {setIsOpenModal}
-               />}
+               {modalComponent === "confirm" && (
+                  <ConfirmModal
+                     loading={loading}
+                     label={`Delete '${data.name}'`}
+                     desc={"This action cannot be undone"}
+                     theme={theme}
+                     callback={handleDeleteSong}
+                     setOpenModal={setIsOpenModal}
+                  />
+               )}
             </Modal>
          )}
       </div>

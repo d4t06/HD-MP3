@@ -1,13 +1,10 @@
 import { DocumentIcon, PencilSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Dispatch, SetStateAction, forwardRef, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, forwardRef, useState } from "react";
 import { Song, ThemeType } from "../types";
 
 import { Button, ConfirmModal, Modal, SongItemEditForm } from ".";
 
 import { useToast } from "../store/ToastContext";
-import { selectAllSongStore } from "../store/SongSlice";
-import { useSelector } from "react-redux";
-// import { initSongObject } from "../utils/appHelpers";
 
 import { deleteSong } from "../utils/firebaseHelpers";
 import { Link } from "react-router-dom";
@@ -21,7 +18,7 @@ type Props = {
    selectedSongList?: Song[];
    setSelectedSongList?: Dispatch<SetStateAction<Song[]>>;
 
-   setAdminSongs?: Dispatch<SetStateAction<Song[]>>;
+   setAdminSongs?:(adminSongs: Song[]) => void;
    adminSongs?: Song[];
    inProcess: boolean;
 };
@@ -43,10 +40,7 @@ const DashboardSongItem = (
    const [isOpenModal, setIsOpenModal] = useState(false);
    const [modalComponent, setModalComponent] = useState<string>();
 
-   // use hooks
-   // const dispatch = useDispatch();
    const { setErrorToast, setSuccessToast } = useToast();
-   const { song: songInStore } = useSelector(selectAllSongStore);
 
    const handleOpenModal = (name: string) => {
       setModalComponent(name);
@@ -72,18 +66,18 @@ const DashboardSongItem = (
          // eliminate 1 song
          const index = newAdminSongs.indexOf(data);
          newAdminSongs.splice(index, 1);
+  
+         // >>> api
+         await deleteSong(data);
 
          // >>> local
          setAdminSongs(newAdminSongs);
-
-         // >>> api
-         await deleteSong(data);
 
          // >>> finish
          setSuccessToast({ message: `'${data.name}' deleted` });
       } catch (error) {
          console.log({ message: error });
-         setErrorToast({});
+         setErrorToast({message: 'Error when delete song'});
       } finally {
          closeModal();
       }

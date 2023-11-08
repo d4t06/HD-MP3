@@ -9,8 +9,9 @@ type Props = {
    theme: ThemeType & { alpha: string };
    admin?: boolean;
    userInfo?: User;
+   cb?: () => void;
 };
-export default function AddPlaylist({ setIsOpenModal, theme, admin }: Props) {
+export default function AddPlaylist({ setIsOpenModal, theme, admin, cb }: Props) {
    const [playlistName, setPlayListName] = useState<string>("");
    const { addPlaylist, loading } = usePlaylistActions({ admin });
 

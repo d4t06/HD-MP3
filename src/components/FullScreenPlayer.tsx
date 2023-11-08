@@ -52,6 +52,14 @@ export default function FullScreenPlayer({
       firstTimeRender,
       isOpenFullScreen: isOpenFullScreen,
    });
+
+   // use hook
+   const { songLyric, loading } = useGetSongLyric({
+      songInStore,
+      audioEle,
+      isOpenFullScreen,
+   });
+
    const handleClickNext = useDebounce(
       () => handleScroll("next"),
       scrollToActiveSong,
@@ -157,15 +165,21 @@ export default function FullScreenPlayer({
    const renderLyricTab = (
       <div className={classes.lyricTabContainer}>
          {/* left */}
-
-         <SongThumbnail theme={theme} active={true} data={songInStore} />
-
-         {/* right */}
+         <SongThumbnail
+            classNames={`opacity-0 transition-opacity delay-400 ${
+               isOpenFullScreen ? "opacity-100" : ""
+            }`}
+            theme={theme}
+            active={true}
+            data={songInStore}
+         />
+         ;{/* right */}
          <div className={classes.lyricContainer}>
             <LyricsList
                audioEle={audioEle}
-               isOpenFullScreen={isOpenFullScreen}
                className=""
+               songLyric={songLyric}
+               loading={loading}
             />
          </div>
       </div>

@@ -11,23 +11,6 @@ const useSongItemActions = () => {
    const { userPlaylists, setUserPlaylists, userSongs, setUserSongs } = useSongsStore();
    const { playlist: playlistInStore } = useSelector(selectAllSongStore);
 
-   const setPlaylistDocAndSetUserPlaylists = useCallback(
-      async ({ newPlaylist }: { newPlaylist: Playlist }) => {
-         // update userPlaylist
-         const newUserPlaylists = [...userPlaylists];
-         updatePlaylistsValue(newPlaylist, newUserPlaylists);
-
-         // if user playing this playlist, need to update new
-         if (playlistInStore.name === newPlaylist.name) {
-            dispatch(setPlaylist(newPlaylist));
-         }
-         await mySetDoc({ collection:'playlist', data: newPlaylist, id: newPlaylist.id });
-         
-         setUserPlaylists(newUserPlaylists, []);
-      },
-      [userPlaylists, playlistInStore]
-   );
-
    const updateAndSetUserSongs = useCallback(
       async ({ song }: { song: Song }) => {
          // reference copy newUserSongIds = userSongIds;
@@ -51,7 +34,7 @@ const useSongItemActions = () => {
    );
 
    
-   return { setPlaylistDocAndSetUserPlaylists, updateAndSetUserSongs };
+   return {updateAndSetUserSongs };
 };
 
 export default useSongItemActions;

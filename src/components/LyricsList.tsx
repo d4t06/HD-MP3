@@ -1,30 +1,24 @@
 import { FC, useCallback, useEffect, useRef, useState } from "react";
 import LyricItem from "./child/LyricItem";
-import { ArrowPathIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store";
+import { Lyric } from "../types";
 
 interface Props {
    audioEle: HTMLAudioElement;
    className: string;
-   isOpenFullScreen: boolean;
+   songLyric: Lyric;
+   loading: boolean;
 }
 
-const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen }) => {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+const LyricsList: FC<Props> = ({ audioEle, className, songLyric, loading }) => {
    // state
    const [currentTime, setCurrentTime] = useState<number>(0);
    const firstTimeRender = useRef(true);
    const scrollBehavior = useRef<ScrollBehavior>("instant");
    const containerRef = useRef<HTMLDivElement>(null);
-
-   // use hook
-   const { songLyric, loading } = useGetSongLyric({
-      songInStore,
-      audioEle,
-      isOpenFullScreen,
-   });
 
    const handleUpdateTime = useCallback(() => {
       setCurrentTime(audioEle.currentTime);
@@ -69,21 +63,19 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen }) => {
          if (containerEle) containerEle.scrollTop = 0;
          if (audioEle) audioEle.removeEventListener("timeupdate", handleUpdateTime);
       };
-   }, []);
+   }, []);   
 
    if (loading)
       return (
-         <h1 className="mt-[30px] text-center">
-            <ArrowPathIcon className="animate-spin w-[35px]" />
-         </h1>
+         <div className="mt-[30px] flex justify-center">
+            <span>
+               <ArrowPathIcon className="animate-spin w-[35px] duration-[2s]" />
+            </span>
+         </div>
       );
 
    if (!songLyric.real_time.length) {
-      return (
-         <button>
-            <PlusIcon className="w-[25px]" />
-         </button>
-      );
+      return;
    }
 
    return (

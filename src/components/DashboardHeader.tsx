@@ -17,6 +17,7 @@ import {
 import { useRef, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
+import zingIcon from "../assets/icon-zing.svg";
 
 import { useAuthActions } from "../store/AuthContext";
 
@@ -60,16 +61,19 @@ export default function DashboardHeader() {
 
    return (
       <>
-         <div className={`${theme.side_bar_bg}`}>
+         <div className={`${theme.side_bar_bg} fixed top-0 z-10 left-0 right-0`}>
             <div className="container mx-auto flex justify-between items-center h-[50px]">
-               <h1 className="text-[20px] uppercase">Zing dash board</h1>
+               <div className="flex">
+                  <img className="w-[30px]" src={zingIcon} alt="" />
+                  <h1 className="text-[20px] uppercase ml-[10px]">Zing admin</h1>
+               </div>
 
                <div className="flex items-center">
                   {loggedInUser?.displayName && (
                      <p className="text-[14px] mr-[8px]">{loggedInUser.displayName}</p>
                   )}
                   <div
-                     className={`w-[30px] h-[30px] rounded-full overflow-hidden border-[#ccc] border`}
+                     className={`w-[30px] h-[30px] rounded-full overflow-hidden border-[#ccc] border-[2px]`}
                   >
                      {loggedInUser?.photoURL && (
                         <img src={loggedInUser.photoURL!} className="w-full" alt="" />

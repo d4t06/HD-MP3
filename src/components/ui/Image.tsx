@@ -18,6 +18,8 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
 
       if (!src) return;
       if (src?.includes("blob")) {
+         console.log('check image ref', imageRef.current);
+         
          console.log("revoke");
          URL.revokeObjectURL(src);
       }
@@ -32,28 +34,6 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
    const handleError = () => {
       !!onError ? [onError(), defaultHandleError()] : defaultHandleError();
    };
-
-   // useEffect(() => {
-   //    // if no have image (use default placeholder png)
-   //    if (!src) {
-   //       defaultHandleError();
-   //       return;
-   //    }
-
-   //    const imageEle = imageRef.current as HTMLImageElement;
-
-   //    if (imageEle) {
-   //       imageEle.addEventListener("load", handleLoadImage);
-   //       imageEle.addEventListener("error", handleError);
-   //    }
-
-   //    return () => {
-   //       if (imageEle) {
-   //          imageEle.removeEventListener("load", handleLoadImage);
-   //          imageEle.removeEventListener("error", handleError);
-   //       }
-   //    };
-   // }, []);
 
    return (
       <>

@@ -26,6 +26,7 @@ import {
    AppInfo,
    Appearance,
    ConfirmModal,
+   PlaylistItem,
 } from "../components";
 // hooks
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -33,7 +34,11 @@ import { useSongs, useSongItemActions } from "../hooks";
 // config
 import { routes } from "../routes";
 import { auth } from "../config/firebase";
-import Skeleton, { SongItemSkeleton, MobileLinkSkeleton } from "../components/skeleton";
+import Skeleton, {
+   SongItemSkeleton,
+   MobileLinkSkeleton,
+   PlaylistSkeleton,
+} from "../components/skeleton";
 
 import { useAuthActions } from "../store/AuthContext";
 
@@ -43,14 +48,13 @@ export default function HomePage() {
    const [loggedInUser, loading] = useAuthState(auth);
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
-   const { loading: useSongLoading } = useSongs();
-   const { adminSongs, userPlaylists } = useSongsStore();
+   const { loading: useSongLoading } = useSongs({});
+   const { adminSongs, adminPlaylists, userPlaylists } = useSongsStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    // use hooks
    const songItemActions = useSongItemActions();
    const { logIn, logOut } = useAuthActions();
-
 
    // component states
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
@@ -65,7 +69,6 @@ export default function HomePage() {
    };
 
    const isOnMobile = useMemo(() => window.innerWidth < 800, []);
-
 
    //   methods
    const handleLogIn = async () => {
@@ -181,13 +184,23 @@ export default function HomePage() {
                </div>
             </div>
          )}
-         {/* admin song */}
          <div className="pb-[30px]">
             <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
+            <div className="flex flex-row flex-wrap mb-[30px]">
+               {useSongLoading && PlaylistSkeleton}
+               {!useSongLoading &&
+                  !!adminPlaylists.length &&
+                  adminPlaylists.map((playList, index) => (
+                     <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                        <PlaylistItem theme={theme} data={playList} />
+                     </div>
+                  ))}
+            </div>
+            {/* admin song */}
             {useSongLoading && SongItemSkeleton}
 
             {!useSongLoading && (
-               <>{!!adminSongs.length ? renderAdminSongs : "No songs jet..."}</>
+               <>{!!adminSongs.length ? renderAdminSongs : (<h1 className="text-[22px] text-center">...</h1>)}</>
             )}
          </div>
 
@@ -234,7 +247,13 @@ export default function HomePage() {
          {isOpenModal && (
             <Modal theme={theme} setOpenModal={setIsOpenModal} classNames="w-[90vw]">
                {modalName.current === "confirm" && (
-                  <ConfirmModal setOpenModal={setIsOpenModal} callback={handleSignOut} loading={false} theme={theme} label="Log out ?"/>
+                  <ConfirmModal
+                     setOpenModal={setIsOpenModal}
+                     callback={handleSignOut}
+                     loading={false}
+                     theme={theme}
+                     label="Log out ?"
+                  />
                )}
                {modalName.current === "info" && (
                   <AppInfo setIsOpenModal={setIsOpenModal} />

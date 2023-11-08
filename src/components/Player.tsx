@@ -27,14 +27,13 @@ const Player: FC<PlayerProps> = () => {
    const isOnMobile = useMemo(() => {
       return window.innerWidth < 800;
    }, []);
-   const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
-   // console.log("check render");
+   // const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
 
    const desktopContent = (
       <>
          <FullScreenPlayer
             audioEle={audioRef.current as HTMLAudioElement}
-            idle={idle}
+            idle={false}
             isPlaying={isPlaying}
             isOpenFullScreen={isOpenFullScreen}
             setIsOpenFullScreen={setIsOpenFullScreen}
@@ -42,7 +41,7 @@ const Player: FC<PlayerProps> = () => {
 
          <BottomPlayer
             audioEle={audioRef.current as HTMLAudioElement}
-            idle={idle && isOpenFullScreen}
+            idle={false && isOpenFullScreen}
             isPlaying={isPlaying}
             isWaiting={isWaiting}
             isOpenFullScreen={isOpenFullScreen}

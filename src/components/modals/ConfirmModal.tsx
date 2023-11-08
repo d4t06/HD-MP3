@@ -22,7 +22,11 @@ export default function ConfirmModal({
    setOpenModal: Dispatch<SetStateAction<boolean>>;
 }) {
    return (
-      <div className={className || "w-[400px]"}>
+      <div
+         className={`${className || "w-[400px]"} ${
+            loading ? "opacity-60 pointer-events-none" : ""
+         }`}
+      >
          <h1 className="text-[20px] text-red-500 font-semibold">
             {label || "Wait a minute"}
          </h1>

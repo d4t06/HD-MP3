@@ -23,7 +23,7 @@ export default function Edit() {
   const firstTimeRun = useRef<boolean>(true);
 
   //  use hooks
-  const { errorMsg, loading: useSongsLoading, initial } = useSongs();
+  const { errorMsg, loading: useSongsLoading, initial } = useSongs({});
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
 

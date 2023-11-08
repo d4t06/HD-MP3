@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Lyric, Song } from "../types";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { sleep } from "../utils/appHelpers";
+import appConfig from "../config/app";
 
 export default function useSongLyric({
    songInStore,
@@ -22,9 +23,7 @@ export default function useSongLyric({
    // const isSongLoaded = useRef(false)
 
    const handleSongLoaded = async () => {
-      await sleep(1000);
       console.log("song loaded");
-
       setIsSongLoaded(true);
    };
 
@@ -55,6 +54,7 @@ export default function useSongLyric({
    };
 
    useEffect(() => {
+      // if (!isOpenFullScreen) return;
       if (audioEle) audioEle.addEventListener("loadeddata", handleSongLoaded);
 
       return () => {
@@ -71,14 +71,14 @@ export default function useSongLyric({
 
       return () => {
          setIsSongLoaded(false);
-         setLoading(true)
+         setLoading(true);
          setSongLyric({ base: "", real_time: [] });
       };
    }, [songInStore]);
 
    useEffect(() => {
-      if (!songInStore.lyric_id) {
-         setLoading(false)
+      if (!songInStore.lyric_id && isSongLoaded) {
+         setLoading(false);
          return;
       }
       if (songLyric.real_time.length) return;

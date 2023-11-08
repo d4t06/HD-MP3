@@ -168,7 +168,7 @@ export const generatePlaylistAfterChangeSongs = ({
    const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
    const newPlaylist: Playlist = {
       ...existingPlaylist,
-      time: +time.toFixed(1),
+      time,
       song_ids: ids,
       count: ids.length,
    };
@@ -187,7 +187,7 @@ export const generatePlaylistAfterChangeSong = ({
 
    const newPlaylist: Playlist = {
       ...playlist,
-      time: +(playlist.time + song.duration).toFixed(1),
+      time: playlist.time + song.duration,
       song_ids: [...playlist.song_ids, song.id],
       count: playlist.count + 1,
    };

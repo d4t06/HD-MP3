@@ -49,3 +49,6 @@
 
 ### update thứ 7 4/11/2023
 - Bỏ trường in_playlist ở bảng songs
+
+### update thứ 3 7/11/2023
+- Sửa hook usePlaylist detail, hoàn thiện các chức năng của admin

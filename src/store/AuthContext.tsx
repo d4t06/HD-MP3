@@ -23,7 +23,7 @@ const initialState: StateType = {
       status: "loading",
       display_name: "",
       playlist_ids: [],
-      role: "user",
+      role: "",
       song_count: 0,
       song_ids: [],
       email: "",
