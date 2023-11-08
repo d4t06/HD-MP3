@@ -18,7 +18,6 @@ import { useGetSongLyric, useBgImage } from "../hooks";
 import {
    Tabs,
    ScrollText,
-   MobileSongThumbnail,
    Control,
    LyricsList,
    MobileSongItem,
@@ -65,6 +64,7 @@ export default function MobileFullScreenPlayer({
 
    // use hooks
    useBgImage({ bgRef, songInStore });
+   const {loading, songLyric} = useGetSongLyric({audioEle, isOpenFullScreen, songInStore})
 
    const findParent = (ele: HTMLDivElement) => {
       let i = 0;
@@ -143,7 +143,8 @@ export default function MobileFullScreenPlayer({
          <LyricsList
             className="h-[calc(100vh-60px-65px-130px-20px)]"
             audioEle={audioEle}
-            isOpenFullScreen={isOpenFullScreen}
+            loading={loading}
+            songLyric={songLyric}
          />
       ),
       [isLandscape]

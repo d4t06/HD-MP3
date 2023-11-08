@@ -374,7 +374,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
    const menuComponent = useMemo(
       () => (
          <div className="w-[200px] relative">
-            {(!isOnMobile || !admin) && (
+            {!admin && !isOnMobile && (
                <>
                   <h5 className="text-mg line-clamp-1">{data.name}</h5>
                   <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
@@ -521,6 +521,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
          handleAddSongToPlaylist,
          deleteFromPlaylist,
          loading,
+         admin
       ]
    );
 
@@ -605,10 +606,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                {modalComponent === "edit" && (
                   <SongItemEditForm
                      setIsOpenModal={setIsOpenModal}
-                     setUserSongs={setUserSongs}
                      theme={theme}
-                     userSongs={userSongs}
-                     data={data}
+                     song={data}
+                     admin={admin}
                   />
                )}
                {modalComponent === "confirm" && (

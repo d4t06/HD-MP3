@@ -3,6 +3,7 @@ import {
    Cog6ToothIcon,
    ArrowLeftOnRectangleIcon,
    MusicalNoteIcon,
+   ComputerDesktopIcon,
 } from "@heroicons/react/24/outline";
 import {
    useFloating,
@@ -137,9 +138,9 @@ export default function Sidebar() {
          <div className={classes.divide}></div>
 
          <div className="flex flex-col gap-[15px] items-start">
-            {loading && menuItemSkeletons}
+            {userInfo.status === 'loading' && menuItemSkeletons}
 
-            {!loading && (
+            {userInfo.status !== 'loading' && (
                <>
                   <Link className="w-full" to={routes.Home}>
                      <Button className={classes.button}>
@@ -170,6 +171,14 @@ export default function Sidebar() {
                      <Cog6ToothIcon className={classes.icon} />
                      Settings
                   </button>
+                  {userInfo.role === 'admin' &&
+                  <Link className="w-full" to={routes.Dashboard}>
+                     <Button className={classes.button}>
+                        <ComputerDesktopIcon className={classes.icon} />
+                        Dashboard
+                     </Button>
+                  </Link>
+                  }
                </>
             )}
          </div>
