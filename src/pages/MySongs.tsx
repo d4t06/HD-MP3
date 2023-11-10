@@ -3,7 +3,7 @@ import { ReactNode, useRef, useState, useMemo, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { Playlist, Song } from "../types";
+import { Song } from "../types";
 
 // store
 import {
@@ -12,18 +12,14 @@ import {
    useSongsStore,
    useToast,
    useAuthStore,
-   setPlaylist,
    setSong,
 } from "../store";
 
 // utils
 import {
    deleteSong,
-   mySetDoc,
    setUserSongIdsAndCountDoc,
 } from "../utils/firebaseHelpers";
-import { updatePlaylistsValue } from "../utils/appHelpers";
-// import {  } from "../utils/songItemHelper";
 
 // hooks
 import { useUploadSongs, useSongs, useSongItemActions } from "../hooks";
@@ -53,7 +49,7 @@ export default function MySongsPage() {
    const { setErrorToast, setSuccessToast } = useToast();
    const { loading: initialLoading, errorMsg, initial } = useSongs({});
 
-   const { song: songInStore, playlist: playlistInStore } =
+   const { song: songInStore } =
       useSelector(selectAllSongStore);
    const { userPlaylists, setUserSongs, setUserPlaylists, userSongs } = useSongsStore();
    const songItemActions = useSongItemActions();
@@ -117,73 +113,28 @@ export default function MySongsPage() {
    };
 
    const handleDeleteSelectedSong = async () => {
-      let isOneSongInPlaylist = false;
       const newUserSongs = [...userSongs];
-      const newUserPlaylists = [...userPlaylists];
 
       try {
          setLoading(true);
-
-         // loop each selected song, update playlist need to update
-         // const playlistsNeedToUpdate: Playlist[] = [];
          for (let song of selectedSongList) {
-            // if some song added in some playlist
-            // if (song.in_playlist.length) {
-            //    isOneSongInPlaylist = true;
-            //    // problem, this is just for one song
-            //    const { error } = handlePlaylistWhenDeleteManySongs(
-            //       song,
-            //       playlistsNeedToUpdate,
-            //       newUserPlaylists
-            //    );
-
-            //    if (error) {
-            //       setLoading(false);
-            //       closeModal();
-            //       setErrorToast({ message: "Error when handle playlist" });
-            //       return;
-            //    }
-            // }
-
             const index = newUserSongs.findIndex((item) => item.id === song.id);
             newUserSongs.splice(index, 1);
          }
-
-         // for (let playlist of playlistsNeedToUpdate) {
-         //    updatePlaylistsValue(playlist, newUserPlaylists);
-
-         //    if (playlist.id === playlistInStore.id) {
-         //       dispatch(setPlaylist(playlist));
-         //    }
-
-         //    // >>> api
-         //    await mySetDoc({
-         //       collection: "playlist",
-         //       data: playlist,
-         //       id: playlist.id,
-         //    });
-         // }
-
          // >>> api
          for (let song of selectedSongList) {
             await deleteSong(song);
          }
-
-         // >>> local
-         // if (isOneSongInPlaylist) {
-         //    setUserPlaylists(newUserPlaylists, []);
-         // }
+         const userSongIds: string[] = newUserSongs.map((song) => song.id);
+         await setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
 
          setUserSongs(newUserSongs);
-
-         const userSongIds: string[] = newUserSongs.map((song) => song.id);
-         setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
 
          // >>> finish
          setSuccessToast({ message: `${selectedSongList.length} songs deleted` });
       } catch (error) {
          console.log(error);
-         setErrorToast({ message: "Catch error" });
+         setErrorToast({ message: "Error when delete songs" });
       } finally {
          resetCheckedList();
          closeModal();
@@ -358,7 +309,7 @@ export default function MySongsPage() {
          {/* song list */}
          <div className="pb-[30px] max-[549px]:pb-[80px]">
             {/* title */}
-            <div className="flex justify-between mb-[10px]">
+            <div className="flex justify-between">
                <h3 className="text-2xl font-bold">Songs</h3>
                {/* for upload song */}
                <input
@@ -388,27 +339,23 @@ export default function MySongsPage() {
 
             {/* song list */}
             <div
-               className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[50px] mb-[10px]`}
+               className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[60px]`}
             >
                {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
 
                {/* checked song */}
                {!initialLoading && (
-                  <>
+                  <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
                      {!isCheckedSong ? (
-                        <p
-                           className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}
-                        >
-                           {(songCount ? songCount : 0) + " songs"}
-                        </p>
+                       
+                           (songCount ? songCount : 0) + " songs"
+                        
                      ) : (
-                        <p
-                           className={`text-[14px]] font-semibold text-gray-500 w-[100px]`}
-                        >
-                           {selectedSongList.length + " selected"}
-                        </p>
+                        
+                           selectedSongList.length + " selected"
+                        
                      )}
-                  </>
+                  </p>
                )}
                {isCheckedSong && userSongs.length && (
                   <>

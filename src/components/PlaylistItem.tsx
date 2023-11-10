@@ -41,7 +41,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
                      <div className={classes.overlay}></div>
 
                      <div className={classes.buttonWrapper}>
-                        <Link to={`playlist/${data.id}`}>
+                        <Link to={`/playlist/${data.id}`}>
                            <Button className={classes.button}>
                               <PauseCircleIcon className="w-[35px]" />
                            </Button>

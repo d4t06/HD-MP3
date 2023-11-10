@@ -344,7 +344,7 @@ export default function Control({
       processContainer: `flex flex-row items-center h-[30px]`,
       processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
-      currentTime: `text-gray-500 text-[14px] font-semibold`,
+      currentTime: `opacity-60 text-[14px] font-semibold`,
       duration: `text-[14px] font-semibold`,
       icon: "w-[30px] max-[549px]:w-[40px]",
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,

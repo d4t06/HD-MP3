@@ -173,7 +173,7 @@ export default function FullScreenPlayer({
             active={true}
             data={songInStore}
          />
-         ;{/* right */}
+         {/* right */}
          <div className={classes.lyricContainer}>
             <LyricsList
                audioEle={audioEle}

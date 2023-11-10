@@ -26,8 +26,8 @@ const SongThumbnail = (
          "group relative transition-[width] duration-[.3s] origin-center rounded-[6px] overflow-hidden",
       image: "select-none object-cover object-center rounded w-full",
       overlay:
-         "absolute inset-0 bg-[#333] bg-opacity-60 items-center justify-center hidden group-hover:flex",
-      playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px]",
+         `absolute  ${active ? 'bottom-0 h-[20%] block w-full bg-gradient-to-t from-[#333] to-99% to-transparent': 'inset-0 hidden bg-opacity-60 bg-[#333] items-center justify-center'}   group-hover:flex`,
+      playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
       title: "text-[22px] text-white mt-[10px] font-bold text-ellipsis line-clamp-1",
    };
 
@@ -40,22 +40,15 @@ const SongThumbnail = (
                className={`${classes.imageFrame} ${active ? "w-[320px]" : "w-[280px]"}`}
             >
                <Image classNames="rounded-[6px]" src={data.image_url} blurHashEncode={data.blurhash_encode}/>
-
-               {/* <img
-                  src={data.image_url || "https://placehold.co/100"}
-                  className="w-full"
-                  alt=""
-               /> */}
-
-               {!active && (
-                  <div className={classes.overlay}>
-                     <Button
+               { (
+                  <div className={`${classes.overlay}`}>
+                     {!active && <Button
                         onClick={onClick}
                         variant={"circle"}
                         className={`h-[50px] w-[50px] text-white ${theme.content_hover_text}`}
                      >
                         <PauseCircleIcon className="w-full" />
-                     </Button>
+                     </Button>}
                   </div>
                )}
 
