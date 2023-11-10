@@ -22,27 +22,28 @@ import {
    LyricsList,
    MobileSongItem,
 } from "../components";
+import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 
 type Props = {
    audioEle: HTMLAudioElement;
    idle: boolean;
-   isPlaying: boolean;
    isOpenFullScreen: boolean;
-   isWaiting: boolean;
+   // isPlaying: boolean;
+   // isWaiting: boolean;
 
-   setIsWaiting: Dispatch<SetStateAction<boolean>>;
-   setIsPlaying: Dispatch<SetStateAction<boolean>>;
+   // setIsWaiting: Dispatch<SetStateAction<boolean>>;
+   // setIsPlaying: Dispatch<SetStateAction<boolean>>;
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
 };
 
 export default function MobileFullScreenPlayer({
    audioEle,
-   isPlaying,
-   isWaiting,
    isOpenFullScreen,
-
-   setIsPlaying,
-   setIsWaiting,
+   
+   // isPlaying,
+   // isWaiting,
+   // setIsPlaying,
+   // setIsWaiting,
    setIsOpenFullScreen,
 }: Props) {
    // use store
@@ -50,6 +51,7 @@ export default function MobileFullScreenPlayer({
    const { theme } = useTheme();
    // const { userInfo } = useAuthStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
+   const { playStatus } = useSelector(selectAllPlayStatusStore);
    const { actuallySongs } = useActuallySongs();
 
    // state
@@ -320,14 +322,14 @@ export default function MobileFullScreenPlayer({
                               <Control
                                  audioEle={audioEle}
                                  isOpenFullScreen={false}
-                                 isPlaying={isPlaying}
-                                 isWaiting={isWaiting}
-                                 setIsWaiting={setIsWaiting}
-                                 setIsPlaying={setIsPlaying}
+                                 // isPlaying={isPlaying}
+                                 // isWaiting={isWaiting}
+                                 // setIsWaiting={setIsWaiting}
+                                 // setIsPlaying={setIsPlaying}
                                  idle={false}
                               />
                            ),
-                           [isPlaying, isWaiting]
+                           [playStatus.isPlaying, playStatus.isWaiting]
                         )}
                      </div>
                   </div>

@@ -10,6 +10,7 @@ import { useAuthStore } from "../store/AuthContext";
 import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
+import { testPlaylists, testSongs } from "./songs";
 
 export default function useSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -156,19 +157,23 @@ export default function useSong({ admin }: { admin?: boolean }) {
       try {
          setLoading(true);
 
-         // case for all
-         const adminSongs = await getAdminSongs();
-         const adminPlaylists = await getAdminPLaylist();
+         // // case for all
+         // const adminSongs = await getAdminSongs();
+         // const adminPlaylists = await getAdminPLaylist();
 
+
+         // console.log(adminSongs);
+         // console.log(adminPlaylists);
+         
          // case no logged in
          if (!userInfo.email || admin) {
             console.log(">>> run initial, no user");
 
-            await sleep(2000);
+            await sleep(1000);
 
             initSongsContext({
-               adminSongs,
-               adminPlaylists,
+               adminSongs: testSongs,
+               adminPlaylists: testPlaylists,
                userPlaylists: [],
                userSongs: [],
             });

@@ -14,7 +14,7 @@ interface Props {
    onClick?: () => void;
 }
 
-const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
+const PlaylistItem: FC<Props> = ({ data, inDetail, theme }) => {
    const classes = {
       button: `rounded-full text-[#fff] p-[4px] hover:bg-${theme?.alpha}`,
       imageContainer: `absolute inset-0 overflow-hidden rounded-[6px]`,
@@ -31,7 +31,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, onClick }) => {
       <>
          <div
             className="group relative pt-[100%]"
-            onClick={() => isOnMobile && onClick && onClick()}
+            // onClick={() => isOnMobile && onClick && onClick()}
          >
             <div className={classes.imageContainer}>
                <Image classNames="" src={data.image_url} blurHashEncode={data.blurhash_encode} />

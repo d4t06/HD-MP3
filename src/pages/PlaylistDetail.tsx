@@ -1,5 +1,7 @@
 import {
+  ArrowPathIcon,
   ChevronLeftIcon,
+  PencilIcon,
   PencilSquareIcon,
   PlayIcon,
   PlusCircleIcon,
@@ -23,11 +25,8 @@ import {
   selectAllSongStore,
   setSong,
 } from "../store";
-import { usePlaylistDetail } from "../hooks";
-import {
-  handleTimeText,
-
-} from "../utils/appHelpers";
+import { useLocalStorage, usePlaylistDetail } from "../hooks";
+import { handleTimeText } from "../utils/appHelpers";
 import {
   PlaylistItem,
   SongItem,
@@ -42,6 +41,7 @@ import {
 import { routes } from "../routes";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import EditPlaylist from "../components/modals/EditPlaylist";
+import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 
 export default function PlaylistDetail() {
   // *** store
@@ -54,8 +54,10 @@ export default function PlaylistDetail() {
   const { userSongs, setUserSongs } = useSongsStore();
   const { song: songInStore, playlist: playlistInStore } =
     useSelector(selectAllSongStore);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   // *** state
+
   const firstTimeRender = useRef(true);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
@@ -63,8 +65,8 @@ export default function PlaylistDetail() {
   const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
   const [isCheckedSong, setIsCheckedSong] = useState(false);
 
-
   //  *** use hooks
+
   const {
     deletePlaylist,
     loading: playlistActionLoading,
@@ -111,6 +113,10 @@ export default function PlaylistDetail() {
 
     if (songInStore.song_in.includes(params.name as string)) return;
     handleSetSong(firstSong, 0);
+  };
+
+  const handleRepeatPlaylist = () => {
+    dispatch(setPlayStatus({ isRepeatPlaylist: !playStatus.isRepeatPlaylist }));
   };
 
   const deleteFromPlaylist = async (song: Song) => {
@@ -162,24 +168,25 @@ export default function PlaylistDetail() {
   };
 
   const songCount = useMemo(() => playlistSongs.length, [playlistSongs]);
-  const isOnMobile = useMemo(() => window.innerWidth < 800, []);
+  const isOnMobile = useMemo(() => window.innerWidth < 800, [window.innerWidth]);
 
   const classes = {
     addSongContainer: "pb-[50px] relative",
     addSongContent: "max-h-[calc(90vh-50px)] w-[700px] max-w-[80vw] overflow-auto",
-    songItem: "w-full max-[549px]:w-full",
+    songItem: "w-full",
     editContainer: "w-[700px] max-w-[90vw] max-h-[90vh]",
     input: "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
     button: `${theme.content_bg} rounded-full`,
-    playListTop: "w-full flex max-[549px]:flex-col max-[549px]:gap-[12px]",
-    playlistInfoContainer:
-      "ml-[15px] flex flex-col justify-between max-[549px]:ml-0 max-[549px]:mb-[30px] max-[549px]:gap-[12px]",
+    playListTop: "w-full gap-[12px] flex flex-col md:flex-row",
+    playlistInfoContainer: `flex flex-col gap-[12px] md:justify-between`,
+    infoTop: "flex justify-center items-center gap-[8px] md:flex-col md:items-start",
     songListContainer:
       "h-[50px] mb-[10px] flex gap-[20px] max-[549px]:gap-[12px] items-center border-b",
-    countSongText: "text-[14px]] font-semibold text-gray-500 w-[100px]",
+    countSongText: "text-[14px]] font-semibold text-gray-500 w-[100px] leading-[1]",
 
     inActiveBtn: `bg-${theme.alpha}`,
     activeBtn: `${theme.content_bg}`,
+    ctaContainer: `flex justify-center gap-[12px] mt-[12px] [mask-type:luminance]`,
     buttonAddSongContainer: "w-full text-center mt-[30px]",
     td: `py-[10px] my-[10px] border-${theme.alpha} border-b-[1px]`,
     th: `py-[5px]`,
@@ -232,25 +239,6 @@ export default function PlaylistDetail() {
     });
   }, [playlistInStore.name, songInStore, playlistSongs, isCheckedSong, selectedSongList]);
 
-  // for define skeleton
-  const playlistSkeleton = (
-    <div className="flex max-[549px]:flex-col max-[549px]:gap-[12px]">
-      <div className="w-1/4 max-[549px]:w-full max-[549px]:px-[20px]">
-        <Skeleton className="pt-[100%] rounded-[8px]" />
-      </div>
-      <div className="min-[550px]:ml-[15px] max-[549px]:flex max-[549px]:mb-[30px] justify-between">
-        <Skeleton className="h-[30px]  w-[100px]" />
-        <Skeleton className="h-[20px] mt-[9px] w-[50px]" />
-
-        {!isOnMobile && (
-          <>
-            <Skeleton className="h-[15px] mt-[9px] w-[200px]" />
-          </>
-        )}
-      </div>
-    </div>
-  );
-
   const SongItemSkeleton = [...Array(4).keys()].map((index) => {
     return (
       <div className="flex p-[10px]" key={index}>
@@ -268,74 +256,106 @@ export default function PlaylistDetail() {
       {isOnMobile && (
         <Link
           to={routes.MySongs}
-          className="inline-flex items-center mb-[30px] hover:opacity-75"
+          className={`inline-block p-[8px] rounded-full mb-[30px] ${theme.content_hover_bg} bg-${theme.alpha}`}
         >
           <ChevronLeftIcon className="w-[25px]" />
-          <span className="text-[20px] font-semibold leading-1">My songs</span>
         </Link>
       )}
+
       {/* head */}
-      {usePlaylistLoading && playlistSkeleton}
-      {!usePlaylistLoading && !!playlistInStore.name && (
+      {!!playlistInStore.name && (
         <div className={classes.playListTop}>
           {/* image */}
-          <div className="w-1/4 max-[549px]:w-full max-[549px]:px-[20px]">
-            <PlaylistItem data={playlistInStore} inDetail theme={theme} />
+          <div className="w-full px-[20px] md:w-1/4 md:px-0">
+            {usePlaylistLoading ? (
+              <Skeleton className="pt-[100%] rounded-[8px]" />
+            ) : (
+              <PlaylistItem data={playlistInStore} inDetail theme={theme} />
+            )}
           </div>
 
-          {/* playlist info */}
+          {/* desktop playlist info */}
           <div className={classes.playlistInfoContainer}>
-            <div className="max-[549px]:flex justify-between items-center gap-[12px]">
-              <h3 className="text-[20px] font-semibold max-[549px]:text-[30px] leading-1">
-                {playlistInStore.name}
-                <button onClick={() => openModal("edit")} className="p-[5px]">
-                  <PencilSquareIcon className="w-[20px]" />
-                </button>
-              </h3>
-              <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
-              <p className="text-[14px] opacity-60 max-[549px]:hidden">
-                create by {playlistInStore.by}
-              </p>
+            <div className={classes.infoTop}>
+              {usePlaylistLoading ? (
+                <>
+                  <Skeleton className="h-[30px]  w-[100px]" />
+                  <Skeleton className="hidden md:block h-[16px] w-[60px]" />
+                  <Skeleton className="hidden md:block h-[16px] w-[200px]" />
+                </>
+              ) : (
+                <>
+                  <h3 className="text-[30px] font-semibold leading-[1]">
+                    {playlistInStore.name}
+                  </h3>
+                  {!isOnMobile && (
+                    <p className="text-[16px] leading-[1]">
+                      {handleTimeText(playlistInStore?.time)}
+                    </p>
+                  )}
+                  <p className="hidden md:block opacity-60 leading-[1]">
+                    create by {playlistInStore.by}
+                  </p>
+                </>
+              )}
+            </div>
+
+            {/* cta */}
+            <div
+              className={`${classes.ctaContainer} ${
+                usePlaylistLoading ? "opacity-60 pointer-events-none" : ""
+              }`}
+            >
+              <Button
+                onClick={handlePlayPlaylist}
+                className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
+                  !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
+                }`}
+              >
+                Play
+                <PlayIcon className="ml-[5px] w-[25px]" />
+              </Button>
+
+              <Button
+                onClick={handleRepeatPlaylist}
+                className={`rounded-full p-[8px] ${
+                  playStatus.isRepeatPlaylist ? theme.content_bg : "bg-" + theme.alpha
+                }  ${
+                  !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
+                }`}
+              >
+                <ArrowPathIcon className="w-[25px]" />
+              </Button>
+
+              <Button
+                onClick={() => openModal("confirm")}
+                className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+              >
+                <TrashIcon className="w-[25px]" />
+              </Button>
+
+              <Button
+                onClick={() => openModal("edit")}
+                className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+              >
+                <PencilSquareIcon className="w-[25px]" />
+              </Button>
             </div>
           </div>
         </div>
       )}
 
-      {/* cta */}
-
-      <div className="flex items-center mt-[15px] gap-[12px] max-[549px]:justify-center">
-        <Button
-          onClick={() => handlePlayPlaylist()}
-          className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
-            !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
-          }`}
-        >
-          Play
-          <PlayIcon className="ml-[5px] w-[25px]" />
-        </Button>
-        <Button
-          onClick={() => openModal("confirm")}
-          className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
-        >
-          <TrashIcon className="w-[25px]" />
-        </Button>
-      </div>
-
       {/* songs list */}
       <div className="pb-[50px]">
         <div className={`${classes.songListContainer} border-${theme.alpha}`}>
-          {usePlaylistLoading && <Skeleton className="h-[20px] w-[100px]" />}
+          {usePlaylistLoading && <Skeleton className="h-[16px] w-[100px]" />}
 
           {!usePlaylistLoading && (
-            <>
-              {!isCheckedSong ? (
-                <p className={classes.countSongText}>{songCount + " songs"}</p>
-              ) : (
-                <p className={classes.countSongText}>
-                  {selectedSongList.length + " selected"}
-                </p>
-              )}
-            </>
+            <p className={classes.countSongText}>
+              {!isCheckedSong
+                ? songCount + " songs"
+                : selectedSongList.length + " selected"}
+            </p>
           )}
           {isCheckedSong && userSongs.length && (
             <>

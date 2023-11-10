@@ -52,3 +52,7 @@
 
 ### update thứ 3 7/11/2023
 - Sửa hook usePlaylist detail, hoàn thiện các chức năng của admin
+
+
+### update thứ 6 10/11/2023
+- Thêm status repeat shuffle vào redux store thay vì  

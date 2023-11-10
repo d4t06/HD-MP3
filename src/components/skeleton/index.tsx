@@ -13,7 +13,7 @@ export default function Skeleton({ className }: Props) {
 
 export const SongItemSkeleton = [...Array(4).keys()].map((index) => {
    return (
-      <div className="flex items-center p-[10px] border-b-[1px] border-transparent" key={index}>
+      <div key={index} className="flex items-center p-[10px] border-b-[1px] border-transparent" >
          <Skeleton className="h-[18px] w-[18px]" />
 
          <Skeleton className="h-[54px] w-[54px] ml-[10px] rounded-[4px]" />
