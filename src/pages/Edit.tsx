@@ -34,7 +34,7 @@ export default function Edit() {
         const lyricSnapshot = await myGetDoc({
           collection: "lyrics",
           id: song.lyric_id,
-          msg: ">>> api: get lyric doc"
+          msg: ">>> api: get lyric doc",
         });
         const lyricData = lyricSnapshot.data() as Lyric;
 
@@ -71,7 +71,12 @@ export default function Edit() {
     }
   }, [initial]);
 
-  if (useSongsLoading || loading) return <h1><ArrowPathIcon className="w-[25px] animate-spin"/></h1>;
+  if (useSongsLoading || loading)
+    return (
+      <h1>
+        <ArrowPathIcon className="w-[25px] animate-spin" />
+      </h1>
+    );
   if (errorMsg) return <h1>{errorMsg}</h1>;
 
   return (
@@ -80,14 +85,12 @@ export default function Edit() {
       <audio ref={audioRef} src={targetSong?.song_url} className="hidden" />
       {targetSong && (
         <>
-          <Link
-            to={routes.MySongs}
-            className={`inline-flex text-[20px] font-bold mb-[14px] ${theme.content_hover_text}`}
-          >
-            <ChevronLeftIcon className="w-[25px]" />
-            <span className="ml-[12px]">{targetSong.name}</span>
-          </Link>
-          <LyricEditor lyric={lyric} audioRef={audioRef} theme={theme} song={targetSong} />
+          <LyricEditor
+            lyric={lyric}
+            audioRef={audioRef}
+            theme={theme}
+            song={targetSong}
+          />
         </>
       )}
     </div>

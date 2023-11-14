@@ -6,7 +6,7 @@ export {default as LinkItem} from './ui/LinkItem'
 
 export {default as Skeleton} from './skeleton/index'
 
-export {default as AddSongsToPlaylist} from './modals/AddSongsToPlaylist'
+export {default as AddSongsToPlaylist} from './modals/SongList'
 export {default as LyricItem} from './child/LyricItem'
 export {default as PlayPauseButton} from './child/PlayPauseButton'
 export {default as SongItemEditForm} from './modals/SongItemEditForm'
@@ -35,6 +35,7 @@ export {default as SongList} from './SongList'
 
 
 export {default as Tabs} from './Tabs'
+export {default as BackBtn} from './BackBtn'
 export {default as ToastPortal} from './ToastPortal'
 export {default as UserItem} from './UserItem'
 export {default as DashboardHeader} from './DashboardHeader'

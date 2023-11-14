@@ -9,16 +9,27 @@ import { Lyric } from "../types";
 interface Props {
    audioEle: HTMLAudioElement;
    className: string;
-   songLyric: Lyric;
-   loading: boolean;
+   // songLyric: Lyric;
+   // loading: boolean;
+   isOpenFullScreen:boolean
 }
 
-const LyricsList: FC<Props> = ({ audioEle, className, songLyric, loading }) => {
+const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen,  }) => {
+
+   const {song: songInStore} = useSelector(selectAllSongStore)
+
    // state
    const [currentTime, setCurrentTime] = useState<number>(0);
    const firstTimeRender = useRef(true);
    const scrollBehavior = useRef<ScrollBehavior>("instant");
    const containerRef = useRef<HTMLDivElement>(null);
+
+
+   const { loading, songLyric } = useGetSongLyric({
+      audioEle,
+      isOpenFullScreen,
+      songInStore,
+    });
 
    const handleUpdateTime = useCallback(() => {
       setCurrentTime(audioEle.currentTime);

@@ -10,9 +10,9 @@ import {
 
 import { Song } from "../types";
 
-import { useMemo, useState, useRef, createContext } from "react";
+import { useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { Status } from "../store/SongSlice";
 import {
@@ -35,7 +35,6 @@ import {
    SongList,
 } from "../components";
 
-import { routes } from "../routes";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import EditPlaylist from "../components/modals/EditPlaylist";
 
@@ -191,12 +190,12 @@ export default function PlaylistDetail() {
 
    return (
       <>
-            <Link
+            {/* <Link
                to={routes.MySongs}
                className={`inline-block p-[4px] rounded-full mb-[10px] ${theme.content_hover_bg} bg-${theme.alpha}`}
             >
                <ChevronLeftIcon className="w-[25px]" />
-            </Link>
+            </Link> */}
          
 
          {/* head */}

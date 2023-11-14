@@ -15,7 +15,7 @@ type Props = {
    setIsOpenModal: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function AddSongsToPlaylist({
+export default function SongList({
    admin,
    theme,
    playlist,
@@ -85,13 +85,14 @@ export default function AddSongsToPlaylist({
                   return (
                      <div key={index} className={classes.songItem}>
                         <MobileSongItem
-                           isCheckedSong={true}
-                           selectedSongList={selectedSongList}
-                           setSelectedSongList={setSelectedSongList}
+                           isChecked={true}
+                           selectedSongs={selectedSongList}
+                           setSelectedSongs={setSelectedSongList}
                            theme={theme}
                            data={song}
                            active={false}
                            onClick={() => {}}
+                           setIsChecked={() => {}}
                         />
                      </div>
                   );

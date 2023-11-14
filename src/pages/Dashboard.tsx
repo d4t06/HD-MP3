@@ -41,7 +41,7 @@ export default function DashBoard() {
       initSongsAndPlaylists,
       initial,
    } = useSong({ admin: true });
-   const { adminPlaylists, adminSongs, setAdminSongs, setAdminPlaylists } =
+   const { adminPlaylists, adminSongs, setAdminSongs } =
       useSongsStore();
 
    // state
@@ -130,28 +130,6 @@ export default function DashBoard() {
       setIsOpenModal(true);
    };
 
-   // const renderSongs = () => {
-   //   return adminSongs.map((song, index) => {
-   //     return (
-   //       <SongItem
-   //         admin
-   //         theme={theme}
-   //         active={false}
-   //         key={index}
-   //         data={song}
-   //         userInfo={userInfo}
-   //         userSongs={adminSongs}
-   //         userPlaylists={adminPlaylists}
-   //         setUserSongs={setAdminSongs}
-   //         isCheckedSong={isCheckedSong}
-   //         setIsCheckedSong={setIsCheckedSong}
-   //         selectedSongList={selectedSongList}
-   //         setSelectedSongList={setSelectedSongList}
-   //       />
-   //     );
-   //   });
-   // };
-
    const renderTempSongsList = () => {
       return tempSongs.map((song, index) => {
          const isAdded = addedSongIds.some((id) => {
@@ -197,7 +175,7 @@ export default function DashBoard() {
    };
 
 
-  //  run initial
+  //  run auth
    useEffect(() => {
      if (userInfo.status === "loading") {
        setLoading(false);

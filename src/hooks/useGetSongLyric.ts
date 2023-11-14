@@ -33,6 +33,8 @@ export default function useSongLyric({
       await sleep(1000);
       setSongLyric({ base: "kdafs", real_time: [{ end: 100, start: 0, text: "Test" }] });
       setLoading(false);
+      console.log(">>> api: get lyric finish");
+      
 
       // try {
       //    const lyricsData = (

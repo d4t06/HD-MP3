@@ -112,8 +112,6 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
          await setUserPlaylistIdsDoc(newPlaylists, userInfo);
          setUserPlaylists(newPlaylists, []);
       }
-      // *** finish
-      setSuccessToast({ message: `'${playlistName}' created` });
    };
 
    const deletePlaylist = async (playlist: Playlist) => {

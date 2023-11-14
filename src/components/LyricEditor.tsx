@@ -435,7 +435,7 @@ export default function LyricEditor({
          )}
 
          {openModal && (
-            <Modal classNames="w-[700px]" theme={theme} setOpenModal={setOpenModal}>
+            <Modal classNames="w-[700px] max-w-[calc(90vw-40px)]" theme={theme} setOpenModal={setOpenModal}>
                   <textarea
                      ref={textareaRef}
                      value={baseLyric}

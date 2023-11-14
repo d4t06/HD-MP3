@@ -3,52 +3,52 @@ import { Button } from "..";
 import { ThemeType } from "../../types";
 
 export default function ConfirmModal({
-   loading,
-   theme,
-   callback,
-   label,
-   setOpenModal,
-   buttonLabel,
-   desc,
-   className,
+  loading,
+  theme,
+  callback,
+  label,
+  setOpenModal,
+  buttonLabel,
+  desc,
+  className,
 }: {
-   callback: () => void;
-   label?: string;
-   desc?: string;
-   buttonLabel?: string;
-   loading: boolean;
-   theme: ThemeType & { alpha: string };
-   className?: string;
-   setOpenModal: Dispatch<SetStateAction<boolean>>;
+  callback: () => void;
+  label?: string;
+  desc?: string;
+  buttonLabel?: string;
+  loading: boolean;
+  theme: ThemeType & { alpha: string };
+  className?: string;
+  setOpenModal: Dispatch<SetStateAction<boolean>>;
 }) {
-   return (
-      <div
-         className={`${className || "w-[400px]"} ${
-            loading ? "opacity-60 pointer-events-none" : ""
-         }`}
-      >
-         <h1 className="text-[20px] text-red-500 font-semibold">
-            {label || "Wait a minute"}
-         </h1>
-         <p className=" text-[16px]">{desc}</p>
+  return (
+    <div
+      className={`${className || "w-[400px] max-w-[calc(90vw-40px)]"} ${
+        loading ? "opacity-60 pointer-events-none" : ""
+      }`}
+    >
+      <h1 className="text-[20px] font-semibold">{label || "Wait a minute"}</h1>
+      <p className=" text-[16px] font-semibold text-red-500">
+        {desc || "This action cannot be undone"}
+      </p>
 
-         <div className="flex gap-[10px] mt-[20px]">
-            <Button
-               isLoading={loading}
-               className={` bg-${theme.alpha} hover:bg-red-500 rounded-full text-[14px]`}
-               variant={"primary"}
-               onClick={callback}
-            >
-               {buttonLabel || "Yes please"}
-            </Button>
-            <Button
-               onClick={() => setOpenModal(false)}
-               className={`${theme.content_bg} rounded-full text-[14px]`}
-               variant={"primary"}
-            >
-               Close
-            </Button>
-         </div>
+      <div className="flex gap-[10px] mt-[20px]">
+        <Button
+          isLoading={loading}
+          className={` bg-${theme.alpha} hover:bg-red-500 rounded-full text-[14px]`}
+          variant={"primary"}
+          onClick={callback}
+        >
+          {buttonLabel || "Yes please"}
+        </Button>
+        <Button
+          onClick={() => setOpenModal(false)}
+          className={`${theme.content_bg} rounded-full text-[14px]`}
+          variant={"primary"}
+        >
+          Close
+        </Button>
       </div>
-   );
+    </div>
+  );
 }

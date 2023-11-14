@@ -45,7 +45,9 @@ export default function useUploadSongs({
   const { setUserSongs, userSongs, setAdminSongs, adminSongs } = useSongsStore();
 
   // hook states
-  const [status, setStatus] = useState<"uploading" | "finish" | "idle" | "finish-error">("idle");
+  const [status, setStatus] = useState<"uploading" | "finish" | "idle" | "finish-error">(
+    "idle"
+  );
   const [tempSongs, setTempSongs] = useState<Song[]>([]);
   const [addedSongIds, setAddedSongIds] = useState<string[]>([]);
 
@@ -53,7 +55,10 @@ export default function useUploadSongs({
   const actuallyFileIds = useRef<number[]>([]);
   const isDuplicate = useRef(false);
 
-  const targetSongs = useMemo(() => (admin ? adminSongs : userSongs), []);
+  const targetSongs = useMemo(
+    () => (admin ? adminSongs : userSongs),
+    [userSongs, adminSongs]
+  );
 
   const finishAndClear = (sts: typeof status) => {
     const inputEle = inputRef.current as HTMLInputElement;
@@ -129,10 +134,11 @@ export default function useUploadSongs({
           // check duplicate file
           const checkDuplicate = () =>
             targetSongs.some(
-              (song) => song.singer === songFileObject.singer && song.name === songFileObject.name
+              (song) =>
+                song.singer === songFileObject.singer && song.name === songFileObject.name
             );
 
-            // case song is duplicate
+          // case song is duplicate
           if (checkDuplicate()) {
             console.log(">>>duplicate");
             isDuplicate.current = true;
@@ -257,7 +263,10 @@ export default function useUploadSongs({
         // case admin
         if (isDuplicate.current) {
           finishAndClear("finish-error");
-          setToasts((t) => [...t, { id: nanoid(4), title: "warning", desc: "Song duplicate" }]);
+          setToasts((t) => [
+            ...t,
+            { id: nanoid(4), title: "warning", desc: "Song duplicate" },
+          ]);
         } else {
           finishAndClear("finish");
           // if upload gather than 1 file
@@ -280,7 +289,11 @@ export default function useUploadSongs({
     [userInfo, userSongs]
   );
 
-  const handleUploadImage = async (imageBlob: Blob, songId: string, songNeedToUpdate: Song) => {
+  const handleUploadImage = async (
+    imageBlob: Blob,
+    songId: string,
+    songNeedToUpdate: Song
+  ) => {
     return new Promise<void>((rs, rj) => {
       const testImageEle = testImageRef.current as HTMLImageElement;
       const imageURL = URL.createObjectURL(imageBlob);
@@ -329,57 +342,60 @@ export default function useUploadSongs({
   };
 
   // get song duration and upload song doc
-  const handleUploadSong = useCallback(async (processSongsList: Song[], index: number) => {
-    return new Promise<void>((resolve, reject) => {
-      const audioEle = audioRef.current as HTMLAudioElement;
-      const upload = async () => {
-        try {
-          let song = processSongsList[index];
-          // update songList
-          const duration = Math.ceil(audioEle.duration);
-          song = {
-            ...song,
-            duration,
-          };
-          processSongsList[index] = song;
+  const handleUploadSong = useCallback(
+    async (processSongsList: Song[], index: number) => {
+      return new Promise<void>((resolve, reject) => {
+        const audioEle = audioRef.current as HTMLAudioElement;
+        const upload = async () => {
+          try {
+            let song = processSongsList[index];
+            // update songList
+            const duration = Math.ceil(audioEle.duration);
+            song = {
+              ...song,
+              duration,
+            };
+            processSongsList[index] = song;
 
-          // add to firebase
-          await mySetDoc({
-            collection: "songs",
-            data: song,
-            id: song.id,
-            msg: ">>> api: set song doc",
-          });
+            // add to firebase
+            await mySetDoc({
+              collection: "songs",
+              data: song,
+              id: song.id,
+              msg: ">>> api: set song doc",
+            });
 
-          // update new song list (include new song_url....)
-          setTempSongs(processSongsList);
+            // update new song list (include new song_url....)
+            setTempSongs(processSongsList);
 
-          // update added song
-          setAddedSongIds((prev) => [...prev, song.id]);
+            // update added song
+            setAddedSongIds((prev) => [...prev, song.id]);
 
-          // when song uploaded
-          URL.revokeObjectURL(audioEle.src);
-          setToasts((t) => [
-            ...t,
-            {
-              title: "success",
-              id: nanoid(4),
-              desc: `'${song.name}' uploaded`,
-            },
-          ]);
+            // when song uploaded
+            URL.revokeObjectURL(audioEle.src);
+            setToasts((t) => [
+              ...t,
+              {
+                title: "success",
+                id: nanoid(4),
+                desc: `'${song.name}' uploaded`,
+              },
+            ]);
 
-          resolve();
-        } catch (error) {
-          errorLogger("upload song file error");
-          reject();
-        } finally {
-          audioEle.removeEventListener("loadedmetadata", upload);
-        }
-      };
+            resolve();
+          } catch (error) {
+            errorLogger("upload song file error");
+            reject();
+          } finally {
+            audioEle.removeEventListener("loadedmetadata", upload);
+          }
+        };
 
-      audioEle.addEventListener("loadedmetadata", upload);
-    });
-  }, []);
+        audioEle.addEventListener("loadedmetadata", upload);
+      });
+    },
+    []
+  );
 
   useEffect(() => {
     if (!tempSongs.length) return;
