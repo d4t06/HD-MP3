@@ -6,6 +6,8 @@ export type User = {
    photoURL: string;
    playlist_ids: string[];
    song_ids: string[];
+   like_song_ids: string[];
+   like_playlist_ids: string[];
    role: string;
    song_count: number;
    latest_seen: Timestamp;

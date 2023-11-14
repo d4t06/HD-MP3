@@ -158,14 +158,15 @@ export const countSongsListTimeIds = (
 };
 
 export const generatePlaylistAfterChangeSongs = ({
-   newPlaylistSongs,
+   songs,
    existingPlaylist,
 }: {
-   newPlaylistSongs: Song[];
+   songs: Song[];
    existingPlaylist: Playlist;
-}) => {
-   if (isDev) console.log("generate playlist");
-   const { ids, time } = countSongsListTimeIds(newPlaylistSongs);
+}) => {   
+
+   if (isDev) console.log("generate playlist, check songs: ", songs);
+   const { ids, time } = countSongsListTimeIds(songs);
    const newPlaylist: Playlist = {
       ...existingPlaylist,
       time,

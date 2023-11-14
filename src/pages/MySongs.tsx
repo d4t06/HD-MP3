@@ -16,17 +16,13 @@ import {
 } from "../store";
 
 // utils
-import {
-   deleteSong,
-   setUserSongIdsAndCountDoc,
-} from "../utils/firebaseHelpers";
+import { deleteSong, setUserSongIdsAndCountDoc } from "../utils/firebaseHelpers";
 
 // hooks
-import { useUploadSongs, useSongs, useSongItemActions } from "../hooks";
+import { useUploadSongs, useSongs } from "../hooks";
 // components
 import {
    Empty,
-   MobileSongItem,
    Modal,
    Button,
    SongItem,
@@ -34,10 +30,12 @@ import {
    Skeleton,
    ConfirmModal,
    AddPlaylist,
+   SongList,
 } from "../components";
 
 import { routes } from "../routes";
 import { SongItemSkeleton, PlaylistSkeleton } from "../components/skeleton";
+import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 
 type ModalName = "ADD_PLAYLIST" | "CONFIRM";
 
@@ -49,10 +47,12 @@ export default function MySongsPage() {
    const { setErrorToast, setSuccessToast } = useToast();
    const { loading: initialLoading, errorMsg, initial } = useSongs({});
 
-   const { song: songInStore } =
+   const { song: songInStore, playlist: playlistInStore } =
       useSelector(selectAllSongStore);
-   const { userPlaylists, setUserSongs, setUserPlaylists, userSongs } = useSongsStore();
-   const songItemActions = useSongItemActions();
+   const {
+      playStatus: { isPlaying },
+   } = useSelector(selectAllPlayStatusStore);
+   const { userPlaylists, setUserSongs, userSongs } = useSongsStore();
 
    // state
    const [loading, setLoading] = useState(false);
@@ -60,15 +60,12 @@ export default function MySongsPage() {
    const [modalName, setModalName] = useState<ModalName>("ADD_PLAYLIST");
 
    // ref
+   const audioRef = useRef<HTMLAudioElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
    const firstTempSong = useRef<HTMLDivElement>(null);
    const testImageRef = useRef<HTMLImageElement>(null);
-
-   //  for delete song
-   const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
-   const [isCheckedSong, setIsCheckedSong] = useState(false);
-
-   const audioRef = useRef<HTMLAudioElement>(null);
+   const [isChecked, setIsChecked] = useState(false);
+   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
    // use hooks
    const navigate = useNavigate();
@@ -103,8 +100,8 @@ export default function MySongsPage() {
    }, []);
 
    const resetCheckedList = () => {
-      setSelectedSongList([]);
-      setIsCheckedSong(false);
+      setSelectedSongs([]);
+      setIsChecked(false);
    };
 
    const closeModal = () => {
@@ -117,12 +114,12 @@ export default function MySongsPage() {
 
       try {
          setLoading(true);
-         for (let song of selectedSongList) {
+         for (let song of selectedSongs) {
             const index = newUserSongs.findIndex((item) => item.id === song.id);
             newUserSongs.splice(index, 1);
          }
          // >>> api
-         for (let song of selectedSongList) {
+         for (let song of selectedSongs) {
             await deleteSong(song);
          }
          const userSongIds: string[] = newUserSongs.map((song) => song.id);
@@ -131,7 +128,7 @@ export default function MySongsPage() {
          setUserSongs(newUserSongs);
 
          // >>> finish
-         setSuccessToast({ message: `${selectedSongList.length} songs deleted` });
+         setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
       } catch (error) {
          console.log(error);
          setErrorToast({ message: "Error when delete songs" });
@@ -177,63 +174,6 @@ export default function MySongsPage() {
       });
    }, [tempSongs, addedSongIds, theme]);
 
-   //   theme, userInfo, userSongs, songInStore, selectedSongList, isCheckedSong, userPlaylists
-   const renderUserSongs = useMemo(() => {
-      if (!userSongs.length) return;
-
-      return userSongs.map((song, index) => {
-         const active =
-            song.id === songInStore.id &&
-            songInStore.song_in === "user" &&
-            song.singer === songInStore.singer;
-         if (isOnMobile) {
-            return (
-               <MobileSongItem
-                  theme={theme}
-                  onClick={() => handleSetSong(song, index)}
-                  active={active}
-                  key={index}
-                  data={song}
-                  isCheckedSong={isCheckedSong}
-                  selectedSongList={selectedSongList}
-                  setIsCheckedSong={setIsCheckedSong}
-                  setSelectedSongList={setSelectedSongList}
-               />
-            );
-         }
-         return (
-            <div key={index} className={classes.songItemContainer}>
-               <SongItem
-                  theme={theme}
-                  onClick={() => handleSetSong(song, index)}
-                  active={active}
-                  key={index}
-                  data={song}
-                  userInfo={userInfo}
-                  userSongs={userSongs}
-                  userPlaylists={userPlaylists}
-                  setUserSongs={setUserSongs}
-                  setUserPlaylists={setUserPlaylists}
-                  isCheckedSong={isCheckedSong}
-                  setIsCheckedSong={setIsCheckedSong}
-                  selectedSongList={selectedSongList}
-                  setSelectedSongList={setSelectedSongList}
-                  handleOpenParentModal={handleOpenModal}
-                  songItemActions={songItemActions}
-               />
-            </div>
-         );
-      });
-   }, [
-      theme,
-      userInfo,
-      userSongs,
-      songInStore,
-      selectedSongList,
-      isCheckedSong,
-      userPlaylists,
-   ]);
-
    // define modals
    const ModalPopup: Record<ModalName, ReactNode> = {
       ADD_PLAYLIST: (
@@ -258,7 +198,7 @@ export default function MySongsPage() {
          navigate(routes.Home);
          console.log(">>> navigate to home");
       }
-   }, [userInfo, initial]);
+   }, [userInfo.status, initial]);
 
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
@@ -271,30 +211,29 @@ export default function MySongsPage() {
             {isOnMobile && (
                <Link
                   to={routes.Home}
-                  className="inline-flex items-center mb-[30px] hover:opacity-75"
+                  className={`inline-block p-[8px] rounded-full mb-[30px] ${theme.content_hover_bg} bg-${theme.alpha}`}
                >
                   <ChevronLeftIcon className="w-[25px]" />
-                  <span className="text-[20px] font-semibold leading-1">Home</span>
                </Link>
             )}
 
             <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
-            <div className="flex flex-row flex-wrap">
+            <div className="flex flex-row flex-wrap -mx-[8px]">
                {!!userPlaylists.length &&
                   !initialLoading &&
-                  userPlaylists.map((playList, index) => (
-                     <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
-                        {isOnMobile ? (
-                           <Link to={`${routes.Playlist}/${playList.id}`}>
-                              <PlaylistItem data={playList} />
-                           </Link>
-                        ) : (
-                           <PlaylistItem theme={theme} data={playList} />
-                        )}
-                     </div>
-                  ))}
+                  userPlaylists.map((playlist, index) => {
+                     const active =
+                        playlistInStore.id === playlist.id &&
+                        isPlaying &&
+                        songInStore.song_in.includes("playlist");
+                     return (
+                        <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                           <PlaylistItem active={active} theme={theme} data={playlist} />
+                        </div>
+                     );
+                  })}
                {initialLoading && PlaylistSkeleton}
-               {(
+               {
                   <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
                      <Empty
                         theme={theme}
@@ -302,7 +241,7 @@ export default function MySongsPage() {
                         onClick={() => handleOpenModal("ADD_PLAYLIST")}
                      />
                   </div>
-               )}
+               }
             </div>
          </div>
 
@@ -346,21 +285,15 @@ export default function MySongsPage() {
                {/* checked song */}
                {!initialLoading && (
                   <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
-                     {!isCheckedSong ? (
-                       
-                           (songCount ? songCount : 0) + " songs"
-                        
-                     ) : (
-                        
-                           selectedSongList.length + " selected"
-                        
-                     )}
+                     {!isChecked
+                        ? (songCount ? songCount : 0) + " songs"
+                        : selectedSongs.length + " selected"}
                   </p>
                )}
-               {isCheckedSong && userSongs.length && (
+               {isChecked && userSongs.length && (
                   <>
                      <Button
-                        onClick={() => setSelectedSongList(userSongs)}
+                        onClick={() => setSelectedSongs(userSongs)}
                         variant={"primary"}
                         className={classes.button}
                      >
@@ -375,8 +308,8 @@ export default function MySongsPage() {
                      </Button>
                      <Button
                         onClick={() => {
-                           setIsCheckedSong(false);
-                           setSelectedSongList([]);
+                           setIsChecked(false);
+                           setSelectedSongs([]);
                         }}
                         className={`px-[5px]`}
                      >
@@ -388,7 +321,17 @@ export default function MySongsPage() {
             <div className="min-h-[50vh]">
                {!!songCount && !initialLoading ? (
                   <>
-                     {!!userSongs.length && renderUserSongs}
+                     {!!userSongs.length && (
+                        <SongList
+                           handleSetSong={handleSetSong}
+                           activeExtend={songInStore.song_in === "user"}
+                           isChecked={isChecked}
+                           setIsChecked={setIsChecked}
+                           setSelectedSongs={setSelectedSongs}
+                           selectedSongs={selectedSongs}
+                           songs={userSongs}
+                        />
+                     )}
                      {!!tempSongs.length && renderTempSongs}
                   </>
                ) : (

@@ -15,7 +15,7 @@ import {
    useRole,
    useInteractions,
 } from "@floating-ui/react";
-import {  useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { routes } from "../routes";
@@ -120,7 +120,6 @@ export default function Sidebar() {
       themeItem: "w-[25%] px-[10px] max-[549px]:w-[50%]",
    };
 
-
    return (
       <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] flex items-center">
@@ -138,9 +137,9 @@ export default function Sidebar() {
          <div className={classes.divide}></div>
 
          <div className="flex flex-col gap-[15px] items-start">
-            {userInfo.status === 'loading' && menuItemSkeletons}
+            {userInfo.status === "loading" && menuItemSkeletons}
 
-            {userInfo.status !== 'loading' && (
+            {userInfo.status !== "loading" && (
                <>
                   <Link className="w-full" to={routes.Home}>
                      <Button className={classes.button}>
@@ -149,12 +148,20 @@ export default function Sidebar() {
                      </Button>
                   </Link>
                   {loggedInUser?.email ? (
-                     <Link className="w-full" to={routes.MySongs}>
-                        <Button className={classes.button}>
-                           <MusicalNoteIcon className={classes.icon} />
-                           My songs
-                        </Button>
-                     </Link>
+                     <>
+                        <Link className="w-full" to={routes.MySongs}>
+                           <Button className={classes.button}>
+                              <MusicalNoteIcon className={classes.icon} />
+                              My songs
+                           </Button>
+                        </Link>
+                        {/* <Link className="w-full" to={routes.MySongs}>
+                           <Button className={classes.button}>
+                              <MusicalNoteIcon className={classes.icon} />
+                              Favorite
+                           </Button>
+                        </Link> */}
+                     </>
                   ) : (
                      <Button onClick={handleLogIn} className={classes.button}>
                         <ArrowLeftOnRectangleIcon className={classes.icon} />
@@ -171,14 +178,14 @@ export default function Sidebar() {
                      <Cog6ToothIcon className={classes.icon} />
                      Settings
                   </button>
-                  {userInfo.role === 'admin' &&
-                  <Link className="w-full" to={routes.Dashboard}>
-                     <Button className={classes.button}>
-                        <ComputerDesktopIcon className={classes.icon} />
-                        Dashboard
-                     </Button>
-                  </Link>
-                  }
+                  {userInfo.role === "admin" && (
+                     <Link className="w-full" to={routes.Dashboard}>
+                        <Button className={classes.button}>
+                           <ComputerDesktopIcon className={classes.icon} />
+                           Dashboard
+                        </Button>
+                     </Link>
+                  )}
                </>
             )}
          </div>
@@ -201,10 +208,14 @@ export default function Sidebar() {
          )}
 
          {isOpenModal && (
-            <Modal classNames={modalName.current === "theme" ? 'w-[900px] max-w-[90vw]' : ''} theme={theme} setOpenModal={setIsOpenModal}>
+            <Modal
+               classNames={modalName.current === "theme" ? "w-[900px] max-w-[90vw]" : ""}
+               theme={theme}
+               setOpenModal={setIsOpenModal}
+            >
                {modalName.current === "confirm" && (
                   <ConfirmModal
-                  setOpenModal={setIsOpenModal}
+                     setOpenModal={setIsOpenModal}
                      callback={handleSignOut}
                      loading={false}
                      theme={theme}

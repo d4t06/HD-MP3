@@ -33,7 +33,7 @@ export default function EditPlaylist({
   };
 
   const classes = {
-    editContainer: "w-[400px] max-w-[90vw] max-h-[90vh]",
+    editContainer: "w-[400px] max-w-[90vw] max-w-[calc(90vw-40px)]",
     input: "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
   };
 

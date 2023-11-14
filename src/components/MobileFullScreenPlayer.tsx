@@ -15,41 +15,19 @@ import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../stor
 import { Song } from "../types";
 import { useGetSongLyric, useBgImage } from "../hooks";
 
-import {
-   Tabs,
-   ScrollText,
-   Control,
-   LyricsList,
-   MobileSongItem,
-} from "../components";
+import { Tabs, ScrollText, Control, LyricsList, MobileSongItem } from "../components";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 
 type Props = {
    audioEle: HTMLAudioElement;
-   idle: boolean;
    isOpenFullScreen: boolean;
-   // isPlaying: boolean;
-   // isWaiting: boolean;
-
-   // setIsWaiting: Dispatch<SetStateAction<boolean>>;
-   // setIsPlaying: Dispatch<SetStateAction<boolean>>;
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
 };
 
-export default function MobileFullScreenPlayer({
-   audioEle,
-   isOpenFullScreen,
-   
-   // isPlaying,
-   // isWaiting,
-   // setIsPlaying,
-   // setIsWaiting,
-   setIsOpenFullScreen,
-}: Props) {
+export default function MobileFullScreenPlayer({ audioEle, isOpenFullScreen, setIsOpenFullScreen }: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   // const { userInfo } = useAuthStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { playStatus } = useSelector(selectAllPlayStatusStore);
    const { actuallySongs } = useActuallySongs();
@@ -66,7 +44,11 @@ export default function MobileFullScreenPlayer({
 
    // use hooks
    useBgImage({ bgRef, songInStore });
-   const {loading, songLyric} = useGetSongLyric({audioEle, isOpenFullScreen, songInStore})
+   const { loading, songLyric } = useGetSongLyric({
+      audioEle,
+      isOpenFullScreen,
+      songInStore,
+   });
 
    const findParent = (ele: HTMLDivElement) => {
       let i = 0;
@@ -179,7 +161,6 @@ export default function MobileFullScreenPlayer({
       button:
          "bg-gray-500 bg-opacity-20 inline-flex justify-center items-center rounded-full absolute right-0 top-0 h-full w-[35px]",
    };
-   
 
    return (
       <>

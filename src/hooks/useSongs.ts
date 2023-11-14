@@ -10,7 +10,7 @@ import { useAuthStore } from "../store/AuthContext";
 import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
-import { testPlaylists, testSongs } from "./songs";
+// import { testPlaylists, testSongs } from "./songs";
 
 export default function useSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -79,6 +79,8 @@ export default function useSong({ admin }: { admin?: boolean }) {
                song_count: fullUserInfo.song_count,
                playlist_ids: fullUserInfo.playlist_ids,
                role: fullUserInfo.role,
+               like_song_ids: fullUserInfo.like_song_ids,
+               like_playlist_ids: fullUserInfo.like_playlist_ids
             });
 
             return fullUserInfo;
@@ -158,8 +160,8 @@ export default function useSong({ admin }: { admin?: boolean }) {
          setLoading(true);
 
          // // case for all
-         // const adminSongs = await getAdminSongs();
-         // const adminPlaylists = await getAdminPLaylist();
+         const adminSongs = await getAdminSongs();
+         const adminPlaylists = await getAdminPLaylist();
 
 
          // console.log(adminSongs);
@@ -172,8 +174,8 @@ export default function useSong({ admin }: { admin?: boolean }) {
             await sleep(1000);
 
             initSongsContext({
-               adminSongs: testSongs,
-               adminPlaylists: testPlaylists,
+               adminSongs,
+               adminPlaylists,
                userPlaylists: [],
                userSongs: [],
             });
@@ -250,7 +252,7 @@ export default function useSong({ admin }: { admin?: boolean }) {
          setTimeout(() => setLoading(false), appConfig.loadingDuration);
          return;
       }
-   }, [userInfo, initial]);
+   }, [userInfo.status, initial]);
    // user loading x1
    // loading x2
    // 3 time re-render

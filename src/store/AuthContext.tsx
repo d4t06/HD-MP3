@@ -28,6 +28,8 @@ const initialState: StateType = {
       song_ids: [],
       email: "",
       photoURL: "",
+      like_playlist_ids: [],
+      like_song_ids: [],
       latest_seen: new Timestamp(0, 0),
    },
 };

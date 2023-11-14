@@ -8,8 +8,8 @@ import {
    MobileBottomPlayer,
 } from "../components";
 import { selectAllSongStore } from "../store/SongSlice";
-import useIdle from "../hooks/useIdle";
-import  appConfig from '../config/app'
+// import useIdle from "../hooks/useIdle";
+// import  appConfig from '../config/app'
 
 interface PlayerProps {}
 
@@ -17,8 +17,6 @@ const Player: FC<PlayerProps> = () => {
    const songStore = useSelector(selectAllSongStore);
 
    const { song: songInStore } = songStore;
-   // const [isPlaying, setIsPlaying] = useState<boolean>(false);
-   // const [isWaiting, setIsWaiting] = useState<boolean>(false);
    const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
 
    const [isHasAudioEle, setIsHasAudioEle] = useState(false);
@@ -34,7 +32,6 @@ const Player: FC<PlayerProps> = () => {
          <FullScreenPlayer
             audioEle={audioRef.current as HTMLAudioElement}
             idle={false}
-            // isPlaying={isPlaying}
             isOpenFullScreen={isOpenFullScreen}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
@@ -42,11 +39,7 @@ const Player: FC<PlayerProps> = () => {
          <BottomPlayer
             audioEle={audioRef.current as HTMLAudioElement}
             idle={false && isOpenFullScreen}
-            // isPlaying={isPlaying}
-            // isWaiting={isWaiting}
             isOpenFullScreen={isOpenFullScreen}
-            // setIsPlaying={setIsPlaying}
-            // setIsWaiting={setIsWaiting}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
       </>
@@ -56,21 +49,14 @@ const Player: FC<PlayerProps> = () => {
       <>
          <MobileFullScreenPlayer
             audioEle={audioRef.current as HTMLAudioElement}
-            idle={false}
-            // isPlaying={isPlaying}
-            // isWaiting={isWaiting}
             isOpenFullScreen={isOpenFullScreen}
-            // setIsPlaying={setIsPlaying}
-            // setIsWaiting={setIsWaiting}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
 
          <MobileBottomPlayer
             audioEle={audioRef.current as HTMLAudioElement}
             idle={false && isOpenFullScreen}
-            // isPlaying={isPlaying}
             isOpenFullScreen={isOpenFullScreen}
-            // isWaiting={isWaiting}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
       </>

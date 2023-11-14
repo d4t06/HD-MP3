@@ -4,8 +4,6 @@ import {
   useRef,
   useState,
   useCallback,
-  Dispatch,
-  SetStateAction,
   useMemo,
   useEffect,
 } from "react";
@@ -26,8 +24,6 @@ import { useAuthStore } from "../store/AuthContext";
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
   admin?: boolean;
-  // songs?: Song[];
-  // setSongs?: Dispatch<SetStateAction<Song[]>>;
   firstTempSong: RefObject<HTMLDivElement>;
   testImageRef: RefObject<HTMLImageElement>;
   inputRef: RefObject<HTMLInputElement>;
@@ -39,8 +35,6 @@ type Props = {
 export default function useUploadSongs({
   audioRef,
   admin,
-  // songs,
-  // setSongs,
   firstTempSong,
   inputRef,
   testImageRef,

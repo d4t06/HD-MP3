@@ -6,10 +6,10 @@ export {default as LinkItem} from './ui/LinkItem'
 
 export {default as Skeleton} from './skeleton/index'
 
-export {default as AddSongToPlaylistModal} from './child/AddSongToPlaylistModal'
+export {default as AddSongsToPlaylist} from './modals/AddSongsToPlaylist'
 export {default as LyricItem} from './child/LyricItem'
 export {default as PlayPauseButton} from './child/PlayPauseButton'
-export {default as SongItemEditForm} from './child/SongItemEditForm'
+export {default as SongItemEditForm} from './modals/SongItemEditForm'
 export {default as ToastItem} from './child/ToastItem'
 
 export {default as Auth} from './Auth'
@@ -31,6 +31,9 @@ export {default as Sidebar} from './Sidebar'
 export {default as SongItem} from './SongItem'
 export {default as SongThumbnail} from './SongThumbnail'
 export {default as MobileSongThumbnail} from './MobileSongThumbnail'
+export {default as SongList} from './SongList'
+
+
 export {default as Tabs} from './Tabs'
 export {default as ToastPortal} from './ToastPortal'
 export {default as UserItem} from './UserItem'
@@ -41,3 +44,4 @@ export {default as AppInfo} from './modals/AppInfo'
 export {default as Appearance} from './modals/Appearance'
 export {default as ConfirmModal} from './modals/ConfirmModal'
 export {default as AddPlaylist} from './modals/AddPlaylist'
+export {default as PlaylistList} from './modals/PlaylistList'

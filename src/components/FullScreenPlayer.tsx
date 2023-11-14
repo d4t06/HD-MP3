@@ -18,7 +18,6 @@ interface Props {
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
    idle: boolean;
    audioEle: HTMLAudioElement;
-   isPlaying?: boolean;
    setIsPlaying?: () => void;
 }
 
@@ -33,11 +32,9 @@ export default function FullScreenPlayer({
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { actuallySongs } = useActuallySongs();
-
-   // component state
+   // state
    const [activeTab, setActiveTab] = useState<string>("Lyric");
-
-   // component ref
+   //  ref
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const activeSongRef = useRef<HTMLDivElement>(null);
@@ -46,6 +43,7 @@ export default function FullScreenPlayer({
    // use hooks
    const navigate = useNavigate();
    useBgImage({ bgRef, songInStore });
+
    const { scrollToActiveSong } = useScrollSong({
       containerRef,
       songItemRef: activeSongRef,
@@ -53,12 +51,14 @@ export default function FullScreenPlayer({
       isOpenFullScreen: isOpenFullScreen,
    });
 
-   // use hook
    const { songLyric, loading } = useGetSongLyric({
       songInStore,
       audioEle,
       isOpenFullScreen,
    });
+
+
+   // methods
 
    const handleClickNext = useDebounce(
       () => handleScroll("next"),
@@ -73,7 +73,6 @@ export default function FullScreenPlayer({
       300
    );
 
-   // define callback functions
    const handleSetSongWhenClick = (song: Song, index: number) => {
       if (songInStore.id === song.id) return;
       dispatch(setSong({ ...song, currentIndex: index, song_in: songInStore.song_in }));
@@ -102,7 +101,7 @@ export default function FullScreenPlayer({
 
    const classes = {
       button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
-      mainContainer: `fixed inset-0 overflow-hidden text-white bg-zinc-900 ${
+      mainContainer: `fixed inset-0 z-10 overflow-hidden text-white bg-zinc-900 ${
          isOpenFullScreen ? "translate-y-0" : "translate-y-full"
       } transition-[transform] duration-[.5s] linear delay-100`,
       bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,

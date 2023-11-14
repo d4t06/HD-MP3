@@ -37,7 +37,7 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
 
     if (!userInfo.email) setErrorMsg("Ops, Some thing went wrong");
     auth();
-  }, [userInfo]);
+  }, [userInfo.status]);
 
   return (
     <>

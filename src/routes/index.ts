@@ -9,7 +9,7 @@ const routes = {
    DashboardEdit: "/dashboard/edit/:id",
 
    MySongs: "/mysongs",
-   MobileMySongs: "/mobile-mysongs",
+   Favorite: "/favorite",
    Playlist: "/playlist/:id",
    Edit: "/mysongs/edit/:id",
 };

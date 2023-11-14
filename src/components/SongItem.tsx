@@ -8,7 +8,6 @@ import {
    Bars3Icon,
    CheckIcon,
    DocumentPlusIcon,
-   HeartIcon,
    MinusCircleIcon,
    MusicalNoteIcon,
    PauseCircleIcon,
@@ -16,7 +15,9 @@ import {
    PlusCircleIcon,
    StopIcon,
    TrashIcon,
+   HeartIcon,
 } from "@heroicons/react/24/outline";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { handleTimeText, initSongObject } from "../utils/appHelpers";
 import {
@@ -35,15 +36,13 @@ import {
    Image,
    SongItemEditForm,
    ConfirmModal,
+   PlaylistList,
 } from "../components";
 
 import { Link } from "react-router-dom";
 import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
-import { UseSongItemActionsType } from "../hooks/useSongItemActions";
 import usePlaylistActions from "../hooks/usePlaylistActions";
-
-type ModalName = "ADD_PLAYLIST";
 
 interface Props {
    data: Song;
@@ -55,22 +54,19 @@ interface Props {
 
    admin?: boolean;
 
-   songItemActions?: UseSongItemActionsType;
-
    userInfo?: User;
    userSongs?: Song[];
    userPlaylists?: Playlist[];
+   setUserInfo?: (user: Partial<User>) => void;
    setUserSongs?: (userSongs: Song[]) => void;
-   setUserPlaylists?: (userPlaylists: Playlist[], adminPlaylists: []) => void;
    deleteFromPlaylist?: (song: Song) => Promise<void>;
+   addToPlaylist?: (song: Song, playlist: Playlist) => Promise<void>;
 
-   isCheckedSong?: boolean;
-   selectedSongList?: Song[];
+   isChecked?: boolean;
+   selectedSongs?: Song[];
 
-   setSelectedSongList?: Dispatch<SetStateAction<Song[]>>;
-   setIsCheckedSong?: Dispatch<SetStateAction<boolean>>;
-
-   handleOpenParentModal?: (name: ModalName) => void;
+   setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
+   setIsChecked?: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function SongListItem({
@@ -86,27 +82,23 @@ export default function SongListItem({
    userInfo,
    userSongs,
    userPlaylists,
+   setUserInfo,
    setUserSongs,
-   setUserPlaylists,
-
-   songItemActions,
 
    // call back function
    deleteFromPlaylist,
+   addToPlaylist,
 
    // for selected
-   selectedSongList,
-   isCheckedSong,
-   setSelectedSongList,
-   setIsCheckedSong,
-
-   handleOpenParentModal,
+   selectedSongs,
+   isChecked,
+   setSelectedSongs,
+   setIsChecked,
 }: Props) {
    // user store
    const dispatch = useDispatch();
    const { setErrorToast, setSuccessToast } = useToast();
-   const { playlist: playlistInStore, song: songInStore } =
-      useSelector(selectAllSongStore);
+   const { song: songInStore } = useSelector(selectAllSongStore);
 
    // state
    const [loading, setLoading] = useState<boolean>(false);
@@ -115,7 +107,7 @@ export default function SongListItem({
    const [modalComponent, setModalComponent] = useState<string>();
 
    // hooks
-   const { addSongToPlaylistSongItem } = usePlaylistActions({});
+   const {loading: PActsLoading } = usePlaylistActions({});
 
    // floating ui
    const { refs, floatingStyles, context } = useFloating({
@@ -134,9 +126,14 @@ export default function SongListItem({
 
    // define call back functions
    const isSelected = useMemo(() => {
-      if (!selectedSongList) return false;
-      return selectedSongList?.indexOf(data) != -1;
-   }, [selectedSongList]);
+      if (!selectedSongs) return false;
+      return selectedSongs?.indexOf(data) != -1;
+   }, [selectedSongs]);
+
+   const isLiked = useMemo(
+      () => userInfo?.like_song_ids.includes(data.id) ?? false,
+      [userInfo?.like_song_ids, data]
+   );
 
    const handleOpenModal = (name: string) => {
       setModalComponent(name);
@@ -157,14 +154,7 @@ export default function SongListItem({
 
    // songInStore, data, userSongs
    const handleDeleteSong = useCallback(async () => {
-      if (
-         !userInfo ||
-         !userSongs ||
-         !userPlaylists ||
-         !setUserSongs ||
-         !setUserPlaylists ||
-         !songItemActions
-      ) {
+      if (!userInfo || !userSongs || !userPlaylists || !setUserSongs) {
          setErrorToast({ message: "Lack of props" });
          return;
       }
@@ -218,15 +208,13 @@ export default function SongListItem({
    // userSongs
    const handleAddSongToPlaylist = useCallback(
       async (song: Song, playlist: Playlist) => {
-         if (!song || !playlist) {
+         if (!song || !playlist || !addToPlaylist) {
             setErrorToast({ message: "Lack of props" });
             return;
          }
 
          try {
-            setLoading(true);
-            await addSongToPlaylistSongItem(data, playlist);
-            setLoading(false);
+            await addToPlaylist(data, playlist);
          } catch (error) {
             console.log(error);
             setErrorToast({ message: "Error when add song to playlist" });
@@ -238,29 +226,57 @@ export default function SongListItem({
    );
 
    const handleRemoveSongFromPlaylist = async () => {
-      if (!deleteFromPlaylist) return;
-
       try {
-         setLoading(true);
+         if (!deleteFromPlaylist) throw new Error("lack of props");
+
          await deleteFromPlaylist(data);
       } catch (error) {
          console.log(error);
-         throw new Error("Error when remove song from playlist ");
+         throw new Error("Error when remove song from playlist sdfgdfgdgdfs");
       } finally {
-         setLoading(false);
          setIsOpenPopup(false);
       }
    };
 
-   //selectedSongList
+   const handleLikeSong = async () => {
+      if (!userInfo || !userPlaylists || !setUserInfo) {
+         console.log("lack of props");
+         return;
+      }
+
+      try {
+         setLoading(true);
+
+         const newUserLikeSongIds = [...userInfo.like_song_ids];
+         const index = newUserLikeSongIds.indexOf(data.id);
+
+         if (index === -1) newUserLikeSongIds.push(data.id);
+         else newUserLikeSongIds.splice(index, 1);
+
+         setUserInfo({ like_song_ids: newUserLikeSongIds });
+
+         await mySetDoc({
+            collection: "users",
+            data: { like_song_ids: newUserLikeSongIds },
+            id: userInfo.email,
+         });
+      } catch (error) {
+         console.log(error);
+         setErrorToast({ message: "Error when liked song" });
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   //selectedSong
    const handleSelect = (song: Song) => {
-      if (!setSelectedSongList || !selectedSongList || !setIsCheckedSong) {
+      if (!setSelectedSongs || !selectedSongs || !setIsChecked) {
          setErrorToast({ message: "Selected lack of props" });
          return;
       }
-      setIsCheckedSong(true);
+      setIsChecked(true);
 
-      let list = [...selectedSongList];
+      let list = [...selectedSongs];
       const index = list.indexOf(song);
 
       // if no present
@@ -271,8 +287,8 @@ export default function SongListItem({
       } else {
          list.splice(index, 1);
       }
-      setSelectedSongList(list);
-      if (!list.length) setIsCheckedSong(false);
+      setSelectedSongs(list);
+      if (!list.length) setIsChecked(false);
    };
 
    // define style
@@ -280,7 +296,7 @@ export default function SongListItem({
       textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
       button: `${theme.content_hover_bg} p-[8px] rounded-full`,
       songListButton: `mr-[10px] text-[inherit]`,
-      itemContainer: `w-full border-b border-${
+      itemContainer: `flex flex-row rounded justify-between songContainers-center px-[10px] py-[10px] w-full border-b border-${
          theme.alpha
       } last:border-none p-[0px] hover:bg-${theme.alpha} ${
          isSelected && "bg-" + theme.alpha
@@ -288,47 +304,57 @@ export default function SongListItem({
       imageFrame: `h-[54px] w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
       input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-[14px] font-[500]`,
+      overlay:
+         "absolute rounded-[6px] flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
+      level2Menu:
+         "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover:block hover:block",
+      ctaWrapper: "flex items-center ",
+      menuBtnWrapper: "w-[50px] flex justify-center songContainers-center",
    };
+
+   const checkBox = (
+      <>
+         {!inProcess ? (
+            <>
+               {!isChecked && !isOnMobile ? (
+                  <>
+                     <button
+                        onClick={() => handleSelect(data)}
+                        className={`${classes.songListButton} hidden group-hover/main:block`}
+                     >
+                        <StopIcon className="w-[18px] " />
+                     </button>
+                     <button
+                        className={`${classes.songListButton} group-hover/main:hidden group-hover/main:mr-[0px]`}
+                     >
+                        <MusicalNoteIcon className="w-[18px]" />
+                     </button>
+                  </>
+               ) : (
+                  <button
+                     onClick={() => handleSelect(data)}
+                     className={`${classes.songListButton} text-[inherit]`}
+                  >
+                     {!isSelected ? (
+                        <StopIcon className="w-[18px]" />
+                     ) : (
+                        <CheckIcon className="w-[18px]" />
+                     )}
+                  </button>
+               )}
+            </>
+         ) : (
+            <button className={`${classes.songListButton}`}>
+               <MusicalNoteIcon className="w-[18px]" />
+            </button>
+         )}
+      </>
+   );
 
    const songComponent = (
       <div className={`flex flex-row ${inProcess ? "opacity-60" : ""}`}>
-         <>
-            {/* check box */}
-            {!inProcess ? (
-               <>
-                  {!isCheckedSong ? (
-                     <>
-                        <button
-                           onClick={() => handleSelect(data)}
-                           className={`${classes.songListButton} hidden group-hover/main:block`}
-                        >
-                           <StopIcon className="w-[18px] " />
-                        </button>
-                        <button
-                           className={`${classes.songListButton} group-hover/main:hidden group-hover/main:mr-[0px]`}
-                        >
-                           <MusicalNoteIcon className="w-[18px]" />
-                        </button>
-                     </>
-                  ) : (
-                     <button
-                        onClick={() => handleSelect(data)}
-                        className={`${classes.songListButton} text-[inherit]`}
-                     >
-                        {!isSelected ? (
-                           <StopIcon className="w-[18px]" />
-                        ) : (
-                           <CheckIcon className="w-[18px]" />
-                        )}
-                     </button>
-                  )}
-               </>
-            ) : (
-               <button className={`${classes.songListButton}`}>
-                  <MusicalNoteIcon className="w-[18px]" />
-               </button>
-            )}
-         </>
+         {/* check box */}
+         {!!setIsChecked && !!setSelectedSongs && checkBox}
 
          {/* song image */}
          <div className={`${classes.imageFrame}`}>
@@ -370,6 +396,63 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       </div>
    );
 
+   const renderAddToPlaylistBtn = (
+      <>
+         {isOnMobile ? (
+            <Button
+               className={`mt-[15px] group relative ${theme.content_hover_text} ${classes.before}`}
+               variant={"list"}
+               onClick={() => handleOpenModal("addToPlaylist")}
+            >
+               <PlusCircleIcon className="w-[18px] mr-[5px]" />
+               Add to playlist
+               {/* level 2 */}
+            </Button>
+         ) : (
+            <Button
+               className={`mt-[15px] group relative ${theme.content_hover_text} ${classes.before}`}
+               variant={"list"}
+            >
+               <PlusCircleIcon className="w-[18px] mr-[5px]" />
+               Add to playlist
+               {/* level 2 */}
+               <PopupWrapper
+                  classNames={`${classes.level2Menu} ${PActsLoading ? "hidden" : ""}`}
+                  theme={theme}
+               >
+                  {/* playlist */}
+                  <ul className="w-[150px]">
+                     {!!userPlaylists?.length && (
+                        <>
+                           {userPlaylists.map((playlist, index) => {
+                              const isAdded = playlist.song_ids.includes(data.id);
+
+                              return (
+                                 <li
+                                    key={index}
+                                    onClick={() =>
+                                       !isAdded && handleAddSongToPlaylist(data, playlist)
+                                    }
+                                    className={`list-none flex rounded-[4px] p-[5px] ${
+                                       isAdded && 'opacity-60 pointer-events-none'
+                                    } ${!isAdded && theme.content_hover_text}`}
+                                 >
+                                    <MusicalNoteIcon className={`w-[20px] mr-[5px]`} />
+                                    <p>
+                                       {playlist.name}
+                                    </p>
+                                 </li>
+                              );
+                           })}
+                        </>
+                     )}
+                  </ul>
+               </PopupWrapper>
+            </Button>
+         )}
+      </>
+   );
+
    //   theme, active, userPlaylists, data, handleAddSongToPlaylist, deleteFromPlaylist
    const menuComponent = useMemo(
       () => (
@@ -383,61 +466,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             {(admin || (userInfo?.email && data.by !== "admin")) && (
                <>
                   {!inPlaylist ? (
-                     <Button
-                        className={`mt-[15px] group relative ${theme.content_hover_text} ${classes.before}`}
-                        variant={"list"}
-                     >
-                        <PlusCircleIcon className="w-[18px] mr-[5px]" />
-                        Add to playlist
-                        {/* level 2 */}
-                        <PopupWrapper
-                           classNames="w-[100%] absolute right-[calc(100%+5px)] hidden group-hover:block hover:block"
-                           theme={theme}
-                        >
-                           {/* playlist */}
-                           <ul className="w-[150px]">
-                              {!!userPlaylists?.length && (
-                                 <>
-                                    {userPlaylists.map((playlist, index) => {
-                                       const isAdded = playlist.song_ids.includes(
-                                          data.id
-                                       );
-
-                                       return (
-                                          <li
-                                             key={index}
-                                             onClick={() =>
-                                                !isAdded &&
-                                                handleAddSongToPlaylist(data, playlist)
-                                             }
-                                             className={`list-none flex rounded-[4px] p-[5px] ${
-                                                isAdded && "opacity-60"
-                                             } ${!isAdded && theme.content_hover_text}`}
-                                          >
-                                             <MusicalNoteIcon
-                                                className={`w-[20px] mr-[5px]`}
-                                             />
-                                             <p>
-                                                {playlist.name} {isAdded && "(added)"}
-                                             </p>
-                                          </li>
-                                       );
-                                    })}
-                                 </>
-                              )}
-                              <li
-                                 onClick={() =>
-                                    handleOpenParentModal &&
-                                    handleOpenParentModal("ADD_PLAYLIST")
-                                 }
-                                 className={`list-none flex rounded-[4px] p-[5px] ${theme.content_hover_text}`}
-                              >
-                                 <PlusCircleIcon className={`w-[18px] mr-[5px]`} />
-                                 Add new playlist
-                              </li>
-                           </ul>
-                        </PopupWrapper>
-                     </Button>
+                     renderAddToPlaylistBtn
                   ) : (
                      <>
                         {!active && (
@@ -457,6 +486,14 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
 
             {(admin || data.by != "admin") && (
                <>
+                  <Button
+                     onClick={() => handleOpenModal("edit")}
+                     className={`${theme.content_hover_text}`}
+                     variant={"list"}
+                  >
+                     <PencilSquareIcon className="w-[18px] mr-[5px]" />
+                     Edit
+                  </Button>
                   <a
                      target="_blank"
                      download
@@ -466,15 +503,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      <ArrowDownTrayIcon className="w-[18px] mr-[5px]" />
                      Download
                   </a>
-                  <Button
-                     onClick={() => handleOpenModal("edit")}
-                     className={`${theme.content_hover_text}`}
-                     variant={"list"}
-                  >
-                     <PencilSquareIcon className="w-[18px] mr-[5px]" />
-                     Edit
-                  </Button>
-
                   {data.lyric_id ? (
                      <Link to={`/mysongs/edit/${data.id}`}>
                         <Button
@@ -496,7 +524,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         </Button>
                      </Link>
                   )}
-
                   <Button
                      onClick={() => handleOpenModal("confirm")}
                      className={`${theme.content_hover_text}`}
@@ -521,18 +548,30 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
          handleAddSongToPlaylist,
          deleteFromPlaylist,
          loading,
-         admin
+         admin,
       ]
    );
 
+   const renderHeartIcon = () => {
+      if (loading) return <ArrowPathIcon className="w-[20px] animate-spin" />;
+      return (
+         <>
+            <HeartIconSolid
+               className={`w-[20px] ${
+                  isLiked ? "block group-hover:hidden" : "hidden group-hover:block"
+               }`}
+            />
+            <HeartIcon
+               className={`w-[20px] ${
+                  isLiked ? "hidden group-hover:block" : "block group-hover:hidden"
+               }`}
+            />
+         </>
+      );
+   };
+
    return (
-      <div
-         className={`${
-            !inProcess && "group/main"
-         } flex flex-row rounded justify-between songContainers-center px-[10px] py-[10px] ${
-            classes.itemContainer
-         }`}
-      >
+      <div className={`${!inProcess && "group/main"}  ${classes.itemContainer}`}>
          {/* left */}
          {songComponent}
 
@@ -546,32 +585,28 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             </div>
          ) : (
             <>
-               <div className="flex flex-row items-center gap-x-[5px]">
+               <div className={classes.ctaWrapper}>
                   {!admin && (
                      <Button
-                        className={`${classes.button} ${
-                           theme.type === "light"
-                              ? "hover:text-[#333]"
-                              : "hover:text-white"
-                        }`}
+                        onClick={handleLikeSong}
+                        className={`${classes.button} group`}
                      >
-                        <HeartIcon className="w-[20px]" />
+                        {renderHeartIcon()}
                      </Button>
                   )}
-                  <div className="w-[80px] flex justify-center songContainers-center">
+                  <div className={classes.menuBtnWrapper}>
                      <button
                         ref={refs.setReference}
                         {...getReferenceProps()}
-                        className={`group-hover/main:block ${classes.button}
-            ${isOpenPopup ? "block cursor-default" : "hidden "}
-            ${theme.type === "light" ? "hover:text-[#333]" : "hover:text-white"}
-            `}
+                        className={`block group-hover/main:block ${classes.button} ${
+                           isOpenPopup ? "md:block" : "md:hidden"
+                        }`}
                      >
                         <Bars3Icon className="w-[20px]" />
                      </button>
                      <span
-                        className={`text-[12px] group-hover/main:hidden ${
-                           isOpenPopup && "hidden"
+                        className={`text-[12px] hidden  group-hover/main:hidden ${
+                           isOpenPopup ? "hidden" : "md:block"
                         }`}
                      >
                         {handleTimeText(data.duration)}
@@ -590,9 +625,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                   {...getFloatingProps()}
                >
                   <PopupWrapper theme={theme}>{menuComponent}</PopupWrapper>
-                  {loading && (
-                     <div className="absolute rounded-[6px] flex items-center justify-center inset-0 bg-[#000] bg-opacity-40">
-                        <span>
+                  {PActsLoading && (
+                     <div className={classes.overlay}>
+                        <span className="text-[#fff]">
                            <ArrowPathIcon className="w-[40px] animate-spin" />
                         </span>
                      </div>
@@ -619,6 +654,16 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      theme={theme}
                      callback={handleDeleteSong}
                      setOpenModal={setIsOpenModal}
+                  />
+               )}
+
+               {modalComponent === "addToPlaylist" && userPlaylists && (
+                  <PlaylistList
+                     loading={PActsLoading}
+                     handleAddSongToPlaylist={handleAddSongToPlaylist}
+                     setIsOpenModal={setIsOpenModal}
+                     song={data}
+                     userPlaylists={userPlaylists}
                   />
                )}
             </Modal>
