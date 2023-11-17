@@ -30,7 +30,6 @@ import Skeleton, { PlaylistSkeleton } from "../components/skeleton";
 
 // 2 time render
 
-
 // manual run init
 export default function DashBoard() {
    // use store
@@ -41,8 +40,7 @@ export default function DashBoard() {
       initSongsAndPlaylists,
       initial,
    } = useSong({ admin: true });
-   const { adminPlaylists, adminSongs, setAdminSongs } =
-      useSongsStore();
+   const { adminPlaylists, adminSongs, setAdminSongs } = useSongsStore();
 
    // state
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
@@ -65,7 +63,6 @@ export default function DashBoard() {
 
    // use hooks
    const navigate = useNavigate();
-   const location = useLocation()
    const { addedSongIds, handleInputChange, status, tempSongs } = useUploadSongs({
       audioRef,
       admin: true,
@@ -140,7 +137,7 @@ export default function DashBoard() {
          if (index == 0) {
             return (
                <SongItem
-                  admin
+                  action="less"
                   theme={theme}
                   inProcess={!isAdded}
                   data={song}
@@ -150,7 +147,13 @@ export default function DashBoard() {
          }
 
          return (
-            <SongItem admin theme={theme} inProcess={!isAdded} data={song} key={index} />
+            <SongItem
+               action="less"
+               theme={theme}
+               inProcess={!isAdded}
+               data={song}
+               key={index}
+            />
          );
       });
    };
@@ -174,40 +177,39 @@ export default function DashBoard() {
       });
    };
 
-
-  //  run auth
+   //  run auth
    useEffect(() => {
-     if (userInfo.status === "loading") {
-       setLoading(false);
-       return;
-     }
+      if (userInfo.status === "loading") {
+         setLoading(false);
+         return;
+      }
 
-     const auth = async () => {
-       try {
-         const userSnapshot = await myGetDoc({
-           collection: "users",
-           id: userInfo?.email as string,
-           msg: ">>> api: get auth info",
-         });
-         const userData = userSnapshot.data() as User;
-         if (userData.role !== "admin") return navigate(routes.Home);
+      const auth = async () => {
+         try {
+            const userSnapshot = await myGetDoc({
+               collection: "users",
+               id: userInfo?.email as string,
+               msg: ">>> api: get auth info",
+            });
+            const userData = userSnapshot.data() as User;
+            if (userData.role !== "admin") return navigate(routes.Home);
 
-         if (!initial) initSongsAndPlaylists();
-         else setTimeout(() => setLoading(false), 200);
-       } catch (error) {
-         console.log(error);
-       }
-     };
+            if (!initial) initSongsAndPlaylists();
+            else setTimeout(() => setLoading(false), 200);
+         } catch (error) {
+            console.log(error);
+         }
+      };
 
-     if (!userInfo.email) return navigate(routes.Home);
+      if (!userInfo.email) return navigate(routes.Home);
 
-     if (firstTimeRun.current) {
-       firstTimeRun.current = false;
+      if (firstTimeRun.current) {
+         firstTimeRun.current = false;
 
-       // case already run auth
-       if (userInfo.role === "admin") return;
-       else auth();
-     }
+         // case already run auth
+         if (userInfo.role === "admin") return;
+         else auth();
+      }
    }, [userInfo.status]);
 
    useEffect(() => {
@@ -374,7 +376,8 @@ export default function DashBoard() {
                      {/* {renderSongs()} */}
                      {!initialLoading && (
                         <SongList
-                           admin
+                           action="full"
+                           inAdmin={true}
                            activeExtend={false}
                            handleSetSong={() => {}}
                            isChecked={isChecked}

@@ -1,5 +1,5 @@
 import {
-  ChevronLeftIcon,
+   ChevronLeftIcon,
    PencilSquareIcon,
    PlusCircleIcon,
    TrashIcon,
@@ -22,6 +22,8 @@ import {
    Modal,
    ConfirmModal,
    SongItem,
+   BackBtn,
+   SongList,
 } from "../components";
 
 import usePlaylistActions from "../hooks/usePlaylistActions";
@@ -53,7 +55,7 @@ export default function DashboardPlaylist() {
       loading: playlistActionLoading,
       deleteManyFromPlaylist,
       deleteSongFromPlaylist,
-   } = usePlaylistActions({});
+   } = usePlaylistActions({ admin: true });
    const {
       playlistSongs,
       loading: usePlaylistLoading,
@@ -65,7 +67,7 @@ export default function DashboardPlaylist() {
       admin: true,
    });
 
-   const deleteFromPlaylist = async (song: Song) => {
+   const hadnleDeleteFromPlaylist = async (song: Song) => {
       try {
          const newPlaylistSongs = await deleteSongFromPlaylist(song, playlistSongs);
          if (newPlaylistSongs) {
@@ -119,41 +121,42 @@ export default function DashboardPlaylist() {
       input: "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
       button: `${theme.content_bg} rounded-full`,
       playListTop: "w-full flex",
-      playlistInfoContainer: "ml-[15px]",
+      playlistInfoContainer: "flex flex-col gap-[12px] justify-between ml-[12px]",
       songListContainer: "h-[50px] mb-[10px] flex gap-[20px] ] items-center border-b",
       countSongText: "text-[14px]] font-semibold text-gray-500 w-[100px]",
-
+      ctaContainer: `flex justify-center gap-[12px] md:justify-start`,
       buttonAddSongContainer: "w-full text-center mt-[30px]",
    };
 
    // playlistSongs, songInStore, isCheckedSong, selectedSong, isOpenModal
-   const renderPlaylistSongs = useMemo(() => {
-      return playlistSongs.map((song, index) => {
-         return (
-            <SongItem
-               key={index}
-               setSelectedSongs={setSelectedSongs}
-               setUserSongs={setPlaylistSongs}
-               admin={true}
-               isChecked={isChecked && !isOpenModal}
-               setIsChecked={setIsChecked}
-               selectedSongs={selectedSongs}               
-               deleteFromPlaylist={deleteFromPlaylist}
-               theme={theme}
-               active={false}
-               data={song}
-               inPlaylist
-            />
-         );
-      });
-   }, [
-      playlistInStore.name,
-      songInStore,
-      playlistSongs,
-      isChecked,
-      selectedSongs,
-      isOpenModal,
-   ]);
+   // const renderPlaylistSongs = useMemo(() => {
+   //    return playlistSongs.map((song, index) => {
+   //       return (
+   //          <SongItem
+   //             key={index}
+   //             action="full"
+   //             setSelectedSongs={setSelectedSongs}
+   //             setUserSongs={setPlaylistSongs}
+   //             inAdmin={true}
+   //             isChecked={isChecked && !isOpenModal}
+   //             setIsChecked={setIsChecked}
+   //             selectedSongs={selectedSongs}
+   //             deleteFromPlaylist={deleteFromPlaylist}
+   //             theme={theme}
+   //             active={false}
+   //             data={song}
+   //             inPlaylist
+   //          />
+   //       );
+   //    });
+   // }, [
+   //    playlistInStore.name,
+   //    songInStore,
+   //    playlistSongs,
+   //    isChecked,
+   //    selectedSongs,
+   //    isOpenModal,
+   // ]);
 
    // for define skeleton
    const playlistSkeleton = (
@@ -172,12 +175,7 @@ export default function DashboardPlaylist() {
    return (
       <div className="playlist-page">
          {/* head */}
-         <Link
-            to={'/dashboard'}
-            className={`inline-block p-[4px] rounded-full mb-[10px] ${theme.content_hover_bg} bg-${theme.alpha}`}
-         >
-            <ChevronLeftIcon className="w-[25px]" />
-         </Link>
+         <BackBtn />
 
          {usePlaylistLoading && playlistSkeleton}
          {!usePlaylistLoading && !!playlistInStore.name && (
@@ -205,12 +203,34 @@ export default function DashboardPlaylist() {
                   </div>
 
                   {/* cta */}
-                  <div className="flex items-center mt-[15px] gap-[12px]">
+                  <div
+                     className={`${classes.ctaContainer} ${
+                        usePlaylistLoading ? "opacity-60 pointer-events-none" : ""
+                     }`}
+                  >
+                     {/* <Button
+                        onClick={handlePlayPlaylist}
+                        className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
+                           !playlistInStore.song_ids.length &&
+                           "opacity-60 pointer-events-none"
+                        }`}
+                     >
+                        Play
+                        <PlayIcon className="ml-[5px] w-[25px]" />
+                     </Button> */}
+
                      <Button
                         onClick={() => openModal("confirm")}
                         className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
                      >
                         <TrashIcon className="w-[25px]" />
+                     </Button>
+
+                     <Button
+                        onClick={() => openModal("edit")}
+                        className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+                     >
+                        <PencilSquareIcon className="w-[25px]" />
                      </Button>
                   </div>
                </div>
@@ -264,7 +284,21 @@ export default function DashboardPlaylist() {
 
             {usePlaylistLoading && SongItemSkeleton}
 
-            {!usePlaylistLoading && !!playlistSongs.length && renderPlaylistSongs}
+            {!usePlaylistLoading && !!playlistSongs.length && (
+               <SongList
+                  inAdmin
+                  action="full"
+                  setPlaylistSongs={setPlaylistSongs}
+                  songs={playlistSongs}
+                  handleSetSong={() => {}}
+                  isChecked={isChecked}
+                  setIsChecked={setIsChecked}
+                  selectedSongs={selectedSongs}
+                  setSelectedSongs={setSelectedSongs}
+                  deleteFromPlaylist={hadnleDeleteFromPlaylist}
+                  activeExtend={songInStore.song_in.includes(playlistInStore.name)}
+               />
+            )}
 
             {(!!userSongs.length || !!adminSongs.length) && (
                <div className={classes.buttonAddSongContainer}>

@@ -313,6 +313,7 @@ export default function MySongsPage() {
             <>
               {!!userSongs.length && (
                 <SongList
+                  action="full"
                   handleSetSong={handleSetSong}
                   activeExtend={songInStore.song_in === "user"}
                   isChecked={isChecked}

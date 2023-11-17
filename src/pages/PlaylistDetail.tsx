@@ -179,7 +179,7 @@ export default function PlaylistDetail() {
    const SongItemSkeleton = [...Array(4).keys()].map((index) => {
       return (
          <div className="flex p-[10px]" key={index}>
-            <Skeleton className="h-[54px] w-[54px] ml-[33px] rounded-[4px]" />
+            <Skeleton className="h-[54px] w-[54px] ml-[28px] rounded-[4px]" />
             <div className="ml-[10px]">
                <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
                <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
@@ -190,16 +190,15 @@ export default function PlaylistDetail() {
 
    return (
       <>
-            {/* <Link
+         {/* <Link
                to={routes.MySongs}
                className={`inline-block p-[4px] rounded-full mb-[10px] ${theme.content_hover_bg} bg-${theme.alpha}`}
             >
                <ChevronLeftIcon className="w-[25px]" />
             </Link> */}
-         
 
          {/* head */}
-         
+
          {!!playlistInStore.name && (
             <div className={classes.playListTop}>
                {/* image */}
@@ -216,7 +215,7 @@ export default function PlaylistDetail() {
                   <div className={classes.infoTop}>
                      {usePlaylistLoading ? (
                         <>
-                           <Skeleton className="h-[30px]  w-[100px]" />
+                           <Skeleton className="h-[30px]  w-[200px]" />
                            <Skeleton className="hidden md:block h-[16px] w-[60px]" />
                            <Skeleton className="hidden md:block h-[16px] w-[200px]" />
                         </>
@@ -327,12 +326,16 @@ export default function PlaylistDetail() {
                <>
                   {playlistInStore.by === "admin" ? (
                      <SongList
+                        action="less"
                         songs={playlistSongs}
                         activeExtend={songInStore.song_in.includes(playlistInStore.name)}
                         handleSetSong={handleSetSong}
+                        setIsChecked={() => {}}
+                        setSelectedSongs={() => {}}
                      />
                   ) : (
                      <SongList
+                        action="full"
                         songs={playlistSongs}
                         handleSetSong={handleSetSong}
                         isChecked={isChecked}
@@ -346,7 +349,7 @@ export default function PlaylistDetail() {
                </>
             )}
 
-            {!!userSongs.length && (
+            {playlistInStore.by !== "admin" && !!userSongs.length && (
                <div
                   className={`${classes.buttonAddSongContainer} ${
                      playlistSongs.length === userSongs.length

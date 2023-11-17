@@ -6,7 +6,7 @@ export {default as LinkItem} from './ui/LinkItem'
 
 export {default as Skeleton} from './skeleton/index'
 
-export {default as AddSongsToPlaylist} from './modals/SongList'
+export {default as AddSongsToPlaylist} from './modals/SongListModal'
 export {default as LyricItem} from './child/LyricItem'
 export {default as PlayPauseButton} from './child/PlayPauseButton'
 export {default as SongItemEditForm} from './modals/SongItemEditForm'

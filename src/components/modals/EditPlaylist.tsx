@@ -23,6 +23,8 @@ export default function EditPlaylist({
 
   const handleEditPlaylist = async (e: FormEvent) => {
     e.preventDefault();
+    if (!isAbleToSubmit) return;
+    
     try {
       await editPlaylist(playlistName, playlist);
     } catch (error) {

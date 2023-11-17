@@ -118,6 +118,13 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
       console.log("playlist action deletePlaylist");
       setLoading(true);
 
+      // >>> api
+      await myDeleteDoc({
+         collection: "playlist",
+         id: playlist.id,
+         msg: ">>> api: delete playlist doc",
+      });
+
       let newUserPlaylist: Playlist[] = [];
       // *** admin
       if (admin) {
@@ -129,13 +136,6 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
          newUserPlaylist = userPlaylists.filter((pl) => pl.id !== playlist.id);
          setUserPlaylists(newUserPlaylist, []);
       }
-
-      // >>> api
-      await myDeleteDoc({
-         collection: "playlist",
-         id: playlist.id,
-         msg: ">>> api: delete playlist doc",
-      });
 
       if (!admin) await setUserPlaylistIdsDoc(newUserPlaylist, userInfo);
 
@@ -194,6 +194,8 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
          await setPlaylistDocAndSetContext({
             newPlaylist,
          });
+
+         dispatch(setPlaylist(newPlaylist));
 
          setSuccessToast({ message: "Playlist edited" });
       } catch (error) {

@@ -10,8 +10,8 @@ type Props = {
   songs: Song[];
   activeExtend: boolean;
   handleSetSong: (song: Song, index: number) => void;
-
-  admin?: boolean;
+  action: 'full' | 'less'
+  inAdmin?: boolean;
   selectedSongs?: Song[];
   isChecked?: boolean;
   setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
@@ -24,7 +24,9 @@ type Props = {
 
 function SongList({
   songs,
-  admin,
+  // admin,
+  inAdmin,
+  action,
   activeExtend,
   handleSetSong,
   // isChecked,
@@ -45,7 +47,7 @@ function SongList({
     setAdminSongs,
   } = useSongsStore();
   const { song: songInStore } = useSelector(selectAllSongStore);
-  const { addSongToPlaylistSongItem } = usePlaylistActions({ admin });
+  const { addSongToPlaylistSongItem } = usePlaylistActions({ admin: inAdmin });
 
   const location = useLocation();
 
@@ -60,12 +62,13 @@ function SongList({
           key={index}
           data={song}
           theme={theme}
-          admin={admin}
+          inAdmin={inAdmin}
+          action={action}
           active={activeExtend && songInStore.id === song.id}
           userInfo={userInfo}
-          userSongs={admin ? adminSongs : userSongs}
-          setUserSongs={admin ? setAdminSongs : setUserSongs}
-          userPlaylists={admin ? adminPlaylists : userPlaylists}
+          userSongs={inAdmin ? adminSongs : userSongs}
+          setUserSongs={inAdmin ? setAdminSongs : setUserSongs}
+          userPlaylists={inAdmin ? adminPlaylists : userPlaylists}
           inPlaylist={inPlaylist}
           setUserInfo={setUserInfo}
           addToPlaylist={addSongToPlaylistSongItem}
