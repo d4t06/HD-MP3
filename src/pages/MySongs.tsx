@@ -1,42 +1,37 @@
-import {
-  ChevronLeftIcon,
-  PlusCircleIcon,
-  TrashIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { ReactNode, useRef, useState, useMemo, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { PlusCircleIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ReactNode, useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Song } from "../types";
 
 // store
 import {
-  useTheme,
-  selectAllSongStore,
-  useSongsStore,
-  useToast,
-  useAuthStore,
-  setSong,
+   useTheme,
+   selectAllSongStore,
+   useSongsStore,
+   useToast,
+   useAuthStore,
+   setSong,
+   useUpload,
 } from "../store";
 
 // utils
 import { deleteSong, setUserSongIdsAndCountDoc } from "../utils/firebaseHelpers";
 
 // hooks
-import { useUploadSongs, useSongs } from "../hooks";
+import { useSongs } from "../hooks";
 // components
 import {
-  Empty,
-  Modal,
-  Button,
-  SongItem,
-  PlaylistItem,
-  Skeleton,
-  ConfirmModal,
-  AddPlaylist,
-  SongList,
-  MobileSongItem,
+   Empty,
+   Modal,
+   Button,
+   //  SongItem,
+   PlaylistItem,
+   Skeleton,
+   ConfirmModal,
+   AddPlaylist,
+   SongList,
 } from "../components";
 
 import { routes } from "../routes";
@@ -46,307 +41,245 @@ import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 type ModalName = "addPlaylist" | "confirm";
 
 export default function MySongsPage() {
-  // use store
-  const dispatch = useDispatch();
-  const { theme } = useTheme();
-  const { userInfo } = useAuthStore();
-  const { setErrorToast, setSuccessToast } = useToast();
-  const { loading: initialLoading, errorMsg, initial } = useSongs({});
+   // use store
+   const dispatch = useDispatch();
+   const { userInfo } = useAuthStore();
 
-  const { song: songInStore, playlist: playlistInStore } =
-    useSelector(selectAllSongStore);
-  const {
-    playStatus: { isPlaying },
-  } = useSelector(selectAllPlayStatusStore);
-  const { userPlaylists, setUserSongs, userSongs } = useSongsStore();
+   const { song: songInStore, playlist: playlistInStore } =
+      useSelector(selectAllSongStore);
+   const {
+      playStatus: { isPlaying },
+   } = useSelector(selectAllPlayStatusStore);
+   const { userPlaylists, setUserSongs, userSongs } = useSongsStore();
 
-  // state
-  const [loading, setLoading] = useState(false);
-  const [openModal, setOpenModal] = useState(false);
-  const [modalName, setModalName] = useState<ModalName>("addPlaylist");
+   // state
+   const [loading, setLoading] = useState(false);
+   const [openModal, setOpenModal] = useState(false);
+   const [modalName, setModalName] = useState<ModalName>("addPlaylist");
+   const [isChecked, setIsChecked] = useState(false);
+   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
-  // ref
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const firstTempSong = useRef<HTMLDivElement>(null);
-  const testImageRef = useRef<HTMLImageElement>(null);
-  const [isChecked, setIsChecked] = useState(false);
-  const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
+   // use hooks
+   const { theme } = useTheme();
+   const navigate = useNavigate();
+   const { setErrorToast, setSuccessToast } = useToast();
+   const { tempSongs, addedSongIds, status } = useUpload();
+   const { loading: initialLoading, errorMsg, initial } = useSongs({});
 
-  // use hooks
-  const navigate = useNavigate();
-  const { tempSongs, addedSongIds, status, handleInputChange } = useUploadSongs({
-    audioRef,
-    firstTempSong,
-    testImageRef,
-    inputRef,
-  });
+   // define callback functions
+   const handleOpenModal = (name: ModalName) => {
+      setModalName(name);
+      setOpenModal(true);
+   };
 
-  // define callback functions
-  const handleOpenModal = (name: ModalName) => {
-    setModalName(name);
-    setOpenModal(true);
-  };
-
-  const handleSetSong = (song: Song, index: number) => {
-    // when user play playlist then play user songs
-    if (songInStore.id !== song.id || songInStore.song_in !== "user") {
-      dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
-    }
-  };
-
-  const songCount = useMemo(() => {
-    if (initialLoading || !initial) return 0;
-    return tempSongs.length + userSongs.length;
-  }, [tempSongs, userSongs, initial, initialLoading]);
-
-  const resetCheckedList = () => {
-    setSelectedSongs([]);
-    setIsChecked(false);
-  };
-
-  const closeModal = () => {
-    setLoading(false);
-    setOpenModal(false);
-  };
-
-  const handleSelectAll = () => {
-    if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
-    else setSelectedSongs([]);
-  };
-  // selectedSongs.length ? setSelectedSongs([]) : setSelectedSongs(userSongs);
-
-  const handleDeleteSelectedSong = async () => {
-    const newUserSongs = [...userSongs];
-
-    try {
-      setLoading(true);
-      for (let song of selectedSongs) {
-        const index = newUserSongs.findIndex((item) => item.id === song.id);
-        newUserSongs.splice(index, 1);
+   const handleSetSong = (song: Song, index: number) => {
+      // when user play playlist then play user songs
+      if (songInStore.id !== song.id || songInStore.song_in !== "user") {
+         dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
       }
-      // >>> api
-      for (let song of selectedSongs) {
-        await deleteSong(song);
+   };
+
+   const songCount = useMemo(() => {
+      if (initialLoading || !initial) return 0;
+      return tempSongs.length + userSongs.length;
+   }, [tempSongs, userSongs, initial, initialLoading]);
+
+   const resetCheckedList = () => {
+      setSelectedSongs([]);
+      setIsChecked(false);
+   };
+
+   const closeModal = () => {
+      setLoading(false);
+      setOpenModal(false);
+   };
+
+   const handleSelectAll = () => {
+      if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
+      else setSelectedSongs([]);
+   };
+   // selectedSongs.length ? setSelectedSongs([]) : setSelectedSongs(userSongs);
+
+   const handleDeleteSelectedSong = async () => {
+      const newUserSongs = [...userSongs];
+
+      try {
+         setLoading(true);
+         for (let song of selectedSongs) {
+            const index = newUserSongs.findIndex((item) => item.id === song.id);
+            newUserSongs.splice(index, 1);
+         }
+         // >>> api
+         for (let song of selectedSongs) {
+            await deleteSong(song);
+         }
+         const userSongIds: string[] = newUserSongs.map((song) => song.id);
+         await setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
+
+         setUserSongs(newUserSongs);
+
+         // >>> finish
+         setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
+      } catch (error) {
+         console.log(error);
+         setErrorToast({ message: "Error when delete songs" });
+      } finally {
+         resetCheckedList();
+         closeModal();
       }
-      const userSongIds: string[] = newUserSongs.map((song) => song.id);
-      await setUserSongIdsAndCountDoc({ songIds: userSongIds, userInfo });
+   };
 
-      setUserSongs(newUserSongs);
+   // define classes
+   const classes = {
+      button: `${theme.content_bg} rounded-full`,
+      songItemContainer: `w-full border-b border-${theme.alpha}`,
+   };
 
-      // >>> finish
-      setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
-    } catch (error) {
-      console.log(error);
-      setErrorToast({ message: "Error when delete songs" });
-    } finally {
-      resetCheckedList();
-      closeModal();
-    }
-  };
-
-  // define classes
-  const classes = {
-    button: `${theme.content_bg} rounded-full`,
-    songItemContainer: `w-full border-b border-${theme.alpha}`,
-  };
-
-  const renderTempSongsList = () => {
-    return tempSongs.map((song, index) => {
-      const isAdded = addedSongIds.some((id) => {
-        let condition = id === song.id;
-        return condition;
-      });
-
-      if (index == 0) {
-        return (
-          <MobileSongItem
-            ref={firstTempSong}
+   // define modals
+   const ModalPopup: Record<ModalName, ReactNode> = {
+      addPlaylist: (
+         <AddPlaylist setIsOpenModal={setOpenModal} theme={theme} userInfo={userInfo} />
+      ),
+      confirm: (
+         <ConfirmModal
+            loading={loading}
+            label={`Delete ${selectedSongs.length} songs ?`}
             theme={theme}
-            onClick={() => {}}
-            inProcess={!isAdded}
-            data={song}
-            active={false}
-            key={index}
-          />
-        );
+            callback={handleDeleteSelectedSong}
+            setOpenModal={setOpenModal}
+         />
+      ),
+   };
+
+   // route guard
+   useEffect(() => {
+      if (userInfo.status === "loading") return;
+
+      if (!userInfo.email) {
+         navigate(routes.Home);
+         console.log(">>> navigate to home");
       }
+   }, [userInfo.status, initial]);
 
-      return (
-        <MobileSongItem
-          key={index}
-          active={false}
-          onClick={() => {}}
-          theme={theme}
-          inProcess={!isAdded}
-          data={song}
-        />
-      );
-    });
-  };
+   if (errorMsg) return <h1>{errorMsg}</h1>;
 
-  // define modals
-  const ModalPopup: Record<ModalName, ReactNode> = {
-    addPlaylist: (
-      <AddPlaylist setIsOpenModal={setOpenModal} theme={theme} userInfo={userInfo} />
-    ),
-    confirm: (
-      <ConfirmModal
-        loading={loading}
-        label={`Delete ${selectedSongs.length} songs ?`}
-        theme={theme}
-        callback={handleDeleteSelectedSong}
-        setOpenModal={setOpenModal}
-      />
-    ),
-  };
-
-  // route guard
-  useEffect(() => {
-    if (userInfo.status === "loading") return;
-
-    if (!userInfo.email) {
-      navigate(routes.Home);
-      console.log(">>> navigate to home");
-    }
-  }, [userInfo.status, initial]);
-
-  if (errorMsg) return <h1>{errorMsg}</h1>;
-
-  return (
-    <>
-      <img className="hidden" ref={testImageRef} />
-      {/* playlist */}
-      <div className="pb-[30px] ">
-        <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
-        <div className="flex flex-row flex-wrap -mx-[8px]">
-          {!!userPlaylists.length &&
-            !initialLoading &&
-            userPlaylists.map((playlist, index) => {
-              const active =
-                playlistInStore.id === playlist.id &&
-                isPlaying &&
-                songInStore.song_in.includes("playlist");
-              return (
-                <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
-                  <PlaylistItem active={active} theme={theme} data={playlist} />
-                </div>
-              );
-            })}
-          {initialLoading && PlaylistSkeleton}
-          {
-            <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
-              <Empty
-                theme={theme}
-                className="pt-[100%]"
-                onClick={() => handleOpenModal("addPlaylist")}
-              />
+   return (
+      <>
+         <div className="pb-[30px] ">
+            <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
+            <div className="flex flex-row flex-wrap -mx-[8px]">
+               {!!userPlaylists.length &&
+                  !initialLoading &&
+                  userPlaylists.map((playlist, index) => {
+                     const active =
+                        playlistInStore.id === playlist.id &&
+                        isPlaying &&
+                        songInStore.song_in.includes("playlist");
+                     return (
+                        <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                           <PlaylistItem active={active} theme={theme} data={playlist} />
+                        </div>
+                     );
+                  })}
+               {initialLoading && PlaylistSkeleton}
+               {
+                  <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
+                     <Empty
+                        theme={theme}
+                        className="pt-[100%]"
+                        onClick={() => handleOpenModal("addPlaylist")}
+                     />
+                  </div>
+               }
             </div>
-          }
-        </div>
-      </div>
+         </div>
 
-      {/* song list */}
-      <div className="pb-[30px] max-[549px]:pb-[80px]">
-        {/* title */}
-        <div className="flex justify-between">
-          {/* for upload song */}
-          <audio ref={audioRef} className="hidden" />
-          <h3 className="text-2xl font-bold">Songs</h3>
-          <input
-            ref={inputRef}
-            onChange={handleInputChange}
-            type="file"
-            multiple
-            accept=".mp3"
-            id="file"
-            className="hidden"
-          />
-          <label
-            className={`${theme.content_bg} ${
-              status === "uploading" || initialLoading
-                ? "opacity-60 pointer-events-none"
-                : ""
-            } items-center rounded-full flex px-[20px] py-[4px] cursor-pointer`}
-            htmlFor="file"
-          >
-            <PlusCircleIcon className="w-[20px] mr-[5px]" />
-            Upload
-          </label>
-        </div>
+         {/* song list */}
+         <div className="pb-[30px] max-[549px]:pb-[80px]">
+            {/* title */}
+            <div className="flex justify-between">
+               {/* for upload song */}
+               <h3 className="text-2xl font-bold">Songs</h3>
+               <label
+                  className={`${theme.content_bg} ${
+                     status === "uploading" || initialLoading
+                        ? "opacity-60 pointer-events-none"
+                        : ""
+                  } items-center rounded-full flex px-[20px] py-[4px] cursor-pointer`}
+                  htmlFor="song_upload"
+               >
+                  <PlusCircleIcon className="w-[20px] mr-[5px]" />
+                  Upload
+               </label>
+            </div>
 
-        {/* song list */}
-        <div
-          className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[60px]`}
-        >
-          {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
+            {/* song list */}
+            <div
+               className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[60px]`}
+            >
+               {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
 
-          {/* checked song */}
-          {!initialLoading && (
-            <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
-              {!isChecked
-                ? (songCount ? songCount : 0) + " songs"
-                : selectedSongs.length + " selected"}
-            </p>
-          )}
-          {isChecked && userSongs.length && (
-            <>
-              <Button
-                onClick={handleSelectAll}
-                variant={"primary"}
-                className={classes.button}
-              >
-                All
-              </Button>
-              <Button
-                onClick={() => handleOpenModal("confirm")}
-                variant={"primary"}
-                className={classes.button}
-              >
-                <TrashIcon className="w-[20px]" />
-              </Button>
-              <Button
-                onClick={() => {
-                  setIsChecked(false);
-                  setSelectedSongs([]);
-                }}
-                className={`px-[5px]`}
-              >
-                <XMarkIcon className="w-[25px]" />
-              </Button>
-            </>
-          )}
-        </div>
-        <div className="min-h-[50vh]">
-          {!!songCount && !initialLoading ? (
-            <>
-              {!!userSongs.length && (
-                <SongList
-                  handleSetSong={handleSetSong}
-                  activeExtend={songInStore.song_in === "user"}
-                  isChecked={isChecked}
-                  setIsChecked={setIsChecked}
-                  setSelectedSongs={setSelectedSongs}
-                  selectedSongs={selectedSongs}
-                  songs={userSongs}
-                />
-              )}
-              {!!tempSongs.length && renderTempSongsList()}
-            </>
-          ) : (
-            !initialLoading && <p>No songs jet...</p>
-          )}
+               {/* checked song */}
+               {!initialLoading && (
+                  <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
+                     {!isChecked
+                        ? (songCount ? songCount : 0) + " songs"
+                        : selectedSongs.length + " selected"}
+                  </p>
+               )}
+               {isChecked && userSongs.length && (
+                  <>
+                     <Button
+                        onClick={handleSelectAll}
+                        variant={"primary"}
+                        className={classes.button}
+                     >
+                        All
+                     </Button>
+                     <Button
+                        onClick={() => handleOpenModal("confirm")}
+                        variant={"primary"}
+                        className={classes.button}
+                     >
+                        <TrashIcon className="w-[20px]" />
+                     </Button>
+                     <Button
+                        onClick={() => {
+                           setIsChecked(false);
+                           setSelectedSongs([]);
+                        }}
+                        className={`px-[5px]`}
+                     >
+                        <XMarkIcon className="w-[25px]" />
+                     </Button>
+                  </>
+               )}
+            </div>
+            <div className="min-h-[50vh]">
+               {initialLoading && SongItemSkeleton}
 
-          {initialLoading && SongItemSkeleton}
-        </div>
-      </div>
+               {!!songCount && !initialLoading && (
+                  <SongList
+                     handleSetSong={handleSetSong}
+                     activeExtend={songInStore.song_in === "user"}
+                     isChecked={isChecked}
+                     setIsChecked={setIsChecked}
+                     setSelectedSongs={setSelectedSongs}
+                     selectedSongs={selectedSongs}
+                     songs={userSongs}
+                     tempSongs={tempSongs}
+                     addedSongIds={addedSongIds}
+                  />
+               )}
+            </div>
+         </div>
 
-      {/* add playlist modal */}
-      {openModal && (
-        <Modal theme={theme} setOpenModal={setOpenModal}>
-          {ModalPopup[modalName]}
-        </Modal>
-      )}
-    </>
-  );
+         {/* add playlist modal */}
+         {openModal && (
+            <Modal theme={theme} setOpenModal={setOpenModal}>
+               {ModalPopup[modalName]}
+            </Modal>
+         )}
+      </>
+   );
 }

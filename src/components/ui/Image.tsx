@@ -1,4 +1,4 @@
-import {useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
 
@@ -18,9 +18,6 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
 
       if (!src) return;
       if (src?.includes("blob")) {
-         console.log('check image ref', imageRef.current);
-         
-         console.log("revoke");
          URL.revokeObjectURL(src);
       }
    };

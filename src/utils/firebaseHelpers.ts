@@ -66,7 +66,7 @@ export const uploadFile = async ({
 
    // define ref
    const fileName =
-      file.name.replaceAll(" ", "").toLowerCase() + "_" + email.replace("@gmail.com", "");
+      email.replace("@gmail.com", "") + "_" + file.name.replaceAll(" ", "").toLowerCase();
    const fileRef = ref(store, `${folder + fileName}`);
 
    const fileRes = await uploadBytes(fileRef, file);
@@ -77,7 +77,7 @@ export const uploadFile = async ({
    return { fileURL, filePath: fileRes.metadata.fullPath };
 };
 
-export const uploadBlob =  async ({
+export const uploadBlob = async ({
    blob,
    folder,
    songId,
@@ -93,16 +93,15 @@ export const uploadBlob =  async ({
 
    // define ref
    // try {
-      const fileName = songId + "_stock";
-      const fileRef = ref(store, `${folder + fileName}`);
-      const fileRes = await uploadBytes(fileRef, blob);
-      const fileURL = await getDownloadURL(fileRes.ref);
+   const fileName = songId + "_stock";
+   const fileRef = ref(store, `${folder + fileName}`);
+   const fileRes = await uploadBytes(fileRef, blob);
+   const fileURL = await getDownloadURL(fileRes.ref);
 
-      const consuming = (Date.now() - start) / 1000;
-      if (isDev) console.log(">>> api: upload blob finished after", consuming);
+   const consuming = (Date.now() - start) / 1000;
+   if (isDev) console.log(">>> api: upload blob finished after", consuming);
 
-      return { fileURL, filePath: fileRes.metadata.fullPath };
-
+   return { fileURL, filePath: fileRes.metadata.fullPath };
 };
 
 export const deleteFile = async ({

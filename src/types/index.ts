@@ -76,7 +76,7 @@ export type ThemeType = {
 };
 
 export type Toast = {
-   title: "success" | "error" | "warning";
+   title?: "success" | "error" | "warning";
    desc: string;
    id: string;
 };

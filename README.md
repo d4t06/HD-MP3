@@ -58,6 +58,22 @@
 - Thêm status repeat shuffle vào redux store thay vì
 
 
+### Song
+- [y] upload
+- [y] edit
+- [y] delete
+- [y] add to playlist
+- [y] delete from playlist
+- [y] add lyrics
+
+### Playlist
+- [y] add
+- [y] edit playlist
+- [y] delete playlist
+- [y] add songs to playlist
+
+
 ### Issues
 - [x] Fix mất bài hát khi thêm
 - [x] Fix không scroll text khi overflow
+- [x] Upload nhạc global

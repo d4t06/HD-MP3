@@ -58,7 +58,7 @@ function MobileSongItem(
     songListButton: `mr-[10px] px-[5px]`,
     itemContainer: `hover:bg-${
       theme.alpha
-    } item-container transition-opacity duration-[.3s] border-b last:border-none border-${
+    } item-container cursor-pointer transition-opacity duration-[.3s] border-b last:border-none border-${
       theme.alpha
     } flex rounded-[4px] justify-between w-[100%] p-[10px] ${
       isSelected() && "bg-" + theme.alpha

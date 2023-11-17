@@ -10,23 +10,26 @@ import ToastProvider from "./store/ToastContext.tsx";
 import ActuallySongsProvider from "./store/ActuallySongsContext.tsx";
 import AuthProvider from "./store/AuthContext.tsx";
 import Auth from "./components/Auth.tsx";
+import UploadSongProvider from "./store/UploadContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <AuthProvider>
-      <ThemeProvider theme={initialState}>
-        <SongsProvider songsStore={initialSongs}>
-          <Provider store={Store}>
-            <ToastProvider>
-              <ActuallySongsProvider>
-                <Auth>
-                  <App />
-                </Auth>
-              </ActuallySongsProvider>
-            </ToastProvider>
-          </Provider>
-        </SongsProvider>
-      </ThemeProvider>
-    </AuthProvider>
-  </React.StrictMode>
+   <React.StrictMode>
+      <AuthProvider>
+         <ThemeProvider theme={initialState}>
+            <SongsProvider songsStore={initialSongs}>
+               <Provider store={Store}>
+                  <ToastProvider>
+                     <ActuallySongsProvider>
+                        <UploadSongProvider>
+                           <Auth>
+                              <App />
+                           </Auth>
+                        </UploadSongProvider>
+                     </ActuallySongsProvider>
+                  </ToastProvider>
+               </Provider>
+            </SongsProvider>
+         </ThemeProvider>
+      </AuthProvider>
+   </React.StrictMode>
 );
