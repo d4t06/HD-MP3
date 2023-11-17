@@ -56,3 +56,8 @@
 
 ### update thứ 6 10/11/2023
 - Thêm status repeat shuffle vào redux store thay vì
+
+
+### Issues
+- Fix mất bài hát khi thêm
+- Fix không scroll text khi overflow

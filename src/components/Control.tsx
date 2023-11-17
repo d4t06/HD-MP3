@@ -263,7 +263,9 @@ export default function Control({
       return;
     }
 
-    play();
+    dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
+
+    // play();
   };
 
   const handleError = useCallback(() => {
@@ -369,11 +371,8 @@ export default function Control({
         </button>
 
         <PlayPauseButton
-          isError={error}
-          isWaiting={isWaiting}
-          isPlaying={isPlaying}
           handlePlayPause={handlePlayPause}
-          songInStore={songInStore}
+          // songInStore={songInStore}
         />
 
         <button className={`${classes.button}`} onClick={() => handleNext()}>

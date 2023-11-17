@@ -90,7 +90,6 @@ export default function MySongsPage() {
   const handleSetSong = (song: Song, index: number) => {
     // when user play playlist then play user songs
     if (songInStore.id !== song.id || songInStore.song_in !== "user") {
-      console.log("set song");
       dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
     }
   };
@@ -99,10 +98,6 @@ export default function MySongsPage() {
     if (initialLoading || !initial) return 0;
     return tempSongs.length + userSongs.length;
   }, [tempSongs, userSongs, initial, initialLoading]);
-
-  const isOnMobile = useMemo(() => {
-    return window.innerWidth < 800;
-  }, []);
 
   const resetCheckedList = () => {
     setSelectedSongs([]);
@@ -164,6 +159,7 @@ export default function MySongsPage() {
 
       return (
         <SongItem
+          action="full"
           theme={theme}
           onClick={() => handleSetSong(tempSong, index)}
           inProcess={!isAdded}

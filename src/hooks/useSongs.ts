@@ -10,7 +10,7 @@ import { useAuthStore } from "../store/AuthContext";
 import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
-// import { testPlaylists, testSongs } from "./songs";
+import { testSongs } from "./songs";
 
 export default function useSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -160,58 +160,59 @@ export default function useSong({ admin }: { admin?: boolean }) {
          setLoading(true);
 
          // // case for all
-         const adminSongs = await getAdminSongs();
-         const adminPlaylists = await getAdminPLaylist();
+         // const adminSongs = await getAdminSongs();
+         // const adminPlaylists = await getAdminPLaylist();
 
 
          // console.log(adminSongs);
          // console.log(adminPlaylists);
          
-         // case no logged in
-         if (!userInfo.email || admin) {
-            console.log(">>> run initial, no user");
+         // // case no logged in
+         // if (!userInfo.email || admin) {
+         //    console.log(">>> run initial, no user");
 
-            await sleep(1000);
+         //    await sleep(1000);
 
-            initSongsContext({
-               adminSongs,
-               adminPlaylists,
-               userPlaylists: [],
-               userSongs: [],
-            });
+         //    initSongsContext({
+         //       adminSongs,
+         //       adminPlaylists,
+         //       userPlaylists: [],
+         //       userSongs: [],
+         //    });
 
-            setLoading(false);
-            return;
-         }
-
-         //  case logged
-         const fullUserInfo = await getAndSetFullUserInfo();
-
-         if (fullUserInfo) {
-            console.log(">>> run initial, have user");
-
-            const userData = await getUserSongsAndPlaylists(fullUserInfo);
-            // update songs context
-            initSongsContext({ ...userData, adminSongs, adminPlaylists });
-
-            // update user context
-         }
+         //    setLoading(false);
+         //    return;
+         // }
 
          // //  case logged
-         // await sleep(1000);
-         // const fullUserInfo = (await getAndSetFullUserInfo()) as User;
+         // const fullUserInfo = await getAndSetFullUserInfo();
 
-         // setUserInfo({
-         //    latest_seen: fullUserInfo.latest_seen,
-         //    song_ids: fullUserInfo.song_ids,
-         //    song_count: fullUserInfo.song_count,
-         //    playlist_ids: fullUserInfo.playlist_ids,
-         //    role: fullUserInfo.role,
-         // });
-         // initSongsContext({
-         //    userSongs: testSongs,
-         //    adminSongs: testSongs,
-         // });
+         // if (fullUserInfo) {
+         //    console.log(">>> run initial, have user");
+
+         //    const userData = await getUserSongsAndPlaylists(fullUserInfo);
+
+         //    console.log('user data', userData);
+            
+         //    // update songs context
+         //    initSongsContext({ ...userData, adminSongs, adminPlaylists });
+         // }
+
+         //  case logged
+         await sleep(1000);
+         const fullUserInfo = (await getAndSetFullUserInfo()) as User;
+
+         setUserInfo({
+            latest_seen: fullUserInfo.latest_seen,
+            song_ids: fullUserInfo.song_ids,
+            song_count: fullUserInfo.song_count,
+            playlist_ids: fullUserInfo.playlist_ids,
+            role: fullUserInfo.role,
+         });
+         initSongsContext({
+            userSongs: testSongs,
+            adminSongs: testSongs,
+         });
       } catch (error) {
          console.log(error);
          setErrorToast({ message: "init song error" });

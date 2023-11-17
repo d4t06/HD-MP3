@@ -33,7 +33,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 
           <div className={classes.content}>
             <>
-              <BackBtn />
+              {/* <BackBtn /> */}
               {children}
             </>
           </div>
