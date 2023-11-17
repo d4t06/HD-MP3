@@ -59,5 +59,5 @@
 
 
 ### Issues
-- Fix mất bài hát khi thêm
-- Fix không scroll text khi overflow
+- [x] Fix mất bài hát khi thêm
+- [x] Fix không scroll text khi overflow

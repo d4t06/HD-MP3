@@ -4,32 +4,21 @@ import {
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useMemo } from "react";
-import { Song } from "../../types";
+import { memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "../../store/PlayStatusSlice";
 import { selectAllSongStore } from "../../store";
 
 type Props = {
   handlePlayPause: () => void;
-  //   songInStore: Song;
 };
-
-export default function PlayPauseButton({
-  // isWaiting,
-  // isPlaying,
-  handlePlayPause,
-}: //   hoverClasses,
-// isError,
-Props) {
+function PlayPauseButton({ handlePlayPause }: Props) {
   const {
     playStatus: { isError, isPlaying, isWaiting },
   } = useSelector(selectAllPlayStatusStore);
   const { song: songInStore } = useSelector(selectAllSongStore);
 
   const renderIcon = useMemo(() => {
-    console.log("check error", isError);
-
     if (isWaiting) {
       return <ArrowPathIcon className={"w-[36px] max-[549px]:w-[46px] animate-spin"} />;
     } else if (isError && songInStore.name) {
@@ -56,3 +45,5 @@ Props) {
     </>
   );
 }
+
+export default memo(PlayPauseButton);

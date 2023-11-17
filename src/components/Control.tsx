@@ -78,9 +78,9 @@ export default function Control({
   };
 
   // >>> click handle
-  const handlePlayPause = () => {
+  const handlePlayPause = useCallback(() => {
     isPlaying ? pause() : play();
-  };
+  }, [isPlaying]);
 
   const handlePause = () => {
     dispatch(setPlayStatus({ isPlaying: false }));
@@ -265,7 +265,7 @@ export default function Control({
 
     dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
 
-    // play();
+    play();
   };
 
   const handleError = useCallback(() => {
@@ -370,10 +370,7 @@ export default function Control({
           <BackwardIcon className={classes.icon} />
         </button>
 
-        <PlayPauseButton
-          handlePlayPause={handlePlayPause}
-          // songInStore={songInStore}
-        />
+        <PlayPauseButton handlePlayPause={handlePlayPause} />
 
         <button className={`${classes.button}`} onClick={() => handleNext()}>
           <ForwardIcon className={classes.icon} />

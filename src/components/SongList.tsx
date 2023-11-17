@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction, memo, useMemo } from "react";
-import { Song } from "../types";
+import { Playlist, Song } from "../types";
 import { selectAllSongStore, useAuthStore, useSongsStore, useTheme } from "../store";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
@@ -10,8 +10,9 @@ type Props = {
   songs: Song[];
   activeExtend: boolean;
   handleSetSong: (song: Song, index: number) => void;
-  action: 'full' | 'less'
+  // action: 'full' | 'less'
   inAdmin?: boolean;
+  inPlaylist?: Playlist,
   selectedSongs?: Song[];
   isChecked?: boolean;
   setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
@@ -21,12 +22,12 @@ type Props = {
 
 // remove song from playlist need playlist songs prop => pass as prop
 // add song to playlist use direct from playlist actions
-
 function SongList({
   songs,
   // admin,
   inAdmin,
-  action,
+  inPlaylist,
+  // action,
   activeExtend,
   handleSetSong,
   // isChecked,
@@ -49,10 +50,6 @@ function SongList({
   const { song: songInStore } = useSelector(selectAllSongStore);
   const { addSongToPlaylistSongItem } = usePlaylistActions({ admin: inAdmin });
 
-  const location = useLocation();
-
-  const inPlaylist = useMemo(() => location.pathname.includes("playlist"), [location]);
-
   const renderSongList = () => {
     if (!songs.length) return <h1>No song jet...</h1>;
 
@@ -62,18 +59,17 @@ function SongList({
           key={index}
           data={song}
           theme={theme}
-          inAdmin={inAdmin}
-          action={action}
+          admin={inAdmin}
+          // action={action}
           active={activeExtend && songInStore.id === song.id}
           userInfo={userInfo}
-          userSongs={inAdmin ? adminSongs : userSongs}
-          setUserSongs={inAdmin ? setAdminSongs : setUserSongs}
+          songs={inAdmin ? adminSongs : userSongs}
+          setSongs={inAdmin ? setAdminSongs : setUserSongs}
           userPlaylists={inAdmin ? adminPlaylists : userPlaylists}
           inPlaylist={inPlaylist}
           setUserInfo={setUserInfo}
           addToPlaylist={addSongToPlaylistSongItem}
           onClick={() => handleSetSong(song, index)}
-          
           
           {...props}
           

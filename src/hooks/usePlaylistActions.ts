@@ -8,6 +8,7 @@ import {
 } from "../store";
 import { Playlist, Song } from "../types";
 import {
+  countSongsListTimeIds,
   generateId,
   generatePlaylistAfterChangeSong,
   generatePlaylistAfterChangeSongs,
@@ -151,16 +152,23 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
     else navigate("/mysongs");
   };
 
+  // before (playlistSongs, selectedSongs)
+
   const addSongsToPlaylist = async (selectSongs: Song[], playList: Playlist) => {
     console.log("playlist action addSongToPlaylist");
 
     setLoading(true);
 
-    // const newPlaylistSongs = [...playlistSongs, ...selectSongs];
-    const newPlaylist = generatePlaylistAfterChangeSongs({
-      songs: selectSongs,
-      existingPlaylist: playList,
-    });
+    const { ids, time } = countSongsListTimeIds(selectSongs);
+
+    const newPlaylistSongIds = [...playList.song_ids, ...ids];
+
+    const newPlaylist: Playlist = {
+      ...playList,
+      song_ids: newPlaylistSongIds,
+      time: playList.time + time,
+      count: newPlaylistSongIds.length,
+    };
 
     // check valid
     if (newPlaylist.song_ids.length <= playList.song_ids.length) {
@@ -215,19 +223,14 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
 
       // check valid
       if (
-        newPlaylist.count < 0 ||
-        newPlaylist.time < 0 ||
-        newPlaylist.song_ids.length === playlist.song_ids.length
+        newPlaylist.time <= playlist.time ||
+        newPlaylist.song_ids.length <= playlist.song_ids.length
       ) {
         setErrorToast({ message: "New playlist data error" });
         throw new Error("New playlist data error");
       }
 
-      // handle playlist
       await setPlaylistDocAndSetContext({ newPlaylist });
-
-      // finish
-      setSuccessToast({ message: `${song.name} songs added` });
     } catch (error) {
       console.log(error);
       throw new Error("Error when edit playlist");

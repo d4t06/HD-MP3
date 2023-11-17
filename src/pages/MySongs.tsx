@@ -36,6 +36,7 @@ import {
   ConfirmModal,
   AddPlaylist,
   SongList,
+  MobileSongItem,
 } from "../components";
 
 import { routes } from "../routes";
@@ -150,23 +151,35 @@ export default function MySongsPage() {
     songItemContainer: `w-full border-b border-${theme.alpha}`,
   };
 
-  // tempSongs, addedSongIds, theme
-  const renderTempSongs = () => {
-    if (!tempSongs.length) return "";
+  const renderTempSongsList = () => {
+    return tempSongs.map((song, index) => {
+      const isAdded = addedSongIds.some((id) => {
+        let condition = id === song.id;
+        return condition;
+      });
 
-    return tempSongs.map((tempSong, index) => {
-      const isAdded = addedSongIds.some((id) => id === tempSong.id);
+      if (index == 0) {
+        return (
+          <MobileSongItem
+            ref={firstTempSong}
+            theme={theme}
+            onClick={() => {}}
+            inProcess={!isAdded}
+            data={song}
+            active={false}
+            key={index}
+          />
+        );
+      }
 
       return (
-        <SongItem
-          action="full"
-          theme={theme}
-          onClick={() => handleSetSong(tempSong, index)}
-          inProcess={!isAdded}
-          data={tempSong}
-          setIsChecked={() => {}}
-          setSelectedSongs={() => {}}
+        <MobileSongItem
           key={index}
+          active={false}
+          onClick={() => {}}
+          theme={theme}
+          inProcess={!isAdded}
+          data={song}
         />
       );
     });
@@ -309,7 +322,6 @@ export default function MySongsPage() {
             <>
               {!!userSongs.length && (
                 <SongList
-                  action="full"
                   handleSetSong={handleSetSong}
                   activeExtend={songInStore.song_in === "user"}
                   isChecked={isChecked}
@@ -319,7 +331,7 @@ export default function MySongsPage() {
                   songs={userSongs}
                 />
               )}
-              {!!tempSongs.length && renderTempSongs()}
+              {!!tempSongs.length && renderTempSongsList()}
             </>
           ) : (
             !initialLoading && <p>No songs jet...</p>

@@ -1,6 +1,11 @@
-import { Dispatch, MouseEvent, SetStateAction, useCallback } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useCallback, forwardRef } from "react";
 import { Song, ThemeType } from "../types";
-import { CheckIcon, PauseCircleIcon, StopIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  CheckIcon,
+  PauseCircleIcon,
+  StopIcon,
+} from "@heroicons/react/24/outline";
 import Image from "./ui/Image";
 import { selectSongs } from "../utils/appHelpers";
 
@@ -15,20 +20,26 @@ type Props = {
 
   setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
   setIsChecked?: Dispatch<SetStateAction<boolean>>;
+
+  inProcess?: boolean;
 };
 
 // alway in state ready for select
-const MobileSongItem = ({
-  data,
-  theme,
-  selectedSongs,
-  active,
-  onClick,
+function MobileSongItem(
+  {
+    data,
+    theme,
+    selectedSongs,
+    active,
+    onClick,
 
-  isChecked,
-  setSelectedSongs,
-  setIsChecked,
-}: Props) => {
+    isChecked,
+    setSelectedSongs,
+    setIsChecked,
+    inProcess,
+  }: Props,
+  ref: any
+) {
   const isSelected = useCallback(() => {
     if (!selectedSongs) return false;
     return selectedSongs?.indexOf(data) != -1;
@@ -49,7 +60,7 @@ const MobileSongItem = ({
       theme.alpha
     } item-container transition-opacity duration-[.3s] border-b last:border-none border-${
       theme.alpha
-    } flex rounded-[4px] justify-between w-[100%] px-[5px] py-[10px] ${
+    } flex rounded-[4px] justify-between w-[100%] p-[10px] ${
       isSelected() && "bg-" + theme.alpha
     }`,
     imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
@@ -58,27 +69,34 @@ const MobileSongItem = ({
 
   return (
     <>
-      <div className={`${classes.itemContainer}`}>
+      <div
+        ref={ref}
+        className={`${classes.itemContainer} ${inProcess ? "pointer-events-none" : ""}`}
+      >
         <div className={`flex flex-row w-[100%]`}>
           {/* check box */}
-          {!isChecked ? (
-            <button
-              onClick={() => handleSelect(data)}
-              className={`${classes.songListButton} block`}
-            >
-              <StopIcon className="w-[18px] " />
-            </button>
-          ) : (
-            <button
-              onClick={() => handleSelect(data)}
-              className={`${classes.songListButton} text-[inherit]`}
-            >
-              {!isSelected() ? (
-                <StopIcon className="w-[18px]" />
+          {!inProcess && (
+            <>
+              {!isChecked ? (
+                <button
+                  onClick={() => handleSelect(data)}
+                  className={`${classes.songListButton} block`}
+                >
+                  <StopIcon className="w-[18px] " />
+                </button>
               ) : (
-                <CheckIcon className="w-[18px]" />
+                <button
+                  onClick={() => handleSelect(data)}
+                  className={`${classes.songListButton} text-[inherit]`}
+                >
+                  {!isSelected() ? (
+                    <StopIcon className="w-[18px]" />
+                  ) : (
+                    <CheckIcon className="w-[18px]" />
+                  )}
+                </button>
               )}
-            </button>
+            </>
           )}
 
           {/* song image */}
@@ -86,7 +104,7 @@ const MobileSongItem = ({
             className="flex-grow flex"
             onClick={(e) => (isChecked ? handleSelect(data) : onClick(e))}
           >
-            <div className={`${classes.imageFrame}`}>
+            <div className={`${classes.imageFrame} ${inProcess ? "ml-[28px]" : ""} `}>
               <Image blurHashEncode={data.blurhash_encode} src={data.image_url} />
 
               {/* hidden when in process and in list */}
@@ -98,7 +116,7 @@ const MobileSongItem = ({
             </div>
 
             {/* song info */}
-            <div className="ml-[10px]">
+            <div className={`ml-[10px] ${inProcess ? "opacity-60" : ""}`}>
               <h5 className={`text-mg line-clamp-1 ${active && theme.content_text}`}>
                 {data.name}
               </h5>
@@ -106,11 +124,18 @@ const MobileSongItem = ({
                 {data.singer}
               </p>
             </div>
+
+            {inProcess && (
+              <p className="ml-auto self-center flex">
+                <ArrowPathIcon className="w-[20px] animate-spin mr-[4px]" />
+                in process...
+              </p>
+            )}
           </div>
         </div>
       </div>
     </>
   );
-};
+}
 
-export default MobileSongItem;
+export default forwardRef(MobileSongItem);

@@ -265,6 +265,6 @@ export const selectSongs = (
   }
   setSelectedSongs(list);
   if (!list.length) {
-    setIsChecked && setIsChecked(true);
+    setIsChecked && setIsChecked(false);
   }
 };

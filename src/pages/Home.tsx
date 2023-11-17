@@ -142,8 +142,8 @@ export default function HomePage() {
         </div>
       )}
       <div className="pb-[30px]">
-        <h3 className="text-[24px] font-bold mb-[10px]">Popular</h3>
-        <div className="flex flex-row flex-wrap -mx-[8px] mb-[30px]">
+        <h3 className="text-[24px] font-bold mb-[30px]">Popular</h3>
+        <div className="flex flex-row flex-wrap -mx-[8px] mb-[50px]">
           {/* admin playlist */}
           {useSongLoading && PlaylistSkeleton}
 
