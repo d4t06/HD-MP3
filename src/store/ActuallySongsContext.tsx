@@ -5,6 +5,7 @@ import {
    createContext,
    useContext,
    useEffect,
+   useRef,
    useState,
 } from "react";
 import { Song } from "../types";
@@ -43,6 +44,8 @@ const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
    const [actuallySongs, setActuallySongs] = useState<Song[]>([]);
    const [songsList, setSongsList] = useState<Song[]>([]);
 
+   const prevAcctuallySongs = useRef<Song[]>([]);
+
    // play in songs then play in playlist
    // play in playlist then add song to playlis
    // play in songs then user add new song
@@ -51,19 +54,25 @@ const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
 
       if (!songInStore.name) return;
 
-      if (songInStore.song_in.includes("playlist")) {
-         console.log("set actually songs");
+      if (
+         actuallySongs.length &&
+         prevAcctuallySongs.current.length !== actuallySongs.length
+      ) {
+         console.log("set actually songs === actual songs");
          setSongsList(actuallySongs);
+
+         prevAcctuallySongs.current = actuallySongs;
          return;
       }
 
-      if (songInStore.song_in === "admin") {
-         setSongsList(adminSongs);
-      } else {
-         setSongsList(userSongs);
-      }
-      console.log("set actually songs");
-   }, [songInStore.song_in, initial, actuallySongs, userSongs]);
+      // if (songInStore.song_in === "admin") {
+      //    console.log("set actually songs === admin songs");
+      //    setSongsList(adminSongs);
+      // } else {
+      //    console.log("set actually songs === user songs");
+      //    setSongsList(userSongs);
+      // }
+   }, [initial, actuallySongs, userSongs]);
 
    return (
       <ActuallySongsContext.Provider

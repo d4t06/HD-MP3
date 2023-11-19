@@ -21,7 +21,6 @@ import {
    AddSongsToPlaylist,
    Modal,
    ConfirmModal,
-   SongItem,
    BackBtn,
    SongList,
 } from "../components";
@@ -29,7 +28,6 @@ import {
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { SongItemSkeleton } from "../components/skeleton";
 import EditPlaylist from "../components/modals/EditPlaylist";
-import { Link } from "react-router-dom";
 
 export default function DashboardPlaylist() {
    // *** store
@@ -49,7 +47,7 @@ export default function DashboardPlaylist() {
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
    const [isChecked, setIsChecked] = useState(false);
 
-   //  *** use hooks
+   // use hooks
    const {
       deletePlaylist,
       loading: playlistActionLoading,
@@ -128,37 +126,6 @@ export default function DashboardPlaylist() {
       buttonAddSongContainer: "w-full text-center mt-[30px]",
    };
 
-   // playlistSongs, songInStore, isCheckedSong, selectedSong, isOpenModal
-   // const renderPlaylistSongs = useMemo(() => {
-   //    return playlistSongs.map((song, index) => {
-   //       return (
-   //          <SongItem
-   //             key={index}
-   //             action="full"
-   //             setSelectedSongs={setSelectedSongs}
-   //             setUserSongs={setPlaylistSongs}
-   //             inAdmin={true}
-   //             isChecked={isChecked && !isOpenModal}
-   //             setIsChecked={setIsChecked}
-   //             selectedSongs={selectedSongs}
-   //             deleteFromPlaylist={deleteFromPlaylist}
-   //             theme={theme}
-   //             active={false}
-   //             data={song}
-   //             inPlaylist
-   //          />
-   //       );
-   //    });
-   // }, [
-   //    playlistInStore.name,
-   //    songInStore,
-   //    playlistSongs,
-   //    isChecked,
-   //    selectedSongs,
-   //    isOpenModal,
-   // ]);
-
-   // for define skeleton
    const playlistSkeleton = (
       <div className="flex">
          <div className="w-1/4 ">
@@ -287,8 +254,7 @@ export default function DashboardPlaylist() {
             {!usePlaylistLoading && !!playlistSongs.length && (
                <SongList
                   inAdmin
-                  action="full"
-                  setPlaylistSongs={setPlaylistSongs}
+                  inPlaylist={playlistInStore}
                   songs={playlistSongs}
                   handleSetSong={() => {}}
                   isChecked={isChecked}

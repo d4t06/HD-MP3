@@ -8,6 +8,7 @@ export type User = {
    song_ids: string[];
    like_song_ids: string[];
    like_playlist_ids: string[];
+   play_history: string[];
    role: string;
    song_count: number;
    latest_seen: Timestamp;

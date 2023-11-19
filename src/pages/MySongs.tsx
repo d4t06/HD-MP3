@@ -1,4 +1,10 @@
-import { PlusCircleIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+   PlusCircleIcon,
+   QueueListIcon,
+   StopIcon,
+   TrashIcon,
+   XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { ReactNode, useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,6 +20,7 @@ import {
    useAuthStore,
    setSong,
    useUpload,
+   useActuallySongs,
 } from "../store";
 
 // utils
@@ -37,8 +44,14 @@ import {
 import { routes } from "../routes";
 import { SongItemSkeleton, PlaylistSkeleton } from "../components/skeleton";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { sleep } from "../utils/appHelpers";
+import { SongWithSongIn } from "../store/SongSlice";
 
 type ModalName = "addPlaylist" | "confirm";
+type Tab = "mine" | "favorite";
+const TAB: Array<Tab> = ["mine", "favorite"];
 
 export default function MySongsPage() {
    // use store
@@ -59,12 +72,18 @@ export default function MySongsPage() {
    const [isChecked, setIsChecked] = useState(false);
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
+   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
+   const [songLoading, setSongLoading] = useState(false);
+
    // use hooks
    const { theme } = useTheme();
    const navigate = useNavigate();
+   const { actuallySongs, setActuallySongs } = useActuallySongs();
    const { setErrorToast, setSuccessToast } = useToast();
    const { tempSongs, addedSongIds, status } = useUpload();
    const { loading: initialLoading, errorMsg, initial } = useSongs({});
+
+   const [songTab, setSongTab] = useState<Tab>("mine");
 
    // define callback functions
    const handleOpenModal = (name: ModalName) => {
@@ -72,11 +91,72 @@ export default function MySongsPage() {
       setOpenModal(true);
    };
 
-   const handleSetSong = (song: Song, index: number) => {
-      // when user play playlist then play user songs
-      if (songInStore.id !== song.id || songInStore.song_in !== "user") {
+   const handleGetFavorite = async () => {
+      if (!userInfo.like_song_ids.length) {
+         setErrorToast({});
+         return;
+      }
+
+      try {
+         console.log("get favorite songs");
+
+         const queryGetFavorites = query(
+            collection(db, "songs"),
+            where("id", "in", userInfo.like_song_ids)
+         );
+         const favoritesSnap = await getDocs(queryGetFavorites);
+
+         if (favoritesSnap.docs.length) {
+            const favorites = favoritesSnap.docs.map(
+               (s) => ({ ...s.data(), song_in: "favorite" } as SongWithSongIn)
+            );
+
+            setFavoriteSongs(favorites);
+         }
+      } catch (error) {
+         console.log("error");
+      } finally {
+         setSongLoading(false);
+      }
+   };
+
+   const handleSetTab = async (name: Tab) => {
+      setSongTab(name);
+      setSongLoading(true);
+      if (name === "favorite") await handleGetFavorite();
+      else {
+         await sleep(300);
+         setSongLoading(false);
+      }
+   };
+
+   const handleSetFavoriteSong = (song: Song, index: number) => {
+      if (
+         songInStore.song_in !== "favorite" ||
+         actuallySongs.length !== favoriteSongs.length
+      ) {
+         setActuallySongs(favoriteSongs);
+      }
+
+      if (songInStore.id !== song.id) {
          dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
       }
+   };
+
+   const handleSetSong = (song: Song, index: number) => {
+      // when user play playlist then play user songs
+      if (songInStore.song_in !== "user" || actuallySongs.length !== userSongs.length) {
+         setActuallySongs(userSongs);
+      }
+
+      if (songInStore.id !== song.id) {
+         dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
+      }
+   };
+
+   const handleSelectAll = () => {
+      if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
+      else setSelectedSongs([]);
    };
 
    const songCount = useMemo(() => {
@@ -93,12 +173,12 @@ export default function MySongsPage() {
       setLoading(false);
       setOpenModal(false);
    };
+   const addSongsToQueue = () => {
+      const newQueue = [...actuallySongs, ...selectedSongs];
+      setActuallySongs(newQueue);
 
-   const handleSelectAll = () => {
-      if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
-      else setSelectedSongs([]);
+      resetCheckedList();
    };
-   // selectedSongs.length ? setSelectedSongs([]) : setSelectedSongs(userSongs);
 
    const handleDeleteSelectedSong = async () => {
       const newUserSongs = [...userSongs];
@@ -129,12 +209,6 @@ export default function MySongsPage() {
       }
    };
 
-   // define classes
-   const classes = {
-      button: `${theme.content_bg} rounded-full`,
-      songItemContainer: `w-full border-b border-${theme.alpha}`,
-   };
-
    // define modals
    const ModalPopup: Record<ModalName, ReactNode> = {
       addPlaylist: (
@@ -161,29 +235,34 @@ export default function MySongsPage() {
       }
    }, [userInfo.status, initial]);
 
+   useEffect(() => {
+      if (!userInfo.like_song_ids.length) {
+         if (songTab === "favorite") setSongTab("mine");
+      }
+   }, [userInfo.like_song_ids]);
+
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
    return (
       <>
          <div className="pb-[30px] ">
-            <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
+            <h3 className="text-[24px] font-bold mb-[10px]">Playlist</h3>
+
             <div className="flex flex-row flex-wrap -mx-[8px]">
                {!!userPlaylists.length &&
                   !initialLoading &&
                   userPlaylists.map((playlist, index) => {
                      const active =
-                        playlistInStore.id === playlist.id &&
-                        isPlaying &&
-                        songInStore.song_in.includes("playlist");
+                        isPlaying && songInStore.song_in.includes(playlist.id);
                      return (
-                        <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
+                        <div key={index} className="w-1/4 px-[8px] max-[549px]:w-1/2">
                            <PlaylistItem active={active} theme={theme} data={playlist} />
                         </div>
                      );
                   })}
                {initialLoading && PlaylistSkeleton}
                {
-                  <div className="w-1/4 p-[8px] max-[549px]:w-1/2 mb-[25px]">
+                  <div className="w-1/4 px-[8px] max-[549px]:w-1/2 mb-[25px]">
                      <Empty
                         theme={theme}
                         className="pt-[100%]"
@@ -197,15 +276,15 @@ export default function MySongsPage() {
          {/* song list */}
          <div className="pb-[30px] max-[549px]:pb-[80px]">
             {/* title */}
-            <div className="flex justify-between">
+            <div className="flex items-center justify-between">
                {/* for upload song */}
-               <h3 className="text-2xl font-bold">Songs</h3>
+               <h3 className="text-[24px] font-bold">Songs</h3>
                <label
                   className={`${theme.content_bg} ${
                      status === "uploading" || initialLoading
                         ? "opacity-60 pointer-events-none"
                         : ""
-                  } items-center rounded-full flex px-[20px] py-[4px] cursor-pointer`}
+                  } items-center hover:opacity-60 rounded-full flex px-[16px] py-[4px] cursor-pointer`}
                   htmlFor="song_upload"
                >
                   <PlusCircleIcon className="w-[20px] mr-[5px]" />
@@ -215,13 +294,19 @@ export default function MySongsPage() {
 
             {/* song list */}
             <div
-               className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[60px]`}
+               className={`flex gap-[12px] items-center h-[60px] border-b border-${theme.alpha}`}
             >
                {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
 
+               {isChecked && (
+                  <button onClick={handleSelectAll} className="ml-[10px]">
+                     <StopIcon className="w-[18px]" />
+                  </button>
+               )}
+
                {/* checked song */}
                {!initialLoading && (
-                  <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
+                  <p className="text-[14px] w-[100px]">
                      {!isChecked
                         ? (songCount ? songCount : 0) + " songs"
                         : selectedSongs.length + " selected"}
@@ -230,46 +315,78 @@ export default function MySongsPage() {
                {isChecked && userSongs.length && (
                   <>
                      <Button
-                        onClick={handleSelectAll}
-                        variant={"primary"}
-                        className={classes.button}
+                        onClick={addSongsToQueue}
+                        variant={"outline"}
+                        size={"small"}
+                        className={`border-${theme.alpha} ${theme.side_bar_bg}`}
                      >
-                        All
+                        <QueueListIcon className="w-[20px] mr-[4px]" />
+                        Add to songs queue
                      </Button>
+
                      <Button
                         onClick={() => handleOpenModal("confirm")}
-                        variant={"primary"}
-                        className={classes.button}
+                        variant={"outline"}
+                        size={"small"}
+                        className={`border-${theme.alpha} ${theme.side_bar_bg}`}
                      >
-                        <TrashIcon className="w-[20px]" />
+                        <TrashIcon className="w-[20px] mr-[4px]" />
+                        Delete
                      </Button>
-                     <Button
-                        onClick={() => {
-                           setIsChecked(false);
-                           setSelectedSongs([]);
-                        }}
-                        className={`px-[5px]`}
-                     >
-                        <XMarkIcon className="w-[25px]" />
+
+                     <Button onClick={resetCheckedList} className={`px-[5px]`}>
+                        <XMarkIcon className="w-[20px]" />
                      </Button>
                   </>
                )}
             </div>
-            <div className="min-h-[50vh]">
-               {initialLoading && SongItemSkeleton}
 
-               {!!songCount && !initialLoading && (
-                  <SongList
-                     handleSetSong={handleSetSong}
-                     activeExtend={songInStore.song_in === "user"}
-                     isChecked={isChecked}
-                     setIsChecked={setIsChecked}
-                     setSelectedSongs={setSelectedSongs}
-                     selectedSongs={selectedSongs}
-                     songs={userSongs}
-                     tempSongs={tempSongs}
-                     addedSongIds={addedSongIds}
-                  />
+            <div className={`flex items-center gap-[10px] my-[14px]`}>
+               {TAB.map((tab, index) => {
+                  const active = songTab === tab;
+                  return (
+                     <button
+                        key={index}
+                        onClick={() => handleSetTab(tab)}
+                        className={`text-[14px] font-[500] px-[10px]  py-[4px] rounded-[99px] ${
+                           active ? theme.content_bg : `${theme.content_border} border`
+                        } ${
+                           !active && !userInfo.like_song_ids.length
+                              ? "opacity-[.2] pointer-events-none"
+                              : ""
+                        }`}
+                     >
+                        {tab === "mine" ? "My songs" : "Favorite"}
+                     </button>
+                  );
+               })}
+            </div>
+            <div className="min-h-[50vh]">
+               {initialLoading || (songLoading && SongItemSkeleton)}
+
+               {!!songCount && !initialLoading && !songLoading && (
+                  <>
+                     {songTab === "mine" ? (
+                        <SongList
+                           handleSetSong={handleSetSong}
+                           activeExtend={songInStore.song_in === "user"}
+                           isChecked={isChecked}
+                           setIsChecked={setIsChecked}
+                           setSelectedSongs={setSelectedSongs}
+                           selectedSongs={selectedSongs}
+                           songs={userSongs}
+                           tempSongs={tempSongs}
+                           addedSongIds={addedSongIds}
+                        />
+                     ) : (
+                        <SongList
+                           activeExtend={songInStore.song_in === "favorite"}
+                           handleSetSong={handleSetFavoriteSong}
+                           isChecked={isChecked}
+                           songs={favoriteSongs}
+                        />
+                     )}
+                  </>
                )}
             </div>
          </div>

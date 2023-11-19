@@ -35,7 +35,6 @@ function App() {
             </Routes>
          </Router>
          <ToastPortal autoClose />
-         <UploadSongPortal />
       </>
    );
 }

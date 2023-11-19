@@ -49,3 +49,4 @@ export {default as PlaylistList} from './modals/PlaylistList'
 
 
 export {default as UploadSongPortal} from './UploadSongPortal'
+export {default as SongItemList} from './SongList'

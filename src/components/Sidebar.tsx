@@ -4,6 +4,7 @@ import {
    ArrowLeftOnRectangleIcon,
    MusicalNoteIcon,
    ComputerDesktopIcon,
+   HeartIcon,
 } from "@heroicons/react/24/outline";
 import {
    useFloating,
@@ -148,20 +149,12 @@ export default function Sidebar() {
                      </Button>
                   </Link>
                   {loggedInUser?.email ? (
-                     <>
-                        <Link className="w-full" to={routes.MySongs}>
-                           <Button className={classes.button}>
-                              <MusicalNoteIcon className={classes.icon} />
-                              My songs
-                           </Button>
-                        </Link>
-                        {/* <Link className="w-full" to={routes.MySongs}>
-                           <Button className={classes.button}>
-                              <MusicalNoteIcon className={classes.icon} />
-                              Favorite
-                           </Button>
-                        </Link> */}
-                     </>
+                     <Link className="w-full" to={routes.MySongs}>
+                        <Button className={classes.button}>
+                           <MusicalNoteIcon className={classes.icon} />
+                           My Song
+                        </Button>
+                     </Link>
                   ) : (
                      <Button onClick={handleLogIn} className={classes.button}>
                         <ArrowLeftOnRectangleIcon className={classes.icon} />
@@ -208,11 +201,7 @@ export default function Sidebar() {
          )}
 
          {isOpenModal && (
-            <Modal
-               classNames={modalName.current === "theme" ? "w-[900px] max-w-[90vw]" : ""}
-               theme={theme}
-               setOpenModal={setIsOpenModal}
-            >
+            <Modal theme={theme} setOpenModal={setIsOpenModal}>
                {modalName.current === "confirm" && (
                   <ConfirmModal
                      setOpenModal={setIsOpenModal}

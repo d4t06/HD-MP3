@@ -6,11 +6,11 @@ import { Playlist, Song, User } from "../types";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { useAuthStore } from "../store/AuthContext";
-// import { testSongs } from "./songs";
 import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
-// import { testSongs } from "./songs";
+import { testPlaylists, testSongs } from "./songs";
+import { SongIn, SongWithSongIn } from "../store/SongSlice";
 
 export default function useSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -19,9 +19,6 @@ export default function useSong({ admin }: { admin?: boolean }) {
    const { initial, initSongsContext } = useSongsStore();
 
    const [errorMsg, setErrorMsg] = useState<string>("");
-   // const [loading, setLoading] = useState(
-   //    adminSongs.length || userSongs.length ? false : true
-   // );
    const [loading, setLoading] = useState(true);
 
    const hasRanInitFinish = useRef(true);
@@ -42,7 +39,9 @@ export default function useSong({ admin }: { admin?: boolean }) {
       const songsSnap = await getDocs(queryGetAdminSongs);
 
       if (songsSnap.docs) {
-         const songs = songsSnap.docs.map((doc) => doc.data() as Song);
+         const songs = songsSnap.docs.map(
+            (doc) => ({ ...doc.data(), song_in: "admin" } as SongWithSongIn)
+         );
 
          return songs;
       }
@@ -74,13 +73,15 @@ export default function useSong({ admin }: { admin?: boolean }) {
             const fullUserInfo = userSnapShot.data() as User;
 
             setUserInfo({
-               latest_seen: fullUserInfo.latest_seen,
-               song_ids: fullUserInfo.song_ids,
-               song_count: fullUserInfo.song_count,
-               playlist_ids: fullUserInfo.playlist_ids,
-               role: fullUserInfo.role,
-               like_song_ids: fullUserInfo.like_song_ids,
-               like_playlist_ids: fullUserInfo.like_playlist_ids
+               ...fullUserInfo
+               // latest_seen: fullUserInfo.latest_seen,
+               // song_ids: fullUserInfo.song_ids,
+               // song_count: fullUserInfo.song_count,
+               // playlist_ids: fullUserInfo.playlist_ids,
+               // role: fullUserInfo.role,
+               // like_song_ids: fullUserInfo.like_song_ids,
+               // like_playlist_ids: fullUserInfo.like_playlist_ids,
+               // play_history: fullUserInfo.play_history
             });
 
             return fullUserInfo;
@@ -119,7 +120,9 @@ export default function useSong({ admin }: { admin?: boolean }) {
 
          const songsSnapshot = await getDocs(queryGetUserSongs);
          if (songsSnapshot.docs.length) {
-            const songs = songsSnapshot.docs.map((doc) => doc.data() as Song);
+            const songs = songsSnapshot.docs.map(
+               (doc) => ({ ...doc.data(), song_in: "user" } as SongWithSongIn)
+            );
             return songs;
          }
       } catch (error) {
@@ -131,7 +134,7 @@ export default function useSong({ admin }: { admin?: boolean }) {
    // get user songs
    const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
       try {
-         const userData: { userSongs: Song[]; userPlaylists: Playlist[] } = {
+         const userData: { userSongs: SongWithSongIn[]; userPlaylists: Playlist[] } = {
             userSongs: [],
             userPlaylists: [],
          };
@@ -163,21 +166,15 @@ export default function useSong({ admin }: { admin?: boolean }) {
          const adminSongs = await getAdminSongs();
          const adminPlaylists = await getAdminPLaylist();
 
-
-         // console.log(adminSongs);
-         // console.log(adminPlaylists);
-         
          // case no logged in
          if (!userInfo.email || admin) {
             console.log(">>> run initial, no user");
 
-            await sleep(1000);
+            await sleep(300);
 
             initSongsContext({
                adminSongs,
                adminPlaylists,
-               userPlaylists: [],
-               userSongs: [],
             });
 
             setLoading(false);
@@ -192,15 +189,13 @@ export default function useSong({ admin }: { admin?: boolean }) {
 
             const userData = await getUserSongsAndPlaylists(fullUserInfo);
 
-            console.log('user data', userData);
-            
+            // console.log("user data", userData);
+
             // update songs context
             initSongsContext({ ...userData, adminSongs, adminPlaylists });
          }
 
-         // //  case logged
          // await sleep(1000);
-         // const fullUserInfo = (await getAndSetFullUserInfo()) as User;
 
          // setUserInfo({
          //    latest_seen: fullUserInfo.latest_seen,
@@ -211,6 +206,8 @@ export default function useSong({ admin }: { admin?: boolean }) {
          // });
          // initSongsContext({
          //    userSongs: testSongs,
+         //    userPlaylists: testPlaylists,
+         //    adminPlaylists: testPlaylists,
          //    adminSongs: testSongs,
          // });
       } catch (error) {
@@ -249,7 +246,7 @@ export default function useSong({ admin }: { admin?: boolean }) {
          return;
       } else if (initial) {
          console.log("Already init");
- 
+
          setTimeout(() => setLoading(false), appConfig.loadingDuration);
          return;
       }

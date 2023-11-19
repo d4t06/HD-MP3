@@ -8,16 +8,16 @@ import {
    MobileBottomPlayer,
 } from "../components";
 import { selectAllSongStore } from "../store/SongSlice";
+import SongQueue from "./SongQueue";
 // import useIdle from "../hooks/useIdle";
 // import  appConfig from '../config/app'
 
-interface PlayerProps {}
-
-const Player: FC<PlayerProps> = () => {
+const Player = ({ admin }: { admin?: boolean }) => {
    const songStore = useSelector(selectAllSongStore);
 
    const { song: songInStore } = songStore;
    const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
+   const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
 
    const [isHasAudioEle, setIsHasAudioEle] = useState(false);
 
@@ -29,17 +29,26 @@ const Player: FC<PlayerProps> = () => {
 
    const desktopContent = (
       <>
-         <FullScreenPlayer
-            audioEle={audioRef.current as HTMLAudioElement}
-            idle={false}
-            isOpenFullScreen={isOpenFullScreen}
-            setIsOpenFullScreen={setIsOpenFullScreen}
+         {!admin && (
+            <FullScreenPlayer
+               audioEle={audioRef.current as HTMLAudioElement}
+               idle={false}
+               isOpenFullScreen={isOpenFullScreen}
+               setIsOpenFullScreen={setIsOpenFullScreen}
+            />
+         )}
+         <SongQueue
+            isOpenSongQueue={isOpenSongQueue}
+            setIsOpenSongQueue={setIsOpenSongQueue}
          />
 
          <BottomPlayer
+            admin={admin}
             audioEle={audioRef.current as HTMLAudioElement}
             idle={false && isOpenFullScreen}
             isOpenFullScreen={isOpenFullScreen}
+            isOpenSongQueue={isOpenSongQueue}
+            setIsOpenSongQueue={setIsOpenSongQueue}
             setIsOpenFullScreen={setIsOpenFullScreen}
          />
       </>

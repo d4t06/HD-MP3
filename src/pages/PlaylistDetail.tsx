@@ -3,6 +3,8 @@ import {
    PencilSquareIcon,
    PlayIcon,
    PlusCircleIcon,
+   QueueListIcon,
+   StopIcon,
    TrashIcon,
    XMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -13,7 +15,7 @@ import { useMemo, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 
-import { Status } from "../store/SongSlice";
+import { SongIn } from "../store/SongSlice";
 import {
    useTheme,
    useSongsStore,
@@ -55,11 +57,11 @@ export default function PlaylistDetail() {
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
    const [modalComponent, setModalComponent] = useState<ModalName>();
 
-   //  *** use hooks
+   // use hooks
    const params = useParams();
    const { theme } = useTheme();
    const { setErrorToast } = useToast();
-   const { setActuallySongs } = useActuallySongs();
+   const { setActuallySongs, actuallySongs } = useActuallySongs();
    const {
       deletePlaylist,
       loading: playlistActionLoading,
@@ -83,11 +85,7 @@ export default function PlaylistDetail() {
          songInStore.id !== song.id ||
          !songInStore.song_in.includes(playlistInStore.name)
       ) {
-         const newSongIn: Status["song_in"] =
-            playlistInStore.by === "admin"
-               ? `admin-playlist-${playlistInStore.name as string}`
-               : `user-playlist-${playlistInStore.name as string}`;
-
+         const newSongIn: SongIn = `playlist_${playlistInStore.id}`;
          dispatch(
             setSong({
                ...song,
@@ -100,6 +98,25 @@ export default function PlaylistDetail() {
             setActuallySongs(playlistSongs);
          }
       }
+   };
+
+   
+
+   const handleSelectAll = () => {
+      if (selectedSongs.length < playlistSongs.length) setSelectedSongs(playlistSongs);
+      else setSelectedSongs([]);
+   };
+
+   const resetCheckedList = () => {
+      setSelectedSongs([]);
+      setIsChecked(false);
+   };
+
+   const addSongsToQueue = () => {
+      const newQueue = [...actuallySongs, ...selectedSongs];
+      setActuallySongs(newQueue);
+
+      resetCheckedList();
    };
 
    const handlePlayPlaylist = () => {
@@ -170,7 +187,7 @@ export default function PlaylistDetail() {
       infoTop: "flex justify-center items-center gap-[8px] md:flex-col md:items-start",
       songListContainer:
          "h-[50px] mb-[10px] flex gap-[20px] max-[549px]:gap-[12px] items-center border-b",
-      countSongText: "text-[14px]] font-semibold text-gray-500 w-[100px] leading-[1]",
+      countSongText: "text-[14px]] font-semibold text-gray-500 w-[90px] leading-[1]",
       ctaContainer: `flex justify-center gap-[12px] md:justify-start`,
       buttonAddSongContainer: "w-full text-center mt-[30px]",
    };
@@ -268,7 +285,13 @@ export default function PlaylistDetail() {
          {/* songs list */}
          <div className="pb-[50px] mt-[30px]">
             <div className={`${classes.songListContainer} border-${theme.alpha}`}>
-               {usePlaylistLoading && <Skeleton className="h-[16px] w-[100px]" />}
+               {usePlaylistLoading && <Skeleton className="h-[16px] w-[90px]" />}
+
+               {isChecked && (
+                  <button onClick={handleSelectAll} className="ml-[10px]">
+                     <StopIcon className="w-[18px]" />
+                  </button>
+               )}
 
                {!usePlaylistLoading && (
                   <p className={classes.countSongText}>
@@ -277,33 +300,34 @@ export default function PlaylistDetail() {
                         : selectedSongs.length + " selected"}
                   </p>
                )}
-               {isChecked && userSongs.length && (
+
+               {isChecked && selectedSongs.length && (
                   <>
                      <Button
-                        onClick={() => setSelectedSongs(playlistSongs)}
-                        variant={"primary"}
-                        className={classes.button}
+                        onClick={addSongsToQueue}
+                        variant={"outline"}
+                        size={"small"}
+                        className={`border-${theme.alpha} ${theme.side_bar_bg}`}
                      >
-                        All
+                        <QueueListIcon className="w-[20px] mr-[4px]" />
+                        Add to songs queue
                      </Button>
-                     <Button
-                        onClick={() => handleDeleteManyFromPlaylist()}
-                        variant={"primary"}
-                        className={classes.button}
-                     >
-                        {playlistActionLoading ? (
-                           <ArrowPathIcon className="w-[20px] animate-spin" />
-                        ) : (
-                           "Remove"
-                        )}
-                     </Button>
-                     <Button
-                        onClick={() => {
-                           setIsChecked(false);
-                           setSelectedSongs([]);
-                        }}
-                        className={`p-[5px]`}
-                     >
+
+                     {playlistInStore.by !== "admin" && (
+                        <Button
+                           onClick={() => handleDeleteManyFromPlaylist()}
+                           variant={"primary"}
+                           className={classes.button}
+                        >
+                           {playlistActionLoading ? (
+                              <ArrowPathIcon className="w-[20px] animate-spin" />
+                           ) : (
+                              "Remove"
+                           )}
+                        </Button>
+                     )}
+
+                     <Button onClick={resetCheckedList} className={`px-[5px]`}>
                         <XMarkIcon className="w-[20px]" />
                      </Button>
                   </>
@@ -320,9 +344,11 @@ export default function PlaylistDetail() {
                         songs={playlistSongs}
                         inPlaylist={playlistInStore}
                         handleSetSong={handleSetSong}
-                        setIsChecked={() => {}}
-                        setSelectedSongs={() => {}}
-                        activeExtend={songInStore.song_in.includes(playlistInStore.name)}
+                        setIsChecked={setIsChecked}
+                        setSelectedSongs={setSelectedSongs}
+                        isChecked={isChecked}
+                        selectedSongs={selectedSongs}
+                        activeExtend={songInStore.song_in.includes(playlistInStore.id)}
                      />
                   ) : (
                      <SongList

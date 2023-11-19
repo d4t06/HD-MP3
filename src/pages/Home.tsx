@@ -6,6 +6,7 @@ import {
    InformationCircleIcon,
    MusicalNoteIcon,
    PaintBrushIcon,
+   QueueListIcon,
    XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Song } from "../types";
@@ -16,6 +17,7 @@ import {
    useTheme,
    useSongsStore,
    useAuthStore,
+   useActuallySongs,
 } from "../store";
 import {
    Button,
@@ -41,27 +43,40 @@ import Skeleton, {
 } from "../components/skeleton";
 
 import { useAuthActions } from "../store/AuthContext";
+import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 
 export default function HomePage() {
    // use store
    const dispatch = useDispatch();
    const [loggedInUser, loading] = useAuthState(auth);
+
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
    const { adminSongs, adminPlaylists } = useSongsStore();
    const { loading: useSongLoading } = useSongs({});
    const { song: songInStore } = useSelector(selectAllSongStore);
+   const {
+      playStatus: { isPlaying },
+   } = useSelector(selectAllPlayStatusStore);
+
+   // states
+   const [isOpenModal, setIsOpenModal] = useState(false);
+   const [isChecked, setIsChecked] = useState(false);
+   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
+
+   // ref
+   const modalName = useRef<"theme" | "info" | "confirm" | "addSongToPlaylist">("theme");
 
    // use hooks
    const { logIn, logOut } = useAuthActions();
-
-   // component states
-   const [isOpenModal, setIsOpenModal] = useState(false);
-   // for mobile
-   const modalName = useRef<"theme" | "info" | "confirm" | "addSongToPlaylist">("theme");
+   const { actuallySongs, setActuallySongs } = useActuallySongs();
 
    // define callback functions
    const handleSetSong = (song: Song, index: number) => {
+      if (songInStore.song_in !== "admin") {
+         setActuallySongs(adminSongs);
+      }
+
       if (songInStore.id === song.id) return;
       dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
    };
@@ -92,6 +107,18 @@ export default function HomePage() {
    const handleOpenModal = (name: typeof modalName.current) => {
       modalName.current = name;
       setIsOpenModal(true);
+   };
+
+   const resetCheckedList = () => {
+      setSelectedSongs([]);
+      setIsChecked(false);
+   };
+
+   const addSongsToQueue = () => {
+      const newQueue = [...actuallySongs, ...selectedSongs];
+      setActuallySongs(newQueue);
+
+      resetCheckedList();
    };
 
    // define styles
@@ -146,18 +173,53 @@ export default function HomePage() {
             </div>
          )}
          <div className="pb-[30px]">
-            <h3 className="text-[24px] font-bold mb-[30px]">Popular</h3>
-            <div className="flex flex-row flex-wrap -mx-[8px] mb-[50px]">
+            <h3 className="text-[24px] font-bold mb-[14px]">Popular</h3>
+            <div className="flex flex-row flex-wrap -mx-[8px] mb-[30px]">
                {/* admin playlist */}
                {useSongLoading && PlaylistSkeleton}
 
                {!useSongLoading &&
                   !!adminPlaylists.length &&
-                  adminPlaylists.map((playList, index) => (
+                  adminPlaylists.map((playlist, index) => (
                      <div key={index} className="w-1/4 px-[8px]">
-                        <PlaylistItem theme={theme} data={playList} />
+                        <PlaylistItem
+                           active={isPlaying && songInStore.song_in.includes(playlist.id)}
+                           theme={theme}
+                           data={playlist}
+                        />
                      </div>
                   ))}
+            </div>
+
+            <div className="h-[30px] mb-[10px] flex items-center gap-[10px]">
+               <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>
+
+               {isChecked && (
+                  <p className="text-[13px] font-medium">
+                     {selectedSongs.length + " selected"}
+                  </p>
+               )}
+               {isChecked && selectedSongs.length && (
+                  <>
+                     <Button
+                        onClick={addSongsToQueue}
+                        variant={"outline"}
+                        size={"small"}
+                        className={`border-${theme.alpha} ${theme.side_bar_bg}`}
+                     >
+                        <QueueListIcon className="w-[20px] mr-[4px]" />
+                        Add to songs queue
+                     </Button>
+
+                     <Button
+                        variant={"circle"}
+                        onClick={resetCheckedList}
+                        className={`p-[4px] border border-${theme.alpha} ${theme.side_bar_bg}`}
+                     >
+                        <XMarkIcon className="w-[20px]" />
+                     </Button>
+                  </>
+               )}
             </div>
 
             {/* admin song */}
@@ -167,6 +229,10 @@ export default function HomePage() {
                <>
                   {!!adminSongs.length ? (
                      <SongList
+                        isChecked={isChecked}
+                        setIsChecked={setIsChecked}
+                        selectedSongs={selectedSongs}
+                        setSelectedSongs={setSelectedSongs}
                         handleSetSong={handleSetSong}
                         activeExtend={songInStore.song_in === "admin"}
                         songs={adminSongs}

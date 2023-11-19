@@ -58,6 +58,11 @@
 - Thêm status repeat shuffle vào redux store thay vì
 
 
+### update thứ 7 17/11/2023
+- Sửa lỗi scroll text
+- Global upload
+
+
 ### Song
 - [y] upload
 - [y] edit

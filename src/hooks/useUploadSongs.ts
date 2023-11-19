@@ -201,7 +201,6 @@ export default function useUploadSongs({
             }
 
             // inti songItem to render to view
-            // setTempSongs(processSongsList);
             _setTempSongs(processSongsList);
 
             // upload song file, image file and get blurhash encode
@@ -299,15 +298,9 @@ export default function useUploadSongs({
             } else {
                finishAndClear("finish");
                // if upload gather than 1 file
-               if ((processSongsList.length = 1)) {
-                  setSuccessToast({
-                     message: `'${processSongsList[0].name}' uploaded`,
-                  });
-               } else {
-                  setSuccessToast({
-                     message: `${processSongsList.length} songs uploaded`,
-                  });
-               }
+               setSuccessToast({
+                  message: `${processSongsList.length} songs uploaded`,
+               });
             }
 
             const finish = Date.now();
@@ -401,11 +394,9 @@ export default function useUploadSongs({
                   });
 
                   // update new song list (include new song_url....)
-                  // setTempSongs(processSongsList);
                   _setTempSongs(processSongsList);
 
                   // update added song
-                  // setAddedSongIds((prev) => [...prev, song.id]);
                   _setAddedSongIds((prev) => [...prev, song.id]);
 
                   // when song uploaded

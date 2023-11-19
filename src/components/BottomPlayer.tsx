@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useRef } from "react";
 import {
    ChevronUpIcon,
+   QueueListIcon,
    SpeakerWaveIcon,
    SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
@@ -16,18 +17,25 @@ import zingIcon from "../assets/icon-zing.svg";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 
 interface Props {
-   isOpenFullScreen: boolean;
+   admin?: boolean;
    idle: boolean;
    audioEle: HTMLAudioElement;
+   isOpenFullScreen: boolean;
+   isOpenSongQueue: boolean;
    setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
+   setIsOpenSongQueue: Dispatch<SetStateAction<boolean>>;
 }
 
 export default function BottomPlayer({
    idle,
    audioEle,
+   admin,
 
    isOpenFullScreen,
    setIsOpenFullScreen,
+
+   isOpenSongQueue,
+   setIsOpenSongQueue,
 }: Props) {
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
@@ -46,6 +54,11 @@ export default function BottomPlayer({
    );
    const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
+   const handleOpenFullScreen = () => {
+      if (isOpenSongQueue) setIsOpenSongQueue(false);
+      setIsOpenFullScreen(true);
+   };
+
    // update process lines width
    useEffect(() => {
       volumeLineWidth.current = volumeLine.current?.offsetWidth;
@@ -53,7 +66,11 @@ export default function BottomPlayer({
 
    const classes = {
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
-      wrapper: `border-${theme.alpha} fixed bottom-0 w-full h-[90px] border-t transition-transform z-50 px-10`,
+      wrapper: `border-${
+         theme.alpha
+      } fixed bottom-0 w-full border-t transition-transform z-50 px-10 ${
+         admin ? "h-[60px]" : "h-[90px]"
+      }`,
       container: `flex flex-row gap-[10px] h-full items-stretch`,
 
       controlWrapper: `flex max-w-[400px] flex-grow`,
@@ -138,11 +155,14 @@ export default function BottomPlayer({
 
             {/* control */}
             <div
-               className={` ${classes.controlWrapper} ${classes.controlWrapperChild_1}  ${classes.controlWrapperChild_2}`}
+               className={` ${classes.controlWrapper} ${
+                  !admin ? classes.controlWrapperChild_1 : ""
+               }  ${classes.controlWrapperChild_2}`}
             >
                {useMemo(
                   () => (
                      <Control
+                        admin={admin}
                         audioEle={audioEle}
                         idle={false}
                         isOpenFullScreen={isOpenFullScreen}
@@ -175,15 +195,30 @@ export default function BottomPlayer({
                   </div>
                </div>
 
-               <Button
-                  onClick={() => setIsOpenFullScreen(true)}
-                  variant={"circle"}
-                  className={`h-[35px] w-[35px] p-[8px] ${
-                     songInStore.name ? "" : "opacity-20 pointer-events-none"
-                  }`}
-               >
-                  <ChevronUpIcon />
-               </Button>
+               {!admin && (
+                  <>
+                     <Button
+                        onClick={handleOpenFullScreen}
+                        variant={'circle'}
+                        className={`h-[35px] w-[35px] rounded-[99px] ${theme.side_bar_bg}  ${
+                           theme.content_hover_bg
+                        } p-[8px] ${
+                           songInStore.name ? "" : "opacity-20 pointer-events-none"
+                        }`}
+                     >
+                        <ChevronUpIcon />
+                     </Button>
+
+                     <Button
+                        onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
+                        className={`${theme.content_hover_bg} h-[35px] w-[35px] p-[8px] rounded-[4px] ${
+                           songInStore.name ? "" : "opacity-20 pointer-events-none"
+                        } ${isOpenSongQueue ? theme.content_bg : theme.side_bar_bg}`}
+                     >
+                        <QueueListIcon />
+                     </Button>
+                  </>
+               )}
             </div>
          </div>
       </div>

@@ -10,11 +10,7 @@ import { useSongs } from "../hooks";
 
 import { db } from "../config/firebase";
 import { Status } from "../store/SongSlice";
-import {
-   generatePlaylistAfterChangeSongs,
-   sleep,
-   updatePlaylistsValue,
-} from "../utils/appHelpers";
+import { generatePlaylistAfterChangeSongs, sleep } from "../utils/appHelpers";
 import { myGetDoc, mySetDoc } from "../utils/firebaseHelpers";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import {
@@ -67,16 +63,17 @@ export default function usePlaylistDetail({ admin }: Props) {
             msg: "Get playlist doc",
          });
 
-         if (playlistData.exists()) playlist = playlistData.data() as Playlist;
-         else throw new Error();
+         if (playlistData.exists()) {
+            playlist = playlistData.data() as Playlist;
 
-         if (playlist) {
             console.log(">>> local: set playlist");
             dispatch(setPlaylist(playlist));
             setSomeThingToTrigger(Math.random());
          } else {
             console.log("Playlist not found");
-            navigate("/");
+
+            if (admin) navigate("/dashboard");
+            else navigate("/");
          }
       } catch (error) {
          console.log(error);
@@ -111,7 +108,12 @@ export default function usePlaylistDetail({ admin }: Props) {
       const songsSnap = await getDocs(queryGetSongs);
 
       if (songsSnap.docs) {
-         const songs = songsSnap.docs.map((doc) => doc.data() as Song);
+         const songs = songsSnap.docs.map(
+            (doc) =>
+               ({ ...doc.data(), song_in: playlistInStore.id } as Song & {
+                  song_in: string;
+               })
+         );
          setPlaylistSongs(songs);
 
          // case actually song length do not match with data
@@ -148,17 +150,6 @@ export default function usePlaylistDetail({ admin }: Props) {
          data: newPlaylist,
          msg: ">>> api: update image_url playlist doc",
       });
-      // get new user playlist
-
-      // const newTargetPlaylists = admin ? adminPlaylists : userPlaylists;
-      // updatePlaylistsValue(newPlaylist, newTargetPlaylists);
-
-      // // *** admin case
-      // if (admin) setAdminPlaylists(newTargetPlaylists);
-      // // *** user case
-      // else setUserPlaylists(newTargetPlaylists, []);
-
-      // dispatch(setPlaylist(newPlaylist));
    };
 
    const handleUpdateActuallySongs = () => {

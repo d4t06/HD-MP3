@@ -4,6 +4,7 @@ import { useTheme } from "../../store";
 import { Playlist } from "../../types";
 import { Button } from "..";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import ModalHeader from "./ModalHeader";
 
 export default function EditPlaylist({
   playlist,
@@ -58,6 +59,8 @@ export default function EditPlaylist({
       onSubmit={handleEditPlaylist}
       className={`${classes.editContainer} ${loading ? "opacity-60 pointer-events-none" : ""}`}
     >
+      <ModalHeader setIsOpenModal={setIsOpenModal} title="Edit playlist" />
+
       <input
         ref={inputRef}
         value={playlistName}

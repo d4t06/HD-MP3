@@ -7,15 +7,16 @@ const buttonVariant = cva("inline-flex items-center hover:brightness-90", {
    variants: {
       variant: {
          default: '',
-         circle: "rounded-[99px] p-[4px] bg-gray-500 bg-opacity-20 text-xl",
+         circle: "rounded-[99px] p-[4px]",
          list: 'flex items-center py-[4px] w-full text-[14px]',
-         primary: 'px-[20px] py-[5px] text-[14px]'
+         primary: 'px-[16px] py-[4px] text-[14px]',
+         outline: `border rounded-full`
       },
       size: {
          half: "w-1/2",
          full: "w-full",
-         small:"h-[20px] w-[20px]",
-         normal: "h-[35px] w-[35px]",
+         small:"text-[13px] px-[10px] py-[3px]",
+         normal: "text-[14px] px-[16px] py-[4px]",
          large: "h-[40px] w-[40px]"
       },
    },

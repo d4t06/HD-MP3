@@ -1,12 +1,6 @@
 import { Timestamp } from "firebase/firestore";
 import { User } from "../types";
-import {
-   ReactNode,
-   createContext,
-   useCallback,
-   useContext,
-   useReducer,
-} from "react";
+import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import { setSong, useSongsStore } from ".";
@@ -17,7 +11,9 @@ import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useDispatch } from "react-redux";
 
 // 1 initial state
-type StateType = { userInfo: User & { status: "finish" | "loading" | "error" } };
+type StateType = {
+   userInfo: User & { status: "finish" | "loading" | "error" };
+};
 const initialState: StateType = {
    userInfo: {
       status: "loading",
@@ -26,6 +22,7 @@ const initialState: StateType = {
       role: "",
       song_count: 0,
       song_ids: [],
+      play_history: [],
       email: "",
       photoURL: "",
       like_playlist_ids: [],
@@ -44,6 +41,7 @@ type ReducerAction = {
    type: REDUCER_ACTION_TYPE;
    payload: {
       userInfo: Partial<StateType["userInfo"]>;
+      history_song_ids?: string[];
    };
 };
 
@@ -54,12 +52,14 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
 
          return {
             userInfo: { ...state.userInfo, ...action.payload.userInfo },
+            // history_song_ids: action.payload.history_song_ids || state.history_song_ids,
          };
       default:
          console.log("default case");
 
          return {
             userInfo: state.userInfo,
+            // history_song_ids: state.history_song_ids,
          };
    }
 };

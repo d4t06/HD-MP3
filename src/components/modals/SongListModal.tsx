@@ -5,6 +5,7 @@ import Button from "../ui/Button";
 import MobileSongItem from "../MobileSongItem";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import usePlaylistActions from "../../hooks/usePlaylistActions";
+import ModalHeader from "./ModalHeader";
 
 type Props = {
    admin?: boolean;
@@ -65,6 +66,7 @@ export default function SongList({
 
    return (
       <div className={classes.addSongContainer}>
+      <ModalHeader setIsOpenModal={setIsOpenModal} title="Add song to playlist" />
          <div className={classes.addSongContent}>
             <Button
                onClick={handleAddSongsToPlaylist}

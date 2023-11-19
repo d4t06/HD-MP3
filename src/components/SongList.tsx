@@ -1,18 +1,24 @@
-import { Dispatch, RefObject, SetStateAction, memo, useMemo } from "react";
+import { Dispatch, RefObject, SetStateAction, memo } from "react";
 import { Playlist, Song } from "../types";
-import { selectAllSongStore, useAuthStore, useSongsStore, useTheme } from "../store";
+import {
+   selectAllSongStore,
+   useActuallySongs,
+   useAuthStore,
+   useSongsStore,
+   useTheme,
+} from "../store";
 import { MobileSongItem, SongItem } from ".";
 import { useSelector } from "react-redux";
 import usePlaylistActions from "../hooks/usePlaylistActions";
+// import { SongWithSongIn } from "../store/SongSlice";
 
 type Props = {
    songs: Song[];
    tempSongs?: Song[];
    addedSongIds?: string[];
-   activeExtend: boolean;
+   activeExtend?: boolean;
    firstTempSongRef?: RefObject<HTMLDivElement>;
    handleSetSong: (song: Song, index: number) => void;
-   // action: 'full' | 'less'
    inAdmin?: boolean;
    inPlaylist?: Playlist;
    selectedSongs?: Song[];
@@ -20,6 +26,8 @@ type Props = {
    setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
    setIsChecked?: Dispatch<SetStateAction<boolean>>;
    deleteFromPlaylist?: (song: Song) => Promise<void>;
+   inQueue?: boolean;
+   inHistory?: boolean;
 };
 
 // remove song from playlist need playlist songs prop => pass as prop
@@ -35,6 +43,8 @@ function SongList({
    tempSongs = [],
    addedSongIds = [],
    firstTempSongRef,
+   inQueue,
+   inHistory,
 
    // isChecked,
    // selectedSongs,
@@ -55,6 +65,7 @@ function SongList({
    } = useSongsStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { addSongToPlaylistSongItem } = usePlaylistActions({ admin: inAdmin });
+   const { actuallySongs, setActuallySongs } = useActuallySongs();
 
    const renderTempSongsList = () => {
       return tempSongs.map((song, index) => {
@@ -63,22 +74,8 @@ function SongList({
             return condition;
          });
 
-         if (index == 0) {
-            return (
-               <MobileSongItem
-                  ref={firstTempSongRef}
-                  theme={theme}
-                  onClick={() => {}}
-                  inProcess={!isAdded}
-                  data={song}
-                  active={false}
-                  key={index}
-               />
-            );
-         }
-
          return (
-            <MobileSongItem
+            <SongItem   
                key={index}
                active={false}
                onClick={() => {}}
@@ -94,14 +91,16 @@ function SongList({
       if (!songs.length) return <h1>No song jet...</h1>;
 
       return songs.map((song, index) => {
+         let active = !!activeExtend && songInStore.id === song.id;
+
+         if (inQueue) active = active && songInStore.currentIndex === index;
          return (
             <SongItem
                key={index}
                data={song}
                theme={theme}
                admin={inAdmin}
-               // action={action}
-               active={activeExtend && songInStore.id === song.id}
+               active={active}
                userInfo={userInfo}
                songs={inAdmin ? adminSongs : userSongs}
                setSongs={inAdmin ? setAdminSongs : setUserSongs}
@@ -110,6 +109,9 @@ function SongList({
                setUserInfo={setUserInfo}
                addToPlaylist={addSongToPlaylistSongItem}
                onClick={() => handleSetSong(song, index)}
+               actuallySongs={!inHistory ? actuallySongs : undefined}
+               setActuallySongs={!inHistory ? setActuallySongs : undefined}
+               inQueue={inQueue}
                {...props}
 
                // deleteFromPlaylist={deleteFromPlaylist}

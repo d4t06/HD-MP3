@@ -5,8 +5,6 @@ import { useTheme } from "../store/ThemeContext";
 import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Song, User } from "../types";
 import { db } from "../config/firebase";
-import { useNavigate } from "react-router-dom";
-import { routes } from "../routes";
 
 import {
    Button,
@@ -20,15 +18,24 @@ import {
 } from "../components";
 
 import { convertTimestampToString } from "../utils/appHelpers";
-import { deleteSong, myGetDoc } from "../utils/firebaseHelpers";
-import { useAuthStore, useSongsStore, useUpload } from "../store";
+import { deleteSong } from "../utils/firebaseHelpers";
+import {
+   selectAllSongStore,
+   setSong,
+   useAuthStore,
+   useSongsStore,
+   useUpload,
+} from "../store";
 import useSong from "../hooks/useSongs";
 import Skeleton, { PlaylistSkeleton } from "../components/skeleton";
+import { useDispatch, useSelector } from "react-redux";
 
 // manual run init
 export default function DashBoard() {
    // use store
+   const dispatch = useDispatch();
    const { userInfo } = useAuthStore();
+   const { song: songInStore } = useSelector(selectAllSongStore);
    const { adminPlaylists, adminSongs, setAdminSongs } = useSongsStore();
 
    // state
@@ -38,17 +45,16 @@ export default function DashBoard() {
    const [isOpenModal, setIsOpenModal] = useState(false);
    const [modalName, setModalName] = useState<"confirm" | "addPlaylist">();
 
-   const [loading, setLoading] = useState(false);
+   const [loading, setLoading] = useState(true);
    const [users, setUsers] = useState<User[]>([]);
    const [selectedList, setSelectedList] = useState<Song[]>([]);
    const [tab, setTab] = useState<"adminSongs" | "users">("adminSongs");
 
    // const firstTempSong = useRef<HTMLDivElement>(null);
-   const firstTimeRun = useRef(true);
+   const ranUseEffect = useRef(true);
 
    // use hooks
    const { theme } = useTheme();
-   const navigate = useNavigate();
    const { addedSongIds, tempSongs, status } = useUpload();
    const {
       loading: initialLoading,
@@ -57,7 +63,6 @@ export default function DashBoard() {
    } = useSong({ admin: true });
 
    const songCount = useMemo(() => {
-      if (loading) return 0;
       return tempSongs.length + adminSongs.length;
    }, [tempSongs, adminSongs]);
 
@@ -78,6 +83,13 @@ export default function DashBoard() {
          console.log(error);
       } finally {
          setLoading(false);
+      }
+   };
+
+   const handleSetSong = (song: Song, index: number) => {
+      // when user play playlist then play user songs
+      if (songInStore.id !== song.id) {
+         dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
       }
    };
 
@@ -125,40 +137,26 @@ export default function DashBoard() {
       });
    };
 
-   //  run auth
+   //  run initial
    useEffect(() => {
-      if (userInfo.status === "loading") {
-         setLoading(false);
-         return;
-      }
-
-      const auth = async () => {
+      const init = async () => {
          try {
-            const userSnapshot = await myGetDoc({
-               collection: "users",
-               id: userInfo?.email as string,
-               msg: ">>> api: get auth info",
-            });
-            const userData = userSnapshot.data() as User;
-            if (userData.role !== "admin") return navigate(routes.Home);
-
             if (!initial) initSongsAndPlaylists();
-            else setTimeout(() => setLoading(false), 200);
+            else {
+               console.log("already initialized");
+               setTimeout(() => setLoading(false), 200);
+            }
          } catch (error) {
             console.log(error);
          }
       };
 
-      if (!userInfo.email) return navigate(routes.Home);
+      if (ranUseEffect.current) {
+         ranUseEffect.current = false;
 
-      if (firstTimeRun.current) {
-         firstTimeRun.current = false;
-
-         // case already run auth
-         if (userInfo.role === "admin") return;
-         else auth();
+         init();
       }
-   }, [userInfo.status]);
+   }, []);
 
    useEffect(() => {
       if (userInfo.status === "loading") return;
@@ -178,9 +176,7 @@ export default function DashBoard() {
       tableHeader: `border-b border-${theme.alpha} ${theme.side_bar_bg} flex items-center h-[50px] gap-[15px]`,
    };
 
-   if (userInfo.status === "loading") {
-      return;
-   }
+   console.log("check admin song", adminSongs);
 
    return (
       <>
@@ -298,22 +294,24 @@ export default function DashBoard() {
                         )}
                      </div>
 
-                     {!!songCount && !initialLoading ? (
-                        <SongList
-                           inAdmin
-                           songs={adminSongs}
-                           activeExtend={false}
-                           handleSetSong={() => {}}
-                           isChecked={isChecked}
-                           setIsChecked={setIsChecked}
-                           selectedSongs={selectedSongs}
-                           setSelectedSongs={setSelectedSongs}
-                           tempSongs={tempSongs}
-                           addedSongIds={addedSongIds}
-                        />
-                     ) : (
-                        <h1>No song jet...</h1>
-                     )}
+                     <div className="min-h-[50vh]">
+                        {!!songCount && !initialLoading ? (
+                           <SongList
+                              inAdmin
+                              activeExtend={true}
+                              songs={adminSongs}
+                              handleSetSong={handleSetSong}
+                              isChecked={isChecked}
+                              setIsChecked={setIsChecked}
+                              selectedSongs={selectedSongs}
+                              setSelectedSongs={setSelectedSongs}
+                              tempSongs={tempSongs}
+                              addedSongIds={addedSongIds}
+                           />
+                        ) : (
+                           <h1>No song jet...</h1>
+                        )}
+                     </div>
                   </>
                )}
 
@@ -352,7 +350,6 @@ export default function DashBoard() {
 
                {modalName === "addPlaylist" && (
                   <AddPlaylist
-                     // cb={handleGetAndSetAdminPlaylists}
                      setIsOpenModal={setIsOpenModal}
                      theme={theme}
                      admin={true}

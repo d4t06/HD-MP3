@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 
 import { Playlist, Song, ThemeType, User } from "../types";
 import Button from "./ui/Button";
@@ -16,6 +16,7 @@ import {
    StopIcon,
    TrashIcon,
    HeartIcon,
+   QueueListIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
@@ -51,15 +52,16 @@ interface Props {
    theme: ThemeType & { alpha: string };
    inProcess?: boolean;
    inPlaylist?: Playlist;
+   inQueue?: boolean;
    // action: "full" | "less";
 
    admin?: boolean;
 
    userInfo?: User;
    songs?: Song[];
+   setSongs?: (songs: Song[]) => void;
    userPlaylists?: Playlist[];
    setUserInfo?: (user: Partial<User>) => void;
-   setSongs?: (songs: Song[]) => void;
    deleteFromPlaylist?: (song: Song) => Promise<void>;
    addToPlaylist?: (song: Song, playlist: Playlist) => Promise<void>;
 
@@ -68,6 +70,9 @@ interface Props {
 
    setSelectedSongs?: Dispatch<SetStateAction<Song[]>>;
    setIsChecked?: Dispatch<SetStateAction<boolean>>;
+
+   actuallySongs?: Song[];
+   setActuallySongs?: Dispatch<SetStateAction<Song[]>>;
 }
 
 function SongItem({
@@ -87,6 +92,8 @@ function SongItem({
    setUserInfo,
    setSongs,
 
+   inQueue,
+
    // call back function
    deleteFromPlaylist,
    addToPlaylist,
@@ -94,8 +101,12 @@ function SongItem({
    // for selected
    selectedSongs,
    isChecked,
+
    setSelectedSongs,
    setIsChecked,
+
+   actuallySongs,
+   setActuallySongs,
 }: Props) {
    // user store
    const dispatch = useDispatch();
@@ -241,6 +252,45 @@ function SongItem({
       }
    };
 
+   const removeFromQueue = () => {
+      if (!inQueue || !setActuallySongs || !actuallySongs) return;
+
+      const newQueue = [...actuallySongs];
+      const index = newQueue.indexOf(data);
+      newQueue.splice(index, 1);
+
+      if (!newQueue.length) {
+         dispatch(setSong({ ...initSongObject({}), song_in: "admin", currentIndex: 0 }));
+         setActuallySongs([]);
+      }
+
+      setActuallySongs(newQueue);
+
+      if (songInStore.id === data.id) {
+         dispatch(
+            setSong({
+               ...data,
+               song_in: songInStore.song_in,
+               currentIndex: songInStore.currentIndex,
+            })
+         );
+      }
+
+      setSuccessToast({ message: "Song removed from queue" });
+      setIsOpenPopup(false);
+   };
+
+   const addToQueue = () => {
+      if (!setActuallySongs || !actuallySongs) return;
+
+      const newQueue = [...actuallySongs];
+      newQueue.push(data);
+      setActuallySongs(newQueue);
+
+      setIsOpenPopup(false);
+      setSuccessToast({ message: "Song added to queue" });
+   };
+
    const handleLikeSong = async () => {
       if (!userInfo || !userPlaylists || !setUserInfo) {
          console.log("lack of props");
@@ -253,14 +303,33 @@ function SongItem({
          const newUserLikeSongIds = [...userInfo.like_song_ids];
          const index = newUserLikeSongIds.indexOf(data.id);
 
-         if (index === -1) newUserLikeSongIds.push(data.id);
-         else newUserLikeSongIds.splice(index, 1);
+         if (index === -1) {
+            newUserLikeSongIds.push(data.id);
+            if (actuallySongs) {
+               const index = actuallySongs.find((s) => s.id === data.id);
+               if (!index) {
+                  console.log("like songs, add to queue");
+
+                  addToQueue();
+               }
+            }
+         } else {
+            newUserLikeSongIds.splice(index, 1);
+            if (actuallySongs) {
+               const index = actuallySongs.find((s) => s.id === data.id);
+               if (index) {
+                  console.log("unlike songs remove from queue");
+
+                  removeFromQueue();
+               }
+            }
+         }
 
          setUserInfo({ like_song_ids: newUserLikeSongIds });
 
          await mySetDoc({
             collection: "users",
-            data: { like_song_ids: newUserLikeSongIds },
+            data: { like_song_ids: newUserLikeSongIds } as Partial<User>,
             id: userInfo.email,
          });
       } catch (error) {
@@ -291,7 +360,9 @@ function SongItem({
       } last:border-none p-[0px] hover:bg-${theme.alpha} ${
          isSelected && "bg-" + theme.alpha
       }`,
-      imageFrame: `h-[54px] w-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
+      imageFrame: ` relative rounded-[4px] overflow-hidden group/image flex-shrink-0 ${
+         inQueue ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
+      }`,
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
       input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-[14px] font-[500]`,
       overlay:
@@ -316,12 +387,20 @@ function SongItem({
                   <>
                      <button
                         onClick={() => handleSelect(data)}
-                        className={`${classes.songListButton} hidden group-hover/main:block`}
+                        className={`${classes.songListButton} hidden ${
+                           !!setIsChecked && !!setSelectedSongs
+                              ? "group-hover/main:block"
+                              : ""
+                        }`}
                      >
                         <StopIcon className="w-[18px] " />
                      </button>
                      <button
-                        className={`${classes.songListButton} group-hover/main:hidden group-hover/main:mr-[0px]`}
+                        className={`${classes.songListButton} ${
+                           !!setIsChecked && !!setSelectedSongs
+                              ? "group-hover/main:hidden group-hover/main:mr-[0px]"
+                              : ""
+                        }`}
                      >
                         <MusicalNoteIcon className="w-[18px]" />
                      </button>
@@ -349,14 +428,8 @@ function SongItem({
 
    const songComponent = (
       <div className={`flex flex-row flex-grow ${inProcess ? "opacity-60" : ""}`}>
-         {/* check box */}
-         {!!setIsChecked && !!setSelectedSongs && checkBox}
-
-         {data.by === "admin" && !inPlaylist && (
-            <button className={`${classes.songListButton}  `}>
-               <MusicalNoteIcon className="w-[18px]" />
-            </button>
-         )}
+         {/* hidden in check box */}
+         {!inQueue && checkBox}
 
          {/* song image */}
          <div className="flex flex-grow " onClick={isOnMobile ? onClick : () => ""}>
@@ -395,7 +468,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
 
             {/* song info */}
             <div className="ml-[10px]">
-               <h5 className="text-mg line-clamp-1">{data.name}</h5>
+               <h5 className={`line-clamp-1 ${inQueue ? "text-[13px]" : ""}`}>
+                  {data.name}
+               </h5>
                <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
             </div>
          </div>
@@ -416,7 +491,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             </Button>
          ) : (
             <Button
-               className={`mt-[15px] group relative ${theme.content_hover_text} ${classes.before}`}
+               className={`group relative ${theme.content_hover_text} ${classes.before}`}
                variant={"list"}
             >
                <PlusCircleIcon className="w-[18px] mr-[5px]" />
@@ -458,7 +533,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
    );
 
    const menuComponent = (
-      <div className="w-[200px] relative">
+      <div className={` ${inQueue ? "w-[160px]" : "w-[200px]"} relative`}>
          {!isOnMobile && (
             <>
                <h5 className="text-mg line-clamp-1">{data.name}</h5>
@@ -466,31 +541,55 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             </>
          )}
 
-         {/* alway visible in dashboard */}
-         {userInfo?.email && (
-            <>
-               {admin || !inPlaylist || userInAdminPlaylist ? (
-                  renderAddToPlaylistBtn
-               ) : (
-                  <>
-                     {!active && (
-                        <Button
-                           className={`mt-[15px] ${theme.content_hover_text}`}
-                           variant={"list"}
-                           onClick={() => handleRemoveSongFromPlaylist()}
-                        >
-                           <MinusCircleIcon className="w-[18px] mr-[5px]" />
-                           Remove from playlist
-                        </Button>
-                     )}
-                  </>
-               )}
-            </>
-         )}
+         <div className="mt-[14px]">
+            {setActuallySongs && actuallySongs && (
+               <>
+                  {inQueue ? (
+                     <Button
+                        onClick={removeFromQueue}
+                        className={`${theme.content_hover_text}`}
+                        variant={"list"}
+                     >
+                        <TrashIcon className="w-[18px] mr-[5px]" />
+                        Remove
+                     </Button>
+                  ) : (
+                     <Button
+                        onClick={addToQueue}
+                        className={`${theme.content_hover_text}`}
+                        variant={"list"}
+                     >
+                        <QueueListIcon className="w-[18px] mr-[5px]" />
+                        Add to queue
+                     </Button>
+                  )}
+               </>
+            )}
 
-         {/* alway visible in dashboard */}
-         {admin ||
-            (data.by !== "admin" && (
+            {/* alway visible in dashboard */}
+            {userInfo?.email && (
+               <>
+                  {(admin && !inPlaylist) || !inPlaylist || userInAdminPlaylist ? (
+                     renderAddToPlaylistBtn
+                  ) : (
+                     <>
+                        {!active && (
+                           <Button
+                              className={`${theme.content_hover_text}`}
+                              variant={"list"}
+                              onClick={() => handleRemoveSongFromPlaylist()}
+                           >
+                              <MinusCircleIcon className="w-[18px] mr-[5px]" />
+                              Remove from playlist
+                           </Button>
+                        )}
+                     </>
+                  )}
+               </>
+            )}
+
+            {/* alway visible in dashboard    */}
+            {(admin || data.by !== "admin") && !inQueue && (
                <>
                   <Button
                      onClick={() => handleOpenModal("edit")}
@@ -500,15 +599,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      <PencilSquareIcon className="w-[18px] mr-[5px]" />
                      Edit
                   </Button>
-                  <a
-                     target="_blank"
-                     download
-                     href={data.song_url}
-                     className={`${theme.content_hover_text} text-[14px] inline-flex items-center cursor-pointer`}
-                  >
-                     <ArrowDownTrayIcon className="w-[18px] mr-[5px]" />
-                     Download
-                  </a>
                   {data.lyric_id ? (
                      <Link to={`/mysongs/edit/${data.id}`}>
                         <Button
@@ -539,11 +629,24 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      Delete
                   </Button>
                </>
-            ))}
+            )}
 
-         <p className="opacity-60 text-center text-[12px] mt-[10px]">
-            uploaded by {data.by}
-         </p>
+            <a
+               target="_blank"
+               download
+               href={data.song_url}
+               className={`${theme.content_hover_text} text-[14px] inline-flex items-center cursor-pointer`}
+            >
+               <ArrowDownTrayIcon className="w-[18px] mr-[5px]" />
+               Download
+            </a>
+         </div>
+
+         {!inQueue && (
+            <p className="opacity-60 text-center text-[12px] mt-[10px]">
+               uploaded by {data.by}
+            </p>
+         )}
       </div>
    );
 
@@ -552,8 +655,8 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       return (
          <>
             <HeartIconSolid
-               className={`w-[20px] ${
-                  isLiked ? "block group-hover:hidden" : "hidden group-hover:block"
+               className={`w-[20px]  ${
+                  isLiked ? `${theme.content_text} block group-hover:hidden` : `text-white hidden group-hover:block`
                }`}
             />
             <HeartIcon
@@ -594,14 +697,14 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         ref={refs.setReference}
                         {...getReferenceProps()}
                         className={`block group-hover/main:block ${classes.button} ${
-                           isOpenPopup ? "md:block" : "md:hidden"
+                           isOpenPopup || inQueue ? "md:block" : "md:hidden"
                         }`}
                      >
                         <Bars3Icon className="w-[20px]" />
                      </button>
                      <span
                         className={`text-[12px] hidden  group-hover/main:hidden ${
-                           isOpenPopup ? "hidden" : "md:block"
+                           isOpenPopup || inQueue ? "hidden" : "md:block"
                         }`}
                      >
                         {handleTimeText(data.duration)}

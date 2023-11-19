@@ -2,7 +2,7 @@ import { createPortal } from "react-dom";
 import { useRef } from "react";
 import { useUploadSongs } from "../hooks";
 
-function UploadSongPortal() {
+function UploadSongPortal({ admin }: { admin?: boolean }) {
    const audioRef = useRef<HTMLAudioElement>(null);
    const inputRef = useRef<HTMLInputElement>(null);
    const testImageRef = useRef<HTMLImageElement>(null);
@@ -11,6 +11,7 @@ function UploadSongPortal() {
       audioRef,
       testImageRef,
       inputRef,
+      admin,
    });
 
    const classes = {

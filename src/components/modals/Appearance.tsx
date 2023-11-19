@@ -45,7 +45,7 @@ export default function Appearance({
    });
 
    return (
-      <>
+      <div className="w-[900px] max-w-[90vw]">
          <ModalHeader setIsOpenModal={setIsOpenModal} title="Appearance" />
          <div className={classes.themeContainer}>
             <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
@@ -54,6 +54,6 @@ export default function Appearance({
             <h2 className="text-md font-semibold mb-[10px] mt-[30px]">Light</h2>
             <div className={classes.themeList}>{lightThemes}</div>
          </div>
-      </>
+      </div>
    );
 }

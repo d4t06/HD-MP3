@@ -1,36 +1,39 @@
-import { Dispatch, FC, SetStateAction } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
+import { useTheme } from "../store";
 
-type Props = {
-   setActiveTab: Dispatch<SetStateAction<string>>;
-   activeTab: string;
-   tabs: string[];
+type Props<T> = {
+   setActiveTab: Dispatch<SetStateAction<T>>;
+   activeTab: T;
+   tabs: T[];
    className?: string;
+   render: (item: T) => ReactNode;
+   inFullScreen?: boolean
 };
 
-const Tabs: FC<Props> = ({ tabs, activeTab, setActiveTab, className }) => {
+// generic
+function Tabs<T>({ tabs, activeTab, setActiveTab, className, render, inFullScreen }: Props<T>) {
+   const { theme } = useTheme();
    return (
       <ul
-         className={
-            `flex py-[4px] h-full px-[4px] items-center mx-auto rounded-full bg-gray-500 bg-opacity-20 ${className && className}` 
-         }
+         className={`flex py-[4px] h-full px-[4px] items-center mx-auto rounded-full ${
+            inFullScreen ? 'bg-gray-500 bg-opacity-[.2]' : theme.side_bar_bg
+         } ${className && className}`}
       >
-         {tabs.map((item, index) => {
-            return (
-               <li
-                  key={index}
-                  onClick={() => setActiveTab(item)}
-                  className={`px-[30px] h-full rounded-full max-[549px]:px-[15px] ${
-                     activeTab === item ? "bg-gray-400 bg-opacity-20 text-white" : ""
-                  }`}
-               >
-                  <span className="leading-[27px] font-bold max-[549px]:font-normal">
-                     {item}
-                  </span>
-               </li>
-            );
-         })}
+         {tabs.map((item, index) => (
+            <li
+               key={index}
+               onClick={() => setActiveTab(item)}
+               className={`px-[30px] cursor-pointer h-full rounded-full max-[549px]:px-[15px] ${inFullScreen ? '' : theme.content_hover_text} ${
+                  activeTab === item ? inFullScreen ? 'bg-gray-400 bg-opacity-[.2]' : `${theme.content_text} ${theme.container} ` : "" 
+               }`}
+            >
+               <span className="leading-[27px] font-[500] max-[549px]:font-normal">
+                  {render(item)}
+               </span>
+            </li>
+         ))}
       </ul>
    );
-};
+}
 
 export default Tabs;
