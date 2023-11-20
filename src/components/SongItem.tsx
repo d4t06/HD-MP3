@@ -556,7 +556,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                   ) : (
                      <Button
                         onClick={addToQueue}
-                        className={`${theme.content_hover_text}`}
+                        className={`${theme.content_hover_text} ${
+                           !songInStore.name ? "opacity-60 pointer-events-none" : ""
+                        } `}
                         variant={"list"}
                      >
                         <QueueListIcon className="w-[18px] mr-[5px]" />
@@ -656,7 +658,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
          <>
             <HeartIconSolid
                className={`w-[20px]  ${
-                  isLiked ? `${theme.content_text} block group-hover:hidden` : `text-white hidden group-hover:block`
+                  isLiked
+                     ? `${theme.content_text} block group-hover:hidden`
+                     : `text-white hidden group-hover:block`
                }`}
             />
             <HeartIcon
@@ -684,7 +688,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
          ) : (
             <>
                <div className={classes.ctaWrapper}>
-                  {!admin && (
+                  {!admin && userInfo?.email && (
                      <Button
                         onClick={handleLikeSong}
                         className={`${classes.button} group`}

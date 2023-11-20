@@ -21,6 +21,7 @@ import { Song, User } from "../types";
 import { useLocation } from "react-router-dom";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 import { mySetDoc } from "../utils/firebaseHelpers";
+import Countdown from "./ui/Countdown";
 
 interface Props {
    admin?: boolean;
@@ -35,7 +36,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
    const { theme } = useTheme();
    const { userInfo } = useAuthStore();
    const {
-      playStatus: { isPlaying, isRepeat, isShuffle, isTimer },
+      playStatus: { isPlaying, isRepeat, isShuffle },
    } = useSelector(selectAllPlayStatusStore);
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { actuallySongs } = useActuallySongs();
@@ -58,8 +59,6 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
    const firstTimePlay = useRef(true);
    const history = useRef<string[]>([]);
-
-   const timerId = useRef<NodeJS.Timeout>()
 
    // use hook
    const location = useLocation();
@@ -162,12 +161,13 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
    const handleResetForNewSong = useCallback(() => {
       pause();
-      dispatch(setPlayStatus({ isWaiting: true, isLoaded: false }));
+      dispatch(setPlayStatus({ isPlaying: false }));
 
       const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
       if (timeProcessLineElement && currentTimeRef.current && remainingTime.current) {
          currentTimeRef.current.innerText = "00:00";
+         remainingTime.current.innerText = "00:00";
          timeProcessLineElement.style.width = "0%";
       }
    }, []);
@@ -386,20 +386,6 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       };
    }, [isInEdit, songInStore.id, userInfo.like_song_ids]);
 
-
-   // timer
-   useEffect(() => {
-
-      if (isTimer) {
-         timerId.current = setTimeout(() => pause(), isTimer)
-      }
-
-
-      return () => {
-         clearTimeout(timerId.current)
-      }
-   }, [isTimer])
-
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
       buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] ${
@@ -492,13 +478,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             )}
          </div>
 
-         {isTimer && (
-            <div className="absolute bottom-[100%] left-[50%] translate-x-[-50%]">
-               <div className="bg-red-500">
-                  {isTimer}
-               </div>
-            </div>
-      )} 
+         <Countdown cb={pause} play={play} isPlaying={isPlaying} />
       </div>
    );
 }

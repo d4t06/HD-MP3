@@ -38,45 +38,39 @@ const ActuallySongsContext = createContext(initialContext);
 
 // define provider
 const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
-   const { adminSongs, userSongs, initial } = useSongsStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   // const { adminSongs, userSongs, initial } = useSongsStore();
+   // const { song: songInStore } = useSelector(selectAllSongStore);
 
    const [actuallySongs, setActuallySongs] = useState<Song[]>([]);
-   const [songsList, setSongsList] = useState<Song[]>([]);
+   // const [songsList, setSongsList] = useState<Song[]>([]);
 
-   const prevAcctuallySongs = useRef<Song[]>([]);
+   // const prevAcctuallySongs = useRef<Song[]>([]);
 
    // play in songs then play in playlist
    // play in playlist then add song to playlis
    // play in songs then user add new song
-   useEffect(() => {
-      if (!initial) return;
+   // useEffect(() => {
+   //    if (!initial) return;
 
-      if (!songInStore.name) return;
+   //    if (!songInStore.name) return;
 
-      if (
-         actuallySongs.length &&
-         prevAcctuallySongs.current.length !== actuallySongs.length
-      ) {
-         console.log("set actually songs === actual songs");
-         setSongsList(actuallySongs);
+   //    if (
+   //       // actuallySongs.length &&
+   //       prevAcctuallySongs.current.length !== actuallySongs.length
+   //    ) {
+   //       console.log("set actually songs === actual songs");
 
-         prevAcctuallySongs.current = actuallySongs;
-         return;
-      }
+   //       // setSongsList(actuallySongs);
+   //       setActuallySongs(actuallySongs);
 
-      // if (songInStore.song_in === "admin") {
-      //    console.log("set actually songs === admin songs");
-      //    setSongsList(adminSongs);
-      // } else {
-      //    console.log("set actually songs === user songs");
-      //    setSongsList(userSongs);
-      // }
-   }, [initial, actuallySongs, userSongs]);
+   //       prevAcctuallySongs.current = actuallySongs;
+   //       return;
+   //    }
+   // }, [userSongs]);
 
    return (
       <ActuallySongsContext.Provider
-         value={{ state: { actuallySongs: songsList }, setActuallySongs }}
+         value={{ state: { actuallySongs: actuallySongs }, setActuallySongs }}
       >
          {children}
       </ActuallySongsContext.Provider>

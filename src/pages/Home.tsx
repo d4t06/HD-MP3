@@ -191,10 +191,10 @@ export default function HomePage() {
                   ))}
             </div>
 
-            <div className="h-[30px] mb-[10px] flex items-center gap-[10px]">
+            <div className="h-[30px] mb-[10px] flex items-center gap-[8px]">
                <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>
 
-               {isChecked && (
+               {!isOnMobile && isChecked && (
                   <p className="text-[13px] font-medium">
                      {selectedSongs.length + " selected"}
                   </p>
@@ -273,12 +273,14 @@ export default function HomePage() {
                         label="Info"
                         onClick={() => handleOpenModal("info")}
                      />
-                     <LinkItem
-                        className={classes.linkItem}
-                        icon={<ArrowRightOnRectangleIcon className={classes.icon} />}
-                        label="Logout"
-                        onClick={() => handleOpenModal("confirm")}
-                     />
+                     {userInfo.email && (
+                        <LinkItem
+                           className={classes.linkItem}
+                           icon={<ArrowRightOnRectangleIcon className={classes.icon} />}
+                           label="Logout"
+                           onClick={() => handleOpenModal("confirm")}
+                        />
+                     )}
                   </>
                )}
             </div>

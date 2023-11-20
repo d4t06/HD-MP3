@@ -77,6 +77,16 @@
 - [x] delete playlist
 - [x] add songs to playlist
 
+### Song queue
+- [x] add song
+- [x] remove song
+- [x] clear song
+
+### control 
+- [x] repeat
+- [] shuffle
+- [x] timer
+
 
 ### Issues
 - [x] Fix mất bài hát khi thêm

@@ -106,7 +106,7 @@ export default function BottomPlayer({
                isOpenFullScreen ? "justify-center text-white" : "justify-between"
             } ${idle && "transition-opacity duration-[.3s] opacity-0"}`}
          >
-            <div className={`current-song w-1/3 ${isOpenFullScreen ? "hidden" : ""}`}>
+            <div className={`w-1/3 ${isOpenFullScreen ? "hidden" : ""}`}>
                {/* song image, name and singer */}
                <div
                   className={`flex flex-row items-center h-full origin-center ${
@@ -175,7 +175,7 @@ export default function BottomPlayer({
             <div
                className={`${classes.volumeWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}
             >
-               <div className="flex items-center w-[150px]">
+               <div className="flex flex-grow items-center max-w-[150px]">
                   <button onClick={() => handleMute()}>
                      {isMute ? (
                         <SpeakerXMarkIcon className="w-6 h-6" />
@@ -199,10 +199,10 @@ export default function BottomPlayer({
                   <>
                      <Button
                         onClick={handleOpenFullScreen}
-                        variant={'circle'}
-                        className={`h-[35px] w-[35px] rounded-[99px] ${theme.side_bar_bg}  ${
-                           theme.content_hover_bg
-                        } p-[8px] ${
+                        variant={"circle"}
+                        className={`h-[35px] w-[35px] rounded-[99px] ${
+                           theme.side_bar_bg
+                        }  ${theme.content_hover_bg} p-[8px] ${
                            songInStore.name ? "" : "opacity-20 pointer-events-none"
                         }`}
                      >
@@ -211,7 +211,9 @@ export default function BottomPlayer({
 
                      <Button
                         onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                        className={`${theme.content_hover_bg} h-[35px] w-[35px] p-[8px] rounded-[4px] ${
+                        className={`${
+                           theme.content_hover_bg
+                        } h-[35px] w-[35px] p-[8px] rounded-[4px] ${
                            songInStore.name ? "" : "opacity-20 pointer-events-none"
                         } ${isOpenSongQueue ? theme.content_bg : theme.side_bar_bg}`}
                      >

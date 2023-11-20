@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
 
 import { Song } from "../types";
-import { useGetSongLyric, useBgImage } from "../hooks";
+import { useBgImage } from "../hooks";
 
 import {
   Tabs,

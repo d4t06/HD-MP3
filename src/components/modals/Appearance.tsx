@@ -21,9 +21,9 @@ export default function Appearance({
    const classes = {
       songItemContainer: `w-full border-b border-${themeInStore.alpha} last:border-none`,
       icon: `w-6 h-6 mr-2 inline`,
-      popupWrapper: "w-[400px] max-w-[calc(90vw-40px)]",
+      popupWrapper: "w-[900px] max-w-[calc(90vw-40px)]",
       themeContainer: "overflow-y-auto overflow-x-hidden no-scrollbar h-[calc(70vh-60px)]  pb-[5vh]",
-      themeList: "flex flex-row -mx-[10px] flex-wrap gap-y-[20px]",
+      themeList: "flex flex-row -mx-[10px] flex-wrap",
       linkItem: `py-[10px] border-b border-${themeInStore.alpha} last:border-none`,
    };
 
@@ -45,7 +45,7 @@ export default function Appearance({
    });
 
    return (
-      <div className="w-[900px] max-w-[90vw]">
+      <div className={classes.popupWrapper}>
          <ModalHeader setIsOpenModal={setIsOpenModal} title="Appearance" />
          <div className={classes.themeContainer}>
             <h2 className="text-md font-semibold mb-[10px]">Dark</h2>

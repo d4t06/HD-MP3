@@ -15,7 +15,7 @@ function Tabs<T>({ tabs, activeTab, setActiveTab, className, render, inFullScree
    const { theme } = useTheme();
    return (
       <ul
-         className={`flex py-[4px] h-full px-[4px] items-center mx-auto rounded-full ${
+         className={`flex py-[4px] h-full px-[4px] items-center ${inFullScreen ? 'mx-auto' : ''} rounded-full ${
             inFullScreen ? 'bg-gray-500 bg-opacity-[.2]' : theme.side_bar_bg
          } ${className && className}`}
       >
@@ -23,7 +23,7 @@ function Tabs<T>({ tabs, activeTab, setActiveTab, className, render, inFullScree
             <li
                key={index}
                onClick={() => setActiveTab(item)}
-               className={`px-[30px] cursor-pointer h-full rounded-full max-[549px]:px-[15px] ${inFullScreen ? '' : theme.content_hover_text} ${
+               className={`${inFullScreen ? 'px-[30px]' : 'px-[20px]'}  cursor-pointer h-full rounded-full max-[549px]:px-[15px] ${inFullScreen ? '' : theme.content_hover_text} ${
                   activeTab === item ? inFullScreen ? 'bg-gray-400 bg-opacity-[.2]' : `${theme.content_text} ${theme.container} ` : "" 
                }`}
             >
