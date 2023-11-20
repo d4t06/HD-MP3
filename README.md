@@ -64,18 +64,18 @@
 
 
 ### Song
-- [y] upload
-- [y] edit
-- [y] delete
-- [y] add to playlist
-- [y] delete from playlist
-- [y] add lyrics
+- [x] upload
+- [x] edit
+- [x] delete
+- [x] add to playlist
+- [x] delete from playlist
+- [x] add lyrics
 
 ### Playlist
-- [y] add
-- [y] edit playlist
-- [y] delete playlist
-- [y] add songs to playlist
+- [x] add
+- [x] edit playlist
+- [x] delete playlist
+- [x] add songs to playlist
 
 
 ### Issues

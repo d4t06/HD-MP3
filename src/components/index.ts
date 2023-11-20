@@ -46,6 +46,7 @@ export {default as Appearance} from './modals/Appearance'
 export {default as ConfirmModal} from './modals/ConfirmModal'
 export {default as AddPlaylist} from './modals/AddPlaylist'
 export {default as PlaylistList} from './modals/PlaylistList'
+export {default as TimerModal} from './modals/TimerModal'
 
 
 export {default as UploadSongPortal} from './UploadSongPortal'

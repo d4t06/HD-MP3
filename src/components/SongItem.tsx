@@ -481,7 +481,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       <>
          {isOnMobile ? (
             <Button
-               className={`mt-[15px] group relative ${theme.content_hover_text} ${classes.before}`}
+               className={`group relative ${theme.content_hover_text} ${classes.before}`}
                variant={"list"}
                onClick={() => handleOpenModal("addToPlaylist")}
             >

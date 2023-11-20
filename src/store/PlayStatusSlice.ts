@@ -8,6 +8,7 @@ type stateType = {
       isRepeat: 'one' | 'all' | 'no';
       isShuffle: boolean;
       isLoaded: boolean;
+      isTimer: number
    };
 };
 
@@ -31,6 +32,7 @@ const init: stateType = {
       isLoaded: true,
       isRepeat: 'no',
       isShuffle: false,
+      isTimer: 0,
    },
 };
 

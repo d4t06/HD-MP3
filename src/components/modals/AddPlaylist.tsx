@@ -12,6 +12,7 @@ type Props = {
   userInfo?: User;
   cb?: () => void;
 };
+
 export default function AddPlaylist({ setIsOpenModal, theme, admin, cb }: Props) {
   const [playlistName, setPlayListName] = useState<string>("");
   const { addPlaylist, loading } = usePlaylistActions({ admin });
