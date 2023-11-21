@@ -4,14 +4,9 @@ import {
    SetStateAction,
    createContext,
    useContext,
-   useEffect,
-   useRef,
    useState,
 } from "react";
 import { Song } from "../types";
-import { useSongsStore } from "./SongsContext";
-import { useSelector } from "react-redux";
-import { selectAllSongStore } from "./SongSlice";
 
 // define initial state
 type StateType = {

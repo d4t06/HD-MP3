@@ -7,7 +7,7 @@ import {
    useSongsStore,
    useTheme,
 } from "../store";
-import { MobileSongItem, SongItem } from ".";
+import { SongItem } from ".";
 import { useSelector } from "react-redux";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 // import { SongWithSongIn } from "../store/SongSlice";

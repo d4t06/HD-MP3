@@ -1,9 +1,7 @@
-import { PauseCircleIcon } from "@heroicons/react/24/outline";
 import { FC, useMemo } from "react";
 
 import { Playlist, ThemeType } from "../types";
 
-import Button from "./ui/Button";
 import { Link } from "react-router-dom";
 import Image from "./ui/Image";
 import playingIcon from "../assets/icon-playing.gif";

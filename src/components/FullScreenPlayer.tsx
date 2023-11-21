@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Song } from "../types";
 import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
 import { SongThumbnail, Button, Tabs, LyricsList } from ".";
-import { useScrollSong, useBgImage, useGetSongLyric } from "../hooks";
+import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 
 interface Props {

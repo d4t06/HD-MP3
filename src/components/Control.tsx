@@ -21,7 +21,7 @@ import { Song, User } from "../types";
 import { useLocation } from "react-router-dom";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 import { mySetDoc } from "../utils/firebaseHelpers";
-import Countdown from "./ui/Countdown";
+import {Countdown} from "./";
 
 interface Props {
    admin?: boolean;
@@ -392,7 +392,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
          admin ? "" : "h-[50px]"
       }`,
       processContainer: `flex w-full flex-row items-center h-[30px] ${
-         admin ? "h-auto" : ""
+         admin ? "h-full" : ""
       }`,
       processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
@@ -403,7 +403,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
    };
 
    return (
-      <div className="relative h-full">
+      <div className="relative h-full w-full">
          {/* buttons */}
          <div className={`${classes.buttonsContainer}`}>
             {!admin && (

@@ -612,7 +612,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         </Button>
                      </Link>
                   ) : (
-                     <Link to={`/mysongs/edit/${data.id}`}>
+                     <Link to={`edit/${data.id}`}>
                         <Button
                            className={`${theme.content_hover_text}`}
                            variant={"list"}

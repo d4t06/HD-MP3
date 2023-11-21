@@ -2,7 +2,6 @@ import { FC, ReactNode, useMemo } from "react";
 import { useTheme } from "../store/ThemeContext";
 import { Sidebar, Player, UploadSongPortal } from "../components";
 import { useLocation } from "react-router-dom";
-import BackBtn from "../components/BackBtn";
 
 interface Props {
    children: ReactNode;

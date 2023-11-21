@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useDispatch } from "react-redux";
 import ModalHeader from "./ModalHeader";
 import { ThemeType } from "../../types";
@@ -9,10 +9,9 @@ import { useToast } from "../../store";
 type Props = {
    setIsOpenModal: Dispatch<SetStateAction<boolean>>;
    theme: ThemeType & { alpha: string };
-   cb?: () => void;
 };
 
-function TimerModal({ setIsOpenModal, theme, cb }: Props) {
+function TimerModal({ setIsOpenModal, theme }: Props) {
    const disPath = useDispatch();
 
    const [quickMinute, setQuickMinute] = useState<"5" | "10" | "15" | "30" | "">();

@@ -2,10 +2,8 @@ import {
    ChangeEvent,
    RefObject,
    useRef,
-   useState,
    useCallback,
    useMemo,
-   useEffect,
 } from "react";
 import { Song } from "../types";
 import { generateId, getBlurhashEncode, parserSong } from "../utils/appHelpers";

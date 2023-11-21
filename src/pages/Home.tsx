@@ -44,6 +44,7 @@ import Skeleton, {
 
 import { useAuthActions } from "../store/AuthContext";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { SongWithSongIn } from "../store/SongSlice";
 
 export default function HomePage() {
    // use store
@@ -72,13 +73,13 @@ export default function HomePage() {
    const { actuallySongs, setActuallySongs } = useActuallySongs();
 
    // define callback functions
-   const handleSetSong = (song: Song, index: number) => {
+   const handleSetSong = (song: Song , index: number) => {
       if (songInStore.song_in !== "admin") {
          setActuallySongs(adminSongs);
       }
 
       if (songInStore.id === song.id) return;
-      dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
+      dispatch(setSong({ ...song as SongWithSongIn, currentIndex: index }));
    };
 
    const isOnMobile = useMemo(() => window.innerWidth < 800, []);

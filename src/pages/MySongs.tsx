@@ -58,7 +58,7 @@ export default function MySongsPage() {
    const dispatch = useDispatch();
    const { userInfo } = useAuthStore();
 
-   const { song: songInStore, playlist: playlistInStore } =
+   const { song: songInStore } =
       useSelector(selectAllSongStore);
    const {
       playStatus: { isPlaying },
@@ -139,7 +139,7 @@ export default function MySongsPage() {
       }
 
       if (songInStore.id !== song.id) {
-         dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
+         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
       }
    };
 
@@ -150,7 +150,7 @@ export default function MySongsPage() {
       }
 
       if (songInStore.id !== song.id) {
-         dispatch(setSong({ ...song, currentIndex: index, song_in: "user" }));
+         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
       }
    };
 

@@ -1,10 +1,10 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState, useRef } from "react";
-import { selectAllPlayStatusStore, setPlayStatus } from "../../store/PlayStatusSlice";
-import { handleTimeText } from "../../utils/appHelpers";
-import { Button, Modal } from "..";
-import { useTheme } from "../../store";
+import { Button, Modal } from "./";
+import { useTheme } from "../store";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
+import { handleTimeText } from "../utils/appHelpers";
 
 type Props = {
    cb: () => void;
@@ -63,11 +63,13 @@ function Countdown({ cb, isPlaying, play }: Props) {
       if (!isTimer) return;
 
       // case after add timer but no play
+      console.log('check sec', sec, lastTimer.current);
+      
       if (!isPlaying && sec === lastTimer.current) {
-         // for case when sec just ini 
+         // for case when sec just ini
          // and not enough to run first countdown
          // when user press pause this time, song alway play
-         playAfterAddTimer.current = true; 
+         playAfterAddTimer.current = true;
          play();
 
          // case user play song and pause
@@ -92,9 +94,12 @@ function Countdown({ cb, isPlaying, play }: Props) {
 
    useEffect(() => {
       return () => {
+         console.log('run clean up check sec', sec);
+         
          playAfterAddTimer.current = false;
          // suddenly turn of
-         if (!sec) lastTimer.current = 0;
+         // console.log("check sec", sec);
+         if (sec) lastTimer.current = 0 
 
          setSec(0);
       };
@@ -103,7 +108,7 @@ function Countdown({ cb, isPlaying, play }: Props) {
    return (
       <>
          {!!sec && (
-            <div className="absolute bottom-[100%] w-[60%] left-[50%] translate-x-[-50%]">
+            <div className="absolute bottom-[100%] w-[70%] left-[50%] translate-x-[-50%]">
                <div
                   className={`${theme.content_bg} flex justify-center gap-[10px] py-[2px] text-[13px] px-[20px] rounded-tl-[4px] rounded-tr-[4px]`}
                >

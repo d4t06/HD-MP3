@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { Lyric, Song } from "../types";
 import { myGetDoc } from "../utils/firebaseHelpers";
-import { sleep } from "../utils/appHelpers";
-import appConfig from "../config/app";
+// import appConfig from "../config/app";
 
 export default function useSongLyric({
    songInStore,
@@ -30,7 +29,7 @@ export default function useSongLyric({
    const getLyric = async () => {
       console.log(">>> api: run get lyric");
       setLoading(true);
-      
+
       // await sleep(1000);
       // setSongLyric({ base: "kdafs", real_time: [{ end: 100, start: 0, text: "Test" }] });
       // setLoading(false);
@@ -65,11 +64,6 @@ export default function useSongLyric({
    }, []);
 
    useEffect(() => {
-      // if (!isSongLoaded) return;
-      // if (!songInStore.lyric_id) return;
-
-      // getLyric();
-
       return () => {
          setIsSongLoaded(false);
          setLoading(true);

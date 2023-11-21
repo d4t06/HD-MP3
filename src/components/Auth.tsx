@@ -23,19 +23,19 @@ export default function Auth({ children }: { children: ReactNode }) {
 
    const handleUserLogged = async () => {
       try {
-         // await mySetDoc({
-         //    collection: "users",
-         //    data: {
-         //       email: loggedInUser?.email,
-         //       latest_seen: serverTimestamp(),
-         //       photoURL: loggedInUser?.photoURL,
-         //       display_name: loggedInUser?.displayName,
-         //    },
-         //    id: loggedInUser?.email as string,
-         // });
+         await mySetDoc({
+            collection: "users",
+            data: {
+               email: loggedInUser?.email,
+               latest_seen: serverTimestamp(),
+               photoURL: loggedInUser?.photoURL,
+               display_name: loggedInUser?.displayName,
+            },
+            id: loggedInUser?.email as string,
+         });
 
          console.log(">>> auth have user, update status");
-         // await sleep(1000);   
+         
          setUserInfo({
             status: "finish",
             email: loggedInUser?.email as string,

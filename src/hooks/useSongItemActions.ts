@@ -1,19 +1,12 @@
-import { useDispatch, useSelector } from "react-redux";
 import { useSongsStore } from "../store/SongsContext";
-import { selectAllSongStore } from "../store/SongSlice";
-import { Playlist, Song, User } from "../types";
-// import { updatePlaylistsValue } from "../utils/appHelpers";
+import { Song, User } from "../types";
 import { useCallback, useState } from "react";
-import { generatePlaylistAfterChangeSong } from "../utils/appHelpers";
 import { useToast } from "../store";
-import { mySetDoc } from "../utils/firebaseHelpers";
-// import { mySetDoc } from "../utils/firebaseHelpers";
+import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 
 const useSongItemActions = () => {
-   const dispatch = useDispatch();
    const {setErrorToast, setSuccessToast} = useToast()
    const { userPlaylists, setUserPlaylists, userSongs, setUserSongs } = useSongsStore();
-   const { playlist: playlistInStore } = useSelector(selectAllSongStore);
 
    const [loading, setLoading] = useState(false);
 
@@ -22,7 +15,7 @@ const useSongItemActions = () => {
       const log = (msg: string) => console.log(`[${type}]: ${msg}`);
       return log;
    };
-   const errorLogger = logger("error");
+   // const errorLogger = logger("error");
    const successLogger = logger("success");
 
 
@@ -48,38 +41,8 @@ const useSongItemActions = () => {
       [userSongs]
    );
 
-   const addSongToPlaylistSongItem = async (song: Song, playlist: Playlist) => {
-      console.log("playlist action addSongToPlaylist");
-
-      setLoading(true);
-
-      const newPlaylist = generatePlaylistAfterChangeSong({
-         song: song as Song,
-         playlist,
-      });
-
-      // check valid
-      if (
-         newPlaylist.count < 0 ||
-         newPlaylist.time < 0 ||
-         newPlaylist.song_ids.length === playlist.song_ids.length
-      ) {
-         setErrorToast({ message: "New playlist data error" });
-         return;
-      }
-
-      // upate playlist
-      // await setPlaylistDocAndSetContext({
-      //    newPlaylist,
-      // });
-
-      // finish
-      setLoading(false);
-      setSuccessToast({ message: `${song.name} songs added` });
-   };
-
-
-   const deleteSong = async (song: Song, userInfo: User) => {
+ 
+   const hadnleDeleteSong = async (song: Song, userInfo: User) => {
       if (
          !userInfo ||
          !userSongs ||
@@ -108,7 +71,7 @@ const useSongItemActions = () => {
 
          const newUserSongIds = newUserSongs.map((songItem) => songItem.id);
          // >>> api
-         await deleteSong(song, userInfo);
+         await deleteSong(song);
          await mySetDoc({
             collection: "users",
             data: {
@@ -132,7 +95,7 @@ const useSongItemActions = () => {
    };
 
    
-   return {updateAndSetUserSongs };
+   return {updateAndSetUserSongs, hadnleDeleteSong, loading };
 };
 
 export default useSongItemActions;

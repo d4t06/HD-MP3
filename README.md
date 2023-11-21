@@ -91,4 +91,5 @@
 ### Issues
 - [x] Fix mất bài hát khi thêm
 - [x] Fix không scroll text khi overflow
-- [x] Upload nhạc global
+- [x] Upload song global
+- [] Add song to song queue after upload new song

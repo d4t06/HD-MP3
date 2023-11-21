@@ -4,13 +4,10 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store";
-import { Lyric } from "../types";
 
 interface Props {
    audioEle: HTMLAudioElement;
    className: string;
-   // songLyric: Lyric;
-   // loading: boolean;
    isOpenFullScreen:boolean
 }
 

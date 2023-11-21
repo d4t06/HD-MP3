@@ -143,9 +143,7 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
       setIsOpenModal(false);
    };
 
-   // inputFields, imageFile, userSongs, data, isImpactOnImage
-   // don't need isChangeInEdit cause inputFields change => isChangeInEdit change
-   const handleEditSong = useCallback(async () => {
+   const handleEditSong = async () => {
       if (!song.id) {
          setErrorToast({ message: "Edit song wrong data id" });
          return;
@@ -295,7 +293,7 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
       } finally {
          setLoading(false);
       }
-   }, [inputFields, imageFile, userSongs, song, isImpactOnImage]);
+   };
 
    // define style
    const classes = {

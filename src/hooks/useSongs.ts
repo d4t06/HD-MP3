@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from "react";
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
 import { db } from "../config/firebase";
-import { Playlist, Song, User } from "../types";
+import { Playlist, User } from "../types";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { useAuthStore } from "../store/AuthContext";
 import { sleep } from "../utils/appHelpers";
 import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
-import { testPlaylists, testSongs } from "./songs";
-import { SongIn, SongWithSongIn } from "../store/SongSlice";
+// import { testPlaylists, testSongs } from "./songs";
+import { SongWithSongIn } from "../store/SongSlice";
 
 export default function useSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
