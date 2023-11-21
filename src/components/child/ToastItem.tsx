@@ -14,8 +14,8 @@ type Props = {
 export default function ToastItem({ toast, theme, onClick }: Props) {
    const classes = {
       icon: `w-[30px] max-[549px]:w-[25px]`,
-      container: `text-white px-[20px] py-[10px] rounded-[4px] flex items-center  ${theme.bottom_player_bg} border border-${theme.alpha}`,
-      text: `font-[500] text-[16px] max-[549px]:text-[14px] ${
+      container: `text-white px-[12px] py-[6px] rounded-[4px] flex items-center  ${theme.bottom_player_bg} border border-${theme.alpha}`,
+      text: `font-[500] text-[14px] max-[549px]:text-[14px] ${
          theme.type === "light" ? "text-[#333]" : ""
       }`,
    };

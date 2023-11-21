@@ -158,6 +158,8 @@ export default function usePlaylistDetail({ admin }: Props) {
          return;
       }
       setActuallySongs(playlistSongs);
+      console.log('setActuallySongs');
+      
    };
 
    useEffect(() => {

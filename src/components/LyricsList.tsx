@@ -75,7 +75,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen,  }) => {
 
    if (loading)
       return (
-         <div className="mt-[30px] flex justify-center">
+         <div className="mt-[30px] w-full flex justify-center">
             <span>
                <ArrowPathIcon className="animate-spin w-[35px] duration-[2s]" />
             </span>

@@ -1,37 +1,61 @@
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store";
 
-export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullScreen:boolean) {
-   const {song: songInStore} = useSelector(selectAllSongStore)
-   const [idle, setIdle] = useState(false);
-   const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
-   const timerId = useRef<NodeJS.Timeout>();
+export default function useIdle(
+  delay: number,
+  isOnMobile: boolean,
+  isOpenFullScreen: boolean,
+  activeSongThumbnailRef: RefObject<HTMLDivElement>
+) {
+  const { song: songInStore } = useSelector(selectAllSongStore);
+  const [idle, setIdle] = useState(false);
+  const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
+  const timerId = useRef<NodeJS.Timeout>();
 
-   const handleMouseMove = () => {
-      setIdle(false);
-      setSomeThingToTriggerIdle(Math.random());
-   };
+  const intObserver = useMemo(
+    () =>
+      new IntersectionObserver(
+        (entries, observer) => {
+          console.log('log check entries', entries);
+        },
+        { root: document.querySelector(".song-thumbnail-container") }
+      ),
+    []
+  );
 
-   useEffect(() => {      
-      if (!isOpenFullScreen) return;
-      if (isOnMobile || !songInStore.id) return;
+  const handleMouseMove = () => {
+    setIdle(false);
+    setSomeThingToTriggerIdle(Math.random());
+  };
 
-      window.addEventListener("mousemove", handleMouseMove);
+  useEffect(() => {
+    if (!isOpenFullScreen) return;
+    if (isOnMobile || !songInStore.id) return;
 
-      return () => {
-         window.removeEventListener("mousemove", handleMouseMove);
-         clearTimeout(timerId.current);
-      };
-   }, [isOpenFullScreen, songInStore]);
+    window.addEventListener("mousemove", handleMouseMove);
 
-   useEffect(() => {      
-      timerId.current = setTimeout(() => setIdle(true), delay);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      clearTimeout(timerId.current);
+    };
+  }, [isOpenFullScreen, songInStore]);
 
-      return () => clearTimeout(timerId.current);
-   }, [someThingToTrigger]);
+  useEffect(() => {
+    timerId.current = setTimeout(() => {
+      const activeSongEle = activeSongThumbnailRef.current as HTMLDivElement;
+      console.log(activeSongEle);
+      
+      if (activeSongEle) {
+        intObserver.observe(activeSongEle);
+      }
+      setIdle(true);
+    }, delay);
 
-   if (!isOpenFullScreen) return false
+    return () => clearTimeout(timerId.current);
+  }, [someThingToTrigger]);
 
-   return idle;
+  if (!isOpenFullScreen) return false;
+
+  return idle;
 }

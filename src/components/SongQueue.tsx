@@ -51,6 +51,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
          const newQueue = [...actuallySongs];
          newQueue.push(song);
          setActuallySongs(newQueue);
+         console.log('setActuallySongs');
+         
 
          dispatch(
             setSong({ ...(song as SongWithSongIn), currentIndex: newQueue.length - 1 })
@@ -70,6 +72,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       setIsOpenSongQueue(false);
 
       setActuallySongs([]);
+      console.log('setActuallySongs');
+      
       dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
    };
 
@@ -167,7 +171,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                <ClockIcon className="w-[20px]" />
             </Button>
          </div>
-         <div className="h-[calc(100vh-146px)] overflow-auto">
+         <div className="h-[calc(100vh-146px)] overflow-y-auto overflow-x-hidden no-scroll">
             {activeTab === "Queue" && (
                <>
                   <SongItemList
