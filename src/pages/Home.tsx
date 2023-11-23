@@ -124,8 +124,6 @@ export default function HomePage() {
     console.log("setActuallySongs");
 
     setSuccessToast({ message: "songs added to queue" });
-
-    resetCheckedList();
   };
 
   // define styles
@@ -155,9 +153,7 @@ export default function HomePage() {
                   <LinkItem
                     className={classes.linkItem}
                     to={routes.MySongs}
-                    icon={
-                      <MusicalNoteIcon className={classes.icon + theme.content_text} />
-                    }
+                    icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
                     label="All songs"
                     arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
                   />
@@ -184,7 +180,7 @@ export default function HomePage() {
           {!useSongLoading &&
             !!adminPlaylists.length &&
             adminPlaylists.map((playlist, index) => (
-              <div key={index} className="w-1/4 px-[8px]">
+              <div key={index} className="w-1/2 min-[800px]:w-1/4 px-[8px]">
                 <PlaylistItem
                   active={isPlaying && songInStore.song_in.includes(playlist.id)}
                   theme={theme}
@@ -198,9 +194,7 @@ export default function HomePage() {
           <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>
 
           {!isOnMobile && isChecked && (
-            <p className="text-[13px] font-medium">
-              {selectedSongs.length + " selected"}
-            </p>
+            <p className="text-[13px] font-medium">{selectedSongs.length + " selected"}</p>
           )}
           {isChecked && selectedSongs.length && (
             <>
@@ -301,9 +295,7 @@ export default function HomePage() {
             />
           )}
           {modalName.current === "info" && <AppInfo setIsOpenModal={setIsOpenModal} />}
-          {modalName.current === "theme" && (
-            <Appearance setIsOpenModal={setIsOpenModal} />
-          )}
+          {modalName.current === "theme" && <Appearance setIsOpenModal={setIsOpenModal} />}
         </Modal>
       )}
     </>

@@ -28,17 +28,19 @@ type Props = {
   audioRef: RefObject<HTMLAudioElement>;
   lyric: Lyric;
   song: Song;
+  admin?: boolean;
 };
 
 export default function LyricEditor({
   audioRef,
   theme,
   song,
+  admin,
 
   lyric,
 }: Props) {
   const dispatch = useDispatch();
-  const { userSongs, setUserSongs } = useSongsStore();
+  const { userSongs, setUserSongs, adminSongs, setAdminSongs } = useSongsStore();
   const { setSuccessToast, setErrorToast } = useToast();
   const { actuallySongs, setActuallySongs } = useActuallySongs();
 
@@ -87,6 +89,8 @@ export default function LyricEditor({
   const isEnableAddBtn = useMemo(() => {
     return isClickPlay && !!baseLyricArr.length && !isFinish;
   }, [isFinish, baseLyricArr, isClickPlay]);
+
+  const targetSongs = useMemo(() => admin ? adminSongs : userSongs, [adminSongs, userSongs]);
 
   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
 
@@ -185,10 +189,16 @@ export default function LyricEditor({
         id: song.id,
       });
 
-      const newSong: Song = { ...song, lyric_id: song.id };
-      const newUserSongs = [...userSongs];
+      console.log(realTimeLyrics);
+      
 
-      const index = updateSongsListValue(newSong, newUserSongs);
+      const newSong: Song = { ...song, lyric_id: song.id };
+      const newSongs = [...targetSongs];
+
+      console.log('check new songs', targetSongs.map(s => s.name));
+      
+
+      const index = updateSongsListValue(newSong, newSongs);
       if (index == undefined) {
         setErrorToast({ message: "No song found" });
         setLoading(false);
@@ -196,7 +206,8 @@ export default function LyricEditor({
       }
 
       // local
-      setUserSongs(newUserSongs);
+      if (admin) setAdminSongs(newSongs)
+      else setUserSongs(newSongs);
 
       const newSongQueue = [...actuallySongs];
       updateSongsListValue(newSong, newSongQueue);
@@ -313,8 +324,7 @@ export default function LyricEditor({
         variant={"primary"}
         onClick={removeLyric}
         className={
-          style.button +
-          (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")
+          style.button + (!realTimeLyrics.length || !baseLyricArr.length ? style.disable : "")
         }
       >
         <MinusIcon className="w-[16px]" />
@@ -322,9 +332,7 @@ export default function LyricEditor({
       <Button
         variant={"primary"}
         onClick={() => seekSong("prev")}
-        className={
-          style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")
-        }
+        className={style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")}
       >
         <ChevronDoubleLeftIcon className="w-[16px] mr-[5px]" />
         2s
@@ -332,9 +340,7 @@ export default function LyricEditor({
       <Button
         variant={"primary"}
         onClick={() => seekSong("next")}
-        className={
-          style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")
-        }
+        className={style.button + (!isClickPlay || !baseLyricArr.length ? style.disable : "")}
       >
         2s
         <ChevronDoubleRightIcon className="w-[16px] ml-[5px]" />
@@ -447,11 +453,7 @@ export default function LyricEditor({
             onChange={(e) => setBaseLyric(e.target.value)}
             className="w-full rounded-[4px] mb-[10px] min-h-[50vh] bg-transparent border p-[10px]"
           />
-          <Button
-            variant={"primary"}
-            onClick={() => handleAddBaseLyric()}
-            className={style.button}
-          >
+          <Button variant={"primary"} onClick={() => handleAddBaseLyric()} className={style.button}>
             Save
           </Button>
         </Modal>

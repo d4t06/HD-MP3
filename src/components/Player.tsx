@@ -11,8 +11,6 @@ import { selectAllSongStore } from "../store/SongSlice";
 import SongQueue from "./SongQueue";
 import useIdle from "../hooks/useIdle";
 import appConfig from "../config/app";
-// import useIdle from "../hooks/useIdle";
-// import  appConfig from '../config/app'
 
 const Player = ({ admin }: { admin?: boolean }) => {
   const songStore = useSelector(selectAllSongStore);
@@ -24,19 +22,22 @@ const Player = ({ admin }: { admin?: boolean }) => {
   const [isHasAudioEle, setIsHasAudioEle] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const activeSongThumbnailRef = useRef<HTMLDivElement>(null)
   const isOnMobile = useMemo(() => {
     return window.innerWidth < 800;
   }, []);
-  // const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen, activeSongThumbnailRef);
+
+  const idle = useIdle(
+    appConfig.focusDelay,
+    isOnMobile,
+    isOpenFullScreen,
+  );
 
   const desktopContent = (
     <>
       {!admin && (
         <FullScreenPlayer
           audioEle={audioRef.current as HTMLAudioElement}
-          idle={false}
-          ref={activeSongThumbnailRef}
+          idle={idle}
           isOpenFullScreen={isOpenFullScreen}
           setIsOpenFullScreen={setIsOpenFullScreen}
         />
@@ -50,7 +51,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
       <BottomPlayer
         admin={admin}
         audioEle={audioRef.current as HTMLAudioElement}
-        idle={false && isOpenFullScreen}
+        idle={idle && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         isOpenSongQueue={isOpenSongQueue}
         setIsOpenSongQueue={setIsOpenSongQueue}
@@ -69,7 +70,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
 
       <MobileBottomPlayer
         audioEle={audioRef.current as HTMLAudioElement}
-        idle={false && isOpenFullScreen}
+        idle={idle && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />

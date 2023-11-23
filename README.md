@@ -113,6 +113,7 @@
 - [x] Handle song queue when edit song
 - [x] Handle song queue when upload song
 - [x] Handle song queue when delete songs
+- [] add lyric in dash board
 
 ### ui
 - [x] song name overflow in queue

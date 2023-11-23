@@ -3,82 +3,88 @@ import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store/SongSlice";
 
 type Props = {
-   containerRef?: RefObject<HTMLDivElement>;
-   songItemRef?: RefObject<HTMLDivElement>;
-   firstTimeRender: MutableRefObject<Boolean>;
-   isOpenFullScreen?: boolean;
+  containerRef?: RefObject<HTMLDivElement>;
+  songItemRef?: RefObject<HTMLDivElement>;
+  firstTimeRender: MutableRefObject<Boolean>;
+  isOpenFullScreen?: boolean;
+};
+
+const scrollToActiveSong = (
+  songItemEle: HTMLDivElement,
+  containerEle: HTMLDivElement
+) => {
+  const windowWidth = window.innerWidth;
+
+  if (!songItemEle || !containerEle) {
+    console.log("ele not found");
+    return;
+  }
+
+  const rect = songItemEle.getBoundingClientRect();
+
+  const lefDiff = rect.left;
+  const rightDiff = windowWidth - (lefDiff + songItemEle.offsetWidth);
+
+  const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
+
+  // case element position don't change
+  if (needToScroll === 0) return;
+
+  console.log("scroll to active");
+
+  // case element not in view
+  if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
+    containerEle.style.scrollBehavior = "auto";
+  } else {
+    containerEle.style.scrollBehavior = "smooth";
+  }
+
+  // case in view
+  //on the left side
+  let newScroll = containerEle.scrollLeft;
+  if (rightDiff > lefDiff) {
+    setTimeout(() => {
+      containerEle.scrollLeft = newScroll - needToScroll;
+    }, 300);
+
+    // on the right side
+  } else if (rightDiff < lefDiff) {
+    // newScroll += needToScroll;
+    setTimeout(() => {
+      containerEle.scrollLeft = newScroll + needToScroll;
+    }, 300);
+  }
 };
 
 export default function useScrollSong({
-   containerRef,
-   songItemRef,
-   isOpenFullScreen,
+  containerRef,
+  songItemRef,
+  isOpenFullScreen,
 }: Props) {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+  const { song: songInStore } = useSelector(selectAllSongStore);
 
-   const scrollToActiveSong = () => {
-      const windowWidth = window.innerWidth;
-      const songItemEle = songItemRef?.current as HTMLElement;
-      const containerEle = containerRef?.current as HTMLElement;
+  const handleScrollToActiveSong = () => {
+    const songItemEle = songItemRef?.current as HTMLDivElement;
+    const containerEle = containerRef?.current as HTMLDivElement;
 
-      console.log('scroll to active');
-      
+    scrollToActiveSong(songItemEle, containerEle);
+  };
 
-      if (!songItemEle || !containerEle) {
-         console.log('ele not found', songItemEle, containerEle);
-         return;
-         
-      };
+  useEffect(() => {
+    if (!isOpenFullScreen) return;
+    if (!scroll || !containerRef?.current || !songItemRef?.current) {
+      console.log("lack props");
+      return;
+    }
 
-      const rect = songItemEle.getBoundingClientRect();
+    if (!songInStore.name) return;
 
-      const lefDiff = rect.left;
-      const rightDiff = windowWidth - (lefDiff + songItemEle.offsetWidth);
+    if (!isOpenFullScreen) {
+      return;
+    }
 
-      const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
-
-      // case element position don't change
-      if (needToScroll === 0) return;
-
-      // case element not in view
-      if (Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
-         containerEle.style.scrollBehavior = "auto";
-      } else {
-         containerEle.style.scrollBehavior = "smooth";
-      }
-
-      // case in view
-      //on the left side
-      let newScroll = containerEle.scrollLeft;
-      if (rightDiff > lefDiff) {
-         setTimeout(() => {
-            containerEle.scrollLeft = newScroll - needToScroll;
-         }, 300);
-
-         // on the right side
-      } else if (rightDiff < lefDiff) {
-         // newScroll += needToScroll;
-         setTimeout(() => {
-            containerEle.scrollLeft = newScroll + needToScroll;
-         }, 300);
-      }
-   };
-
-   useEffect(() => {
-      if (!isOpenFullScreen) return;
-      if (!scroll || !containerRef?.current || !songItemRef?.current) {
-         console.log("lack props");
-         return;
-      }
-
-      if (!songInStore.name) return;
-
-      if (!isOpenFullScreen) {
-         return;
-      }
-
-      scrollToActiveSong();
-   }, [songInStore, isOpenFullScreen]);
-
-   return { scrollToActiveSong };
+    handleScrollToActiveSong();
+  }, [songInStore, isOpenFullScreen]);
 }
+
+export { scrollToActiveSong };

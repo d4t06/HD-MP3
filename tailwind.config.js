@@ -15,9 +15,6 @@ export default {
       },
       colors: {},
     },
-    screens: {
-      md: "800px",
-    },
   },
   safelist: [
     "bg-[#000]/[.1]",

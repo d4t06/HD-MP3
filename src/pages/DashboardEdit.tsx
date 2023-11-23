@@ -68,7 +68,7 @@ export default function Edit() {
                   <span className="ml-[12px]">{song.name}</span>
                </Link>
 
-               <LyricEditor lyric={lyric} audioRef={audioRef} theme={theme} song={song} />
+               <LyricEditor admin lyric={lyric} audioRef={audioRef} theme={theme} song={song} />
             </>
          )}
       </div>
