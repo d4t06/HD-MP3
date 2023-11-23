@@ -143,7 +143,7 @@ const useAuthActions = () => {
          // after set sign cause trigger auth useEffect and will update status to 'finish'
          setUserInfo({ status: "loading" });
 
-         navigate(routes.Home);
+         // navigate(routes.Home);
       }
    };
 

@@ -73,6 +73,10 @@
 - Sửa lỗi scroll text
 - Global upload
 
+
+### update thứ 3 21/11/2023
+- thêm require auth cho trang dashboard
+
 ### Song
 
 - [x] upload

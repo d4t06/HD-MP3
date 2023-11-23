@@ -28,14 +28,14 @@ const Player = ({ admin }: { admin?: boolean }) => {
   const isOnMobile = useMemo(() => {
     return window.innerWidth < 800;
   }, []);
-  const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen, activeSongThumbnailRef);
+  // const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen, activeSongThumbnailRef);
 
   const desktopContent = (
     <>
       {!admin && (
         <FullScreenPlayer
           audioEle={audioRef.current as HTMLAudioElement}
-          idle={idle}
+          idle={false}
           ref={activeSongThumbnailRef}
           isOpenFullScreen={isOpenFullScreen}
           setIsOpenFullScreen={setIsOpenFullScreen}
@@ -50,7 +50,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
       <BottomPlayer
         admin={admin}
         audioEle={audioRef.current as HTMLAudioElement}
-        idle={idle && isOpenFullScreen}
+        idle={false && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         isOpenSongQueue={isOpenSongQueue}
         setIsOpenSongQueue={setIsOpenSongQueue}
@@ -69,7 +69,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
 
       <MobileBottomPlayer
         audioEle={audioRef.current as HTMLAudioElement}
-        idle={idle && isOpenFullScreen}
+        idle={false && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />

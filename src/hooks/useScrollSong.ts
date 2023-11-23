@@ -21,7 +21,14 @@ export default function useScrollSong({
       const songItemEle = songItemRef?.current as HTMLElement;
       const containerEle = containerRef?.current as HTMLElement;
 
-      if (!songItemEle || !containerEle) return;
+      console.log('scroll to active');
+      
+
+      if (!songItemEle || !containerEle) {
+         console.log('ele not found', songItemEle, containerEle);
+         return;
+         
+      };
 
       const rect = songItemEle.getBoundingClientRect();
 

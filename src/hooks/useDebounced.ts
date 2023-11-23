@@ -31,23 +31,31 @@ export default function useDebounce(
 
       timerId.current = setTimeout(() => (timerId.current = undefined), delay);
 
+      console.log('add restore timmer');
+            
       restoreTimerId.current = setTimeout(() => {
          console.log("restore");
          restoreCb();
          window.dispatchEvent(new Event("mousemove"));
-      }, appConfig.scrollSongDelay);
+      }, 1000);
    }, [someThingToRun, appConfig]);
 
    // run cb,trigger prevent multiple click
    useEffect(() => {
       if (!timerId.current) {
          cb();
-         setSomeThingToRun(Math.random());
+         console.log('set run');
+         
+         setSomeThingToRun(Math.random() * 10);
       }
 
-      return () => clearTimeout(restoreTimerId.current);
+      return () => {
+         console.log("clear restore time out");
+
+         clearTimeout(restoreTimerId.current);
+      };
    }, [someThingToTrigger]);
 
    // trigger cb
-   return () => setSomeThingToTrigger(Math.random());
+   return () => setSomeThingToTrigger(Math.random() * 10);
 }

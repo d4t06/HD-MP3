@@ -1,6 +1,14 @@
 import DashBoardLayout from "../layout/DashBoardLayout";
 
-import { Home, Edit, Dashboard, PlaylistDetail, MySongs, DashboardEdit, DashboardPlaylist } from "../pages";
+import {
+   Home,
+   Edit,
+   Dashboard,
+   PlaylistDetail,
+   MySongs,
+   DashboardEdit,
+   DashboardPlaylist,
+} from "../pages";
 
 const routes = {
    Home: "/",
@@ -21,15 +29,20 @@ export type PlaylistParamsType = {
 const publicRoutes = [
    { path: routes.Home, component: Home, layout: "" },
 
-   { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout },
-
    { path: routes.MySongs, component: MySongs, layout: "" },
    { path: routes.Playlist, component: PlaylistDetail, layout: "" },
 
    { path: routes.Edit, component: Edit, layout: "" },
+];
 
-   { path: routes.DashboardPlaylist, component: DashboardPlaylist, layout: DashBoardLayout },
+const privateRoutes = [
+   { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout },
+   {
+      path: routes.DashboardPlaylist,
+      component: DashboardPlaylist,
+      layout: DashBoardLayout,
+   },
    { path: routes.DashboardEdit, component: DashboardEdit, layout: DashBoardLayout },
 ];
 
-export { publicRoutes, routes };
+export { publicRoutes, privateRoutes, routes };
