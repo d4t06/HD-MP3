@@ -1,11 +1,5 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongs,
-   useAuthStore,
-   useTheme,
-} from "../store";
+import { selectAllSongStore, setSong, useActuallySongs, useAuthStore, useTheme } from "../store";
 import { Button, Modal, SongItemList, Tabs, TimerModal } from ".";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +10,7 @@ import { db } from "../config/firebase";
 import Skeleton from "./skeleton";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 import { initSongObject } from "../utils/appHelpers";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 
 type Props = {
    isOpenSongQueue: boolean;
@@ -51,12 +46,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
          const newQueue = [...actuallySongs];
          newQueue.push(song);
          setActuallySongs(newQueue);
-         console.log('setActuallySongs');
-         
+         console.log("setActuallySongs");
 
-         dispatch(
-            setSong({ ...(song as SongWithSongIn), currentIndex: newQueue.length - 1 })
-         );
+         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: newQueue.length - 1 }));
 
          setActiveTab("Queue");
       }
@@ -72,8 +64,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       setIsOpenSongQueue(false);
 
       setActuallySongs([]);
-      console.log('setActuallySongs');
-      
+      console.log("setActuallySongs");
+
       dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
    };
 
@@ -130,12 +122,16 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       setLoading(true);
    }, [activeTab]);
 
+   useEffect(() => {
+      if (!userInfo.email) {
+         setIsOpenSongQueue(false);
+         setActiveTab("Queue");
+      }
+   }, [userInfo]);
+
    const SongItemSkeleton = [...Array(4).keys()].map((index) => {
       return (
-         <div
-            key={index}
-            className="flex items-center p-[10px] border-b-[1px] border-transparent"
-         >
+         <div key={index} className="flex items-center p-[10px] border-b-[1px] border-transparent">
             <Skeleton className="h-[40px] w-[40px] rounded-[4px]" />
             <div className="ml-[10px]">
                <Skeleton className="h-[20px] mb-[5px] w-[120px]" />
@@ -161,15 +157,17 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                tabs={["Queue", "History"]}
                render={(tab) => tab}
             />
-            <Button
-               onClick={handleTimerBtn}
-               className={`p-[8px] ${theme.content_hover_bg} ${
-                  isTimer ? theme.content_bg : theme.side_bar_bg
-               }`}
-               variant={"circle"}
-            >
-               <ClockIcon className="w-[20px]" />
-            </Button>
+            <Tooltip placement="bottom">
+               <TooltipTrigger
+                  onClick={handleTimerBtn}
+                  className={`p-[8px] rounded-[50%] ${theme.content_hover_bg} ${
+                     isTimer ? theme.content_bg : theme.side_bar_bg
+                  }`}
+               >
+                  <ClockIcon className="w-[20px]" />
+               </TooltipTrigger>
+               <TooltipContent>Add timer</TooltipContent>
+            </Tooltip>
          </div>
          <div className="h-[calc(100vh-146px)] overflow-y-auto overflow-x-hidden no-scroll">
             {activeTab === "Queue" && (

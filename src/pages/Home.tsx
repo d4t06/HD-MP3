@@ -175,12 +175,12 @@ export default function HomePage() {
         <h3 className="text-[24px] font-bold mb-[14px]">Popular</h3>
         <div className="flex flex-row flex-wrap -mx-[8px] mb-[30px]">
           {/* admin playlist */}
-          {useSongLoading && PlaylistSkeleton}
+          {(useSongLoading || userInfo.status === 'loading') && PlaylistSkeleton}
 
-          {!useSongLoading &&
+          {userInfo.status === 'finish' && !useSongLoading &&
             !!adminPlaylists.length &&
             adminPlaylists.map((playlist, index) => (
-              <div key={index} className="w-1/2 min-[800px]:w-1/4 px-[8px]">
+              <div key={index} className="w-1/2 min-[800px]:w-1/4 p-[8px]">
                 <PlaylistItem
                   active={isPlaying && songInStore.song_in.includes(playlist.id)}
                   theme={theme}

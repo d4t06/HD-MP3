@@ -1,7 +1,7 @@
 const appConfig = {
    isDebug: false,
-   focusDelay: 3000,
-   scrollSongDelay: 2000,
+   focusDelay: 2000,
+   scrollSongDelay: 4000,
    loadingDuration: 200,
 }
 

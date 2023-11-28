@@ -46,7 +46,7 @@ export default function Appearance({
 
    return (
       <div className={classes.popupWrapper}>
-         <ModalHeader setIsOpenModal={setIsOpenModal} title="Appearance" />
+         <ModalHeader setIsOpenModal={setIsOpenModal} title="Themes" />
          <div className={classes.themeContainer}>
             <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
             <div className={classes.themeList}>{darkThemes}</div>

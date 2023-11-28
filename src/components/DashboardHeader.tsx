@@ -2,30 +2,18 @@ import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../config/firebase";
 
-import {
-   useFloating,
-   autoUpdate,
-   offset,
-   flip,
-   shift,
-   FloatingFocusManager,
-   useClick,
-   useDismiss,
-   useRole,
-   useInteractions,
-} from "@floating-ui/react";
 import { useRef, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
 import zingIcon from "../assets/icon-zing.svg";
 
 import { useAuthActions } from "../store/AuthContext";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 
 export default function DashboardHeader() {
    const { theme } = useTheme();
    const [loggedInUser] = useAuthState(auth);
 
-   const [isOpenMenu, setIsOpenMenu] = useState(false);
    const [isOpenModal, setIsOpenModal] = useState(false);
    const modalName = useRef<"theme" | "info" | "confirm">("confirm");
 
@@ -33,21 +21,6 @@ export default function DashboardHeader() {
    const { logOut } = useAuthActions();
 
    // floating ui
-   const { refs, floatingStyles, context } = useFloating({
-      open: isOpenMenu,
-      onOpenChange: setIsOpenMenu,
-      placement: "bottom-end",
-      middleware: [offset(20), flip(), shift()],
-      whileElementsMounted: autoUpdate,
-   });
-   const click = useClick(context);
-   const dismiss = useDismiss(context);
-   const role = useRole(context);
-   const { getReferenceProps, getFloatingProps } = useInteractions([
-      click,
-      dismiss,
-      role,
-   ]);
 
    const handleSignOut = async () => {
       try {
@@ -79,35 +52,25 @@ export default function DashboardHeader() {
                         <img src={loggedInUser.photoURL!} className="w-full" alt="" />
                      )}
                   </div>
-                  <button
-                     ref={refs.setReference}
-                     {...getReferenceProps()}
-                     className={`flex ml-[12px] justify-center rounded-full items-center h-[30px] w-[30px] hover:brightness-75  ${
-                        isOpenMenu && theme.content_text
-                     } bg-${theme.alpha}`}
-                  >
-                     <Cog6ToothIcon className="w-[24px]" />
-                  </button>
+
+                  <Popover>
+                     <PopoverTrigger
+                        className={`flex ml-[12px] justify-center rounded-full items-center h-[30px] w-[30px] hover:brightness-75   bg-${theme.alpha}`}
+                     >
+                        <Cog6ToothIcon className="w-[24px]" />
+                     </PopoverTrigger>
+
+                     <PopoverContent>
+                        <SettingMenu
+                           loggedIn={false}
+                           setIsOpenModal={setIsOpenModal}
+                           modalName={modalName}
+                        />
+                     </PopoverContent>
+                  </Popover>
                </div>
             </div>
          </div>
-
-         {isOpenMenu && (
-            <FloatingFocusManager context={context} modal={false}>
-               <div
-                  className="z-[99]"
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  {...getFloatingProps()}
-               >
-                  <SettingMenu
-                     modalName={modalName}
-                     loggedIn={!!loggedInUser?.email}
-                     setIsOpenModal={setIsOpenModal}
-                  />
-               </div>
-            </FloatingFocusManager>
-         )}
 
          {isOpenModal && (
             <Modal theme={theme} setOpenModal={setIsOpenModal}>
@@ -120,12 +83,8 @@ export default function DashboardHeader() {
                      label="Log out ?"
                   />
                )}
-               {modalName.current === "info" && (
-                  <AppInfo setIsOpenModal={setIsOpenModal} />
-               )}
-               {modalName.current === "theme" && (
-                  <Appearance setIsOpenModal={setIsOpenModal} />
-               )}
+               {modalName.current === "info" && <AppInfo setIsOpenModal={setIsOpenModal} />}
+               {modalName.current === "theme" && <Appearance setIsOpenModal={setIsOpenModal} />}
             </Modal>
          )}
       </>

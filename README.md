@@ -85,6 +85,8 @@
 - [x] add to playlist
 - [x] delete from playlist
 - [x] add lyrics
+- [x] active
+- [x] like song
 
 ### Playlist
 
@@ -92,6 +94,7 @@
 - [x] edit playlist
 - [x] delete playlist
 - [x] add songs to playlist
+- [x] active 
 
 ### Song queue
 
@@ -102,9 +105,10 @@
 ### control
 
 - [x] repeat
-- [] shuffle
+- [x] shuffle
 - [x] timer
-- [] Fix auto play when mysongs to dashboard and dashboard to mysong 
+- [x] focus mode
+
 
 ### data
 
@@ -119,6 +123,11 @@
 - [x] song name overflow in queue
 - [x] direct edit lyric item in lyric edit
 - [x] fix scroll text
+- [x] increase song thumb size when min width 1356px
+
 
 ### Issues
-
+- [x] không tải được like song ở trên mobile
+- [x] Nút điều khiển trên mobile to
+- [x] không load dươc lyric trên mobile
+- [x] dừng load song khi song lỗi

@@ -80,7 +80,7 @@ export default function Edit() {
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
    return (
-      <div className="pb-[30px]">
+      <div className="pb-[60px]">
          {/* audio element always visible */}
          <audio ref={audioRef} src={targetSong?.song_url} className="hidden" />
          {targetSong && (

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Lyric, Song } from "../types";
 import { myGetDoc } from "../utils/firebaseHelpers";
+import { useSelector } from "react-redux";
+import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 // import appConfig from "../config/app";
 
 export default function useSongLyric({
@@ -19,6 +21,9 @@ export default function useSongLyric({
 
    const [loading, setLoading] = useState(false);
    const [isSongLoaded, setIsSongLoaded] = useState(false);
+   const {
+      playStatus: { isError },
+   } = useSelector(selectAllPlayStatusStore);
    // const isSongLoaded = useRef(false)
 
    const handleSongLoaded = async () => {
@@ -64,12 +69,16 @@ export default function useSongLyric({
    }, []);
 
    useEffect(() => {
+      if (isError) {
+         setLoading(false);
+         return;
+      }
       return () => {
          setIsSongLoaded(false);
          setLoading(true);
          setSongLyric({ base: "", real_time: [] });
       };
-   }, [songInStore]);
+   }, [songInStore, isError]);
 
    useEffect(() => {
       if (!songInStore.lyric_id && isSongLoaded) {

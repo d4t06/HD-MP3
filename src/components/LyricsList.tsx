@@ -34,7 +34,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen }) => {
     return songLyric.real_time.map((lyricItem, index) => {
       const bounce = 0.3;
       const inRange =
-        currentTime >= lyricItem.start - bounce && lyricItem.end > currentTime + bounce;
+        currentTime >= lyricItem.start - bounce && currentTime + bounce < lyricItem.end;
       return (
         <LyricItem
           firstTimeRender={firstTimeRender}

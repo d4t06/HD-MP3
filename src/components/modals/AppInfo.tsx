@@ -8,7 +8,7 @@ export default function AppInfo({
 }) {
    return (
       <div className="w-[400px] max-w-[calc(90vw-40px)]">
-         <ModalHeader setIsOpenModal={setIsOpenModal} title={"Zingmp3 Clone"} />
+         <ModalHeader setIsOpenModal={setIsOpenModal} title={"HD Player"} />
          <div className="">
             <h5 className="text-lg font-bold">Các công nghệ sử dụng:</h5>
             <ul>

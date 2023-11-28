@@ -29,7 +29,6 @@ export default function Auth({ children }: { children: ReactNode }) {
                email: loggedInUser?.email,
                latest_seen: serverTimestamp(),
                photoURL: loggedInUser?.photoURL,
-               display_name: loggedInUser?.displayName,
             },
             id: loggedInUser?.email as string,
          });

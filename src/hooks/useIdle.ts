@@ -2,56 +2,65 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from "../store";
 import { scrollToActiveSong } from "./useScrollSong";
-import { sleep } from "../utils/appHelpers";
+import appConfig from "../config/app";
 
-export default function useIdle(
-  delay: number,
-  isOnMobile: boolean,
-  isOpenFullScreen: boolean
-) {
-  const { song: songInStore } = useSelector(selectAllSongStore);
-  const [idle, setIdle] = useState(false);
-  const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
-  const timerId = useRef<NodeJS.Timeout>();
+export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullScreen: boolean) {
+   const { song: songInStore } = useSelector(selectAllSongStore);
+   const [idle, setIdle] = useState(false);
+   const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
+   const timerIdFocus = useRef<NodeJS.Timeout>();
+   const timerIdScrollSong = useRef<NodeJS.Timeout>();
 
-  const handleMouseMove = () => {
-    setIdle(false);
-    setSomeThingToTriggerIdle(Math.random());
-  };
+   const handleMouseMove = () => {
+      setIdle(false);
+      setSomeThingToTriggerIdle(Math.random());
+   };
 
-  const handleIdle = async () => {
-    const activeSongEle = document.querySelector(".song-thumb.active") as HTMLDivElement;
-    const containerEle = document.querySelector(".song-list-container") as HTMLDivElement;
+   const clear = () => {
+      clearTimeout(timerIdScrollSong.current);
+      clearTimeout(timerIdFocus.current);
+   };
 
-    if (activeSongEle && containerEle) {
-      scrollToActiveSong(activeSongEle, containerEle);
-      await sleep(2000);
-    }
+   const handleIdle = async () => {
+      if (!isOpenFullScreen) return;
 
-    setIdle(true);
-  };
+      const activeSongEle = document.querySelector(".song-thumb.active") as HTMLDivElement;
+      const containerEle = document.querySelector(".song-list-container") as HTMLDivElement;
 
-  useEffect(() => {
-    if (!isOpenFullScreen) return;
-    if (isOnMobile || !songInStore.id) return;
+      if (activeSongEle && containerEle) {
+         console.log("scroll");
 
-    window.addEventListener("mousemove", handleMouseMove);
+         scrollToActiveSong(activeSongEle, containerEle, true);
+         timerIdFocus.current = setTimeout(() => {
+            setIdle(true);
+         }, appConfig.focusDelay);
+      }
+   };
 
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      clearTimeout(timerId.current);
-    };
-  }, [isOpenFullScreen, songInStore]);
+   useEffect(() => {
+      if (!isOpenFullScreen) return;
+      if (isOnMobile || !songInStore.id) return;
 
-  useEffect(() => {
-    timerId.current = setTimeout(() => {
-      handleIdle();
-    }, delay);
+      setTimeout(() => {
+         window.addEventListener("mousemove", handleMouseMove);
+      }, 1000);
 
-    return () => clearTimeout(timerId.current);
-  }, [someThingToTrigger]);
+      return () => {
+         window.removeEventListener("mousemove", handleMouseMove);
+         clear();
+      };
+   }, [isOpenFullScreen, songInStore]);
 
-  if (!isOpenFullScreen) return false;
+   useEffect(() => {
+      timerIdScrollSong.current = setTimeout(() => {
+         handleIdle();
+      }, delay);
 
-  return idle;
+      return () => {
+         clear();
+      };
+   }, [someThingToTrigger]);
+
+   if (!isOpenFullScreen) return false;
+   return idle;
 }

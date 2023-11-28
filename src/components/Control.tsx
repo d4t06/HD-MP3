@@ -6,13 +6,7 @@ import {
    ForwardIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import {
-   selectAllSongStore,
-   setSong,
-   useTheme,
-   useActuallySongs,
-   useAuthStore,
-} from "../store";
+import { selectAllSongStore, setSong, useTheme, useActuallySongs, useAuthStore } from "../store";
 
 import { handleTimeText } from "../utils/appHelpers";
 
@@ -38,7 +32,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
    const {
       playStatus: { isPlaying, isRepeat, isShuffle, isError },
    } = useSelector(selectAllPlayStatusStore);
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
    const { actuallySongs } = useActuallySongs();
 
    // component state
@@ -65,7 +59,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
    const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
    const updateHistory = async () => {
-     if (!songInStore.id) return;
+      if (!songInStore.id) return;
 
       let newHistory = [...history.current];
 
@@ -143,7 +137,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
    const handleResetForNewSong = useCallback(() => {
       pause();
-      dispatch(setPlayStatus({ isPlaying: false, isWaiting: true }));
+      dispatch(setPlayStatus({ isWaiting: true, isError: false }));
 
       const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
@@ -290,8 +284,6 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
          return;
       }
 
-      dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
-
       play();
    };
 
@@ -325,6 +317,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       audioEle.src = songInStore.song_url;
       currentIndex.current = songInStore.currentIndex;
 
+      if (songInStore.name) {
+         document.title = `${songInStore.name} - ${songInStore.singer}`;
+      }
+
       return () => {
          if (firstTimeRender.current) {
             firstTimeRender.current = false;
@@ -335,6 +331,17 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
          firstTimePlay.current = true;
       };
    }, [songInStore]);
+
+   // update site title
+   useEffect(() => {
+      if (!songInStore.name) return;
+
+      let myTitle = `${songInStore.name} - ${songInStore.singer}`;
+      if (!isPlaying && playlistInStore.name && songInStore.song_in.includes(playlistInStore.id)) {
+         myTitle = `${playlistInStore.name}`;
+      }
+      // document.title = myTitle;
+   }, [isPlaying]);
 
    // add new handle when song end function
    useEffect(() => {
@@ -378,14 +385,12 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] ${
          admin ? "" : "h-[50px]"
       }`,
-      processContainer: `flex w-full flex-row items-center h-[30px] ${
-         admin ? "h-full" : ""
-      }`,
+      processContainer: `flex w-full flex-row items-center h-[30px] ${admin ? "h-full" : ""}`,
       processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
       currentTime: `opacity-60 text-[14px] font-semibold`,
       duration: `text-[14px] font-semibold`,
-      icon: "w-[30px] max-[549px]:w-[40px]",
+      icon: "w-[30px] max-[350px]:w-[25px]",
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
    };
 
@@ -442,14 +447,11 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             <div
                ref={durationLine}
                onClick={(e) => handleSeek(e)}
-               className={`${classes.processLineBase} ${
-                  !isLoaded && "pointer-events-none"
-               }  ${classes.before}`}
+               className={`${classes.processLineBase} ${!isLoaded && "pointer-events-none"}  ${
+                  classes.before
+               }`}
             >
-               <div
-                  ref={timeProcessLine}
-                  className={`${classes.processLineCurrent}`}
-               ></div>
+               <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
             </div>
             <div className="w-[55px] pl-[5px]">
                {audioEle && (

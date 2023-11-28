@@ -121,16 +121,15 @@ export const handleTimeText = (duration: number) => {
   }
 };
 
-export const updateSongsListValue = (song: Song, userSongs: Song[]) => {
+export const updateSongsListValue = (song: Song, songList: Song[]) => {
   if (isDev) console.log("update songs list");
 
-  const index = userSongs.findIndex((songItem) => {
-    // if (isDev) console.log(songItem.id, "===", song.id, songItem.id === song.id);
-    return songItem.id === song.id;
+  const index = songList.findIndex((s) => {
+    return s.id === song.id;
   });
 
   if (index == -1) return;
-  userSongs[index] = song;
+  songList[index] = song;
   return index;
 };
 

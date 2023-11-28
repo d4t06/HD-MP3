@@ -31,7 +31,7 @@ export default function SongList({
 
    const classes = {
       addSongContainer: "pb-[50px] relative",
-      addSongContent: "max-h-[calc(90vh-50px)] w-[700px] max-w-[80vw] overflow-auto",
+      addSongContent: "max-h-[calc(60vh)] w-[700px] max-w-[80vw] overflow-auto",
       songItem: "w-full max-[549px]:w-full",
    };
 

@@ -3,12 +3,13 @@ import { User } from "../types";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { setSong, useSongsStore } from ".";
+import { setSong, useActuallySongs, useSongsStore } from ".";
 import { initialSongs } from "./SongsContext";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useDispatch } from "react-redux";
+import { initSongObject } from "../utils/appHelpers";
 
 // 1 initial state
 type StateType = {
@@ -98,11 +99,7 @@ const AuthContext = createContext<ContextType>(initialContext);
 const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
    const { userInfo, setUserInfo } = useAuthContext();
 
-   return (
-      <AuthContext.Provider value={{ userInfo, setUserInfo }}>
-         {children}
-      </AuthContext.Provider>
-   );
+   return <AuthContext.Provider value={{ userInfo, setUserInfo }}>{children}</AuthContext.Provider>;
 };
 
 // 6 hook
@@ -118,16 +115,20 @@ const useAuthActions = () => {
    const { setUserInfo } = useAuthStore();
    const { initSongsContext } = useSongsStore();
    const [signInWithGoogle] = useSignInWithGoogle(auth);
+   const { setActuallySongs } = useActuallySongs();
 
    const logOut = async () => {
       await signOut(auth);
       // reset userInfo
-      // after set sign cause trigger auth useEffect and will update status to 'finish'
+      // trigger auth useEffect and will update status to 'finish'
       setUserInfo(initialState.userInfo);
       // reset song context
+      setActuallySongs([]);
       initSongsContext(initialSongs);
-      // reset song redux
 
+      dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
+
+      // reset song redux
       navigate(routes.Home);
    };
 

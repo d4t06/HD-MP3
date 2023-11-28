@@ -1,5 +1,4 @@
 import {
-   ChevronLeftIcon,
    PencilSquareIcon,
    PlusCircleIcon,
    TrashIcon,
@@ -34,15 +33,12 @@ export default function DashboardPlaylist() {
    const { theme } = useTheme();
    const { setErrorToast } = useToast();
    const { userSongs, adminSongs } = useSongsStore();
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
 
    // *** state
    const firstTimeRender = useRef(true);
    const [isOpenModal, setIsOpenModal] = useState(false);
-   const [modalComponent, setModalComponent] = useState<
-      "edit" | "confirm" | "addSongs"
-   >();
+   const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
    // for multiselect songItem
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
    const [isChecked, setIsChecked] = useState(false);
@@ -140,7 +136,7 @@ export default function DashboardPlaylist() {
    );
 
    return (
-      <div className="playlist-page">
+      <div className="playlist-page min-  h-[100vh]">
          {/* head */}
          <BackBtn />
 
@@ -161,12 +157,8 @@ export default function DashboardPlaylist() {
                            <PencilSquareIcon className="w-[20px]" />
                         </button>
                      </h3>
-                     <p className="text-[16px]">
-                        {handleTimeText(playlistInStore?.time)}
-                     </p>
-                     <p className="text-[14px] opacity-60">
-                        create by {playlistInStore.by}
-                     </p>
+                     <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
+                     <p className="text-[14px] opacity-60">create by {playlistInStore.by}</p>
                   </div>
 
                   {/* cta */}
@@ -175,17 +167,6 @@ export default function DashboardPlaylist() {
                         usePlaylistLoading ? "opacity-60 pointer-events-none" : ""
                      }`}
                   >
-                     {/* <Button
-                        onClick={handlePlayPlaylist}
-                        className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
-                           !playlistInStore.song_ids.length &&
-                           "opacity-60 pointer-events-none"
-                        }`}
-                     >
-                        Play
-                        <PlayIcon className="ml-[5px] w-[25px]" />
-                     </Button> */}
-
                      <Button
                         onClick={() => openModal("confirm")}
                         className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}

@@ -17,8 +17,40 @@ export default function Edit() {
    const [lyric, setLyric] = useState<Lyric>({ base: "", real_time: [] });
 
    const audioRef = useRef<HTMLAudioElement>(null);
+   const ranUseEffect = useRef(false);
    const params = useParams<{ id: string }>();
    const navigate = useNavigate();
+
+   const getSong = async () => {
+      try {
+         const songSnapshot = await myGetDoc({
+            collection: "songs",
+            id: params?.id as string,
+            msg: ">>> api: get song doc",
+         });
+
+         if (!songSnapshot.exists()) {
+            navigate("/dashboard");
+            return;
+         }
+
+         const songData = songSnapshot.data() as Song;
+
+         // if song already had lyric, get it and pass to children component
+         if (songData.lyric_id) {
+            const lyricSnapshot = await myGetDoc({
+               collection: "lyrics",
+               id: songData.lyric_id,
+            });
+            const lyricData = lyricSnapshot.data() as Lyric;
+            setLyric(lyricData);
+         }
+
+         setSong({ ...songData, id: songSnapshot.id });
+      } catch (error) {
+         console.log({ message: error });
+      }
+   };
 
    useEffect(() => {
       if (userInfo.status === "loading") return;
@@ -28,34 +60,14 @@ export default function Edit() {
          return;
       }
 
-      const getSong = async () => {
-         try {
-            const songSnapshot = await myGetDoc({ collection: "songs", id: params?.id as string, msg: ">>> api: get song doc" });
-
-            const songData = songSnapshot.data() as Song;
-
-            // if song already had lyric, get it and pass to children component
-            if (songData.lyric_id) {
-               const lyricSnapshot = await myGetDoc({
-                  collection: "lyrics",
-                  id: songData.lyric_id,
-               });
-               const lyricData = lyricSnapshot.data() as Lyric;
-
-               setLyric(lyricData);
-            }
-
-            setSong({ ...songData, id: songSnapshot.id });
-         } catch (error) {
-            console.log({ message: error });
-         }
-      };
-
-      getSong();
+      if (!ranUseEffect.current) {
+         ranUseEffect.current = true;
+         getSong();
+      }
    }, []);
 
    return (
-      <div className={`container mx-auto pt-[30px]`}>
+      <div className={`container mx-auto pb-[60px]`}>
          <audio ref={audioRef} src={song && song.song_url} className="hidden" />
          {/* audio element always visible */}
          {song && (
@@ -68,7 +80,13 @@ export default function Edit() {
                   <span className="ml-[12px]">{song.name}</span>
                </Link>
 
-               <LyricEditor admin lyric={lyric} audioRef={audioRef} theme={theme} song={song} />
+               <LyricEditor
+                  admin
+                  lyric={lyric}
+                  audioRef={audioRef}
+                  theme={theme}
+                  song={song}
+               />
             </>
          )}
       </div>

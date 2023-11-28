@@ -6,18 +6,18 @@ import { ReferenceType } from "@floating-ui/react";
 const buttonVariant = cva("inline-flex items-center hover:brightness-90", {
    variants: {
       variant: {
-         default: '',
+         default: "",
          circle: "rounded-[99px] p-[4px]",
-         list: 'flex items-center py-[4px] w-full text-[14px]',
-         primary: 'px-[16px] py-[4px] text-[14px]',
-         outline: `border rounded-full`
+         list: "flex items-center py-[5px] w-full text-[14px]",
+         primary: "px-[16px] py-[4px] text-[14px]",
+         outline: `border rounded-full`,
       },
       size: {
          half: "w-1/2",
          full: "w-full",
-         small:"text-[13px] px-[10px] py-[3px]",
+         small: "text-[13px] px-[10px] py-[3px]",
          normal: "text-[14px] px-[16px] py-[4px]",
-         large: "h-[40px] w-[40px]"
+         large: "h-[40px] w-[40px]",
       },
    },
    defaultVariants: {
@@ -31,9 +31,8 @@ interface Props
    children: ReactNode;
    // classNames: any;
    isLoading?: boolean;
-   onClick?:MouseEventHandler,
-   ref?: ((node: ReferenceType | null) => void);
-
+   onClick?: MouseEventHandler;
+   ref?: (node: ReferenceType | null) => void;
 }
 
 const Button: FC<Props> = ({
@@ -46,7 +45,13 @@ const Button: FC<Props> = ({
    ...props
 }) => {
    return (
-      <button type="button" onClick={(e) => onClick ? onClick(e) : ''} {...props} className={buttonVariant({variant, size, className})} disabled={isLoading}>
+      <button
+         type="button"
+         onClick={(e) => (onClick ? onClick(e) : "")}
+         {...props}
+         className={buttonVariant({ variant, size, className })}
+         disabled={isLoading}
+      >
          {isLoading ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : null}
          {!isLoading && children}
       </button>

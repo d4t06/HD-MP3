@@ -46,23 +46,12 @@ function SongList({
    inQueue,
    inHistory,
 
-   // isChecked,
-   // selectedSongs,
-   // setIsChecked,
-   // setSelectedSongs,
-   // deleteFromPlaylist,
    ...props
 }: Props) {
    const { theme } = useTheme();
    const { userInfo, setUserInfo } = useAuthStore();
-   const {
-      userPlaylists,
-      userSongs,
-      setUserSongs,
-      adminSongs,
-      adminPlaylists,
-      setAdminSongs,
-   } = useSongsStore();
+   const { userPlaylists, userSongs, setUserSongs, adminSongs, adminPlaylists, setAdminSongs } =
+      useSongsStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { addSongToPlaylistSongItem } = usePlaylistActions({ admin: inAdmin });
    const { actuallySongs, setActuallySongs } = useActuallySongs();
@@ -82,15 +71,14 @@ function SongList({
                theme={theme}
                inProcess={!isAdded}
                data={song}
-               //  setActuallySongs={setActuallySongs}
-               //  actuallySongs={actuallySongs}
+               userInfo={userInfo}
             />
          );
       });
    };
 
    const renderSongList = () => {
-      if (!songs.length) return <h1>No song jet...</h1>;
+      if (!songs.length && !tempSongs.length) return <h1>No song jet...</h1>;
 
       return songs.map((song, index) => {
          let active = !!activeExtend && songInStore.id === song.id;
@@ -115,12 +103,6 @@ function SongList({
                setActuallySongs={!inHistory ? setActuallySongs : undefined}
                inQueue={inQueue}
                {...props}
-
-               // deleteFromPlaylist={deleteFromPlaylist}
-               // isChecked={isChecked}
-               // selectedSongs={selectedSongs}
-               // setIsChecked={setIsChecked}
-               // setSelectedSongs={setSelectedSongs}
             />
          );
       });
