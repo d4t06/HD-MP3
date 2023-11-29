@@ -14,14 +14,12 @@ export const testSongs: (Song & { song_in: string })[] = [
       image_file_path: "",
       image_url: "",
       song_in: "admin",
-      in_playlist: [],
       name: "Jumbo",
    },
    // {
    //    name: "Savannah",
    //    image_url:
    //       "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/images%2Fdivinerssavannahfeatphillykncsrelease_XFi1_admin_stock?alt=media&token=2c144bed-1d96-43ad-a4f1-3a11e03a21da",
-   //    in_playlist: [],
    //    image_file_path: "images/divinerssavannahfeatphillykncsrelease_XFi1_admin_stock",
    //    lyric_id: "divinerssavannahfeatphillykncsrelease_XFi1_admin",
    //    song_url:
@@ -42,7 +40,6 @@ export const testSongs: (Song & { song_in: string })[] = [
    //    lyric_id: "ncs005dddifferentheavensafeandsound_Rnfk_admin",
    //    id: "ncs005dddifferentheavensafeandsound_Rnfk_admin",
    //    blurhash_encode: "U48Eh:@@D47y*Wz~tLGg00CPyp*#HQ7TS5[O",
-   //    in_playlist: [],
    //    name: "Safe And Sound",
    //    singer: "Different Heaven",
    //    image_file_path: "images/ncs005dddifferentheavensafeandsound_Rnfk_admin_stock",
@@ -53,7 +50,6 @@ export const testSongs: (Song & { song_in: string })[] = [
    // },
    // {
    //    by: "admin",
-   //    in_playlist: [],
    //    song_in: "admin",
    //    name: "Popsicle",
    //    song_url:
@@ -79,7 +75,6 @@ export const testSongs: (Song & { song_in: string })[] = [
    //    singer: "Syn Cole",
    //    image_file_path: "images/syncolegizmoncsreleasemp3_dfkD_admin_stock",
    //    lyric_id: "syncolegizmoncsreleasemp3_dfkD_admin",
-   //    in_playlist: [],
    //    image_url:
    //       "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/images%2Fsyncolegizmoncsreleasemp3_dfkD_admin_stock?alt=media&token=8feb2882-d550-4a09-b2b8-a34e21a90f32",
    //    song_url:
@@ -87,7 +82,6 @@ export const testSongs: (Song & { song_in: string })[] = [
    // },
    {
       name: "Time",
-      in_playlist: [],
       song_file_path: "songs/syncole-time.mp3_huudat01234560",
       singer: "Syn Cole",
       blurhash_encode: "U8H,Yj56Mdxt7%r=n$S400%1X,V[_#OZo#s,",
@@ -107,7 +101,6 @@ export const testSongs: (Song & { song_in: string })[] = [
       lyric_id: "tropiclove_GKjN_admin",
       name: "Tropic Love",
       singer: "Contacreast",
-      in_playlist: [],
       by: "admin",
       image_file_path: "images/tropiclove_GKjN_admin_stock",
       duration: 300,

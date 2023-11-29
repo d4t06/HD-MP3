@@ -26,18 +26,18 @@ export default function Sidebar() {
 
    //  define styles
    const classes = {
-      container: `w-[180px] flex-shrink-0 border-r-[1px] h-screen overflow-y-auto ${theme.side_bar_bg} border-${theme.alpha}`,
+      container: `w-[180px] flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
       button: `w-full text-[14px] font-[500] ${theme.content_hover_text}`,
       text: theme.type === "light" ? "text-[#333]" : "text-white",
       icon: "w-[25px] mr-[5px]",
       menuItem: "w-full border-l-[4px] pl-[10px] h-[44px] inline-flex items-center",
-      activeMenu: `${theme.content_text} bg-${theme.alpha} ${theme.content_border}`,
+      activeMenu: `${theme.content_text} ${theme.container} ${theme.content_border}`,
    };
 
    return (
       <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] h-[60px] flex items-center">
-            <h1 className="text-[24px]">HD MP3</h1>
+            <h1 className="text-[24px] font-semibold">HD MP3</h1>
          </div>
 
          <div className="flex flex-col items-start">
@@ -59,7 +59,8 @@ export default function Sidebar() {
                   {loggedInUser?.email && (
                      <Link
                         className={`${classes.menuItem}  ${
-                           location.pathname === "/mysongs"
+                           location.pathname.includes("mysongs") ||
+                           location.pathname.includes("playlist")
                               ? classes.activeMenu
                               : "border-transparent"
                         }`}
@@ -85,8 +86,6 @@ export default function Sidebar() {
                </>
             )}
          </div>
-
-         
       </div>
    );
 }

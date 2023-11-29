@@ -111,9 +111,6 @@ export default function MySongsPage() {
                (s) => ({ ...s.data(), song_in: "favorite" } as SongWithSongIn)
             );
 
-            userInfo.like_song_ids.map((id) => console.log(id));
-            favorites.map((song) => console.log(song.name));
-
             setFavoriteSongs(favorites);
             //   handle update user like_song_ids when song have been remove
             if (favoriteSongs.length < userInfo.like_song_ids.length) {
@@ -155,8 +152,11 @@ export default function MySongsPage() {
    };
 
    const handleSetFavoriteSong = (song: Song, index: number) => {
-      if (songInStore.song_in !== "favorite" || actuallySongs.length !== favoriteSongs.length) {
-         setActuallySongs(favoriteSongs);
+      if (
+         songInStore.song_in !== "favorite" ||
+         actuallySongs.length !== favoriteSongsFiltered.length
+      ) {
+         setActuallySongs(favoriteSongsFiltered);
          console.log("setActuallySongs");
       }
 
@@ -186,6 +186,11 @@ export default function MySongsPage() {
       if (initialLoading || !initial) return 0;
       return tempSongs.length + userSongs.length;
    }, [tempSongs, userSongs, initial, initialLoading]);
+
+   const favoriteSongsFiltered = useMemo(
+      () => favoriteSongs.filter((s) => userInfo.like_song_ids.includes(s.id)),
+      [userInfo.like_song_ids]
+   );
 
    const resetCheckedList = () => {
       setSelectedSongs([]);
@@ -413,14 +418,16 @@ export default function MySongsPage() {
                })}
             </div>
             <div className="min-h-[50vh]">
-               {initialLoading || (songLoading && SongItemSkeleton)}
+               {(initialLoading || songLoading) && SongItemSkeleton}
 
                {!initialLoading && !songLoading && (
                   <>
                      {songTab === "mine" && !!songCount && (
                         <SongList
                            handleSetSong={handleSetSong}
-                           activeExtend={songInStore.song_in === "user"}
+                           activeExtend={
+                              songInStore.song_in === "user" || songInStore.song_in === "favorite"
+                           }
                            isChecked={isChecked}
                            setIsChecked={setIsChecked}
                            setSelectedSongs={setSelectedSongs}
@@ -431,12 +438,14 @@ export default function MySongsPage() {
                         />
                      )}
 
-                     {songTab === "favorite" && !!favoriteSongs.length && (
+                     {songTab === "favorite" && !!favoriteSongsFiltered.length && (
                         <SongList
-                           activeExtend={songInStore.song_in === "favorite"}
+                           activeExtend={
+                              songInStore.song_in === "user" || songInStore.song_in === "favorite"
+                           }
                            handleSetSong={handleSetFavoriteSong}
                            isChecked={isChecked}
-                           songs={favoriteSongs}
+                           songs={favoriteSongsFiltered}
                         />
                      )}
                   </>

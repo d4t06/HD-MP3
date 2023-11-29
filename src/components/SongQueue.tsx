@@ -169,7 +169,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                <TooltipContent>Add timer</TooltipContent>
             </Tooltip>
          </div>
-         <div className="h-[calc(100vh-146px)] overflow-y-auto overflow-x-hidden no-scroll">
+         <div className="h-[calc(100vh-146px)] pb-[30px] overflow-y-auto overflow-x-hidden no-scroll">
             {activeTab === "Queue" && (
                <>
                   <SongItemList

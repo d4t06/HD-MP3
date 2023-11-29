@@ -10,10 +10,10 @@ import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
-import { ScrollText, Image, Control, Button } from ".";
+import { ScrollText, Image, Control } from ".";
 
 import useVolume from "../hooks/useVolume";
-import zingIcon from "../assets/icon-zing.svg";
+import logo from "../assets/siteLogo.png";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 
@@ -41,12 +41,13 @@ export default function BottomPlayer({
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const {
-      playStatus: { isPlaying, isWaiting, isError },
+      playStatus: { isPlaying, isWaiting },
    } = useSelector(selectAllPlayStatusStore);
 
    const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
    const volumeProcessLine = useRef<HTMLDivElement>(null);
+   const vinylRef = useRef<HTMLImageElement>(null);
 
    // use hooks
    const location = useLocation();
@@ -67,6 +68,12 @@ export default function BottomPlayer({
       volumeLineWidth.current = volumeLine.current?.offsetWidth;
    }, [isOpenFullScreen]);
 
+   useEffect(() => {
+      const vinylEle = vinylRef.current as HTMLDivElement;
+      if (isPlaying) vinylEle.style.animationPlayState = "running";
+      else vinylEle.style.animationPlayState = "paused";
+   }, [isPlaying]);
+
    const classes = {
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
       wrapper: `border-${
@@ -76,19 +83,22 @@ export default function BottomPlayer({
       }`,
       container: `flex flex-row gap-[10px] h-full items-stretch`,
 
-      songInfoWrapper: `${admin ? "w-1/4" : "w-1/3 "}`,
+      songInfoWrapper: `${admin ? "w-1/4" : "w-1/4 "}`,
+      songInfoChild: "flex flex-row items-center h-full origin-center",
 
-      controlWrapper: `flex max-w-[400px] flex-grow`,
+      controlWrapper: `flex max-w-[450px] flex-grow`,
       controlWrapperChild_1: `${
          isOpenFullScreen ? "max-w-[600px] flex-col-reverse pb-[10px]" : "flex-col justify-center"
       }`,
       controlWrapperChild_2: `${!songInStore.song_url && "pointer-events-none opacity-60"}`,
 
       volumeWrapper: `volume-control ${
-         admin ? "w-1/4" : "w-1/3 "
+         admin ? "w-1/4" : "w-1/4 "
       } flex items-center justify-end gap-5`,
       volumeLineBase: `ml-3 w-full relative h-[4px] cursor-pointer rounded-3xl bg-gray-200`,
       volumeLineCurrent: `absolute left-0 top-0 h-full w-full rounded-l-full`,
+
+      blurBg: `bg-opacity-[0.7] backdrop-blur-[15px] z-[-1] absolute inset-0 ${theme.bottom_player_bg}`,
    };
 
    return (
@@ -98,9 +108,7 @@ export default function BottomPlayer({
          } bg-transparent`}
       >
          <div
-            className={`absolute inset-0 ${
-               theme.bottom_player_bg
-            } bg-opacity-[0.7] backdrop-blur-[15px] z-[-1] ${
+            className={`${classes.blurBg} ${
                isOpenFullScreen ? "opacity-0 transition-opacity delay-[.2s]" : ""
             }`}
          ></div>
@@ -111,22 +119,16 @@ export default function BottomPlayer({
          >
             <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
                {/* song image, name and singer */}
-               <div
-                  className={`flex flex-row items-center h-full origin-center ${
-                     isOpenFullScreen ? "hidden" : ""
-                  }`}
-               >
-                  <div className="w-[2.5rem] h-[2.5rem]">
-                     <Image
-                        blurHashEncode={songInStore.blurhash_encode}
-                        src={songInStore.image_url || zingIcon}
-                        classNames={`rounded-full ${
-                           isPlaying ? "animate-[spin_8s_linear_infinite]" : ""
-                        } `}
+               <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
+                  <div className={`w-[46px]`}>
+                     <img
+                        ref={vinylRef}
+                        src={songInStore.image_url || logo}
+                        className={`rounded-full w-full animate-[spin_8s_linear_infinite]`}
                      />
                   </div>
 
-                  <div className="ml-[10px] flex-grow">
+                  {/* <div className="ml-[10px] flex-grow">
                      <div className="h-[24px] w-full mask-image-horizontal">
                         {useMemo(
                            () => (
@@ -154,7 +156,7 @@ export default function BottomPlayer({
                            [songInStore]
                         )}
                      </div>
-                  </div>
+                  </div> */}
                </div>
             </div>
 
@@ -225,7 +227,7 @@ export default function BottomPlayer({
                            <QueueListIcon />
                         </TooltipTrigger>
 
-                        <TooltipContent>Songs queue</TooltipContent>
+                        <TooltipContent>Queue</TooltipContent>
                      </Tooltip>
                   </>
                )}

@@ -3,7 +3,7 @@ function Footer() {
    const classes = {
       container: `my-[30px] pt-[15px] justify-end text-right flex items-center`,
       icon: "w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
-      copyRightText: "text-[10px] italic",
+      copyRightText: "text-[11px] italic",
    };
    return (
       <div className={`${classes.container}`}>

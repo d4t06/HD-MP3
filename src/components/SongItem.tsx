@@ -17,20 +17,12 @@ import {
    TrashIcon,
    HeartIcon,
    QueueListIcon,
+   BackspaceIcon,
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { handleTimeText, initSongObject, selectSongs } from "../utils/appHelpers";
-import {
-   FloatingFocusManager,
-   autoPlacement,
-   autoUpdate,
-   offset,
-   useClick,
-   useDismiss,
-   useFloating,
-   useInteractions,
-} from "@floating-ui/react";
+
 import { selectAllSongStore, setSong, useToast } from "../store";
 import {
    PopupWrapper,
@@ -45,9 +37,11 @@ import { Link } from "react-router-dom";
 import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import usePlaylistActions from "../hooks/usePlaylistActions";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 
 interface Props {
    data: Song;
+   className?: string;
    active?: boolean;
    onClick?: () => void;
    theme: ThemeType & { alpha: string };
@@ -77,6 +71,7 @@ interface Props {
 }
 
 function SongItem({
+   className,
    data,
    active,
    onClick,
@@ -122,17 +117,6 @@ function SongItem({
 
    // hooks
    const { loading: PActsLoading } = usePlaylistActions({});
-
-   // floating ui
-   const { refs, floatingStyles, context } = useFloating({
-      open: isOpenPopup,
-      onOpenChange: setIsOpenPopup,
-      middleware: [autoPlacement(), offset(6)],
-      whileElementsMounted: autoUpdate,
-   });
-   const click = useClick(context);
-   const dismiss = useDismiss(context);
-   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
    const isOnMobile = useMemo(() => {
       return window.innerWidth < 800;
@@ -264,7 +248,7 @@ function SongItem({
          await deleteFromPlaylist(data);
       } catch (error) {
          console.log(error);
-         throw new Error("Error when remove song from playlist sdfgdfgdgdfs");
+         throw new Error("Error when remove song from playlist");
       } finally {
          setIsOpenPopup(false);
       }
@@ -383,7 +367,9 @@ function SongItem({
       songListButton: `mr-[10px] text-[inherit]`,
       itemContainer: `flex flex-row rounded justify-between songContainers-center px-[10px] py-[10px] w-full border-b border-${
          theme.alpha
-      } last:border-none p-[0px] hover:bg-${theme.alpha} ${isSelected && "bg-" + theme.alpha}`,
+      } last:border-none p-[0px] ${active ? "bg-" + theme.alpha : ""} hover:bg-${theme.alpha} ${
+         isSelected && "bg-" + theme.alpha
+      }`,
       imageFrame: ` relative rounded-[4px] overflow-hidden group/image flex-shrink-0 ${
          inQueue ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
       }`,
@@ -391,9 +377,12 @@ function SongItem({
       input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-[14px] font-[500]`,
       overlay:
          "absolute rounded-[6px] flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
-      level2Menu: "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover:block hover:block",
+      level2Menu:
+         "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover/add-playlist:block hover:block",
       ctaWrapper: "flex items-center min-w-[86px] flex-shrink-0",
       menuBtnWrapper: "w-[50px] flex justify-center songContainers-center",
+      menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} pl-[12px] rounded-[4px]`,
+      menuIcon: 'w-[18px] mr-[8px]'
    };
 
    const userInAdminPlaylist = useMemo(
@@ -502,28 +491,30 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
       <>
          {isOnMobile ? (
             <Button
-               className={`group relative ${theme.content_hover_text} ${classes.before}`}
+               className={`group hover:brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
                variant={"list"}
                onClick={() => handleOpenModal("addToPlaylist")}
             >
-               <PlusCircleIcon className="w-[18px] mr-[5px]" />
+               <PlusCircleIcon className={classes.menuIcon} />
                Add to playlist
-               {/* level 2 */}
             </Button>
          ) : (
             <Button
-               className={`group relative ${theme.content_hover_text} ${classes.before}`}
+               className={`group/add-playlist hover:brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
                variant={"list"}
             >
-               <PlusCircleIcon className="w-[18px] mr-[5px]" />
+               <PlusCircleIcon className={classes.menuIcon} />
                Add to playlist
                {/* level 2 */}
                <PopupWrapper
-                  className={`${classes.level2Menu} ${PActsLoading ? "hidden" : ""}`}
+               variant={'thin'}
+
+                  className={`${classes.level2Menu} z-[99] brightness-100 ${PActsLoading ? "hidden" : ""}`}
+                  color="sidebar"
                   theme={theme}
                >
                   {/* playlist */}
-                  <ul className="w-[150px]">
+                  <ul className="w-full">
                      {!!userPlaylists?.length && (
                         <>
                            {userPlaylists.map((playlist, index) => {
@@ -535,11 +526,11 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                                     onClick={() =>
                                        !isAdded && handleAddSongToPlaylist(data, playlist)
                                     }
-                                    className={`list-none flex rounded-[4px] p-[5px] ${
+                                    className={`list-none w-full flex rounded-[4px] p-[5px] ${
                                        isAdded && "opacity-60 pointer-events-none"
-                                    } ${!isAdded && theme.content_hover_text}`}
+                                    } ${!isAdded && classes.menuItem}`}
                                  >
-                                    <MusicalNoteIcon className={`w-[20px] mr-[5px]`} />
+                                    <MusicalNoteIcon className={classes.menuIcon} />
                                     <p>{playlist.name}</p>
                                  </li>
                               );
@@ -555,8 +546,10 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
 
    const menuComponent = (
       <div className={` ${inQueue ? "w-[160px]" : "w-[200px]"} relative`}>
-         <h5 className="text-mg line-clamp-1">{data.name}</h5>
-         <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
+         <div className="ml-[14px] mt-[10px]">
+            <h5 className="text-mg line-clamp-1">{data.name}</h5>
+            <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
+         </div>
 
          <div className={`mt-[14px]`}>
             {setActuallySongs && actuallySongs && (
@@ -564,21 +557,21 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                   {inQueue ? (
                      <Button
                         onClick={handleRemoveSongFromQueue}
-                        className={`${theme.content_hover_text}`}
+                        className={` ${classes.menuItem}`}
                         variant={"list"}
                      >
-                        <TrashIcon className="w-[18px] mr-[5px]" />
+                        <BackspaceIcon className={classes.menuIcon} />
                         Remove
                      </Button>
                   ) : (
                      <Button
                         onClick={addToQueue}
-                        className={`${theme.content_hover_text} ${
+                        className={` ${classes.menuItem}  ${
                            !songInStore.name ? "opacity-60 pointer-events-none" : ""
                         } `}
                         variant={"list"}
                      >
-                        <QueueListIcon className="w-[18px] mr-[5px]" />
+                        <QueueListIcon className={classes.menuIcon} />
                         Add to queue
                      </Button>
                   )}
@@ -594,11 +587,11 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                      <>
                         {!active && (
                            <Button
-                              className={`${theme.content_hover_text}`}
+                              className={` ${classes.menuItem} `}
                               variant={"list"}
                               onClick={() => handleRemoveSongFromPlaylist()}
                            >
-                              <MinusCircleIcon className="w-[18px] mr-[5px]" />
+                              <MinusCircleIcon className={classes.menuIcon} />
                               Remove from playlist
                            </Button>
                         )}
@@ -610,35 +603,38 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             {/* alway visible in dashboard    */}
             {(admin || data.by !== "admin") && !inQueue && (
                <>
-                  <Button
-                     onClick={() => handleOpenModal("edit")}
-                     className={`${theme.content_hover_text}`}
-                     variant={"list"}
-                  >
-                     <PencilSquareIcon className="w-[18px] mr-[5px]" />
-                     Edit
-                  </Button>
+                  {!inPlaylist && (
+                     <Button
+                        onClick={() => handleOpenModal("edit")}
+                        className={` ${classes.menuItem} `}
+                        variant={"list"}
+                     >
+                        <PencilSquareIcon className={classes.menuIcon} />
+                        Edit
+                     </Button>
+                  )}
+
                   {data.lyric_id ? (
                      <Link to={`edit/${data.id}`}>
-                        <Button className={`${theme.content_hover_text}`} variant={"list"}>
-                           <DocumentPlusIcon className="w-[18px] mr-[5px]" />
+                        <Button className={` ${classes.menuItem} `} variant={"list"}>
+                           <DocumentPlusIcon className={classes.menuIcon} />
                            Edit lyric
                         </Button>
                      </Link>
                   ) : (
                      <Link to={`edit/${data.id}`}>
-                        <Button className={`${theme.content_hover_text}`} variant={"list"}>
-                           <DocumentPlusIcon className="w-[18px] mr-[5px]" />
+                        <Button className={` ${classes.menuItem} `} variant={"list"}>
+                           <DocumentPlusIcon className={classes.menuIcon} />
                            Add lyric
                         </Button>
                      </Link>
                   )}
                   <Button
-                     onClick={() => handleOpenModal("confirm")}
-                     className={`${theme.content_hover_text}`}
+                     onClick={() => console.log("akdfkahsdfkj")}
+                     className={` ${classes.menuItem} `}
                      variant={"list"}
                   >
-                     <TrashIcon className="w-[18px] mr-[5px]" />
+                     <TrashIcon className={classes.menuIcon} />
                      Delete
                   </Button>
                </>
@@ -648,7 +644,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                target="_blank"
                download
                href={data.song_url}
-               className={`${theme.content_hover_text} py-[5px] text-[14px] inline-flex items-center cursor-pointer`}
+               className={` ${classes.menuItem} w-full  py-[5px] text-[14px] inline-flex items-center cursor-pointer`}
             >
                <ArrowDownTrayIcon className="w-[18px] mr-[5px]" />
                Download
@@ -682,7 +678,7 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
    };
 
    return (
-      <div className={`${!inProcess && "group/main"}  ${classes.itemContainer}`}>
+      <div className={`${className || ""} ${!inProcess && "group/main"}  ${classes.itemContainer}`}>
          {/* left */}
          {songComponent}
 
@@ -702,16 +698,26 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         {renderHeartIcon()}
                      </Button>
                   )}
+
                   <div className={classes.menuBtnWrapper}>
-                     <button
-                        ref={refs.setReference}
-                        {...getReferenceProps()}
-                        className={`block group-hover/main:block ${classes.button} ${
-                           isOpenPopup || inQueue ? "md:block" : "md:hidden"
-                        }`}
+                     <Popover
+                        isOpenFromParent={isOpenPopup}
+                        setIsOpenFromParent={setIsOpenPopup}
+                        placement="left"
                      >
-                        <Bars3Icon className="w-[20px]" />
-                     </button>
+                        <PopoverTrigger
+                           className={`block  group-hover/main:block ${classes.button} ${
+                              isOpenPopup || inQueue ? "md:block" : "md:hidden"
+                           }`}
+                        >
+                           <Bars3Icon className="w-[20px]" />
+                        </PopoverTrigger>
+                        <PopoverContent>
+                           <PopupWrapper variant={"thin"} color="sidebar"  theme={theme}>
+                              {menuComponent}
+                           </PopupWrapper>
+                        </PopoverContent>
+                     </Popover>
                      <span
                         className={`text-[12px] hidden  group-hover/main:hidden ${
                            isOpenPopup || inQueue ? "hidden" : "md:block"
@@ -722,28 +728,6 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                   </div>
                </div>
             </>
-         )}
-
-         {isOpenPopup && !inProcess && (
-            <FloatingFocusManager context={context} modal={false}>
-               <div
-                  className="z-[99]"
-                  ref={refs.setFloating}
-                  style={floatingStyles}
-                  {...getFloatingProps()}
-               >
-                  <PopupWrapper color="sidebar" theme={theme}>
-                     {menuComponent}
-                  </PopupWrapper>
-                  {PActsLoading && (
-                     <div className={classes.overlay}>
-                        <span className="text-[#fff]">
-                           <ArrowPathIcon className="w-[40px] animate-spin" />
-                        </span>
-                     </div>
-                  )}
-               </div>
-            </FloatingFocusManager>
          )}
 
          {isOpenModal && !inProcess && (

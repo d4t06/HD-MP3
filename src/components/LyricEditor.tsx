@@ -23,8 +23,6 @@ import { setSong, useActuallySongs, useSongsStore, useToast } from "../store";
 import { updateSongsListValue } from "../utils/appHelpers";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { deleteDoc } from "firebase/firestore";
-import EditPlaylist from "./modals/EditPlaylist";
 
 type Props = {
    theme: ThemeType & { alpha: string };

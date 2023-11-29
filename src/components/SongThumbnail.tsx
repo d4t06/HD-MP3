@@ -26,7 +26,7 @@ const SongThumbnail = (
     image: "select-none object-cover object-center rounded w-full",
     overlay: `absolute  ${
       active
-        ? "bottom-0 h-[20%] block w-full bg-gradient-to-t from-[#333] to-99% to-transparent"
+        ? ""
         : "inset-0 hidden bg-opacity-60 bg-[#333] items-center justify-center"
     }   group-hover:flex`,
     playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",

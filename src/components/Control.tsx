@@ -37,6 +37,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
    // component state
    const [isLoaded, setIsLoaded] = useState(false);
+   const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
 
    // component ref
    const currentIndex = useRef(0);
@@ -48,7 +49,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
    const currentTimeRef = useRef<HTMLDivElement>(null);
    const remainingTime = useRef<HTMLDivElement>(null);
 
-   const firstTimeRender = useRef(true);
+   // const firstTimeRender = useRef(true);
    const isEndOfList = useRef(false);
 
    const firstTimePlay = useRef(true);
@@ -135,7 +136,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       dispatch(setPlayStatus({ isWaiting: true }));
    };
 
-   const handleResetForNewSong = useCallback(() => {
+   const handleResetForNewSong = () => {
       pause();
       dispatch(setPlayStatus({ isWaiting: true, isError: false }));
 
@@ -146,7 +147,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
          remainingTime.current.innerText = "00:00";
          timeProcessLineElement.style.width = "0%";
       }
-   }, []);
+   };
 
    const handleSeek = useCallback(
       (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -278,7 +279,9 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
          return;
       }
 
-      if (firstTimeRender.current || isInEdit) {
+      if (isInEdit) {
+         console.log("in edit");
+
          dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
 
          return;
@@ -287,9 +290,9 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       play();
    };
 
-   const handleError = useCallback(() => {
-      dispatch(setPlayStatus({ isWaiting: false, isError: true }));
-   }, []);
+   const handleError = () => {
+      setSomeThingToTriggerError(Math.random());
+   };
 
    // add events listener
    useEffect(() => {
@@ -310,9 +313,15 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       };
    }, []);
 
-   // update date audio src
+   useEffect(() => {
+      if (!someThingToTriggerError) return;
+      if (songInStore.name) dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+   }, [someThingToTriggerError]);
+
+   // update audio src
    useEffect(() => {
       if (!audioEle) return;
+      if (!songInStore.name) return;
 
       audioEle.src = songInStore.song_url;
       currentIndex.current = songInStore.currentIndex;
@@ -322,11 +331,6 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       }
 
       return () => {
-         if (firstTimeRender.current) {
-            firstTimeRender.current = false;
-            return;
-         }
-
          handleResetForNewSong();
          firstTimePlay.current = true;
       };
@@ -340,7 +344,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       if (!isPlaying && playlistInStore.name && songInStore.song_in.includes(playlistInStore.id)) {
          myTitle = `${playlistInStore.name}`;
       }
-      // document.title = myTitle;
+      document.title = myTitle;
    }, [isPlaying]);
 
    // add new handle when song end function
@@ -375,10 +379,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       };
    }, [isInEdit, songInStore.id, userInfo.like_song_ids]);
 
-   useEffect(() => {
-      if (location.pathname === "/dashboard" || location.pathname === "/mysongs")
-         firstTimeRender.current = true;
-   }, [location]);
+   // useEffect(() => {
+   //    if (location.pathname === "/dashboard" || location.pathname === "/mysongs")
+   //       firstTimeRender.current = true;
+   // }, [location]);
 
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
@@ -471,7 +475,12 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             )}
          </div>
 
-         <Countdown cb={pause} play={play} isPlaying={isPlaying} />
+         <Countdown
+            isOpenFullScreen={isOpenFullScreen}
+            cb={pause}
+            play={play}
+            isPlaying={isPlaying}
+         />
       </div>
    );
 }

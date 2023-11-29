@@ -63,6 +63,20 @@ function SongList({
             return condition;
          });
 
+         if (index == 0)
+            return (
+               <SongItem
+                  className="temp-song"
+                  key={index}
+                  active={false}
+                  onClick={() => handleSetSong(song, index)}
+                  theme={theme}
+                  inProcess={!isAdded}
+                  data={song}
+                  userInfo={userInfo}
+               />
+            );
+
          return (
             <SongItem
                key={index}

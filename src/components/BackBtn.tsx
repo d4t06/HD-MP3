@@ -10,7 +10,7 @@ function BackBtn() {
 
    const handleNavigate = (direction: "back" | "forward") => {
       if (direction === "back") {
-         navigate('/');
+         navigate(-1);
          // console.log("check pathname", location.pathname);
          // setPrevLocation(location.pathname);
       }

@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
+import logo from '../../assets/logo.png'
 
 type Props = {
    src?: string;
@@ -49,7 +50,7 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
             className={`${classNames ? classNames : ""} w-full ${
                !imageLoaded ? "hidden" : ""
             }`}
-            src={src || "https://placehold.co/100"}
+            src={src || logo}
             ref={imageRef}
          />
       </>

@@ -205,7 +205,6 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
     image_file_path: "",
     song_file_path: "",
     id: "",
-    in_playlist: [],
     blurhash_encode: "",
   };
   return {

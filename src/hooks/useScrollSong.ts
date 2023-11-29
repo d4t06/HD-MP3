@@ -33,7 +33,7 @@ const scrollToActiveSong = (
    const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
 
    // case element position don't change
-   if (needToScroll < 5) return;
+   if (needToScroll < 5) return false;
 
    if (idle) {
       containerEle.onscroll = () => {};
@@ -65,6 +65,8 @@ const scrollToActiveSong = (
          containerEle.scrollLeft = newScroll + needToScroll;
       }, 300);
    }
+
+   return true;
 };
 
 export default function useScrollSong({

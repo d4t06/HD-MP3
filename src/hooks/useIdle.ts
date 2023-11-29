@@ -28,12 +28,16 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
       const containerEle = document.querySelector(".song-list-container") as HTMLDivElement;
 
       if (activeSongEle && containerEle) {
-         console.log("scroll");
+         const isScroll = scrollToActiveSong(activeSongEle, containerEle, true);
 
-         scrollToActiveSong(activeSongEle, containerEle, true);
+         console.log("check isScroll", isScroll);
+
+         let timeToEnableFocus = appConfig.focusDelay;
+         if (!isScroll) timeToEnableFocus = 0;
+
          timerIdFocus.current = setTimeout(() => {
             setIdle(true);
-         }, appConfig.focusDelay);
+         }, timeToEnableFocus);
       }
    };
 

@@ -8,6 +8,7 @@ import {
    useInteractions,
    Placement,
    FloatingFocusManager,
+   autoPlacement,
 } from "@floating-ui/react";
 import { ReactNode, createContext, useContext, useState } from "react";
 
@@ -15,16 +16,22 @@ interface PopoverOptions {
    initialOpen?: boolean;
    placement?: Placement;
    modal?: boolean;
-   isOpen?: boolean;
-   setIsOpen?: (open: boolean) => void;
+   isOpenFromParent?: boolean;
+   autoPlace?: boolean;
+   setIsOpenFromParent?: (open: boolean) => void;
 }
 
-export function usePopover({ placement = "bottom" }: PopoverOptions = {}) {
+export function usePopover({
+   placement = "bottom",
+   autoPlace,
+   isOpenFromParent,
+   setIsOpenFromParent,
+}: PopoverOptions = {}) {
    const [isOpen, setIsOpen] = useState(false);
    const { context, floatingStyles, refs } = useFloating({
       placement,
-      open: isOpen,
-      onOpenChange: setIsOpen,
+      open: isOpenFromParent || isOpen,
+      onOpenChange: setIsOpenFromParent || setIsOpen,
       whileElementsMounted: autoUpdate,
       middleware: [
          offset(6),
@@ -37,14 +44,14 @@ export function usePopover({ placement = "bottom" }: PopoverOptions = {}) {
       ],
    });
    const click = useClick(context);
-   const dismiss = useDismiss(context, {escapeKey: false, outsidePress: true});
+   const dismiss = useDismiss(context, { escapeKey: false });
    const role = useRole(context);
 
    const { getFloatingProps, getReferenceProps } = useInteractions([click, dismiss, role]);
 
    return {
-      isOpen,
-      setIsOpen,
+      isOpen: isOpenFromParent || isOpen,
+      setIsOpen: setIsOpenFromParent || setIsOpen,
       getFloatingProps,
       getReferenceProps,
       floatingStyles,
@@ -87,7 +94,7 @@ export function PopoverTrigger({
       <button
          ref={refs.setReference}
          data-state={isOpen ? "open" : "closed"}
-         className={className ?? ''}
+         className={`${className ?? ""}`}
          {...getReferenceProps(props)}
       >
          {children}
@@ -109,7 +116,7 @@ export function PopoverContent({
 
    return (
       <FloatingFocusManager context={context} modal={false}>
-         <div ref={refs.setFloating} style={{ ...floatingStyles }} {...getFloatingProps(props)}>
+         <div ref={refs.setFloating} className="z-[20]" style={{ ...floatingStyles }} {...getFloatingProps(props)}>
             {children}
          </div>
       </FloatingFocusManager>

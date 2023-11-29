@@ -28,7 +28,6 @@ const init: stateType = {
       lyric_id: "",
       currentIndex: 0,
       song_in: "",
-      in_playlist: [],
       blurhash_encode: "",
    },
    playlist: {

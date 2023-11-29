@@ -25,7 +25,6 @@ export type Song = {
    by: string;
    duration: number;
    lyric_id: string;
-   in_playlist: string[];
    blurhash_encode: string;
 };
 

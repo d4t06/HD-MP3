@@ -10,9 +10,10 @@ type Props = {
    cb: () => void;
    isPlaying: boolean;
    play: () => void;
+   isOpenFullScreen: boolean
 };
 
-function Countdown({ cb, isPlaying, play }: Props) {
+function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const dispatch = useDispatch();
    const { theme } = useTheme();
 
@@ -107,7 +108,7 @@ function Countdown({ cb, isPlaying, play }: Props) {
 
    return (
       <>
-         {!!sec && (
+         {!!sec && !isOpenFullScreen && (
             <div className="absolute bottom-[100%] w-[70%] left-[50%] translate-x-[-50%]">
                <div
                   className={`${theme.content_bg} flex justify-center gap-[10px] py-[2px] text-[13px] px-[20px] rounded-tl-[4px] rounded-tr-[4px]`}

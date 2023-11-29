@@ -15,7 +15,7 @@ type Props = {
    setIsOpenModal: Dispatch<React.SetStateAction<boolean>>;
 };
 
-export default function SettingMenu({ modalName, setIsOpenModal, loggedIn }: Props) {
+export default function SettingMenu({ modalName, setIsOpenModal }: Props) {
    const { theme } = useTheme();
    const handleSetComp = (name: "theme" | "info" | "confirm") => {
       modalName.current = name;

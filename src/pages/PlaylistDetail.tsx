@@ -196,7 +196,7 @@ export default function PlaylistDetail() {
    });
 
    return (
-      <>
+      <div className="min-h-screen">
          <BackBtn />
 
          <div className={classes.playListTop}>
@@ -404,6 +404,6 @@ export default function PlaylistDetail() {
                )}
             </Modal>
          )}
-      </>
+      </div>
    );
 }

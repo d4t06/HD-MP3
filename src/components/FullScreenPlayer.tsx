@@ -12,7 +12,7 @@ import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../stor
 import { SongThumbnail, Button, Tabs, LyricsList } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
-import zingIcon from "../assets/icon-zing.svg";
+import logoIcon from "../assets/siteLogo.png";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -165,11 +165,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                   {/* left */}
                   {idle && (
                      <div className={`${classes.headerCta} left-0`}>
-                        <img
-                           className={`${idle ? "h-full" : "h-full"} mr-[10px]`}
-                           src={zingIcon}
-                           alt=""
-                        />
+                        <img className={`animate-[spin_8s_linear_infinite] w-[46px] mr-[10px]`} src={logoIcon} alt="" />
                         {activeTab === "Lyric" && (
                            <p className={`${classes.songNameSinger}`}>
                               {songInStore.name} -{" "}
