@@ -13,9 +13,9 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
             }`}
          >
             <DashboardHeader />
-            <div className="mt-[50px]">
+            <div className="h-[calc(100vh-50px)] no-scrollbar overflow-auto">
                <div className={`h-[100px]`}></div>
-               <div className="container mx-[auto]">{children}</div>
+               <div className="container mx-[auto] px-[40px]">{children}</div>
             </div>
 
             <Player admin />

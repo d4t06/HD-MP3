@@ -94,11 +94,11 @@ export default function BottomPlayer({
 
       volumeWrapper: `volume-control ${
          admin ? "w-1/4" : "w-1/4 "
-      } flex items-center justify-end gap-5`,
+      } flex items-center justify-end gap-[8px]`,
       volumeLineBase: `ml-3 w-full relative h-[4px] cursor-pointer rounded-3xl bg-gray-200`,
       volumeLineCurrent: `absolute left-0 top-0 h-full w-full rounded-l-full`,
 
-      blurBg: `bg-opacity-[0.7] backdrop-blur-[15px] z-[-1] absolute inset-0 ${theme.bottom_player_bg}`,
+      blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 ${theme.bottom_player_bg}`,
    };
 
    return (
@@ -120,7 +120,7 @@ export default function BottomPlayer({
             <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
                {/* song image, name and singer */}
                <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
-                  <div className={`w-[46px]`}>
+                  <div className={admin ?  `w-[36px]` : 'w-[46px]'}>
                      <img
                         ref={vinylRef}
                         src={songInStore.image_url || logo}

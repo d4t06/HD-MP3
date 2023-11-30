@@ -7,147 +7,149 @@ import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlic
 import { handleTimeText } from "../utils/appHelpers";
 
 type Props = {
-   cb: () => void;
-   isPlaying: boolean;
-   play: () => void;
-   isOpenFullScreen: boolean
+  cb: () => void;
+  isPlaying: boolean;
+  play: () => void;
+  isOpenFullScreen: boolean;
 };
 
 function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
-   const dispatch = useDispatch();
-   const { theme } = useTheme();
+  const dispatch = useDispatch();
+  const { theme } = useTheme();
 
-   const {
-      playStatus: { isTimer },
-   } = useSelector(selectAllPlayStatusStore);
-   const [sec, setSec] = useState(0);
-   const [someThingToTrigger, setSomeThingToTrigger] = useState(0);
+  const {
+    playStatus: { isTimer },
+  } = useSelector(selectAllPlayStatusStore);
+  const [sec, setSec] = useState(0);
+  const [someThingToTrigger, setSomeThingToTrigger] = useState(0);
 
-   const [isOpenModal, setIsOpenModal] = useState(false);
-   const timerId = useRef<NodeJS.Timeout>();
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const timerId = useRef<NodeJS.Timeout>();
 
-   const lastTimer = useRef(0);
-   const playAfterAddTimer = useRef(false);
+  const lastTimer = useRef(0);
+  const playAfterAddTimer = useRef(false);
 
-   const handleContinuePlay = () => {
-      lastTimer.current = 0;
-      setIsOpenModal(false);
-      play();
-   };
+  const handleContinuePlay = () => {
+    lastTimer.current = 0;
+    setIsOpenModal(false);
+    play();
+  };
 
-   const handeCloseModal = () => {
-      setIsOpenModal(false);
-      lastTimer.current = 0;
-   };
+  const handeCloseModal = () => {
+    setIsOpenModal(false);
+    lastTimer.current = 0;
+  };
 
-   const clearTimer = () => {
+  const clearTimer = () => {
+    dispatch(setPlayStatus({ isTimer: 0 }));
+  };
+
+  useEffect(() => {
+    if (!someThingToTrigger) return;
+
+    if (sec === 1) {
+      console.log("pause");
+
+      cb();
       dispatch(setPlayStatus({ isTimer: 0 }));
-   };
+      setIsOpenModal(true);
 
-   useEffect(() => {
-      if (!someThingToTrigger) return;
+      return;
+    }
 
-      if (sec === 1) {
-         console.log("pause");
+    setSec(sec - 1);
+  }, [someThingToTrigger]);
 
-         cb();
-         dispatch(setPlayStatus({ isTimer: 0 }));
-         setIsOpenModal(true);
+  useEffect(() => {
+    if (!isTimer) return;
 
-         return;
-      }
+    // case after add timer but no play
+    console.log("check sec", sec, lastTimer.current);
 
-      setSec(sec - 1);
-   }, [someThingToTrigger]);
+    if (!isPlaying && sec === lastTimer.current) {
+      // for case when sec just ini
+      // and not enough to run first countdown
+      // when user press pause this time, song alway play
+      playAfterAddTimer.current = true;
+      play();
 
-   useEffect(() => {
-      if (!isTimer) return;
+      // case user play song and pause
+    } else if (!isPlaying) {
+      return;
+    }
 
-      // case after add timer but no play
-      console.log('check sec', sec, lastTimer.current);
-      
-      if (!isPlaying && sec === lastTimer.current) {
-         // for case when sec just ini
-         // and not enough to run first countdown
-         // when user press pause this time, song alway play
-         playAfterAddTimer.current = true;
-         play();
+    if (!sec) {
+      setSec(isTimer);
+      lastTimer.current = isTimer;
+    }
 
-         // case user play song and pause
-      } else if (!isPlaying) {
-         return;
-      }
+    timerId.current = setInterval(() => {
+      setSomeThingToTrigger(Math.random());
+    }, 1000);
 
-      if (!sec) {
-         setSec(isTimer);
-         lastTimer.current = isTimer;
-      }
+    return () => {
+      clearInterval(timerId.current);
+      setSomeThingToTrigger(0);
+    };
+  }, [isTimer, isPlaying]);
 
-      timerId.current = setInterval(() => {
-         setSomeThingToTrigger(Math.random());
-      }, 1000);
+  useEffect(() => {
+    return () => {
+      console.log("run clean up check sec", sec);
 
-      return () => {
-         clearInterval(timerId.current);
-         setSomeThingToTrigger(0);
-      };
-   }, [isTimer, isPlaying]);
+      playAfterAddTimer.current = false;
+      // suddenly turn of
+      // console.log("check sec", sec);
+      if (sec) lastTimer.current = 0;
 
-   useEffect(() => {
-      return () => {
-         console.log('run clean up check sec', sec);
-         
-         playAfterAddTimer.current = false;
-         // suddenly turn of
-         // console.log("check sec", sec);
-         if (sec) lastTimer.current = 0 
+      setSec(0);
+    };
+  }, [isTimer]);
 
-         setSec(0);
-      };
-   }, [isTimer]);
+  return (
+    <>
+      {!!sec && !isOpenFullScreen && (
+        <div className="absolute bottom-[100%] w-[70%] left-[50%] translate-x-[-50%]">
+          <div
+            className={`${theme.content_bg} flex justify-center gap-[10px] py-[2px] text-[13px] px-[20px] rounded-tl-[4px] rounded-tr-[4px]`}
+          >
+            <p className={` text-[13px]`}>Song stop in {handleTimeText(sec)}</p>
+            <button onClick={clearTimer}>
+              <XMarkIcon className="w-[18px]" />
+            </button>
+          </div>
+        </div>
+      )}
 
-   return (
-      <>
-         {!!sec && !isOpenFullScreen && (
-            <div className="absolute bottom-[100%] w-[70%] left-[50%] translate-x-[-50%]">
-               <div
-                  className={`${theme.content_bg} flex justify-center gap-[10px] py-[2px] text-[13px] px-[20px] rounded-tl-[4px] rounded-tr-[4px]`}
-               >
-                  <p className={` text-[13px]`}>Song stop in {handleTimeText(sec)}</p>
-                  <button onClick={clearTimer}>
-                     <XMarkIcon className="w-[18px]" />
-                  </button>
-               </div>
+      {isOpenModal && (
+        <Modal setOpenModal={setIsOpenModal} theme={theme}>
+          <div className="w-[500px] max-w-[calc(100vw-40px)]">
+            <h1 className="text-[22px]">
+              You have been listened music in {handleTimeText(lastTimer.current)}
+            </h1>
+
+            <div className="flex gap-[10px] mt-[30px]">
+              <Button
+                onClick={() => handleContinuePlay()}
+                size={"normal"}
+                className={`${theme.content_bg} rounded-[99px]`}
+              >
+                Continue playing
+              </Button>
+
+              <Button
+                onClick={handeCloseModal}
+                size={"normal"}
+                className={`bg-${theme.alpha} rounded-[99px]`}
+              >
+                Close
+              </Button>
             </div>
-         )}
-
-         {isOpenModal && (
-            <Modal setOpenModal={setIsOpenModal} theme={theme}>
-               <h1 className="text-[22px]">
-                  You have been listened music in {handleTimeText(lastTimer.current)}
-               </h1>
-
-               <div className="flex gap-[10px] mt-[30px]">
-                  <Button
-                     onClick={() => handleContinuePlay()}
-                     size={"normal"}
-                     className={`${theme.content_bg} rounded-[99px]`}
-                  >
-                     Continue playing
-                  </Button>
-
-                  <Button
-                     onClick={handeCloseModal}
-                     size={"normal"}
-                     className={`bg-${theme.alpha} rounded-[99px]`}
-                  >
-                     Close
-                  </Button>
-               </div>
-            </Modal>
-         )}
-      </>
-   );
+          </div>
+        </Modal>
+      )}
+    </>
+  );
 }
 
 export default Countdown;

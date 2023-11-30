@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   ArrowRightOnRectangleIcon,
   ChevronRightIcon,
+  ClockIcon,
+  HeartIcon,
   InformationCircleIcon,
   MusicalNoteIcon,
   PaintBrushIcon,
@@ -76,13 +78,15 @@ export default function HomePage() {
 
   // define callback functions
   const handleSetSong = (song: Song, index: number) => {
-    if (songInStore.song_in !== "admin") {
-      setActuallySongs(adminSongs);
-      console.log("setActuallySongs");
-    }
+    // song in playlist and song in user are two difference case
+    if (songInStore.id !== song.id || songInStore.song_in !== "admin") {
+      dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
 
-    if (songInStore.id === song.id) return;
-    dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+      if (songInStore.song_in !== "admin") {
+        setActuallySongs(adminSongs);
+        console.log("setActuallySongs");
+      }
+    }
   };
 
   const isOnMobile = useMemo(() => window.innerWidth < 800, []);
@@ -150,13 +154,33 @@ export default function HomePage() {
             ) : (
               <>
                 {userInfo.email ? (
-                  <LinkItem
-                    className={classes.linkItem}
-                    to={routes.MySongs}
-                    icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
-                    label="All songs"
-                    arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
-                  />
+                  <>
+                    <LinkItem
+                      className={classes.linkItem}
+                      to={routes.MySongs}
+                      icon={
+                        <MusicalNoteIcon className={classes.icon + theme.content_text} />
+                      }
+                      label="All songs"
+                      arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                    />
+
+                    <LinkItem
+                      className={classes.linkItem}
+                      to={routes.MySongs}
+                      icon={<HeartIcon className={classes.icon + theme.content_text} />}
+                      label="Favorite"
+                      arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                    />
+
+                    <LinkItem
+                      className={classes.linkItem}
+                      to={routes.MySongs}
+                      icon={<ClockIcon className={classes.icon + theme.content_text} />}
+                      label="Recent"
+                      arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                    />
+                  </>
                 ) : (
                   <Button
                     onClick={handleLogIn}
@@ -175,9 +199,10 @@ export default function HomePage() {
         <h3 className="text-[24px] font-bold mb-[14px]">Popular</h3>
         <div className="flex flex-row flex-wrap -mx-[8px] mb-[30px]">
           {/* admin playlist */}
-          {(useSongLoading || userInfo.status === 'loading') && PlaylistSkeleton}
+          {(useSongLoading || userInfo.status === "loading") && PlaylistSkeleton}
 
-          {userInfo.status === 'finish' && !useSongLoading &&
+          {userInfo.status === "finish" &&
+            !useSongLoading &&
             !!adminPlaylists.length &&
             adminPlaylists.map((playlist, index) => (
               <div key={index} className="w-1/2 min-[800px]:w-1/4 p-[8px]">
@@ -191,10 +216,12 @@ export default function HomePage() {
         </div>
 
         <div className="h-[30px] mb-[10px] flex items-center gap-[8px]">
-          <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>
+          {!isChecked && <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>}
 
           {!isOnMobile && isChecked && (
-            <p className="text-[13px] font-medium">{selectedSongs.length + " selected"}</p>
+            <p className="text-[13px] font-medium">
+              {selectedSongs.length + " selected"}
+            </p>
           )}
           {isChecked && selectedSongs.length && (
             <>
@@ -295,7 +322,9 @@ export default function HomePage() {
             />
           )}
           {modalName.current === "info" && <AppInfo setIsOpenModal={setIsOpenModal} />}
-          {modalName.current === "theme" && <Appearance setIsOpenModal={setIsOpenModal} />}
+          {modalName.current === "theme" && (
+            <Appearance setIsOpenModal={setIsOpenModal} />
+          )}
         </Modal>
       )}
     </>

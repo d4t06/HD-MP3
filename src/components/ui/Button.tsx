@@ -7,7 +7,7 @@ const buttonVariant = cva("inline-flex items-center hover:brightness-90", {
    variants: {
       variant: {
          default: "",
-         circle: "rounded-[99px] p-[4px]",
+         circle: "rounded-[99px] p-[4px] justify-center",
          list: "flex items-center py-[5px] w-full text-[14px]",
          primary: "px-[16px] py-[4px] text-[14px]",
          outline: `border rounded-full`,

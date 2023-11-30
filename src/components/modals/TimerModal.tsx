@@ -55,7 +55,7 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
    const valid = quickMinute || hour || minute;
 
    return (
-      <div className="w-[300px] max-w-[calc(100vw-40px)]:">
+      <div className="w-[300px] max-w-[calc(100vw-40px)]">
          <ModalHeader setIsOpenModal={setIsOpenModal} title="Timer" />
          <div>
             <div className="flex gap-[10px] mb-[12px]">

@@ -271,8 +271,7 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
         updateSongsListValue(newSong, newSongQueue);
 
         setActuallySongs(newSongQueue);
-        console.log('setActuallySongs');
-        
+        console.log("setActuallySongs");
 
         if (songInStore.id === newSong.id) {
           dispatch(
@@ -321,8 +320,8 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
       />
       <h1 className="text-[20px] font-semibold">Edit</h1>
       <div className="flex gap-[20px] mt-[10px] max-[800px]:flex-col">
-        <div className="w-[130px] max-[800px]:flex max-[800px]:gap-[20px]">
-          <div className="w-[130px] h-[130px] flex-shrink-0 rounded-[5px] overflow-hidden">
+        <div className="w-[30%] max-[800px]:flex max-[800px]:w-full max-[800px]:gap-[12px]">
+          <div className="w-full rounded-[5px] overflow-hidden">
             <Image
               classNames="object-cover object-center w-full h-full"
               onError={() => setValidURL(false)}
@@ -411,14 +410,6 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
 
           <div className="flex gap-[10px] mt-[10px]">
             <Button
-              onClick={handleCloseEditForm}
-              className={`bg-${theme.alpha} rounded-full text-[14px]`}
-              variant={"primary"}
-            >
-              <XMarkIcon className="w-[20px]" />
-            </Button>
-
-            <Button
               isLoading={loading}
               onClick={() => handleEditSong()}
               className={`${theme.content_bg} rounded-full text-[14px] ${
@@ -429,6 +420,14 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
               variant={"primary"}
             >
               Save
+            </Button>
+
+            <Button
+              onClick={handleCloseEditForm}
+              className={`bg-${theme.alpha} rounded-full hover:bg-red-500 hover:text-[#fff] text-[14px]`}
+              variant={"primary"}
+            >
+              Close
             </Button>
           </div>
         </div>

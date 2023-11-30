@@ -6,13 +6,14 @@ import {
    PauseCircleIcon,
    PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import zingIcon from "../assets/icon-zing.svg";
+import siteLogo from "../assets/siteLogo.png";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useSongsStore } from "../store/SongsContext";
 import { Image } from ".";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { useLocation } from "react-router-dom";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -35,6 +36,10 @@ const MobileBottomPlayer: FC<Props> = ({
    const { userSongs } = useSongsStore();
    const { theme } = useTheme();
    const { song: songInStore } = SongStore;
+
+   const location = useLocation();
+   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+
 
    const play = () => {
       audioEle?.play();
@@ -76,7 +81,7 @@ const MobileBottomPlayer: FC<Props> = ({
    }, [isWaiting, isError, isPlaying]);
 
    const classes = {
-      wrapper: `fixed bottom-0 w-full h-[70px] border-t border-${theme.alpha} z-40  px-[20px]`,
+      wrapper: `fixed bottom-0 transition-transform w-full h-[70px] border-t border-${theme.alpha} z-40  px-[20px]`,
       container: `absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
       songImageWrapper: `flex flex-row items-center flex-grow h-full`,
       image: `w-[40px] h-[40px] flex-shrink-0`,
@@ -84,7 +89,7 @@ const MobileBottomPlayer: FC<Props> = ({
    };
 
    return (
-      <div className={classes.wrapper}>
+      <div className={`${classes.wrapper} ${inEdit ? 'translate-y-full' : ''}`}>
          <div
             className={`${classes.container} ${
                isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""
@@ -100,7 +105,7 @@ const MobileBottomPlayer: FC<Props> = ({
                <div className={classes.songImageWrapper}>
                   <div className={classes.image}>
                      <Image
-                        src={songInStore.image_url || zingIcon}
+                        src={songInStore.image_url || siteLogo}
                         classNames="rounded-full"
                      />
                   </div>

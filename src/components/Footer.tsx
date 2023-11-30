@@ -1,7 +1,7 @@
 
 function Footer() {
    const classes = {
-      container: `my-[30px] pt-[15px] justify-end text-right flex items-center`,
+      container: `my-[30px] pt-[15px] justify-end max-[800px]:justify-center  text-right flex items-center`,
       icon: "w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
       copyRightText: "text-[11px] italic",
    };

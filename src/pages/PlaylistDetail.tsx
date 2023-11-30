@@ -190,7 +190,7 @@ export default function PlaylistDetail() {
       playlistInfoContainer: `flex flex-col gap-[12px] md:justify-between`,
       infoTop: "flex justify-center items-center gap-[8px] md:flex-col md:items-start",
       songListContainer:
-         "h-[50px] mb-[10px] flex gap-[8px] max-[549px]:gap-[12px] items-center border-b",
+         "h-[50px] w-full mb-[10px] flex gap-[8px] max-[549px]:gap-[12px] items-center border-b",
       countSongText: "text-[14px]] font-semibold opacity-[.6] w-[90px] leading-[1]",
       ctaContainer: `flex justify-center gap-[12px] md:justify-start`,
       buttonAddSongContainer: "w-full text-center mt-[30px]",
@@ -287,7 +287,7 @@ export default function PlaylistDetail() {
 
          {/* songs list */}
          <div className="pb-[50px] mt-[30px]">
-            <div className={`${classes.songListContainer} border-${theme.alpha}`}>
+            <div className={`${classes.songListContainer} overflow-x-auto overflow-y-hidden border-${theme.alpha}`}>
                {usePlaylistLoading && <Skeleton className="h-[16px] w-[90px]" />}
 
                {isChecked && (
@@ -308,7 +308,7 @@ export default function PlaylistDetail() {
                         onClick={addSongsToQueue}
                         variant={"outline"}
                         size={"small"}
-                        className={`border-${theme.alpha} ${theme.side_bar_bg}`}
+                        className={`border-${theme.alpha} flex-shrink-0 ${theme.side_bar_bg}`}
                      >
                         <QueueListIcon className="w-[20px] mr-[4px]" />
                         Add to songs queue
@@ -319,7 +319,7 @@ export default function PlaylistDetail() {
                            onClick={() => handleDeleteManyFromPlaylist()}
                            variant={"outline"}
                            size={"small"}
-                           className={`border-${theme.alpha} ${theme.side_bar_bg}`}
+                           className={`border-${theme.alpha} flex-shrink-0 ${theme.side_bar_bg}`}
                         >
                            {playlistActionLoading ? (
                               <ArrowPathIcon className="w-[20px] animate-spin" />

@@ -26,7 +26,7 @@ export default function Sidebar() {
 
    //  define styles
    const classes = {
-      container: `w-[180px] flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
+      container: `w-[180px] h-full flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
       button: `w-full text-[14px] font-[500] ${theme.content_hover_text}`,
       text: theme.type === "light" ? "text-[#333]" : "text-white",
       icon: "w-[25px] mr-[5px]",

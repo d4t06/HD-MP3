@@ -79,7 +79,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
 
    const classes = {
       button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
-      mainContainer: `fixed inset-0 z-10 overflow-hidden text-white bg-zinc-900
+      mainContainer: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
     } transition-[transform] duration-[.7s] linear delay-100`,
       bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,
       overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,

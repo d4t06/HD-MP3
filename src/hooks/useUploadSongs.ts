@@ -171,7 +171,7 @@ Props) {
             }
 
             // check limit
-            if (userSongs.length + actuallyFileIds.current.length > 20) {
+            if (userSongs.length + actuallyFileIds.current.length > 10) {
                if (userInfo.role !== "admin") {
                   finishAndClear("finish-error");
                   setErrorToast({ message: "You have reach the upload limit" });

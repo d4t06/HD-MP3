@@ -13,7 +13,7 @@ export default function ThemeItem({ onClick, theme, active }: Props) {
          <div className="w-[25%] px-[10px] max-[549px]:w-[50%]">
             <div
                onClick={() => onClick(theme)}
-               className={`relative border ${theme.content_border} pt-[100%] rounded-xl ${
+               className={`relative border-l-[20px] ${theme.content_border} pt-[100%] rounded-xl ${
                   theme.side_bar_bg
                } ${active ? theme.content_border : ""}`}
             >
