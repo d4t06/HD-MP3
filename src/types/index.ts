@@ -58,7 +58,7 @@ export interface RealTimeLyric {
    text: string;
 }
 
-export type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray";
+export type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray" | 'white';
 
 export type ThemeType = {
    name: string;

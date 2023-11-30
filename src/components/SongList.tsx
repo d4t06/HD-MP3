@@ -50,9 +50,10 @@ function SongList({
 }: Props) {
    const { theme } = useTheme();
    const { userInfo, setUserInfo } = useAuthStore();
+   const { song: songInStore } = useSelector(selectAllSongStore);
    const { userPlaylists, userSongs, setUserSongs, adminSongs, adminPlaylists, setAdminSongs } =
       useSongsStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
+
    const { addSongToPlaylistSongItem } = usePlaylistActions({ admin: inAdmin });
    const { actuallySongs, setActuallySongs } = useActuallySongs();
 

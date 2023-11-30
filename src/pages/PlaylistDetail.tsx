@@ -39,6 +39,7 @@ import {
 
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import EditPlaylist from "../components/modals/EditPlaylist";
+import { setPlayStatus } from "../store/PlayStatusSlice";
 
 type ModalName = "edit" | "confirm" | "addSongs";
 
@@ -80,8 +81,8 @@ export default function PlaylistDetail() {
 
    const handleSetSong = (song: Song, index: number) => {
       // case user play user songs then play playlist song
-      if (songInStore.id !== song.id || !songInStore.song_in.includes(playlistInStore.name)) {
-         const newSongIn: SongIn = `playlist_${playlistInStore.id}`;
+      const newSongIn: SongIn = `playlist_${playlistInStore.id}`;
+      if (songInStore.id !== song.id || songInStore.song_in !== newSongIn) {
          dispatch(
             setSong({
                ...song,
@@ -90,9 +91,9 @@ export default function PlaylistDetail() {
             })
          );
 
-         if (!songInStore.song_in.includes(playlistInStore.name)) {
+         if (songInStore.song_in !== newSongIn) {
             setActuallySongs(playlistSongs);
-            console.log("setActuallySongs");
+            console.log("setActuallySongs when playlist list");
          }
       }
    };
@@ -110,7 +111,7 @@ export default function PlaylistDetail() {
    const addSongsToQueue = () => {
       const newQueue = [...actuallySongs, ...selectedSongs];
       setActuallySongs(newQueue);
-      console.log("setActuallySongs");
+      console.log("setActuallySongs when add to song queuec");
    };
 
    const handlePlayPlaylist = () => {
@@ -125,6 +126,10 @@ export default function PlaylistDetail() {
          const newPlaylistSongs = await deleteSongFromPlaylist(song, playlistSongs);
          if (newPlaylistSongs) {
             setPlaylistSongs(newPlaylistSongs);
+            if (songInStore.song_in === `playlist_${playlistInStore.id}`) {
+               setActuallySongs(newPlaylistSongs);
+               console.log("set actually songs");
+            }
          }
       } catch (error) {
          console.log(error);
@@ -137,6 +142,11 @@ export default function PlaylistDetail() {
          const newPlaylistSongs = await deleteManyFromPlaylist(selectedSongs, playlistSongs);
          if (newPlaylistSongs) {
             setPlaylistSongs(newPlaylistSongs);
+
+            if (songInStore.song_in === `playlist_${playlistInStore.id}`) {
+               setActuallySongs(newPlaylistSongs);
+               console.log("set actually songs");
+            }
          }
       } catch (error) {
          console.log(error);
@@ -150,6 +160,9 @@ export default function PlaylistDetail() {
    const handleDeletePlaylist = async () => {
       try {
          await deletePlaylist(playlistInStore);
+
+         const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
+         if (audioEle) audioEle.pause();
       } catch (error) {
          console.log(error);
       } finally {
@@ -205,7 +218,7 @@ export default function PlaylistDetail() {
                {usePlaylistLoading ? (
                   <Skeleton className="pt-[100%] rounded-[8px]" />
                ) : (
-                  <PlaylistItem data={playlistInStore} inDetail theme={theme} />
+                  <PlaylistItem data={playlistInStore} active={songInStore.song_in === `playlist_${playlistInStore.id}`} inDetail theme={theme} />
                )}
             </div>
 
@@ -285,7 +298,7 @@ export default function PlaylistDetail() {
 
                {!usePlaylistLoading && !!songCount && (
                   <p className={classes.countSongText}>
-                     {!isChecked ? songCount + " songs" : selectedSongs.length + " selected"}
+                     {!isChecked ? songCount + " songs" : selectedSongs.length}
                   </p>
                )}
 

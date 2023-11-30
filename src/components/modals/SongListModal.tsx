@@ -6,6 +6,8 @@ import MobileSongItem from "../MobileSongItem";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import usePlaylistActions from "../../hooks/usePlaylistActions";
 import ModalHeader from "./ModalHeader";
+import { useSelector } from "react-redux";
+import { selectAllSongStore, useActuallySongs } from "../../store";
 
 type Props = {
    admin?: boolean;
@@ -24,8 +26,11 @@ export default function SongList({
    setPlaylistSongs,
    setIsOpenModal,
 }: Props) {
+   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { actuallySongs, setActuallySongs } = useActuallySongs();
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
 
+   // hook
    const { userSongs, adminSongs } = useSongsStore();
    const { addSongsToPlaylist, loading } = usePlaylistActions({});
 
@@ -36,20 +41,11 @@ export default function SongList({
    };
 
    const isAbleToSubmit = useMemo(() => !!selectedSongList.length, [selectedSongList]);
-   const targetSongs = useMemo(
-      () => (admin ? adminSongs : userSongs),
-      [userSongs, adminSongs]
-   );
+   const targetSongs = useMemo(() => (admin ? adminSongs : userSongs), [userSongs, adminSongs]);
 
-   const handleAddSongsToPlaylist = async () => {    
-    
+   const handleAddSongsToPlaylist = async () => {
       try {
-         if (
-            !playlist ||
-            !selectedSongList.length ||
-            !setIsOpenModal ||
-            !setPlaylistSongs
-         ) {
+         if (!playlist || !selectedSongList.length || !setIsOpenModal || !setPlaylistSongs) {
             return;
          }
 
@@ -57,6 +53,12 @@ export default function SongList({
 
          const newPlaylistSongs = [...playlistSongs, ...selectedSongList];
          setPlaylistSongs(newPlaylistSongs);
+
+         if (songInStore.song_in === `playlist_${playlist.id}`) {
+            console.log("set actually songs");
+            const newSongs = [...actuallySongs, ...selectedSongList];
+            setActuallySongs(newSongs);
+         }
       } catch (error) {
          console.log(error);
       } finally {
@@ -66,7 +68,7 @@ export default function SongList({
 
    return (
       <div className={classes.addSongContainer}>
-      <ModalHeader setIsOpenModal={setIsOpenModal} title="Add song to playlist" />
+         <ModalHeader setIsOpenModal={setIsOpenModal} title="Add song to playlist" />
          <div className={classes.addSongContent}>
             <Button
                onClick={handleAddSongsToPlaylist}
@@ -80,8 +82,7 @@ export default function SongList({
                {loading ? <ArrowPathIcon className="w-[20px] animate-spin" /> : "Save"}
             </Button>
             {targetSongs.map((song, index) => {
-               const isDifferenceSong =
-                  playlistSongs.findIndex((s) => s.id === song.id) === -1;
+               const isDifferenceSong = playlistSongs.findIndex((s) => s.id === song.id) === -1;
 
                if (isDifferenceSong) {
                   return (

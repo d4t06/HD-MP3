@@ -47,15 +47,17 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
 
       setTimeout(() => {
          window.addEventListener("mousemove", handleMouseMove);
+
+         window.dispatchEvent(new Event("mousemove"))
       }, 1000);
 
       return () => {
          window.removeEventListener("mousemove", handleMouseMove);
          clear();
       };
-   }, [isOpenFullScreen, songInStore]);
+   }, [isOpenFullScreen]);
 
-   useEffect(() => {
+   useEffect(() => {      
       timerIdScrollSong.current = setTimeout(() => {
          handleIdle();
       }, delay);

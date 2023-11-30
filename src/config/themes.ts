@@ -17,6 +17,21 @@ export const themes: ThemeType[] = [
       container: "bg-[#2e0f10]",
    },
    {
+      name: "Black",
+      id: "black",
+      type: "dark",
+      bottom_player_bg: "bg-[#181818]",
+      side_bar_bg: "bg-[#242424]",
+      content_text: "text-[#198585]",
+      content_hover_text: "hover:text-[#198585]",
+      content_border: "border-[#198585]",
+      content_hover_border: "hover:border-[#198585]",
+
+      content_bg: "bg-[#198585]  text-[#fff]",
+      content_hover_bg: "hover:bg-[#198585] hover:text-[#fff] ",
+      container: "bg-[#1e1e1e]",
+   },
+   {
       name: "Deep blue",
       id: "deep_blue",
       type: "dark",
@@ -30,6 +45,21 @@ export const themes: ThemeType[] = [
       content_bg: "bg-[#0c9e85]  text-[#fff]",
       content_hover_bg: "hover:bg-[#0c9e85] hover:text-[#fff] ",
       container: "bg-[#0f1a2e]",
+   },
+      {
+      name: "White",
+      id: "white",
+      type: "light",
+      bottom_player_bg: "bg-[#fff]",
+      side_bar_bg: "bg-[#f2f2f2]",
+      content_text: "text-[#198585]",
+      content_hover_text: "hover:text-[#198585]",
+      content_border: "border-[#198585]",
+      content_hover_border: "hover:border-[#198585]",
+
+      content_bg: "bg-[#198585] text-[#fff]",
+      content_hover_bg: "hover:bg-[#198585] hover:text-[#fff]",
+      container: "bg-[#fff]",
    },
    {
       name: "Light green",
@@ -47,7 +77,7 @@ export const themes: ThemeType[] = [
       container: "bg-[#ced9d9]",
    },
    {
-      name: "Gray",
+      name: "Brown",
       id: "gray",
       type: "light",
       bottom_player_bg: "bg-[#dedad1]",

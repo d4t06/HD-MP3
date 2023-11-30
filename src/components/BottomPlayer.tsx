@@ -10,7 +10,7 @@ import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
-import { ScrollText, Image, Control } from ".";
+import { ScrollText, Control } from ".";
 
 import useVolume from "../hooks/useVolume";
 import logo from "../assets/siteLogo.png";
@@ -128,7 +128,7 @@ export default function BottomPlayer({
                      />
                   </div>
 
-                  {/* <div className="ml-[10px] flex-grow">
+                   <div className="ml-[10px] flex-grow">
                      <div className="h-[24px] w-full mask-image-horizontal">
                         {useMemo(
                            () => (
@@ -156,7 +156,7 @@ export default function BottomPlayer({
                            [songInStore]
                         )}
                      </div>
-                  </div> */}
+                  </div> 
                </div>
             </div>
 

@@ -28,10 +28,6 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
   const { userPlaylists, setUserPlaylists, adminPlaylists, setAdminPlaylists } =
     useSongsStore();
 
-  // const targetPlaylists = useMemo(
-  //    () => (admin ? adminPlaylists : userPlaylists),
-  //    [adminPlaylists, userPlaylists, admin]
-  // );
   const navigate = useNavigate();
 
   // closure
@@ -59,7 +55,7 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
       msg: ">>> api: set playlist doc",
     });
 
-    console.log("check newPlaylist", newTargetPlaylists);
+    // console.log("check newPlaylist", newTargetPlaylists);
 
     // *** admin
     if (admin) setAdminPlaylists(newTargetPlaylists);
@@ -68,12 +64,11 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
 
     // if user playing this playlist, need to update new
     if (playlistInStore.name === newPlaylist.name) {
-      console.log("dispatch");
-
       dispatch(setPlaylist(newPlaylist));
     }
   };
 
+  
   const addPlaylist = async (playlistName: string) => {
     if (admin === undefined && userInfo === undefined) {
       errorLogger("lack of props");
@@ -153,16 +148,12 @@ export default function usePlaylistActions({ admin }: { admin?: boolean }) {
   };
 
   // before (playlistSongs, selectedSongs)
-
   const addSongsToPlaylist = async (selectSongs: Song[], playList: Playlist) => {
     console.log("playlist action addSongToPlaylist");
-
     setLoading(true);
 
     const { ids, time } = countSongsListTimeIds(selectSongs);
-
     const newPlaylistSongIds = [...playList.song_ids, ...ids];
-
     const newPlaylist: Playlist = {
       ...playList,
       song_ids: newPlaylistSongIds,

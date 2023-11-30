@@ -42,7 +42,7 @@ export default function ConfirmModal({
             </Button>
             <Button
                isLoading={loading}
-               className={` text-[#fff] bg-red-500 rounded-full text-[14px]`}
+               className={` text-[#fff] bg-${theme.alpha} hover:bg-red-500 rounded-full text-[14px] font-bold`}
                variant={"primary"}
                onClick={callback}
             >

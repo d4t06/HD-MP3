@@ -35,9 +35,8 @@ export default function usePlaylistDetail({ admin }: Props) {
    const dispatch = useDispatch();
    const { userInfo } = useAuthStore();
    const { setErrorToast } = useToast();
-   const { setActuallySongs } = useActuallySongs();
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+   const { setActuallySongs, actuallySongs } = useActuallySongs();
+   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
    const { errorMsg, initial } = useSongs({ admin });
    const { adminSongs, userSongs } = useSongsStore();
 
@@ -117,10 +116,21 @@ export default function usePlaylistDetail({ admin }: Props) {
          setPlaylistSongs(songs);
 
          // case actually song length do not match with data
+         // because song have been deleted
          if (songs.length != playlistInStore.song_ids.length) {
             console.log(">>> handle playlist, song modified");
             await handlePlaylistWhenSongsModified(songs);
          }
+
+         // case user add song to playlist song item
+         if (
+            songInStore.song_in === `playlist_${playlistInStore.id}` &&
+            actuallySongs.length < songs.length
+         ) {
+            setActuallySongs(songs);
+            console.log("set actually songs");
+         }
+
          // finish
          await sleep(appConfig.loadingDuration);
          setLoading(false);
@@ -132,10 +142,7 @@ export default function usePlaylistDetail({ admin }: Props) {
       if (!firstSongHasImage) return;
 
       // case both images  same
-      if (
-         playlistInStore.image_url &&
-         playlistInStore.image_url === firstSongHasImage.image_url
-      )
+      if (playlistInStore.image_url && playlistInStore.image_url === firstSongHasImage.image_url)
          return;
 
       const newPlaylist: Playlist = {
@@ -158,8 +165,7 @@ export default function usePlaylistDetail({ admin }: Props) {
          return;
       }
       setActuallySongs(playlistSongs);
-      console.log('setActuallySongs');
-      
+      console.log("setActuallySongs");
    };
 
    useEffect(() => {

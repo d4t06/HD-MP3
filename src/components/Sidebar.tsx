@@ -37,7 +37,10 @@ export default function Sidebar() {
    return (
       <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] h-[60px] flex items-center">
-            <h1 className="text-[24px] font-semibold">HD MP3</h1>
+            <h1 className="text-[24px] font-semibold">
+               HD
+               <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
+            </h1>
          </div>
 
          <div className="flex flex-col items-start">
@@ -59,8 +62,7 @@ export default function Sidebar() {
                   {loggedInUser?.email && (
                      <Link
                         className={`${classes.menuItem}  ${
-                           location.pathname.includes("mysongs") ||
-                           location.pathname.includes("playlist")
+                           location.pathname.includes("mysongs")
                               ? classes.activeMenu
                               : "border-transparent"
                         }`}

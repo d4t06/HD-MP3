@@ -38,6 +38,8 @@ import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
+// import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
+import Tippy from "@tippyjs/react/headless";
 
 interface Props {
    data: Song;
@@ -230,7 +232,7 @@ function SongItem({
          }
          try {
             await addToPlaylist(data, playlist);
-            setSuccessToast({ message: `${song.name} added to ${playlist.name}` });
+            setSuccessToast({ message: `'${song.name}' added to '${playlist.name}'` });
          } catch (error) {
             console.log(error);
             setErrorToast({ message: "Error when add song to playlist" });
@@ -365,12 +367,12 @@ function SongItem({
       textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
       button: `${theme.content_hover_bg} p-[8px] rounded-full`,
       songListButton: `mr-[10px] text-[inherit]`,
-      itemContainer: `flex flex-row rounded justify-between songContainers-center px-[10px] py-[10px] w-full border-b border-${
+      itemContainer: `group/container flex flex-row rounded justify-between songContainers-center px-[10px] py-[10px] w-full border-b border-${
          theme.alpha
       } last:border-none p-[0px] ${active ? "bg-" + theme.alpha : ""} hover:bg-${theme.alpha} ${
          isSelected && "bg-" + theme.alpha
       }`,
-      imageFrame: ` relative rounded-[4px] overflow-hidden group/image flex-shrink-0 ${
+      imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
          inQueue ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
       }`,
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
@@ -382,7 +384,7 @@ function SongItem({
       ctaWrapper: "flex items-center min-w-[86px] flex-shrink-0",
       menuBtnWrapper: "w-[50px] flex justify-center songContainers-center",
       menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} pl-[12px] rounded-[4px]`,
-      menuIcon: 'w-[18px] mr-[8px]'
+      menuIcon: "w-[18px] mr-[8px]",
    };
 
    const userInAdminPlaylist = useMemo(
@@ -460,7 +462,7 @@ function SongItem({
                         !isOnMobile && (
                            <div
                               className="absolute  inset-0 bg-black bg-opacity-60 
-songContainers-center justify-center items-center hidden group-hover/image:flex"
+songContainers-center justify-center items-center hidden group-hover/container:flex"
                            >
                               <Button
                                  onClick={onClick}
@@ -507,9 +509,10 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                Add to playlist
                {/* level 2 */}
                <PopupWrapper
-               variant={'thin'}
-
-                  className={`${classes.level2Menu} z-[99] brightness-100 ${PActsLoading ? "hidden" : ""}`}
+                  variant={"thin"}
+                  className={`${classes.level2Menu} z-[99] brightness-100 ${
+                     PActsLoading ? "hidden" : ""
+                  }`}
                   color="sidebar"
                   theme={theme}
                >
@@ -531,7 +534,9 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                                     } ${!isAdded && classes.menuItem}`}
                                  >
                                     <MusicalNoteIcon className={classes.menuIcon} />
-                                    <p>{playlist.name}</p>
+                                    <p>
+                                       {playlist.name} {isAdded && "(Added)"}
+                                    </p>
                                  </li>
                               );
                            })}
@@ -694,9 +699,24 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
             <>
                <div className={classes.ctaWrapper}>
                   {!admin && userInfo?.email && (
-                     <Button onClick={handleLikeSong} className={`${classes.button} group`}>
-                        {renderHeartIcon()}
-                     </Button>
+                     <Tippy
+                        render={(attrs) => (
+                           <div
+                              className={`${
+                                 theme.type === "light" ? "bg-[#333]" : "bg-white"
+                              } px-[8px] py-[3px] rounded-[4px] text-[13px]`}
+                              tabIndex={-1}
+                              {...attrs}
+                           >
+                              Like
+                           </div>
+                        )}
+                        offset={[0, 6]}
+                     >
+                        <button onClick={handleLikeSong} className={`${classes.button} group`}>
+                           {renderHeartIcon()}
+                        </button>
+                     </Tippy>
                   )}
 
                   <div className={classes.menuBtnWrapper}>
@@ -705,15 +725,32 @@ songContainers-center justify-center items-center hidden group-hover/image:flex"
                         setIsOpenFromParent={setIsOpenPopup}
                         placement="left"
                      >
-                        <PopoverTrigger
-                           className={`block  group-hover/main:block ${classes.button} ${
-                              isOpenPopup || inQueue ? "md:block" : "md:hidden"
-                           }`}
-                        >
-                           <Bars3Icon className="w-[20px]" />
+                        <PopoverTrigger asChild>
+                           {/* <Tippy
+                              render={(attrs) => (
+                                 <div
+                                    className={`${
+                                       theme.type === "light" ? "bg-[#333]" : "bg-white"
+                                    } px-[8px] py-[3px] rounded-[4px] text-[13px]`}
+                                    tabIndex={-1}
+                                    {...attrs}
+                                 >
+                                    Menu
+                                 </div>
+                              )}
+                              offset={[0, 6]}
+                           > */}
+                              <button
+                                 className={`block  group-hover/main:block ${classes.button} ${
+                                    isOpenPopup || inQueue ? "md:block" : "md:hidden"
+                                 }`}
+                              >
+                                 <Bars3Icon className="w-[20px]" />
+                              </button>
+                           {/* </Tippy> */}
                         </PopoverTrigger>
                         <PopoverContent>
-                           <PopupWrapper variant={"thin"} color="sidebar"  theme={theme}>
+                           <PopupWrapper variant={"thin"} color="sidebar" theme={theme}>
                               {menuComponent}
                            </PopupWrapper>
                         </PopoverContent>

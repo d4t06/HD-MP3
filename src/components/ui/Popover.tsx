@@ -8,22 +8,26 @@ import {
    useInteractions,
    Placement,
    FloatingFocusManager,
-   autoPlacement,
 } from "@floating-ui/react";
-import { ReactNode, createContext, useContext, useState } from "react";
+import {
+   ReactNode,
+   cloneElement,
+   createContext,
+   isValidElement,
+   useContext,
+   useState,
+} from "react";
 
 interface PopoverOptions {
    initialOpen?: boolean;
    placement?: Placement;
    modal?: boolean;
    isOpenFromParent?: boolean;
-   autoPlace?: boolean;
    setIsOpenFromParent?: (open: boolean) => void;
 }
 
 export function usePopover({
    placement = "bottom",
-   autoPlace,
    isOpenFromParent,
    setIsOpenFromParent,
 }: PopoverOptions = {}) {
@@ -33,15 +37,7 @@ export function usePopover({
       open: isOpenFromParent || isOpen,
       onOpenChange: setIsOpenFromParent || setIsOpen,
       whileElementsMounted: autoUpdate,
-      middleware: [
-         offset(6),
-         // flip({
-         //    crossAxis: placement.includes("-"),
-         //    fallbackAxisSideDirection: "end",
-         //    padding: 5,
-         // }),
-         // shift({ padding: 5 }),
-      ],
+      middleware: [offset(6)],
    });
    const click = useClick(context);
    const dismiss = useDismiss(context, { escapeKey: false });
@@ -83,12 +79,26 @@ export function Popover({
 export function PopoverTrigger({
    children,
    className,
+   asChild = false,
    ...props
 }: {
    children: ReactNode;
+   asChild?: boolean;
    className?: string;
 }) {
    const { getReferenceProps, refs, isOpen } = usePopoverContext();
+
+   if (asChild && isValidElement(children)) {
+      return cloneElement(
+         children,
+         getReferenceProps({
+            'ref': refs.setReference,
+            ...props,
+            ...children.props,
+            "data-state": isOpen ? "open" : "closed",
+         })
+      );
+   }
 
    return (
       <button
@@ -116,7 +126,12 @@ export function PopoverContent({
 
    return (
       <FloatingFocusManager context={context} modal={false}>
-         <div ref={refs.setFloating} className="z-[20]" style={{ ...floatingStyles }} {...getFloatingProps(props)}>
+         <div
+            ref={refs.setFloating}
+            className="z-[20]"
+            style={{ ...floatingStyles }}
+            {...getFloatingProps(props)}
+         >
             {children}
          </div>
       </FloatingFocusManager>

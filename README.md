@@ -77,6 +77,9 @@
 
 -  thêm require auth cho trang dashboard
 
+### update thứ 4 29/11/2023
+- Sửa giao diện, fix lỗi
+
 ### Song
 
 -  [x] upload
@@ -87,6 +90,9 @@
 -  [x] add lyrics
 -  [x] active
 -  [x] like song
+-  [x] Handle actually song when edit song
+-  [x] Handle actually song when upload song
+-  [x] Handle actually song when delete songs
 
 ### Playlist
 
@@ -95,6 +101,9 @@
 -  [x] delete playlist
 -  [x] add songs to playlist
 -  [x] active
+-  [x] handle actually song when remove song
+-  [x] handle actually song when add new song
+-  [x] handle actually song when add to playlist song item
 
 ### Song queue
 
@@ -102,7 +111,7 @@
 -  [x] remove song
 -  [x] clear song
 
-### control
+### Control
 
 -  [x] repeat
 -  [x] shuffle
@@ -112,11 +121,12 @@
 ### data
 
 -  [x] global upload
+
+--- song
 -  [x] Handle user like_song_ids song when song deleted
--  [x] Handle song queue when edit song
--  [x] Handle song queue when upload song
--  [x] Handle song queue when delete songs
--  [] add lyric in dash board
+
+--- playlist
+-  [] Handle playlist songs when song delete
 
 ### ui
 
@@ -125,6 +135,8 @@
 -  [x] fix scroll text
 -  [x] increase song thumb size when min width 1356px
 -  [x] scroll to first temp song when upload song
+-  [x] add my logo
+-  [x] add text color to theme props
 
 ### Issues
 
@@ -133,3 +145,4 @@
 -  [x] không load dươc lyric trên mobile
 -  [x] dừng load lyric song khi song lỗi
 -  [x] edit song in playlist page
+-  [] handle actually song when use playlist actions
