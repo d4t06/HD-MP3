@@ -3,7 +3,10 @@ import { useEffect, useState, useRef } from "react";
 import { Button, Modal } from "./";
 import { useTheme } from "../store";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
+import {
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "../store/PlayStatusSlice";
 import { handleTimeText } from "../utils/appHelpers";
 
 type Props = {
@@ -95,7 +98,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
 
   useEffect(() => {
     return () => {
-      console.log("run clean up check sec", sec);
+      // console.log("run clean up check sec", sec);
 
       playAfterAddTimer.current = false;
       // suddenly turn of
@@ -125,7 +128,8 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
         <Modal setOpenModal={setIsOpenModal} theme={theme}>
           <div className="w-[500px] max-w-[calc(100vw-40px)]">
             <h1 className="text-[22px]">
-              You have been listened music in {handleTimeText(lastTimer.current)}
+              You have been listened music in{" "}
+              {handleTimeText(lastTimer.current)}
             </h1>
 
             <div className="flex gap-[10px] mt-[30px]">

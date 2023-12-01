@@ -7,16 +7,21 @@ import {
   useTheme,
 } from "../store";
 import { Button, Modal, SongItemList, Tabs, TimerModal } from ".";
-import { ClockIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { Song, User } from "../types";
 import { SongWithSongIn } from "../store/SongSlice";
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Skeleton from "./skeleton";
-import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
-import { initSongObject } from "../utils/appHelpers";
+import {
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "../store/PlayStatusSlice";
+import { initSongObject, sleep } from "../utils/appHelpers";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
+import { mySetDoc } from "../utils/firebaseHelpers";
+import { useLocalStorage } from "../hooks";
 
 type Props = {
   isOpenSongQueue: boolean;
@@ -39,6 +44,12 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   const [historySongs, setHistorySongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [_playHistory, setPlayHistory] = useLocalStorage<string[]>(
+    "play_history",
+    []
+  );
+  const [fetchLoading, setFetchLoading] = useState(false);
+
   const handleSetSong = (song: Song, index: number) => {
     // when user play playlist then play user songs
 
@@ -55,7 +66,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       console.log("setActuallySongs");
 
       dispatch(
-        setSong({ ...(song as SongWithSongIn), currentIndex: newQueue.length - 1 })
+        setSong({
+          ...(song as SongWithSongIn),
+          currentIndex: newQueue.length - 1,
+        })
       );
 
       setActiveTab("Queue");
@@ -77,39 +91,56 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
     dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
   };
 
-  const getHistorySong = async () => {
-    const userCollectionRef = collection(db, "users");
-    const userDocRef = doc(userCollectionRef, userInfo?.email as string);
-
-    // get user data
+  const clearHistory = async () => {
     try {
-      setLoading(true);
-      const userSnapShot = await getDoc(userDocRef);
+      setFetchLoading(true);
+      await mySetDoc({
+        collection: "users",
+        data: { play_history: [] } as Partial<User>,
+        id: userInfo.email,
+      });
+      setHistorySongs([]);
+      setPlayHistory([]);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setFetchLoading(false);
+      setActiveTab("Queue");
+    }
+  };
 
-      if (userSnapShot.exists()) {
-        const fullUserInfo = userSnapShot.data() as User;
-        const historySongIds = fullUserInfo.play_history;
+  const getHistorySong = async () => {
+    try {
+      const playHistory = JSON.parse(
+        localStorage.getItem("play_history") || "[]"
+      );
 
-        if (!historySongIds.length) return;
+      // console.log("code run 1");
+      await sleep(500);
 
-        const queryGetHistorySongs = query(
-          collection(db, "songs"),
-          where("id", "in", historySongIds)
-        );
-        console.log(">>> api: get history songs");
-
-        const songsSnap = await getDocs(queryGetHistorySongs);
-
-        const songs = songsSnap.docs.map((doc) => {
-          const data = doc.data() as Song;
-          return {
-            ...data,
-            song_in: data.by === "admin" ? "admin" : "user",
-          } as SongWithSongIn;
-        });
-
-        setHistorySongs(songs);
+      if (!playHistory.length) {
+        setLoading(false);
+        // console.log("code run 2");
+        return;
       }
+
+      const queryGetHistorySongs = query(
+        collection(db, "songs"),
+        where("id", "in", playHistory)
+      );
+      const songsSnap = await getDocs(queryGetHistorySongs);
+
+      const songs = songsSnap.docs.map((doc) => {
+        const data = doc.data() as Song;
+        return {
+          ...data,
+          song_in: data.by === "admin" ? "admin" : "user",
+        } as SongWithSongIn;
+      });
+
+      // await sleep(appConfig.loadingDuration);
+
+      setHistorySongs(songs);
     } catch (error) {
       console.log(error);
     } finally {
@@ -122,7 +153,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
     if (activeTab === "Recent") {
       getHistorySong();
     }
-    setLoading(true);
+
+    return () => {
+      setLoading(true);
+    };
   }, [activeTab]);
 
   useEffect(() => {
@@ -131,6 +165,14 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       setActiveTab("Queue");
     }
   }, [userInfo]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (!isOpenSongQueue) {
+        setActiveTab("Queue");
+      }
+    }, 1000);
+  }, [isOpenSongQueue]);
 
   const SongItemSkeleton = [...Array(4).keys()].map((index) => {
     return (
@@ -149,8 +191,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
   const classes = {
     textColor: `${theme.type === "dark" ? "text-white" : "text-[#333]"} `,
-    mainContainer: `fixed w-[260px] bottom-[0] right-[0] top-[0] z-20 px-[15px] ${theme.container} border-l shadow-xl border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
+    mainContainer: `fixed w-[260px] bottom-[0] right-[0] top-[0] z-20 px-[15px] ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
   };
+
+  // console.log("check loading", loading);
 
   return (
     <div
@@ -208,13 +252,31 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
             {loading ? (
               SongItemSkeleton
             ) : (
-              <SongItemList
-                inQueue
-                inHistory
-                songs={historySongs}
-                handleSetSong={handleSetHistorySong}
-                activeExtend={true}
-              />
+              <>
+                <SongItemList
+                  inQueue
+                  inHistory
+                  songs={historySongs}
+                  handleSetSong={handleSetHistorySong}
+                  activeExtend={true}
+                />
+
+                {!!historySongs.length && (
+                  <p className="text-center">
+                    <Button
+                      onClick={clearHistory}
+                      size={"small"}
+                      className={`${theme.content_bg} rounded-full mt-[24px]`}
+                    >
+                      {fetchLoading ? (
+                        <ArrowPathIcon className="w-[20px] animate-spin" />
+                      ) : (
+                        "Clear"
+                      )}
+                    </Button>
+                  </p>
+                )}
+              </>
             )}
           </>
         )}

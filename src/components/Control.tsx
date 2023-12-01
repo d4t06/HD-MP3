@@ -1,4 +1,11 @@
-import { MouseEvent, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  MouseEvent,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import {
   ArrowPathRoundedSquareIcon,
   ArrowTrendingUpIcon,
@@ -19,9 +26,13 @@ import { handleTimeText } from "../utils/appHelpers";
 import PlayPauseButton from "./child/PlayPauseButton";
 import { Song, User } from "../types";
 import { useLocation } from "react-router-dom";
-import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
+import {
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "../store/PlayStatusSlice";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { Countdown } from "./";
+import { useLocalStorage } from "../hooks";
 
 interface Props {
   admin?: boolean;
@@ -45,6 +56,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   // state
   const [isLoaded, setIsLoaded] = useState(false);
   const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
+  const [someThingToUpdateHistory, setSomeThingToUpdateHisory] = useState(0);
 
   // ref
   const currentIndex = useRef(0);
@@ -60,26 +72,40 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   const isEndOfList = useRef(false);
 
   const firstTimePlay = useRef(true);
-  const history = useRef<string[]>([]);
+  // const history = useRef<string[]>([]);
 
   // use hook
+  const [_playHistory, setPlayHistory] = useLocalStorage<string[]>(
+    "play_history",
+    []
+  );
   const location = useLocation();
-  const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+  const isInEdit = useMemo(
+    () => location.pathname.includes("edit"),
+    [location]
+  );
 
+  // use localstorage intead of dispatch user info
   const updateHistory = async () => {
-   if (admin) return;
+    if (admin) return;
     if (!songInStore.id) return;
 
-    let newHistory = [...history.current];
+    const playHistory = JSON.parse(
+      localStorage.getItem("play_history") || "[]"
+    );
 
-    const index = newHistory.find((id) => id === songInStore.id);
-    if (index) return;
+    let newHistory: string[] = [];
+    if (playHistory.length) {
+      newHistory = [...playHistory];
+
+      const index = newHistory.find((id) => id === songInStore.id);
+      if (index) return;
+    }
 
     newHistory.push(songInStore.id);
     if (newHistory.length > 5) newHistory = newHistory.slice(1);
-    if (newHistory.length < history.current.length) return;
 
-    history.current = newHistory;
+    setPlayHistory(newHistory);
 
     await mySetDoc({
       collection: "users",
@@ -96,7 +122,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
     if (firstTimePlay.current) {
       firstTimePlay.current = false;
-      updateHistory();
+      setSomeThingToUpdateHisory(Math.floor(Math.random() * 10));
     }
   };
 
@@ -137,7 +163,9 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   };
 
   const handlePlaying = () => {
-    dispatch(setPlayStatus({ isPlaying: true, isWaiting: false, isError: false }));
+    dispatch(
+      setPlayStatus({ isPlaying: true, isWaiting: false, isError: false })
+    );
   };
 
   const handleWaiting = () => {
@@ -147,7 +175,11 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   const handleResetForNewSong = () => {
     const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
-    if (timeProcessLineElement && currentTimeRef.current && remainingTime.current) {
+    if (
+      timeProcessLineElement &&
+      currentTimeRef.current &&
+      remainingTime.current
+    ) {
       currentTimeRef.current.innerText = "00:00";
       remainingTime.current.innerText = "00:00";
       timeProcessLineElement.style.width = "0%";
@@ -180,7 +212,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
           audioEle.currentTime = newSeekTime;
           prevSeekTime.current = newSeekTime;
-          timeProcessLineElement.style.width = (lengthRatio * 100).toFixed(1) + "%";
+          timeProcessLineElement.style.width =
+            (lengthRatio * 100).toFixed(1) + "%";
 
           if (!isPlaying) play();
           else dispatch(setPlayStatus({ isWaiting: true }));
@@ -243,7 +276,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     }
 
     if (currentTimeRef.current) {
-      currentTimeRef.current.innerText = handleTimeText(currentTime!) || "00:00";
+      currentTimeRef.current.innerText =
+        handleTimeText(currentTime!) || "00:00";
     }
   }, [songInStore, isOpenFullScreen]);
 
@@ -334,7 +368,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
   useEffect(() => {
     if (!someThingToTriggerError) return;
-    if (songInStore.name) dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+    if (songInStore.name)
+      dispatch(setPlayStatus({ isWaiting: false, isError: true }));
   }, [someThingToTriggerError]);
 
   // update audio src, currentIndex
@@ -393,10 +428,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     if (!audioEle) return;
     if (isInEdit) {
       if (isPlaying) pause();
-    }
-
-    if (!history.current.length && userInfo.play_history.length) {
-      history.current = userInfo.play_history;
+      // console.log('pau when handle here');
+      
     }
 
     audioEle.addEventListener("loadedmetadata", handleLoaded);
@@ -406,8 +439,17 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     };
   }, [isInEdit, songInStore.id, userInfo.like_song_ids]);
 
+  // update play history
+  useEffect(() => {
+    if (!someThingToTriggerError) return;
+
+    updateHistory();
+  }, [someThingToUpdateHistory]);
+
   const classes = {
-    button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
+    button: `p-[5px] ${
+      actuallySongs.length <= 1 && "opacity-20 pointer-events-none"
+    }`,
     buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] ${
       admin ? "" : "h-[50px]"
     }`,
@@ -446,7 +488,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
             <PlayPauseButton handlePlayPause={handlePlayPause} />
 
-            <button className={`${classes.button}`} onClick={() => handleNext()}>
+            <button
+              className={`${classes.button}`}
+              onClick={() => handleNext()}
+            >
               <ForwardIcon className={classes.icon} />
             </button>
             <button
@@ -475,11 +520,14 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
         <div
           ref={durationLine}
           onClick={(e) => handleSeek(e)}
-          className={`${classes.processLineBase} ${!isLoaded && "pointer-events-none"}  ${
-            classes.before
-          }`}
+          className={`${classes.processLineBase} ${
+            !isLoaded && "pointer-events-none"
+          }  ${classes.before}`}
         >
-          <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
+          <div
+            ref={timeProcessLine}
+            className={`${classes.processLineCurrent}`}
+          ></div>
         </div>
         <div className="w-[55px] pl-[5px]">
           {audioEle && (
@@ -492,7 +540,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
         {admin && (
           <div className="flex items-center">
             <PlayPauseButton handlePlayPause={handlePlayPause} />
-            <button className={`${classes.button}`} onClick={() => handleNext()}>
+            <button
+              className={`${classes.button}`}
+              onClick={() => handleNext()}
+            >
               <ForwardIcon className={classes.icon} />
             </button>
           </div>

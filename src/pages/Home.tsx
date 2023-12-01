@@ -141,6 +141,9 @@ export default function HomePage() {
     button: `${theme.content_bg} rounded-full`,
   };
 
+  // console.log('check user status', userInfo.status);
+  
+
   return (
     <>
       {/* mobile nav */}
@@ -258,7 +261,7 @@ export default function HomePage() {
                 selectedSongs={selectedSongs}
                 setSelectedSongs={setSelectedSongs}
                 handleSetSong={handleSetSong}
-                activeExtend={songInStore.song_in === "admin"}
+                activeExtend={songInStore.song_in === "admin" || songInStore.song_in === 'favorite'}
                 songs={adminSongs}
               />
             ) : (

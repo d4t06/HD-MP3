@@ -221,8 +221,6 @@ export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
     time: 0,
     count: 0,
     by: "",
-    image_by: "",
-    image_file_path: "",
     image_url: "",
     blurhash_encode: "",
   };

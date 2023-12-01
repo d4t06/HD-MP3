@@ -1,4 +1,10 @@
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useMemo,
+  useState,
+} from "react";
 
 import { Playlist, Song, ThemeType, User } from "../types";
 import Button from "./ui/Button";
@@ -21,7 +27,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
-import { handleTimeText, initSongObject, selectSongs } from "../utils/appHelpers";
+import {
+  handleTimeText,
+  initSongObject,
+  selectSongs,
+} from "../utils/appHelpers";
 
 import { selectAllSongStore, setSong, useToast } from "../store";
 import {
@@ -48,7 +58,7 @@ interface Props {
   inProcess?: boolean;
   inPlaylist?: Playlist;
   inQueue?: boolean;
-   
+
   admin?: boolean;
 
   userInfo?: User;
@@ -231,7 +241,9 @@ function SongItem({
       }
       try {
         await addToPlaylist(data, playlist);
-        setSuccessToast({ message: `'${song.name}' added to '${playlist.name}'` });
+        setSuccessToast({
+          message: `'${song.name}' added to '${playlist.name}'`,
+        });
       } catch (error) {
         console.log(error);
         setErrorToast({ message: "Error when add song to playlist" });
@@ -261,7 +273,9 @@ function SongItem({
     const newQueue = removeFromQueue();
 
     if (!newQueue || !newQueue.length) {
-      dispatch(setSong({ ...initSongObject({}), song_in: "admin", currentIndex: 0 }));
+      dispatch(
+        setSong({ ...initSongObject({}), song_in: "admin", currentIndex: 0 })
+      );
     }
 
     setSuccessToast({ message: "Song removed from queue" });
@@ -401,7 +415,9 @@ function SongItem({
               <button
                 onClick={() => handleSelect(data)}
                 className={`${classes.songListButton} hidden ${
-                  !!setIsChecked && !!setSelectedSongs ? "group-hover/main:block" : ""
+                  !!setIsChecked && !!setSelectedSongs
+                    ? "group-hover/main:block"
+                    : ""
                 }`}
               >
                 <StopIcon className="w-[18px] " />
@@ -443,7 +459,10 @@ function SongItem({
       {!inQueue && checkBox}
 
       {/* song image */}
-      <div className="flex flex-grow " onClick={isOnMobile ? onClick : () => ""}>
+      <div
+        className="flex flex-grow "
+        onClick={isOnMobile ? onClick : () => ""}
+      >
         <div className={`${classes.imageFrame}`}>
           <Image src={data.image_url} blurHashEncode={data.blurhash_encode} />
 
@@ -460,7 +479,7 @@ function SongItem({
               ) : (
                 !isOnMobile && (
                   <div
-                    className="absolute  inset-0 bg-black bg-opacity-60 
+                    className="absolute inset-0 bg-black bg-opacity-60 
 songContainers-center justify-center items-center hidden group-hover/container:flex"
                   >
                     <Button
@@ -479,7 +498,11 @@ songContainers-center justify-center items-center hidden group-hover/container:f
 
         {/* song info */}
         <div className={`ml-[10px] ${inQueue ? "max-w-[96px]" : ""}`}>
-          <h5 className={`line-clamp-1 overflow-hidden ${inQueue ? "text-[13px]" : ""}`}>
+          <h5
+            className={`line-clamp-1 overflow-hidden ${
+              inQueue ? "text-[13px]" : ""
+            }`}
+          >
             {data.name}
           </h5>
           <p className="text-xs text-gray-500 line-clamp-1">{data.singer}</p>
@@ -492,7 +515,7 @@ songContainers-center justify-center items-center hidden group-hover/container:f
     <>
       {isOnMobile ? (
         <Button
-          className={`group hover:brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
+          className={`group relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
           variant={"list"}
           onClick={() => handleOpenModal("addToPlaylist")}
         >
@@ -501,7 +524,7 @@ songContainers-center justify-center items-center hidden group-hover/container:f
         </Button>
       ) : (
         <Button
-          className={`group/add-playlist hover:brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
+          className={`group/add-playlist hover:!brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
           variant={"list"}
         >
           <PlusCircleIcon className={classes.menuIcon} />
@@ -509,7 +532,7 @@ songContainers-center justify-center items-center hidden group-hover/container:f
           {/* level 2 */}
           <PopupWrapper
             variant={"thin"}
-            className={`${classes.level2Menu} z-[99] brightness-100 ${
+            className={`${classes.level2Menu} z-[99] ${
               PActsLoading ? "hidden" : ""
             }`}
             color="sidebar"
@@ -530,10 +553,12 @@ songContainers-center justify-center items-center hidden group-hover/container:f
                         }
                         className={`list-none w-full flex rounded-[4px] p-[5px] ${
                           isAdded && "opacity-60 pointer-events-none"
-                        } ${!isAdded && classes.menuItem}`}
+                        } ${classes.menuItem}`}
                       >
-                        <MusicalNoteIcon className={classes.menuIcon} />
-                        <p>
+                        <span>
+                          <MusicalNoteIcon className={classes.menuIcon} />
+                        </span>
+                        <p className="line-clamp-1 text-left">
                           {playlist.name} {isAdded && "(Added)"}
                         </p>
                       </li>
@@ -596,7 +621,7 @@ songContainers-center justify-center items-center hidden group-hover/container:f
                     onClick={() => handleRemoveSongFromPlaylist()}
                   >
                     <MinusCircleIcon className={classes.menuIcon} />
-                    Remove from playlist
+                    Remove
                   </Button>
                 )}
               </>
@@ -704,7 +729,10 @@ songContainers-center justify-center items-center hidden group-hover/container:f
         <>
           <div className={classes.ctaWrapper}>
             {!admin && userInfo?.email && (
-              <button onClick={handleLikeSong} className={`${classes.button} group`}>
+              <button
+                onClick={handleLikeSong}
+                className={`${classes.button} group`}
+              >
                 {renderHeartIcon()}
               </button>
             )}
@@ -713,13 +741,13 @@ songContainers-center justify-center items-center hidden group-hover/container:f
               <Popover
                 isOpenFromParent={isOpenPopup}
                 setIsOpenFromParent={setIsOpenPopup}
-                placement="left"
+                placement={inQueue ? "bottom-end" : "left"}
               >
                 <PopoverTrigger asChild>
                   <button
-                    className={`block  group-hover/main:block ${classes.button} ${
-                      isOpenPopup || inQueue ? "md:block" : "md:hidden"
-                    }`}
+                    className={`block  group-hover/main:block ${
+                      classes.button
+                    } ${isOpenPopup || inQueue ? "md:block" : "md:hidden"}`}
                   >
                     <Bars3Icon className="w-[20px]" />
                   </button>

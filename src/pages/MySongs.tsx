@@ -136,6 +136,8 @@ export default function MySongsPage() {
           msg: ">>> api: update user like song ids",
         });
         setUserInfo({ like_song_ids: userLikeSongIds });
+        console.log('get favorite set user info');
+        
       }
     } catch (error) {
       console.log("error");
@@ -293,7 +295,7 @@ export default function MySongsPage() {
   }, [userInfo.like_song_ids]);
 
   const classes = {
-    playlistItem: "w-1/4 p-[8px] max-[549px]:w-1/2",
+    playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
   };
 
   if (errorMsg) return <h1>{errorMsg}</h1>;
@@ -336,7 +338,7 @@ export default function MySongsPage() {
         {/* title */}
         <div className="flex items-center justify-between">
           {/* for upload song */}
-          <h3 className="text-[24px] font-bold">Songs</h3>
+          <h3 className="text-[24px] font-bold">{songTab === 'mine' ? 'Songs' : 'Favorite'}</h3>
           <label
             className={`${theme.content_bg} ${
               status === "uploading" || initialLoading

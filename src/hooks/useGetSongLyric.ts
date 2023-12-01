@@ -15,6 +15,7 @@ export default function useSongLyric({
    isOpenFullScreen: boolean;
 }) {
    const [songLyric, setSongLyric] = useState<Lyric>({
+      id: '',
       base: "",
       real_time: [],
    });
@@ -32,7 +33,7 @@ export default function useSongLyric({
    };
 
    const getLyric = async () => {
-      console.log(">>> api: run get lyric");
+      // console.log(">>> api: run get lyric");
       setLoading(true);
 
       // await sleep(1000);
@@ -63,7 +64,7 @@ export default function useSongLyric({
       if (audioEle) audioEle.addEventListener("loadeddata", handleSongLoaded);
 
       return () => {
-         console.log(">>> local: lyric clean up");
+         // console.log(">>> local: lyric clean up");
          if (audioEle) audioEle.removeEventListener("loadeddata", handleSongLoaded);
       };
    }, []);
@@ -76,7 +77,7 @@ export default function useSongLyric({
       return () => {
          setIsSongLoaded(false);
          setLoading(true);
-         setSongLyric({ base: "", real_time: [] });
+         setSongLyric({ base: "", real_time: [], id: '' });
       };
    }, [songInStore, isError]);
 

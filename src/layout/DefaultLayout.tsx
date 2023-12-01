@@ -41,7 +41,6 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           </div>
         </div>
         <Player />
-        <ScrollTop containerRef={containerRef} />
       </div>
 
       <UploadSongPortal />

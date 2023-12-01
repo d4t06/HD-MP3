@@ -1,5 +1,5 @@
 import { Lyric, Song } from "../types";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {  useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { routes } from "../routes";
@@ -8,7 +8,7 @@ import LyricEditor from "../components/LyricEditor";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { selectAllSongStore, useSongsStore, useTheme } from "../store";
 import { useSongs } from "../hooks";
-import { ArrowPathIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
    const { theme } = useTheme();
@@ -85,13 +85,13 @@ export default function Edit() {
          <audio ref={audioRef} src={targetSong?.song_url} className="hidden" />
          {targetSong && (
             <>
-               <Link
+               {/* <Link
                   to={routes.MySongs}
                   className={`inline-flex text-[20px] font-bold mb-[14px] ${theme.content_hover_text}`}
                >
                   <ChevronLeftIcon className="w-[25px]" />
                   <span className="ml-[12px]">{targetSong.name}</span>
-               </Link>
+               </Link> */}
                <LyricEditor
                   lyric={lyric}
                   audioRef={audioRef}

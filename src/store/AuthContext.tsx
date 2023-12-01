@@ -26,7 +26,6 @@ const initialState: StateType = {
     play_history: [],
     email: "",
     photoURL: "",
-    like_playlist_ids: [],
     like_song_ids: [],
     latest_seen: new Timestamp(0, 0),
   },
@@ -125,7 +124,7 @@ const useAuthActions = () => {
     const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
     audioEle.pause();
 
-    console.log("check audio ele", audioEle);
+    // console.log("check audio ele", audioEle);
 
     dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
   };
@@ -135,6 +134,8 @@ const useAuthActions = () => {
     // reset userInfo
     // trigger auth useEffect and will update status to 'finish'
     setUserInfo(initialState.userInfo);
+    console.log('use auth setUserInfo');
+    
     // reset song context
     setActuallySongs([]);
     initSongsContext(initialSongs);
@@ -155,6 +156,8 @@ const useAuthActions = () => {
       // reset userInfo
       // after set sign cause trigger auth useEffect and will update status to 'finish'
       setUserInfo({ status: "loading" });
+      console.log('use auth login, setUser info');
+      
     }
   };
 

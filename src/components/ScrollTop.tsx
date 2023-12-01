@@ -3,12 +3,14 @@ import { Button } from ".";
 import { ArrowSmallUpIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../store";
 
-function ScrollTop({ containerRef }: { containerRef: RefObject<HTMLDivElement> }) {
+function ScrollTop({ containerRef, className }: { containerRef?: RefObject<HTMLDivElement>, className?: string }) {
   const [isShow, setIsShow] = useState(false);
   const { theme } = useTheme();
 
   const handleScroll = () => {
-    const scrollTop = containerRef.current?.scrollTop || 0;
+    const containerEle = document.querySelector(".main-container")
+    if (!containerEle) return;
+    const scrollTop = containerEle.scrollTop || 0;
     setIsShow(scrollTop > 100);
   };
 
@@ -21,20 +23,24 @@ function ScrollTop({ containerRef }: { containerRef: RefObject<HTMLDivElement> }
   };
 
   useEffect(() => {
-    containerRef.current?.addEventListener("scroll", handleScroll);
+
+    const containerEle = document.querySelector(".main-container")
+    if (!containerEle) return;
+
+    containerEle.addEventListener("scroll", handleScroll);
 
     return () => {
-      containerRef.current?.removeEventListener("scroll", handleScroll);
+      containerEle.removeEventListener("scroll", handleScroll);
     };
   }, []);
   return (
     <Button
       onClick={scrollToTop}
       variant={"circle"}
-      className={`fixed right-[5px] bottom-[80px] md:bottom-[100px] w-[30px] ${
+      className={`absolute transition-[opacity,transform] ${className || ''} w-[30px] ${
         theme.content_hover_bg
       } h-[30px] bg-${theme.alpha} 
-      ${isShow ? "" : "hidden"}`}
+      ${isShow ? "opacity-[1]" : "opacity-0 translate-y-[20px]"}`}
     >
       <ArrowSmallUpIcon className="w-[20px]" />
     </Button>

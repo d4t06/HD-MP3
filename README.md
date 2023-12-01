@@ -80,6 +80,9 @@
 ### update thứ 4 29/11/2023
 - Sửa giao diện, fix lỗi
 
+### update thứ 6 1/2/2023
+- margin sẽ không hoạt động nếu dùng flex gap
+
 ### Song
 
 -  [x] upload

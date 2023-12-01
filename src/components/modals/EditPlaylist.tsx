@@ -1,4 +1,11 @@
-import { useState, useEffect, useRef, FormEvent, Dispatch, SetStateAction } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  FormEvent,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import usePlaylistActions from "../../hooks/usePlaylistActions";
 import { useTheme } from "../../store";
 import { Playlist } from "../../types";
@@ -25,7 +32,9 @@ export default function EditPlaylist({
   const handleEditPlaylist = async (e: FormEvent) => {
     e.preventDefault();
     if (!isAbleToSubmit) return;
-    
+
+    console.log("submiy");
+
     try {
       await editPlaylist(playlistName, playlist);
     } catch (error) {
@@ -37,7 +46,8 @@ export default function EditPlaylist({
 
   const classes = {
     editContainer: "w-[400px] max-w-[90vw] max-w-[calc(90vw-40px)]",
-    input: "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
+    input:
+      "text-[20px] rounded-[4px] px-[10px] h-[40px] mb-[15px] outline-none w-full",
   };
 
   useEffect(() => {
@@ -49,35 +59,45 @@ export default function EditPlaylist({
   }, [isOpenModal]);
 
   useEffect(() => {
-    if (playlistName.trim() && playlistName.trim() !== playlist.name) setIsAbleToSubmit(true);
+    if (playlistName.trim() && playlistName.trim() !== playlist.name)
+      setIsAbleToSubmit(true);
     else setIsAbleToSubmit(false);
   }, [playlistName]);
 
   return (
-    <form
-      action=""
-      onSubmit={handleEditPlaylist}
-      className={`${classes.editContainer} ${loading ? "opacity-60 pointer-events-none" : ""}`}
-    >
+    <>
       <ModalHeader setIsOpenModal={setIsOpenModal} title="Edit playlist" />
-
-      <input
-        ref={inputRef}
-        value={playlistName}
-        onChange={(e) => setPlaylistName(e.target.value)}
-        type="text"
-        className={`${classes.input} bg-${theme.alpha} ${
-          theme.type === "light" ? "text-[#333]" : "text-white"
+      <form
+        action=""
+        onSubmit={handleEditPlaylist}
+        className={`${classes.editContainer} ${
+          loading ? "opacity-60 pointer-events-none" : ""
         }`}
-      />
-
-      <Button
-        type="submit"
-        variant={"primary"}
-        className={`${theme.content_bg} rounded-full self-end mt-[15px] ${isAbleToSubmit ? '' : 'opacity-60 pointer-events-none'}`}
       >
-        {loading ? <ArrowPathIcon className="w-[20px] animate-spin" /> : "Save"}
-      </Button>
-    </form>
+        <input
+          ref={inputRef}
+          value={playlistName}
+          onChange={(e) => setPlaylistName(e.target.value)}
+          type="text"
+          className={`${classes.input} bg-${theme.alpha} ${
+            theme.type === "light" ? "text-[#333]" : "text-white"
+          }`}
+        />
+
+        <Button
+          type="submit"
+          variant={"primary"}
+          className={`${theme.content_bg} rounded-full self-end mt-[15px] ${
+            isAbleToSubmit ? "" : "opacity-60 pointer-events-none"
+          }`}
+        >
+          {loading ? (
+            <ArrowPathIcon className="w-[20px] animate-spin" />
+          ) : (
+            "Save"
+          )}
+        </Button>
+      </form>
+    </>
   );
 }
