@@ -1,5 +1,5 @@
 import { Lyric, Song } from "../types";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 
 import { useTheme, useAuthStore } from "../store";
@@ -7,14 +7,17 @@ import { useTheme, useAuthStore } from "../store";
 import LyricEditor from "../components/LyricEditor";
 import { routes } from "../routes";
 import { myGetDoc } from "../utils/firebaseHelpers";
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
   const { theme } = useTheme();
   const { userInfo } = useAuthStore();
 
   const [song, setSong] = useState<Song>();
-  const [lyric, setLyric] = useState<Lyric>({ base: "", real_time: [] });
+  const [lyric, setLyric] = useState<Lyric>({
+    base: "",
+    real_time: [],
+    id: "",
+  });
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const ranUseEffect = useRef(false);
@@ -42,11 +45,14 @@ export default function Edit() {
           collection: "lyrics",
           id: songData.lyric_id,
         });
-        const lyricData = lyricSnapshot.data() as Lyric;
-        setLyric(lyricData);
+
+        if (lyricSnapshot.exists()) {
+          const lyricData = lyricSnapshot.data() as Lyric;
+          setLyric(lyricData);
+        }
       }
 
-      setSong({ ...songData, id: songSnapshot.id });
+      setSong(songData);
     } catch (error) {
       console.log({ message: error });
     }

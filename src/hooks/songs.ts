@@ -117,7 +117,6 @@ export const testSongs: (Song & { song_in: string })[] = [
 export const testPlaylists: Playlist[] = [
    {
       name: "NCS",
-      image_by: "",
       id: "test_b6-B_admin",
       time: 654,
       count: 3,
@@ -130,6 +129,5 @@ export const testPlaylists: Playlist[] = [
          "popsicle_Wv03_admin",
          "ncs005dddifferentheavensafeandsound_Rnfk_admin",
       ],
-      image_file_path: "",
    },
 ];

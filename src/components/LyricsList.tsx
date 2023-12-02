@@ -33,14 +33,17 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen }) => {
   const renderItem = () => {
     return songLyric.real_time.map((lyricItem, index) => {
       const bounce = 0.3;
+      // display lyric early
+      // ex start: 10 - 2s
+      //    end: 20 - 2s
       const inRange =
-        currentTime >= lyricItem.start - bounce && currentTime + bounce < lyricItem.end;
+        currentTime >= lyricItem.start - bounce && currentTime < lyricItem.end - bounce ;
       return (
         <LyricItem
           firstTimeRender={firstTimeRender}
           scrollBehavior={scrollBehavior}
           key={index}
-          done={!inRange && currentTime > lyricItem.end}
+          done={!inRange && currentTime > lyricItem.end - bounce}
           active={inRange}
           className="mb-[30px]"
         >

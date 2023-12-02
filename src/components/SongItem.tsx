@@ -200,7 +200,10 @@ function SongItem({
       }
 
       setSongs(newSongs);
+      // don't use 
+      // setActuallySongs(newSongs)
 
+      
       // not for admin
       if (admin || songInStore.song_in === "user") {
         removeFromQueue();
@@ -306,7 +309,12 @@ function SongItem({
   const addToQueue = () => {
     if (!setActuallySongs || !actuallySongs) return;
 
+
+
     const newQueue = [...actuallySongs];
+
+    console.log('add to queue check song in', data?.song_in);
+    
     newQueue.push(data);
     setActuallySongs(newQueue);
     console.log("setActuallySongs");
@@ -643,29 +651,39 @@ songContainers-center justify-center items-center hidden group-hover/container:f
               </Button>
             )}
 
-            {data.lyric_id ? (
-              <Link to={`edit/${data.id}`}>
-                <Button className={` ${classes.menuItem} `} variant={"list"}>
-                  <DocumentPlusIcon className={classes.menuIcon} />
-                  Edit lyric
-                </Button>
-              </Link>
-            ) : (
-              <Link to={`edit/${data.id}`}>
-                <Button className={` ${classes.menuItem} `} variant={"list"}>
-                  <DocumentPlusIcon className={classes.menuIcon} />
-                  Add lyric
-                </Button>
-              </Link>
+            {!inPlaylist && (
+              <>
+                {data.lyric_id ? (
+                  <Link to={`edit/${data.id}`}>
+                    <Button
+                      className={` ${classes.menuItem} `}
+                      variant={"list"}
+                    >
+                      <DocumentPlusIcon className={classes.menuIcon} />
+                      Edit lyric
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to={`edit/${data.id}`}>
+                    <Button
+                      className={` ${classes.menuItem} `}
+                      variant={"list"}
+                    >
+                      <DocumentPlusIcon className={classes.menuIcon} />
+                      Add lyric
+                    </Button>
+                  </Link>
+                )}
+              </>
             )}
-            <Button
+            {!inPlaylist && <Button
               onClick={() => handleOpenModal("confirm")}
               className={` ${classes.menuItem} `}
               variant={"list"}
             >
               <TrashIcon className={classes.menuIcon} />
               Delete
-            </Button>
+            </Button>}
           </>
         )}
 

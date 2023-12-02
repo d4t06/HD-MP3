@@ -141,7 +141,7 @@ export default function HomePage() {
     button: `${theme.content_bg} rounded-full`,
   };
 
-  // console.log('check user status', userInfo.status);
+  // console.log('check user status, useSong loading', userInfo.status, useSongLoading);
   
 
   return (

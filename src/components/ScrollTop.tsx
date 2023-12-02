@@ -3,7 +3,7 @@ import { Button } from ".";
 import { ArrowSmallUpIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../store";
 
-function ScrollTop({ containerRef, className }: { containerRef?: RefObject<HTMLDivElement>, className?: string }) {
+function ScrollTop({ className }: { containerRef?: RefObject<HTMLDivElement>, className?: string }) {
   const [isShow, setIsShow] = useState(false);
   const { theme } = useTheme();
 

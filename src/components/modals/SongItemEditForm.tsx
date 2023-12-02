@@ -13,7 +13,11 @@ import {
   uploadBlob,
   uploadFile,
 } from "../../utils/firebaseHelpers";
-import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowUpTrayIcon,
+  CheckIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 import { Image, Button } from "..";
 import {
@@ -39,13 +43,19 @@ type Props = {
   theme: ThemeType & { alpha: string };
 };
 
-export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }: Props) {
+export default function SongItemEditForm({
+  song,
+  setIsOpenModal,
+  theme,
+  admin,
+}: Props) {
   // use store
   const dispatch = useDispatch();
   const { userInfo } = useAuthStore();
   const { setErrorToast, setSuccessToast } = useToast();
   const { song: songInStore } = useSelector(selectAllSongStore);
-  const { userSongs, adminSongs, setUserSongs, setAdminSongs } = useSongsStore();
+  const { userSongs, adminSongs, setUserSongs, setAdminSongs } =
+    useSongsStore();
   const { actuallySongs, setActuallySongs } = useActuallySongs();
 
   // state
@@ -53,8 +63,8 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
   const [isImpactOnImage, setIsImpactOnImage] = useState(false);
 
   const [stockImageURL, setStockImageURL] = useState(song.image_url);
-  const [localImageURL, setLocalImageURL] = useState("");
-  const [imageFile, setImageFile] = useState<File>();
+  const [imageURLFromLocal, setImageURLFromLocal] = useState("");
+  const [imageFileFromLocal, setImageFileFromLocal] = useState<File>();
   const [inputFields, setInputFields] = useState({
     name: song.name,
     singer: song.singer,
@@ -79,21 +89,21 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
   } = useEditForm({
     data: song,
     inputFields,
-    localImageURL,
+    imageURLFromLocal,
   });
 
   // priority order
   // - upload image (now => before) (local image url or image file path)
   // - image from url
   const imageToDisplay = useMemo(() => {
-    if (localImageURL) return localImageURL;
+    if (imageURLFromLocal) return imageURLFromLocal;
     else if (stockImageURL) return stockImageURL;
     else if (validURL) return inputFields.image_url;
-  }, [inputFields, localImageURL, stockImageURL, song, validURL]);
+  }, [inputFields, imageURLFromLocal, stockImageURL, song, validURL]);
 
   const isShowRemoveImageButton = useMemo(
-    () => !!localImageURL || !!stockImageURL,
-    [localImageURL, stockImageURL]
+    () => !!imageURLFromLocal || !!stockImageURL,
+    [imageURLFromLocal, stockImageURL]
   );
 
   const handleInput = (field: keyof typeof inputFields, value: string) => {
@@ -104,13 +114,13 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
   const handleUnsetImage = useCallback(() => {
     // main case 1: song has image before
     // case 1: user remove current image
-    if (song.image_file_path && !localImageURL) {
+    if (song.image_file_path && !imageURLFromLocal) {
       setStockImageURL("");
 
       // case 2: after upload, user remove image
-    } else if (localImageURL) {
-      setLocalImageURL("");
-      setImageFile(undefined);
+    } else if (imageURLFromLocal) {
+      setImageURLFromLocal("");
+      setImageFileFromLocal(undefined);
     } else {
       // main case 2: user never upload image before
       setStockImageURL("");
@@ -122,17 +132,20 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
     if (inputEle) {
       inputEle.value = "";
     }
-  }, [localImageURL, song.image_file_path]);
+  }, [imageURLFromLocal, song.image_file_path]);
 
-  const uploadImageFromLocal = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const target = e.target as HTMLInputElement & { files: FileList };
+  const uploadImageFromLocal = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      const target = e.target as HTMLInputElement & { files: FileList };
 
-    const imageFile = target.files[0];
-    setLocalImageURL(URL.createObjectURL(imageFile));
+      const imageFileFromLocal = target.files[0];
+      setImageURLFromLocal(URL.createObjectURL(imageFileFromLocal));
 
-    setIsImpactOnImage(true);
-    setImageFile(imageFile);
-  }, []);
+      setIsImpactOnImage(true);
+      setImageFileFromLocal(imageFileFromLocal);
+    },
+    []
+  );
 
   const closeModal = () => {
     setLoading(false);
@@ -166,7 +179,9 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
         }
 
         const songImageUrl =
-          !!inputFields.image_url && validURL ? inputFields.image_url : newSong.image_url;
+          !!inputFields.image_url && validURL
+            ? inputFields.image_url
+            : newSong.image_url;
 
         setLoading(true);
         newSong = {
@@ -177,16 +192,19 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
         };
 
         // check valid
-        if (newSong.name !== inputFields.name || newSong.singer !== inputFields.singer) {
+        if (
+          newSong.name !== inputFields.name ||
+          newSong.singer !== inputFields.singer
+        ) {
           console.log("input invalid");
           setErrorToast({});
           return;
         }
 
         // user upload song from local
-        if (imageFile && isImpactOnImage) {
+        if (imageFileFromLocal && isImpactOnImage) {
           const { filePath, fileURL } = await uploadFile({
-            file: imageFile,
+            file: imageFileFromLocal,
             folder: "/images/",
             email: userInfo.email,
           });
@@ -213,19 +231,33 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
         setLoading(true);
 
         console.log("isImpactOnImage");
-        // delete old image in case unset image and change image
-        if (!imageFile || (imageFile && song.image_file_path)) {
+
+        // >>> handle delete song file
+        // when user upload new image
+        if (song.image_file_path) {
           newSong.image_file_path = "";
           newSong.image_url = "";
-          // >>> api
+
           await deleteFile({
             filePath: song.image_file_path,
             msg: ">>> api: delete song's image file",
           });
         }
 
-        if (imageFile) {
-          const imageBlob = await optimizeImage(imageFile);
+        // when user remove current image url and no upload image from local
+        if (!stockImageURL && !imageFileFromLocal) {
+          console.log("remove current image url");
+
+          newSong.image_file_path = "";
+          newSong.image_url = "";
+        }
+
+        // >>> handle add new song file if exist
+        // handle upload image upload from local
+        if (imageFileFromLocal) {
+          console.log("upload new file");
+
+          const imageBlob = await optimizeImage(imageFileFromLocal);
           if (imageBlob == undefined) return;
 
           const uploadProcess = uploadBlob({
@@ -315,6 +347,7 @@ export default function SongItemEditForm({ song, setIsOpenModal, theme, admin }:
         ref={inputFileRef}
         id="editImageInput"
         type="file"
+        accept="image/*"
         onChange={uploadImageFromLocal}
         className="hidden"
       />

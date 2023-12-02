@@ -5,10 +5,10 @@ import { auth } from "../config/firebase";
 import { useRef, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
-import siteLogo from "../assets/siteLogo.png";
 
 import { useAuthActions } from "../store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
+import { Link } from "react-router-dom";
 
 export default function DashboardHeader() {
   const { theme } = useTheme();
@@ -47,10 +47,10 @@ export default function DashboardHeader() {
              </div> */}
           {/* <img className="w-[30px]" src={siteLogo} alt="" />
             <h1 className="text-[20px] uppercase ml-[10px]">Zing admin</h1> */}
-          <h1 className="text-[24px] font-semibold">
+          <Link to={'/dashboard'} className="text-[24px] font-semibold">
             HD
             <span className={`${theme.content_text} ml-[4px] uppercase`}>Dashboard</span>
-          </h1>
+          </Link>
 
           <div className="flex items-center">
             {loggedInUser?.displayName && (

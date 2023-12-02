@@ -64,23 +64,15 @@ export default function useSong({ admin }: { admin?: boolean }) {
         userInfo.email as string
       );
 
-      // case new user
       if (!fullUserInfo?.email) {
-        //  await mySetDoc({
-        //    collection: "users",
-        //    data: {
-        //       email: loggedInUser?.email,
-        //       latest_seen: serverTimestamp(),
-        //       photoURL: loggedInUser?.photoURL,
-        //    },
-        //    id: loggedInUser?.email as string,
-        // });
+        initSongsContext({ adminSongs, adminPlaylists });
+        setLoading(false);
+
         return;
       }
 
       setUserInfo({ ...fullUserInfo });
-      console.log('use song set full user info');
-      
+      console.log("use song set full user info");
 
       if (fullUserInfo.play_history) {
         setPlayHistory(fullUserInfo.play_history);
@@ -105,15 +97,14 @@ export default function useSong({ admin }: { admin?: boolean }) {
       }
       return;
     }
-    // setLoading(true);
 
     if (userInfo.status === "loading") {
+      setLoading(true);
       return;
     }
 
     if (location.pathname === "/mysongs" && !userInfo.email) {
       console.log(">>> skip init because in /mysongs but no user");
-      // setLoading(true);
       return;
     }
 

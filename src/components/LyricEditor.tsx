@@ -82,7 +82,7 @@ export default function LyricEditor({
   const [currentLyricIndex, setCurrentLyricIndex] = useState<number>(
     realTimeLyrics ? realTimeLyrics.length : 0
   );
-  const [textAreaValue, setTextAreaValue] = useState('')
+  const [textAreaValue, setTextAreaValue] = useState("");
   const [isChange, setIsChange] = useState(false);
 
   const firstTimeRender = useRef(true);
@@ -127,11 +127,6 @@ export default function LyricEditor({
     () => (admin ? adminSongs : userSongs),
     [adminSongs, userSongs]
   );
-
-  // let isChange = useMemo(
-  //   () => lyric.real_time !== realTimeLyrics || lyric.base != baseLyric,
-  //   [baseLyric, realTimeLyrics]
-  // );
 
   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
 
@@ -227,6 +222,28 @@ export default function LyricEditor({
     }
   };
 
+  const updateSongStore = (song: Song) => {
+    const newSongs = [...targetSongs];
+
+    const index = updateSongsListValue(song, newSongs);
+    if (index == undefined) {
+      setErrorToast({ message: "No song found" });
+      setLoading(false);
+      return;
+    }
+
+    // local
+    if (admin) setAdminSongs(newSongs);
+    else setUserSongs(newSongs);
+
+    const newSongQueue = [...actuallySongs];
+    updateSongsListValue(song, newSongQueue);
+    setActuallySongs(newSongQueue);
+    console.log("setActuallySongs");
+
+    return index;
+  };
+
   const handleSetLyricToDb = async () => {
     try {
       setLoading(true);
@@ -239,24 +256,8 @@ export default function LyricEditor({
       });
 
       const newSong: Song = { ...song, lyric_id: song.id };
-      const newSongs = [...targetSongs];
-
-      const index = updateSongsListValue(newSong, newSongs);
-      if (index == undefined) {
-        setErrorToast({ message: "No song found" });
-        setLoading(false);
-        return;
-      }
-
-      // local
-      if (admin) setAdminSongs(newSongs);
-      else setUserSongs(newSongs);
-
-      const newSongQueue = [...actuallySongs];
-      updateSongsListValue(newSong, newSongQueue);
-      setActuallySongs(newSongQueue);
-      console.log("setActuallySongs");
-
+      const index = updateSongStore(newSong);
+      if (!index) return;
       // api
       await mySetDoc({
         collection: "songs",
@@ -267,10 +268,11 @@ export default function LyricEditor({
       // finish
       dispatch(setSong({ ...newSong, currentIndex: index, song_in: "user" }));
       setSuccessToast({ message: "Add lyric successful" });
-      setLoading(false);
       setIsChange(false);
     } catch (error) {
       console.log({ message: error });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -285,7 +287,13 @@ export default function LyricEditor({
       await myDeleteDoc({ collection: "lyrics", id: song.lyric_id });
       setSuccessToast({ message: "Delete lyric successful" });
 
-      navigate(-1);
+      const newSong: Song = { ...song, lyric_id: "" };
+      const index = updateSongStore(newSong);
+      if (!index) return;
+
+      dispatch(setSong({ ...newSong, currentIndex: index, song_in: "user" }));
+
+      navigateBack()
     } catch (error) {
       console.log(error);
     } finally {
@@ -299,11 +307,6 @@ export default function LyricEditor({
   };
 
   const handleOpenModal = (name: typeof modalComponent.current) => {
-    if (name === "add_base_lyric") {
-
-      const textAreaEle = textareaRef.current
-      if (textAreaEle) textAreaEle.value = 'jjjjhggjg'
-    }
     setOpenModal(true);
     modalComponent.current = name;
   };
@@ -359,6 +362,10 @@ export default function LyricEditor({
 
   useEffect(() => {
     if (isChange) return;
+    if (!lyric) {
+      setIsChange(true);
+      return;
+    }
 
     if (lyric.real_time !== realTimeLyrics || lyric.base != baseLyric)
       setIsChange(true);
@@ -480,6 +487,8 @@ export default function LyricEditor({
     </div>
   );
 
+  // console.log('check lyric', lyric);
+
   return (
     <div className={`${loading ? "opacity-[0.6] pointer-events-none" : ""}`}>
       <button
@@ -533,7 +542,9 @@ export default function LyricEditor({
 
       <Button
         // isLoading={loading}
-        className={`${theme.content_bg} ${isChange ? '' : 'opacity-[.6] pointer-events-none'} text-[14px] rounded-full mt-[20px]`}
+        className={`${theme.content_bg} ${
+          isChange ? "" : "opacity-[.6] pointer-events-none"
+        } text-[14px] rounded-full mt-[20px]`}
         variant={"primary"}
         onClick={handleSetLyricToDb}
       >

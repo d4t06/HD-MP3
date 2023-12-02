@@ -89,6 +89,18 @@ export default function MySongsPage() {
 
   const [songTab, setSongTab] = useState<Tab>("mine");
 
+  
+  const songCount = useMemo(() => {
+    if (initialLoading || !initial) return 0;
+    return tempSongs.length + userSongs.length;
+  }, [tempSongs, userSongs, initial, initialLoading]);
+
+  const favoriteSongsFiltered = useMemo(
+    () => favoriteSongs.filter((s) => userInfo.like_song_ids.includes(s.id)),
+    [userInfo.like_song_ids]
+  );
+
+
   // define callback functions
   const handleOpenModal = (name: ModalName) => {
     setModalName(name);
@@ -174,7 +186,8 @@ export default function MySongsPage() {
   const handleSetSong = (song: Song, index: number) => {
     console.log(">>> check songin", songInStore.song_in);
 
-    if (songInStore.song_in !== "user" || actuallySongs.length !== userSongs.length) {
+    
+    if (songInStore.song_in !== "user") {
       setActuallySongs(userSongs);
       console.log("setActuallySongs");
     }
@@ -189,16 +202,6 @@ export default function MySongsPage() {
     if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
     else resetCheckedList();
   };
-
-  const songCount = useMemo(() => {
-    if (initialLoading || !initial) return 0;
-    return tempSongs.length + userSongs.length;
-  }, [tempSongs, userSongs, initial, initialLoading]);
-
-  const favoriteSongsFiltered = useMemo(
-    () => favoriteSongs.filter((s) => userInfo.like_song_ids.includes(s.id)),
-    [userInfo.like_song_ids]
-  );
 
   const resetCheckedList = () => {
     setSelectedSongs([]);

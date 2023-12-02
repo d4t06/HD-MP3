@@ -1,4 +1,11 @@
-import { Dispatch, FormEvent, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FormEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+  useRef,
+} from "react";
 import ModalHeader from "./ModalHeader";
 import { ThemeType, User } from "../../types";
 import { Button } from "..";
@@ -6,76 +13,83 @@ import usePlaylistActions from "../../hooks/usePlaylistActions";
 import { useSongsStore, useToast } from "../../store";
 
 type Props = {
-   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
-   theme: ThemeType & { alpha: string };
-   admin?: boolean;
-   userInfo?: User;
+  setIsOpenModal: Dispatch<SetStateAction<boolean>>;
+  theme: ThemeType & { alpha: string };
+  admin?: boolean;
+  userInfo?: User;
 };
 
 export default function AddPlaylist({ setIsOpenModal, theme, admin }: Props) {
-   const [playlistName, setPlayListName] = useState<string>("");
-   const { addPlaylist, loading } = usePlaylistActions({ admin });
-   const { adminPlaylists, userPlaylists } = useSongsStore();
-   const { setErrorToast, setSuccessToast } = useToast();
-   const [error, setError] = useState(false);
+  const [playlistName, setPlayListName] = useState<string>("");
+  const { addPlaylist, loading } = usePlaylistActions({ admin });
+  const { adminPlaylists, userPlaylists } = useSongsStore();
+  const { setErrorToast, setSuccessToast } = useToast();
+  const [error, setError] = useState(false);
 
-   const handleAddPlaylist = async (e: FormEvent) => {
-      e.preventDefault();
-      if (error) return;
+  const inputRef = useRef<HTMLInputElement>(null);
 
-      const targetPlaylists = admin ? adminPlaylists : userPlaylists;
-      const isDuplicate = targetPlaylists.find((p) => p.name === playlistName);
-      if (isDuplicate) {
-         setErrorToast({ message: "Playlist name already use" });
-         setError(true);
-         return;
-      }
+  const handleAddPlaylist = async (e: FormEvent) => {
+    e.preventDefault();
+    if (error) return;
 
-      try {
-         await addPlaylist(playlistName);
+    const targetPlaylists = admin ? adminPlaylists : userPlaylists;
+    const isDuplicate = targetPlaylists.find((p) => p.name === playlistName);
+    if (isDuplicate) {
+      setErrorToast({ message: "Playlist name already use" });
+      setError(true);
+      return;
+    }
 
-         setSuccessToast({ message: `'${playlistName}' created` });
-      } catch (error) {
-         console.log("error");
-         setErrorToast({ message: "Error when add playlist" });
-      } finally {
-         console.log("run finally");
+    try {
+      await addPlaylist(playlistName);
 
-         setIsOpenModal(false);
-      }
-   };
+      setSuccessToast({ message: `'${playlistName}' created` });
+    } catch (error) {
+      console.log("error");
+      setErrorToast({ message: "Error when add playlist" });
+    } finally {
+      console.log("run finally");
 
-   useEffect(() => {
-      if (playlistName.trim()) setError(false);
-   }, [playlistName]);
+      setIsOpenModal(false);
+    }
+  };
 
-   return (
-      <div className="w-[300px] max-w-[calc(100vw-40px)]:">
-         <ModalHeader setIsOpenModal={setIsOpenModal} title="Add playlist" />
-         <form action="" onSubmit={handleAddPlaylist}>
-            <input
-               className={`bg-${theme.alpha} ${
-                  error ? "border border-red-500" : ""
-               } px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
-               type="text"
-               placeholder="name..."
-               value={playlistName}
-               onChange={(e) => setPlayListName(e.target.value)}
-            />
+  useEffect(() => {
+    if (playlistName.trim()) setError(false);
+  }, [playlistName]);
 
-            <p className="text-right mt-[20px]">
-               <Button
-                  type="submit"
-                  isLoading={loading}
-                  variant={"primary"}
-                  className={`${theme.content_bg} rounded-full ${
-                     error ? "opacity-[.6] pointer-events-none" : ""
-                  }`}
-               >
-                  Save
-               </Button>
-            </p>
-         </form>
-      </div>
-   );
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  return (
+    <div className="w-[300px] max-w-[calc(100vw-40px)]:">
+      <ModalHeader setIsOpenModal={setIsOpenModal} title="Add playlist" />
+      <form action="" onSubmit={handleAddPlaylist}>
+        <input
+        ref={inputRef}
+          className={`bg-${theme.alpha} ${
+            error ? "border border-red-500" : ""
+          } px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
+          type="text"
+          placeholder="name..."
+          value={playlistName}
+          onChange={(e) => setPlayListName(e.target.value)}
+        />
+
+        <p className="text-right mt-[20px]">
+          <Button
+            type="submit"
+            isLoading={loading}
+            variant={"primary"}
+            className={`${theme.content_bg} rounded-full ${
+              error ? "opacity-[.6] pointer-events-none" : ""
+            }`}
+          >
+            Save
+          </Button>
+        </p>
+      </form>
+    </div>
+  );
 }

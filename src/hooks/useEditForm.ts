@@ -8,12 +8,12 @@ type Props = {
       singer: string;
       image_url: string;
    };
-   localImageURL: string;
+   imageURLFromLocal: string;
 };
 
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-export default function useEditForm({ data, inputFields, localImageURL }: Props) {
+export default function useEditForm({ data, inputFields, imageURLFromLocal }: Props) {
    const [validName, setValidName] = useState(!!data.name);
    const [validSinger, setValidSinger] = useState(!!data.singer);
    const [validURL, setValidURL] = useState(false);
@@ -55,7 +55,7 @@ export default function useEditForm({ data, inputFields, localImageURL }: Props)
       ) {
          setIsChangeInEdit(true);
       }
-   }, [inputFields, localImageURL]);
+   }, [inputFields, imageURLFromLocal]);
 
    useEffect(() => {
       setIsAbleToSubmit(validName && validSinger && validURL && isChangeInEdit);

@@ -56,14 +56,14 @@ export default function usePlaylistDetail({ admin }: Props) {
 
       try {
          let playlist;
-         const playlistData = await myGetDoc({
+         const playlistSnap = await myGetDoc({
             collection: "playlist",
             id: params.id,
             msg: "Get playlist doc",
          });
 
-         if (playlistData.exists()) {
-            playlist = playlistData.data() as Playlist;
+         if (playlistSnap.exists()) {
+            playlist = playlistSnap.data() as Playlist;
 
             console.log(">>> local: set playlist");
             dispatch(setPlaylist(playlist));
@@ -109,7 +109,7 @@ export default function usePlaylistDetail({ admin }: Props) {
       if (songsSnap.docs) {
          const songs = songsSnap.docs.map(
             (doc) =>
-               ({ ...doc.data(), song_in: playlistInStore.id } as Song & {
+               ({ ...doc.data(), song_in: `playlist_${playlistInStore.id}` } as Song & {
                   song_in: string;
                })
          );

@@ -23,12 +23,20 @@ export default function Auth({ children }: { children: ReactNode }) {
 
   const handleUserLogged = async () => {
     try {
+      if (!loggedInUser?.email) {
+        setUserInfo({
+          status: "finish",
+        });
+        return;
+      }
+
       await mySetDoc({
         collection: "users",
         data: {
           email: loggedInUser?.email,
           latest_seen: serverTimestamp(),
-          photoURL: loggedInUser?.photoURL,
+          photoURL: loggedInUser?.photoURL || "",
+          display_name: loggedInUser?.displayName || "",
         },
         id: loggedInUser?.email as string,
       });
