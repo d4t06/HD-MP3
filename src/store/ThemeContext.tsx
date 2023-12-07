@@ -4,8 +4,16 @@ import { themes } from "../config/themes";
 
 type StateType = { theme: ThemeType & { alpha: string } };
 
-const localStorageThemeId: ThemeKeyType = JSON.parse(localStorage.getItem("theme")!);
-const initTheme = themes.find((theme) => theme.id === localStorageThemeId) || themes[0];
+let initTheme = themes[0];
+const localStorageThemeId = localStorage.getItem("theme") as ThemeKeyType | null;
+
+if (localStorageThemeId) {
+   themes.forEach((theme) => {
+      if (theme.id === localStorageThemeId) {
+         initTheme = theme;
+      }
+   });
+}
 
 const initialState: StateType = {
    theme: {

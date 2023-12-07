@@ -5,7 +5,6 @@ import { selectAllSongStore } from "../store/SongSlice";
 type Props = {
    containerRef?: RefObject<HTMLDivElement>;
    songItemRef?: RefObject<HTMLDivElement>;
-   firstTimeRender: MutableRefObject<Boolean>;
    isOpenFullScreen?: boolean;
    idle: boolean;
 };

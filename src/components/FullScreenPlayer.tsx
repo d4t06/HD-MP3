@@ -1,9 +1,4 @@
-import {
-   ChevronDownIcon,
-   ChevronLeftIcon,
-   ChevronRightIcon,
-   DocumentTextIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -44,7 +39,6 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
    useScrollSong({
       containerRef,
       songItemRef: activeSongRef,
-      firstTimeRender,
       isOpenFullScreen: isOpenFullScreen,
       idle,
    });
@@ -144,16 +138,13 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
             className={"w-full ml-[50px] h-full"}
             audioEle={audioEle}
             isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
+            active={activeTab === "Lyric"}
          />
       </div>
    );
 
    return (
-      <div
-         className={`${classes.mainContainer}  ${
-            isOpenFullScreen ? "translate-y-0" : "translate-y-full"
-         }`}
-      >
+      <div className={`${classes.mainContainer}  ${isOpenFullScreen ? "translate-y-0" : "translate-y-full"}`}>
          {/* bg image */}
          <div ref={bgRef} className={`${classes.absoluteFull} ${classes.bg}`}></div>
          <div className={`${classes.absoluteFull} ${classes.overplay}`}></div>
@@ -168,8 +159,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                         <img className={`animate-[spin_8s_linear_infinite] w-[46px] mr-[10px]`} src={logoIcon} alt="" />
                         {activeTab === "Lyric" && (
                            <p className={`${classes.songNameSinger}`}>
-                              {songInStore.name} -{" "}
-                              <span className="opacity-30">{songInStore.singer}</span>
+                              {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
                            </p>
                         )}
                      </div>
@@ -184,17 +174,9 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                      render={(tab) => tab}
                   />
                   {/* right */}
-                  <div
-                     className={`${classes.headerCta} right-0 gap-[10px] ${
-                        idle && classes.fadeTransition
-                     }`}
-                  >
+                  <div className={`${classes.headerCta} right-0 gap-[10px] ${idle && classes.fadeTransition}`}>
                      {songInStore.by != "admin" && activeTab === "Lyric" && (
-                        <Button
-                           onClick={() => handleEdit()}
-                           variant={"circle"}
-                           className={`p-[4px] ${classes.button}`}
-                        >
+                        <Button onClick={() => handleEdit()} variant={"circle"} className={`p-[4px] ${classes.button}`}>
                            <DocumentTextIcon className="w-[20px]" />
                         </Button>
                      )}
@@ -223,26 +205,18 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                </div>
                {activeTab === "Songs" && !idle && (
                   <>
-                     <button
-                        onClick={() => handleClickPrevious()}
-                        className={`${classes.absoluteButton} left-[20px]`}
-                     >
+                     <button onClick={() => handleClickPrevious()} className={`${classes.absoluteButton} left-[20px]`}>
                         <ChevronLeftIcon className="w-[25px]" />
                      </button>
 
-                     <button
-                        onClick={() => handleClickNext()}
-                        className={`${classes.absoluteButton} right-[20px]`}
-                     >
+                     <button onClick={() => handleClickNext()} className={`${classes.absoluteButton} right-[20px]`}>
                         <ChevronRightIcon className="w-[25px]" />
                      </button>
                   </>
                )}
 
                {/* lyric tab */}
-               <div className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}>
-                  {renderLyricTab}
-               </div>
+               <div className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}>{renderLyricTab}</div>
             </div>
 
             {isOpenFullScreen && activeTab === "Lyric" && !idle && (

@@ -1,14 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+type Repeat = "one" | "all" | "no";
+
 type stateType = {
    playStatus: {
       isPlaying: boolean;
       isWaiting: boolean;
       isError: boolean;
-      isRepeat: 'one' | 'all' | 'no';
+      isRepeat: Repeat;
       isShuffle: boolean;
       isLoaded: boolean;
-      isTimer: number
+      isTimer: number;
    };
 };
 
@@ -30,9 +32,9 @@ const init: stateType = {
       isPlaying: false,
       isWaiting: false,
       isLoaded: true,
-      isRepeat: 'no',
-      isShuffle: false,
-      isTimer: 0,
+      isRepeat: (localStorage.getItem("isRepeat") || "no") as Repeat,
+      isShuffle: JSON.parse(localStorage.getItem("isShuffle") || "false"),
+      isTimer: JSON.parse(localStorage.getItem("isTimer") || "0"),
    },
 };
 
@@ -40,18 +42,14 @@ const PlayStatusSlice = createSlice({
    name: "playStatus",
    initialState: init,
    reducers: {
-      setPlayStatus(
-         state,
-         action: { type: string; payload: Partial<stateType["playStatus"]> }
-      ) {
+      setPlayStatus(state, action: { type: string; payload: Partial<stateType["playStatus"]> }) {
          state.playStatus = { ...state.playStatus, ...action.payload };
       },
    },
 });
 
 // state ở đây là tất cả cá slice được thêm vào reducer (xem file store)
-export const selectAllPlayStatusStore = (state: { playStatus: stateType }) =>
-   state.playStatus;
+export const selectAllPlayStatusStore = (state: { playStatus: stateType }) => state.playStatus;
 
 export const { setPlayStatus } = PlayStatusSlice.actions;
 

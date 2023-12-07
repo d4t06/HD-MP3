@@ -28,7 +28,7 @@ function UploadSongPortal({ admin }: { admin?: boolean }) {
                   onChange={handleInputChange}
                   type="file"
                   multiple
-                  accept=".mp3"
+                  accept="audio"
                   id="song_upload"
                   className="hidden"
                />

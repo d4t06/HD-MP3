@@ -11,7 +11,7 @@ function PlaylistList({
   loading,
 }: {
   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
-  handleAddSongToPlaylist: (song: Song, playlist: Playlist) => void;
+  handleAddSongToPlaylist: (playlist: Playlist) => void;
   userPlaylists: Playlist[];
   song: Song;
   loading: boolean;
@@ -33,7 +33,7 @@ function PlaylistList({
                 return (
                   <li
                     key={index}
-                    onClick={() => !isAdded && handleAddSongToPlaylist(song, playlist)}
+                    onClick={() => !isAdded && handleAddSongToPlaylist(playlist)}
                     className={`list-none flex rounded-[4px] p-[5px] ${
                       isAdded && "opacity-60"
                     }`}

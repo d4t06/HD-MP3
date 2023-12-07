@@ -30,7 +30,7 @@ const publicRoutes = [
    { path: routes.Home, component: Home, layout: "" },
 
    { path: routes.MySongs, component: MySongs, layout: "" },
-   { path: routes.Playlist, component: PlaylistDetail, layout: "" },
+   { path: routes.Playlist, component: PlaylistDetail, layout: ""},
 
    { path: routes.Edit, component: Edit, layout: "" },
 ];

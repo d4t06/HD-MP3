@@ -47,6 +47,7 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
       } else totalMinute = +hour * 60 + +minute;
 
       disPath(setPlayStatus({ isTimer: totalMinute }));
+      localStorage.setItem('isTimer', JSON.stringify(totalMinute))
 
       setSuccessToast({ message: "Timer added" });
       setIsOpenModal(false);

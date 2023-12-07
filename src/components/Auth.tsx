@@ -30,16 +30,16 @@ export default function Auth({ children }: { children: ReactNode }) {
         return;
       }
 
-      await mySetDoc({
-        collection: "users",
-        data: {
-          email: loggedInUser?.email,
-          latest_seen: serverTimestamp(),
-          photoURL: loggedInUser?.photoURL || "",
-          display_name: loggedInUser?.displayName || "",
-        },
-        id: loggedInUser?.email as string,
-      });
+      // await mySetDoc({
+      //   collection: "users",
+      //   data: {
+      //     email: loggedInUser?.email,
+      //     latest_seen: serverTimestamp(),
+      //     photoURL: loggedInUser?.photoURL || "",
+      //     display_name: loggedInUser?.displayName || "",
+      //   },
+      //   id: loggedInUser?.email as string,
+      // });
 
       setUserInfo({
         status: "finish",

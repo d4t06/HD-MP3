@@ -25,6 +25,7 @@ export type Song = {
   duration: number;
   lyric_id: string;
   blurhash_encode: string;
+  size: number
 };
 
 export type ParserSong = {
