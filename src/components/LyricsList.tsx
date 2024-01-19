@@ -44,9 +44,9 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
    }, []);
 
    const lyricSizeMap = {
-      small: "text-[30px]",
-      medium: "text-[35px]",
-      large: "text-[40px]",
+      small: "text-[20px] sm:text-[30px]",
+      medium: "text-[25px] sm:text-[35px]",
+      large: "text-[30px] sm:text-[40px]",
    };
 
    const renderItem = () => {

@@ -2,14 +2,14 @@
 function Footer() {
    const classes = {
       container: `my-[30px] h-[45px] justify-end max-[800px]:justify-center  text-right flex items-center`,
-      icon: "w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
-      copyRightText: "text-[11px] italic",
+      icon: "w-[26px] sm:w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
+      copyRightText: "text-[12px] italic",
    };
    return (
       <div className={`${classes.container}`}>
          <p className={classes.copyRightText}>Nguyen Huu Dat © - 2023</p>
 
-         <div className="flex ml-[30px] gap-[10px]">
+         <div className="flex ml-[30px] space-x-[10px]">
             <a href="https://facebook.com/DAtdz06" target="_blank">
                <svg
                   xmlns="http://www.w3.org/2000/svg"

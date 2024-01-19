@@ -280,10 +280,10 @@ export default function MobileFullScreenPlayer({ audioEle, isOpenFullScreen, set
                         activeTab === "Songs" && "opacity-0 pointer-events-none h-[0px] mb-[0px]"
                      }`}
                   >
-                     <div className="flex flex-col-reverse justify-between h-[100px]">
+                     <div className="h-[120px]">
                         {useMemo(
                            () => (
-                              <Control audioEle={audioEle} isOpenFullScreen={true} idle={false} />
+                              <Control className="flex flex-col-reverse justify-between pb-[24px]" audioEle={audioEle} isOpenFullScreen={true} idle={false} />
                            ),
                            [isOpenFullScreen]
                         )}

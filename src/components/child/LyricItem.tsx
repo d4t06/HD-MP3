@@ -35,7 +35,7 @@ export default function LyricItem({ children, active, done, inUpload, className,
       <p
          ref={lyricRef}
          className={`lyric ${className && className} ${
-            inUpload ? "text-[16px]" : "text-[30px] min-[1536px]:text-[40px]"
+            inUpload ? "text-[16px]" : ""
          }  select-none  max-[549px]:text-center font-bold ${done && "opacity-40"} ${inUpload ? "flex" : ""} ${
             active && !inUpload ? "text-[#ffed00]" : ""
          }`}

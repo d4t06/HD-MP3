@@ -149,3 +149,7 @@
 -  [x] dừng load lyric song khi song lỗi
 -  [x] edit song in playlist page
 -  [] handle actually song when use playlist actions
+
+
+### upda thứ 6 19/1/2024
+- Sửa giao diện

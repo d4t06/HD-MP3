@@ -1,32 +1,41 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { redirect, useLocation, useNavigate } from "react-router-dom";
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "../store";
 
-function BackBtn() {
-   const { theme } = useTheme();
-   const navigate = useNavigate();
-   const location = useLocation();
+type Props = {
+  to?: string;
+};
 
-   const handleNavigate = (direction: "back" | "forward") => {
-      if (direction === "back") {
-         navigate(-1);
-      }
-   };
+function BackBtn({ to }: Props) {
+  const { theme } = useTheme();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-   const classes = {
-      button: `h-[36px] w-[36px] inline-flex items-center justify-center p-[6px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`,
-   };
+  const handleNavigate = (direction: "back" | "forward") => {
+    if (typeof to === 'string') {
+      redirect(to);
+    }
+    if (direction === "back") {
+      navigate(-1);
+    }
+  };
 
-   return (
-      <div className="flex gap-[10px] mb-[30px]">
-         <button
-            onClick={() => handleNavigate("back")}
-            className={`${classes.button} ${location.pathname === "/" ? "opacity-60 pointer-events-none" : ""}`}
-         >
-            <ChevronLeftIcon className="" />
-         </button>
+  const classes = {
+    button: `h-[36px] w-[36px] p-[6px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`,
+  };
 
-         {/* <button
+  return (
+    <div className="flex gap-[10px] mb-[30px]">
+      <button
+        onClick={() => handleNavigate("back")}
+        className={`${classes.button} ${
+          location.pathname === "/" ? "opacity-60 pointer-events-none" : ""
+        }`}
+      >
+        <ChevronLeftIcon className="" />
+      </button>
+
+      {/* <button
         onClick={() => handleNavigate("forward")}
         className={`${classes.button} ${
           prevLocation ? "" : "opacity-60 pointer-events-none"
@@ -34,8 +43,8 @@ function BackBtn() {
       >
         <ChevronRightIcon className="w-[full]" />
       </button> */}
-      </div>
-   );
+    </div>
+  );
 }
 
 export default BackBtn;

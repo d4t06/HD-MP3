@@ -18,9 +18,10 @@ interface Props {
    audioEle: HTMLAudioElement;
    idle: boolean;
    isOpenFullScreen: boolean;
+   className?: string
 }
 
-export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
+export default function Control({ audioEle, admin, isOpenFullScreen, className }: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
@@ -80,18 +81,18 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
-      buttonsContainer: `w-full flex justify-center items-center gap-x-[20px] ${admin ? "" : "h-[50px]"}`,
+      buttonsContainer: `w-full flex justify-between sm:justify-center items-center gap-x-[20px] ${admin ? "" : "h-[50px]"}`,
       processContainer: `flex w-full flex-row items-center h-[30px] ${admin ? "h-full" : ""}`,
       processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
       currentTime: `opacity-60 text-[14px] font-semibold`,
       duration: `text-[14px] font-semibold`,
-      icon: "w-[30px] max-[350px]:w-[25px]",
+      icon: "w-[35px] max-[350px]:w-[25px]",
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
    };
 
    return (
-      <div className="relative h-full w-full">
+      <div className={`relative h-full w-full ${className || ''}`}>
          {/* buttons */}
          <div className={`${classes.buttonsContainer}`}>
             {!admin && (
@@ -137,7 +138,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             >
                <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
             </div>
-            <div className="w-[55px] pl-[5px]">
+            <div className="w-[46px] pl-[5px]">
                {audioEle && (
                   <span ref={remainingTimeRef} className={classes.duration}>
                      00:00

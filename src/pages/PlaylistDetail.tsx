@@ -182,7 +182,7 @@ export default function PlaylistDetail() {
 
    const classes = {
       button: `${theme.content_bg} rounded-full`,
-      playListTop: "w-full gap-[12px] flex flex-col md:flex-row",
+      playListTop: "w-full space-y-[12px] md:space-y-0 md:space-x-[12px] flex flex-col md:flex-row",
       playlistInfoContainer: `flex flex-col gap-[12px] md:justify-between`,
       infoTop: "flex justify-center items-center gap-[8px] md:flex-col md:items-start",
       songListContainer: "h-[50px] w-full mb-[10px] flex gap-[8px] max-[549px]:gap-[12px] items-center border-b",

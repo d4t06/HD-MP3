@@ -283,7 +283,7 @@ export default function MySongsPage() {
    return (
       <>
          <div className="pb-[30px] ">
-            {window.innerWidth < 800 && <BackBtn />}
+            {window.innerWidth < 800 && <BackBtn to="" />}
             <h3 className="text-[24px] font-bold">Playlist</h3>
 
             <div className="flex flex-row flex-wrap -mx-[8px]">
@@ -380,16 +380,16 @@ export default function MySongsPage() {
                )}
             </div>
 
-            <div className={`flex items-center gap-[10px] my-[10px]`}>
+            <div className={`flex items-center space-x-[10px] my-[10px]`}>
                {TAB.map((tab, index) => {
                   const active = songTab === tab;
                   return (
                      <button
                         key={index}
                         onClick={() => handleSetTab(tab)}
-                        className={`text-[14px] font-[500] px-[10px]  py-[4px] rounded-[99px] ${
-                           active ? theme.content_bg : `${theme.content_border} border`
-                        } ${!active && !userInfo.like_song_ids.length ? "opacity-[.2] pointer-events-none" : ""}`}
+                        className={`text-[14px] font-[500] px-[10px] ${theme.content_border} border py-[4px] rounded-[99px] 
+                        ${active ? theme.content_bg : ''}
+                        ${!active && !userInfo.like_song_ids.length ? "opacity-[.2] pointer-events-none" : ""}`}
                      >
                         {tab === "mine" ? "My songs" : "Favorite"}
                      </button>
