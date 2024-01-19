@@ -33,8 +33,6 @@ import {
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import EditPlaylist from "../components/modals/EditPlaylist";
 import { SongListProvider } from "../store/SongListContext";
-import PlaylistProvider from "../store/PlaylistSongContext";
-// import { setPlayStatus } from "../store/PlayStatusSlice";
 
 type ModalName = "edit" | "confirm" | "addSongs";
 
@@ -325,32 +323,31 @@ export default function PlaylistDetail() {
             {usePlaylistLoading && SongItemSkeleton}
 
             {!usePlaylistLoading && !!playlistSongs.length && (
-                  <SongListProvider
-                     setIsChecked={setIsChecked}
-                     setSelectedSongs={setSelectedSongs}
-                     isChecked={isChecked}
-                     selectedSongs={selectedSongs}
-
-                  >
-                     {playlistInStore.by === "admin" ? (
-                        <SongList
-                           songs={playlistSongs}
-                           inPlaylist={playlistInStore}
-                           handleSetSong={handleSetSong}
-                           activeExtend={songInStore.song_in.includes(playlistInStore.id)}
-                        />
-                     ) : (
-                        <SongList
-                           songs={playlistSongs}
-                           inPlaylist={playlistInStore}
-                           handleSetSong={handleSetSong}
-                           activeExtend={songInStore.song_in.includes(playlistInStore.id)}
-                           deleteFromPlaylist={handleDeleteSongFromPlaylist}
-                           playlistSongs={playlistSongs}
-                           setPlaylistSongs={setPlaylistSongs}
-                        />
-                     )}
-                  </SongListProvider>
+               <SongListProvider
+                  setIsChecked={setIsChecked}
+                  setSelectedSongs={setSelectedSongs}
+                  isChecked={isChecked}
+                  selectedSongs={selectedSongs}
+               >
+                  {playlistInStore.by === "admin" ? (
+                     <SongList
+                        songs={playlistSongs}
+                        inPlaylist={playlistInStore}
+                        handleSetSong={handleSetSong}
+                        activeExtend={songInStore.song_in.includes(playlistInStore.id)}
+                     />
+                  ) : (
+                     <SongList
+                        songs={playlistSongs}
+                        inPlaylist={playlistInStore}
+                        handleSetSong={handleSetSong}
+                        activeExtend={songInStore.song_in.includes(playlistInStore.id)}
+                        deleteFromPlaylist={handleDeleteSongFromPlaylist}
+                        playlistSongs={playlistSongs}
+                        setPlaylistSongs={setPlaylistSongs}
+                     />
+                  )}
+               </SongListProvider>
             )}
 
             {playlistInStore.by !== "admin" && !!userSongs.length && (

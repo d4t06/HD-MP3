@@ -1,23 +1,27 @@
-import { useEffect, useRef } from "react";
+import { MutableRefObject, useEffect, useRef } from "react";
 
-interface Props {
+type Props = {
+   inUpload?: boolean;
    children: string;
    active: boolean;
    done: boolean;
-   inUpload?: boolean;
    className?: string;
-}
+   scrollBehavior: MutableRefObject<ScrollBehavior>;
+};
 
-export default function LyricItem({ children, active, done, inUpload, className }: Props) {
+export default function LyricItem({ children, active, done, inUpload, className, scrollBehavior }: Props) {
    const lyricRef = useRef<HTMLParagraphElement>(null);
 
    const scroll = () => {
       const ele = lyricRef.current as HTMLElement;
+
       if (ele) {
          ele.scrollIntoView({
-            behavior: "smooth",
+            behavior: scrollBehavior.current,
             block: "center",
          });
+
+         if (scrollBehavior.current === "instant") scrollBehavior.current = "smooth";
       }
    };
 

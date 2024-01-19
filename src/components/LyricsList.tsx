@@ -3,6 +3,7 @@ import LyricItem from "./child/LyricItem";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
+import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 import { selectAllSongStore } from "../store";
 
 interface Props {
@@ -13,12 +14,16 @@ interface Props {
 }
 
 const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }) => {
-   const { song: songInStore } = useSelector(selectAllSongStore);
-
    // state
+   const {
+      playStatus: { lyricSize },
+   } = useSelector(selectAllPlayStatusStore);
    const [currentTime, setCurrentTime] = useState<number>(0);
    const scrollBehavior = useRef<ScrollBehavior>("instant");
    const containerRef = useRef<HTMLDivElement>(null);
+   const { song: songInStore } = useSelector(selectAllSongStore);
+
+   const prevTime = useRef(0);
 
    const { loading, songLyric } = useGetSongLyric({
       audioEle,
@@ -26,8 +31,23 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
    });
 
    const handleUpdateTime = useCallback(() => {
-      setCurrentTime(audioEle.currentTime);
+      const currentTime = audioEle.currentTime;
+      setCurrentTime(currentTime);
+
+      // disable animation
+      if (Math.abs(currentTime - prevTime.current) > 5) {
+         scrollBehavior.current = "instant";
+         prevTime.current = currentTime;
+         return;
+      }
+      prevTime.current = currentTime;
    }, []);
+
+   const lyricSizeMap = {
+      small: "text-[30px]",
+      medium: "text-[35px]",
+      large: "text-[40px]",
+   };
 
    const renderItem = () => {
       return songLyric.real_time.map((lyricItem, index) => {
@@ -41,7 +61,8 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
                key={index}
                done={!inRange && currentTime > lyricItem.end - bounce}
                active={inRange}
-               className={`${inRange ? "active" : ""} mb-[30px]`}
+               scrollBehavior={scrollBehavior}
+               className={`${lyricSizeMap[lyricSize || "medium"]} ${inRange ? "active" : ""} mb-[30px]`}
             >
                {lyricItem.text}
             </LyricItem>
@@ -49,6 +70,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
       });
    };
 
+   // add event listeners
    useEffect(() => {
       if (!audioEle) return;
 
@@ -59,19 +81,26 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
       };
    }, []);
 
+   // scroll to active lyric when change between lyric tab and others
    useEffect(() => {
       const activeLyric = document.querySelector(".active.lyric");
       if (activeLyric) {
          activeLyric.scrollIntoView({
-            behavior: scrollBehavior.current,
+            behavior: "instant",
             block: "center",
          });
       }
    }, [active]);
 
+   // disable animation when first time load lyric
+   useEffect(() => {
+      if (scrollBehavior.current !== "instant") scrollBehavior.current = "instant";
+   }, [songInStore]);
+
    const classes = {
       container: "overflow-y-auto overflow-x-hidden no-scrollbar pt-[30px] mask-image",
       loadingContainer: "flex justify-center items-center h-full w-full",
+      loadingIcon: "opacity-[.6] animate-spin w-[35px] duration-[2s]",
    };
 
    return (
@@ -79,7 +108,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
          {loading && (
             <div className={classes.loadingContainer}>
                <span>
-                  <ArrowPathIcon className="opacity-[.6] animate-spin w-[35px] duration-[2s]" />
+                  <ArrowPathIcon className={classes.loadingIcon} />
                </span>
             </div>
          )}

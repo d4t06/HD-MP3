@@ -15,7 +15,6 @@ type Props = {
 
 const initSec = JSON.parse(localStorage.getItem("isTimer") || "0");
 
-
 function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const dispatch = useDispatch();
    const { theme } = useTheme();
@@ -39,7 +38,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
       play();
    };
 
-   const handeCloseModal = () => {
+   const handleCloseModal = () => {
       setIsOpenModal(false);
       lastTimer.current = 0;
    };
@@ -57,6 +56,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
          console.log("pause");
 
          cb();
+         setSec(0);
          dispatch(setPlayStatus({ isTimer: 0 }));
          localStorage.setItem("isTimer", JSON.stringify(0));
          setIsOpenModal(true);
@@ -81,9 +81,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
          play();
 
          // case user play song and pause
-      } else if (!isPlaying) {
-         return;
-      }
+      } else if (!isPlaying) return;
 
       if (!sec) {
          setSec(isTimer);
@@ -113,7 +111,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
       if (!sec) return;
       consuming.current += 1;
 
-      if (consuming.current === 10) {
+      if (consuming.current === 5) {
          localStorage.setItem("isTimer", JSON.stringify(sec));
          consuming.current = 0;
       }
@@ -148,7 +146,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
                         Continue playing
                      </Button>
 
-                     <Button onClick={handeCloseModal} size={"normal"} className={`bg-${theme.alpha} rounded-[99px]`}>
+                     <Button onClick={handleCloseModal} size={"normal"} className={`bg-${theme.alpha} rounded-[99px]`}>
                         Close
                      </Button>
                   </div>

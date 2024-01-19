@@ -17,6 +17,8 @@ export default function useSongLyric({
       playStatus: { isError },
    } = useSelector(selectAllPlayStatusStore);
 
+   // const currentPromise = useRef<Promise<any>>();
+
    const [songLyric, setSongLyric] = useState<Lyric>({
       id: "",
       base: "",
@@ -89,7 +91,9 @@ export default function useSongLyric({
          setLoading(false);
          return;
       }
-      return () => resetForNewSong();
+      return () => {
+         resetForNewSong();
+      };
    }, [songInStore, isError]);
 
    return { songLyric, loading };

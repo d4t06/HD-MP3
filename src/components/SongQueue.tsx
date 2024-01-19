@@ -77,6 +77,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       console.log("setActuallySongs");
 
       dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
+      localStorage.setItem("duration", JSON.stringify(0));
    };
 
    const clearHistory = async () => {

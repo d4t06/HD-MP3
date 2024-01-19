@@ -1,4 +1,10 @@
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
+import {
+   ChevronDownIcon,
+   ChevronLeftIcon,
+   ChevronRightIcon,
+   Cog6ToothIcon,
+   DocumentTextIcon,
+} from "@heroicons/react/24/outline";
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +14,8 @@ import { SongThumbnail, Button, Tabs, LyricsList } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 import logoIcon from "../assets/siteLogo.png";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
+import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -23,18 +31,15 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { actuallySongs } = useActuallySongs();
    // state
-   const [activeTab, setActiveTab] = useState<"Songs" | "Lyric">("Lyric");
+   const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
    //  ref
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const activeSongRef = useRef<HTMLDivElement>(null);
-   const firstTimeRender = useRef(true);
 
    // use hooks
    const navigate = useNavigate();
-
    useBgImage({ bgRef, songInStore });
-
    // dùng hook ở component cha thay vì dùng ở mỗi child
    useScrollSong({
       containerRef,
@@ -90,6 +95,8 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
       lyricTabContainer:
          "px-[40px] min-[1536px]:container min-[1536px]:mx-auto min-[1536px]:px-[200px] h-full flex items-center justify-center flex-row",
       fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
+      before: `before:content-[''] before:w-[50px] before:h-[10px] before:absolute before:bottom-[-7px] `,
+      logo: "animate-[spin_8s_linear_infinite] w-[46px] mr-[10px]",
    };
 
    // define jsx
@@ -135,7 +142,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
 
          {/* right */}
          <LyricsList
-            className={"w-full ml-[50px] h-full"}
+            className={"w-full ml-[40px] h-full"}
             audioEle={audioEle}
             isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
             active={activeTab === "Lyric"}
@@ -156,7 +163,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                   {/* left */}
                   {idle && (
                      <div className={`${classes.headerCta} left-0`}>
-                        <img className={`animate-[spin_8s_linear_infinite] w-[46px] mr-[10px]`} src={logoIcon} alt="" />
+                        <img className={`${classes.logo}`} src={logoIcon} alt="" />
                         {activeTab === "Lyric" && (
                            <p className={`${classes.songNameSinger}`}>
                               {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
@@ -170,7 +177,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                      activeTab={activeTab}
                      setActiveTab={setActiveTab}
                      className={`${idle && classes.fadeTransition}`}
-                     tabs={["Songs", "Lyric"]}
+                     tabs={["Songs", "Karaoke", "Lyric"]}
                      render={(tab) => tab}
                   />
                   {/* right */}
@@ -180,6 +187,16 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                            <DocumentTextIcon className="w-[20px]" />
                         </Button>
                      )}
+
+                     <Popover placement="bottom-end">
+                        <PopoverTrigger className={`h-[36px] rounded-full w-[36px] ${classes.button}`}>
+                           <Cog6ToothIcon className="w-[20px]" />
+                        </PopoverTrigger>
+
+                        <PopoverContent className="z-[99]">
+                           <FullScreenPlayerSetting />
+                        </PopoverContent>
+                     </Popover>
 
                      <Button
                         onClick={() => setIsOpenFullScreen(false)}
@@ -217,6 +234,9 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
 
                {/* lyric tab */}
                <div className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}>{renderLyricTab}</div>
+               <div className={`absolute inset-0 z-20 ${activeTab === "Karaoke" ? "" : "hidden"}`}>
+                  <h1 className="text-center font-semibold opacity-60 relative top-[50%]">Coming soon...</h1>
+               </div>
             </div>
 
             {isOpenFullScreen && activeTab === "Lyric" && !idle && (

@@ -60,7 +60,6 @@ function SongList({
                   theme={theme}
                   inProcess={!isAdded}
                   data={song}
-                  // userInfo={userInfo}
                />
             );
 
@@ -88,9 +87,8 @@ function SongList({
          const isLastIndexInQueue = songInStore.currentIndex === actuallySongs?.length - 1;
 
          return (
-            <>
+            <div key={index}>
                <SongItem
-                  key={index}
                   data={song}
                   theme={theme}
                   admin={inAdmin}
@@ -103,10 +101,10 @@ function SongList({
 
                {inQueue && active && !isLastIndexInQueue && (
                   <div className="mt-[12px] mb-[4px]">
-                     <h5 className="text-[13px] font-semibold">Playing next</h5>
+                     <p className={`${theme.content_text} text-[14px] font-[600]`}>Playing next</p>
                   </div>
                )}
-            </>
+            </div>
          );
       });
    };

@@ -316,11 +316,6 @@ export default function DashBoard() {
                         activeExtend={true}
                         songs={adminSongs}
                         handleSetSong={handleSetSong}
-                        isChecked={isChecked}
-                        setIsChecked={setIsChecked}
-                        selectedSongs={selectedSongs}
-                        setSelectedSongs={setSelectedSongs}
-                        tempSongs={tempSongs}
                         addedSongIds={addedSongIds}
                       />
                     ) : (

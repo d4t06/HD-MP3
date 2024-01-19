@@ -3,7 +3,6 @@ import { useTheme } from "../store/ThemeContext";
 import { Sidebar, Player, UploadSongPortal, Header } from "../components";
 import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
-import ScrollTop from "../components/ScrollTop";
 
 interface Props {
   children: ReactNode;

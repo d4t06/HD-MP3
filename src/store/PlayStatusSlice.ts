@@ -1,16 +1,19 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 type Repeat = "one" | "all" | "no";
+type LyricSize = "small" | "medium" | "large";
 
 type stateType = {
    playStatus: {
       isPlaying: boolean;
       isWaiting: boolean;
       isError: boolean;
+      lyricSize: LyricSize;
       isRepeat: Repeat;
       isShuffle: boolean;
       isLoaded: boolean;
       isTimer: number;
+      isCrossFade: boolean;
    };
 };
 
@@ -31,10 +34,12 @@ const init: stateType = {
       isError: false,
       isPlaying: false,
       isWaiting: false,
+      lyricSize: (localStorage.getItem("lyricSize") || "medium") as LyricSize,
       isLoaded: true,
       isRepeat: (localStorage.getItem("isRepeat") || "no") as Repeat,
       isShuffle: JSON.parse(localStorage.getItem("isShuffle") || "false"),
       isTimer: JSON.parse(localStorage.getItem("isTimer") || "0"),
+      isCrossFade: JSON.parse(localStorage.getItem("isCrossFade") || "false"),
    },
 };
 

@@ -12,6 +12,7 @@ export {default as PlayPauseButton} from './child/PlayPauseButton'
 export {default as SongItemEditForm} from './modals/SongItemEditForm'
 export {default as ToastItem} from './child/ToastItem'
 export {default as AddLyricItem} from './child/AddLyricItem'
+export {default as Switch} from './ui/Switch'
 
 export {default as Auth} from './Auth'
 export {default as BottomPlayer} from './BottomPlayer'

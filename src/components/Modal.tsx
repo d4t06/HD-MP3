@@ -21,7 +21,8 @@ const Modal: FC<Props> = ({ children, setOpenModal, theme, classNames }) => {
             <div className="fixed inset-0 z-[99]">
                <div
                   onClick={(e) => {
-                     e.stopPropagation;
+                     e.preventDefault();
+                     e.stopPropagation();
                      setOpenModal(false);
                   }}
                   className="absolute bg-black opacity-60 inset-0 z-[90]"

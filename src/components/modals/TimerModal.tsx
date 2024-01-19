@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
 import { useDispatch } from "react-redux";
 import ModalHeader from "./ModalHeader";
 import { ThemeType } from "../../types";
@@ -26,7 +26,11 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
       input: `bg-${theme.alpha} px-[10px] rounded-[4px] outline-none mt-[10px] text-[16px]  h-[35px] w-full`,
    };
 
-   const handleSelect = (value: typeof quickMinute) => {
+   const handleSelect = (value: typeof quickMinute, e: MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+      console.log("handleSelect", value);
+
+      e.stopPropagation();
+      e.preventDefault();
       setHour("");
       setMinute("");
       setQuickMinute(value);
@@ -47,7 +51,7 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
       } else totalMinute = +hour * 60 + +minute;
 
       disPath(setPlayStatus({ isTimer: totalMinute }));
-      localStorage.setItem('isTimer', JSON.stringify(totalMinute))
+      localStorage.setItem("isTimer", JSON.stringify(totalMinute));
 
       setSuccessToast({ message: "Timer added" });
       setIsOpenModal(false);
@@ -61,33 +65,30 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
          <div>
             <div className="flex gap-[10px] mb-[12px]">
                <button
-                  onClick={() => handleSelect("5")}
+                  type="button"
+                  onClick={(e) => handleSelect("5", e)}
                   className={`${classes.button} ${
-                     quickMinute === "5"
-                        ? theme.content_bg
-                        : `${theme.content_border} border`
+                     quickMinute === "5" ? theme.content_bg : `${theme.content_border} border`
                   }`}
                >
                   5 min
                </button>
 
                <button
-                  onClick={() => handleSelect("15")}
+                  type="button"
+                  onClick={(e) => handleSelect("15", e)}
                   className={`${classes.button} ${
-                     quickMinute === "15"
-                        ? theme.content_bg
-                        : `${theme.content_border} border`
+                     quickMinute === "15" ? theme.content_bg : `${theme.content_border} border`
                   }`}
                >
                   15 min
                </button>
 
                <button
-                  onClick={() => handleSelect("30")}
+                  type="button"
+                  onClick={(e) => handleSelect("30", e)}
                   className={`${classes.button} ${
-                     quickMinute === "30"
-                        ? theme.content_bg
-                        : `${theme.content_border} border`
+                     quickMinute === "30" ? theme.content_bg : `${theme.content_border} border`
                   }`}
                >
                   30 min
@@ -132,9 +133,7 @@ function TimerModal({ setIsOpenModal, theme }: Props) {
                <Button
                   onClick={handleSetTimer}
                   variant={"primary"}
-                  className={`${theme.content_bg} rounded-full ${
-                     valid ? "" : "opacity-60 pointer-events-none"
-                  }`}
+                  className={`${theme.content_bg} rounded-full ${valid ? "" : "opacity-60 pointer-events-none"}`}
                >
                   Ok
                </Button>

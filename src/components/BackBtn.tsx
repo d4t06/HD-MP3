@@ -6,13 +6,10 @@ function BackBtn() {
    const { theme } = useTheme();
    const navigate = useNavigate();
    const location = useLocation();
-   //   const [prevLocation, setPrevLocation] = useState("");
 
    const handleNavigate = (direction: "back" | "forward") => {
       if (direction === "back") {
          navigate(-1);
-         // console.log("check pathname", location.pathname);
-         // setPrevLocation(location.pathname);
       }
    };
 
@@ -24,11 +21,9 @@ function BackBtn() {
       <div className="flex gap-[10px] mb-[30px]">
          <button
             onClick={() => handleNavigate("back")}
-            className={`${classes.button} ${
-               location.pathname === "/" ? "opacity-60 pointer-events-none" : ""
-            }`}
+            className={`${classes.button} ${location.pathname === "/" ? "opacity-60 pointer-events-none" : ""}`}
          >
-            <ChevronLeftIcon className="w-[full]" />
+            <ChevronLeftIcon className="" />
          </button>
 
          {/* <button

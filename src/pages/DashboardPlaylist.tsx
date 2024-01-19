@@ -1,9 +1,4 @@
-import {
-   PencilSquareIcon,
-   PlusCircleIcon,
-   TrashIcon,
-   XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PencilSquareIcon, PlusCircleIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Song } from "../types";
 
@@ -48,7 +43,6 @@ export default function DashboardPlaylist() {
       deletePlaylist,
       loading: playlistActionLoading,
       deleteManyFromPlaylist,
-      deleteSongFromPlaylist,
    } = usePlaylistActions({ admin: true });
    const {
       playlistSongs,
@@ -60,18 +54,6 @@ export default function DashboardPlaylist() {
       songInStore,
       admin: true,
    });
-
-   const hadnleDeleteFromPlaylist = async (song: Song) => {
-      try {
-         const newPlaylistSongs = await deleteSongFromPlaylist(song, playlistSongs);
-         if (newPlaylistSongs) {
-            setPlaylistSongs(newPlaylistSongs);
-         }
-      } catch (error) {
-         console.log(error);
-         setErrorToast({ message: "Error when delete song" });
-      }
-   };
 
    const handleDeleteManyFromPlaylist = async () => {
       try {
@@ -163,9 +145,7 @@ export default function DashboardPlaylist() {
 
                   {/* cta */}
                   <div
-                     className={`${classes.ctaContainer} ${
-                        usePlaylistLoading ? "opacity-60 pointer-events-none" : ""
-                     }`}
+                     className={`${classes.ctaContainer} ${usePlaylistLoading ? "opacity-60 pointer-events-none" : ""}`}
                   >
                      <Button
                         onClick={() => openModal("confirm")}
@@ -195,9 +175,7 @@ export default function DashboardPlaylist() {
                      {!isChecked ? (
                         <p className={classes.countSongText}>{songCount + " songs"}</p>
                      ) : (
-                        <p className={classes.countSongText}>
-                           {selectedSongs.length + " selected"}
-                        </p>
+                        <p className={classes.countSongText}>{selectedSongs.length + " selected"}</p>
                      )}
                   </>
                )}
@@ -238,11 +216,6 @@ export default function DashboardPlaylist() {
                   inPlaylist={playlistInStore}
                   songs={playlistSongs}
                   handleSetSong={() => {}}
-                  isChecked={isChecked}
-                  setIsChecked={setIsChecked}
-                  selectedSongs={selectedSongs}
-                  setSelectedSongs={setSelectedSongs}
-                  deleteFromPlaylist={hadnleDeleteFromPlaylist}
                   activeExtend={songInStore.song_in.includes(playlistInStore.name)}
                />
             )}
@@ -265,11 +238,7 @@ export default function DashboardPlaylist() {
          {isOpenModal && (
             <Modal classNames="" theme={theme} setOpenModal={closeModal}>
                {modalComponent === "edit" && (
-                  <EditPlaylist
-                     isOpenModal={isOpenModal}
-                     setIsOpenModal={setIsOpenModal}
-                     playlist={playlistInStore}
-                  />
+                  <EditPlaylist isOpenModal={isOpenModal} setIsOpenModal={setIsOpenModal} playlist={playlistInStore} />
                )}
                {modalComponent === "confirm" && (
                   <ConfirmModal

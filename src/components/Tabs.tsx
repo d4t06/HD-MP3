@@ -24,10 +24,10 @@ function Tabs<T>({ tabs, activeTab, setActiveTab, className, render, inFullScree
                key={index}
                onClick={() => setActiveTab(item)}
                className={`${inFullScreen ? 'px-[30px]' : 'px-[20px]'}  cursor-pointer h-full rounded-full max-[549px]:px-[15px] ${inFullScreen ? '' : theme.content_hover_text} ${
-                  activeTab === item ? inFullScreen ? 'bg-gray-400 bg-opacity-[.2]' : `${theme.content_text} ${theme.container} ` : "" 
+                  activeTab === item ? inFullScreen ? 'bg-gray-400 bg-opacity-[.2]' : `${theme.content_text} ${theme.container}` : "opacity-60" 
                }`}
             >
-               <span className="leading-[27px] font-[500] max-[549px]:font-normal">
+               <span className="leading-[27px] font-semibold max-[549px]:font-normal">
                   {render(item)}
                </span>
             </li>

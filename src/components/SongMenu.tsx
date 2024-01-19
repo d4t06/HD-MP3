@@ -140,7 +140,6 @@ function SongMenu({
                   >
                      <BackspaceIcon className={classes.menuIcon} />
                      {inQueue ? "Remove" : "Add to queue"}
-                     Remove
                   </Button>
                )}
 

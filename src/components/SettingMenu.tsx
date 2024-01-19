@@ -1,13 +1,12 @@
-import {
-   DocumentTextIcon,
-   InformationCircleIcon,
-   PaintBrushIcon,
-   PlayCircleIcon,
-} from "@heroicons/react/24/outline";
+import { InformationCircleIcon, PaintBrushIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import { Dispatch, MutableRefObject } from "react";
 import { useTheme } from "../store/ThemeContext";
 
 import PopupWrapper from "./ui/PopupWrapper";
+import { useLocalStorage } from "../hooks";
+import { Switch } from ".";
+import { useDispatch } from "react-redux";
+import { setPlayStatus } from "../store/PlayStatusSlice";
 
 type Props = {
    modalName: MutableRefObject<"theme" | "info" | "confirm">;
@@ -17,9 +16,17 @@ type Props = {
 
 export default function SettingMenu({ modalName, setIsOpenModal }: Props) {
    const { theme } = useTheme();
+   const dispatch = useDispatch();
    const handleSetComp = (name: "theme" | "info" | "confirm") => {
       modalName.current = name;
       setIsOpenModal(true);
+   };
+
+   const [isCrossFade, setIsCrossFade] = useLocalStorage("isCrossFade", false);
+
+   const handleSetCrossFade = () => {
+      setIsCrossFade(!isCrossFade);
+      dispatch(setPlayStatus({ isCrossFade: !isCrossFade }));
    };
 
    const classes = {
@@ -32,27 +39,22 @@ export default function SettingMenu({ modalName, setIsOpenModal }: Props) {
    return (
       <>
          <PopupWrapper variant={"thin"} color="sidebar" theme={theme}>
-            <ul className="flex flex-col w-[170px]">
-               <li
-                  className={`${classes.menuItem} ${classes.disable}`}
-                  onClick={() => handleSetComp("theme")}
-               >
-                  <PlayCircleIcon className={classes.icon} />
-                  Player
+            <ul className="flex flex-col w-[200px]">
+               <li className={`${classes.menuItem} justify-between hover:bg-[unset]`}>
+                  <div className="flex items-center">
+                     <PlayCircleIcon className={classes.icon} />
+                     Cross fade
+                  </div>
+                  <Switch active={isCrossFade} cb={handleSetCrossFade} />
                </li>
                <li className={`${classes.menuItem}`} onClick={() => handleSetComp("theme")}>
                   <PaintBrushIcon className={classes.icon} />
                   Themes
                </li>
-
                <div className={classes.divide}></div>
                <li className={`${classes.menuItem}`} onClick={() => handleSetComp("info")}>
                   <InformationCircleIcon className={classes.icon} />
                   Info
-               </li>
-               <li className={`${classes.menuItem}`} onClick={() => handleSetComp("info")}>
-                  <DocumentTextIcon className={classes.icon} />
-                  Privacy
                </li>
             </ul>
          </PopupWrapper>
