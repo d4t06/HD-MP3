@@ -1,51 +1,53 @@
 import { useMemo, useState, SetStateAction, Dispatch } from "react";
-import { Playlist, Song, ThemeType } from "../../types";
 import { useSongsStore } from "../../store/SongsContext";
 import Button from "../ui/Button";
 import MobileSongItem from "../MobileSongItem";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import usePlaylistActions from "../../hooks/usePlaylistActions";
 import ModalHeader from "./ModalHeader";
 import { useSelector } from "react-redux";
-import { selectAllSongStore, useActuallySongs } from "../../store";
+import { selectAllSongStore, useActuallySongsStore, useTheme } from "../../store";
 
 type Props = {
    admin?: boolean;
    playlist: Playlist;
    playlistSongs: Song[];
-   theme: ThemeType & { alpha: string };
    setPlaylistSongs: Dispatch<SetStateAction<Song[]>>;
-   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
+   close: () => void;
 };
 
-export default function SongList({
+export default function SongListModal({
    admin,
-   theme,
    playlist,
    playlistSongs,
    setPlaylistSongs,
-   setIsOpenModal,
+   close,
 }: Props) {
+
+   const {theme} = useTheme()
+
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const { actuallySongs, setActuallySongs } = useActuallySongs();
+   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
 
    // hook
    const { userSongs, adminSongs } = useSongsStore();
-   const { addSongsToPlaylist, loading } = usePlaylistActions({});
+   const { addSongsToPlaylist, isFetching } = usePlaylistActions();
 
    const classes = {
-      addSongContainer: "pb-[50px] relative",
+      addSongContainer: "pb-[40px] relative",
       addSongContent: "max-h-[calc(60vh)] w-[700px] max-w-[80vw] overflow-auto",
       songItem: "w-full max-[549px]:w-full",
    };
 
    const isAbleToSubmit = useMemo(() => !!selectedSongList.length, [selectedSongList]);
-   const targetSongs = useMemo(() => (admin ? adminSongs : userSongs), [userSongs, adminSongs]);
+   const targetSongs = useMemo(
+      () => (admin ? adminSongs : userSongs),
+      [userSongs, adminSongs]
+   );
 
    const handleAddSongsToPlaylist = async () => {
       try {
-         if (!playlist || !selectedSongList.length || !setIsOpenModal || !setPlaylistSongs) {
+         if (!playlist || !selectedSongList.length || !setPlaylistSongs) {
             return;
          }
 
@@ -62,27 +64,30 @@ export default function SongList({
       } catch (error) {
          console.log(error);
       } finally {
-         setIsOpenModal(false);
+         close();
       }
    };
 
    return (
       <div className={classes.addSongContainer}>
-         <ModalHeader setIsOpenModal={setIsOpenModal} title="Add song to playlist" />
+         <ModalHeader close={close} title="Add song to playlist" />
          <div className={classes.addSongContent}>
             <Button
                onClick={handleAddSongsToPlaylist}
                variant={"primary"}
+               isLoading={isFetching}
                className={`rounded-full ${
                   theme.content_bg
-               } absolute bottom-0 right-15px min-w-[34px] h-[32px] ${
+               } absolute bottom-0 right-[15px] min-w-[34px] h-[32px] ${
                   !isAbleToSubmit && "opacity-60 pointer-events-none"
                }`}
             >
-               {loading ? <ArrowPathIcon className="w-[20px] animate-spin" /> : "Save"}
+               Add
+               {`${selectedSongList.length ? ` (${selectedSongList.length})` : ""}`}
             </Button>
             {targetSongs.map((song, index) => {
-               const isDifferenceSong = playlistSongs.findIndex((s) => s.id === song.id) === -1;
+               const isDifferenceSong =
+                  playlistSongs.findIndex((s) => s.id === song.id) === -1;
 
                if (isDifferenceSong) {
                   return (

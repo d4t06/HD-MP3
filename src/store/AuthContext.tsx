@@ -1,9 +1,7 @@
-import { Timestamp } from "firebase/firestore";
-import { User } from "../types";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { setSong, useActuallySongs, useSongsStore } from ".";
+import { setSong, useActuallySongsStore, useSongsStore } from ".";
 import { initialSongs } from "./SongsContext";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
@@ -13,155 +11,172 @@ import { initSongObject } from "../utils/appHelpers";
 
 // 1 initial state
 type StateType = {
-  userInfo: User & { status: "finish" | "loading" | "error" };
+   user: User | null;
+   loading: boolean;
 };
 const initialState: StateType = {
-  userInfo: {
-    status: "loading",
-    display_name: "",
-    playlist_ids: [],
-    role: "",
-    song_count: 0,
-    song_ids: [],
-    play_history: [],
-    email: "",
-    photoURL: "",
-    like_song_ids: [],
-    latest_seen: new Timestamp(0, 0),
-  },
+   user: null,
+   loading: true,
 };
 
 // 2 reducer
 const enum REDUCER_ACTION_TYPE {
-  SETUSERINFO,
-  SETSTATUS,
+   SETUSER,
+   RESET,
 }
 
 type ReducerAction = {
-  type: REDUCER_ACTION_TYPE;
-  payload: {
-    userInfo: Partial<StateType["userInfo"]>;
-    history_song_ids?: string[];
-  };
+   type: REDUCER_ACTION_TYPE;
+   payload: {
+      user: StateType["user"];
+      history_song_ids?: string[];
+   };
 };
 
 const reducer = (state: StateType, action: ReducerAction): StateType => {
-  switch (action.type) {
-    case REDUCER_ACTION_TYPE.SETUSERINFO:
-      console.log("dispatch set user info");
+   switch (action.type) {
+      case REDUCER_ACTION_TYPE.SETUSER:
+         const payload = action.payload;
 
-      return {
-        userInfo: { ...state.userInfo, ...action.payload.userInfo },
-        // history_song_ids: action.payload.history_song_ids || state.history_song_ids,
-      };
-    default:
-      console.log("default case");
-
-      return {
-        userInfo: state.userInfo,
-        // history_song_ids: state.history_song_ids,
-      };
-  }
+         return {
+            user: payload.user,
+            loading: false,
+         };
+      case REDUCER_ACTION_TYPE.RESET:
+         return {
+            user: null,
+            loading: true,
+         };
+      default:
+         return {
+            user: state.user,
+            loading: state.loading,
+         };
+   }
 };
 
-// 6 hook
-const useAuthContext = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
-
-  const setUserInfo = useCallback((userInfo: Partial<StateType["userInfo"]>) => {
-    dispatch({
-      type: REDUCER_ACTION_TYPE.SETUSERINFO,
-      payload: { userInfo },
-    });
-  }, []);
-
-  return { userInfo: state.userInfo, setUserInfo };
-  // return { userInfo: state.userInfo, otherInfo: state.otherInfo , setUserInfo };
+type SetUser = {
+   type: "set-user";
+   user: StateType["user"];
 };
+
+type Reset = {
+   type: "reset";
+};
+
+type SetUserType = SetUser | Reset;
 
 // 3 initial context
 type ContextType = {
-  userInfo: StateType["userInfo"];
-  setUserInfo: (userInfo: Partial<StateType["userInfo"]>) => void;
-  // otherInfo: StateType["otherInfo"];
+   state: StateType;
+   setUser: (payload: SetUserType) => void;
 };
 
-const initialContext = {
-  userInfo: initialState.userInfo,
-  setUserInfo: () => {},
+const initialContext: ContextType = {
+   state: {
+      user: initialState.user,
+      loading: true,
+   },
+   setUser: () => {},
 };
 
 // 4 create context
 const AuthContext = createContext<ContextType>(initialContext);
 
-// 5 context provider
-const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
-  const { userInfo, setUserInfo } = useAuthContext();
+// 5 hook
+const useAuthContext = (): ContextType => {
+   const [state, dispatch] = useReducer(reducer, initialState);
 
-  return (
-    <AuthContext.Provider value={{ userInfo, setUserInfo }}>
-      {children}
-    </AuthContext.Provider>
-  );
+   const setUser = useCallback((payload: SetUserType) => {
+      switch (payload.type) {
+         case "set-user":
+            console.log("set user");
+            return dispatch({
+               type: REDUCER_ACTION_TYPE.SETUSER,
+               payload: { user: payload.user },
+            });
+         case "reset":
+            console.log("reset user");
+
+            return dispatch({
+               type: REDUCER_ACTION_TYPE.RESET,
+               payload: { user: null },
+            });
+      }
+   }, []);
+
+   return { state: { loading: state.loading, user: state.user }, setUser };
+};
+
+// 6 context provider
+const AuthProvider = ({ children }: { children: ReactNode }): ReactNode => {
+   const {
+      state: { loading, user },
+      setUser,
+   } = useAuthContext();
+
+   return (
+      <AuthContext.Provider value={{ state: { loading, user }, setUser }}>
+         {children}
+      </AuthContext.Provider>
+   );
 };
 
 // 6 hook
 const useAuthStore = () => {
-  const { userInfo, setUserInfo } = useContext(AuthContext);
+   const {
+      state: { loading, user },
+      setUser,
+   } = useContext(AuthContext);
 
-  return { userInfo, setUserInfo };
+   return { loading, user, setUser };
 };
 
 const useAuthActions = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { setUserInfo } = useAuthStore();
-  const { initSongsContext } = useSongsStore();
-  const [signInWithGoogle] = useSignInWithGoogle(auth);
-  const { setActuallySongs } = useActuallySongs();
+   const navigate = useNavigate();
+   const dispatch = useDispatch();
+   const { setUser } = useAuthStore();
+   const { initSongsContext } = useSongsStore();
+   const [signInWithGoogle] = useSignInWithGoogle(auth);
+   const { setActuallySongs } = useActuallySongsStore();
 
-  const pauseSong = () => {
-    const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
-    audioEle.pause();
+   const pauseSong = () => {
+      const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
+      audioEle.pause();
 
-    // console.log("check audio ele", audioEle);
+      dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
+   };
 
-    dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
-  };
-
-  const logOut = async () => {
-    await signOut(auth);
-    // reset userInfo
-    // trigger auth useEffect and will update status to 'finish'
-    setUserInfo(initialState.userInfo);
-    console.log('use auth setUserInfo');
-    
-    // reset song context
-    setActuallySongs([]);
-    initSongsContext(initialSongs);
-
-    pauseSong();
-    // reset song redux
-    navigate(routes.Home);
-  };
-
-  const logIn = async () => {
-    const userCredential = await signInWithGoogle();
-    //  reset song context
-    if (userCredential) {
-      // reset song redux
-      dispatch(setSong());
-      // reset song context
-      initSongsContext({ adminSongs: [], adminPlaylists: [] });
+   const logOut = async () => {
+      await signOut(auth);
       // reset userInfo
-      // after set sign cause trigger auth useEffect and will update status to 'finish'
-      setUserInfo({ status: "loading" });
-      console.log('use auth login, setUser info');
-      
-    }
-  };
+      // trigger auth useEffect and will update loading to 'finish'
+      setUser({ type: "reset" });
 
-  return { logOut, logIn };
+      // reset song context
+      setActuallySongs([]);
+      initSongsContext(initialSongs);
+
+      pauseSong();
+      // reset song redux
+      navigate(routes.Home);
+   };
+
+   const logIn = async () => {
+      const userCredential = await signInWithGoogle();
+      //  reset song context
+      if (userCredential) {
+         // reset song redux
+         dispatch(setSong());
+         // reset song context
+         initSongsContext({ adminSongs: [], adminPlaylists: [] });
+         // reset userInfo
+         // after set sign cause trigger auth useEffect and will update loading to 'finish'
+         setUser({ type: "reset" });
+      }
+   };
+
+   return { logOut, logIn };
 };
 
 export default AuthProvider;

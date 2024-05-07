@@ -8,7 +8,7 @@ import {
    useContext,
    useState,
 } from "react";
-import { Song } from "../types";
+;
 
 type StateType = {
    tempSongs: Song[];

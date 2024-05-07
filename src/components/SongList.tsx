@@ -1,45 +1,60 @@
-import { Dispatch, RefObject, SetStateAction, memo } from "react";
-import { Playlist, Song } from "../types";
-import { selectAllSongStore, useActuallySongs, useTheme } from "../store";
+import { RefObject, useMemo } from "react";
+import { selectAllSongStore, useActuallySongsStore, useTheme } from "../store";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
-import PlaylistProvider from "../store/PlaylistSongContext";
-// import usePlaylistActions from "../hooks/usePlaylistActions";
-type Props = {
-   songs: Song[];
-   tempSongs?: Song[];
-   addedSongIds?: string[];
-   activeExtend?: boolean;
-   firstTempSongRef?: RefObject<HTMLDivElement>;
+
+type Base = {
    handleSetSong: (song: Song, index: number) => void;
-   inAdmin?: boolean;
-   inPlaylist?: Playlist;
-   deleteFromPlaylist?: (song: Song) => Promise<void>;
-   inQueue?: boolean;
-   inHistory?: boolean;
-   controlled?: boolean;
-   playlistSongs?: Song[];
-   setPlaylistSongs?: Dispatch<SetStateAction<Song[]>>;
+   activeExtend?: boolean;
+   songs: Song[];
 };
+
+type Home = Base & {
+   location: "home";
+};
+
+type MySong = Base & {
+   location: "my-songs";
+};
+
+type Favorite = Base & {
+   location: "favorite";
+};
+
+type Queue = Base & {
+   location: 'queue'
+}
+
+type MyPlaylist = Base & {
+   location: "my-playlist";
+};
+
+type AdminPlaylist = Base & {
+   location: "admin-playlist";
+};
+
+// type Props = {
+//    songs: Song[];
+//    tempSongs?: Song[];
+//    addedSongIds?: string[];
+//    activeExtend?: boolean;
+//    firstTempSongRef?: RefObject<HTMLDivElement>;
+//    handleSetSong: (song: Song, index: number) => void;
+//    inPlaylist?: Playlist;
+//    deleteFromPlaylist?: (song: Song) => Promise<void>;
+//    inQueue?: boolean;
+//    inHistory?: boolean;
+// };
+
+type Props = Home | MySong | MyPlaylist | AdminPlaylist | Queue | Favorite;
 
 // remove song from playlist need playlist songs prop => pass as prop
 // add song to playlist use direct from playlist actions
-function SongList({
-   songs,
-   // admin,
-   inAdmin,
-   inPlaylist,
-   activeExtend,
-   handleSetSong,
-   tempSongs = [],
-   addedSongIds = [],
-   inQueue,
-   playlistSongs,
-   setPlaylistSongs,
-}: Props) {
+function SongList({ activeExtend = true, handleSetSong, songs, location }: Props) {
+   // store
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const { actuallySongs } = useActuallySongs();
+   const { actuallySongs } = useActuallySongsStore();
 
    const renderTempSongsList = () => {
       return tempSongs.map((song, index) => {
@@ -71,52 +86,65 @@ function SongList({
                theme={theme}
                inProcess={!isAdded}
                data={song}
-               //  userInfo={userInfo}
             />
          );
       });
    };
 
-   const renderSongList = () => {
-      if (!songs.length && !tempSongs.length) return <h1>No song jet...</h1>;
+   const renderSongList = useMemo(() => {
+
+      switch(location) {
+       case "home":
+       case "my-songs":
+       case "my-playlist":
+       case "admin-playlist":
+       case "queue":
+       case "favorite":
+      }
+
+      if (!songs.length && !tempSongs.length)
+         return <p className="text-center my-[60px]">... ¯\_(ツ)_/¯</p>;
 
       return songs.map((song, index) => {
          let active = !!activeExtend && songInStore.id === song.id;
          if (inQueue) active = active && songInStore.currentIndex === index;
 
-         const isLastIndexInQueue = songInStore.currentIndex === actuallySongs?.length - 1;
+         const isLastIndexInQueue =
+            songInStore.currentIndex === actuallySongs?.length - 1;
 
          return (
             <div key={index}>
                <SongItem
                   data={song}
                   theme={theme}
-                  admin={inAdmin}
                   active={active}
-                  inPlaylist={inPlaylist}
                   onClick={() => handleSetSong(song, index)}
                   inQueue={inQueue}
-                  className={`${inQueue && index < songInStore.currentIndex ? "opacity-[.6] hover:opacity-[1]" : ""}`}
+                  className={`${
+                     inQueue && index < songInStore.currentIndex
+                        ? "opacity-[.6] hover:opacity-[1]"
+                        : ""
+                  }`}
                />
 
                {inQueue && active && !isLastIndexInQueue && (
                   <div className="mt-[12px] mb-[4px]">
-                     <p className={`${theme.content_text} text-[14px] font-[600]`}>Playing next</p>
+                     <p className={`${theme.content_text} text-[14px] font-[600]`}>
+                        Playing next
+                     </p>
                   </div>
                )}
             </div>
          );
       });
-   };
+   }, [songs, tempSongs, songInStore, actuallySongs]);
 
    return (
       <>
-         <PlaylistProvider playlistSongs={playlistSongs || []} setPlaylistSongs={setPlaylistSongs || function () {}}>
-            {renderSongList()}
-            {!!tempSongs.length && renderTempSongsList()}
-         </PlaylistProvider>
+         {renderSongList}
+         {!!tempSongs.length && renderTempSongsList()}
       </>
    );
 }
 
-export default memo(SongList);
+export default SongList;

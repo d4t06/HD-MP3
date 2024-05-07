@@ -1,20 +1,23 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
 
-const useLocalStorage = <T>(key: string, initValue: T):  [T, React.Dispatch<React.SetStateAction<T>>] => {
+const useLocalStorage = <T>(
+   key: string,
+   initValue: T
+): [T, React.Dispatch<React.SetStateAction<T>>] => {
+   const [value, setValue] = useState<T>(() => {
+      const storage = JSON.parse(localStorage.getItem("HD-MP3") || "{}");
 
-
-   const [value, setValue] = useState<T>(JSON.parse(localStorage.getItem(key) || JSON.stringify(initValue)));
+      return storage[key] || initValue;
+   });
 
    useEffect(() => {
-      // console.log("check value use local storage", value);
-      
+      const storage = JSON.parse(localStorage.getItem("HD-MP3") || "{}");
 
-      localStorage.setItem(key, JSON.stringify(value))
-   }, [value])
+      storage[key] = value;
+      localStorage.setItem("HD-MP3", JSON.stringify(storage));
+   }, [value]);
 
+   return [value, setValue];
+};
 
-   return [value, setValue]
-}
-
-
-export default useLocalStorage
+export default useLocalStorage;

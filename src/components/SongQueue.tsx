@@ -1,35 +1,48 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { selectAllSongStore, setSong, useActuallySongs, useAuthStore, useTheme } from "../store";
-import { Button, Modal, SongItemList, Tabs, TimerModal } from ".";
+import {
+   selectAllSongStore,
+   setSong,
+   useActuallySongsStore,
+   useAuthStore,
+   useTheme,
+} from "../store";
+import { Button, Modal, SongList, Tabs, TimerModal } from ".";
 import { ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { Song, User } from "../types";
 import { SongWithSongIn } from "../store/SongSlice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Skeleton from "./skeleton";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
-import { initSongObject, sleep } from "../utils/appHelpers";
+import {
+   getLocalStorage,
+   initSongObject,
+   setLocalStorage,
+   sleep,
+} from "../utils/appHelpers";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { useLocalStorage } from "../hooks";
+import PlaylistProvider from "../store/PlaylistSongContext";
 
 type Props = {
    isOpenSongQueue: boolean;
    setIsOpenSongQueue: Dispatch<SetStateAction<boolean>>;
 };
 
+type Modal = "timer";
+
 function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { userInfo } = useAuthStore();
-   const { actuallySongs, setActuallySongs } = useActuallySongs();
+   const { user } = useAuthStore();
+   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
    const {
       playStatus: { isTimer },
    } = useSelector(selectAllPlayStatusStore);
    const { song: songInStore } = useSelector(selectAllSongStore);
 
-   const [isOpenModal, setIsOpenModal] = useState(false);
+   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
    const [activeTab, setActiveTab] = useState<"Queue" | "Recent">("Queue");
    const [historySongs, setHistorySongs] = useState<Song[]>([]);
@@ -37,6 +50,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
    const [fetchLoading, setFetchLoading] = useState(false);
+
+   const closeModal = () => setIsOpenModal("");
 
    const handleSetSong = (song: Song, index: number) => {
       // when user play playlist then play user songs
@@ -67,7 +82,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    const handleTimerBtn = () => {
       if (isTimer) return dispatch(setPlayStatus({ isTimer: 0 }));
 
-      setIsOpenModal(true);
+      setIsOpenModal("timer");
    };
 
    const clearSongQueue = () => {
@@ -77,17 +92,21 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       console.log("setActuallySongs");
 
       dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
-      localStorage.setItem("duration", JSON.stringify(0));
+
+      setLocalStorage("duration", 0);
    };
 
    const clearHistory = async () => {
       try {
+         if (!user) return;
+
          setFetchLoading(true);
          await mySetDoc({
             collection: "users",
             data: { play_history: [] } as Partial<User>,
-            id: userInfo.email,
+            id: user.email,
          });
+
          setHistorySongs([]);
          setPlayHistory([]);
       } catch (error) {
@@ -100,7 +119,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const getHistorySong = async () => {
       try {
-         const playHistory = JSON.parse(localStorage.getItem("play_history") || "[]");
+         const storage = getLocalStorage();
+         const playHistory = storage["play_history"] || [];
+
          await sleep(500);
 
          if (!playHistory.length) {
@@ -108,7 +129,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
             return;
          }
 
-         const queryGetHistorySongs = query(collection(db, "songs"), where("id", "in", playHistory));
+         const queryGetHistorySongs = query(
+            collection(db, "songs"),
+            where("id", "in", playHistory)
+         );
          const songsSnap = await getDocs(queryGetHistorySongs);
 
          const songs = songsSnap.docs.map((doc) => {
@@ -127,7 +151,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       }
    };
    useEffect(() => {
-      if (!userInfo.email) return;
+      if (!user) return;
 
       if (activeTab === "Recent") {
          getHistorySong();
@@ -139,11 +163,13 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    }, [activeTab]);
 
    useEffect(() => {
-      if (!userInfo.email) {
+      if (!user) return;
+
+      if (!user.email) {
          setIsOpenSongQueue(false);
          setActiveTab("Queue");
       }
-   }, [userInfo]);
+   }, [user]);
 
    useEffect(() => {
       setTimeout(() => {
@@ -155,7 +181,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const SongItemSkeleton = [...Array(4).keys()].map((index) => {
       return (
-         <div key={index} className="flex items-center p-[10px] border-b-[1px] border-transparent">
+         <div
+            key={index}
+            className="flex items-center p-[10px] border-b-[1px] border-transparent"
+         >
             <Skeleton className="h-[40px] w-[40px] rounded-[4px]" />
             <div className="ml-[10px]">
                <Skeleton className="h-[20px] mb-[5px] w-[120px]" />
@@ -172,6 +201,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    // console.log("check loading", loading);
 
+   if (!user) return <></>;
+
    return (
       <div
          className={`${classes.textColor} ${classes.mainContainer} ${
@@ -180,9 +211,11 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       >
          <div className="flex items-center my-[10px] gap-[8px]">
             <Tabs
-               className={`text-[13px] ${!userInfo.email ? "opacity-[.6] pointer-events-none" : ""}`}
+               className={`text-[13px] ${
+                  !user.email ? "opacity-[.6] pointer-events-none" : ""
+               }`}
                activeTab={activeTab}
-               setActiveTab={userInfo.email ? setActiveTab : () => {}}
+               setActiveTab={user.email ? setActiveTab : () => {}}
                tabs={["Queue", "Recent"]}
                render={(tab) => tab}
             />
@@ -201,7 +234,11 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
          <div className="h-[calc(100vh-146px)] pb-[30px] overflow-y-auto overflow-x-hidden no-scrollbar">
             {activeTab === "Queue" && (
                <>
-                  <SongItemList inQueue songs={actuallySongs} handleSetSong={handleSetSong} activeExtend={true} />
+                  <SongList
+                     location="queue"
+                     songs={actuallySongs}
+                     handleSetSong={handleSetSong}
+                  />
 
                   <div className="text-center">
                      {!!actuallySongs.length && (
@@ -222,7 +259,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                      SongItemSkeleton
                   ) : (
                      <>
-                        <SongItemList
+                        <SongList
                            inQueue
                            inHistory
                            songs={historySongs}
@@ -237,7 +274,11 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                                  size={"small"}
                                  className={`${theme.content_bg} rounded-full mt-[24px]`}
                               >
-                                 {fetchLoading ? <ArrowPathIcon className="w-[20px] animate-spin" /> : "Clear"}
+                                 {fetchLoading ? (
+                                    <ArrowPathIcon className="w-[20px] animate-spin" />
+                                 ) : (
+                                    "Clear"
+                                 )}
                               </Button>
                            </p>
                         )}
@@ -246,9 +287,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                </>
             )}
          </div>
-         {isOpenModal && (
-            <Modal setOpenModal={setIsOpenModal} theme={theme}>
-               <TimerModal setIsOpenModal={setIsOpenModal} theme={theme} />
+         {!!isOpenModal && (
+            <Modal closeModal={closeModal}>
+               <TimerModal close={closeModal} />
             </Modal>
          )}
       </div>

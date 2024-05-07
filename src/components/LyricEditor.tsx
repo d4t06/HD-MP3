@@ -1,5 +1,4 @@
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Lyric, RealTimeLyric, Song, ThemeType } from "../types";
 
 import {
   ChevronDoubleLeftIcon,
@@ -20,7 +19,7 @@ import {
 } from "../components";
 
 import { myDeleteDoc, mySetDoc } from "../utils/firebaseHelpers";
-import { setSong, useActuallySongs, useSongsStore, useToast } from "../store";
+import { setSong, useActuallySongsStore, useSongsStore, useToast } from "../store";
 import { updateSongsListValue } from "../utils/appHelpers";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -49,7 +48,7 @@ export default function LyricEditor({
   const dispatch = useDispatch();
   const { userSongs, setUserSongs, adminSongs, setAdminSongs } = useSongsStore();
   const { setSuccessToast, setErrorToast } = useToast();
-  const { actuallySongs, setActuallySongs } = useActuallySongs();
+  const { actuallySongs, setActuallySongs } = useActuallySongsStore();
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isClickPlay, setIsClickPlay] = useState(false);

@@ -8,8 +8,7 @@ import {
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { Song } from "../types";
-import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
+import { selectAllSongStore, setSong, useTheme, useActuallySongsStore } from "../store";
 import { SongThumbnail, Button, Tabs, LyricsList } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
@@ -29,7 +28,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { song: songInStore } = useSelector(selectAllSongStore);
-   const { actuallySongs } = useActuallySongs();
+   const { actuallySongs } = useActuallySongsStore();
    // state
    const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
    //  ref

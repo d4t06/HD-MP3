@@ -78,7 +78,7 @@ export default function useScrollText({ textRef, textWrapperRef, autoScroll }: P
       distance.current = contentNode.offsetWidth + 20;
       duration.current = Math.ceil(distance.current / 35);
 
-      console.log("reScroll dis", distance.current);
+      // console.log("reScroll dis", distance.current);
    };
 
    const resetScroll = () => {

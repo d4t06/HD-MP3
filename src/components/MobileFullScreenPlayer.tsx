@@ -3,9 +3,8 @@ import { Dispatch, SetStateAction, useRef, useState, useEffect, useMemo, MouseEv
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong, useTheme, useActuallySongs } from "../store";
+import { selectAllSongStore, setSong, useTheme, useActuallySongsStore } from "../store";
 
-import { Song } from "../types";
 import { useBgImage } from "../hooks";
 
 import {
@@ -36,7 +35,7 @@ export default function MobileFullScreenPlayer({ audioEle, isOpenFullScreen, set
    const {
       playStatus: { isPlaying },
    } = useSelector(selectAllPlayStatusStore);
-   const { actuallySongs } = useActuallySongs();
+   const { actuallySongs } = useActuallySongsStore();
 
    // state
    const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");

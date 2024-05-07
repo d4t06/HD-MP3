@@ -1,5 +1,5 @@
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
-import { ThemeType } from "../../types";
+;
 
 type Props = {
    theme: ThemeType;

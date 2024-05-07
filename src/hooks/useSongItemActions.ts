@@ -1,7 +1,12 @@
 import { useSongsStore } from "../store/SongsContext";
-import { Playlist, Song, User } from "../types";
 import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
-import { selectAllSongStore, setSong, useActuallySongs, useAuthStore, useToast } from "../store";
+import {
+   selectAllSongStore,
+   setSong,
+   useActuallySongsStore,
+   useAuthStore,
+   useToast,
+} from "../store";
 import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { initSongObject } from "../utils/appHelpers";
@@ -22,12 +27,12 @@ const useSongItemActions = ({
    const dispatch = useDispatch();
    const { song: songInStore } = useSelector(selectAllSongStore);
    const { setErrorToast, setSuccessToast } = useToast();
-   const { userInfo, setUserInfo } = useAuthStore();
-   const { removeFromQueue } = useActuallySongs();
+   const { user } = useAuthStore();
+   const { removeFromQueue } = useActuallySongsStore();
    const { userSongs, setUserSongs, adminSongs, setAdminSongs } = useSongsStore();
    const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
 
-   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } = usePlaylistActions({});
+   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } = usePlaylistActions();
 
    const songs = useMemo(() => (admin ? adminSongs : userSongs), [adminSongs, userSongs]);
    const setSongs = useMemo(() => (admin ? setAdminSongs : setUserSongs), []);
@@ -94,25 +99,31 @@ const useSongItemActions = ({
 
          // not for admin
          if (!admin) {
+            if (!user) return;
             await mySetDoc({
                collection: "users",
                data: {
                   song_ids: newUserSongIds,
                   song_count: newUserSongIds.length,
                } as Partial<User>,
-               id: userInfo.email,
-               msg: `>>> api: update user doc ${userInfo.email}`,
+               id: user.email,
+               msg: `>>> api: update user doc ${user.email}`,
             });
          }
+
          setSongs(newSongs);
+
          if (admin || songInStore.song_in === "user") {
             removeFromQueue(song);
          }
 
          if (!admin) {
-            if (userInfo.like_song_ids.includes(song.id)) {
-               const newUserLikeSongIds = userInfo.like_song_ids.filter((id) => id !== song.id);
-               setUserInfo({ like_song_ids: newUserLikeSongIds });
+            if (!user) return;
+            if (user.like_song_ids.includes(song.id)) {
+               const newUserLikeSongIds = user.like_song_ids.filter(
+                  (id) => id !== song.id
+               );
+               // setUser({ like_song_ids: newUserLikeSongIds });
             }
          }
 

@@ -1,4 +1,4 @@
-import { Lyric, Song } from "../types";
+;
 import { useNavigate, useParams } from "react-router-dom";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import { routes } from "../routes";
 import LyricEditor from "../components/LyricEditor";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { selectAllSongStore, useSongsStore, useTheme } from "../store";
-import { useSongs } from "../hooks";
+import { useInitSong } from "../hooks";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function Edit() {
@@ -27,7 +27,7 @@ export default function Edit() {
   const firstTimeRun = useRef<boolean>(true);
 
   //  use hooks
-  const { errorMsg, loading: useSongsLoading, initial } = useSongs({});
+  const { errorMsg, loading: useSongsLoading, initial } = useInitSong({});
   const navigate = useNavigate();
   const params = useParams<{ id: string }>();
 

@@ -1,4 +1,3 @@
-import {User} from '../types'
 
 import { forwardRef } from 'react'
 

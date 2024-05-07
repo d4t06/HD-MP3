@@ -1,5 +1,8 @@
-import { InformationCircleIcon, PaintBrushIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
-import { Dispatch, MutableRefObject } from "react";
+import {
+   InformationCircleIcon,
+   PaintBrushIcon,
+   PlayCircleIcon,
+} from "@heroicons/react/24/outline";
 import { useTheme } from "../store/ThemeContext";
 
 import PopupWrapper from "./ui/PopupWrapper";
@@ -7,19 +10,18 @@ import { useLocalStorage } from "../hooks";
 import { Switch } from ".";
 import { useDispatch } from "react-redux";
 import { setPlayStatus } from "../store/PlayStatusSlice";
+import { HeaderModal } from "./Header";
 
 type Props = {
-   modalName: MutableRefObject<"theme" | "info" | "confirm">;
    loggedIn: boolean;
-   setIsOpenModal: Dispatch<React.SetStateAction<boolean>>;
+   setIsOpenModal: (modal: HeaderModal) => void;
 };
 
-export default function SettingMenu({ modalName, setIsOpenModal }: Props) {
+export default function SettingMenu({ setIsOpenModal }: Props) {
    const { theme } = useTheme();
    const dispatch = useDispatch();
-   const handleSetComp = (name: "theme" | "info" | "confirm") => {
-      modalName.current = name;
-      setIsOpenModal(true);
+   const handleSetModal = (modal: HeaderModal) => {
+      setIsOpenModal(modal);
    };
 
    const [isCrossFade, setIsCrossFade] = useLocalStorage("isCrossFade", false);
@@ -47,12 +49,18 @@ export default function SettingMenu({ modalName, setIsOpenModal }: Props) {
                   </div>
                   <Switch active={isCrossFade} cb={handleSetCrossFade} />
                </li>
-               <li className={`${classes.menuItem}`} onClick={() => handleSetComp("theme")}>
+               <li
+                  className={`${classes.menuItem}`}
+                  onClick={() => handleSetModal("theme")}
+               >
                   <PaintBrushIcon className={classes.icon} />
                   Themes
                </li>
                <div className={classes.divide}></div>
-               <li className={`${classes.menuItem}`} onClick={() => handleSetComp("info")}>
+               <li
+                  className={`${classes.menuItem}`}
+                  onClick={() => handleSetModal("info")}
+               >
                   <InformationCircleIcon className={classes.icon} />
                   Info
                </li>

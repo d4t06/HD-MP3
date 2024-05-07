@@ -1,19 +1,19 @@
-import { Dispatch, SetStateAction } from "react";
 import { themes } from "../../config/themes";
 import { useTheme } from "../../store";
 import ThemeItem from "../child/ThemeItem";
 import ModalHeader from "./ModalHeader";
-import { ThemeType } from "../../types";
+import { setLocalStorage } from "../../utils/appHelpers";
+;
 
 export default function Appearance({
-   setIsOpenModal,
+   close,
 }: {
-   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
+   close: () => void;
 }) {
    const { theme: themeInStore, setTheme } = useTheme();
 
    const handleSetTheme = (theme: ThemeType) => {
-      localStorage.setItem("theme", JSON.stringify(theme.id));
+      setLocalStorage('theme', theme.id)
       setTheme(theme);
    };
 
@@ -46,7 +46,7 @@ export default function Appearance({
 
    return (
       <div className={classes.popupWrapper}>
-         <ModalHeader setIsOpenModal={setIsOpenModal} title="Themes" />
+         <ModalHeader close={close} title="Themes" />
          <div className={classes.themeContainer}>
             <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
             <div className={classes.themeList}>{darkThemes}</div>

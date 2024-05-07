@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { ThemeType } from "../../types";
+;
 import { VariantProps, cva } from "class-variance-authority";
 
 const popupVariant = cva("", {

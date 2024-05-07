@@ -1,5 +1,5 @@
 import { RefObject, useEffect } from "react";
-import { Song } from "../types";
+;
 
 export default function useBgImage({
    bgRef,

@@ -151,5 +151,9 @@
 -  [] handle actually song when use playlist actions
 
 
-### upda thứ 6 19/1/2024
+### update thứ 6 19/1/2024
 - Sửa giao diện
+
+### update thứ 2 6/5/2024
+- refactoring code
+- use empty value context

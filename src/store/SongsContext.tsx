@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
-import { Playlist, Song, User } from "../types";
 // only change user song, user playlist
 
 type StateType = {
@@ -9,7 +8,7 @@ type StateType = {
    userPlaylists: Playlist[];
    adminPlaylists: Playlist[];
 
-   // userInfo: User;
+   // user. User;
 
    initial: boolean;
 };
@@ -20,17 +19,6 @@ const initialSongs: StateType = {
 
    adminSongs: [],
    adminPlaylists: [],
-
-   // userInfo: {
-   //    display_name: "",
-   //    email: "",
-   //    photoURL: "",
-   //    playlist_ids: [],
-   //    song_ids: [],
-   //    role: "",
-   //    song_count: 0,
-   //    latest_seen: new Timestamp(0, 0),
-   // },
 
    initial: false,
 };
@@ -52,14 +40,13 @@ type ReducerAction = {
       adminSongs?: Song[];
       adminPlaylists?: Playlist[];
 
-      userInfo?: User;
+      user?: User;
    };
 };
 
 // reducer
 const reducer = (state: StateType, action: ReducerAction): StateType => {
    const payload = action.payload;
-   console.log("dispatch song context");
 
    switch (action.type) {
       case REDUCER_ACTION_TYPE.INIT:
@@ -130,14 +117,16 @@ const useSongsContext = (songsStore: StateType) => {
    const [state, dispatch] = useReducer(reducer, songsStore);
 
    const setUserSongs = useCallback((userSongs: Song[]) => {
-      dispatch({
+      console.log("set user songs");
+      return dispatch({
          type: REDUCER_ACTION_TYPE.SETUSERSONGS,
          payload: { userSongs },
       });
    }, []);
 
    const setAdminSongs = useCallback((adminSongs: Song[]) => {
-      dispatch({
+      console.log("set user songs");
+      return dispatch({
          type: REDUCER_ACTION_TYPE.SETADMINSONGS,
          payload: { adminSongs },
       });
@@ -149,15 +138,17 @@ const useSongsContext = (songsStore: StateType) => {
          adminSongs,
          userPlaylists,
          adminPlaylists,
-      }: // userInfo,
+      }: // user.
       {
-         // userInfo: User | undefined;
+         // user. User | undefined;
          userSongs?: Song[];
          adminSongs?: Song[];
          userPlaylists?: Playlist[];
          adminPlaylists?: Playlist[];
       }) => {
-         dispatch({
+         console.log("init song context");
+
+         return dispatch({
             type: REDUCER_ACTION_TYPE.INIT,
             payload: { userSongs, adminSongs, userPlaylists, adminPlaylists },
          });
@@ -166,14 +157,16 @@ const useSongsContext = (songsStore: StateType) => {
    );
 
    const setUserPlaylists = useCallback((userPlaylists: Playlist[]) => {
-      dispatch({
+      console.log("set user playlist");
+      return dispatch({
          type: REDUCER_ACTION_TYPE.SETUSERPLAYLISTS,
          payload: { userPlaylists },
       });
    }, []);
 
    const setAdminPlaylists = useCallback((adminPlaylists: Playlist[]) => {
-      dispatch({
+      console.log("set admin playlist");
+      return dispatch({
          type: REDUCER_ACTION_TYPE.SETADMINPLAYLISTS,
          payload: { adminPlaylists },
       });
@@ -217,7 +210,7 @@ const SongsProvider = ({
 };
 
 export type UseSongsHookType = {
-   // userInfo: StateType["userInfo"];
+   // user. StateType["user.];
    initial: StateType["initial"];
    userSongs: StateType["userSongs"];
    adminSongs: StateType["adminSongs"];
@@ -232,9 +225,9 @@ export type UseSongsHookType = {
       adminSongs,
       userPlaylists,
       adminPlaylists,
-   }: // userInfo,
+   }: // user.
    {
-      // userInfo: User | undefined;
+      // user. User | undefined;
       userSongs?: Song[];
       adminSongs?: Song[];
       userPlaylists?: Playlist[];
@@ -253,7 +246,7 @@ const useSongsStore = (): UseSongsHookType => {
    } = useContext(SongsContext);
 
    return {
-      // userInfo,
+      // user.
       adminPlaylists,
       adminSongs,
       initial,

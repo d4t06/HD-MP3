@@ -1,7 +1,7 @@
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { FC } from "react";
 import Button from "./Button";
-import { ThemeType } from "../../types";
+;
 
 interface Props {
    className?: string;

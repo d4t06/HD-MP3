@@ -1,15 +1,15 @@
 
 function Footer() {
    const classes = {
-      container: `my-[30px] h-[45px] justify-end max-[800px]:justify-center  text-right flex items-center`,
+      container: `my-[30px] flex flex-col md:flex-row md:justify-between items-start`,
       icon: "w-[26px] sm:w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
-      copyRightText: "text-[12px] italic",
+      copyRightText: "text-[14px]",
    };
    return (
       <div className={`${classes.container}`}>
-         <p className={classes.copyRightText}>Nguyen Huu Dat © - 2023</p>
+         <p className={classes.copyRightText}>Make with Make with ❤️ by datnh <br/> © All rights no reserved ¯\_(ツ)_/¯</p>
 
-         <div className="flex ml-[30px] space-x-[10px]">
+         <div className="flex mt-[20px] md:mt-0 space-x-[10px]">
             <a href="https://facebook.com/DAtdz06" target="_blank">
                <svg
                   xmlns="http://www.w3.org/2000/svg"

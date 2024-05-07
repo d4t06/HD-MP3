@@ -1,7 +1,15 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useEffect, useState } from "react";
-import { Song } from "../types";
+import {
+   Dispatch,
+   ReactNode,
+   SetStateAction,
+   createContext,
+   useContext,
+   useEffect,
+   useState,
+} from "react";
 import { useSelector } from "react-redux";
 import { selectAllSongStore } from ".";
+import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 
 // define initial state
 type StateType = {
@@ -9,11 +17,13 @@ type StateType = {
 };
 
 let initActuallySongs: Song[] = [];
-const hd_mp3 = JSON.parse(localStorage.getItem("hdmp3") || JSON.stringify({ songs: [], current: "" })) as
-   | { songs: Song[]; current: string }
-   | "";
-if (hd_mp3) {
-   initActuallySongs = hd_mp3.songs;
+// const hd_mp3 = JSON.parse(
+//    localStorage.getItem("hdmp3") || JSON.stringify({ songs: [], current: "" })
+// ) as { songs: Song[]; current: string } | "";
+
+const storage = getLocalStorage()
+if (storage && storage?.songs) {
+   initActuallySongs = storage.songs;
 }
 
 const initialState: StateType = {
@@ -39,17 +49,20 @@ const ActuallySongsProvider = ({ children }: { children: ReactNode }) => {
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    useEffect(() => {
-      localStorage.setItem("hdmp3", JSON.stringify({ songs: actuallySongs, current: songInStore.id }));
+      setLocalStorage("songs", actuallySongs);
+      setLocalStorage("current", songInStore.id);
    }, [actuallySongs, songInStore.currentIndex]);
 
    return (
-      <ActuallySongsContext.Provider value={{ state: { actuallySongs: actuallySongs }, setActuallySongs }}>
+      <ActuallySongsContext.Provider
+         value={{ state: { actuallySongs: actuallySongs }, setActuallySongs }}
+      >
          {children}
       </ActuallySongsContext.Provider>
    );
 };
 
-const useActuallySongs = () => {
+const useActuallySongsStore = () => {
    const {
       setActuallySongs,
       state: { actuallySongs },
@@ -73,4 +86,4 @@ const useActuallySongs = () => {
 };
 
 export default ActuallySongsProvider;
-export { useActuallySongs };
+export { useActuallySongsStore };

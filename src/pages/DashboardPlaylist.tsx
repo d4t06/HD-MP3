@@ -1,6 +1,9 @@
-import { PencilSquareIcon, PlusCircleIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
-import { Song } from "../types";
+import {
+   PencilSquareIcon,
+   PlusCircleIcon,
+   TrashIcon,
+   XMarkIcon,
+} from "@heroicons/react/24/outline";
 
 import { useMemo, useState, useRef } from "react";
 import { useSelector } from "react-redux";
@@ -22,28 +25,32 @@ import {
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { SongItemSkeleton } from "../components/skeleton";
 import EditPlaylist from "../components/modals/EditPlaylist";
+import useAdminPlaylistActions from "../hooks/useAdminPlaylistActions";
 
 export default function DashboardPlaylist() {
    // *** store
    const { theme } = useTheme();
    const { setErrorToast } = useToast();
    const { userSongs, adminSongs } = useSongsStore();
-   const { song: songInStore, playlist: playlistInStore } = useSelector(selectAllSongStore);
+   const { song: songInStore, playlist: playlistInStore } =
+      useSelector(selectAllSongStore);
 
    // *** state
    const firstTimeRender = useRef(true);
    const [isOpenModal, setIsOpenModal] = useState(false);
-   const [modalComponent, setModalComponent] = useState<"edit" | "confirm" | "addSongs">();
+   const [modalComponent, setModalComponent] = useState<
+      "edit" | "confirm" | "addSongs"
+   >();
    // for multiselect songItem
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
    const [isChecked, setIsChecked] = useState(false);
 
    // use hooks
    const {
-      deletePlaylist,
-      loading: playlistActionLoading,
-      deleteManyFromPlaylist,
-   } = usePlaylistActions({ admin: true });
+      isFetching: playlistActionLoading,
+      deleteManyFromAdminPlaylist,
+      deleteAdminPlaylist
+   } = useAdminPlaylistActions();
    const {
       playlistSongs,
       loading: usePlaylistLoading,
@@ -57,7 +64,7 @@ export default function DashboardPlaylist() {
 
    const handleDeleteManyFromPlaylist = async () => {
       try {
-         await deleteManyFromPlaylist(selectedSongs, playlistSongs);
+         await deleteManyFromAdminPlaylist(selectedSongs, playlistSongs);
       } catch (error) {
          console.log(error);
          setErrorToast({ message: "Error when delete song" });
@@ -68,7 +75,7 @@ export default function DashboardPlaylist() {
 
    const handleDeletePlaylist = async () => {
       try {
-         await deletePlaylist(playlistInStore);
+         await deleteAdminPlaylist(playlistInStore);
       } catch (error) {
          console.log(error);
       } finally {
@@ -139,13 +146,19 @@ export default function DashboardPlaylist() {
                            <PencilSquareIcon className="w-[20px]" />
                         </button>
                      </h3>
-                     <p className="text-[16px]">{handleTimeText(playlistInStore?.time)}</p>
-                     <p className="text-[14px] opacity-60">create by {playlistInStore.by}</p>
+                     <p className="text-[16px]">
+                        {handleTimeText(playlistInStore?.time)}
+                     </p>
+                     <p className="text-[14px] opacity-60">
+                        create by {playlistInStore.by}
+                     </p>
                   </div>
 
                   {/* cta */}
                   <div
-                     className={`${classes.ctaContainer} ${usePlaylistLoading ? "opacity-60 pointer-events-none" : ""}`}
+                     className={`${classes.ctaContainer} ${
+                        usePlaylistLoading ? "opacity-60 pointer-events-none" : ""
+                     }`}
                   >
                      <Button
                         onClick={() => openModal("confirm")}
@@ -175,7 +188,9 @@ export default function DashboardPlaylist() {
                      {!isChecked ? (
                         <p className={classes.countSongText}>{songCount + " songs"}</p>
                      ) : (
-                        <p className={classes.countSongText}>{selectedSongs.length + " selected"}</p>
+                        <p className={classes.countSongText}>
+                           {selectedSongs.length + " selected"}
+                        </p>
                      )}
                   </>
                )}
@@ -235,7 +250,7 @@ export default function DashboardPlaylist() {
          </div>
 
          {/* modal */}
-         {isOpenModal && (
+         {/* {isOpenModal && (
             <Modal classNames="" theme={theme} setOpenModal={closeModal}>
                {modalComponent === "edit" && (
                   <EditPlaylist isOpenModal={isOpenModal} setIsOpenModal={setIsOpenModal} playlist={playlistInStore} />
@@ -260,7 +275,7 @@ export default function DashboardPlaylist() {
                   />
                )}
             </Modal>
-         )}
+         )} */}
       </div>
    );
 }

@@ -30,6 +30,11 @@
   .mask-image-horizontal {
     -webkit-mask-image: linear-gradient(270deg, transparent 0.5%, #000 10%);
   }
+
+  .disable {
+    pointer-events: none;
+    opacity: .6;
+  }
 }
 
 @layer base {

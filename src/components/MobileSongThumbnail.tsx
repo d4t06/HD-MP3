@@ -1,5 +1,4 @@
 import { Image } from ".";
-import { Song } from "../types";
 
 interface Props {
    data?: Song;

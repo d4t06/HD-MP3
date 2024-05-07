@@ -1,95 +1,76 @@
-import {
-  Dispatch,
-  FormEvent,
-  SetStateAction,
-  useEffect,
-  useState,
-  useRef,
-} from "react";
+import { FormEvent, useEffect, useState, useRef } from "react";
 import ModalHeader from "./ModalHeader";
-import { ThemeType, User } from "../../types";
 import { Button } from "..";
-import usePlaylistActions from "../../hooks/usePlaylistActions";
-import { useSongsStore, useToast } from "../../store";
+import { useTheme, useToast } from "../../store";
 
 type Props = {
-  setIsOpenModal: Dispatch<SetStateAction<boolean>>;
-  theme: ThemeType & { alpha: string };
-  admin?: boolean;
-  userInfo?: User;
+   close: () => void;
+   isFetching: boolean;
+   addPlaylist: (name: string) => Promise<void>;
 };
 
-export default function AddPlaylist({ setIsOpenModal, theme, admin }: Props) {
-  const [playlistName, setPlayListName] = useState<string>("");
-  const { addPlaylist, loading } = usePlaylistActions({ admin });
-  const { adminPlaylists, userPlaylists } = useSongsStore();
-  const { setErrorToast, setSuccessToast } = useToast();
-  const [error, setError] = useState(false);
+export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
+   const { theme } = useTheme();
 
-  const inputRef = useRef<HTMLInputElement>(null);
+   const [playlistName, setPlayListName] = useState<string>("");
+   // const [validPlaylistName, setValidPlaylistName] = useState(false);
 
-  const handleAddPlaylist = async (e: FormEvent) => {
-    e.preventDefault();
-    if (error) return;
+   // hooks
+   const { setErrorToast, setSuccessToast } = useToast();
+   const inputRef = useRef<HTMLInputElement>(null);
 
-    const targetPlaylists = admin ? adminPlaylists : userPlaylists;
-    const isDuplicate = targetPlaylists.find((p) => p.name === playlistName);
-    if (isDuplicate) {
-      setErrorToast({ message: "Playlist name already use" });
-      setError(true);
-      return;
-    }
+   const handleAddPlaylist = async (e: FormEvent) => {
+      e.preventDefault();
 
-    try {
-      await addPlaylist(playlistName);
+      if (!playlistName) return;
 
-      setSuccessToast({ message: `'${playlistName}' created` });
-    } catch (error) {
-      console.log("error");
-      setErrorToast({ message: "Error when add playlist" });
-    } finally {
-      console.log("run finally");
+      try {
+         await addPlaylist(playlistName);
 
-      setIsOpenModal(false);
-    }
-  };
+         setSuccessToast({ message: `'${playlistName}' created` });
+      } catch (error) {
+         console.log({ message: error });
+         setErrorToast({ message: "Error when add playlist" });
+      } finally {
+         close();
+      }
+   };
 
-  useEffect(() => {
-    if (playlistName.trim()) setError(false);
-  }, [playlistName]);
+   // useEffect(() => {
+   //    if (!playlistName.trim()) setValidPlaylistName(false);
+   //    else setValidPlaylistName(true);
+   // }, [playlistName]);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+   useEffect(() => {
+      inputRef.current?.focus();
+   }, []);
 
-  return (
-    <div className="w-[300px] max-w-[calc(100vw-40px)]:">
-      <ModalHeader setIsOpenModal={setIsOpenModal} title="Add playlist" />
-      <form action="" onSubmit={handleAddPlaylist}>
-        <input
-        ref={inputRef}
-          className={`bg-${theme.alpha} ${
-            error ? "border border-red-500" : ""
-          } px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
-          type="text"
-          placeholder="name..."
-          value={playlistName}
-          onChange={(e) => setPlayListName(e.target.value)}
-        />
+   return (
+      <div className="w-[300px] max-w-[calc(100vw-40px)]:">
+         <ModalHeader close={close} title="Add playlist" />
+         <form action="" onSubmit={handleAddPlaylist}>
+            <input
+               ref={inputRef}
+               className={`bg-${theme.alpha} px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
+               type="text"
+               placeholder="name..."
+               value={playlistName}
+               onChange={(e) => setPlayListName(e.target.value)}
+            />
 
-        <p className="text-right mt-[20px]">
-          <Button
-            type="submit"
-            isLoading={loading}
-            variant={"primary"}
-            className={`${theme.content_bg} rounded-full ${
-              error ? "opacity-[.6] pointer-events-none" : ""
-            }`}
-          >
-            Save
-          </Button>
-        </p>
-      </form>
-    </div>
-  );
+            <p className="text-right mt-[20px]">
+               <Button
+                  type="submit"
+                  isLoading={isFetching}
+                  variant={"primary"}
+                  className={`${theme.content_bg} rounded-full ${
+                     !playlistName ? "opacity-[.6] pointer-events-none" : ""
+                  }`}
+               >
+                  Save
+               </Button>
+            </p>
+         </form>
+      </div>
+   );
 }

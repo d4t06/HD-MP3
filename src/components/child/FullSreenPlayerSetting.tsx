@@ -3,6 +3,7 @@ import { Button, Modal, PopupWrapper, Switch, TimerModal } from "..";
 import { useTheme } from "../../store";
 import { selectAllPlayStatusStore, setPlayStatus } from "../../store/PlayStatusSlice";
 import { useState } from "react";
+import { setLocalStorage } from "../../utils/appHelpers";
 
 // type Props = {
 // handleChangeLyricSize: (size: "small" | "medium" | "large") => void;
@@ -23,7 +24,7 @@ export default function FullScreenPlayerSetting() {
 
   const handleChangeLyricSize = (size: typeof lyricSize) => {
     dispatch(setPlayStatus({ lyricSize: size }));
-    localStorage.setItem("lyricSize", size);
+    setLocalStorage('lyricSize', size)
   };
 
   const handleTimerBtn = () => {

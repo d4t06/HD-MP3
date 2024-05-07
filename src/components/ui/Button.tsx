@@ -52,7 +52,7 @@ const Button: FC<Props> = ({
          className={buttonVariant({ variant, size, className })}
          disabled={isLoading}
       >
-         {isLoading ? <ArrowPathIcon className="h-5 w-5 animate-spin" /> : null}
+         {isLoading ? <ArrowPathIcon className="w-[22px] animate-spin" /> : null}
          {!isLoading && children}
       </button>
    );

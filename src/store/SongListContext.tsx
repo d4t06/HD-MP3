@@ -1,6 +1,11 @@
-import { Dispatch, ReactNode, SetStateAction, createContext, useContext, useMemo } from "react";
-import { Song } from "../types";
-
+import {
+   Dispatch,
+   ReactNode,
+   SetStateAction,
+   createContext,
+   useContext,
+   useMemo,
+} from "react";
 const initSongListContext = (
    isChecked: boolean,
    selectedSongs: Song[],
@@ -30,9 +35,18 @@ export const useSongListContext = () => {
          setIsChecked: () => {},
          selectedSongs: [],
          setSelectedSongs: () => {},
+         reset: () => {},
       };
    }
-   return context;
+
+   const { setSelectedSongs, setIsChecked, ...rest } = context;
+
+   const reset = () => {
+      setSelectedSongs([]);
+      setIsChecked(false);
+   };
+
+   return { ...rest, setSelectedSongs, setIsChecked, reset };
 };
 
 type ProviderProps = {
@@ -50,6 +64,15 @@ export const SongListProvider = ({
    setIsChecked,
    setSelectedSongs,
 }: ProviderProps) => {
-   const providerValues = initSongListContext(isChecked, selectedSongs, setIsChecked, setSelectedSongs);
-   return <SongListContext.Provider value={providerValues}>{children}</SongListContext.Provider>;
+   const providerValues = initSongListContext(
+      isChecked,
+      selectedSongs,
+      setIsChecked,
+      setSelectedSongs
+   );
+   return (
+      <SongListContext.Provider value={providerValues}>
+         {children}
+      </SongListContext.Provider>
+   );
 };

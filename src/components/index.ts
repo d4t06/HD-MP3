@@ -6,7 +6,7 @@ export {default as LinkItem} from './ui/LinkItem'
 
 export {default as Skeleton} from './skeleton/index'
 
-export {default as AddSongsToPlaylist} from './modals/SongListModal'
+export {default as AddSongsToPlaylist} from './modals/AddSongToPlaylist'
 export {default as LyricItem} from './child/LyricItem'
 export {default as PlayPauseButton} from './child/PlayPauseButton'
 export {default as SongItemEditForm} from './modals/SongItemEditForm'
@@ -14,7 +14,6 @@ export {default as ToastItem} from './child/ToastItem'
 export {default as AddLyricItem} from './child/AddLyricItem'
 export {default as Switch} from './ui/Switch'
 
-export {default as Auth} from './Auth'
 export {default as BottomPlayer} from './BottomPlayer'
 export {default as Control} from './Control'
 export {default as FullScreenPlayer} from './FullScreenPlayer'
@@ -53,4 +52,3 @@ export {default as TimerModal} from './modals/TimerModal'
 
 
 export {default as UploadSongPortal} from './UploadSongPortal'
-export {default as SongItemList} from './SongList'

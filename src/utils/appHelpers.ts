@@ -1,5 +1,4 @@
 import { Timestamp } from "firebase/firestore";
-import { Playlist, Song } from "../types";
 import { fromFile } from "id3js";
 import { nanoid } from "nanoid";
 import axios from "axios";
@@ -12,6 +11,16 @@ export const request = axios.create({
 });
 export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
+};
+
+export const getLocalStorage = () =>
+   JSON.parse(localStorage.getItem("HD-MP3") || "{}") as Record<string, any>;
+
+export const setLocalStorage = (key: string, value: any) => {
+   const storage = getLocalStorage();
+   storage[key] = value;
+
+   return localStorage.setItem("HD-MP3", JSON.stringify(storage));
 };
 
 export const generateId = (name: string): string => {
@@ -27,7 +36,9 @@ export const generateId = (name: string): string => {
          .replace(/đ/g, "d");
       return newString;
    };
-   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4);
+   return (
+      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4)
+   );
 };
 
 type ParserSong = {
@@ -141,7 +152,9 @@ export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) 
    playlists[index] = playlist;
 };
 
-export const countSongsListTimeIds = (songsList: Song[]): { time: number; ids: string[] } => {
+export const countSongsListTimeIds = (
+   songsList: Song[]
+): { time: number; ids: string[] } => {
    let time: number = 0;
    let ids: string[] = [];
 
@@ -172,7 +185,13 @@ export const generatePlaylistAfterChangeSongs = ({
    return newPlaylist;
 };
 
-export const generatePlaylistAfterChangeSong = ({ song, playlist }: { song: Song; playlist: Playlist }) => {
+export const generatePlaylistAfterChangeSong = ({
+   song,
+   playlist,
+}: {
+   song: Song;
+   playlist: Playlist;
+}) => {
    if (isDev) console.log(">>> local: generate playlist");
 
    const newPlaylist: Playlist = {

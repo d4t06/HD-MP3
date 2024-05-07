@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Lyric } from "../types";
+;
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";

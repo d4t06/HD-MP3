@@ -1,8 +1,6 @@
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { SongWithSongIn } from "../store/SongSlice";
-import { Playlist, User } from "../types";
-
 const songsCollectionRef = collection(db, "songs");
 const playlistCollectionRef = collection(db, "playlist");
 
@@ -45,7 +43,10 @@ const getUserPlaylists = async (fullUserInfo: User) => {
 };
 
 const getUserSongs = async (fullUserInfo: User) => {
-   const queryGetUserSongs = query(songsCollectionRef, where("id", "in", fullUserInfo.song_ids));
+   const queryGetUserSongs = query(
+      songsCollectionRef,
+      where("id", "in", fullUserInfo.song_ids)
+   );
 
    const songsSnapshot = await getDocs(queryGetUserSongs);
    if (songsSnapshot.docs.length) {
@@ -64,13 +65,13 @@ export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
    };
 
    //  get user song
-   if (fullUserInfo?.song_ids?.length) {
+   if (!!fullUserInfo.song_ids.length) {
       const userSongs = await getUserSongs(fullUserInfo);
       if (userSongs?.length) userData.userSongs = userSongs;
    }
 
    // get user playlist
-   if (fullUserInfo?.playlist_ids?.length) {
+   if (!!fullUserInfo.playlist_ids.length) {
       const playlists = await getUserPlaylists(fullUserInfo);
       if (playlists?.length) userData.userPlaylists = playlists;
    }

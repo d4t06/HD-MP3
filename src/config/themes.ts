@@ -1,4 +1,4 @@
-import { ThemeType } from "../types";
+;
 
 export const themes: ThemeType[] = [
    {

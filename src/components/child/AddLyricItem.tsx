@@ -1,5 +1,4 @@
 import { useRef, useState, Dispatch, SetStateAction, FormEvent, useEffect } from "react";
-import { RealTimeLyric, ThemeType } from "../../types";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 
 type Props = {

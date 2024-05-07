@@ -3,7 +3,7 @@ import {
    ExclamationCircleIcon,
    XCircleIcon,
 } from "@heroicons/react/24/outline";
-import { ThemeType, Toast } from "../../types";
+;
 
 type Props = {
    toast: Toast;

@@ -4,7 +4,7 @@ import { Button, Modal } from "./";
 import { useTheme } from "../store";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
-import { handleTimeText } from "../utils/appHelpers";
+import { getLocalStorage, handleTimeText, setLocalStorage } from "../utils/appHelpers";
 
 type Props = {
    cb: () => void;
@@ -13,8 +13,6 @@ type Props = {
    isOpenFullScreen: boolean;
 };
 
-const initSec = JSON.parse(localStorage.getItem("isTimer") || "0");
-
 function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const dispatch = useDispatch();
    const { theme } = useTheme();
@@ -22,7 +20,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const {
       playStatus: { isTimer },
    } = useSelector(selectAllPlayStatusStore);
-   const [sec, setSec] = useState(initSec);
+   const [sec, setSec] = useState(() => getLocalStorage()['isTimer'] || 0);
    const [someThingToTrigger, setSomeThingToTrigger] = useState(0);
 
    const [isOpenModal, setIsOpenModal] = useState(false);
@@ -46,7 +44,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const clearTimer = () => {
       dispatch(setPlayStatus({ isTimer: 0 }));
       setSec(0);
-      localStorage.setItem("isTimer", JSON.stringify(0));
+      setLocalStorage("isTimer", 0);
    };
 
    useEffect(() => {
@@ -58,7 +56,8 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
          cb();
          setSec(0);
          dispatch(setPlayStatus({ isTimer: 0 }));
-         localStorage.setItem("isTimer", JSON.stringify(0));
+
+         setLocalStorage("isTimer", 0);
          setIsOpenModal(true);
 
          return;
@@ -112,7 +111,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
       consuming.current += 1;
 
       if (consuming.current === 5) {
-         localStorage.setItem("isTimer", JSON.stringify(sec));
+         setLocalStorage("isTimer", sec);
          consuming.current = 0;
       }
    }, [sec]);
@@ -135,7 +134,9 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
          {isOpenModal && (
             <Modal setOpenModal={setIsOpenModal} theme={theme}>
                <div className="w-[500px] max-w-[calc(100vw-40px)]">
-                  <h1 className="text-[22px]">You have been listened music in {handleTimeText(lastTimer.current)}</h1>
+                  <h1 className="text-[22px]">
+                     You have been listened music in {handleTimeText(lastTimer.current)}
+                  </h1>
 
                   <div className="flex gap-[10px] mt-[30px]">
                      <Button
@@ -146,7 +147,11 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
                         Continue playing
                      </Button>
 
-                     <Button onClick={handleCloseModal} size={"normal"} className={`bg-${theme.alpha} rounded-[99px]`}>
+                     <Button
+                        onClick={handleCloseModal}
+                        size={"normal"}
+                        className={`bg-${theme.alpha} rounded-[99px]`}
+                     >
                         Close
                      </Button>
                   </div>

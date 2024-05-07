@@ -1,28 +1,29 @@
-import { Dispatch, SetStateAction } from "react";
 import ModalHeader from "./ModalHeader";
-import { Playlist, Song } from "../../types";
+;
 import { MusicalNoteIcon } from "@heroicons/react/24/outline";
 
-function PlaylistList({
-  setIsOpenModal,
-  handleAddSongToPlaylist,
-  userPlaylists,
-  song,
-  loading,
-}: {
-  setIsOpenModal: Dispatch<SetStateAction<boolean>>;
+type Props = {
+  close: () => void;
   handleAddSongToPlaylist: (playlist: Playlist) => void;
   userPlaylists: Playlist[];
   song: Song;
   loading: boolean;
-}) {
+}
+
+function PlaylistList({
+  close,
+  handleAddSongToPlaylist,
+  userPlaylists,
+  song,
+  loading,
+}: Props ) {
   return (
     <div
       className={`w-[400px] max-w-[calc(90vw-40px)] ${
         loading ? "opacity-60 pointer-events-none" : ""
       }`}
     >
-      <ModalHeader setIsOpenModal={setIsOpenModal} title={"Playlist"} />
+      <ModalHeader close={close} title={"Playlist"} />
       <div className="max-h-[60vh]">
         <ul className="">
           {!!userPlaylists?.length && (

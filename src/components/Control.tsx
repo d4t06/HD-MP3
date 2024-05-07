@@ -6,26 +6,27 @@ import {
    ForwardIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, useTheme, useActuallySongs } from "../store";
+import { selectAllSongStore, useTheme, useActuallySongsStore } from "../store";
 
 import PlayPauseButton from "./child/PlayPauseButton";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 import { Countdown } from "./";
 import useControl from "../hooks/useControl";
+import { setLocalStorage } from "../utils/appHelpers";
 
 interface Props {
    admin?: boolean;
    audioEle: HTMLAudioElement;
    idle: boolean;
    isOpenFullScreen: boolean;
-   className?: string
+   className?: string;
 }
 
 export default function Control({ audioEle, admin, isOpenFullScreen, className }: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { actuallySongs } = useActuallySongs();
+   const { actuallySongs } = useActuallySongsStore();
    const {
       playStatus: { isPlaying, isRepeat, isShuffle, isError },
    } = useSelector(selectAllPlayStatusStore);
@@ -69,20 +70,25 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
             value = "no";
       }
 
-      localStorage.setItem("isRepeat", value);
+      setLocalStorage("isRepeat", value);
       dispatch(setPlayStatus({ isRepeat: value }));
    };
 
-   const handleSuffle = () => {
+   const handleShuffle = () => {
       const newValue = !isShuffle;
       dispatch(setPlayStatus({ isShuffle: newValue }));
-      localStorage.setItem("isShuffle", JSON.stringify(newValue));
+
+      setLocalStorage("isShuffle", newValue);
    };
 
    const classes = {
       button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
-      buttonsContainer: `w-full flex justify-between sm:justify-center items-center gap-x-[20px] ${admin ? "" : "h-[50px]"}`,
-      processContainer: `flex w-full flex-row items-center h-[30px] ${admin ? "h-full" : ""}`,
+      buttonsContainer: `w-full flex justify-between sm:justify-center items-center gap-x-[20px] ${
+         admin ? "" : "h-[50px]"
+      }`,
+      processContainer: `flex w-full flex-row items-center h-[30px] ${
+         admin ? "h-full" : ""
+      }`,
       processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] bg-gray-200 `,
       processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
       currentTime: `opacity-60 text-[14px] font-semibold`,
@@ -92,18 +98,21 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
    };
 
    return (
-      <div className={`relative h-full w-full ${className || ''}`}>
+      <div className={`relative h-full w-full ${className || ""}`}>
          {/* buttons */}
          <div className={`${classes.buttonsContainer}`}>
             {!admin && (
                <>
                   <button
-                     className={`relative ${classes.button} ${isRepeat !== "no" && theme.content_text}`}
+                     className={`relative ${classes.button} ${
+                        isRepeat !== "no" && theme.content_text
+                     }`}
                      onClick={handleRepeatSong}
                   >
                      <ArrowPathRoundedSquareIcon className={classes.icon} />
                      <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                        {songInStore.name && (isRepeat === "one" ? "1" : isRepeat === "all" ? "--" : "")}
+                        {songInStore.name &&
+                           (isRepeat === "one" ? "1" : isRepeat === "all" ? "--" : "")}
                      </span>
                   </button>
                   <button className={classes.button} onClick={() => handlePrevious()}>
@@ -115,7 +124,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
                   <button className={`${classes.button}`} onClick={() => handleNext()}>
                      <ForwardIcon className={classes.icon} />
                   </button>
-                  <button className={`${classes.button} ${isShuffle && theme.content_text}`} onClick={handleSuffle}>
+                  <button
+                     className={`${classes.button} ${isShuffle && theme.content_text}`}
+                     onClick={handleShuffle}
+                  >
                      <ArrowTrendingUpIcon className={classes.icon} />
                   </button>
                </>
@@ -123,7 +135,11 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
          </div>
 
          {/* process */}
-         <div className={`${classes.processContainer} ${isError ? "opacity-[.6] pointer-events-none" : ""}`}>
+         <div
+            className={`${classes.processContainer} ${
+               isError ? "opacity-[.6] pointer-events-none" : ""
+            }`}
+         >
             <div className="w-[45px]">
                {audioEle && (
                   <span ref={currentTimeRef} className={`${classes.currentTime}`}>
@@ -134,9 +150,14 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
             <div
                ref={durationLineRef}
                onClick={(e) => handleSeek(e)}
-               className={`${classes.processLineBase} ${!isLoaded && "pointer-events-none"}  ${classes.before}`}
+               className={`${classes.processLineBase} ${
+                  !isLoaded && "pointer-events-none"
+               }  ${classes.before}`}
             >
-               <div ref={timeProcessLine} className={`${classes.processLineCurrent}`}></div>
+               <div
+                  ref={timeProcessLine}
+                  className={`${classes.processLineCurrent}`}
+               ></div>
             </div>
             <div className="w-[46px] pl-[5px]">
                {audioEle && (
@@ -155,7 +176,14 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
                </div>
             )}
          </div>
-         {!admin && <Countdown isOpenFullScreen={isOpenFullScreen} cb={pause} play={play} isPlaying={isPlaying} />}
+         {!admin && (
+            <Countdown
+               isOpenFullScreen={isOpenFullScreen}
+               cb={pause}
+               play={play}
+               isPlaying={isPlaying}
+            />
+         )}
       </div>
    );
 }

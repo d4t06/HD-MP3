@@ -1,5 +1,4 @@
 import { Dispatch, MouseEvent, SetStateAction, useCallback, forwardRef } from "react";
-import { Song, ThemeType } from "../types";
 import {
   ArrowPathIcon,
   CheckIcon,

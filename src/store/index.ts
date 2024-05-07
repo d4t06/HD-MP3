@@ -1,5 +1,5 @@
 export {setSong, setPlaylist, selectAllSongStore} from './SongSlice'
-export {useActuallySongs} from './ActuallySongsContext'
+export {useActuallySongsStore} from './ActuallySongsContext'
 export {useAuthStore} from './AuthContext'
 export {useSongsStore} from './SongsContext'
 export {useTheme} from './ThemeContext'

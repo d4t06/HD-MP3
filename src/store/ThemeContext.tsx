@@ -1,11 +1,14 @@
 import { createContext, useCallback, useContext, useReducer } from "react";
-import { ThemeKeyType, ThemeType } from "../types";
+;
 import { themes } from "../config/themes";
+import { getLocalStorage } from "../utils/appHelpers";
 
 type StateType = { theme: ThemeType & { alpha: string } };
 
 let initTheme = themes[0];
-const localStorageThemeId = localStorage.getItem("theme") as ThemeKeyType | null;
+
+const storage = getLocalStorage()
+const localStorageThemeId = storage["theme"] as ThemeKeyType | null;
 
 if (localStorageThemeId) {
    themes.forEach((theme) => {

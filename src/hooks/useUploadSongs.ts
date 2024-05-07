@@ -1,14 +1,26 @@
-import { ChangeEvent, RefObject, useRef, useCallback, useEffect, useMemo, useState } from "react";
-import { Song } from "../types";
+import {
+   ChangeEvent,
+   RefObject,
+   useRef,
+   useCallback,
+   useEffect,
+   useMemo,
+   useState,
+} from "react";
 import { generateId, getBlurhashEncode, parserSong } from "../utils/appHelpers";
 import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
-import { mySetDoc, setUserSongIdsAndCountDoc, uploadBlob, uploadFile } from "../utils/firebaseHelpers";
+import {
+   mySetDoc,
+   setUserSongIdsAndCountDoc,
+   uploadBlob,
+   uploadFile,
+} from "../utils/firebaseHelpers";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "../store/AuthContext";
 // import { testSongs } from "./songs";
-import { selectAllSongStore, useActuallySongs, useUpload } from "../store";
+import { selectAllSongStore, useActuallySongsStore, useUpload } from "../store";
 import { useSelector } from "react-redux";
 import { SongWithSongIn } from "../store/SongSlice";
 
@@ -31,11 +43,17 @@ export default function useUploadSongs({
 }: // firstTempSong,
 Props) {
    // use stores
-   const { userInfo } = useAuthStore();
-   const { setTempSongs: _setTempSongs, tempSongs, setAddedSongIds: _setAddedSongIds, setStatus, status } = useUpload();
+   const { user } = useAuthStore();
+   const {
+      setTempSongs: _setTempSongs,
+      tempSongs,
+      setAddedSongIds: _setAddedSongIds,
+      setStatus,
+      status,
+   } = useUpload();
    const { setErrorToast, setSuccessToast, setToasts } = useToast();
    const { setUserSongs, userSongs, setAdminSongs, adminSongs } = useSongsStore();
-   const { setActuallySongs, actuallySongs } = useActuallySongs();
+   const { setActuallySongs, actuallySongs } = useActuallySongsStore();
    const { song: songInStore } = useSelector(selectAllSongStore);
 
    const [triggerUpdateActuallySongs, setTriggerUpdateActuallySongs] = useState<Song>();
@@ -44,7 +62,10 @@ Props) {
    const actuallyFileIds = useRef<number[]>([]);
    const isDuplicate = useRef(false);
 
-   const targetSongs = useMemo(() => (admin ? adminSongs : userSongs), [userSongs, adminSongs]);
+   const targetSongs = useMemo(
+      () => (admin ? adminSongs : userSongs),
+      [userSongs, adminSongs]
+   );
 
    const finishAndClear = (sts: typeof status) => {
       if (!inputRef.current) return;
@@ -67,10 +88,8 @@ Props) {
 
    const handleInputChange = useCallback(
       async (e: ChangeEvent<HTMLInputElement>) => {
-         if (!userInfo.email) {
-            setErrorToast({ message: "Missing user data" });
-            return;
-         }
+         if (!user) return setErrorToast({ message: "Missing user data" });
+
          setStatus("uploading");
 
          const inputEle = e.target as HTMLInputElement & { files: FileList };
@@ -83,7 +102,7 @@ Props) {
 
          // init song object
          let data = initSongObject({
-            by: admin ? "admin" : (userInfo.email as string),
+            by: admin ? "admin" : (user.email as string),
          });
 
          let processSongsList: Song[] = [];
@@ -92,10 +111,16 @@ Props) {
          const checkDuplicate = (songObject: Song) => {
             return (
                targetSongs.some(
-                  (s) => s.singer === songObject.singer && s.name === songObject.name && s.size === songObject.size
+                  (s) =>
+                     s.singer === songObject.singer &&
+                     s.name === songObject.name &&
+                     s.size === songObject.size
                ) ||
                processSongsList.some(
-                  (s) => s.singer === songObject.singer && s.name === songObject.name && s.size === songObject.size
+                  (s) =>
+                     s.singer === songObject.singer &&
+                     s.name === songObject.name &&
+                     s.size === songObject.size
                )
             );
          };
@@ -159,7 +184,7 @@ Props) {
 
             // check limit
             if (userSongs.length + actuallyFileIds.current.length > 5) {
-               if (userInfo.role !== "admin") {
+               if (user.role !== "ADMIN") {
                   finishAndClear("finish-error");
                   setErrorToast({ message: "You have reach the upload limit" });
                   return;
@@ -202,14 +227,18 @@ Props) {
                if (songNeedToUpdate.image_url) {
                   console.log("have stock image");
 
-                  await handleUploadImage(newSongFile.imageBlob, songId, songNeedToUpdate);
+                  await handleUploadImage(
+                     newSongFile.imageBlob,
+                     songId,
+                     songNeedToUpdate
+                  );
                }
 
                //  upload song file
                const { filePath, fileURL } = await uploadFile({
                   file: newSongFile,
                   folder: "/songs/",
-                  email: userInfo.email,
+                  email: user.email,
                   msg: ">>> api: upload song file",
                });
 
@@ -251,7 +280,7 @@ Props) {
                // update user doc
                await setUserSongIdsAndCountDoc({
                   songIds: newUserSongsIds,
-                  userInfo: userInfo,
+                  user: user,
                });
             }
 
@@ -264,7 +293,10 @@ Props) {
             // case admin
             if (isDuplicate.current) {
                finishAndClear("finish-error");
-               setToasts((t) => [...t, { id: nanoid(4), title: "warning", desc: "Song duplicate" }]);
+               setToasts((t) => [
+                  ...t,
+                  { id: nanoid(4), title: "warning", desc: "Song duplicate" },
+               ]);
             } else {
                finishAndClear("finish");
                // if upload gather than 1 file
@@ -284,10 +316,14 @@ Props) {
          }
       },
 
-      [userInfo, userSongs, songInStore.song_in]
+      [user, userSongs, songInStore.song_in]
    );
 
-   const handleUploadImage = async (imageBlob: Blob, songId: string, songNeedToUpdate: Song) => {
+   const handleUploadImage = async (
+      imageBlob: Blob,
+      songId: string,
+      songNeedToUpdate: Song
+   ) => {
       return new Promise<void>((rs, rj) => {
          const testImageEle = testImageRef.current as HTMLImageElement;
          const imageURL = URL.createObjectURL(imageBlob);

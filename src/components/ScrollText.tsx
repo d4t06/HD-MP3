@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { Song } from "../types";
 import useScrollText from "../hooks/useScrollText";
 
 type Props = {
