@@ -1,26 +1,16 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-import { SongIn } from "../store/SongSlice";
-import {
-   useToast,
-   useActuallySongsStore,
-   selectAllSongStore,
-   setSong,
-   useTheme,
-} from "../store";
-import { AddSongsToPlaylist, Button, Modal, Skeleton, SongList } from "../components";
-
+import { useToast, useTheme } from "../store";
+import { AddSongsToPlaylist, Button, Modal, SongList } from "../components";
 import usePlaylistActions from "../hooks/usePlaylistActions";
-
-import { useSongListContext } from "../store/SongListContext";
-
 import CheckedBar from "./CheckedBar";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import  { usePlaylistContext } from "../store/PlaylistSongContext";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
 
 type Props = {
-   location: "admin-playlist" | "my-playlist";
+   location: "admin-playlist" | "my-playlist" | "dashboard-playlist";
 };
 
 type Modal = "add-song";
@@ -29,36 +19,25 @@ export default function PlaylistDetailSongList({ location }: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { setIsChecked, setSelectedSongs, selectedSongs } = useSongListContext();
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { from } = useSelector(selectSongQueue);
+   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
    // state
-   const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
+   // const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
    // use hooks
    const { setErrorToast } = useToast();
-   const { setActuallySongs } = useActuallySongsStore();
    const { deleteSongFromPlaylist } = usePlaylistActions();
 
    const closeModal = () => setIsOpenModal("");
 
-   const handleSelectAll = () => {
-      if (selectedSongs.length < playlistSongs.length) setSelectedSongs(playlistSongs);
-      else resetCheckedList();
-   };
-
-   const resetCheckedList = () => {
-      setSelectedSongs([]);
-      setIsChecked(false);
-   };
-
    const handleSetSong = (song: Song, index: number) => {
       // case user play user songs then play playlist song
-      const newSongIn: SongIn = `playlist_${playlistInStore.id}`;
+      const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
 
-      if (songInStore.id !== song.id || songInStore.song_in !== newSongIn) {
+      if (currentSong.id !== song.id || currentSong.song_in !== newSongIn) {
          dispatch(
             setSong({
                ...song,
@@ -67,26 +46,19 @@ export default function PlaylistDetailSongList({ location }: Props) {
             })
          );
 
-         if (songInStore.song_in !== newSongIn) {
-            setActuallySongs(playlistSongs);
-            console.log("setActuallySongs when playlist list");
+         const isQueueHaveOtherSongs = from.length > 1 || from[0] != newSongIn;
+         if (isQueueHaveOtherSongs) {
+            dispatch(setQueue({ songs: playlistSongs }));
          }
       }
    };
 
    const handleDeleteSongFromPlaylist = async (song: Song) => {
       try {
-         const newPlaylistSongs = await deleteSongFromPlaylist(song, playlistSongs);
-         if (newPlaylistSongs) {
-            setPlaylistSongs(newPlaylistSongs);
-            if (songInStore.song_in === `playlist_${playlistInStore.id}`) {
-               setActuallySongs(newPlaylistSongs);
-               console.log("set actually songs");
-            }
-         }
+         await deleteSongFromPlaylist(song);
       } catch (error) {
          console.log(error);
-         setErrorToast({ message: "Error when delete song" });
+         setErrorToast({});
       }
    };
 
@@ -96,42 +68,44 @@ export default function PlaylistDetailSongList({ location }: Props) {
       switch (location) {
          case "admin-playlist":
             return (
-               <CheckedBar selectAll={handleSelectAll} location={"admin-playlist"}>
+               <CheckedBar location={"admin-playlist"}>
                   <p className="font-semibold opacity-[.6]">
                      {playlistSongs.length} Songs
                   </p>
                </CheckedBar>
             );
          case "my-playlist":
+         case "dashboard-playlist":
             return (
-               <CheckedBar selectAll={handleSelectAll} location={"my-playlist"}>
+               <CheckedBar location={"my-playlist"}>
                   <p className="font-semibold opacity-[.6]">
                      {playlistSongs.length} Songs
                   </p>
                </CheckedBar>
             );
       }
-   }, [playlistInStore, playlistSongs]);
+   }, [currentPlaylist, playlistSongs]);
 
    const renderSongList = useMemo(() => {
       switch (location) {
          case "admin-playlist":
             return (
                <SongList
+                  variant="admin-playlist"
                   songs={playlistSongs}
-                  // inPlaylist={playlistInStore}
                   handleSetSong={handleSetSong}
-                  activeExtend={songInStore.song_in.includes(playlistInStore.id)}
+                  activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
                />
             );
          case "my-playlist":
+         case "dashboard-playlist":
             return (
                <>
                   <SongList
+                     variant={location}
                      songs={playlistSongs}
-                     // inPlaylist={playlistInStore}
                      handleSetSong={handleSetSong}
-                     activeExtend={songInStore.song_in.includes(playlistInStore.id)}
+                     activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
                      deleteFromPlaylist={handleDeleteSongFromPlaylist}
                   />
 
@@ -148,7 +122,7 @@ export default function PlaylistDetailSongList({ location }: Props) {
                </>
             );
       }
-   }, [playlistInStore, playlistSongs, songInStore]);
+   }, [currentPlaylist, playlistSongs, currentSong]);
 
    const renderModal = useMemo(() => {
       switch (isOpenModal) {
@@ -156,15 +130,10 @@ export default function PlaylistDetailSongList({ location }: Props) {
             return <></>;
          case "add-song":
             return (
-               <AddSongsToPlaylist
-                  playlist={playlistInStore}
-                  close={closeModal}
-                  setPlaylistSongs={setPlaylistSongs}
-                  playlistSongs={playlistSongs}
-               />
+               <AddSongsToPlaylist close={closeModal} playlistSongs={playlistSongs} />
             );
       }
-   }, [isOpenModal, playlistSongs, playlistInStore]);
+   }, [isOpenModal, playlistSongs, currentPlaylist]);
 
    return (
       <>

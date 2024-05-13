@@ -1,14 +1,16 @@
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, useActuallySongsStore, useTheme } from "../store";
+import { useTheme } from "../store";
 import { Button, ConfirmModal, Modal, PlaylistItem, Skeleton } from ".";
 import { PencilSquareIcon, PlayIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
-import { SongIn, setSong } from "../store/SongSlice";
 import { useParams } from "react-router-dom";
 import EditPlaylist from "./modals/EditPlaylist";
 import usePlaylistActions from "../hooks/usePlaylistActions";
-import { usePlaylistContext } from "../store/PlaylistSongContext";
 import { handleTimeText } from "../utils/appHelpers";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { setQueue } from "@/store/songQueueSlice";
+import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 
 type Modal = "edit" | "delete";
 
@@ -22,16 +24,19 @@ type AdminPlaylist = {
    loading: boolean;
 };
 
-type Props = MyPlaylist | AdminPlaylist;
+type DashboardPlaylist = {
+   type: "dashboard-playlist";
+   loading: boolean;
+};
+
+type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
 export default function PLaylistInfo({ loading, type }: Props) {
    // store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { playlistSongs } = usePlaylistContext();
-   const { setActuallySongs } = useActuallySongsStore();
-   const { playlist: playlistInStore, song: songInStore } =
-      useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
    // state
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
@@ -39,15 +44,20 @@ export default function PLaylistInfo({ loading, type }: Props) {
    // hooks
    const params = useParams();
    const { deletePlaylist, isFetching } = usePlaylistActions();
+   const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
    const isOnMobile = useMemo(() => window.innerWidth < 800, []);
+   const playlistTime = useMemo(
+      () => playlistSongs.reduce((prev, c) => prev + c.duration, 0),
+      [playlistSongs]
+   );
 
    const closeModal = () => setIsOpenModal("");
 
    const handleSetSong = (song: Song, index: number) => {
       // case user play user songs then play playlist song
-      const newSongIn: SongIn = `playlist_${playlistInStore.id}`;
-      if (songInStore.id !== song.id || songInStore.song_in !== newSongIn) {
+      const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
+      if (currentSong.id !== song.id || currentSong.song_in !== newSongIn) {
          dispatch(
             setSong({
                ...song,
@@ -56,8 +66,8 @@ export default function PLaylistInfo({ loading, type }: Props) {
             })
          );
 
-         if (songInStore.song_in !== newSongIn) {
-            setActuallySongs(playlistSongs);
+         if (currentSong.song_in !== newSongIn) {
+            dispatch(setQueue({ songs: playlistSongs }));
             console.log("setActuallySongs when playlist list");
          }
       }
@@ -66,19 +76,8 @@ export default function PLaylistInfo({ loading, type }: Props) {
    const handlePlayPlaylist = () => {
       const firstSong = playlistSongs[0];
 
-      if (songInStore.song_in.includes(params.name as string)) return;
+      if (currentSong.song_in.includes(params.name as string)) return;
       handleSetSong(firstSong, 0);
-   };
-
-   const handleDeletePlaylist = async () => {
-      try {
-         await deletePlaylist(playlistInStore);
-
-         const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
-         if (audioEle) audioEle.pause();
-      } catch (error) {
-         console.log(error);
-      }
    };
 
    const playlistInfoSkeleton = (
@@ -95,31 +94,32 @@ export default function PLaylistInfo({ loading, type }: Props) {
       return (
          <>
             <h1 className="text-[30px] font-semibold leading-[1]">
-               {playlistInStore.name}
+               {currentPlaylist.name}
             </h1>
             {!isOnMobile && (
-               <p className="text-[16px] leading-[1]">
-                  {handleTimeText(playlistInStore?.time)}
+               <p className="text-[16px] leading-[1] font-[500]">
+                  {handleTimeText(playlistTime)}
                </p>
             )}
             <p className="hidden md:block opacity-60 leading-[1]">
-               create by {playlistInStore.by}
+               created by {currentPlaylist.by}
             </p>
          </>
       );
-   }, [loading]);
+   }, [loading, currentPlaylist]);
 
    const renderCta = useMemo(() => {
       if (loading) return <></>;
 
       switch (type) {
          case "my-playlist":
+         case "dashboard-playlist":
             return (
                <>
                   <Button
                      onClick={handlePlayPlaylist}
                      className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
-                        !playlistInStore.song_ids.length &&
+                        !currentPlaylist.song_ids.length &&
                         "opacity-60 pointer-events-none"
                      }`}
                   >
@@ -146,7 +146,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
                <Button
                   onClick={handlePlayPlaylist}
                   className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
-                     !playlistInStore.song_ids.length && "opacity-60 pointer-events-none"
+                     !currentPlaylist.song_ids.length && "opacity-60 pointer-events-none"
                   }`}
                >
                   <PlayIcon className="mr-[5px] w-[22px]" />
@@ -154,27 +154,38 @@ export default function PLaylistInfo({ loading, type }: Props) {
                </Button>
             );
       }
-   }, [loading]);
+   }, [loading, playlistSongs]);
 
    const renderModal = useMemo(() => {
       switch (isOpenModal) {
          case "":
             return <></>;
          case "edit":
-            return <EditPlaylist close={closeModal} playlist={playlistInStore} />;
+            return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
 
          case "delete":
-            return (
-               <ConfirmModal
-                  loading={isFetching}
-                  label={"Delete playlist ?"}
-                  theme={theme}
-                  callback={handleDeletePlaylist}
-                  close={closeModal}
-               />
-            );
+            if (type === "my-playlist")
+               return (
+                  <ConfirmModal
+                     loading={isFetching}
+                     label={"Delete playlist ?"}
+                     theme={theme}
+                     callback={deletePlaylist}
+                     close={closeModal}
+                  />
+               );
+            if (type === "dashboard-playlist")
+               return (
+                  <ConfirmModal
+                     loading={adminIsFetching}
+                     label={"Delete playlist ?"}
+                     theme={theme}
+                     callback={deleteAdminPlaylist}
+                     close={closeModal}
+                  />
+               );
       }
-   }, [isOpenModal, isFetching]);
+   }, [isOpenModal, isFetching, adminIsFetching]);
 
    const classes = {
       container:
@@ -194,8 +205,8 @@ export default function PLaylistInfo({ loading, type }: Props) {
                   <Skeleton className="pt-[100%] rounded-[8px]" />
                ) : (
                   <PlaylistItem
-                     data={playlistInStore}
-                     active={songInStore.song_in === `playlist_${playlistInStore.id}`}
+                     data={currentPlaylist}
+                     active={currentSong.song_in === `playlist_${currentPlaylist.id}`}
                      inDetail
                      theme={theme}
                   />

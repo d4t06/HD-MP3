@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState, useRef } from "react";
 import ModalHeader from "./ModalHeader";
 import { Button } from "..";
-import { useTheme, useToast } from "../../store";
+import { useTheme } from "../../store";
 
 type Props = {
    close: () => void;
@@ -13,33 +13,17 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
    const { theme } = useTheme();
 
    const [playlistName, setPlayListName] = useState<string>("");
-   // const [validPlaylistName, setValidPlaylistName] = useState(false);
 
    // hooks
-   const { setErrorToast, setSuccessToast } = useToast();
    const inputRef = useRef<HTMLInputElement>(null);
 
    const handleAddPlaylist = async (e: FormEvent) => {
       e.preventDefault();
-
       if (!playlistName) return;
 
-      try {
-         await addPlaylist(playlistName);
-
-         setSuccessToast({ message: `'${playlistName}' created` });
-      } catch (error) {
-         console.log({ message: error });
-         setErrorToast({ message: "Error when add playlist" });
-      } finally {
-         close();
-      }
+      await addPlaylist(playlistName);
+      close();
    };
-
-   // useEffect(() => {
-   //    if (!playlistName.trim()) setValidPlaylistName(false);
-   //    else setValidPlaylistName(true);
-   // }, [playlistName]);
 
    useEffect(() => {
       inputRef.current?.focus();

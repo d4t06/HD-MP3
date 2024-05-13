@@ -1,79 +1,114 @@
-// init state
-
-import {
-   Dispatch,
-   ReactNode,
-   SetStateAction,
-   createContext,
-   useContext,
-   useState,
-} from "react";
-;
-
+import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 type StateType = {
    tempSongs: Song[];
-   addedSongIds: string[];
-   status: "uploading" | "finish" | "idle" | "finish-error";
+   status: "" | "uploading" | "finish" | "finish-error";
 };
 
 const initialState: StateType = {
    tempSongs: [],
-   addedSongIds: [],
-   status: "idle",
+   status: "",
 };
 
-// create context
-// we expect {
-//    state: {...props},
-//    setState
-//    ...
-// }
-type ContextType = {
-   state: StateType;
-   setTempSongs: Dispatch<SetStateAction<Song[]>>;
-   setAddedSongIds: Dispatch<SetStateAction<string[]>>;
-   setStatus: Dispatch<SetStateAction<StateType["status"]>>;
+const enum REDUCER_ACTION_TYPE {
+   SETTEMPSONG,
+   SHIFTSONG,
+   CLEARTEMPSONG,
+}
+
+type SetTempSong = {
+   type: REDUCER_ACTION_TYPE.SETTEMPSONG;
+   payload: { songs: Song[] };
 };
+
+type SpliceTempSong = {
+   type: REDUCER_ACTION_TYPE.SHIFTSONG;
+};
+
+type ClearTempSong = {
+   type: REDUCER_ACTION_TYPE.CLEARTEMPSONG;
+   payload: { status: StateType["status"] };
+};
+
+type ReducerAction = SetTempSong | SpliceTempSong | ClearTempSong;
+
+const reducer = (state: StateType, action: ReducerAction): StateType => {
+   switch (action.type) {
+      case REDUCER_ACTION_TYPE.SETTEMPSONG: {
+         const { songs } = action.payload;
+
+         return { ...state, tempSongs: songs, status: "uploading" };
+      }
+
+      case REDUCER_ACTION_TYPE.SHIFTSONG: {
+         const newSongs = [...state.tempSongs];
+         newSongs.shift();
+
+         return { ...state, tempSongs: newSongs };
+      }
+
+      case REDUCER_ACTION_TYPE.CLEARTEMPSONG: {
+         const { status } = action.payload;
+         return { ...state, tempSongs: [], status };
+      }
+   }
+};
+
+const useUploadActions = () => {
+   const [state, dispatch] = useReducer(reducer, initialState);
+
+   const setTempSongs = useCallback((songs: Song[]) => {
+      dispatch({
+         type: REDUCER_ACTION_TYPE.SETTEMPSONG,
+         payload: { songs },
+      });
+   }, []);
+
+   const shiftSong = useCallback(() => {
+      dispatch({
+         type: REDUCER_ACTION_TYPE.SHIFTSONG,
+      });
+   }, []);
+
+   const clearTempSongs = useCallback((status: StateType["status"]) => {
+      dispatch({
+         type: REDUCER_ACTION_TYPE.CLEARTEMPSONG,
+         payload: { status },
+      });
+   }, []);
+
+   return {
+      state,
+      setTempSongs,
+      shiftSong,
+      clearTempSongs,
+   };
+};
+
+type ContextType = ReturnType<typeof useUploadActions>;
 
 const initialContext: ContextType = {
    state: initialState,
    setTempSongs: () => {},
-   setAddedSongIds: () => {},
-   setStatus: () => {},
+   shiftSong: () => {},
+   clearTempSongs: () => {},
 };
 
-const UploadSongContext = createContext(initialContext);
+const UploadSongContext = createContext<ContextType>(initialContext);
 
-// define context provider
 const UploadSongProvider = ({ children }: { children: ReactNode }) => {
-   const [tempSongs, setTempSongs] = useState<Song[]>([]);
-   const [addedSongIds, setAddedSongIds] = useState<string[]>([]);
-
-   const [status, setStatus] = useState<StateType["status"]>("idle");
-
    return (
-      <UploadSongContext.Provider
-         value={{
-            state: { addedSongIds, tempSongs, status },
-            setAddedSongIds,
-            setTempSongs,
-            setStatus,
-         }}
-      >
+      <UploadSongContext.Provider value={useUploadActions()}>
          {children}
       </UploadSongContext.Provider>
    );
 };
 
-// define useToast Hook
 const useUpload = () => {
    const {
-      state: { addedSongIds, tempSongs, status },
-      setTempSongs,
-      setAddedSongIds,
-      setStatus
+      state: { ...restState },
+      ...restSetState
    } = useContext(UploadSongContext);
-   return { addedSongIds, tempSongs, setTempSongs, setAddedSongIds, setStatus, status };
+   return { ...restSetState, ...restState };
 };
 
 export default UploadSongProvider;

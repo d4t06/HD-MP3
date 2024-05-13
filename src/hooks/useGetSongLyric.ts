@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
-import { selectAllSongStore } from "../store";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useSongLyric({
    audioEle,
@@ -12,12 +12,11 @@ export default function useSongLyric({
    audioEle: HTMLAudioElement;
    isOpenFullScreen: boolean;
 }) {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
    const {
       playStatus: { isError },
    } = useSelector(selectAllPlayStatusStore);
 
-   // const currentPromise = useRef<Promise<any>>();
 
    const [songLyric, setSongLyric] = useState<Lyric>({
       id: "",
@@ -35,7 +34,7 @@ export default function useSongLyric({
       try {
          const lyricSnap = await myGetDoc({
             collection: "lyrics",
-            id: songInStore.lyric_id,
+            id: currentSong.lyric_id,
             msg: ">>> api: get lyric doc",
          });
 
@@ -73,7 +72,7 @@ export default function useSongLyric({
 
    //  api get lyric
    useEffect(() => {
-      if (!songInStore.lyric_id && isSongLoaded) {
+      if (!currentSong.lyric_id && isSongLoaded) {
          setLoading(false);
          return;
       }
@@ -94,7 +93,7 @@ export default function useSongLyric({
       return () => {
          resetForNewSong();
       };
-   }, [songInStore, isError]);
+   }, [currentSong, isError]);
 
    return { songLyric, loading };
 }

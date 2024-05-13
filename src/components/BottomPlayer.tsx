@@ -6,7 +6,6 @@ import {
    SpeakerXMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
@@ -17,7 +16,7 @@ import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import useWindowResize from "../hooks/useWindowResize";
 import SongInfo from "./SongInfo";
-
+import { selectCurrentSong } from "@/store/currentSongSlice";
 interface Props {
    admin?: boolean;
    idle: boolean;
@@ -40,7 +39,7 @@ export default function BottomPlayer({
    setIsOpenSongQueue,
 }: Props) {
    const { theme } = useTheme();
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
    const {
       playStatus: { isPlaying, isWaiting },
    } = useSelector(selectAllPlayStatusStore);
@@ -90,7 +89,7 @@ export default function BottomPlayer({
             : "flex-col justify-center"
       }`,
       controlWrapperChild_2: `${
-         !songInStore.song_url && "pointer-events-none opacity-60"
+         !currentSong.song_url && "pointer-events-none opacity-60"
       }`,
 
       volumeWrapper: `volume-control ${
@@ -170,7 +169,7 @@ export default function BottomPlayer({
                            className={`h-[35px] w-[35px] rounded-[99px] ${
                               theme.side_bar_bg
                            }  ${theme.content_hover_bg} p-[8px] ${
-                              songInStore.name ? "" : "opacity-20 pointer-events-none"
+                              currentSong.name ? "" : "opacity-20 pointer-events-none"
                            }`}
                         >
                            <ChevronUpIcon />
@@ -185,7 +184,7 @@ export default function BottomPlayer({
                            className={`${
                               theme.content_hover_bg
                            } h-[35px] w-[35px] p-[8px] rounded-[4px] ${
-                              songInStore.name ? "" : "opacity-20 pointer-events-none"
+                              currentSong.name ? "" : "opacity-20 pointer-events-none"
                            } ${isOpenSongQueue ? theme.content_bg : theme.side_bar_bg}`}
                         >
                            <QueueListIcon />

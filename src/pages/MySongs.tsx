@@ -1,40 +1,27 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-
-// store
-import {
-   useTheme,
-   selectAllSongStore,
-   useSongsStore,
-   useAuthStore,
-   useUpload,
-} from "../store";
-
-// hooks
+import { useTheme, useSongsStore, useAuthStore, useUpload } from "../store";
 import { useInitSong } from "../hooks";
-
 import { BackBtn } from "../components";
 import { routes } from "../routes";
-
 import PlaylistList from "../components/PlaylistList";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import SongListMain from "../components/SongListMain";
-import usePlaylistActions from "../hooks/usePlaylistActions";
 import MySongSongsList from "../components/MySongSongsList";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function MySongsPage() {
    // store
    const { theme } = useTheme();
    const { loading: userLoading, user } = useAuthStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
    const { userPlaylists } = useSongsStore();
 
    // use hooks
    const { status } = useUpload();
    const navigate = useNavigate();
    const { loading: initialLoading, errorMsg, initial } = useInitSong({});
-   const { addPlaylist, isFetching } = usePlaylistActions();
 
    // route guard
    useEffect(() => {
@@ -56,12 +43,10 @@ export default function MySongsPage() {
             <h3 className="text-[24px] font-bold mb-[14px]">Playlist</h3>
 
             <PlaylistList
-               activeCondition={!!songInStore?.song_in}
+               activeCondition={!!currentSong.song_in}
                loading={initialLoading}
                playlist={userPlaylists}
                location="my-songs"
-               addPlaylist={addPlaylist}
-               isFetching={isFetching}
             />
          </div>
 
@@ -82,7 +67,8 @@ export default function MySongsPage() {
             </div>
 
             <SongListMain>
-               <MySongSongsList />
+               {errorMsg && <p>Some thing went wrong</p>}
+               {!errorMsg && <MySongSongsList initialLoading={initialLoading} />}
             </SongListMain>
          </div>
       </>

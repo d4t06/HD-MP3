@@ -6,30 +6,31 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { Button, Skeleton } from "../components";
-import { useTheme, useAuthStore, setSong } from "../store";
+import { useTheme, useAuthStore, useSongsStore } from "../store";
 import ScrollTop from "./ScrollTop";
 import { useDispatch } from "react-redux";
-import { initSongObject } from "../utils/appHelpers";
+import { resetCurrentSong } from "@/store/currentSongSlice";
+import { resetCurrentPlaylist } from "@/store/currentPlaylistSlice";
 export default function Sidebar() {
    // store
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { user, loading: userLoading } = useAuthStore();
+   const { resetSongPlaylistStore } = useSongsStore();
 
    // hooks
    const location = useLocation();
    const navigate = useNavigate();
 
-   const pauseSong = () => {
-      const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
-      audioEle.pause();
-
-      dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
+   const reset = () => {
+      dispatch(resetCurrentSong());
+      dispatch(resetCurrentPlaylist());
+      resetSongPlaylistStore();
    };
 
    const handleNavigateToDashboard = () => {
+      reset();
       navigate("/dashboard");
-      pauseSong();
    };
 
    // define skeleton
@@ -60,7 +61,6 @@ export default function Sidebar() {
                <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
             </Link>
          </div>
-
          <div className="flex flex-col items-start">
             {userLoading && menuItemSkeletons}
 
@@ -110,7 +110,6 @@ export default function Sidebar() {
                </>
             )}
          </div>
-
          <ScrollTop className="left-[50%] translate-x-[-50%] bottom-[80px] md:bottom-[100px]" />
       </div>
    );

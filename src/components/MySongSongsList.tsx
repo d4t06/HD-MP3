@@ -1,66 +1,55 @@
 import { useMemo, useState } from "react";
 import { useSongListContext } from "../store/SongListContext";
-import {
-   selectAllSongStore,
-   useActuallySongsStore,
-   useAuthStore,
-   useSongsStore,
-   useTheme,
-   useUpload,
-} from "../store";
-import { useInitSong } from "../hooks";
+import { useAuthStore, useSongsStore, useTheme, useUpload } from "../store";
 import { useDispatch, useSelector } from "react-redux";
-import { SongWithSongIn, setSong } from "../store/SongSlice";
 import { SongList } from ".";
-import { SongItemSkeleton } from "./skeleton";
+import Skeleton, { SongItemSkeleton } from "./skeleton";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { sleep } from "../utils/appHelpers";
 import CheckedBar from "./CheckedBar";
-import PlaylistProvider from "../store/PlaylistSongContext";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
 
 type Tab = "mine" | "favorite";
 
 const tabs: Array<Tab> = ["mine", "favorite"];
 
-export default function MySongSongsList() {
+type Props = {
+   initialLoading: boolean;
+};
+
+export default function MySongSongsList({ initialLoading }: Props) {
    const dispatch = useDispatch();
 
    //   store
    const { theme } = useTheme();
    const { user } = useAuthStore();
    const { userSongs } = useSongsStore();
-   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { selectedSongs, setSelectedSongs, setIsChecked } = useSongListContext();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { queueSongs, from } = useSelector(selectSongQueue);
+   const { setSelectedSongs, setIsChecked } = useSongListContext();
 
    //    state
    const [songTab, setSongTab] = useState<Tab>("mine");
-   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
+   const [favoriteSongs, setFavoriteSongs] = useState<SongWithSongIn[]>([]);
    const [songLoading, setSongLoading] = useState(false);
 
    // hooks
    // const { setSuccessToast, setErrorToast } = useToast();
-   const { loading: initialLoading, errorMsg, initial } = useInitSong({});
-   const { tempSongs, addedSongIds } = useUpload();
+   // const { loading: initialLoading, errorMsg, initial } = useInitSong({});
+   const { tempSongs } = useUpload();
 
    const songCount = useMemo(() => {
-      if (initialLoading || !initial) return 0;
+      if (initialLoading) return 0;
       return tempSongs.length + userSongs.length;
-   }, [tempSongs, userSongs, initial, initialLoading]);
+   }, [tempSongs, userSongs, initialLoading]);
 
    const favoriteSongsFiltered = useMemo(
       () => (user ? favoriteSongs.filter((s) => user.like_song_ids.includes(s.id)) : []),
       [user?.like_song_ids]
    );
-
-   // const closeModal = () => setIsOpenModal(false);
-
-   const handleSelectAll = () => {
-      if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
-      else resetCheckedList();
-   };
 
    const resetCheckedList = () => {
       setSelectedSongs([]);
@@ -130,83 +119,45 @@ export default function MySongSongsList() {
    };
 
    const handleSetSong = (song: Song, index: number) => {
-      console.log(">>> check song in", songInStore.song_in);
+      console.log("check set song", from, currentSong.by);
 
-      if (songInStore.song_in !== "user") {
-         setActuallySongs(userSongs);
+      const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
+      if (isQueueHaveOtherSongs) {
+         dispatch(setQueue({ songs: userSongs }));
          console.log("setActuallySongs");
       }
 
       // song in playlist and song in user are two difference case
-      if (songInStore.id !== song.id || songInStore.song_in !== "user") {
+      if (currentSong.id !== song.id || currentSong.song_in !== "user") {
          dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
       }
    };
 
    const handleSetFavoriteSong = (song: Song, index: number) => {
-      if (songInStore.id !== song.id) {
+      if (currentSong.id !== song.id) {
          dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
 
          if (
-            songInStore.song_in !== "favorite" ||
-            actuallySongs.length !== favoriteSongsFiltered.length
+            currentSong.song_in !== "favorite" ||
+            queueSongs.length !== favoriteSongsFiltered.length
          ) {
-            setActuallySongs(favoriteSongsFiltered);
+            dispatch(setQueue({ songs: favoriteSongsFiltered }));
          }
       }
    };
 
-   // const handleDeleteSelectedSong = async () => {
-   //    if (!user) return;
-
-   //    let newUserSongs = [...userSongs];
-   //    const deletedIds: string[] = [];
-
-   //    try {
-   //       setIsFetching(true);
-   //       // >>> api
-   //       for (let song of selectedSongs) {
-   //          await deleteSong(song);
-
-   //          newUserSongs = newUserSongs.filter((s) => s.id !== song.id);
-   //          deletedIds.push(song.id);
-   //       }
-   //       const userSongIds: string[] = newUserSongs.map((song) => song.id);
-   //       await setUserSongIdsAndCountDoc({ songIds: userSongIds, user });
-
-   //       // handle song queue
-   //       if (songInStore.song_in === "user") {
-   //          const newSongQueue = actuallySongs.filter((s) => !deletedIds.includes(s.id));
-   //          setActuallySongs(newSongQueue);
-   //          console.log("setActuallySongs");
-   //       }
-
-   //       // handle song in store
-   //       if (deletedIds.includes(songInStore.id)) {
-   //          const emptySong = initSongObject({});
-   //          dispatch(setSong({ ...emptySong, song_in: "", currentIndex: 0 }));
-   //       }
-
-   //       // handle user songs
-   //       setUserSongs(newUserSongs);
-
-   //       // >>> finish
-   //       setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
-   //    } catch (error) {
-   //       console.log(error);
-   //       setErrorToast({ message: "Error when delete songs" });
-   //    } finally {
-   //       resetCheckedList();
-   //       setIsFetching(false);
-   //    }
-   // };
-
-   if (errorMsg) return <p>Some thing went wrong</p>;
-
    return (
       <>
-         <CheckedBar selectAll={handleSelectAll} location="my-songs">
-            <p className="font-semibold opacity-[.6]">{songCount} Songs</p>
+         <CheckedBar location="my-songs">
+            {initialLoading ? (
+               <>
+                  <div className="h-[30px] mb-[10px] flex items-center">
+                     <Skeleton className="h-[20px] w-[90px]" />
+                  </div>
+               </>
+            ) : (
+               <p className="font-semibold opacity-[.6]">{songCount} Songs</p>
+            )}
          </CheckedBar>
 
          {/* tab */}
@@ -236,23 +187,27 @@ export default function MySongSongsList() {
             {!initialLoading && !songLoading && (
                <>
                   {songTab === "mine" && !!songCount && (
-                     <SongList
-                        handleSetSong={handleSetSong}
-                        activeExtend={
-                           songInStore.song_in === "user" ||
-                           songInStore.song_in === "favorite"
-                        }
-                        songs={userSongs}
-                        tempSongs={tempSongs}
-                        addedSongIds={addedSongIds}
-                     />
+                     <>
+                        <SongList
+                           variant="my-songs"
+                           handleSetSong={handleSetSong}
+                           activeExtend={
+                              currentSong.song_in === "user" ||
+                              currentSong.song_in === "favorite"
+                           }
+                           songs={userSongs}
+                           tempSongs={tempSongs}
+                        />
+                        <SongList songs={tempSongs} variant="uploading" />
+                     </>
                   )}
 
                   {songTab === "favorite" && !!favoriteSongsFiltered.length && (
                      <SongList
+                        variant="favorite"
                         activeExtend={
-                           songInStore.song_in === "user" ||
-                           songInStore.song_in === "favorite"
+                           currentSong.song_in === "user" ||
+                           currentSong.song_in === "favorite"
                         }
                         handleSetSong={handleSetFavoriteSong}
                         songs={favoriteSongsFiltered}

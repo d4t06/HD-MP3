@@ -1,13 +1,13 @@
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
-import { setSong, useActuallySongsStore, useSongsStore } from ".";
-import { initialSongs } from "./SongsContext";
+import { useSongsStore } from ".";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { useDispatch } from "react-redux";
-import { initSongObject } from "../utils/appHelpers";
+import { resetCurrentSong } from "./currentSongSlice";
+import { resetSongQueue } from "./songQueueSlice";
 
 // 1 initial state
 type StateType = {
@@ -136,15 +136,15 @@ const useAuthActions = () => {
    const navigate = useNavigate();
    const dispatch = useDispatch();
    const { setUser } = useAuthStore();
-   const { initSongsContext } = useSongsStore();
+   const { resetSongPlaylistStore } = useSongsStore();
    const [signInWithGoogle] = useSignInWithGoogle(auth);
-   const { setActuallySongs } = useActuallySongsStore();
+   // const { setActuallySongs } = useActuallySongsStore();
 
    const pauseSong = () => {
       const audioEle = document.querySelector(".hd-mp3") as HTMLAudioElement;
       audioEle.pause();
 
-      dispatch(setSong({ ...initSongObject({}), song_in: "", currentIndex: 0 }));
+      dispatch(resetCurrentSong());
    };
 
    const logOut = async () => {
@@ -154,8 +154,8 @@ const useAuthActions = () => {
       setUser({ type: "reset" });
 
       // reset song context
-      setActuallySongs([]);
-      initSongsContext(initialSongs);
+      dispatch(resetSongQueue());
+      resetSongPlaylistStore();
 
       pauseSong();
       // reset song redux
@@ -167,9 +167,9 @@ const useAuthActions = () => {
       //  reset song context
       if (userCredential) {
          // reset song redux
-         dispatch(setSong());
+         dispatch(resetCurrentSong());
          // reset song context
-         initSongsContext({ adminSongs: [], adminPlaylists: [] });
+         resetSongPlaylistStore();
          // reset userInfo
          // after set sign cause trigger auth useEffect and will update loading to 'finish'
          setUser({ type: "reset" });

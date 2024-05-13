@@ -13,6 +13,9 @@ type User = {
    latest_seen: Timestamp;
 };
 
+type SongIn = "" | "favorite" | "admin" | "user" | `playlist_${string}`;
+type SongWithSongIn = Song & { song_in: SongIn };
+
 type Song = {
    id: string;
    name: string;
@@ -26,6 +29,7 @@ type Song = {
    lyric_id: string;
    blurhash_encode: string;
    size: number;
+   song_in: SongIn;
 };
 
 type ParserSong = {
@@ -40,8 +44,8 @@ type Playlist = {
    image_url: string;
    blurhash_encode: string;
    song_ids: Array<string>;
-   time: number;
-   count: number;
+   // time: number;
+   // count: number;
    by: "admin" | string;
 };
 

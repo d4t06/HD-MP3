@@ -8,12 +8,12 @@ type Base = {
 };
 
 type SelectAll = Base & {
-   location: "my-playlist" | "my-songs" | "admin-playlist";
+   location: "my-playlist" | "my-songs" | "admin-playlist" | "dashboard-playlist";
    selectAll: () => void;
 };
 
 type NoSelectAll = Base & {
-   location: "home";
+   location: "home" | "dashboard-songs";
 };
 
 type Props = SelectAll | NoSelectAll;
@@ -21,6 +21,7 @@ type Props = SelectAll | NoSelectAll;
 export default function CheckedCta({ children, reset, ...props }: Props) {
    switch (props.location) {
       case "home":
+      case "dashboard-songs":
          return (
             <>
                {children}
@@ -33,6 +34,7 @@ export default function CheckedCta({ children, reset, ...props }: Props) {
 
       case "my-playlist":
       case "my-songs":
+      case "dashboard-playlist":
       case "admin-playlist":
          return (
             <>

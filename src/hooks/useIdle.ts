@@ -1,11 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store";
 import { scrollToActiveSong } from "./useScrollSong";
 import appConfig from "../config/app";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullScreen: boolean) {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   // store
+   const { currentSong } = useSelector(selectCurrentSong);
+
+   // state
    const [idle, setIdle] = useState(false);
    const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
    const timerIdFocus = useRef<NodeJS.Timeout>();
@@ -43,7 +46,7 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
 
    useEffect(() => {
       if (!isOpenFullScreen) return;
-      if (isOnMobile || !songInStore.id) return;
+      if (isOnMobile || !currentSong.id) return;
 
       setTimeout(() => {
          window.addEventListener("mousemove", handleMouseMove);

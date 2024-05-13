@@ -8,13 +8,15 @@ import {
 import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong, useTheme, useActuallySongsStore } from "../store";
+import { useTheme } from "../store";
 import { SongThumbnail, Button, Tabs, LyricsList } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 import logoIcon from "../assets/siteLogo.png";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -23,12 +25,17 @@ interface Props {
    audioEle: HTMLAudioElement;
    setIsPlaying?: () => void;
 }
-function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEle }: Props) {
+function FullScreenPlayer({
+   isOpenFullScreen,
+   setIsOpenFullScreen,
+   idle,
+   audioEle,
+}: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { actuallySongs } = useActuallySongsStore();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { queueSongs } = useSelector(selectSongQueue);;
    // state
    const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
    //  ref
@@ -38,7 +45,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
 
    // use hooks
    const navigate = useNavigate();
-   useBgImage({ bgRef, songInStore });
+   useBgImage({ bgRef, currentSong });
    // dùng hook ở component cha thay vì dùng ở mỗi child
    useScrollSong({
       containerRef,
@@ -52,8 +59,8 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
    const handleClickPrevious = useDebounce(() => handleScroll("previous"), 200);
 
    const handleSetSongWhenClick = (song: Song, index: number) => {
-      if (songInStore.id === song.id) return;
-      dispatch(setSong({ ...song, currentIndex: index, song_in: songInStore.song_in }));
+      if (currentSong.id === song.id) return;
+      dispatch(setSong({ ...song, currentIndex: index, song_in: currentSong.song_in }));
    };
 
    const handleScroll = (direction: string = "next") => {
@@ -71,7 +78,7 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
       setIsOpenFullScreen(false);
 
       setTimeout(() => {
-         navigate(`/mysongs/edit/${songInStore.id}`);
+         navigate(`/mysongs/edit/${currentSong.id}`);
       }, 300);
    };
 
@@ -100,11 +107,11 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
 
    // define jsx
    const renderSongsList = useMemo(() => {
-      if (!songInStore.id) return;
-      if (!actuallySongs.length) return;
+      if (!currentSong.id) return;
+      if (!queueSongs.length) return;
 
-      return actuallySongs.map((song, index) => {
-         const isActive = index === songInStore.currentIndex;
+      return queueSongs.map((song, index) => {
+         const isActive = index === currentSong.currentIndex;
          if (isActive) {
             return (
                <SongThumbnail
@@ -132,12 +139,12 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
             />
          );
       });
-   }, [songInStore, actuallySongs, idle]);
+   }, [currentSong, queueSongs, idle]);
 
    const renderLyricTab = (
       <div className={classes.lyricTabContainer}>
          {/* left */}
-         <SongThumbnail theme={theme} active={true} data={songInStore} />
+         <SongThumbnail theme={theme} active={true} data={currentSong} />
 
          {/* right */}
          <LyricsList
@@ -150,7 +157,11 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
    );
 
    return (
-      <div className={`${classes.mainContainer}  ${isOpenFullScreen ? "translate-y-0" : "translate-y-full"}`}>
+      <div
+         className={`${classes.mainContainer}  ${
+            isOpenFullScreen ? "translate-y-0" : "translate-y-full"
+         }`}
+      >
          {/* bg image */}
          <div ref={bgRef} className={`${classes.absoluteFull} ${classes.bg}`}></div>
          <div className={`${classes.absoluteFull} ${classes.overplay}`}></div>
@@ -165,7 +176,8 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                         <img className={`${classes.logo}`} src={logoIcon} alt="" />
                         {activeTab === "Lyric" && (
                            <p className={`${classes.songNameSinger}`}>
-                              {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
+                              {currentSong.name} -{" "}
+                              <span className="opacity-30">{currentSong.singer}</span>
                            </p>
                         )}
                      </div>
@@ -180,15 +192,25 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                      render={(tab) => tab}
                   />
                   {/* right */}
-                  <div className={`${classes.headerCta} right-0 gap-[10px] ${idle && classes.fadeTransition}`}>
-                     {songInStore.by != "admin" && activeTab === "Lyric" && (
-                        <Button onClick={() => handleEdit()} variant={"circle"} className={`p-[4px] ${classes.button}`}>
+                  <div
+                     className={`${classes.headerCta} right-0 gap-[10px] ${
+                        idle && classes.fadeTransition
+                     }`}
+                  >
+                     {currentSong.by != "admin" && activeTab === "Lyric" && (
+                        <Button
+                           onClick={() => handleEdit()}
+                           variant={"circle"}
+                           className={`p-[4px] ${classes.button}`}
+                        >
                            <DocumentTextIcon className="w-[20px]" />
                         </Button>
                      )}
 
                      <Popover placement="bottom-end">
-                        <PopoverTrigger className={`h-[36px] rounded-full w-[36px] ${classes.button}`}>
+                        <PopoverTrigger
+                           className={`h-[36px] rounded-full w-[36px] ${classes.button}`}
+                        >
                            <Cog6ToothIcon className="w-[20px]" />
                         </PopoverTrigger>
 
@@ -221,26 +243,49 @@ function FullScreenPlayer({ isOpenFullScreen, setIsOpenFullScreen, idle, audioEl
                </div>
                {activeTab === "Songs" && !idle && (
                   <>
-                     <button onClick={() => handleClickPrevious()} className={`${classes.absoluteButton} left-[20px]`}>
+                     <button
+                        onClick={() => handleClickPrevious()}
+                        className={`${classes.absoluteButton} left-[20px]`}
+                     >
                         <ChevronLeftIcon className="w-[25px]" />
                      </button>
 
-                     <button onClick={() => handleClickNext()} className={`${classes.absoluteButton} right-[20px]`}>
+                     <button
+                        onClick={() => handleClickNext()}
+                        className={`${classes.absoluteButton} right-[20px]`}
+                     >
                         <ChevronRightIcon className="w-[25px]" />
                      </button>
                   </>
                )}
 
                {/* lyric tab */}
-               <div className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}>{renderLyricTab}</div>
-               <div className={`absolute inset-0 z-20 ${activeTab === "Karaoke" ? "" : "hidden"}`}>
-                  <h1 className="text-center font-semibold opacity-60 relative top-[50%]">Coming soon...</h1>
+               <div
+                  className={`absolute inset-0 z-20 ${
+                     activeTab === "Lyric" ? "" : "hidden"
+                  }`}
+               >
+                  {renderLyricTab}
+               </div>
+               <div
+                  className={`absolute inset-0 z-20 ${
+                     activeTab === "Karaoke" ? "" : "hidden"
+                  }`}
+               >
+                  <h1 className="text-center font-semibold opacity-60 relative top-[50%]">
+                     Coming soon...
+                  </h1>
                </div>
             </div>
 
             {isOpenFullScreen && activeTab === "Lyric" && !idle && (
-               <p className={`${classes.songNameSinger} ${idle && classes.fadeTransition}`}>
-                  {songInStore.name} - <span className="opacity-30">{songInStore.singer}</span>
+               <p
+                  className={`${classes.songNameSinger} ${
+                     idle && classes.fadeTransition
+                  }`}
+               >
+                  {currentSong.name} -{" "}
+                  <span className="opacity-30">{currentSong.singer}</span>
                </p>
             )}
          </div>

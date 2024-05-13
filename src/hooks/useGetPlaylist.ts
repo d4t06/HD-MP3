@@ -2,21 +2,24 @@ import { useParams } from "react-router-dom";
 import { myGetDoc } from "../utils/firebaseHelpers";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setPlaylist, useToast } from "../store";
+import { useToast } from "../store";
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { usePlaylistContext } from "../store/PlaylistSongContext";
-import { SongWithSongIn } from "../store/SongSlice";
+import {
+   selectCurrentPlaylist,
+   setCurrentPlaylist,
+   setPlaylistSongs,
+} from "@/store/currentPlaylistSlice";
 
 export default function useGetPlaylist() {
+   // store
    const dispatch = useDispatch();
-   const { playlist: playlistInStore } = useSelector(selectAllSongStore);
+   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
-   //    hooks
+   // hooks
    const params = useParams<PlaylistParamsType>();
    const { setErrorToast } = useToast();
-   const { setPlaylistSongs, playlistSongs } = usePlaylistContext();
 
    // state
    const ranEffect = useRef(false);
@@ -55,7 +58,7 @@ export default function useGetPlaylist() {
 
          // case actually song length do not match with data
          // because song have been deleted
-         //   if (songs.length != playlistInStore.song_ids.length) {
+         //   if (songs.length != currentPlaylist.song_ids.length) {
          //      console.log(">>> handle playlist, song modified");
          //      await handlePlaylistWhenSongsModified(songs);
          //   }
@@ -70,20 +73,24 @@ export default function useGetPlaylist() {
          if (!params.id) throw new Error("invalid playlist id");
          let targetPlaylist: Playlist | undefined;
 
-         const isInStore = playlistInStore.id === params.id;
+         const isInStore = currentPlaylist.id === params.id;
 
          setIsFetching(true);
 
          if (!isInStore) targetPlaylist = await getPlaylist();
-         else targetPlaylist = playlistInStore;
+         else targetPlaylist = currentPlaylist;
 
          if (!targetPlaylist) throw new Error("playlist not found");
 
          const playlistSongs = await getSongs(targetPlaylist);
 
-         if (!isInStore) dispatch(setPlaylist(targetPlaylist));
+         if (!isInStore)
+            dispatch(
+               setCurrentPlaylist({ playlist: targetPlaylist, songs: playlistSongs })
+            );
 
-         setPlaylistSongs(playlistSongs);
+         dispatch(setPlaylistSongs({ songs: playlistSongs }));
+         // setPlaylistSongs(playlistSongs);
       } catch (error) {
          console.log({ message: error });
          setErrorToast({});

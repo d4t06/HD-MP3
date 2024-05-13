@@ -7,7 +7,7 @@ import {
 import { memo, useMemo } from "react";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "../../store/PlayStatusSlice";
-import { selectAllSongStore } from "../../store";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
    handlePlayPause: () => void;
@@ -16,12 +16,12 @@ function PlayPauseButton({ handlePlayPause }: Props) {
    const {
       playStatus: { isError, isPlaying, isWaiting },
    } = useSelector(selectAllPlayStatusStore);
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
    const renderIcon = useMemo(() => {
       if (isWaiting) {
          return <ArrowPathIcon className={"w-[36px] max-[549px]:w-[46px] animate-spin"} />;
-      } else if (isError && songInStore.name) {
+      } else if (isError && currentSong.name) {
          return <ExclamationCircleIcon className="w-[30px] max-[549px]:w-[40px]" />;
       }
 
@@ -30,7 +30,7 @@ function PlayPauseButton({ handlePlayPause }: Props) {
       ) : (
          <PlayCircleIcon className={"w-[50px] max-[549px]:w-[60px] max-[350px]:w-[45px]"} />
       );
-   }, [isWaiting, isError, isPlaying, songInStore]);
+   }, [isWaiting, isError, isPlaying, currentSong]);
 
    return (
       <>

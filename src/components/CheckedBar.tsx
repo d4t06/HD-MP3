@@ -1,23 +1,20 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Button, ConfirmModal, Modal } from ".";
-import {
-   selectAllSongStore,
-   useActuallySongsStore,
-   useAuthStore,
-   useSongsStore,
-   useTheme,
-   useToast,
-} from "../store";
+import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
 import { useSongListContext } from "../store/SongListContext";
 import { QueueListIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
 import { useDispatch, useSelector } from "react-redux";
-import { SongWithSongIn, setSong } from "../store/SongSlice";
-import { deleteSong, setUserSongIdsAndCountDoc } from "../utils/firebaseHelpers";
-import { initSongObject } from "../utils/appHelpers";
-import { usePlaylistContext } from "../store/PlaylistSongContext";
+import { deleteSong } from "../utils/firebaseHelpers";
 import usePlaylistActions from "../hooks/usePlaylistActions";
-
+import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
+import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import {
+   addSongToQueue,
+   selectSongQueue,
+   setQueue,
+} from "@/store/songQueueSlice";
+import { selectSongPlaylist, setUserSongs } from "@/store/songPlaylistSlice";
 
 type Home = {
    location: "home";
@@ -25,17 +22,22 @@ type Home = {
 
 type MyPlaylist = {
    location: "my-playlist";
-   selectAll: () => void;
 };
 
 type MySongs = {
    location: "my-songs";
-   selectAll: () => void;
 };
 
 type AdminPlaylist = {
    location: "admin-playlist";
-   selectAll: () => void;
+};
+
+type DashBoardSong = {
+   location: "dashboard-songs";
+};
+
+type DashBoardPlaylist = {
+   location: "dashboard-playlist";
 };
 
 type Modal = "delete-selected-songs" | "remove-selects-songs";
@@ -46,7 +48,13 @@ type OutlineButtonProps = {
    className: string;
 };
 
-type Props = MyPlaylist | AdminPlaylist | MySongs | Home;
+type Props =
+   | MyPlaylist
+   | AdminPlaylist
+   | MySongs
+   | Home
+   | DashBoardSong
+   | DashBoardPlaylist;
 
 const OutlineButton = ({ children, onClick, className }: OutlineButtonProps) => {
    return (
@@ -73,11 +81,10 @@ export default function CheckedBar({
       setSelectedSongs,
       reset: resetCheckedList,
    } = useSongListContext();
-   const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
-   const { playlist: playlistInStore, song: songInStore } =
-      useSelector(selectAllSongStore);
-   const { userSongs, setUserSongs } = useSongsStore();
-   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { queueSongs } = useSelector(selectSongQueue);
+   const { playlistSongs } = useSelector(selectCurrentPlaylist);
+   const { userSongs } = useSongsStore();
 
    // state
    const [isFetching, setIsFetching] = useState(false);
@@ -85,7 +92,8 @@ export default function CheckedBar({
 
    // hooks
    const { setErrorToast, setSuccessToast } = useToast();
-   const { deleteManyFromPlaylist, isFetching: playlistActionLoading } =
+   // const {} = useSongItemActions()
+   const { deleteSongsFromPlaylist, isFetching: playlistActionLoading } =
       usePlaylistActions();
 
    const closeModal = () => {
@@ -103,97 +111,52 @@ export default function CheckedBar({
    };
 
    const addSongsToQueue = () => {
-      let newQueue: Song[];
+      let songsWithSongIn = selectedSongs;
 
-      switch (props.location) {
-         case "my-playlist":
-         case "admin-playlist":
-            const newSelectedSongs = selectedSongs.map(
-               (s) =>
-                  ({ ...s, song_in: `playlist_${playlistInStore.id}` } as SongWithSongIn)
-            );
-            newQueue = [...actuallySongs, ...newSelectedSongs];
-
-            break;
-         case "my-songs":
-            newQueue = [...actuallySongs, ...selectedSongs];
-            setActuallySongs(newQueue);
-            setSuccessToast({ message: "Songs added to queue" });
-            break;
-         case "home":
-            newQueue = [...actuallySongs, ...selectedSongs];
-
-            setSuccessToast({ message: "songs added to queue" });
-      }
-
-      console.log("setActuallySongs");
-      setActuallySongs(newQueue);
+      dispatch(addSongToQueue({ songs: songsWithSongIn }));
+      setSuccessToast({ message: "songs added to queue" });
       resetCheckedList();
    };
 
    const handleDeleteSelectedSong = async () => {
       if (!user) return;
 
-      let newUserSongs = [...userSongs];
-      const deletedIds: string[] = [];
-
       try {
          setIsFetching(true);
+         const selectedSongIds = selectedSongs.map((s) => s.id);
          // >>> api
-         for (let song of selectedSongs) {
-            await deleteSong(song);
+         for (let song of selectedSongs) await deleteSong(song);
 
-            newUserSongs = newUserSongs.filter((s) => s.id !== song.id);
-            deletedIds.push(song.id);
-         }
-         const userSongIds: string[] = newUserSongs.map((song) => song.id);
-         await setUserSongIdsAndCountDoc({ songIds: userSongIds, user });
+         const newSongs = userSongs.filter((s) => !selectedSongIds.includes(s.id));
 
          // handle song queue
-         if (songInStore.song_in === "user") {
-            const newSongQueue = actuallySongs.filter((s) => !deletedIds.includes(s.id));
-            setActuallySongs(newSongQueue);
-            console.log("setActuallySongs");
+         if (currentSong.song_in === "user") {
+            const newQueue = queueSongs.filter((s) => !selectedSongIds.includes(s.id));
+            if (newQueue.length !== queueSongs.length)
+               dispatch(setQueue({ songs: newQueue }));
          }
+         if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
 
-         // handle song in store
-         if (deletedIds.includes(songInStore.id)) {
-            const emptySong = initSongObject({});
-            dispatch(setSong({ ...emptySong, song_in: "", currentIndex: 0 }));
-         }
-
-         // handle user songs
-         setUserSongs(newUserSongs);
-
-         // >>> finish
+         dispatch(setUserSongs({ songs: newSongs }));
          setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
       } catch (error) {
-         console.log(error);
-         setErrorToast({ message: "Error when delete songs" });
+         console.log({ message: error });
+         setErrorToast({});
       } finally {
          resetCheckedList();
          setIsFetching(false);
+         closeModal();
       }
    };
 
    const handleDeleteManyFromPlaylist = async () => {
       try {
-         const newPlaylistSongs = await deleteManyFromPlaylist(
-            selectedSongs,
-            playlistSongs
-         );
-         if (newPlaylistSongs) {
-            setPlaylistSongs(newPlaylistSongs);
-
-            if (songInStore.song_in === `playlist_${playlistInStore.id}`) {
-               setActuallySongs(newPlaylistSongs);
-               console.log("set actually songs");
-            }
-         }
+         await deleteSongsFromPlaylist(selectedSongs);
       } catch (error) {
          console.log(error);
          setErrorToast({ message: "Error when delete song" });
       } finally {
+         closeModal();
          setIsChecked(false);
          setSelectedSongs([]);
       }
@@ -210,7 +173,7 @@ export default function CheckedBar({
          case "delete-selected-songs":
             return (
                <ConfirmModal
-                  loading={playlistActionLoading}
+                  loading={isFetching}
                   label={`Delete ${selectedSongs.length} songs ?`}
                   theme={theme}
                   callback={handleDeleteSelectedSong}
@@ -220,7 +183,7 @@ export default function CheckedBar({
          case "remove-selects-songs":
             return (
                <ConfirmModal
-                  loading={isFetching}
+                  loading={playlistActionLoading}
                   label={`Remove ${selectedSongs.length} songs ?`}
                   theme={theme}
                   callback={handleDeleteManyFromPlaylist}
@@ -228,7 +191,7 @@ export default function CheckedBar({
                />
             );
       }
-   }, [isOpenModal, playlistActionLoading]);
+   }, [isOpenModal, playlistActionLoading, isFetching]);
 
    const content = useMemo(() => {
       switch (props.location) {
@@ -254,6 +217,26 @@ export default function CheckedBar({
                </>
             );
 
+         case "dashboard-songs":
+            return (
+               <>
+                  {!isChecked && children}
+                  {isChecked && (
+                     <CheckedCta location={props.location} reset={resetCheckedList}>
+                        <p className="font-semibold opacity-[.6]">
+                           {selectedSongs.length}
+                        </p>
+
+                        <OutlineButton
+                           onClick={() => console.log("confirm modal")}
+                           className={classes.outlineButton}
+                        >
+                           Delete
+                        </OutlineButton>
+                     </CheckedCta>
+                  )}
+               </>
+            );
          case "my-songs":
             return (
                <>
@@ -276,7 +259,7 @@ export default function CheckedBar({
                         </OutlineButton>
 
                         <OutlineButton
-                           onClick={() => console.log("confirm modal")}
+                           onClick={() => setIsOpenModal("delete-selected-songs")}
                            className={classes.outlineButton}
                         >
                            Delete
@@ -286,6 +269,7 @@ export default function CheckedBar({
                </>
             );
 
+         case "dashboard-playlist":
          case "my-playlist":
             return (
                <>
@@ -300,15 +284,17 @@ export default function CheckedBar({
                         <p className="font-semibold opacity-[.6]">
                            {selectedSongs.length}
                         </p>
-                        <OutlineButton
-                           onClick={addSongsToQueue}
-                           className={classes.outlineButton}
-                        >
-                           Add to songs queue
-                        </OutlineButton>
+                        {props.location !== "dashboard-playlist" && (
+                           <OutlineButton
+                              onClick={addSongsToQueue}
+                              className={classes.outlineButton}
+                           >
+                              Add to songs queue
+                           </OutlineButton>
+                        )}
 
                         <OutlineButton
-                           onClick={handleDeleteManyFromPlaylist}
+                           onClick={() => setIsOpenModal("remove-selects-songs")}
                            className={classes.outlineButton}
                         >
                            Remove

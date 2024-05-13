@@ -5,7 +5,6 @@ type Props = {
    label: string;
    autoScroll?: boolean;
    classNames: string;
-   songInStore?: Song;
 };
 
 export default function ScrollText({ label, classNames, autoScroll }: Props) {

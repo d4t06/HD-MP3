@@ -1,29 +1,25 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongsStore,
-   useAuthStore,
-   useTheme,
-} from "../store";
+   Dispatch,
+   SetStateAction,
+   useCallback,
+   useEffect,
+   useMemo,
+   useState,
+} from "react";
+import { useAuthStore, useTheme } from "../store";
 import { Button, Modal, SongList, Tabs, TimerModal } from ".";
 import { ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { SongWithSongIn } from "../store/SongSlice";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Skeleton from "./skeleton";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
-import {
-   getLocalStorage,
-   initSongObject,
-   setLocalStorage,
-   sleep,
-} from "../utils/appHelpers";
+import { getLocalStorage, setLocalStorage, sleep } from "../utils/appHelpers";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { useLocalStorage } from "../hooks";
-import PlaylistProvider from "../store/PlaylistSongContext";
+import { resetCurrentSong, selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { addSongToQueue, resetSongQueue, selectSongQueue } from "@/store/songQueueSlice";
 
 type Props = {
    isOpenSongQueue: boolean;
@@ -33,14 +29,16 @@ type Props = {
 type Modal = "timer";
 
 function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
+   // store
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { user } = useAuthStore();
-   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
+   const { queueSongs } = useSelector(selectSongQueue);
+
    const {
       playStatus: { isTimer },
    } = useSelector(selectAllPlayStatusStore);
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
@@ -53,25 +51,20 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const closeModal = () => setIsOpenModal("");
 
-   const handleSetSong = (song: Song, index: number) => {
-      // when user play playlist then play user songs
-
-      if (index !== songInStore.currentIndex) {
+   const handleSetSong = useCallback((song: Song, index: number) => {
+      if (index !== currentSong.currentIndex) {
          dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
       }
-   };
+   }, []);
 
    const handleSetHistorySong = (song: Song, index: number) => {
-      if (index !== songInStore.currentIndex) {
-         const newQueue = [...actuallySongs];
-         newQueue.push(song);
-         setActuallySongs(newQueue);
-         console.log("setActuallySongs");
+      if (index !== currentSong.currentIndex) {
+         dispatch(addSongToQueue({ songs: [song] }));
 
          dispatch(
             setSong({
                ...(song as SongWithSongIn),
-               currentIndex: newQueue.length - 1,
+               currentIndex: queueSongs.length - 1 + 1,
             })
          );
 
@@ -81,20 +74,19 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const handleTimerBtn = () => {
       if (isTimer) return dispatch(setPlayStatus({ isTimer: 0 }));
-
       setIsOpenModal("timer");
    };
 
-   const clearSongQueue = () => {
+   const clearSongQueue = useCallback(() => {
       setIsOpenSongQueue(false);
 
-      setActuallySongs([]);
-      console.log("setActuallySongs");
+      // setActuallySongs([]);
+      dispatch(resetSongQueue());
+      // console.log("setActuallySongs");
 
-      dispatch(setSong({ ...initSongObject({}), currentIndex: 0, song_in: "" }));
-
+      dispatch(resetCurrentSong());
       setLocalStorage("duration", 0);
-   };
+   }, []);
 
    const clearHistory = async () => {
       try {
@@ -196,12 +188,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const classes = {
       textColor: `${theme.type === "dark" ? "text-white" : "text-[#333]"} `,
-      mainContainer: `fixed w-[260px] bottom-[0] right-[0] top-[0] z-20 px-[15px] ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
+      mainContainer: `fixed w-[300px] bottom-[0] right-[0] top-[0] z-20 px-[15px] ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
    };
-
-   // console.log("check loading", loading);
-
-   if (!user) return <></>;
 
    return (
       <div
@@ -209,13 +197,13 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
             isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
          }     `}
       >
-         <div className="flex items-center my-[10px] gap-[8px]">
+         <div className="flex items-center justify-between my-[10px]">
             <Tabs
                className={`text-[13px] ${
-                  !user.email ? "opacity-[.6] pointer-events-none" : ""
+                  !user?.email ? "opacity-[.6] pointer-events-none" : ""
                }`}
                activeTab={activeTab}
-               setActiveTab={user.email ? setActiveTab : () => {}}
+               setActiveTab={user?.email ? setActiveTab : () => {}}
                tabs={["Queue", "Recent"]}
                render={(tab) => tab}
             />
@@ -234,14 +222,23 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
          <div className="h-[calc(100vh-146px)] pb-[30px] overflow-y-auto overflow-x-hidden no-scrollbar">
             {activeTab === "Queue" && (
                <>
-                  <SongList
-                     location="queue"
-                     songs={actuallySongs}
+                  {/* <SongList
+                     variant="queue"
+                     songs={queueSongs}
                      handleSetSong={handleSetSong}
-                  />
-
+                  /> */}
+                  {useMemo(
+                     () => (
+                        <SongList
+                           variant="queue"
+                           songs={queueSongs}
+                           handleSetSong={handleSetSong}
+                        />
+                     ),
+                     [queueSongs]
+                  )}
                   <div className="text-center">
-                     {!!actuallySongs.length && (
+                     {!!queueSongs.length && (
                         <Button
                            onClick={clearSongQueue}
                            size={"small"}
@@ -260,11 +257,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                   ) : (
                      <>
                         <SongList
-                           inQueue
-                           inHistory
+                           variant="queue"
                            songs={historySongs}
                            handleSetSong={handleSetHistorySong}
-                           activeExtend={true}
                         />
 
                         {!!historySongs.length && (

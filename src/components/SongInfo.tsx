@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store";
 import { ScrollText } from ".";
 import { ElementRef, useRef } from "react";
 import logo from "../assets/siteLogo.png";
 import useVinyl from "../hooks/useVinyl";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
    admin?: boolean;
@@ -13,7 +13,7 @@ type Props = {
 export default function SongInfo({ isOpenFullScreen, admin }: Props) {
    const vinylRef = useRef<ElementRef<"img">>(null);
 
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
    // hook
    useVinyl({ vinylRef });
@@ -29,7 +29,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
             <div className={admin ? `w-[36px]` : "w-[46px]"}>
                <img
                   ref={vinylRef}
-                  src={songInStore.image_url || logo}
+                  src={currentSong.image_url || logo}
                   className={`rounded-full w-full animate-[spin_8s_linear_infinite]`}
                />
             </div>
@@ -37,19 +37,17 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
             <div className="ml-[10px] flex-grow">
                <div className="h-[24px] w-full mask-image-horizontal">
                   <ScrollText
-                     songInStore={songInStore}
                      autoScroll
                      classNames="text-[18px] font-[500]"
-                     label={songInStore?.name || "name"}
+                     label={currentSong.name || "name"}
                   />
                </div>
 
                <div className="h-[20px] w-full mask-image-horizontal">
                   <ScrollText
-                     songInStore={songInStore}
                      autoScroll
                      classNames="text-[14px] opacity-60"
-                     label={songInStore?.singer || "singer"}
+                     label={currentSong.singer || "singer"}
                   />
                </div>
             </div>

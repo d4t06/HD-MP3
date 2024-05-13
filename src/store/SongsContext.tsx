@@ -1,9 +1,8 @@
-import { createContext, useCallback, useContext, useReducer } from "react";
-// only change user song, user playlist
+import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 
 type StateType = {
-   userSongs: Song[];
-   adminSongs: Song[];
+   userSongs: SongWithSongIn[];
+   adminSongs: SongWithSongIn[];
 
    userPlaylists: Playlist[];
    adminPlaylists: Playlist[];
@@ -13,7 +12,7 @@ type StateType = {
    initial: boolean;
 };
 
-const initialSongs: StateType = {
+const initialState: StateType = {
    userSongs: [],
    userPlaylists: [],
 
@@ -26,240 +25,273 @@ const initialSongs: StateType = {
 const enum REDUCER_ACTION_TYPE {
    SETUSERSONGS,
    SETADMINSONGS,
+   ADDUSERSONG,
+   UPDATEUSERSONG,
+   ADDUSERPLAYLIST,
+   UPDATEUSERPLAYLIST,
    SETUSERPLAYLISTS,
    SETADMINPLAYLISTS,
    INIT,
+   RESET,
 }
 
-type ReducerAction = {
-   type: REDUCER_ACTION_TYPE;
+type Init = {
+   type: REDUCER_ACTION_TYPE.INIT;
+   payload: Partial<StateType>;
+};
+
+type AddUserSong = {
+   type: REDUCER_ACTION_TYPE.ADDUSERSONG;
    payload: {
-      userSongs?: Song[];
-      userPlaylists?: Playlist[];
-
-      adminSongs?: Song[];
-      adminPlaylists?: Playlist[];
-
-      user?: User;
+      songs: Song[];
    };
 };
 
+type SetUserSong = {
+   type: REDUCER_ACTION_TYPE.SETUSERSONGS;
+   payload: {
+      songs: Song[];
+   };
+};
+
+type UpdateUserSong = {
+   type: REDUCER_ACTION_TYPE.UPDATEUSERSONG;
+   payload: {
+      song: Song;
+   };
+};
+
+type AddUserPlaylist = {
+   type: REDUCER_ACTION_TYPE.ADDUSERPLAYLIST;
+   payload: {
+      playlist: Playlist;
+   };
+};
+
+type SetUserPlaylist = {
+   type: REDUCER_ACTION_TYPE.SETUSERPLAYLISTS;
+   payload: {
+      playlists: Playlist[];
+   };
+};
+
+type UpdateUserPlaylist = {
+   type: REDUCER_ACTION_TYPE.UPDATEUSERPLAYLIST;
+   payload: {
+      playlist: Playlist;
+   };
+};
+
+type Reset = {
+   type: REDUCER_ACTION_TYPE.RESET;
+};
+
+type ReducerAction =
+   | Init
+   | SetUserSong
+   | AddUserSong
+   | UpdateUserSong
+   | AddUserPlaylist
+   | UpdateUserPlaylist
+   | SetUserPlaylist
+   | Reset;
+
 // reducer
 const reducer = (state: StateType, action: ReducerAction): StateType => {
-   const payload = action.payload;
-
    switch (action.type) {
-      case REDUCER_ACTION_TYPE.INIT:
+      case REDUCER_ACTION_TYPE.INIT: {
+         const payload = action.payload;
+         return { ...state, ...payload, initial: true };
+      }
+      case REDUCER_ACTION_TYPE.ADDUSERSONG: {
+         const { songs } = action.payload;
+         const newSongs = [...state.userSongs, ...songs];
+
+         console.log("add user songs check", songs);
+
          return {
-            userSongs: payload.userSongs || [],
-            userPlaylists: payload.userPlaylists || [],
-
-            adminSongs: payload.adminSongs || state.adminSongs,
-            adminPlaylists: payload.adminPlaylists || state.adminPlaylists,
-
-            initial:
-               payload.adminSongs?.length || payload.userSongs?.length ? true : false,
+            ...state,
+            userSongs: newSongs,
          };
+      }
+      case REDUCER_ACTION_TYPE.UPDATEUSERSONG: {
+         const { song } = action.payload;
 
-      case REDUCER_ACTION_TYPE.SETUSERSONGS:
+         const newSongs = [...state.userSongs];
+         const index = newSongs.findIndex((s) => s.id === song.id);
+
+         if (index === -1) return state;
+         newSongs[index] = song;
+
+         return { ...state, userSongs: newSongs };
+      }
+      case REDUCER_ACTION_TYPE.ADDUSERPLAYLIST: {
+         const { playlist } = action.payload;
          return {
-            initial: state.initial,
-            adminSongs: state.adminSongs,
-            userPlaylists: state.userPlaylists,
-            adminPlaylists: state.adminPlaylists,
-
-            userSongs: payload.userSongs || [],
+            ...state,
+            userPlaylists: [...state.userPlaylists, playlist],
          };
+      }
+      case REDUCER_ACTION_TYPE.UPDATEUSERPLAYLIST: {
+         const { playlist } = action.payload;
 
-      case REDUCER_ACTION_TYPE.SETUSERPLAYLISTS:
+         const newPlaylists = [...state.userPlaylists];
+         const index = newPlaylists.findIndex((p) => p.id === playlist.id);
+
+         if (index === -1) return state;
+         newPlaylists[index] = playlist;
+
+         return { ...state, userPlaylists: newPlaylists };
+      }
+      case REDUCER_ACTION_TYPE.RESET:
+         return initialState;
+
+      case REDUCER_ACTION_TYPE.SETUSERSONGS: {
+         const { songs } = action.payload;
          return {
-            initial: state.initial,
-            userSongs: state.userSongs,
-            adminSongs: state.adminSongs,
-            adminPlaylists: state.adminPlaylists,
-
-            userPlaylists: payload.userPlaylists || [],
+            ...state,
+            userSongs: songs,
          };
+      }
 
-      case REDUCER_ACTION_TYPE.SETADMINSONGS:
+      case REDUCER_ACTION_TYPE.SETUSERPLAYLISTS: {
+         const { playlists } = action.payload;
          return {
-            userSongs: [],
-            userPlaylists: [],
-            initial: state.initial,
-            adminPlaylists: state.adminPlaylists,
-
-            adminSongs: payload.adminSongs || [],
+            ...state,
+            userPlaylists: playlists,
          };
+      }
 
-      case REDUCER_ACTION_TYPE.SETADMINPLAYLISTS:
-         return {
-            userSongs: [],
-            userPlaylists: [],
-            initial: state.initial,
-            adminSongs: state.adminSongs,
+      // case REDUCER_ACTION_TYPE.SETADMINSONGS:
+      //    return {
+      //       ...state,
 
-            adminPlaylists: payload.adminPlaylists || [],
-         };
+      //       adminSongs: payload.adminSongs || [],
+      //    };
+
+      // case REDUCER_ACTION_TYPE.SETADMINPLAYLISTS:
+      //    return {
+      //       ...state,
+
+      //       adminPlaylists: payload.adminPlaylists || [],
+      //    };
       default:
-         return {
-            initial: state.initial,
-            userSongs: state.userSongs,
-            adminSongs: state.adminSongs,
-
-            userPlaylists: state.userPlaylists,
-            adminPlaylists: state.adminPlaylists,
-         };
+         return state;
    }
 };
 
 // actions
-const useSongsContext = (songsStore: StateType) => {
-   const [state, dispatch] = useReducer(reducer, songsStore);
+const useSongsActions = () => {
+   const [state, dispatch] = useReducer(reducer, initialState);
 
-   const setUserSongs = useCallback((userSongs: Song[]) => {
-      console.log("set user songs");
+   const setUserSongs = useCallback((songs: Song[]) => {
       return dispatch({
          type: REDUCER_ACTION_TYPE.SETUSERSONGS,
-         payload: { userSongs },
+         payload: { songs },
       });
    }, []);
 
-   const setAdminSongs = useCallback((adminSongs: Song[]) => {
-      console.log("set user songs");
+   const addUserSongs = useCallback((songs: Song[]) => {
       return dispatch({
-         type: REDUCER_ACTION_TYPE.SETADMINSONGS,
-         payload: { adminSongs },
+         type: REDUCER_ACTION_TYPE.ADDUSERSONG,
+         payload: { songs },
       });
    }, []);
 
-   const initSongsContext = useCallback(
-      ({
-         userSongs,
-         adminSongs,
-         userPlaylists,
-         adminPlaylists,
-      }: // user.
-      {
-         // user. User | undefined;
-         userSongs?: Song[];
-         adminSongs?: Song[];
-         userPlaylists?: Playlist[];
-         adminPlaylists?: Playlist[];
-      }) => {
-         console.log("init song context");
+   const updateUserSong = useCallback((song: Song) => {
+      return dispatch({
+         type: REDUCER_ACTION_TYPE.UPDATEUSERSONG,
+         payload: { song },
+      });
+   }, []);
 
-         return dispatch({
-            type: REDUCER_ACTION_TYPE.INIT,
-            payload: { userSongs, adminSongs, userPlaylists, adminPlaylists },
-         });
-      },
-      []
-   );
+   const addUserPlaylist = useCallback((playlist: Playlist) => {
+      return dispatch({
+         type: REDUCER_ACTION_TYPE.ADDUSERPLAYLIST,
+         payload: { playlist },
+      });
+   }, []);
 
-   const setUserPlaylists = useCallback((userPlaylists: Playlist[]) => {
-      console.log("set user playlist");
+   const setUserPlaylists = useCallback((playlists: Playlist[]) => {
       return dispatch({
          type: REDUCER_ACTION_TYPE.SETUSERPLAYLISTS,
-         payload: { userPlaylists },
+         payload: { playlists },
       });
    }, []);
 
-   const setAdminPlaylists = useCallback((adminPlaylists: Playlist[]) => {
-      console.log("set admin playlist");
+   const updateUserPlaylist = useCallback((playlist: Playlist) => {
       return dispatch({
-         type: REDUCER_ACTION_TYPE.SETADMINPLAYLISTS,
-         payload: { adminPlaylists },
+         type: REDUCER_ACTION_TYPE.UPDATEUSERPLAYLIST,
+         payload: { playlist },
+      });
+   }, []);
+
+   const resetSongPlaylistStore = useCallback(() => {
+      return dispatch({
+         type: REDUCER_ACTION_TYPE.RESET,
+      });
+   }, []);
+
+   const initSongsContext = useCallback((payload: Partial<StateType>) => {
+      return dispatch({
+         type: REDUCER_ACTION_TYPE.INIT,
+         payload,
       });
    }, []);
 
    return {
       state,
+      resetSongPlaylistStore,
       setUserSongs,
+      addUserSongs,
+      addUserPlaylist,
+      updateUserSong,
+      updateUserPlaylist,
       initSongsContext,
       setUserPlaylists,
-      setAdminSongs,
-      setAdminPlaylists,
    };
 };
 
-type UseSongsContextType = ReturnType<typeof useSongsContext>;
+type UseSongsContextType = ReturnType<typeof useSongsActions>;
 
-const initialContextState: UseSongsContextType = {
-   state: initialSongs,
-   setUserSongs: () => {},
-   setAdminSongs: () => {},
+const initialContext: UseSongsContextType = {
+   state: initialState,
    initSongsContext: () => {},
+   addUserPlaylist: () => {},
+   addUserSongs: () => {},
+   resetSongPlaylistStore: () => {},
+   setUserSongs: () => {},
+   updateUserPlaylist: () => {},
+   updateUserSong: () => {},
    setUserPlaylists: () => {},
-   setAdminPlaylists: () => {},
 };
 
-const SongsContext = createContext<UseSongsContextType>(initialContextState);
+const SongsContext = createContext<UseSongsContextType>(initialContext);
 
 const SongsProvider = ({
    children,
-   songsStore,
-}: {
-   children: any;
-   songsStore: StateType;
+}: // songsStore,
+{
+   children: ReactNode;
+   // songsStore: StateType;
 }) => {
    return (
-      <SongsContext.Provider value={useSongsContext(songsStore)}>
-         {children}
-      </SongsContext.Provider>
+      <SongsContext.Provider value={useSongsActions()}>{children}</SongsContext.Provider>
    );
 };
 
-export type UseSongsHookType = {
-   // user. StateType["user.];
-   initial: StateType["initial"];
-   userSongs: StateType["userSongs"];
-   adminSongs: StateType["adminSongs"];
-   userPlaylists: StateType["userPlaylists"];
-   adminPlaylists: StateType["adminPlaylists"];
-   setUserSongs: (userSongs: Song[]) => void;
-   setAdminSongs: (adminSongs: Song[]) => void;
-   setUserPlaylists: (userPlaylists: Playlist[], adminPlaylists: Playlist[]) => void;
-   setAdminPlaylists: (adminPlaylists: Playlist[]) => void;
-   initSongsContext: ({
-      userSongs,
-      adminSongs,
-      userPlaylists,
-      adminPlaylists,
-   }: // user.
-   {
-      // user. User | undefined;
-      userSongs?: Song[];
-      adminSongs?: Song[];
-      userPlaylists?: Playlist[];
-      adminPlaylists?: Playlist[];
-   }) => void;
-};
-
-const useSongsStore = (): UseSongsHookType => {
+const useSongsStore = () => {
    const {
-      state: { adminPlaylists, adminSongs, initial, userPlaylists, userSongs },
-      initSongsContext,
-      setUserSongs,
-      setUserPlaylists,
-      setAdminPlaylists,
-      setAdminSongs,
+      state: { ...restState },
+      ...restAction
    } = useContext(SongsContext);
 
    return {
-      // user.
-      adminPlaylists,
-      adminSongs,
-      initial,
-      userPlaylists,
-      userSongs,
-      initSongsContext,
-      setUserSongs,
-      setAdminSongs,
-      setUserPlaylists,
-      setAdminPlaylists,
+      ...restState,
+      ...restAction,
    };
 };
 
 export default SongsProvider;
 
-export { SongsContext, initialSongs, useSongsStore };
+export { SongsContext, useSongsStore };

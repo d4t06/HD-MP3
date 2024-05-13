@@ -1,36 +1,22 @@
-import { useMemo, useState, SetStateAction, Dispatch } from "react";
+import { useMemo, useState } from "react";
 import { useSongsStore } from "../../store/SongsContext";
 import Button from "../ui/Button";
 import MobileSongItem from "../MobileSongItem";
 import usePlaylistActions from "../../hooks/usePlaylistActions";
 import ModalHeader from "./ModalHeader";
-import { useSelector } from "react-redux";
-import { selectAllSongStore, useActuallySongsStore, useTheme } from "../../store";
+import { useTheme } from "../../store";
 
 type Props = {
-   admin?: boolean;
-   playlist: Playlist;
-   playlistSongs: Song[];
-   setPlaylistSongs: Dispatch<SetStateAction<Song[]>>;
    close: () => void;
+   playlistSongs: Song[];
 };
 
-export default function SongListModal({
-   admin,
-   playlist,
-   playlistSongs,
-   setPlaylistSongs,
-   close,
-}: Props) {
-
-   const {theme} = useTheme()
-
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
+export default function SongListModal({ close, playlistSongs }: Props) {
+   const { theme } = useTheme();
    const [selectedSongList, setSelectedSongList] = useState<Song[]>([]);
 
    // hook
-   const { userSongs, adminSongs } = useSongsStore();
+   const { userSongs } = useSongsStore();
    const { addSongsToPlaylist, isFetching } = usePlaylistActions();
 
    const classes = {
@@ -40,29 +26,16 @@ export default function SongListModal({
    };
 
    const isAbleToSubmit = useMemo(() => !!selectedSongList.length, [selectedSongList]);
-   const targetSongs = useMemo(
-      () => (admin ? adminSongs : userSongs),
-      [userSongs, adminSongs]
-   );
 
    const handleAddSongsToPlaylist = async () => {
       try {
-         if (!playlist || !selectedSongList.length || !setPlaylistSongs) {
+         if (!selectedSongList.length) {
             return;
          }
 
-         await addSongsToPlaylist(selectedSongList, playlist);
-
-         const newPlaylistSongs = [...playlistSongs, ...selectedSongList];
-         setPlaylistSongs(newPlaylistSongs);
-
-         if (songInStore.song_in === `playlist_${playlist.id}`) {
-            console.log("set actually songs");
-            const newSongs = [...actuallySongs, ...selectedSongList];
-            setActuallySongs(newSongs);
-         }
+         await addSongsToPlaylist(selectedSongList);
       } catch (error) {
-         console.log(error);
+         console.log({ message: error });
       } finally {
          close();
       }
@@ -85,7 +58,7 @@ export default function SongListModal({
                Add
                {`${selectedSongList.length ? ` (${selectedSongList.length})` : ""}`}
             </Button>
-            {targetSongs.map((song, index) => {
+            {userSongs.map((song, index) => {
                const isDifferenceSong =
                   playlistSongs.findIndex((s) => s.id === song.id) === -1;
 

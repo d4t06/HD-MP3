@@ -1,12 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import SongReducer from "./SongSlice";
-import PlayStatusSlice from "./PlayStatusSlice";
+import currentSongReducer from "./currentSongSlice";
+import playStatusReducer from "./PlayStatusSlice";
+import currentPlaylistReducer from "./currentPlaylistSlice";
+import songQueueReducer from "./songQueueSlice";
 
 const store = configureStore({
    reducer: {
-      song: SongReducer,
-      playStatus: PlayStatusSlice
-   }
-})
+      currentSong: currentSongReducer,
+      currentPlaylist: currentPlaylistReducer,
+      playStatus: playStatusReducer,
+      songQueue: songQueueReducer,
+   },
+});
 
-export default store
+export default store;

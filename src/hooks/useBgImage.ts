@@ -3,17 +3,17 @@ import { RefObject, useEffect } from "react";
 
 export default function useBgImage({
    bgRef,
-   songInStore,
+   currentSong,
 }: {
    bgRef: RefObject<HTMLDivElement>;
-   songInStore: Song;
+   currentSong: Song;
 }) {
    useEffect(() => {
-      if (songInStore.image_url) {
+      if (currentSong.image_url) {
          const node = bgRef.current as HTMLElement;
          if (node) {
-            node.style.backgroundImage = `url(${songInStore.image_url})`;
+            node.style.backgroundImage = `url(${currentSong.image_url})`;
          }
       }
-   }, [songInStore]);
+   }, [currentSong]);
 }

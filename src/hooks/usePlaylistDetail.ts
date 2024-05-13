@@ -1,43 +1,37 @@
-import { PlaylistParamsType } from "../routes";
+// import { PlaylistParamsType } from "../routes";
 
-import { useEffect, useState, MutableRefObject, useCallback, useRef } from "react";
+import { useState } from "react";
 
-import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { useDispatch, useSelector } from "react-redux";
 
-import { useInitSong } from "../hooks";
+// import { useInitSong } from "../hooks";
 
-import { db } from "../config/firebase";
-import { Status, updatePlaylist } from "../store/SongSlice";
-import { generatePlaylistAfterChangeSongs, sleep } from "../utils/appHelpers";
-import { myGetDoc, mySetDoc } from "../utils/firebaseHelpers";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import {
-   useAuthStore,
-   useSongsStore,
-   selectAllSongStore,
-   setPlaylist,
-   useActuallySongsStore,
-   useToast,
-} from "../store";
-import appConfig from "../config/app";
+// import { db } from "../config/firebase";
+// import { sleep } from "../utils/appHelpers";
+// import { myGetDoc, mySetDoc } from "../utils/firebaseHelpers";
+// import { collection, getDocs, query, where } from "firebase/firestore";
+// import { useAuthStore, useSongsStore, useToast } from "../store";
+// import appConfig from "../config/app";
 import useGetPlaylist from "./useGetPlaylist";
+// import { selectCurrentSong } from "@/store/currentSongSlice";
+// import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 
-type Props = {
-   // playlistInStore: Playlist;
-   // songInStore: Song & Status;
-   // firstTimeRender: MutableRefObject<boolean>;
-   // admin?: boolean;
-};
+// type Props = {
+// currentPlaylist: Playlist;
+// songInStore: Song & Status;
+// firstTimeRender: MutableRefObject<boolean>;
+// admin?: boolean;
+// };
 
 export default function usePlaylistDetail() {
    // use store
-   const dispatch = useDispatch();
+   // const dispatch = useDispatch();
    // const { loading: userLoq35]ading} = useAuthStore();
    // const { setErrorToast } = useToast();
-   const { setActuallySongs } = useActuallySongsStore();
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+   // const { currentSong } = useSelector(selectCurrentSong);
+   // const { currentPlaylist } = useSelector(selectCurrentPlaylist);
+
    // const { errorMsg, initial } = useInitSong({ admin });
    // const { adminSongs, userSongs } = useSongsStore();
 
@@ -80,22 +74,21 @@ export default function usePlaylistDetail() {
    //    }
    // };
 
-   const handlePlaylistWhenSongsModified = async (songs: Song[]) => {
-      console.log(">>> handle playlist, song modified");
-      const newPlaylist = generatePlaylistAfterChangeSongs({
-         songs,
-         existingPlaylist: playlistInStore,
-      });
+   // const handlePlaylistWhenSongsModified = async (songs: Song[]) => {
+   //    console.log(">>> handle playlist, song modified");
+   //    const newPlaylist = generatePlaylistAfterChangeSongs({
+   //       songs,
+   //       existingPlaylist: currentPlaylist,
+   //    });
 
-      await mySetDoc({
-         collection: "playlist",
-         data: newPlaylist,
-         id: playlistInStore.id,
-         msg: ">>> api: update playlist doc",
-      });
+   //    await mySetDoc({
+   //       collection: "playlist",
+   //       data: newPlaylist,
+   //       id: currentPlaylist.id,
+   //       msg: ">>> api: update playlist doc",
+   //    });
 
-      dispatch(setPlaylist(newPlaylist));
-   };
+   // };
 
    // const getPlaylistSongs = useCallback(async () => {
    //    console.log(">>> api: get playlist songs");
@@ -103,13 +96,13 @@ export default function usePlaylistDetail() {
    //    setLoading(true);
    //    const songsRef = collection(db, "songs");
 
-   //    const queryGetSongs = query(songsRef, where("id", "in", playlistInStore.song_ids));
+   //    const queryGetSongs = query(songsRef, where("id", "in", currentPlaylist.song_ids));
    //    const songsSnap = await getDocs(queryGetSongs);
 
    //    if (songsSnap.docs) {
    //       const songs = songsSnap.docs.map(
    //          (doc) =>
-   //             ({ ...doc.data(), song_in: `playlist_${playlistInStore.id}` } as Song & {
+   //             ({ ...doc.data(), song_in: `playlist_${currentPlaylist.id}` } as Song & {
    //                song_in: string;
    //             })
    //       );
@@ -117,14 +110,14 @@ export default function usePlaylistDetail() {
 
    //       // case actually song length do not match with data
    //       // because song have been deleted
-   //       if (songs.length != playlistInStore.song_ids.length) {
+   //       if (songs.length != currentPlaylist.song_ids.length) {
    //          console.log(">>> handle playlist, song modified");
    //          await handlePlaylistWhenSongsModified(songs);
    //       }
 
    //       // case user add song to playlist song item
    //       if (
-   //          songInStore.song_in === `playlist_${playlistInStore.id}` &&
+   //          songInStore.song_in === `playlist_${currentPlaylist.id}` &&
    //          actuallySongs.length < songs.length
    //       ) {
    //          setActuallySongs(songs);
@@ -135,7 +128,7 @@ export default function usePlaylistDetail() {
    //       await sleep(appConfig.loadingDuration);
    //       setLoading(false);
    //    }
-   // }, [playlistInStore.song_ids, userSongs, adminSongs, playlistSongs]);
+   // }, [currentPlaylist.song_ids, userSongs, adminSongs, playlistSongs]);
 
    // const handleGetPlaylistImage = async () => {
    //    const firstSongHasImage = playlistSongs.find((song) => song.image_url);
@@ -143,20 +136,20 @@ export default function usePlaylistDetail() {
 
    //    // case both images  same
    //    if (
-   //       playlistInStore.image_url &&
-   //       playlistInStore.image_url === firstSongHasImage.image_url
+   //       currentPlaylist.image_url &&
+   //       currentPlaylist.image_url === firstSongHasImage.image_url
    //    )
    //       return;
 
    //    const newPlaylist: Playlist = {
-   //       ...playlistInStore,
+   //       ...currentPlaylist,
    //       image_url: firstSongHasImage.image_url,
    //       blurhash_encode: firstSongHasImage.blurhash_encode || "",
    //    };
 
    //    await mySetDoc({
    //       collection: "playlist",
-   //       id: playlistInStore.id,
+   //       id: currentPlaylist.id,
    //       data: newPlaylist,
    //       msg: ">>> api: update image_url playlist doc",
    //    });
@@ -165,7 +158,7 @@ export default function usePlaylistDetail() {
    // };
 
    // const handleUpdateActuallySongs = () => {
-   //    const isPlayingPlaylist = songInStore.song_in.includes(playlistInStore.name);
+   //    const isPlayingPlaylist = songInStore.song_in.includes(currentPlaylist.name);
    //    if (!isPlayingPlaylist) {
    //       return;
    //    }
@@ -184,7 +177,7 @@ export default function usePlaylistDetail() {
    //    // if (firstTimeRun.current) {
    //    //    firstTimeRun.current = false;
 
-   //    if (playlistInStore.id === params.id) {
+   //    if (currentPlaylist.id === params.id) {
    //       console.log("Already have playlist");
 
    //       // getPlaylistSongs();
@@ -201,7 +194,7 @@ export default function usePlaylistDetail() {
    //    if (getPlaylistFetching) return;
 
    //    // case playlist no have songs
-   //    if (!playlistInStore.song_ids.length) {
+   //    if (!currentPlaylist.song_ids.length) {
    //       setTimeout(() => {
    //          setLoading(false);
    //       }, appConfig.loadingDuration);
@@ -213,7 +206,7 @@ export default function usePlaylistDetail() {
    //    console.log("call get playlist songs");
 
    //    getPlaylistSongs();
-   // }, [playlistInStore.song_ids]);
+   // }, [currentPlaylist.song_ids]);
 
    // for update playlist feature image
    // useEffect(() => {

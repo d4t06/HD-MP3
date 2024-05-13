@@ -1,51 +1,40 @@
 import { useSongsStore } from "../store/SongsContext";
-import { Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
-import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongsStore,
-   useAuthStore,
-   useToast,
-} from "../store";
-import { deleteSong, mySetDoc } from "../utils/firebaseHelpers";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
+import { useToast } from "../store";
+import { deleteSong } from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
-import { initSongObject } from "../utils/appHelpers";
-import usePlaylistActions from "./usePlaylistActions";
-import { usePlaylistContext } from "../store/PlaylistSongContext";
 
-const useSongItemActions = ({
-   song,
-   admin = false,
-   closeModal,
-   setIsOpenPopup,
-}: {
+import usePlaylistActions from "./usePlaylistActions";
+import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
+
+type Props = {
    song: Song;
    admin?: boolean;
    closeModal: () => void;
    setIsOpenPopup: Dispatch<SetStateAction<boolean>>;
-}) => {
+};
+
+const useSongItemActions = ({ song, closeModal, setIsOpenPopup }: Props) => {
+   // store
    const dispatch = useDispatch();
-   const { song: songInStore } = useSelector(selectAllSongStore);
    const { setErrorToast, setSuccessToast } = useToast();
-   const { user } = useAuthStore();
-   const { removeFromQueue } = useActuallySongsStore();
-   const { userSongs, setUserSongs, adminSongs, setAdminSongs } = useSongsStore();
-   const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { userSongs, setUserSongs } = useSongsStore();
+   // const { playlistSongs } = useSelector(selectCurrentPlaylist);
 
-   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } = usePlaylistActions();
-
-   const songs = useMemo(() => (admin ? adminSongs : userSongs), [adminSongs, userSongs]);
-   const setSongs = useMemo(() => (admin ? setAdminSongs : setUserSongs), []);
-
+   // state
    const [loading, setLoading] = useState(false);
 
+   // hook
+   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } = usePlaylistActions();
+
    // closure
-   const logger = (type: "error" | "success") => {
-      const log = (msg: string) => console.log(`[${type}]: ${msg}`);
-      return log;
-   };
+   // const logger = (type: "error" | "success") => {
+   //    const log = (msg: string) => console.log(`[${type}]: ${msg}`);
+   //    return log;
+   // };
    // const errorLogger = logger("error");
-   const successLogger = logger("success");
+   // const successLogger = logger("success");
 
    const updateAndSetUserSongs = useCallback(
       async ({ song }: { song: Song }) => {
@@ -89,50 +78,17 @@ const useSongItemActions = ({
    const handleDeleteSong = async () => {
       try {
          setLoading(true);
-         let newSongs = [...songs];
+         let newSongs = [...userSongs];
 
          const index = newSongs.indexOf(song);
          newSongs.splice(index, 1);
 
-         const newUserSongIds = newSongs.map((songItem) => songItem.id);
          await deleteSong(song);
 
-         // not for admin
-         if (!admin) {
-            if (!user) return;
-            await mySetDoc({
-               collection: "users",
-               data: {
-                  song_ids: newUserSongIds,
-                  song_count: newUserSongIds.length,
-               } as Partial<User>,
-               id: user.email,
-               msg: `>>> api: update user doc ${user.email}`,
-            });
-         }
+         setUserSongs(newSongs);
 
-         setSongs(newSongs);
+         if (currentSong.id === song.id) dispatch(resetCurrentSong());
 
-         if (admin || songInStore.song_in === "user") {
-            removeFromQueue(song);
-         }
-
-         if (!admin) {
-            if (!user) return;
-            if (user.like_song_ids.includes(song.id)) {
-               const newUserLikeSongIds = user.like_song_ids.filter(
-                  (id) => id !== song.id
-               );
-               // setUser({ like_song_ids: newUserLikeSongIds });
-            }
-         }
-
-         // >>> finish
-         if (songInStore.id === song.id) {
-            const emptySong = initSongObject({});
-            dispatch(setSong({ ...emptySong, song_in: "", currentIndex: 0 }));
-         }
-         successLogger("delete song completed");
          setSuccessToast({ message: `'${song.name}' deleted` });
       } catch (error) {
          console.log({ message: error });
@@ -166,11 +122,9 @@ const useSongItemActions = ({
    const handleRemoveSongFromPlaylist = async () => {
       try {
          setLoading(true);
-         if (!playlistSongs.length) throw Error("Error when remove song from playlist");
-         const newPlaylistSongs = await deleteSongFromPlaylist(song, playlistSongs);
-         setPlaylistSongs(newPlaylistSongs);
+         await deleteSongFromPlaylist(song);
       } catch (error) {
-         console.log(error);
+         console.log({ message: error });
          throw new Error("Error when remove song from playlist");
       } finally {
          setLoading(false);

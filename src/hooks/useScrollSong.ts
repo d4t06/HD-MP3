@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store/SongSlice";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
    containerRef?: RefObject<HTMLDivElement>;
@@ -74,7 +74,7 @@ export default function useScrollSong({
    isOpenFullScreen,
    idle,
 }: Props) {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
    const handleScrollToActiveSong = () => {
       const songItemEle = songItemRef?.current as HTMLDivElement;
@@ -90,14 +90,14 @@ export default function useScrollSong({
          return;
       }
 
-      if (!songInStore.name) return;
+      if (!currentSong.name) return;
 
       if (!isOpenFullScreen) {
          return;
       }
 
       handleScrollToActiveSong();
-   }, [songInStore, isOpenFullScreen]);
+   }, [currentSong, isOpenFullScreen]);
 
    useEffect(() => {
       const containerEle = containerRef?.current as HTMLDivElement;

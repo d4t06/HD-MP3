@@ -72,12 +72,6 @@ export const getBlurhashEncode = async (blob: Blob) => {
    if (isDev) console.log(">>> api: get blurHash encode");
    const start = Date.now();
 
-   // when use fetch {body: blob}
-   // const res = await fetch((import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app") + "/api/image/encodee", {
-   //    method: "post",
-   //    body: blob,
-   // });
-
    const res = await request.post("/api/image/encode", blob);
    let encode;
    if (res) {
@@ -152,58 +146,6 @@ export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) 
    playlists[index] = playlist;
 };
 
-export const countSongsListTimeIds = (
-   songsList: Song[]
-): { time: number; ids: string[] } => {
-   let time: number = 0;
-   let ids: string[] = [];
-
-   songsList.forEach((song) => {
-      time += song.duration;
-      ids.push(song.id);
-   });
-
-   return { time, ids };
-};
-
-export const generatePlaylistAfterChangeSongs = ({
-   songs,
-   existingPlaylist,
-}: {
-   songs: Song[];
-   existingPlaylist: Playlist;
-}) => {
-   if (isDev) console.log("generate playlist, check songs: ", songs);
-   const { ids, time } = countSongsListTimeIds(songs);
-   const newPlaylist: Playlist = {
-      ...existingPlaylist,
-      time,
-      song_ids: ids,
-      count: ids.length,
-   };
-
-   return newPlaylist;
-};
-
-export const generatePlaylistAfterChangeSong = ({
-   song,
-   playlist,
-}: {
-   song: Song;
-   playlist: Playlist;
-}) => {
-   if (isDev) console.log(">>> local: generate playlist");
-
-   const newPlaylist: Playlist = {
-      ...playlist,
-      time: playlist.time + song.duration,
-      song_ids: [...playlist.song_ids, song.id],
-      count: playlist.count + 1,
-   };
-
-   return newPlaylist;
-};
-
 export const initSongObject = ({ ...value }: Partial<Song>) => {
    const song: Song = {
       name: "",
@@ -216,6 +158,7 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
       image_file_path: "",
       song_file_path: "",
       id: "",
+      song_in: "",
       blurhash_encode: "",
       size: 0,
    };
@@ -230,8 +173,6 @@ export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
       id: "",
       name: "",
       song_ids: [],
-      time: 0,
-      count: 0,
       by: "",
       image_url: "",
       blurhash_encode: "",

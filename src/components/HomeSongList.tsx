@@ -1,16 +1,13 @@
 import { useState } from "react";
 import { SongListProvider } from "../store/SongListContext";
 import CheckedBar from "./CheckedBar";
-import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongsStore,
-   useSongsStore,
-} from "../store";
+// import { useSongsStore } from "../store";
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
 import { useDispatch, useSelector } from "react-redux";
-import { SongWithSongIn } from "../store/SongSlice";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { useSongsStore } from "@/store";
 
 type Props = {
    loading: boolean;
@@ -19,20 +16,19 @@ type Props = {
 export default function HomeSongList({ loading }: Props) {
    const dispatch = useDispatch();
    const { adminSongs } = useSongsStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { setActuallySongs } = useActuallySongsStore();
-
+   const { from } = useSelector(selectSongQueue);
+   const { currentSong } = useSelector(selectCurrentSong);
    const [isChecked, setIsChecked] = useState(false);
    const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
    const handleSetSong = (song: Song, index: number) => {
       // song in playlist and song in user are two difference case
-      if (songInStore.id !== song.id || songInStore.song_in !== "admin") {
+      if (currentSong.id !== song.id || currentSong.song_in !== "admin") {
          dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
 
-         if (songInStore.song_in !== "admin") {
-            setActuallySongs(adminSongs);
-            console.log("setActuallySongs");
+      const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
+         if (isQueueHaveOtherSongs) {
+            dispatch(setQueue({ songs: adminSongs }));
          }
       }
    };
@@ -54,10 +50,11 @@ export default function HomeSongList({ loading }: Props) {
                {!!adminSongs.length ? (
                   <>
                      <SongList
+                        variant="home"
                         handleSetSong={handleSetSong}
                         activeExtend={
-                           songInStore.song_in === "admin" ||
-                           songInStore.song_in === "favorite"
+                           currentSong.song_in === "admin" ||
+                           currentSong.song_in === "favorite"
                         }
                         songs={adminSongs}
                      />

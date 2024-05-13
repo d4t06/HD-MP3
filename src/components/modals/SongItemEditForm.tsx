@@ -15,22 +15,13 @@ import {
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Image, Button } from "..";
-import {
-   useToast,
-   useAuthStore,
-   selectAllSongStore,
-   setSong,
-   useSongsStore,
-   useActuallySongsStore,
-   useTheme,
-} from "../../store";
+import { useToast, useAuthStore, useSongsStore, useTheme } from "../../store";
 import { useEditForm } from "../../hooks";
-import {
-   getBlurhashEncode,
-   optimizeImage,
-   updateSongsListValue,
-} from "../../utils/appHelpers";
+import { getBlurhashEncode, optimizeImage } from "../../utils/appHelpers";
 import { useDispatch, useSelector } from "react-redux";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { updateSongInQueue } from "@/store/songQueueSlice";
+// import { updateSongInQueue } from "@/store/songQueueSlice";
 
 type Props = {
    song: Song;
@@ -38,15 +29,14 @@ type Props = {
    close: () => void;
 };
 
-export default function SongItemEditForm({ song, close, admin }: Props) {
+export default function SongItemEditForm({ song, close }: Props) {
    // use store
    const dispatch = useDispatch();
-   const {theme} = useTheme();
+   const { theme } = useTheme();
    const { user } = useAuthStore();
    const { setErrorToast, setSuccessToast } = useToast();
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { userSongs, adminSongs, setUserSongs, setAdminSongs } = useSongsStore();
-   const { actuallySongs, setActuallySongs } = useActuallySongsStore();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { updateUserSong } = useSongsStore();
 
    // state
    const [loading, setLoading] = useState(false);
@@ -63,10 +53,10 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
 
    const inputFileRef = useRef<HTMLInputElement>(null);
 
-   const targetSongs = useMemo(
-      () => (admin ? adminSongs : userSongs),
-      [admin, admin, userSongs]
-   );
+   // const targetSongs = useMemo(
+   //    () => (admin ? adminSongs : userSongs),
+   //    [admin, admin, userSongs]
+   // );
 
    // use hooks
    const {
@@ -153,7 +143,7 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
       }
 
       try {
-         const newTargetSongs: Song[] = [...targetSongs];
+         // const newTargetSongs: Song[] = [...targetSongs];
          let newSong: Song = { ...song };
 
          if (isChangeInEdit) {
@@ -205,12 +195,7 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
             }
 
             if (!isImpactOnImage) {
-               // update user songs
-               const index = updateSongsListValue(newSong, newTargetSongs);
-               if (index == undefined) {
-                  setErrorToast({ message: "New user song Error" });
-                  return;
-               }
+               updateUserSong(newSong);
             }
          }
 
@@ -264,12 +249,6 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
                newSong.image_file_path = filePath;
                newSong.image_url = fileURL;
             }
-
-            const index = updateSongsListValue(newSong, newTargetSongs);
-            if (index == undefined) {
-               setErrorToast({ message: "New user song Error" });
-               return;
-            }
          }
 
          // >>> api
@@ -280,38 +259,25 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
             msg: ">>> api: update song doc",
          });
 
-         // >>> local
-         // case admin
-         if (admin) setAdminSongs(newTargetSongs);
-         // case user
-         else {
-            setUserSongs(newTargetSongs);
+         updateUserSong(newSong);
+         dispatch(updateSongInQueue({ song: newSong }));
 
-            const newSongQueue = [...actuallySongs];
-            updateSongsListValue(newSong, newSongQueue);
-
-            setActuallySongs(newSongQueue);
-            console.log("setActuallySongs");
-
-            if (songInStore.id === newSong.id) {
-               dispatch(
-                  setSong({
-                     ...newSong,
-                     currentIndex: songInStore.currentIndex,
-                     song_in: songInStore.song_in,
-                  })
-               );
-            }
+         if (currentSong.id === newSong.id) {
+            dispatch(
+               setSong({
+                  ...newSong,
+                  currentIndex: currentSong.currentIndex,
+                  song_in: currentSong.song_in,
+               })
+            );
          }
+         // }
 
          // >>> finish
-         setSuccessToast({ message: `${newSong.name} edited` });
+         setSuccessToast({ message: `Song edited` });
          closeModal();
-      } catch (error: any) {
-         console.log(error);
-
-         if (error.response.data) console.log("[error]: ", error.response.data);
-         else console.log("[error]: Server error");
+      } catch (error) {
+         console.log({ message: error });
 
          setErrorToast({});
       } finally {
@@ -432,7 +398,7 @@ export default function SongItemEditForm({ song, close, admin }: Props) {
                <div className="flex gap-[10px] mt-[10px]">
                   <Button
                      isLoading={loading}
-                     onClick={() => handleEditSong()}
+                     onClick={handleEditSong}
                      className={`${theme.content_bg} rounded-full text-[14px] ${
                         !isAbleToSubmit
                            ? !isImpactOnImage && "pointer-events-none opacity-60"

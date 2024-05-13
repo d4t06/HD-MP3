@@ -1,5 +1,4 @@
-import { createContext, useCallback, useContext, useReducer } from "react";
-;
+import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 import { themes } from "../config/themes";
 import { getLocalStorage } from "../utils/appHelpers";
 
@@ -7,7 +6,7 @@ type StateType = { theme: ThemeType & { alpha: string } };
 
 let initTheme = themes[0];
 
-const storage = getLocalStorage()
+const storage = getLocalStorage();
 const localStorageThemeId = storage["theme"] as ThemeKeyType | null;
 
 if (localStorageThemeId) {
@@ -48,8 +47,8 @@ const reducer = (_state: StateType, action: ReducerAction): StateType => {
    };
 };
 
-const useThemeContext = (theme: StateType) => {
-   const [state, dispatch] = useReducer(reducer, theme);
+const useThemeReducer = () => {
+   const [state, dispatch] = useReducer(reducer, initialState);
 
    const setTheme = useCallback((theme: ThemeType) => {
       console.log("set theme");
@@ -63,7 +62,7 @@ const useThemeContext = (theme: StateType) => {
    return { state, setTheme };
 };
 
-type UseThemeContextType = ReturnType<typeof useThemeContext>;
+type UseThemeContextType = ReturnType<typeof useThemeReducer>;
 
 const initialContextState: UseThemeContextType = {
    state: initialState,
@@ -72,8 +71,10 @@ const initialContextState: UseThemeContextType = {
 
 const ThemeContext = createContext<UseThemeContextType>(initialContextState);
 
-const ThemeProvider = ({ children, theme }: { children: any; theme: StateType }) => {
-   return <ThemeContext.Provider value={useThemeContext(theme)}>{children}</ThemeContext.Provider>;
+const ThemeProvider = ({ children }: { children: ReactNode }) => {
+   return (
+      <ThemeContext.Provider value={useThemeReducer()}>{children}</ThemeContext.Provider>
+   );
 };
 
 type UseThemeHookType = {

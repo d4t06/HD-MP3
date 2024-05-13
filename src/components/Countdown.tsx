@@ -20,7 +20,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
    const {
       playStatus: { isTimer },
    } = useSelector(selectAllPlayStatusStore);
-   const [sec, setSec] = useState(() => getLocalStorage()['isTimer'] || 0);
+   const [sec, setSec] = useState(() => getLocalStorage()["isTimer"] || 0);
    const [someThingToTrigger, setSomeThingToTrigger] = useState(0);
 
    const [isOpenModal, setIsOpenModal] = useState(false);
@@ -36,8 +36,10 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
       play();
    };
 
+   const closeModal = () => setIsOpenModal(false);
+
    const handleCloseModal = () => {
-      setIsOpenModal(false);
+      closeModal();
       lastTimer.current = 0;
    };
 
@@ -132,7 +134,7 @@ function Countdown({ cb, isPlaying, play, isOpenFullScreen }: Props) {
          )}
 
          {isOpenModal && (
-            <Modal setOpenModal={setIsOpenModal} theme={theme}>
+            <Modal closeModal={closeModal}>
                <div className="w-[500px] max-w-[calc(100vw-40px)]">
                   <h1 className="text-[22px]">
                      You have been listened music in {handleTimeText(lastTimer.current)}

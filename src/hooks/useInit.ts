@@ -3,12 +3,8 @@ import { useSongsStore } from "../store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { useAuthStore } from "../store/AuthContext";
 import { sleep } from "../utils/appHelpers";
-// import { useLocation } from "react-router-dom";
 import appConfig from "../config/app";
-import { testPlaylists, testSongs } from "./songs";
 import * as appServices from "../services/appServices";
-// import { useLocalStorage } from ".";
-// import { mySetDoc } from "../utils/firebaseHelpers";
 
 export default function useInitSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -17,9 +13,6 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
 
    const [errorMsg, setErrorMsg] = useState<string>("");
    const [loading, setLoading] = useState(true);
-
-   // const ranInit = useRef(false);
-   // const location = useLocation();
 
    // const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
 
@@ -30,30 +23,26 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
    };
 
    const initSongsAndPlaylists = async () => {
-      if (appConfig.isDebug) {
-         await sleep(appConfig.loadingDuration);
-         initSongsContext({
-            userSongs: testSongs,
-            userPlaylists: testPlaylists,
-            adminPlaylists: testPlaylists,
-            adminSongs: testSongs,
-         });
-
-         setLoading(false);
-
-         return;
-      }
-
       try {
          const adminSongs = await appServices.getAdminSongs();
          const adminPlaylists = await appServices.getAdminPLaylist();
 
+         if (admin) {
+            initSongsContext({ userSongs: adminSongs, userPlaylists: adminPlaylists });
+
+            console.log("admin", adminPlaylists, adminSongs);
+
+            setLoading(false);
+            return;
+         }
+
          // case no logged in
-         if (!user || admin) {
+         if (!user) {
             await sleep(appConfig.loadingDuration);
             initSongsContext({ adminSongs, adminPlaylists });
          } else {
             const userSongsAndPlaylist = await appServices.getUserSongsAndPlaylists(user);
+
             initSongsContext({ ...userSongsAndPlaylist, adminSongs, adminPlaylists });
          }
 
@@ -70,22 +59,9 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
 
    // run initSongsAndPlaylists
    useEffect(() => {
-      if (admin) {
-         if (initial) {
-            setTimeout(() => setLoading(false), appConfig.loadingDuration);
-         }
-         return;
-      }
-
       if (userLoading) return setLoading(true);
 
-      // if (location.pathname === "/mysongs" && !user.email) {
-      //    console.log(">>> skip init because in /mysongs but no user");
-      //    return;
-      // }
-
       if (!initial) {
-         // ranInit.current = true;
          initSongsAndPlaylists();
 
          return;

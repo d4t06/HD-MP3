@@ -8,12 +8,12 @@ import {
 } from "@heroicons/react/24/outline";
 import siteLogo from "../assets/siteLogo.png";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, setSong } from "../store/SongSlice";
 import { useTheme } from "../store/ThemeContext";
 import { useSongsStore } from "../store/SongsContext";
 import { Image } from ".";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
 import { useLocation } from "react-router-dom";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -28,14 +28,14 @@ const MobileBottomPlayer: FC<Props> = ({
    isOpenFullScreen,
 }) => {
    const dispatch = useDispatch();
-   const SongStore = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
+
    const {
       playStatus: { isPlaying, isError, isWaiting },
    } = useSelector(selectAllPlayStatusStore);
 
    const { userSongs } = useSongsStore();
    const { theme } = useTheme();
-   const { song: songInStore } = SongStore;
 
    const location = useLocation();
    const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -53,7 +53,7 @@ const MobileBottomPlayer: FC<Props> = ({
    };
 
    const handleNext = () => {
-      let newIndex = songInStore.currentIndex! + 1;
+      let newIndex = currentSong.currentIndex! + 1;
       let newSong;
       if (newIndex < userSongs.length) {
          newSong = userSongs[newIndex];
@@ -62,14 +62,14 @@ const MobileBottomPlayer: FC<Props> = ({
          newIndex = 0;
       }
       dispatch(
-         setSong({ ...newSong, currentIndex: newIndex, song_in: songInStore.song_in })
+         setSong({ ...newSong, currentIndex: newIndex, song_in: currentSong.song_in })
       );
    };
 
    const renderIcon = useMemo(() => {
       if (isWaiting) {
          return <ArrowPathIcon className={"w-[36px] animate-spin"} />;
-      } else if (isError && songInStore.name) {
+      } else if (isError && currentSong.name) {
          return <ExclamationCircleIcon className="w-[36px] " />;
       }
 
@@ -105,21 +105,21 @@ const MobileBottomPlayer: FC<Props> = ({
                <div className={classes.songImageWrapper}>
                   <div className={classes.image}>
                      <Image
-                        src={songInStore.image_url || siteLogo}
+                        src={currentSong.image_url || siteLogo}
                         classNames="rounded-full"
                      />
                   </div>
 
                   <div className="flex-grow  ml-[10px]">
-                     {songInStore.song_url && (
+                     {currentSong.song_url && (
                         <>
                            <h5 className="text-[18px] font-[500] line-clamp-1">
-                              {songInStore?.name || "name"}
+                              {currentSong.name || "name"}
                            </h5>
                            <p
                               className={`text-[14px] font-[400] opacity-60 line-clamp-1`}
                            >
-                              {songInStore?.singer || "singer"}
+                              {currentSong.singer || "singer"}
                            </p>
                         </>
                      )}
@@ -130,7 +130,7 @@ const MobileBottomPlayer: FC<Props> = ({
             {/* cta */}
             <div
                className={`${classes.cta} ${
-                  !songInStore.name && "opacity-60 pointer-events-none"
+                  !currentSong.name && "opacity-60 pointer-events-none"
                }`}
             >
                <button className={` p-[4px]`} onClick={() => handlePlayPause()}>

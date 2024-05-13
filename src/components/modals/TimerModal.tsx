@@ -1,4 +1,4 @@
-import { Dispatch, MouseEvent, SetStateAction, useState } from "react";
+import { MouseEvent, useState } from "react";
 import { useDispatch } from "react-redux";
 import ModalHeader from "./ModalHeader";
 import { Button } from "..";

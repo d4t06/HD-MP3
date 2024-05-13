@@ -1,4 +1,4 @@
-import { memo, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import Button from "./ui/Button";
 import {
@@ -14,13 +14,7 @@ import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { handleTimeText, selectSongs } from "../utils/appHelpers";
 
-import {
-   useActuallySongsStore,
-   useAuthStore,
-   useSongsStore,
-   useTheme,
-   useToast,
-} from "../store";
+import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
 import {
    PopupWrapper,
    Image,
@@ -32,81 +26,36 @@ import {
 
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import SongMenu from "./SongMenu";
-import { mySetDoc } from "../utils/firebaseHelpers";
 import { useSongListContext } from "../store/SongListContext";
 import { useSongItemActions } from "../hooks";
+import { useDispatch } from "react-redux";
+import { removeSongFromQueue } from "@/store/songQueueSlice";
 
-type Base = {
+type Props = {
    className?: string;
-   handleSetSong: (song: Song, index: number) => void;
-   activeExtend: boolean;
+   active?: boolean;
+   onClick: () => void;
    song: Song;
+   index?: number;
+   variant:
+      | "home"
+      | "my-songs"
+      | "my-playlist"
+      | "admin-playlist"
+      | "queue"
+      | "favorite"
+      | "dashboard-songs"
+      | "dashboard-playlist"
+      | "uploading";
 };
-
-type Home = Base & {
-   location: "home";
-};
-
-type MySong = Base & {
-   location: "my-songs";
-};
-
-type Favorite = Base & {
-   location: "favorite";
-};
-
-type Queue = Base & {
-   location: "queue";
-};
-
-type MyPlaylist = Base & {
-   location: "my-playlist";
-};
-
-type AdminPlaylist = Base & {
-   location: "admin-playlist";
-};
-
-type Uploading = {
-   song: Song;
-   location: "uploading";
-};
-
-// interface Props {
-//    data: Song;
-//    className?: string;
-//    active: boolean;
-//    onClick?: () => void;
-//    theme: ThemeType & { alpha: string };
-//    inProcess?: boolean;
-//    inQueue?: boolean;
-//    admin?: boolean;
-// }
-
-type Props =
-   | Home
-   | MySong
-   | MyPlaylist
-   | Queue
-   | Playlist
-   | Favorite
-   | AdminPlaylist
-   | Uploading;
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-function SongItem({}: // className,
-// data,
-// active,
-// onClick,
-// inProcess,
-// admin,
-// inQueue,
-Props) {
+function SongItem({ song, onClick, active = true, index, className, ...props }: Props) {
    // store
+   const dispatch = useDispatch();
    const { theme } = useTheme();
    const { user } = useAuthStore();
-   const { actuallySongs, addToQueue, removeFromQueue } = useActuallySongsStore();
    const { isChecked, selectedSongs, setIsChecked, setSelectedSongs } =
       useSongListContext();
    const { userPlaylists } = useSongsStore();
@@ -117,7 +66,7 @@ Props) {
    const [isOpenModal, setIsOpenModal] = useState<SongItemModal | "">("");
 
    // hooks
-   const { setErrorToast, setSuccessToast } = useToast();
+   const { setErrorToast } = useToast();
 
    const closeModal = () => setIsOpenModal("");
 
@@ -127,7 +76,7 @@ Props) {
       handleAddSongToPlaylist,
       handleRemoveSongFromPlaylist,
       loading: actionLoading,
-   } = useSongItemActions({ song: data, admin, closeModal, setIsOpenPopup });
+   } = useSongItemActions({ song, closeModal, setIsOpenPopup });
 
    const handleOpenModal = (modal: SongItemModal) => {
       setIsOpenModal(modal);
@@ -139,52 +88,48 @@ Props) {
 
    const isSelected = useMemo(() => {
       if (!selectedSongs) return false;
-      return selectedSongs?.indexOf(data) != -1;
+      return selectedSongs.indexOf(song) != -1;
    }, [selectedSongs]);
 
    const isLiked = useMemo(
-      () => (user ? user.like_song_ids.includes(data.id) : false),
-      [user?.like_song_ids, data]
+      () => (user ? user.like_song_ids.includes(song.id) : false),
+      [user?.like_song_ids, song]
    );
 
-   const handleAddToQueue = () => {
-      addToQueue(data);
-      setSuccessToast({ message: "Song add to queue" });
+   const handleRemoveFromQueue = () => {
+      if (index === undefined) return;
+      dispatch(removeSongFromQueue({ index }));
+      // setSuccessToast({ message: `'${song.name}' removed from queue` });
    };
 
    const handleLikeSong = async () => {
-      if (admin || !user) return;
+      if (!user) return;
 
       try {
-         setLoading(true);
-
-         const newUserLikeSongIds = [...user.like_song_ids];
-         const index = newUserLikeSongIds.indexOf(data.id);
-
-         if (index === -1) {
-            newUserLikeSongIds.push(data.id);
-            if (actuallySongs) {
-               const index = actuallySongs.find((s) => s.id === data.id);
-               if (!index) {
-                  console.log("like songs, add to queue");
-
-                  handleAddToQueue();
-               }
-            }
-         } else {
-            newUserLikeSongIds.splice(index, 1);
-            if (actuallySongs) {
-               const index = actuallySongs.find((s) => s.id === data.id);
-               if (index) {
-                  console.log("unlike songs remove from queue");
-
-                  removeFromQueue(data);
-               }
-            }
-         }
-
+         // setLoading(true);
+         // const newUserLikeSongIds = [...user.like_song_ids];
+         // const index = newUserLikeSongIds.indexOf(song.id);
+         // if (index === -1) {
+         //    newUserLikeSongIds.push(song.id);
+         //    if (queueSongs) {
+         //       const index = queueSongs.find((s) => s.id === song.id);
+         //       if (!index) {
+         //          console.log("like songs, add to queue");
+         //          handleAddToQueue();
+         //       }
+         //    }
+         // } else {
+         //    newUserLikeSongIds.splice(index, 1);
+         //    if (queueSongs) {
+         //       const index = queueSongs.find((s) => s.id === song.id);
+         //       if (index) {
+         //          console.log("unlike songs remove from queue");
+         //          // dispatch(removeSongFromQueue({ song }));
+         //          // handleRemoveFromQueue
+         //       }
+         //    }
+         // }
          //  setUser();
-
          //  await mySetDoc({
          //     collection: "users",
          //     data: { like_song_ids: newUserLikeSongIds } as Partial<User>,
@@ -213,18 +158,10 @@ Props) {
       button: `${theme.content_hover_bg} p-[8px] rounded-full`,
       songListButton: `mr-[10px] text-[inherit]`,
       itemContainer: `group/container flex flex-row rounded justify-between px-[10px] py-[10px] w-full border-b 
-    border-${theme.alpha} last:border-none p-[0px] 
-         ${
-            active || isSelected
-               ? inQueue
-                  ? theme.content_bg + " text-white"
-                  : "bg-" + theme.alpha
-               : "max-[549px]:!bg-transparent"
-         } 
-         ${!active ? "hover:bg-" + theme.alpha : ""}`,
+    border-${theme.alpha} last:border-none p-[0px]`,
 
       imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
-         inQueue ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
+         props.variant === "queue" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
       }`,
       overlay:
          "absolute flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
@@ -232,36 +169,21 @@ Props) {
       menuBtnWrapper: "w-[50px] flex justify-center ",
    };
 
-   const checkBox = (
-      <>
-         {!inProcess ? (
-            <>
-               {/* alway in state ready for select on mobile */}
-               {!isChecked && !isOnMobile ? (
-                  <>
-                     <button
-                        onClick={() => handleSelect(data)}
-                        className={`${classes.songListButton} hidden ${
-                           !!setIsChecked && !!setSelectedSongs
-                              ? "group-hover/main:block"
-                              : ""
-                        }`}
-                     >
-                        <StopIcon className="w-[18px] " />
-                     </button>
-                     <button
-                        className={`${classes.songListButton} ${
-                           !!setIsChecked && !!setSelectedSongs
-                              ? "group-hover/main:hidden group-hover/main:mr-[0px]"
-                              : ""
-                        }`}
-                     >
-                        <MusicalNoteIcon className="w-[18px]" />
-                     </button>
-                  </>
-               ) : (
+   const renderCheckBox = () => {
+      switch (props.variant) {
+         case "queue":
+            return <></>;
+         case "uploading":
+            return (
+               <button className={`${classes.songListButton}`}>
+                  <MusicalNoteIcon className="w-[18px]" />
+               </button>
+            );
+         default:
+            if (isOnMobile)
+               return (
                   <button
-                     onClick={() => handleSelect(data)}
+                     onClick={() => handleSelect(song)}
                      className={`${classes.songListButton} text-[inherit]`}
                   >
                      {!isSelected ? (
@@ -270,25 +192,43 @@ Props) {
                         <CheckIcon className="w-[18px]" />
                      )}
                   </button>
-               )}
-            </>
-         ) : (
-            <button className={`${classes.songListButton}`}>
-               <MusicalNoteIcon className="w-[18px]" />
-            </button>
-         )}
-      </>
-   );
+               );
+            return (
+               <>
+                  <button
+                     onClick={() => handleSelect(song)}
+                     className={`${classes.songListButton} ${!isSelected && "hidden"} ${
+                        !!setIsChecked && !!setSelectedSongs
+                           ? "group-hover/main:block"
+                           : ""
+                     }`}
+                  >
+                     {!isSelected ? (
+                        <StopIcon className="w-[18px]" />
+                     ) : (
+                        <CheckIcon className="w-[18px]" />
+                     )}
+                  </button>
+                  <button
+                     className={`${classes.songListButton} ${
+                        !!setIsChecked && !!setSelectedSongs
+                           ? "group-hover/main:hidden group-hover/main:mr-[0px]"
+                           : ""
+                     } ${isSelected && "hidden"}`}
+                  >
+                     <MusicalNoteIcon className="w-[18px]" />
+                  </button>
+               </>
+            );
+      }
+   };
 
-   const songComponent = (
-      <div className={`flex flex-row flex-grow ${inProcess ? "opacity-60" : ""}`}>
-         {!inQueue && checkBox}
-
-         <div className="flex flex-grow " onClick={isOnMobile ? onClick : () => ""}>
-            {/* song image */}
-            <div className={`${classes.imageFrame}`}>
-               <Image src={data.image_url} blurHashEncode={data.blurhash_encode} />
-
+   const imageOverlay = useMemo(() => {
+      switch (props.variant) {
+         case "uploading":
+            return <></>;
+         default:
+            return (
                <div
                   className={`${classes.overlay} 
                ${!active ? "hidden group-hover/main:flex" : ""}`}
@@ -305,41 +245,128 @@ Props) {
                      </Button>
                   )}
                </div>
+            );
+      }
+   }, [active, onClick]);
+
+   const leftElement = (
+      <div className={`flex flex-row flex-grow props`}>
+         {renderCheckBox()}
+
+         <div
+            className="flex flex-grow "
+            onClick={isOnMobile && props.variant !== "uploading" ? onClick : () => {}}
+         >
+            {/* song image */}
+            <div className={`${classes.imageFrame}`}>
+               <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
+
+               {imageOverlay}
             </div>
 
             {/* song name and singer */}
-            <div className={`ml-[10px] ${inQueue ? "max-w-[96px]" : ""}`}>
+            <div
+               className={`ml-[10px] ${props.variant === "queue" ? "max-w-[96px]" : ""}`}
+            >
                <h5
                   className={`line-clamp-1 overflow-hidden ${
-                     inQueue ? "text-[13px]" : ""
+                     props.variant === "queue" ? "text-[13px]" : ""
                   }`}
                >
-                  {data.name}
+                  {song.name}
                </h5>
-               <p className="text-xs opacity-[.6] line-clamp-1">{data.singer}</p>
+               <p className="text-xs opacity-[.6] line-clamp-1">{song.singer}</p>
             </div>
          </div>
       </div>
    );
 
-   const renderHeartIcon = () => {
+   const left = () => {
+      switch (props.variant) {
+         case "uploading":
+            return <div className="opacity-[.6]">{leftElement}</div>;
+         default:
+            return leftElement;
+      }
+   };
+
+   const renderHeartIcon = useMemo(() => {
       if (loading) return <ArrowPathIcon className="w-[20px] animate-spin" />;
-      return (
-         <>
-            <HeartIconSolid
-               className={`w-[20px]  ${
-                  isLiked
-                     ? `${theme.content_text} block group-hover:hidden`
-                     : `text-white hidden group-hover:block`
-               }`}
-            />
-            <HeartIcon
-               className={`w-[20px] ${
-                  isLiked ? "hidden group-hover:block" : "block group-hover:hidden"
-               }`}
-            />
-         </>
-      );
+
+      switch (props.variant) {
+         case "dashboard-songs":
+         case "dashboard-playlist":
+            return <></>;
+         default:
+            return (
+               <button
+                  onClick={handleLikeSong}
+                  className={`${classes.button} max-[549px]:!bg-transparent group`}
+               >
+                  <HeartIconSolid
+                     className={`w-[20px]  ${
+                        isLiked
+                           ? `${theme.content_text} block group-hover:hidden`
+                           : `text-white hidden group-hover:block`
+                     }`}
+                  />
+                  <HeartIcon
+                     className={`w-[20px] ${
+                        isLiked ? "hidden group-hover:block" : "block group-hover:hidden"
+                     }`}
+                  />
+               </button>
+            );
+      }
+   }, [handleLikeSong, isLiked]);
+
+   const renderMenu = () => {
+      switch (props.variant) {
+         case "home":
+         case "dashboard-songs":
+            return (
+               <SongMenu
+                  variant={props.variant}
+                  handleAddSongToPlaylist={handleAddSongToPlaylist}
+                  handleOpenModal={handleOpenModal}
+                  song={song}
+               />
+            );
+
+         case "my-songs":
+         case "favorite":
+            return (
+               <SongMenu
+                  variant="my-songs"
+                  handleAddSongToPlaylist={handleAddSongToPlaylist}
+                  handleOpenModal={handleOpenModal}
+                  song={song}
+               />
+            );
+
+         case "my-playlist":
+         case "admin-playlist":
+         case "dashboard-playlist":
+            return (
+               <SongMenu
+                  variant="playlist"
+                  handleRemoveSongFromPlaylist={handleRemoveSongFromPlaylist}
+                  handleOpenModal={handleOpenModal}
+                  song={song}
+               />
+            );
+         case "queue":
+            return (
+               <SongMenu
+                  handleRemoveSongFromQueue={handleRemoveFromQueue}
+                  variant="queue"
+                  handleOpenModal={handleOpenModal}
+                  song={song}
+               />
+            );
+         default:
+            return <></>;
+      }
    };
 
    const renderModal = useMemo(() => {
@@ -347,12 +374,12 @@ Props) {
          case "":
             return <></>;
          case "edit":
-            return <SongItemEditForm close={close} song={data} admin={admin} />;
+            return <SongItemEditForm close={closeModal} song={song} />;
          case "delete":
             return (
                <ConfirmModal
                   loading={actionLoading}
-                  label={`Delete '${data.name}' ?`}
+                  label={`Delete '${song.name}' ?`}
                   desc={"This action cannot be undone"}
                   theme={theme}
                   callback={handleDeleteSong}
@@ -365,54 +392,42 @@ Props) {
                   loading={actionLoading}
                   handleAddSongToPlaylist={handleAddSongToPlaylistMobile}
                   close={close}
-                  song={data}
+                  song={song}
                   userPlaylists={userPlaylists}
                />
             );
       }
    }, [isOpenModal, actionLoading]);
 
-   return (
-      <>
-         <div
-            className={`${className || ""} ${!inProcess ? "group/main" : ""}  ${
-               classes.itemContainer
-            } ${inQueue ? "py-[6px]" : ""}`}
-         >
-            {/* left */}
-            {songComponent}
-
-            {/* right (cta) */}
-            {inProcess ? (
+   const right = () => {
+      switch (props.variant) {
+         case "uploading":
+            return (
                <div className="flex items-center">
                   <span>
                      <ArrowPathIcon className="w-[20px] mr-[10px] animate-spin" />
                   </span>
                   <p className="text-[14px]">In process...</p>
                </div>
-            ) : (
+            );
+
+         default:
+            return (
                <div className={classes.ctaWrapper}>
-                  {!admin && user && (
-                     <button
-                        onClick={handleLikeSong}
-                        className={`${classes.button} max-[549px]:!bg-transparent group`}
-                     >
-                        {renderHeartIcon()}
-                     </button>
-                  )}
+                  {renderHeartIcon}
 
                   <div className={classes.menuBtnWrapper}>
                      <Popover
                         isOpenFromParent={isOpenPopup}
                         setIsOpenFromParent={setIsOpenPopup}
-                        placement={inQueue ? "bottom-end" : "left"}
+                        placement={props.variant === "queue" ? "bottom-end" : "left"}
                      >
                         <PopoverTrigger asChild>
                            <button
                               className={`block group-hover/main:block ${
                                  classes.button
                               } ${
-                                 isOpenPopup || inQueue
+                                 isOpenPopup || props.variant === "queue"
                                     ? `md:block`
                                     : "md:hidden max-[549px]:!bg-transparent"
                               }`}
@@ -429,18 +444,7 @@ Props) {
                               color="sidebar"
                               theme={theme}
                            >
-                              <SongMenu
-                                 admin={admin}
-                                 inPlaylist={inPlaylist}
-                                 isOnMobile={isOnMobile}
-                                 inQueue={inQueue}
-                                 songData={data}
-                                 handleOpenModal={handleOpenModal}
-                                 handleAddSongToPlaylist={handleAddSongToPlaylist}
-                                 handleRemoveSongFromPlaylist={
-                                    handleRemoveSongFromPlaylist
-                                 }
-                              />
+                              {renderMenu()}
 
                               {actionLoading && (
                                  <div className={classes.overlay}>
@@ -454,19 +458,60 @@ Props) {
                      </Popover>
                      <span
                         className={`text-[12px] hidden  group-hover/main:hidden ${
-                           isOpenPopup || inQueue ? "hidden" : "md:block"
+                           isOpenPopup || props.variant === "queue"
+                              ? "hidden"
+                              : "md:block"
                         }`}
                      >
-                        {handleTimeText(data.duration)}
+                        {handleTimeText(song.duration)}
                      </span>
                   </div>
                </div>
-            )}
+            );
+      }
+   };
+
+   const Container = ({ childClassName }: { childClassName?: string }) => {
+      return (
+         <div className={`${classes.itemContainer} ${className || ""} ${childClassName}`}>
+            {left()}
+            {right()}
          </div>
+      );
+   };
+
+   const renderContainer = () => {
+      switch (props.variant) {
+         case "uploading":
+            return <Container />;
+         case "queue":
+            return (
+               <Container
+                  childClassName={`group/main py-[6px] ${
+                     active ? `${theme.content_bg} text-white` : `hover:bg-${theme.alpha}`
+                  }`}
+               />
+            );
+         default:
+            return (
+               <Container
+                  childClassName={`group/main ${
+                     active || isSelected
+                        ? `bg-${theme.alpha}`
+                        : `hover:bg-${theme.alpha}`
+                  }`}
+               />
+            );
+      }
+   };
+
+   return (
+      <>
+         {renderContainer()}
 
          {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
       </>
    );
 }
 
-export default memo(SongItem);
+export default SongItem;

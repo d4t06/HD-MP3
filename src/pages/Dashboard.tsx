@@ -1,69 +1,37 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useTheme } from "../store/ThemeContext";
 
-import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { db } from "../config/firebase";
 
-import {
-   Button,
-   Image,
-   Modal,
-   ConfirmModal,
-   SongList,
-} from "../components";
+import { Button, Image } from "../components";
 
 import { convertTimestampToString } from "../utils/appHelpers";
-import { deleteSong } from "../utils/firebaseHelpers";
-import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongsStore,
-   useAuthStore,
-   useSongsStore,
-   useUpload,
-} from "../store";
+import { useAuthStore, useSongsStore } from "../store";
 import { useInitSong } from "../hooks";
-import Skeleton, { SongItemSkeleton } from "../components/skeleton";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import PlaylistList from "../components/PlaylistList";
-import useAdminPlaylistActions from "../hooks/useAdminPlaylistActions";
-
-type Modal = "logout" | "add-playlist";
+import { selectCurrentSong } from "@/store/currentSongSlice";
+import DashboardSongList from "@/components/DashboardSongList";
 
 // manual run init
 export default function DashBoard() {
-   const dispatch = useDispatch();
+   // const dispatch = useDispatch();
 
    //  store
    const { theme } = useTheme();
    const { user, loading: userLoading } = useAuthStore();
-   const { song: songInStore } = useSelector(selectAllSongStore);
-   const { adminPlaylists, adminSongs, setAdminSongs } = useSongsStore();
-   const { setActuallySongs, actuallySongs } = useActuallySongsStore();
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { userPlaylists } = useSongsStore();
 
-   // state
-   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
-   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
-   const [isChecked, setIsChecked] = useState(false);
-   const [loading, setLoading] = useState(true);
+   // // state
+   const [_loading, setLoading] = useState(true);
    const [users, setUsers] = useState<User[]>([]);
-   const [tab, setTab] = useState<"adminSongs" | "users">("adminSongs");
-
-   const ranUseEffect = useRef(true);
+   const [tab, setTab] = useState<"userSongs" | "users">("userSongs");
 
    // use hooks
-   const { addedSongIds, tempSongs, status } = useUpload();
-   const { addAdminPlaylist, isFetching } = useAdminPlaylistActions();
-   const {
-      loading: initialLoading,
-      initSongsAndPlaylists,
-      initial,
-   } = useInitSong({ admin: true });
-
-   const songCount = useMemo(() => {
-      return tempSongs.length + adminSongs.length;
-   }, [tempSongs, adminSongs]);
+   const { loading: initialLoading, errorMsg } = useInitSong({ admin: true });
 
    const getUsers = async () => {
       console.log(">>> api: get user");
@@ -87,53 +55,30 @@ export default function DashBoard() {
       }
    };
 
-   const handleSetSong = (song: Song, index: number) => {
-      if (songInStore.song_in !== "admin" || actuallySongs.length !== adminSongs.length) {
-         setActuallySongs(adminSongs);
-         console.log("setActuallySongs");
-      }
+   // const closeModal = () => setIsOpenModal("");
 
-      if (songInStore.id !== song.id) {
-         dispatch(setSong({ ...song, currentIndex: index, song_in: "admin" }));
-      }
-   };
+   // //  no need to handle song queue
+   // const handleDeleteSongs = async () => {
+   //    try {
+   //       const newuserSongs = [...userSongs];
 
-   const resetCheckedList = () => {
-      setSelectedSongs([]);
-      setIsChecked(false);
-   };
+   //       setLoading(true);
+   //       for (let song of selectedSongs) {
+   //          await deleteSong(song);
 
-   const closeModal = () => setIsOpenModal("");
+   //          const index = userSongs.findIndex((item) => item.id === song.id);
+   //          newuserSongs.splice(index, 1);
+   //       }
 
-   const handleSelectAll = () => {
-      selectedSongs.length < adminSongs.length
-         ? setSelectedSongs(adminSongs)
-         : setSelectedSongs([]);
-   };
-
-   //  no need to handle song queue
-   const handleDeleteSongs = async () => {
-      try {
-         const newAdminSongs = [...adminSongs];
-
-         setLoading(true);
-         for (let song of selectedSongs) {
-            await deleteSong(song);
-
-            const index = adminSongs.findIndex((item) => item.id === song.id);
-            newAdminSongs.splice(index, 1);
-         }
-
-         setActuallySongs(newAdminSongs);
-         console.log("setActuallySongs");
-         setAdminSongs(newAdminSongs);
-      } catch (error) {
-         console.log({ message: error });
-      } finally {
-         resetCheckedList();
-         closeModal();
-      }
-   };
+   //       // setActuallySongs(newuserSongs);
+   //       console.log("setActuallySongs");
+   //       // setuserSongs(newuserSongs);
+   //    } catch (error) {
+   //       console.log({ message: error });
+   //    } finally {
+   //       closeModal();
+   //    }
+   // };
 
    const renderUsersList = () => {
       return users.map((user, index) => {
@@ -154,42 +99,21 @@ export default function DashBoard() {
       });
    };
 
-   const renderModal = useMemo(() => {
-      switch (isOpenModal) {
-         case "logout":
-            return (
-               <ConfirmModal
-                  loading={loading}
-                  label={`Delete '${selectedSongs.length} adminSongs'`}
-                  desc={"This action cannot be undone"}
-                  theme={theme}
-                  callback={handleDeleteSongs}
-                  close={closeModal}
-               />
-            );
-      }
-   }, [isOpenModal]);
-
-   //  run initial
-   useEffect(() => {
-      const init = async () => {
-         try {
-            if (!initial) initSongsAndPlaylists();
-            else {
-               console.log("already initialized");
-               setTimeout(() => setLoading(false), 200);
-            }
-         } catch (error) {
-            console.log(error);
-         }
-      };
-
-      if (ranUseEffect.current) {
-         ranUseEffect.current = false;
-
-         init();
-      }
-   }, []);
+   // const renderModal = useMemo(() => {
+   //    switch (isOpenModal) {
+   //       case "logout":
+   //          return (
+   //             <ConfirmModal
+   //                loading={loading}
+   //                label={`Delete '${selectedSongs.length} userSongs'`}
+   //                desc={"This action cannot be undone"}
+   //                theme={theme}
+   //                callback={handleDeleteSongs}
+   //                close={closeModal}
+   //             />
+   //          );
+   //    }
+   // }, [isOpenModal]);
 
    useEffect(() => {
       if (userLoading) return;
@@ -215,9 +139,9 @@ export default function DashBoard() {
             {/* tabs */}
             <div className="mb-[20px]">
                <Button
-                  onClick={() => setTab("adminSongs")}
+                  onClick={() => setTab("userSongs")}
                   className={`${
-                     tab === "adminSongs" ? classes.activeBtn : classes.inActiveBtn
+                     tab === "userSongs" ? classes.activeBtn : classes.inActiveBtn
                   }  rounded-full`}
                   variant={"primary"}
                >
@@ -236,22 +160,20 @@ export default function DashBoard() {
 
             {/* content */}
             <div className="mt-[30px]">
-               {tab === "adminSongs" && (
+               {tab === "userSongs" && (
                   <>
                      {/* playlist */}
                      <h3 className="text-2xl font-bold mb-[10px]">Playlist</h3>
 
                      <PlaylistList
-                        activeCondition={!!songInStore?.song_in}
+                        activeCondition={!!currentSong.song_in}
                         loading={initialLoading}
-                        playlist={adminPlaylists}
+                        playlist={userPlaylists}
                         location="dashboard"
-                        addPlaylist={addAdminPlaylist}
-                        isFetching={isFetching}
                      />
 
-                     {/* adminSongs */}
-                     <div className="flex justify-between mb-[10px]">
+                     {/* userSongs */}
+                     <div className="mt-[30px] flex justify-between mb-[10px]">
                         <h3 className="text-2xl font-bold">Songs</h3>
 
                         <div className="flex items-center">
@@ -269,62 +191,8 @@ export default function DashBoard() {
                         </div>
                      </div>
 
-                     <div
-                        className={`flex gap-[12px] items-center border-b border-${theme.alpha} h-[60px]`}
-                     >
-                        {initialLoading && <Skeleton className="h-[20px] w-[150px]" />}
-
-                        {/* select song */}
-                        {!initialLoading && (
-                           <p className="text-[14px]] font-semibold text-gray-500 w-[100px]">
-                              {!isChecked
-                                 ? (songCount ? songCount : 0) + " songs"
-                                 : selectedSongs.length + " selected"}
-                           </p>
-                        )}
-                        {isChecked && (
-                           <>
-                              <Button
-                                 onClick={handleSelectAll}
-                                 variant={"primary"}
-                                 className={classes.button}
-                              >
-                                 All
-                              </Button>
-                              <Button
-                                 onClick={() => setIsOpenModal("logout")}
-                                 variant={"primary"}
-                                 className={classes.button}
-                              >
-                                 Delete
-                              </Button>
-                              <Button onClick={resetCheckedList} className={`px-[5px]`}>
-                                 <XMarkIcon className="w-[25px]" />
-                              </Button>
-                           </>
-                        )}
-                     </div>
-
-                     <div className="min-h-[50vh]">
-                        {initialLoading && SongItemSkeleton}
-
-                        {!initialLoading && (
-                           <>
-                              {!!songCount ? (
-                                 <SongList
-                                    inAdmin
-                                    tempSongs={tempSongs}
-                                    activeExtend={true}
-                                    songs={adminSongs}
-                                    handleSetSong={handleSetSong}
-                                    addedSongIds={addedSongIds}
-                                 />
-                              ) : (
-                                 <p className="text-center">...</p>
-                              )}
-                           </>
-                        )}
-                     </div>
+                     {errorMsg && <p>Some thing went wrong</p>}
+                     {!errorMsg && <DashboardSongList initialLoading={initialLoading} />}
                   </>
                )}
 
@@ -348,11 +216,7 @@ export default function DashBoard() {
             </div>
          </div>
 
-         {isOpenModal && (
-            <Modal theme={theme} closeModal={closeModal}>
-               {renderModal}
-            </Modal>
-         )}
+         {/* {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>} */}
       </>
    );
 }

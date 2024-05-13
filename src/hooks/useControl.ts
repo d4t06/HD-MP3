@@ -9,12 +9,7 @@ import {
 } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import {
-   selectAllSongStore,
-   setSong,
-   useActuallySongsStore,
-   useAuthStore,
-} from "../store";
+import { useAuthStore } from "../store";
 
 import { getLocalStorage, handleTimeText, setLocalStorage } from "../utils/appHelpers";
 
@@ -24,6 +19,9 @@ import { mySetDoc } from "../utils/firebaseHelpers";
 
 // import { useLocalStorage } from "../hooks";
 import useWindowResize from "./useWindowResize";
+import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
 // import { store } from "../config/firebase";
 
 interface Props {
@@ -48,12 +46,13 @@ export default function useControl({
    // use store
    const dispatch = useDispatch();
    const { user } = useAuthStore();
-   const { actuallySongs } = useActuallySongsStore();
+   const { queueSongs } = useSelector(selectSongQueue);
    const {
       playStatus: { isPlaying, isRepeat, isShuffle, isCrossFade },
    } = useSelector(selectAllPlayStatusStore);
-   const { song: songInStore, playlist: playlistInStore } =
-      useSelector(selectAllSongStore);
+
+   const { currentSong } = useSelector(selectCurrentSong);
+   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
    // state
    const [isLoaded, setIsLoaded] = useState(false);
@@ -87,7 +86,7 @@ export default function useControl({
    // use local storage instead of dispatch user info
    const updateHistory = async () => {
       if (admin || !user) return;
-      if (!songInStore.id) return;
+      if (!currentSong.id) return;
 
       const storage = getLocalStorage();
       const playHistory = storage["play_history"] || [];
@@ -96,11 +95,11 @@ export default function useControl({
       if (playHistory.length) {
          newHistory = [...playHistory];
 
-         const index = newHistory.find((id) => id === songInStore.id);
+         const index = newHistory.find((id) => id === currentSong.id);
          if (index) return;
       }
 
-      newHistory.push(songInStore.id);
+      newHistory.push(currentSong.id);
       if (newHistory.length > 5) newHistory = newHistory.slice(1);
 
       setLocalStorage("play_history", newHistory);
@@ -134,7 +133,7 @@ export default function useControl({
    };
 
    const getNewSong = (index: number) => {
-      return actuallySongs[index];
+      return queueSongs[index];
    };
 
    const handlePause = () => {
@@ -197,47 +196,47 @@ export default function useControl({
             }
          }
       },
-      [isOpenFullScreen, songInStore, isPlaying]
+      [isOpenFullScreen, currentSong, isPlaying]
    );
 
    const handleNext = useCallback(() => {
       let newIndex = currentIndex.current + 1;
       let newSong: Song;
 
-      if (newIndex < actuallySongs.length) {
-         newSong = actuallySongs[newIndex];
+      if (newIndex < queueSongs.length) {
+         newSong = queueSongs[newIndex];
       } else {
          newIndex = 0;
-         newSong = actuallySongs[0];
+         newSong = queueSongs[0];
       }
 
       dispatch(
          setSong({
             ...newSong,
             currentIndex: newIndex,
-            song_in: songInStore.song_in,
+            song_in: currentSong.song_in,
          })
       );
-   }, [songInStore, actuallySongs]);
+   }, [currentSong, queueSongs]);
 
    const handlePrevious = useCallback(() => {
       let newIndex = currentIndex.current! - 1;
       let newSong: Song;
       if (newIndex >= 0) {
-         newSong = actuallySongs[newIndex];
+         newSong = queueSongs[newIndex];
       } else {
-         newSong = actuallySongs[actuallySongs.length - 1];
-         newIndex = actuallySongs.length - 1;
+         newSong = queueSongs[queueSongs.length - 1];
+         newIndex = queueSongs.length - 1;
       }
 
       dispatch(
          setSong({
             ...newSong,
             currentIndex: newIndex,
-            song_in: songInStore.song_in,
+            song_in: currentSong.song_in,
          })
       );
-   }, [songInStore, actuallySongs]);
+   }, [currentSong, queueSongs]);
 
    const handleFade = (currentTime: number) => {
       const storage = getLocalStorage();
@@ -295,7 +294,7 @@ export default function useControl({
       if (isShuffle) {
          let randomIndex: number = currentIndex.current!;
          while (randomIndex === currentIndex.current) {
-            randomIndex = Math.floor(Math.random() * actuallySongs.length);
+            randomIndex = Math.floor(Math.random() * queueSongs.length);
          }
 
          const newSong = getNewSong(randomIndex);
@@ -303,12 +302,12 @@ export default function useControl({
             setSong({
                ...newSong,
                currentIndex: randomIndex,
-               song_in: songInStore.song_in,
+               song_in: currentSong.song_in,
             })
          );
       }
 
-      if (currentIndex.current === actuallySongs.length - 1) {
+      if (currentIndex.current === queueSongs.length - 1) {
          if (isRepeat === "all") isEndOfList.current = false;
          else isEndOfList.current = true;
       }
@@ -387,12 +386,12 @@ export default function useControl({
    // handle when song error
    useEffect(() => {
       if (!someThingToTriggerError) return;
-      if (songInStore.name) dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+      if (currentSong.name) dispatch(setPlayStatus({ isWaiting: false, isError: true }));
    }, [someThingToTriggerError]);
 
    // update audio src, currentIndex, reset song
    useEffect(() => {
-      if (!audioEle || !songInStore.name) {
+      if (!audioEle || !currentSong.name) {
          dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
          return;
       }
@@ -400,11 +399,11 @@ export default function useControl({
       pause();
       dispatch(setPlayStatus({ isWaiting: true, isError: false, isPlaying: false }));
 
-      audioEle.src = songInStore.song_url;
-      currentIndex.current = songInStore.currentIndex;
+      audioEle.src = currentSong.song_url;
+      currentIndex.current = currentSong.currentIndex;
 
-      if (songInStore.name) {
-         document.title = `${songInStore.name} - ${songInStore.singer}`;
+      if (currentSong.name) {
+         document.title = `${currentSong.name} - ${currentSong.singer}`;
       }
 
       return () => {
@@ -413,19 +412,19 @@ export default function useControl({
          isPlayingNewSong.current = true;
          // setNoLongerPlay(false);
       };
-   }, [songInStore]);
+   }, [currentSong]);
 
    // update site title
    useEffect(() => {
-      if (!songInStore.name) return;
+      if (!currentSong.name) return;
 
-      let myTitle = `${songInStore.name} - ${songInStore.singer}`;
+      let myTitle = `${currentSong.name} - ${currentSong.singer}`;
       if (
          !isPlaying &&
-         playlistInStore.name &&
-         songInStore.song_in.includes(playlistInStore.id)
+         currentPlaylist.name &&
+         currentSong.song_in.includes(currentPlaylist.id)
       ) {
-         myTitle = `${playlistInStore.name}`;
+         myTitle = `${currentPlaylist.name}`;
       }
       document.title = myTitle;
    }, [isPlaying]);
@@ -436,7 +435,7 @@ export default function useControl({
       audioEle?.addEventListener("ended", handleEnded);
 
       return () => audioEle?.removeEventListener("ended", handleEnded);
-   }, [isRepeat, isShuffle, songInStore.song_in, actuallySongs]);
+   }, [isRepeat, isShuffle, currentSong.song_in, queueSongs]);
 
    // update time update event
    useEffect(() => {
@@ -457,7 +456,7 @@ export default function useControl({
       return () => {
          audioEle.removeEventListener("loadedmetadata", handleLoaded);
       };
-   }, [isInEdit, songInStore.id, isCrossFade]);
+   }, [isInEdit, currentSong.id, isCrossFade]);
 
    // update play history
    useEffect(() => {
@@ -479,20 +478,20 @@ export default function useControl({
    }, [isPlaying]);
 
    // confirm reload
-   useEffect(() => {
-      if (noLongerPlay) return;
+   // useEffect(() => {
+   //    if (noLongerPlay) return;
 
-      const handleWindowReload = (e: BeforeUnloadEvent) => {
-         e.preventDefault();
-         e.returnValue = true;
-      };
+   //    const handleWindowReload = (e: BeforeUnloadEvent) => {
+   //       e.preventDefault();
+   //       e.returnValue = true;
+   //    };
 
-      window.addEventListener("beforeunload", handleWindowReload);
+   //    window.addEventListener("beforeunload", handleWindowReload);
 
-      return () => {
-         window.removeEventListener("beforeunload", handleWindowReload);
-      };
-   }, [noLongerPlay]);
+   //    return () => {
+   //       window.removeEventListener("beforeunload", handleWindowReload);
+   //    };
+   // }, [noLongerPlay]);
 
    return { handleNext, handlePrevious, handleSeek, play, pause, isLoaded };
 }

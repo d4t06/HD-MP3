@@ -4,7 +4,7 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
-import { selectAllSongStore } from "../store";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 interface Props {
    audioEle: HTMLAudioElement;
@@ -21,7 +21,8 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
    const [currentTime, setCurrentTime] = useState<number>(0);
    const scrollBehavior = useRef<ScrollBehavior>("instant");
    const containerRef = useRef<HTMLDivElement>(null);
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
+
 
    const prevTime = useRef(0);
 
@@ -95,7 +96,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
    // disable animation when first time load lyric
    useEffect(() => {
       if (scrollBehavior.current !== "instant") scrollBehavior.current = "instant";
-   }, [songInStore]);
+   }, [currentSong]);
 
    const classes = {
       container: "overflow-y-auto overflow-x-hidden no-scrollbar pt-[30px] mask-image",

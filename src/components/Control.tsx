@@ -6,13 +6,15 @@ import {
    ForwardIcon,
 } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllSongStore, useTheme, useActuallySongsStore } from "../store";
+import { useTheme } from "../store";
 
 import PlayPauseButton from "./child/PlayPauseButton";
 import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
 import { Countdown } from "./";
 import useControl from "../hooks/useControl";
 import { setLocalStorage } from "../utils/appHelpers";
+import { selectCurrentSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
 
 interface Props {
    admin?: boolean;
@@ -26,11 +28,11 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
-   const { actuallySongs } = useActuallySongsStore();
+   const { queueSongs } = useSelector(selectSongQueue);
    const {
       playStatus: { isPlaying, isRepeat, isShuffle, isError },
    } = useSelector(selectAllPlayStatusStore);
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
    // ref
    const durationLineRef = useRef<HTMLDivElement>(null);
@@ -82,7 +84,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
    };
 
    const classes = {
-      button: `p-[5px] ${actuallySongs.length <= 1 && "opacity-20 pointer-events-none"}`,
+      button: `p-[5px] ${queueSongs.length <= 1 && "opacity-20 pointer-events-none"}`,
       buttonsContainer: `w-full flex justify-between sm:justify-center items-center gap-x-[20px] ${
          admin ? "" : "h-[50px]"
       }`,
@@ -111,7 +113,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
                   >
                      <ArrowPathRoundedSquareIcon className={classes.icon} />
                      <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                        {songInStore.name &&
+                        {currentSong.name &&
                            (isRepeat === "one" ? "1" : isRepeat === "all" ? "--" : "")}
                      </span>
                   </button>
@@ -170,9 +172,9 @@ export default function Control({ audioEle, admin, isOpenFullScreen, className }
             {admin && (
                <div className="flex items-center">
                   <PlayPauseButton handlePlayPause={handlePlayPause} />
-                  <button className={`${classes.button}`} onClick={() => handleNext()}>
+                  {/* <button className={`${classes.button}`} onClick={() => handleNext()}>
                      <ForwardIcon className={classes.icon} />
-                  </button>
+                  </button> */}
                </div>
             )}
          </div>

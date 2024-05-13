@@ -1,6 +1,6 @@
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { SongWithSongIn } from "../store/SongSlice";
+
 const songsCollectionRef = collection(db, "songs");
 const playlistCollectionRef = collection(db, "playlist");
 
@@ -10,7 +10,7 @@ export const getAdminSongs = async () => {
 
    if (songsSnap.docs) {
       const songs = songsSnap.docs.map(
-         (doc) => ({ ...doc.data(), song_in: "admin" } as SongWithSongIn)
+         (doc) => ({ ...doc.data(), song_in: "admin" } as Song)
       );
 
       return songs;
@@ -31,7 +31,7 @@ export const getAdminPLaylist = async () => {
 const getUserPlaylists = async (fullUserInfo: User) => {
    const queryGetUserPlaylist = query(
       playlistCollectionRef,
-      where("id", "in", fullUserInfo.playlist_ids)
+      where("by", "==", fullUserInfo.email)
    );
 
    const playlistSnap = await getDocs(queryGetUserPlaylist);
@@ -45,14 +45,15 @@ const getUserPlaylists = async (fullUserInfo: User) => {
 const getUserSongs = async (fullUserInfo: User) => {
    const queryGetUserSongs = query(
       songsCollectionRef,
-      where("id", "in", fullUserInfo.song_ids)
+      where("by", "==", fullUserInfo.email)
    );
 
    const songsSnapshot = await getDocs(queryGetUserSongs);
    if (songsSnapshot.docs.length) {
       const songs = songsSnapshot.docs.map(
-         (doc) => ({ ...doc.data(), song_in: "user" } as SongWithSongIn)
+         (doc) => ({ ...doc.data(), song_in: "user" } as Song)
       );
+
       return songs;
    }
 };
@@ -65,16 +66,12 @@ export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
    };
 
    //  get user song
-   if (!!fullUserInfo.song_ids.length) {
-      const userSongs = await getUserSongs(fullUserInfo);
-      if (userSongs?.length) userData.userSongs = userSongs;
-   }
+   const userSongs = await getUserSongs(fullUserInfo);
+   if (userSongs?.length) userData.userSongs = userSongs;
 
    // get user playlist
-   if (!!fullUserInfo.playlist_ids.length) {
-      const playlists = await getUserPlaylists(fullUserInfo);
-      if (playlists?.length) userData.userPlaylists = playlists;
-   }
+   const playlists = await getUserPlaylists(fullUserInfo);
+   if (playlists?.length) userData.userPlaylists = playlists;
 
    return userData;
 };

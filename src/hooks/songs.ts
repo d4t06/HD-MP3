@@ -58,8 +58,6 @@ export const testPlaylists: Playlist[] = [
    {
       name: "NCS",
       id: "test_b6-B_admin",
-      time: 654,
-      count: 3,
       blurhash_encode: "U48Eh:@@D47y*Wz~tLGg00CPyp*#HQ7TS5[O",
       image_url:
          "https://firebasestorage.googleapis.com/v0/b/zingmp3-clone-61799.appspot.com/o/images%2Fncs005dddifferentheavensafeandsound_Rnfk_admin_stock?alt=media&token=cb41fea4-1246-431e-a0d9-f36ec86fd494",

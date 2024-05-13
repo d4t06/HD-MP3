@@ -100,7 +100,7 @@ export default function MobileSetting() {
          </div>
 
          {isOpenModal && (
-            <Modal closeModal={closeModal} theme={theme}>
+            <Modal closeModal={closeModal}>
                {renderModal}
             </Modal>
          )}

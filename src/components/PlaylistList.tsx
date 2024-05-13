@@ -1,8 +1,11 @@
 import { useSelector } from "react-redux";
 import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
-import { selectAllSongStore, useTheme } from "../store";
+import { useTheme } from "../store";
 import { PlaylistSkeleton } from "./skeleton";
 import { useState } from "react";
+import { selectCurrentSong } from "@/store/currentSongSlice";
+import usePlaylistActions from "@/hooks/usePlaylistActions";
+import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 
 type Base = {
    className?: string;
@@ -11,24 +14,17 @@ type Base = {
    activeCondition?: boolean;
 };
 
-type CallbackProps = {
-   isFetching: boolean;
-   addPlaylist: (name: string) => Promise<void>;
-};
-
 type InHome = Base & {
    location: "home";
 };
 
-type InMySongs = Base &
-   CallbackProps & {
-      location: "my-songs";
-   };
+type InMySongs = Base & {
+   location: "my-songs";
+};
 
-type InDashboard = Base &
-   CallbackProps & {
-      location: "dashboard";
-   };
+type InDashboard = Base & {
+   location: "dashboard";
+};
 
 type Props = InHome | InMySongs | InDashboard;
 
@@ -39,10 +35,16 @@ export default function PlaylistList({
    className,
    ...props
 }: Props) {
+   // store
    const { theme } = useTheme();
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   const { currentSong } = useSelector(selectCurrentSong);
 
+   // state
    const [isOpenModal, setIsOpenModal] = useState(false);
+
+   // hook
+   const { addPlaylist, isFetching } = usePlaylistActions();
+   const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
    const closeModal = () => setIsOpenModal(false);
 
@@ -59,7 +61,7 @@ export default function PlaylistList({
                   {!!playlist.length
                      ? playlist.map((playlist, index) => {
                           const active =
-                             activeCondition && songInStore.song_in.includes(playlist.id);
+                             activeCondition && currentSong.song_in.includes(playlist.id);
 
                           switch (props.location) {
                              case "home":
@@ -105,11 +107,21 @@ export default function PlaylistList({
 
          {props.location !== "home" && isOpenModal && (
             <Modal closeModal={closeModal}>
-               <AddPlaylist
-                  addPlaylist={props.addPlaylist}
-                  isFetching={props.isFetching}
-                  close={closeModal}
-               />
+               {props.location === "my-songs" && (
+                  <AddPlaylist
+                     addPlaylist={addPlaylist}
+                     isFetching={isFetching}
+                     close={closeModal}
+                  />
+               )}
+
+               {props.location === "dashboard" && (
+                  <AddPlaylist
+                     addPlaylist={addAdminPlaylist}
+                     isFetching={adminIsFetching}
+                     close={closeModal}
+                  />
+               )}
             </Modal>
          )}
       </>

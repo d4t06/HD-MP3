@@ -1,7 +1,7 @@
 import { RefObject, useCallback, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { selectAllSongStore } from "../store/SongSlice";
 import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
    textRef?: RefObject<HTMLDivElement>;
@@ -10,18 +10,19 @@ type Props = {
 };
 
 export default function useScrollText({ textRef, textWrapperRef, autoScroll }: Props) {
-   const { song: songInStore } = useSelector(selectAllSongStore);
+   // store
+   const { currentSong } = useSelector(selectCurrentSong);
+   
    const {
       playStatus: { isPlaying },
    } = useSelector(selectAllPlayStatusStore);
 
+   // red
    const autoScrollTimerId = useRef<NodeJS.Timeout>();
    const unScrollTimerId = useRef<NodeJS.Timeout>();
    const duration = useRef<number>(0);
    const innerText = useRef<string>("");
    const distance = useRef<number>(0);
-
-   // const [isScroll, setIsScroll] = useState(false);
    const isScrollRef = useRef(false);
 
    const unScroll = useCallback(() => {
@@ -30,7 +31,7 @@ export default function useScrollText({ textRef, textWrapperRef, autoScroll }: P
 
       contentNode.style.transition = `none`;
       contentNode.style.transform = `translateX(0)`;
-      contentNode.innerText = innerText.current;
+      // contentNode.innerText = innerText.current;
       isScrollRef.current = false;
    }, [textRef]);
 
@@ -88,7 +89,7 @@ export default function useScrollText({ textRef, textWrapperRef, autoScroll }: P
    };
 
    useEffect(() => {
-      if (!songInStore.name || !isPlaying) return;
+      if (!currentSong.name || !isPlaying) return;
 
       reScroll();
       if (!distance.current) return;
@@ -111,5 +112,5 @@ export default function useScrollText({ textRef, textWrapperRef, autoScroll }: P
 
          resetScroll();
       };
-   }, [songInStore, isPlaying]);
+   }, [currentSong, isPlaying]);
 } 
