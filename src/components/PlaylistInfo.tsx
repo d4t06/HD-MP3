@@ -34,7 +34,7 @@ type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 export default function PLaylistInfo({ loading, type }: Props) {
    // store
    const dispatch = useDispatch();
-   const { theme } = useTheme();
+   const { theme, isOnMobile } = useTheme();
    const { currentSong } = useSelector(selectCurrentSong);
    const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
@@ -46,7 +46,6 @@ export default function PLaylistInfo({ loading, type }: Props) {
    const { deletePlaylist, isFetching } = usePlaylistActions();
    const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
-   const isOnMobile = useMemo(() => window.innerWidth < 800, []);
    const playlistTime = useMemo(
       () => playlistSongs.reduce((prev, c) => prev + c.duration, 0),
       [playlistSongs]

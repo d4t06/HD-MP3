@@ -1,8 +1,9 @@
 import {
+   AdjustmentsHorizontalIcon,
    ArrowDownTrayIcon,
+   DocumentTextIcon,
    MinusCircleIcon,
    MusicalNoteIcon,
-   PencilIcon,
    PlusCircleIcon,
    PlusIcon,
    TrashIcon,
@@ -13,6 +14,7 @@ import { useMemo } from "react";
 import { SongItemModal } from "./SongItem";
 import { useDispatch } from "react-redux";
 import { addSongToQueue } from "@/store/songQueueSlice";
+import { Link } from "react-router-dom";
 
 type Base = {
    song: Song;
@@ -71,18 +73,14 @@ type Props =
 function SongMenu({ song, ...props }: Props) {
    // store
    const dispatch = useDispatch();
-   const { theme } = useTheme();
    const { user } = useAuthStore();
+   const { theme, isOnMobile } = useTheme();
    const { setSuccessToast } = useToast();
    const { userPlaylists } = useSongsStore();
 
-   const isOnMobile = useMemo(() => {
-      return window.innerWidth < 800;
-   }, []);
-
    const handleAddToQueue = () => {
       dispatch(addSongToQueue({ songs: [song] }));
-      setSuccessToast({ message: `'${song.name}' to queue` });
+      setSuccessToast({ message: `Song added to queue` });
    };
 
    // define style
@@ -90,13 +88,15 @@ function SongMenu({ song, ...props }: Props) {
       before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
       level2Menu:
          "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover/add-playlist:block hover:block",
-      menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} max-[549px]:!bg-transparent pl-[8px] rounded-[4px]`,
-      menuIcon: "w-[18px] mr-[8px]",
+      menuItem: `hover:bg-${theme.alpha} font-[500] ${theme.content_hover_text} max-[549px]:!bg-transparent pl-[8px] rounded-[4px]`,
+      menuIcon: "w-[18px] mr-[10px]",
       overlay:
          "absolute flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
    };
 
    const renderAddToPlaylistBtn = useMemo(() => {
+      if (!user) return <></>;
+
       switch (props.variant) {
          case "home":
          case "my-songs":
@@ -216,9 +216,15 @@ function SongMenu({ song, ...props }: Props) {
                      className={` ${classes.menuItem} `}
                      variant={"list"}
                   >
-                     <PencilIcon className={classes.menuIcon} />
+                     <AdjustmentsHorizontalIcon className={classes.menuIcon} />
                      Edit
                   </Button>
+                  <Link to={`edit/${song.id}`}>
+                     <Button className={` ${classes.menuItem} `} variant={"list"}>
+                        <DocumentTextIcon className={classes.menuIcon} />
+                        {song.lyric_id ? "Edit lyric" : "Add lyric"}
+                     </Button>
+                  </Link>
                   <Button
                      onClick={() => props.handleOpenModal("delete")}
                      className={` ${classes.menuItem} `}
@@ -246,31 +252,40 @@ function SongMenu({ song, ...props }: Props) {
       }
    }, [props]);
 
-   if (!user) return <></>;
+   const renderSongInfo = useMemo(() => {
+      switch (props.variant) {
+         case "queue":
+            return <></>;
+         default:
+            return (
+               <div className="pl-[10px] py-[6px]">
+                  <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
+                  <p className="text-[14px] opacity-50 line-clamp-1">{song.singer}</p>
+               </div>
+            );
+      }
+   }, [song]);
 
    return (
       <>
-         <div className={` ${props.variant === "queue" ? "w-[160px]" : "w-[200px]"} `}>
-            <h5 className="text-[14px] line-clamp-1">{song.name}</h5>
-            <p className="text-[12px] text-gray-500 line-clamp-1">{song.singer}</p>
+         <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
+            {renderSongInfo}
+            {renderMenuItem}
 
-            <div className={`mt-[14px]`}>
-               {renderMenuItem}
-
-               <a
-                  target="_blank"
-                  download
-                  href={song.song_url}
-                  className={` ${classes.menuItem} w-full py-[5px] text-[14px] inline-flex items-center cursor-pointer`}
-               >
-                  <ArrowDownTrayIcon className="w-[18px] mr-[5px]" />
-                  Download
-               </a>
-            </div>
+            <a
+               target="_blank"
+               download
+               href={song.song_url}
+               className={` ${classes.menuItem} w-full py-[5px] text-[14px] inline-flex items-center cursor-pointer`}
+            >
+               <ArrowDownTrayIcon className="w-[18px] mr-[10px]" />
+               Download
+            </a>
+            {/* </div> */}
 
             {props.variant !== "queue" && !isOnMobile && (
-               <p className="opacity-60 text-center text-[12px] mt-[10px]">
-                  uploaded by {song.by}
+               <p className="opacity-50 font-[500] text-center text-[13px] mt-[10px]">
+                  Uploaded by {song.by}
                </p>
             )}
          </div>

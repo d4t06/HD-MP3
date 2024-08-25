@@ -1,11 +1,11 @@
 import { useSongsStore, useUpload } from "@/store";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CheckedBar from "./CheckedBar";
 import { Skeleton, SongList } from ".";
 import { SongItemSkeleton } from "./skeleton";
-import { SongListProvider } from "@/store/SongListContext";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 type Props = {
    initialLoading: boolean;
@@ -16,10 +16,6 @@ export default function DashboardSongList({ initialLoading }: Props) {
    const dispatch = useDispatch();
    const { userSongs } = useSongsStore();
    const { currentSong } = useSelector(selectCurrentSong);
-
-   // state
-   const [isChecked, setIsChecked] = useState(false);
-   const [selectedSongs, setSelectedSongs] = useState<Song[]>([]);
 
    // hooks
    const { tempSongs } = useUpload();
@@ -35,13 +31,8 @@ export default function DashboardSongList({ initialLoading }: Props) {
    };
 
    return (
-      <SongListProvider
-         isChecked={isChecked}
-         setIsChecked={setIsChecked}
-         selectedSongs={selectedSongs}
-         setSelectedSongs={setSelectedSongs}
-      >
-         <CheckedBar location="dashboard-songs">
+      <SongSelectProvider>
+         <CheckedBar variant="dashboard-songs">
             {initialLoading ? (
                <>
                   <div className="h-[30px] mb-[10px] flex items-center">
@@ -67,16 +58,14 @@ export default function DashboardSongList({ initialLoading }: Props) {
                            songs={userSongs}
                            handleSetSong={handleSetSong}
                         />
-                        {tempSongs && (
-                           <SongList variant="uploading" songs={tempSongs} />
-                        )}
+                        <SongList variant="uploading" songs={tempSongs} />
                      </>
                   ) : (
-                     <p className="text-center">...</p>
+                     <p className="text-center">¯\_(ツ)_/¯</p>
                   )}
                </>
             )}
          </div>
-      </SongListProvider>
+      </SongSelectProvider>
    );
 }

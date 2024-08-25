@@ -3,22 +3,16 @@ import { ReactNode, createContext, useCallback, useContext, useReducer } from "r
 type StateType = {
    userSongs: SongWithSongIn[];
    adminSongs: SongWithSongIn[];
-
    userPlaylists: Playlist[];
    adminPlaylists: Playlist[];
-
-   // user. User;
-
    initial: boolean;
 };
 
 const initialState: StateType = {
    userSongs: [],
    userPlaylists: [],
-
    adminSongs: [],
    adminPlaylists: [],
-
    initial: false,
 };
 
@@ -107,8 +101,6 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
          const { songs } = action.payload;
          const newSongs = [...state.userSongs, ...songs];
 
-         console.log("add user songs check", songs);
-
          return {
             ...state,
             userSongs: newSongs,
@@ -162,19 +154,6 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
          };
       }
 
-      // case REDUCER_ACTION_TYPE.SETADMINSONGS:
-      //    return {
-      //       ...state,
-
-      //       adminSongs: payload.adminSongs || [],
-      //    };
-
-      // case REDUCER_ACTION_TYPE.SETADMINPLAYLISTS:
-      //    return {
-      //       ...state,
-
-      //       adminPlaylists: payload.adminPlaylists || [],
-      //    };
       default:
          return state;
    }

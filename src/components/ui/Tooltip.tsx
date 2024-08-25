@@ -110,14 +110,14 @@ export function TooltipContent({
    const { context, refs, getFloatingProps, floatingStyles, isOpen } = useTooltipContext();
 
    const classes = {
-      container: `${theme.type === 'dark' ? 'bg-[#666]' : 'bg-[#333]'}`
+      container: `${theme.type === 'dark' ? 'bg-white/70 text-[#333]' : 'bg-black/70 text-white'}`
    }
 
    if (!isOpen) return;
 
    return (
       <FloatingFocusManager context={context} modal={false}>
-         <div className={`${classes.container} text-[12px] font-[600] px-[6px] py-[3px] rounded-[4px]`} ref={refs.setFloating} style={{ ...floatingStyles }} {...getFloatingProps(props)}>
+         <div className={`${classes.container}  text-[12px] font-semibold px-[6px] py-[3px] rounded-[4px]`} ref={refs.setFloating} style={{ ...floatingStyles }} {...getFloatingProps(props)}>
             {children}
          </div>
       </FloatingFocusManager>

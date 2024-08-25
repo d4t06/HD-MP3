@@ -13,9 +13,9 @@ import {
    PopupWrapper,
 } from ".";
 import {
+   AdjustmentsHorizontalIcon,
    ArrowLeftOnRectangleIcon,
    ArrowRightOnRectangleIcon,
-   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthActions } from "../store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
@@ -97,8 +97,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
    const classes = {
       userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
-      button: `h-[35px] w-[35px] inline-flex items-center justify-center rounded-full bg-${theme.alpha} ${theme.content_hover_text}`,
-      menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} rounded-[4px] w-full px-[10px] h-[44px] inline-flex items-center`,
+      button: `h-[35px] w-[35px] rounded-full`,
+      menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} rounded-[4px] w-full px-[10px] h-[44px] inline-flex items-center font-[500]`,
       icon: "w-[25px] mr-[5px]",
       divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-${theme.alpha}`,
    };
@@ -125,9 +125,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                <div className="flex gap-[16px]">
                   <Popover placement="bottom-end">
                      <PopoverTrigger
-                        className={`flex items-center hover:brightness-75 ${classes.button}`}
+                        className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
                      >
-                        <Cog6ToothIcon className={`w-[20px]`} />
+                        <AdjustmentsHorizontalIcon className="w-full" />
                      </PopoverTrigger>
                      <PopoverContent>
                         <SettingMenu setIsOpenModal={setIsOpenModal} loggedIn={false} />

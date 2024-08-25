@@ -1,5 +1,3 @@
-;
-
 export const themes: ThemeType[] = [
    {
       name: "Red",
@@ -12,8 +10,9 @@ export const themes: ThemeType[] = [
       content_border: "border-[#ca4954]",
       content_hover_border: "hover:border-[#ca4954]",
 
-      content_bg: "bg-[#ca4954]  text-[#fff]",
-      content_hover_bg: "hover:bg-[#ca4954] hover:text-[#fff] ",
+      content_bg: "!bg-[#ca4954]  text-[#fff]",
+      content_code: "#ca4954",
+      content_hover_bg: "hover:!bg-[#ca4954] hover:text-[#fff] ",
       container: "bg-[#2e0f10]",
    },
    {
@@ -27,8 +26,9 @@ export const themes: ThemeType[] = [
       content_border: "border-[#198585]",
       content_hover_border: "hover:border-[#198585]",
 
-      content_bg: "bg-[#198585]  text-[#fff]",
-      content_hover_bg: "hover:bg-[#198585] hover:text-[#fff] ",
+      content_bg: "!bg-[#198585]  text-[#fff]",
+      content_code: "#198585",
+      content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff] ",
       container: "bg-[#1e1e1e]",
    },
    {
@@ -42,11 +42,12 @@ export const themes: ThemeType[] = [
       content_border: "border-[#0c9e85]",
       content_hover_border: "hover:border-[#0c9e85]",
 
-      content_bg: "bg-[#0c9e85]  text-[#fff]",
-      content_hover_bg: "hover:bg-[#0c9e85] hover:text-[#fff] ",
+      content_bg: "!bg-[#0c9e85]  text-[#fff]",
+      content_code: "#0c9e85",
+      content_hover_bg: "hover:!bg-[#0c9e85] hover:text-[#fff] ",
       container: "bg-[#0f1a2e]",
    },
-      {
+   {
       name: "White",
       id: "white",
       type: "light",
@@ -57,8 +58,9 @@ export const themes: ThemeType[] = [
       content_border: "border-[#198585]",
       content_hover_border: "hover:border-[#198585]",
 
-      content_bg: "bg-[#198585] text-[#fff]",
-      content_hover_bg: "hover:bg-[#198585] hover:text-[#fff]",
+      content_bg: "!bg-[#198585] text-[#fff]",
+      content_code: "#198585",
+      content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff]",
       container: "bg-[#fff]",
    },
    {
@@ -72,8 +74,9 @@ export const themes: ThemeType[] = [
       content_border: "border-[#198585]",
       content_hover_border: "hover:border-[#198585]",
 
-      content_bg: "bg-[#198585] text-[#fff]",
-      content_hover_bg: "hover:bg-[#198585] hover:text-[#fff]",
+      content_bg: "!bg-[#198585] text-[#fff]",
+      content_code: "#198585",
+      content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff]",
       container: "bg-[#ced9d9]",
    },
    {
@@ -87,8 +90,9 @@ export const themes: ThemeType[] = [
       content_border: "border-[#644646]",
       content_hover_border: "hover:border-[#644646]",
 
-      content_bg: "bg-[#644646]  text-[#fff]",
-      content_hover_bg: "hover:bg-[#644646] hover:text-[#fff]",
+      content_bg: "!bg-[#644646]  text-[#fff]",
+      content_code: "#644646",
+      content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
       container: "bg-[#e5e3df]",
    },
 ];

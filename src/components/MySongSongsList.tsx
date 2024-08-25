@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useSongListContext } from "../store/SongListContext";
 import { useAuthStore, useSongsStore, useTheme, useUpload } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 import { SongList } from ".";
@@ -28,8 +27,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
    const { user } = useAuthStore();
    const { userSongs } = useSongsStore();
    const { currentSong } = useSelector(selectCurrentSong);
-   const { queueSongs, from } = useSelector(selectSongQueue);
-   const { setSelectedSongs, setIsChecked } = useSongListContext();
+   const { from } = useSelector(selectSongQueue);
 
    //    state
    const [songTab, setSongTab] = useState<Tab>("mine");
@@ -37,8 +35,6 @@ export default function MySongSongsList({ initialLoading }: Props) {
    const [songLoading, setSongLoading] = useState(false);
 
    // hooks
-   // const { setSuccessToast, setErrorToast } = useToast();
-   // const { loading: initialLoading, errorMsg, initial } = useInitSong({});
    const { tempSongs } = useUpload();
 
    const songCount = useMemo(() => {
@@ -46,15 +42,15 @@ export default function MySongSongsList({ initialLoading }: Props) {
       return tempSongs.length + userSongs.length;
    }, [tempSongs, userSongs, initialLoading]);
 
-   const favoriteSongsFiltered = useMemo(
-      () => (user ? favoriteSongs.filter((s) => user.like_song_ids.includes(s.id)) : []),
-      [user?.like_song_ids]
-   );
+   // const favoriteSongsFiltered = useMemo(
+   //    () => (user ? favoriteSongs.filter((s) => user.like_song_ids.includes(s.id)) : []),
+   //    [user?.like_song_ids]
+   // );
 
-   const resetCheckedList = () => {
-      setSelectedSongs([]);
-      setIsChecked(false);
-   };
+   // const resetCheckedList = () => {
+   //    setSelectedSongs([]);
+   //    setIsChecked(false);
+   // };
 
    const handleGetFavorite = async () => {
       if (!user) return;
@@ -98,7 +94,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
 
             // setUser();
 
-            console.log("get favorite set user info");
+            // console.log("get favorite set user info");
          }
       } catch (error) {
          console.log("error");
@@ -110,7 +106,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
    const handleSetTab = async (name: Tab) => {
       setSongTab(name);
       setSongLoading(true);
-      resetCheckedList();
+      // resetCheckedList();
       if (name === "favorite") await handleGetFavorite();
       else {
          await sleep(300);
@@ -119,12 +115,12 @@ export default function MySongSongsList({ initialLoading }: Props) {
    };
 
    const handleSetSong = (song: Song, index: number) => {
-      console.log("check set song", from, currentSong.by);
+      // console.log("check set song", from, currentSong.by);
 
       const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
       if (isQueueHaveOtherSongs) {
          dispatch(setQueue({ songs: userSongs }));
-         console.log("setActuallySongs");
+         // console.log("setActuallySongs");
       }
 
       // song in playlist and song in user are two difference case
@@ -133,22 +129,22 @@ export default function MySongSongsList({ initialLoading }: Props) {
       }
    };
 
-   const handleSetFavoriteSong = (song: Song, index: number) => {
-      if (currentSong.id !== song.id) {
-         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+   // const handleSetFavoriteSong = (song: Song, index: number) => {
+   //    if (currentSong.id !== song.id) {
+   //       dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
 
-         if (
-            currentSong.song_in !== "favorite" ||
-            queueSongs.length !== favoriteSongsFiltered.length
-         ) {
-            dispatch(setQueue({ songs: favoriteSongsFiltered }));
-         }
-      }
-   };
+   //       if (
+   //          currentSong.song_in !== "favorite" ||
+   //          queueSongs.length !== favoriteSongsFiltered.length
+   //       ) {
+   //          dispatch(setQueue({ songs: favoriteSongsFiltered }));
+   //       }
+   //    }
+   // };
 
    return (
       <>
-         <CheckedBar location="my-songs">
+         <CheckedBar variant="my-songs">
             {initialLoading ? (
                <>
                   <div className="h-[30px] mb-[10px] flex items-center">
@@ -156,12 +152,12 @@ export default function MySongSongsList({ initialLoading }: Props) {
                   </div>
                </>
             ) : (
-               <p className="font-semibold opacity-[.6]">{songCount} Songs</p>
+               <p className="font-[500] opacity-[.5]">{songCount} Songs</p>
             )}
          </CheckedBar>
 
          {/* tab */}
-         <div className={`flex items-center space-x-[10px] my-[10px]`}>
+         <div className={`flex items-center space-x-[10px] py-[10px]`}>
             {tabs.map((tab, index) => {
                const active = songTab === tab;
                return (
@@ -202,9 +198,9 @@ export default function MySongSongsList({ initialLoading }: Props) {
                      </>
                   )}
 
-                  {songTab === "favorite" && !!favoriteSongsFiltered.length && (
+                  {/* {songTab === "favorite" && !!favoriteSongsFiltered.length && (
                      <SongList
-                        variant="favorite"
+                        // variant="favorite"
                         activeExtend={
                            currentSong.song_in === "user" ||
                            currentSong.song_in === "favorite"
@@ -212,7 +208,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
                         handleSetSong={handleSetFavoriteSong}
                         songs={favoriteSongsFiltered}
                      />
-                  )}
+                  )} */}
                </>
             )}
          </div>

@@ -3,7 +3,6 @@ import {
    SetStateAction,
    useRef,
    useState,
-   useEffect,
    useMemo,
    MouseEvent,
 } from "react";
@@ -30,6 +29,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import useDisableOverflow from "@/hooks/useDisableOverflow";
+import useMobileRotate from "@/hooks/useMobileRotate";
 
 type Props = {
    audioEle: HTMLAudioElement;
@@ -52,7 +53,7 @@ export default function MobileFullScreenPlayer({
    const {
       playStatus: { isPlaying },
    } = useSelector(selectAllPlayStatusStore);
-   const { queueSongs } = useSelector(selectSongQueue);;
+   const { queueSongs } = useSelector(selectSongQueue);
 
    // state
    const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
@@ -60,13 +61,14 @@ export default function MobileFullScreenPlayer({
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
    // ref
-   const [isLandscape, setIsLandscape] = useState(false);
    const bgRef = useRef<HTMLDivElement>(null);
    const containerRef = useRef<HTMLDivElement>(null);
    const lyricContainerRef = useRef<HTMLDivElement>(null);
 
    // use hooks
+   useDisableOverflow({ isOpenFullScreen });
    useBgImage({ bgRef, currentSong });
+   const { isLandscape } = useMobileRotate();
 
    const closeModal = () => setIsOpenModal("");
 
@@ -142,18 +144,6 @@ export default function MobileFullScreenPlayer({
       );
    }, [currentSong, queueSongs]);
 
-   useEffect(() => {
-      const handleResize = () => {
-         if (window.innerWidth > 549 && window.innerWidth < 800) setIsLandscape(true);
-         else setIsLandscape(false);
-      };
-
-      handleResize();
-
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-   }, []);
-
    const classes = {
       headerWrapper: "h-[65px] p-[15px]",
       header: "relative w-full",
@@ -164,7 +154,8 @@ export default function MobileFullScreenPlayer({
       nameAndSinger: "flex flex-grow justify-between items-center",
       scrollText: "h-[30px] mask-image-horizontal",
       control: "absolute bottom-0 left-[15px] right-[15px]",
-      lyricContainer: "absolute top-[65px] bottom-[100px] left-[15px] right-[15px]",
+      lyricContainer:
+         "absolute top-[65px] bottom-[120px] py-[16px] left-[15px] right-[15px]",
       bgImage:
          "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
       overlay:
@@ -200,7 +191,7 @@ export default function MobileFullScreenPlayer({
 
                      <Tabs
                         inFullScreen
-                        className="w-fit"
+                        className="w-fit font-[500]"
                         setActiveTab={setActiveTab}
                         activeTab={activeTab}
                         render={(tab) => tab}
@@ -293,8 +284,7 @@ export default function MobileFullScreenPlayer({
                         () => (
                            <LyricsList
                               active={activeTab === "Lyric"}
-                              // className="h-[calc(100vh-60px-65px-130px-20px)]"
-                              className="h-full"
+                              className="h-[100%]"
                               audioEle={audioEle}
                               isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
                            />

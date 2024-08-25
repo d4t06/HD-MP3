@@ -1,15 +1,8 @@
-import {
-   ChevronDownIcon,
-   ChevronLeftIcon,
-   ChevronRightIcon,
-   Cog6ToothIcon,
-   DocumentTextIcon,
-} from "@heroicons/react/24/outline";
-import { Dispatch, SetStateAction, useMemo, useRef, useState } from "react";
+import { Dispatch, SetStateAction, memo, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
-import { SongThumbnail, Button, Tabs, LyricsList } from ".";
+import { SongThumbnail, Tabs, LyricsList, Button } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 import logoIcon from "../assets/siteLogo.png";
@@ -17,6 +10,15 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import {
+   ChevronDownIcon,
+   ChevronLeftIcon,
+   ChevronRightIcon,
+   Cog6ToothIcon,
+   DocumentTextIcon,
+} from "@heroicons/react/20/solid";
+import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 
 interface Props {
    isOpenFullScreen: boolean;
@@ -35,7 +37,10 @@ function FullScreenPlayer({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { currentSong } = useSelector(selectCurrentSong);
-   const { queueSongs } = useSelector(selectSongQueue);;
+   const { queueSongs } = useSelector(selectSongQueue);
+   const {
+      playStatus: { songImage },
+   } = useSelector(selectAllPlayStatusStore);
    // state
    const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
    //  ref
@@ -83,21 +88,21 @@ function FullScreenPlayer({
    };
 
    const classes = {
-      button: `p-[8px] bg-gray-500 bg-opacity-20 text-xl ${theme.content_hover_text}`,
+      button: `h-[35px] w-[35px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
       mainContainer: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
-    } transition-[transform] duration-[.7s] linear delay-100`,
-      bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background] duration-100`,
+    } transition-transform duration-[.7s] linear delay-100`,
+      bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px]`,
       overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,
       absoluteFull: "absolute h-[100vh] w-[100vw] inset-0",
 
-      headerWrapper: `py-[20px] px-[40px] w-full h-[75px]`,
+      headerWrapper: `py-[20px] px-[40px] w-full`,
       header: "relative flex",
       headerCta: "absolute h-full flex items-center",
 
-      contentContainer: `h-[calc(100%-100px)] song-thumbnail-container relative overflow-hidden`,
+      contentContainer: `h-[calc(100%-120px)] relative overflow-hidden`,
       songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-350px/2)]`,
-      absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-[#fff] bg-opacity-[.2] hover:opacity-100 rounded-full ${theme.content_hover_text}`,
-      songNameSinger: "relative text-center text-white text-[14px] opacity-80",
+      absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-white/30 rounded-full ${theme.content_hover_bg}`,
+      songNameSinger: "relative text-center",
       lyricTabContainer:
          "px-[40px] min-[1536px]:container min-[1536px]:mx-auto min-[1536px]:px-[200px] h-full flex items-center justify-center flex-row",
       fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
@@ -115,7 +120,6 @@ function FullScreenPlayer({
          if (isActive) {
             return (
                <SongThumbnail
-                  theme={theme}
                   key={index}
                   ref={activeSongRef}
                   classNames="active"
@@ -129,7 +133,6 @@ function FullScreenPlayer({
 
          return (
             <SongThumbnail
-               theme={theme}
                key={index}
                idleClass={`${!isActive && idle ? classes.fadeTransition : ""}`}
                hasTitle
@@ -144,11 +147,11 @@ function FullScreenPlayer({
    const renderLyricTab = (
       <div className={classes.lyricTabContainer}>
          {/* left */}
-         <SongThumbnail theme={theme} active={true} data={currentSong} />
+         {songImage && <SongThumbnail active={true} data={currentSong} />}
 
          {/* right */}
          <LyricsList
-            className={"w-full ml-[40px] h-full"}
+            className={`w-full ml-[40px] h-full ${!songImage && "text-center"}`}
             audioEle={audioEle}
             isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
             active={activeTab === "Lyric"}
@@ -177,7 +180,7 @@ function FullScreenPlayer({
                         {activeTab === "Lyric" && (
                            <p className={`${classes.songNameSinger}`}>
                               {currentSong.name} -{" "}
-                              <span className="opacity-30">{currentSong.singer}</span>
+                              <span className="opacity-50">{currentSong.singer}</span>
                            </p>
                         )}
                      </div>
@@ -197,21 +200,21 @@ function FullScreenPlayer({
                         idle && classes.fadeTransition
                      }`}
                   >
-                     {currentSong.by != "admin" && activeTab === "Lyric" && (
-                        <Button
-                           onClick={() => handleEdit()}
-                           variant={"circle"}
-                           className={`p-[4px] ${classes.button}`}
-                        >
-                           <DocumentTextIcon className="w-[20px]" />
-                        </Button>
+                     {currentSong.by !== "admin" && activeTab === "Lyric" && (
+                        <Tooltip placement="bottom">
+                           <TooltipTrigger
+                              onClick={() => handleEdit()}
+                              className={`p-[8px] ${classes.button}`}
+                           >
+                              <DocumentTextIcon />
+                           </TooltipTrigger>
+                           <TooltipContent>Lyric</TooltipContent>
+                        </Tooltip>
                      )}
 
                      <Popover placement="bottom-end">
-                        <PopoverTrigger
-                           className={`h-[36px] rounded-full w-[36px] ${classes.button}`}
-                        >
-                           <Cog6ToothIcon className="w-[20px]" />
+                        <PopoverTrigger className={`${classes.button} p-[8px]`}>
+                           <Cog6ToothIcon />
                         </PopoverTrigger>
 
                         <PopoverContent className="z-[99]">
@@ -219,13 +222,15 @@ function FullScreenPlayer({
                         </PopoverContent>
                      </Popover>
 
-                     <Button
-                        onClick={() => setIsOpenFullScreen(false)}
-                        variant={"circle"}
-                        className={`p-[4px] ${classes.button}`}
-                     >
-                        <ChevronDownIcon className="w-[20px]" />
-                     </Button>
+                     <Tooltip placement="bottom">
+                        <TooltipTrigger
+                           onClick={() => setIsOpenFullScreen(false)}
+                           className={`p-[4px] ${classes.button}`}
+                        >
+                           <ChevronDownIcon />
+                        </TooltipTrigger>
+                        <TooltipContent>Close</TooltipContent>
+                     </Tooltip>
                   </div>
                </div>
             </div>
@@ -243,19 +248,23 @@ function FullScreenPlayer({
                </div>
                {activeTab === "Songs" && !idle && (
                   <>
-                     <button
+                     <Button
+                        hover={"scale"}
+                        size={"clear"}
                         onClick={() => handleClickPrevious()}
                         className={`${classes.absoluteButton} left-[20px]`}
                      >
-                        <ChevronLeftIcon className="w-[25px]" />
-                     </button>
+                        <ChevronLeftIcon className="w-[30px]" />
+                     </Button>
 
-                     <button
+                     <Button
+                        hover={"scale"}
+                        size={"clear"}
                         onClick={() => handleClickNext()}
                         className={`${classes.absoluteButton} right-[20px]`}
                      >
-                        <ChevronRightIcon className="w-[25px]" />
-                     </button>
+                        <ChevronRightIcon className="w-[30px]" />
+                     </Button>
                   </>
                )}
 
@@ -280,12 +289,12 @@ function FullScreenPlayer({
 
             {isOpenFullScreen && activeTab === "Lyric" && !idle && (
                <p
-                  className={`${classes.songNameSinger} ${
+                  className={`pt-[20px] ${classes.songNameSinger} ${
                      idle && classes.fadeTransition
                   }`}
                >
                   {currentSong.name} -{" "}
-                  <span className="opacity-30">{currentSong.singer}</span>
+                  <span className="opacity-50">{currentSong.singer}</span>
                </p>
             )}
          </div>
@@ -293,4 +302,4 @@ function FullScreenPlayer({
    );
 }
 
-export default FullScreenPlayer;
+export default memo(FullScreenPlayer);

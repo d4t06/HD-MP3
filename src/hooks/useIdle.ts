@@ -4,7 +4,11 @@ import { scrollToActiveSong } from "./useScrollSong";
 import appConfig from "../config/app";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
-export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullScreen: boolean) {
+export default function useIdle(
+   delay: number,
+   isOnMobile: boolean,
+   isOpenFullScreen: boolean
+) {
    // store
    const { currentSong } = useSelector(selectCurrentSong);
 
@@ -27,13 +31,15 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
    const handleIdle = async () => {
       if (!isOpenFullScreen) return;
 
-      const activeSongEle = document.querySelector(".song-thumb.active") as HTMLDivElement;
-      const containerEle = document.querySelector(".song-list-container") as HTMLDivElement;
+      const activeSongEle = document.querySelector(
+         ".song-thumb.active"
+      ) as HTMLDivElement;
+      const containerEle = document.querySelector(
+         ".song-list-container"
+      ) as HTMLDivElement;
 
       if (activeSongEle && containerEle) {
          const isScroll = scrollToActiveSong(activeSongEle, containerEle, true);
-
-         console.log("check isScroll", isScroll);
 
          let timeToEnableFocus = appConfig.focusDelay;
          if (!isScroll) timeToEnableFocus = 0;
@@ -51,7 +57,7 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
       setTimeout(() => {
          window.addEventListener("mousemove", handleMouseMove);
 
-         window.dispatchEvent(new Event("mousemove"))
+         window.dispatchEvent(new Event("mousemove"));
       }, 1000);
 
       return () => {
@@ -60,7 +66,7 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
       };
    }, [isOpenFullScreen]);
 
-   useEffect(() => {      
+   useEffect(() => {
       timerIdScrollSong.current = setTimeout(() => {
          handleIdle();
       }, delay);
@@ -71,5 +77,6 @@ export default function useIdle(delay: number, isOnMobile: boolean, isOpenFullSc
    }, [someThingToTrigger]);
 
    if (!isOpenFullScreen) return false;
+
    return idle;
 }

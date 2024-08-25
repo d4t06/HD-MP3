@@ -52,7 +52,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
 
    const renderItem = () => {
       return songLyric.real_time.map((lyricItem, index) => {
-         const bounce = 0.3;
+         const bounce = 0.5;
          // display lyric early
          // ex start: 10 - 2s
          //    end: 20 - 2s
@@ -99,13 +99,13 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
    }, [currentSong]);
 
    const classes = {
-      container: "overflow-y-auto overflow-x-hidden no-scrollbar pt-[30px] mask-image",
+      container: "overflow-y-auto overflow-x-hidden no-scrollbar pt-[20px] mask-image",
       loadingContainer: "flex justify-center items-center h-full w-full",
       loadingIcon: "opacity-[.6] animate-spin w-[35px] duration-[2s]",
    };
 
    return (
-      <div ref={containerRef} className={`${className && className} ${classes.container}`}>
+      <div ref={containerRef} className={`${classes.container} ${className || ""}`}>
          {loading && (
             <div className={classes.loadingContainer}>
                <span>

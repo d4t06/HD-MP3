@@ -4,7 +4,7 @@ import { nanoid } from "nanoid";
 import axios from "axios";
 import { SetStateAction, Dispatch } from "react";
 
-const isDev: boolean = !!import.meta.env.DEV;
+const isDev: boolean = import.meta.env.DEV;
 
 export const request = axios.create({
    baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",

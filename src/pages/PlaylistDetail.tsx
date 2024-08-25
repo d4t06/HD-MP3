@@ -6,20 +6,18 @@ import { useMemo } from "react";
 import PLaylistInfo from "@/components/PlaylistInfo";
 import { SongItemSkeleton } from "@/components/skeleton";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
-import SongListMain from "@/components/SongListMain";
 import { useLocation } from "react-router-dom";
-// import PlaylistProvider from "../store/PlaylistSongContext";
 
 export default function PlaylistDetail() {
    // us store
    const { currentPlaylist } = useSelector(selectCurrentPlaylist);
    // hooks
    const { loading: usePlaylistLoading } = usePlaylistDetail();
-   const location = useLocation();
+   const variant = useLocation();
 
    const isInDashboard = useMemo(
-      () => location.pathname.includes("/dashboard/playlist"),
-      [location]
+      () => variant.pathname.includes("/dashboard/playlist"),
+      [variant]
    );
 
    const renderPlaylistInfo = useMemo(() => {
@@ -44,11 +42,11 @@ export default function PlaylistDetail() {
             </>
          );
 
-      if (isInDashboard) return <PlaylistDetailSongList location="dashboard-playlist" />;
+      if (isInDashboard) return <PlaylistDetailSongList variant="dashboard-playlist" />;
 
       if (currentPlaylist.by === "admin")
-         return <PlaylistDetailSongList location="admin-playlist" />;
-      else return <PlaylistDetailSongList location="my-playlist" />;
+         return <PlaylistDetailSongList variant="admin-playlist" />;
+      else return <PlaylistDetailSongList variant="my-playlist" />;
    }, [usePlaylistLoading]);
 
    return (
@@ -56,9 +54,7 @@ export default function PlaylistDetail() {
          <BackBtn />
 
          {renderPlaylistInfo}
-         <div className="pb-[50px] mt-[30px]">
-            <SongListMain>{renderSongList}</SongListMain>
-         </div>
+         <div className="pb-[50px] mt-[20px]">{renderSongList}</div>
       </div>
    );
 }

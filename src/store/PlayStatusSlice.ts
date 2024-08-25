@@ -1,10 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { getLocalStorage } from "../utils/appHelpers";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 
 type Repeat = "one" | "all" | "no";
 type LyricSize = "small" | "medium" | "large";
 
-type stateType = {
+type StateType = {
    playStatus: {
       isPlaying: boolean;
       isWaiting: boolean;
@@ -15,6 +15,8 @@ type stateType = {
       isLoaded: boolean;
       isTimer: number;
       isCrossFade: boolean;
+      songBackground: boolean;
+      songImage: boolean;
    };
 };
 
@@ -33,7 +35,7 @@ type stateType = {
 const init = () => {
    const storage = getLocalStorage();
 
-   const state: stateType = {
+   const state: StateType = {
       playStatus: {
          isError: false,
          isPlaying: false,
@@ -44,6 +46,8 @@ const init = () => {
          isShuffle: storage["isShuffle"] || false,
          isTimer: storage["isTimer"] || 0,
          isCrossFade: storage["isCrossFade"] || false,
+         songBackground: storage["songBackground"] || false,
+         songImage: storage["songImage"] || false,
       },
    };
 
@@ -56,17 +60,32 @@ const PlayStatusSlice = createSlice({
    reducers: {
       setPlayStatus(
          state,
-         action: { type: string; payload: Partial<stateType["playStatus"]> }
+         action: { type: string; payload: Partial<StateType["playStatus"]> }
       ) {
          state.playStatus = { ...state.playStatus, ...action.payload };
+      },
+      togglePlayControl(
+         state: StateType,
+         action: PayloadAction<{ variant: keyof StateType["playStatus"] }>
+      ) {
+         const { variant } = action.payload;
+
+         switch (variant) {
+            default:
+               if (typeof state.playStatus[variant] === "boolean") {
+                  const value = !state.playStatus[variant] as boolean;
+                  (state.playStatus[variant] as boolean) = value;
+                  setLocalStorage(variant, value);
+               }
+         }
       },
    },
 });
 
 // state ở đây là tất cả cá slice được thêm vào reducer (xem file store)
-export const selectAllPlayStatusStore = (state: { playStatus: stateType }) =>
+export const selectAllPlayStatusStore = (state: { playStatus: StateType }) =>
    state.playStatus;
 
-export const { setPlayStatus } = PlayStatusSlice.actions;
+export const { setPlayStatus, togglePlayControl } = PlayStatusSlice.actions;
 
 export default PlayStatusSlice.reducer;

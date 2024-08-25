@@ -119,6 +119,7 @@ function SongList({ songs, ...props }: Props) {
                   onClick={() => handleSetSong(song, index)}
                   variant={props.variant}
                   song={song}
+                  // theme={theme}
                   index={index}
                />
 
@@ -133,8 +134,6 @@ function SongList({ songs, ...props }: Props) {
          );
       });
    }, [currentSong, props, queueSongs, theme]);
-
-   if (props.variant === "my-songs") console.log("render my songs");
 
    return (
       <>

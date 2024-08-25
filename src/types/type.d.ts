@@ -75,6 +75,7 @@ type ThemeType = {
    content_border: string;
    content_hover_border: string;
    content_bg: string;
+   content_code: string;
    content_hover_bg: string;
 };
 

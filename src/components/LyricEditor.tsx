@@ -67,10 +67,6 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
    const start = useRef(0);
    const scrollBehavior = useRef<ScrollBehavior>("smooth");
 
-   // const modalComponent = useRef<
-   //    "add_base_lyric" | "delete_lyric" | "turtorial" | "confirm_navigate_back"
-   // >("add_base_lyric");
-
    // hook
    const { setSuccessToast, setErrorToast } = useToast();
    const navigate = useNavigate();
@@ -89,17 +85,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
 
    const closeModal = () => setIsOpenModal("");
 
-   // const targetSongs = useMemo(
-   //    () => (admin ? adminSongs : userSongs),
-   //    [adminSongs, userSongs]
-   // );
-
    const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
-
-   // const handleError = () => {
-   //    if (admin) navigate("/dashboard");
-   //    else navigate("/");
-   // };
 
    const play = () => {
       const audioEle = audioRef.current;
@@ -304,11 +290,6 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
          }
       }
 
-      // if (!targetSongs.length || !targetSongs.find((s) => s.id === song.id)) {
-      //    handleError();
-      //    return;
-      // }
-
       audioEle.addEventListener("ended", handleSongEnd);
       return () => {
          audioEle.removeEventListener("ended", handleSongEnd);
@@ -348,7 +329,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
       col: "flex-grow flex flex-col gap-[10px]",
       formGroup: "flex flex-col gap-[5px] flex-grow",
       label: "text-md font-[500]",
-      button: `${theme.content_bg} rounded-full text-white text-[14px] px-[10px]`,
+      button: `${theme.content_bg} rounded-full font-[500] text-white text-[14px] px-[10px]`,
       disable: " opacity-60 pointer-events-none ",
       icon: "h-[20px] w-[20px]",
       lyricBox: "list-none h-full px-[10px] max-[549px]:w-[100%] pb-[20%] ",
@@ -425,7 +406,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
                />
             );
       }
-   }, [isOpenModal]);
+   }, [isOpenModal, textAreaValue]);
 
    const ctaComponent = (
       <div className={`${classes.ctaContainer} ${text}`}>

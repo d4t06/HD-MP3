@@ -9,42 +9,44 @@ import {
 } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useAuthStore } from "../store";
+import { useAuthStore, useTheme } from "../store";
 
-import { getLocalStorage, handleTimeText, setLocalStorage } from "../utils/appHelpers";
+import {
+   getLocalStorage,
+   handleTimeText,
+   setLocalStorage,
+} from "../utils/appHelpers";
 
 import { useLocation } from "react-router-dom";
-import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
-import { mySetDoc } from "../utils/firebaseHelpers";
-
-// import { useLocalStorage } from "../hooks";
+import {
+   selectAllPlayStatusStore,
+   setPlayStatus,
+} from "../store/PlayStatusSlice";
 import useWindowResize from "./useWindowResize";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
-// import { store } from "../config/firebase";
+// import { useLocalStorage } from ".";
 
 interface Props {
    admin?: boolean;
    audioEle: HTMLAudioElement;
    isOpenFullScreen: boolean;
-   durationLineRef: RefObject<HTMLDivElement>;
-   timeProcessLine: RefObject<HTMLDivElement>;
+   timelineRef: RefObject<HTMLDivElement>;
    currentTimeRef: RefObject<HTMLDivElement>;
    remainingTimeRef: RefObject<HTMLDivElement>;
 }
 
 export default function useControl({
    audioEle,
-   admin,
    isOpenFullScreen,
-   durationLineRef,
-   timeProcessLine,
+   timelineRef,
    currentTimeRef,
    remainingTimeRef,
 }: Props) {
    // use store
    const dispatch = useDispatch();
+   const { theme } = useTheme();
    const { user } = useAuthStore();
    const { queueSongs } = useSelector(selectSongQueue);
    const {
@@ -57,13 +59,15 @@ export default function useControl({
    // state
    const [isLoaded, setIsLoaded] = useState(false);
    const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
-   const [someThingToUpdateHistory, setSomeThingToUpdateHistory] = useState(0);
-   const [noLongerPlay, setNoLongerPlay] = useState(true);
+   // const [someThingToUpdateHistory, setSomeThingToUpdateHistory] = useState(0);
+   // const [noLongerPlayRef, setNoLongerPlay] = useState(true);
+
+   const noLongerPlayRef = useRef(true);
 
    // ref
    const currentIndex = useRef(0);
    const durationRef = useRef(0);
-   const durationLineRefWidth = useRef<number>();
+   const timelineRefWidth = useRef<number>();
    const prevSeekTime = useRef(0);
    const startFadeWhenEnd = useRef(0);
    const prevVolume = useRef(0);
@@ -75,43 +79,46 @@ export default function useControl({
 
    // use hook
    const location = useLocation();
-   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+   const isInEdit = useMemo(
+      () => location.pathname.includes("edit"),
+      [location]
+   );
    // const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
 
    const updateProcessLineWidth = () => {
-      durationLineRefWidth.current = durationLineRef.current?.offsetWidth;
+      timelineRefWidth.current = timelineRef.current?.offsetWidth;
    };
    useWindowResize(updateProcessLineWidth, [isOpenFullScreen]);
 
    // use local storage instead of dispatch user info
-   const updateHistory = async () => {
-      if (admin || !user) return;
-      if (!currentSong.id) return;
+   // const updateHistory = async () => {
+   //    if (admin || !user) return;
+   //    if (!currentSong.id) return;
 
-      const storage = getLocalStorage();
-      const playHistory = storage["play_history"] || [];
+   //    const storage = getLocalStorage();
+   //    const playHistory = storage["play_history"] || [];
 
-      let newHistory: string[] = [];
-      if (playHistory.length) {
-         newHistory = [...playHistory];
+   //    let newHistory: string[] = [];
+   //    if (playHistory.length) {
+   //       newHistory = [...playHistory];
 
-         const index = newHistory.find((id) => id === currentSong.id);
-         if (index) return;
-      }
+   //       const index = newHistory.find((id) => id === currentSong.id);
+   //       if (index) return;
+   //    }
 
-      newHistory.push(currentSong.id);
-      if (newHistory.length > 5) newHistory = newHistory.slice(1);
+   //    newHistory.push(currentSong.id);
+   //    if (newHistory.length > 5) newHistory = newHistory.slice(1);
 
-      setLocalStorage("play_history", newHistory);
-      // setPlayHistory(newHistory);
+   //    setLocalStorage("playHistory", newHistory);
+   //    // setPlayHistory(newHistory);
 
-      await mySetDoc({
-         collection: "users",
-         data: { play_history: newHistory } as Partial<User>,
-         id: user.email,
-         msg: ">>> api: set play history",
-      });
-   };
+   //    await mySetDoc({
+   //       collection: "users",
+   //       data: { play_history: newHistory } as Partial<User>,
+   //       id: user.email,
+   //       msg: ">>> api: set play history",
+   //    });
+   // };
 
    const play = () => {
       try {
@@ -123,7 +130,7 @@ export default function useControl({
             if (isCrossFade) audioEle.volume = 0;
 
             isPlayingNewSong.current = false;
-            setSomeThingToUpdateHistory(Math.floor(Math.random() * 10));
+            // setSomeThingToUpdateHistory(Math.floor(Math.random() * 10));
          }
       } catch (error) {}
    };
@@ -143,8 +150,10 @@ export default function useControl({
    };
 
    const handlePlaying = () => {
-      setNoLongerPlay(false);
-      dispatch(setPlayStatus({ isPlaying: true, isWaiting: false, isError: false }));
+      noLongerPlayRef.current = false;
+      dispatch(
+         setPlayStatus({ isPlaying: true, isWaiting: false, isError: false })
+      );
    };
 
    // const handleWaiting = () => {
@@ -152,13 +161,17 @@ export default function useControl({
    // };
 
    const handleResetForNewSong = () => {
-      const timeProcessLineElement = timeProcessLine.current as HTMLElement;
+      // const timeProcessLineElement = timeProcessLine.current as HTMLElement;
       setIsLoaded(false);
 
-      if (timeProcessLineElement && currentTimeRef.current && remainingTimeRef.current) {
+      if (
+         // timeProcessLineElement &&
+         currentTimeRef.current &&
+         remainingTimeRef.current
+      ) {
          currentTimeRef.current.innerText = "00:00";
          remainingTimeRef.current.innerText = "00:00";
-         timeProcessLineElement.style.width = "0%";
+         // timeProcessLineElement.style.width = "0%";
       }
    };
 
@@ -166,15 +179,14 @@ export default function useControl({
       (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
          const node = e.target as HTMLElement;
 
-         if (durationLineRefWidth.current && durationRef.current) {
+         if (timelineRefWidth.current && durationRef.current) {
             const clientRect = node.getBoundingClientRect();
-            const timeProcessLineElement = timeProcessLine.current as HTMLElement;
 
             const length = e.clientX - clientRect.left;
-            const lengthRatio = length / durationLineRefWidth.current;
+            const lengthRatio = length / timelineRefWidth.current;
             const newSeekTime = Math.ceil(lengthRatio * durationRef.current);
 
-            if (audioEle && timeProcessLineElement) {
+            if (audioEle) {
                const currentTime = audioEle.currentTime;
 
                if (prevSeekTime.current) {
@@ -189,10 +201,6 @@ export default function useControl({
 
                audioEle.currentTime = newSeekTime;
                prevSeekTime.current = newSeekTime;
-               timeProcessLineElement.style.width = (lengthRatio * 100).toFixed(1) + "%";
-
-               if (!isPlaying) play();
-               // else dispatch(setPlayStatus({ isWaiting: true }));
             }
          }
       },
@@ -253,7 +261,8 @@ export default function useControl({
       }
 
       if (currentTime >= startFadeWhenEnd.current) {
-         const volumeValue = ((durationRef.current - currentTime) / 2) * volInStore;
+         const volumeValue =
+            ((durationRef.current - currentTime) / 2) * volInStore;
          // console.log("check val", volumeValue.toFixed(2), volInStore);
          audioEle.volume = volumeValue;
       }
@@ -266,16 +275,16 @@ export default function useControl({
       }
 
       const currentTime = audioEle?.currentTime;
-      const timeProcessLineEle = timeProcessLine.current as HTMLElement;
+      const timeLine = timelineRef.current as HTMLElement;
 
-      if (durationRef.current && currentTime) {
-         const newWidth = currentTime / (durationRef.current / 100);
-
-         timeProcessLineEle.style.width = newWidth.toFixed(1) + "%";
+      if (durationRef.current && currentTime && timeLine) {
+         const ratio = currentTime / (durationRef.current / 100);
+         timeLine.style.background = `linear-gradient(to right, ${theme.content_code} ${ratio}%, white ${ratio}%, white 100%)`;
       }
 
       if (currentTimeRef.current) {
-         currentTimeRef.current.innerText = handleTimeText(currentTime!) || "00:00";
+         currentTimeRef.current.innerText =
+            handleTimeText(currentTime!) || "00:00";
       }
 
       if (isCrossFade) handleFade(currentTime);
@@ -326,8 +335,10 @@ export default function useControl({
       remainingTimeEle.innerText = handleTimeText(audioDuration);
 
       // update control props
-      durationLineRefWidth.current = durationLineRef.current?.offsetWidth;
+      timelineRefWidth.current = timelineRef.current?.offsetWidth;
       startFadeWhenEnd.current = audioDuration - 3;
+
+      if (!noLongerPlayRef.current) setLocalStorage("current", currentSong);
 
       // case end of list
       if (isEndOfList.current) {
@@ -337,21 +348,33 @@ export default function useControl({
       }
 
       // case in edit page or (no longer play and have queue localStorage )
-      if (isInEdit || noLongerPlay) {
+      if (isInEdit || noLongerPlayRef.current) {
          dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
 
-         const storage = getLocalStorage();
-         const duration = storage["duration"] || 0;
+         // const storage = getLocalStorage();
+         // const duration = storage["duration"] || 0;
+         const duration = 0;
          // case first time play then update duration in localStorage
          // when user clear song queue or first time access website, these cases don't have duration
-         if (noLongerPlay && duration) {
+         if (noLongerPlayRef.current && duration) {
             audioEle.currentTime = duration;
             handleTimeUpdate();
 
             // case no longer playing and no have queue in localStorage
-         } else play();
+         }
+         // else play();
 
-         setNoLongerPlay(false);
+         if (noLongerPlayRef.current) {
+            noLongerPlayRef.current = false;
+
+            const storage = getLocalStorage();
+
+            if (!storage["current"]) {
+               setLocalStorage("current", currentSong);
+               play();
+            }
+         }
+
          return;
       }
 
@@ -386,7 +409,8 @@ export default function useControl({
    // handle when song error
    useEffect(() => {
       if (!someThingToTriggerError) return;
-      if (currentSong.name) dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+      if (currentSong.name)
+         dispatch(setPlayStatus({ isWaiting: false, isError: true }));
    }, [someThingToTriggerError]);
 
    // update audio src, currentIndex, reset song
@@ -397,7 +421,9 @@ export default function useControl({
       }
 
       pause();
-      dispatch(setPlayStatus({ isWaiting: true, isError: false, isPlaying: false }));
+      dispatch(
+         setPlayStatus({ isWaiting: true, isError: false, isPlaying: false })
+      );
 
       audioEle.src = currentSong.song_url;
       currentIndex.current = currentSong.currentIndex;
@@ -410,9 +436,10 @@ export default function useControl({
          handleResetForNewSong();
          clearInterval(intervalId.current);
          isPlayingNewSong.current = true;
-         // setNoLongerPlay(false);
       };
-   }, [currentSong]);
+
+      // use combine dependencies in other to prevent reload after edit song
+   }, [currentSong.id + currentSong.song_in]);
 
    // update site title
    useEffect(() => {
@@ -459,11 +486,11 @@ export default function useControl({
    }, [isInEdit, currentSong.id, isCrossFade]);
 
    // update play history
-   useEffect(() => {
-      if (!someThingToTriggerError) return;
+   // useEffect(() => {
+   //    if (!someThingToTriggerError) return;
 
-      updateHistory();
-   }, [someThingToUpdateHistory]);
+   //    updateHistory();
+   // }, [someThingToUpdateHistory]);
 
    // update duration in local storage
    useEffect(() => {
@@ -476,22 +503,6 @@ export default function useControl({
 
       return () => clearInterval(intervalId.current);
    }, [isPlaying]);
-
-   // confirm reload
-   // useEffect(() => {
-   //    if (noLongerPlay) return;
-
-   //    const handleWindowReload = (e: BeforeUnloadEvent) => {
-   //       e.preventDefault();
-   //       e.returnValue = true;
-   //    };
-
-   //    window.addEventListener("beforeunload", handleWindowReload);
-
-   //    return () => {
-   //       window.removeEventListener("beforeunload", handleWindowReload);
-   //    };
-   // }, [noLongerPlay]);
 
    return { handleNext, handlePrevious, handleSeek, play, pause, isLoaded };
 }

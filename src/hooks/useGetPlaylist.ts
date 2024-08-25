@@ -109,5 +109,5 @@ export default function useGetPlaylist() {
       }
    }, []);
 
-   return { isFetching, setPlaylistSongs, playlistSongs };
+   return { isFetching, setPlaylistSongs, playlistSongs, currentPlaylist };
 }

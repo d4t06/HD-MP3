@@ -1,20 +1,22 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal, PopupWrapper, Switch, TimerModal } from "..";
 import { useTheme } from "../../store";
-import { selectAllPlayStatusStore, setPlayStatus } from "../../store/PlayStatusSlice";
+import {
+   selectAllPlayStatusStore,
+   setPlayStatus,
+   togglePlayControl,
+} from "../../store/PlayStatusSlice";
 import { useState } from "react";
 import { setLocalStorage } from "../../utils/appHelpers";
 
 type Modal = "timer";
 
 export default function FullScreenPlayerSetting() {
-   const { theme } = useTheme();
+   const { theme, isOnMobile } = useTheme();
    const dispatch = useDispatch();
 
-   const [active, setActive] = useState(false);
-
    const {
-      playStatus: { isTimer, lyricSize },
+      playStatus: { isTimer, lyricSize, songBackground, songImage },
    } = useSelector(selectAllPlayStatusStore);
 
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">();
@@ -34,10 +36,10 @@ export default function FullScreenPlayerSetting() {
    };
 
    const classes = {
-      disableBtn: "bg-gray-500 bg-opacity-20",
-      lyricSizeBtn: `group/text !hover:brightness-100 h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
+      disableBtn: "bg-white/10 bg-opacity-20",
+      lyricSizeBtn: `group/text !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
       itemContainer: "flex justify-between items-center min-h-[30px]",
-      text: "text-[16px] sm:text-[14px] text-[#ccc]",
+      text: "text-md text-[#ccc]",
    };
 
    return (
@@ -46,7 +48,7 @@ export default function FullScreenPlayerSetting() {
             <PopupWrapper
                variant={"default"}
                color="black"
-               className="space-y-[10px]"
+               className="space-y-[6px] text-white"
                theme={theme}
             >
                <div className={classes.itemContainer}>
@@ -55,6 +57,7 @@ export default function FullScreenPlayerSetting() {
                      <Button
                         onClick={() => handleChangeLyricSize("small")}
                         variant={"circle"}
+                        size={"clear"}
                         className={`${
                            lyricSize === "small" ? theme.content_bg : classes.disableBtn
                         } ${classes.lyricSizeBtn}`}
@@ -64,6 +67,7 @@ export default function FullScreenPlayerSetting() {
                      <Button
                         onClick={() => handleChangeLyricSize("medium")}
                         variant={"circle"}
+                        size={"clear"}
                         className={`${
                            lyricSize === "medium" ? theme.content_bg : classes.disableBtn
                         } ${classes.lyricSizeBtn}`}
@@ -73,6 +77,7 @@ export default function FullScreenPlayerSetting() {
                      <Button
                         onClick={() => handleChangeLyricSize("large")}
                         variant={"circle"}
+                        size={"clear"}
                         className={`${
                            lyricSize === "large" ? theme.content_bg : classes.disableBtn
                         } ${classes.lyricSizeBtn}`}
@@ -82,13 +87,34 @@ export default function FullScreenPlayerSetting() {
                   </div>
                </div>
                <div className={`${classes.itemContainer}`}>
-                  <p className={classes.text}>Another option</p>
-                  <Switch size="thin" active={active} cb={() => setActive(!active)} />
+                  <p className={classes.text}>Song background</p>
+                  <Switch
+                     size="thin"
+                     className="bg-white/10"
+                     active={songBackground}
+                     cb={() => dispatch(togglePlayControl({ variant: "songBackground" }))}
+                  />
                </div>
+               {!isOnMobile && (
+                  <div className={`${classes.itemContainer}`}>
+                     <p className={classes.text}>Song image</p>
+                     <Switch
+                        size="thin"
+                        className="bg-white/10"
+                        active={songImage}
+                        cb={() => dispatch(togglePlayControl({ variant: "songImage" }))}
+                     />
+                  </div>
+               )}
 
                <div className={`${classes.itemContainer}`}>
                   <p className={classes.text}>Sleep timer</p>
-                  <Switch size="thin" active={!!isTimer} cb={handleTimerBtn} />
+                  <Switch
+                     className="bg-white/10"
+                     size="thin"
+                     active={!!isTimer}
+                     cb={handleTimerBtn}
+                  />
                </div>
             </PopupWrapper>
          </div>

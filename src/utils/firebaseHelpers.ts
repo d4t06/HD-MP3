@@ -4,7 +4,7 @@ import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
 type collectionVariant = "songs" | "playlist" | "lyrics" | "users";
 
-const isDev: boolean = !!import.meta.env.DEV;
+const isDev: boolean = import.meta.env.DEV;
 
 export const myDeleteDoc = async ({
    collection,
@@ -165,7 +165,7 @@ export const setUserPlaylistIdsDoc = async (playlists: Playlist[], user: User) =
 
 export const setUserSongIdsAndCountDoc = async ({
    songIds,
-   user,  
+   user,
 }: {
    songIds: string[];
    user: User;

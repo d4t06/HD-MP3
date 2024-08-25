@@ -1,52 +1,41 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Button, ConfirmModal, Modal } from ".";
 import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
-import { useSongListContext } from "../store/SongListContext";
-import { QueueListIcon } from "@heroicons/react/24/outline";
+import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteSong } from "../utils/firebaseHelpers";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import {
-   addSongToQueue,
-   selectSongQueue,
-   setQueue,
-} from "@/store/songQueueSlice";
-import { selectSongPlaylist, setUserSongs } from "@/store/songPlaylistSlice";
+import { addSongToQueue, selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { useSongSelectContext } from "@/store/SongSelectContext";
 
 type Home = {
-   location: "home";
+   variant: "home";
 };
 
 type MyPlaylist = {
-   location: "my-playlist";
+   variant: "my-playlist";
 };
 
 type MySongs = {
-   location: "my-songs";
+   variant: "my-songs";
 };
 
 type AdminPlaylist = {
-   location: "admin-playlist";
+   variant: "admin-playlist";
 };
 
 type DashBoardSong = {
-   location: "dashboard-songs";
+   variant: "dashboard-songs";
 };
 
 type DashBoardPlaylist = {
-   location: "dashboard-playlist";
+   variant: "dashboard-playlist";
 };
 
 type Modal = "delete-selected-songs" | "remove-selects-songs";
-
-type OutlineButtonProps = {
-   onClick: () => void;
-   children: ReactNode;
-   className: string;
-};
 
 type Props =
    | MyPlaylist
@@ -55,14 +44,6 @@ type Props =
    | Home
    | DashBoardSong
    | DashBoardPlaylist;
-
-const OutlineButton = ({ children, onClick, className }: OutlineButtonProps) => {
-   return (
-      <Button onClick={onClick} variant={"outline"} size={"small"} className={className}>
-         {children}
-      </Button>
-   );
-};
 
 export default function CheckedBar({
    children,
@@ -74,17 +55,11 @@ export default function CheckedBar({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { user } = useAuthStore();
-   const {
-      isChecked,
-      selectedSongs,
-      setIsChecked,
-      setSelectedSongs,
-      reset: resetCheckedList,
-   } = useSongListContext();
+   const { isChecked, selectedSongs, selectAll, resetSelect } = useSongSelectContext();
    const { currentSong } = useSelector(selectCurrentSong);
    const { queueSongs } = useSelector(selectSongQueue);
    const { playlistSongs } = useSelector(selectCurrentPlaylist);
-   const { userSongs } = useSongsStore();
+   const { userSongs, setUserSongs } = useSongsStore();
 
    // state
    const [isFetching, setIsFetching] = useState(false);
@@ -92,7 +67,6 @@ export default function CheckedBar({
 
    // hooks
    const { setErrorToast, setSuccessToast } = useToast();
-   // const {} = useSongItemActions()
    const { deleteSongsFromPlaylist, isFetching: playlistActionLoading } =
       usePlaylistActions();
 
@@ -101,13 +75,13 @@ export default function CheckedBar({
    };
 
    const handleSelectUserSongs = () => {
-      if (selectedSongs.length < userSongs.length) setSelectedSongs(userSongs);
-      else resetCheckedList();
+      if (selectedSongs.length < userSongs.length) selectAll(userSongs);
+      else resetSelect();
    };
 
    const handleSelectAllPlaylistSongs = () => {
-      if (selectedSongs.length < playlistSongs.length) setSelectedSongs(playlistSongs);
-      else resetCheckedList();
+      if (selectedSongs.length < playlistSongs.length) selectAll(playlistSongs);
+      else resetSelect();
    };
 
    const addSongsToQueue = () => {
@@ -115,7 +89,7 @@ export default function CheckedBar({
 
       dispatch(addSongToQueue({ songs: songsWithSongIn }));
       setSuccessToast({ message: "songs added to queue" });
-      resetCheckedList();
+      resetSelect();
    };
 
    const handleDeleteSelectedSong = async () => {
@@ -137,13 +111,13 @@ export default function CheckedBar({
          }
          if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
 
-         dispatch(setUserSongs({ songs: newSongs }));
+         setUserSongs(newSongs);
          setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
       } catch (error) {
          console.log({ message: error });
          setErrorToast({});
       } finally {
-         resetCheckedList();
+         resetSelect();
          setIsFetching(false);
          closeModal();
       }
@@ -157,13 +131,13 @@ export default function CheckedBar({
          setErrorToast({ message: "Error when delete song" });
       } finally {
          closeModal();
-         setIsChecked(false);
-         setSelectedSongs([]);
+         resetSelect();
       }
    };
 
    const classes = {
       outlineButton: `border-${theme.alpha} ${theme.side_bar_bg}`,
+      icon: "w-[20px] mr-[6px]",
    };
 
    const renderModal = useMemo(() => {
@@ -194,24 +168,25 @@ export default function CheckedBar({
    }, [isOpenModal, playlistActionLoading, isFetching]);
 
    const content = useMemo(() => {
-      switch (props.location) {
+      switch (props.variant) {
          case "home":
             return (
                <>
-                  {!isChecked && <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>}
+                  {!isChecked && <h3 className="text-2xl font-bold !mr-[14px]">Songs</h3>}
 
                   {isChecked && (
-                     <CheckedCta location={props.location} reset={() => {}}>
-                        <p className="font-semibold opacity-[.6]">
-                           {selectedSongs.length}
-                        </p>
-                        <OutlineButton
+                     <CheckedCta variant={props.variant}>
+                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+
+                        <Button
                            onClick={addSongsToQueue}
+                           variant={"outline"}
+                           size="small"
                            className={classes.outlineButton}
                         >
-                           <QueueListIcon className="w-[20px] mr-[4px]" />
+                           <PlusIcon className={classes.icon} />
                            Add to songs queue
-                        </OutlineButton>
+                        </Button>
                      </CheckedCta>
                   )}
                </>
@@ -222,17 +197,18 @@ export default function CheckedBar({
                <>
                   {!isChecked && children}
                   {isChecked && (
-                     <CheckedCta location={props.location} reset={resetCheckedList}>
-                        <p className="font-semibold opacity-[.6]">
-                           {selectedSongs.length}
-                        </p>
+                     <CheckedCta variant={props.variant}>
+                        <p className="font-[500]">{selectedSongs.length}</p>
 
-                        <OutlineButton
+                        <Button
+                           variant={"outline"}
+                           size="small"
                            onClick={() => console.log("confirm modal")}
                            className={classes.outlineButton}
                         >
+                           <TrashIcon className={classes.icon} />
                            Delete
-                        </OutlineButton>
+                        </Button>
                      </CheckedCta>
                   )}
                </>
@@ -245,25 +221,29 @@ export default function CheckedBar({
                   {isChecked && (
                      <CheckedCta
                         selectAll={handleSelectUserSongs}
-                        location={props.location}
-                        reset={resetCheckedList}
+                        variant={props.variant}
                      >
-                        <p className="font-semibold opacity-[.6]">
-                           {selectedSongs.length}
-                        </p>
-                        <OutlineButton
+                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+
+                        <Button
+                           variant={"outline"}
+                           size="small"
                            onClick={addSongsToQueue}
                            className={classes.outlineButton}
                         >
+                           <PlusIcon className={classes.icon} />
                            Add to songs queue
-                        </OutlineButton>
+                        </Button>
 
-                        <OutlineButton
+                        <Button
+                           variant={"outline"}
+                           size="small"
                            onClick={() => setIsOpenModal("delete-selected-songs")}
                            className={classes.outlineButton}
                         >
+                           <TrashIcon className={classes.icon} />
                            Delete
-                        </OutlineButton>
+                        </Button>
                      </CheckedCta>
                   )}
                </>
@@ -278,27 +258,30 @@ export default function CheckedBar({
                   {isChecked && (
                      <CheckedCta
                         selectAll={handleSelectAllPlaylistSongs}
-                        location={props.location}
-                        reset={resetCheckedList}
+                        variant={props.variant}
                      >
-                        <p className="font-semibold opacity-[.6]">
-                           {selectedSongs.length}
-                        </p>
-                        {props.location !== "dashboard-playlist" && (
-                           <OutlineButton
+                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        {props.variant !== "dashboard-playlist" && (
+                           <Button
+                              variant={"outline"}
+                              size="small"
                               onClick={addSongsToQueue}
                               className={classes.outlineButton}
                            >
+                              <PlusIcon className={classes.icon} />
                               Add to songs queue
-                           </OutlineButton>
+                           </Button>
                         )}
 
-                        <OutlineButton
+                        <Button
+                           variant={"outline"}
+                           size="small"
                            onClick={() => setIsOpenModal("remove-selects-songs")}
                            className={classes.outlineButton}
                         >
+                           <MinusIcon className={classes.icon} />
                            Remove
-                        </OutlineButton>
+                        </Button>
                      </CheckedCta>
                   )}
                </>
@@ -306,23 +289,24 @@ export default function CheckedBar({
          case "admin-playlist":
             return (
                <>
-                  {!isChecked && <h3 className="text-2xl font-bold mr-[14px]">Songs</h3>}
+                  {!isChecked && <h3 className="font-[500] !mr-[14px]">Songs</h3>}
 
                   {isChecked && (
                      <CheckedCta
                         selectAll={handleSelectAllPlaylistSongs}
-                        location={props.location}
-                        reset={resetCheckedList}
+                        variant={props.variant}
                      >
-                        <p className="font-semibold opacity-[.6]">
-                           {selectedSongs.length}
-                        </p>
-                        <OutlineButton
+                        <p className="font-[500]">{selectedSongs.length}</p>
+
+                        <Button
+                           variant={"outline"}
+                           size="small"
                            onClick={addSongsToQueue}
                            className={classes.outlineButton}
                         >
+                           <PlusIcon className={classes.icon} />
                            Add to songs queue
-                        </OutlineButton>
+                        </Button>
                      </CheckedCta>
                   )}
                </>
@@ -332,9 +316,7 @@ export default function CheckedBar({
 
    return (
       <>
-         <div className="h-[30px] mb-[10px] flex items-center space-x-[8px]">
-            {content}
-         </div>
+         <div className="flex items-center space-x-[8px] py-[10px]">{content}</div>
 
          {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
       </>

@@ -1,9 +1,9 @@
 import {
    Dispatch,
    SetStateAction,
+   memo,
    useCallback,
    useEffect,
-   useMemo,
    useState,
 } from "react";
 import { useAuthStore, useTheme } from "../store";
@@ -51,11 +51,14 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
    const closeModal = () => setIsOpenModal("");
 
-   const handleSetSong = useCallback((song: Song, index: number) => {
-      if (index !== currentSong.currentIndex) {
-         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
-      }
-   }, []);
+   const handleSetSong = useCallback(
+      (song: Song, index: number) => {
+         if (index !== currentSong.currentIndex) {
+            dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+         }
+      },
+      [currentSong]
+   );
 
    const handleSetHistorySong = (song: Song, index: number) => {
       if (index !== currentSong.currentIndex) {
@@ -191,6 +194,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       mainContainer: `fixed w-[300px] bottom-[0] right-[0] top-[0] z-20 px-[15px] ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
    };
 
+   // if (!isOpenSongQueue) return <></>
+
    return (
       <div
          className={`${classes.textColor} ${classes.mainContainer} ${
@@ -222,21 +227,11 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
          <div className="h-[calc(100vh-146px)] pb-[30px] overflow-y-auto overflow-x-hidden no-scrollbar">
             {activeTab === "Queue" && (
                <>
-                  {/* <SongList
+                  <SongList
                      variant="queue"
                      songs={queueSongs}
                      handleSetSong={handleSetSong}
-                  /> */}
-                  {useMemo(
-                     () => (
-                        <SongList
-                           variant="queue"
-                           songs={queueSongs}
-                           handleSetSong={handleSetSong}
-                        />
-                     ),
-                     [queueSongs]
-                  )}
+                  />
                   <div className="text-center">
                      {!!queueSongs.length && (
                         <Button
@@ -291,4 +286,4 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    );
 }
 
-export default SongQueue;
+export default memo(SongQueue);

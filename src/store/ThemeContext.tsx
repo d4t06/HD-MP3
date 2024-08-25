@@ -2,7 +2,11 @@ import { ReactNode, createContext, useCallback, useContext, useReducer } from "r
 import { themes } from "../config/themes";
 import { getLocalStorage } from "../utils/appHelpers";
 
-type StateType = { theme: ThemeType & { alpha: string } };
+type StateType = {
+   theme: ThemeType & { alpha: string };
+   isOnMobile: boolean;
+   isDev: boolean;
+};
 
 let initTheme = themes[0];
 
@@ -22,6 +26,8 @@ const initialState: StateType = {
       ...initTheme,
       alpha: initTheme.type === "light" ? "[#000]/[.1]" : "[#fff]/[.1]",
    },
+   isOnMobile: window.innerWidth < 800,
+   isDev: import.meta.env.DEV
 };
 
 const enum REDUCER_ACTION_TYPE {
@@ -35,16 +41,19 @@ type ReducerAction = {
    };
 };
 
-const reducer = (_state: StateType, action: ReducerAction): StateType => {
-   // switch (action.type) {
-   // }
-   const theme = action.payload.theme;
-   return {
-      theme: {
-         ...theme,
-         alpha: theme.type === "dark" ? "[#fff]/[.1]" : "[#000]/[.1]",
-      },
-   };
+const reducer = (state: StateType, action: ReducerAction): StateType => {
+   switch (action.type) {
+      case REDUCER_ACTION_TYPE.SETTHEME: {
+         const theme = action.payload.theme;
+         return {
+            ...state,
+            theme: {
+               ...theme,
+               alpha: theme.type === "dark" ? "[#fff]/[.1]" : "[#000]/[.1]",
+            },
+         };
+      }
+   }
 };
 
 const useThemeReducer = () => {
@@ -77,18 +86,13 @@ const ThemeProvider = ({ children }: { children: ReactNode }) => {
    );
 };
 
-type UseThemeHookType = {
-   theme: StateType["theme"];
-   setTheme: (theme: ThemeType) => void;
-};
-
-const useTheme = (): UseThemeHookType => {
+const useTheme = () => {
    const {
-      state: { theme },
-      setTheme,
+      state: { ...restState },
+      ...rest
    } = useContext(ThemeContext);
 
-   return { theme, setTheme };
+   return { ...restState, ...rest };
 };
 
 export default ThemeProvider;

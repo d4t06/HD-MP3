@@ -7,9 +7,9 @@ import { BackBtn } from "../components";
 import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import SongListMain from "../components/SongListMain";
 import MySongSongsList from "../components/MySongSongsList";
 import { selectCurrentSong } from "@/store/currentSongSlice";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 export default function MySongsPage() {
    // store
@@ -66,10 +66,10 @@ export default function MySongsPage() {
                </label>
             </div>
 
-            <SongListMain>
+            <SongSelectProvider>
                {errorMsg && <p>Some thing went wrong</p>}
                {!errorMsg && <MySongSongsList initialLoading={initialLoading} />}
-            </SongListMain>
+            </SongSelectProvider>
          </div>
       </>
    );

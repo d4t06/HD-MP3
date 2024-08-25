@@ -7,7 +7,7 @@ import { mySetDoc, uploadBlob, uploadFile } from "../utils/firebaseHelpers";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "../store/AuthContext";
 // import { testSongs } from "./songs";
-import { useUpload } from "../store";
+import { useTheme, useUpload } from "../store";
 import { useSelector } from "react-redux";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 import { addSongToQueue } from "@/store/songQueueSlice";
@@ -31,6 +31,7 @@ export default function useUploadSongs({
 }: Props) {
    // stores
    const { user } = useAuthStore();
+   const {isDev} = useTheme()
 
    const { userSongs, addUserSongs } = useSongsStore();
    const { currentSong } = useSelector(selectCurrentSong);
@@ -127,15 +128,15 @@ export default function useUploadSongs({
                };
 
                // case song have stock image
-               let imageBlob;
-               if (songData.image) {
-                  imageBlob = new Blob([songData.image], {
-                     type: "application/octet-stream",
-                  });
+               // let imageBlob;
+               // if (songData.image) {
+               //    imageBlob = new Blob([songData.image], {
+               //       type: "application/octet-stream",
+               //    });
 
-                  const url = URL.createObjectURL(imageBlob);
-                  songFileObject.image_url = url;
-               }
+               //    const url = URL.createObjectURL(imageBlob);
+               //    songFileObject.image_url = url;
+               // }
 
                // case song is duplicate
                const duplicated = checkDuplicate(songFileObject);
@@ -153,10 +154,10 @@ export default function useUploadSongs({
                actuallyFileIds.current = [...actuallyFileIds.current, i];
                Object.assign(songFile, {
                   for_song_id: processSongsList.length - 1,
-                  imageBlob,
+                  // imageBlob,
                } as {
                   for_song_id: number;
-                  imageBlob: Blob;
+                  // imageBlob: Blob;
                });
             }
 
@@ -277,7 +278,7 @@ export default function useUploadSongs({
             }
 
             const finish = Date.now();
-            if (import.meta.env.DEV)
+            if (isDev)
                console.log(">>> upload songs finished after", (finish - start) / 1000);
          } catch (error) {
             // errorLogger(`catch 2 erorr ${error}`);
@@ -372,7 +373,7 @@ export default function useUploadSongs({
                // when song uploaded
                URL.revokeObjectURL(audioEle.src);
 
-               if (import.meta.env.DEV) console.log(song, "uploaded");
+               if (isDev) console.log(song, "uploaded");
 
                resolve();
             } catch (error) {

@@ -55,7 +55,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, active, link }) => {
             {content}
          </Link>
 
-         <h5 className="text-[18px] line-clamp-1 leading-[22px] font-[500] mt-[6px]">
+         <h5 className="text-[20px] font-[500] line-clamp-1 leading-[24px]  mt-[6px]">
             {data.name}
          </h5>
       </>

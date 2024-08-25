@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 import { privateRoutes, publicRoutes } from "./routes";
 import DefaultLayout from "./layout/DefaultLayout";
@@ -9,7 +9,7 @@ import PersistLogin from "./routes/PersistLogin";
 function App() {
    return (
       <>
-         <Router basename="HD-MP3">
+         <Router>
             <Routes>
                <Route path={"/login"} element={<Login />} />
                <Route path={"/unauthorized"} element={<Unauthorized />} />

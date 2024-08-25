@@ -1,32 +1,35 @@
 import { StopIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ReactNode } from "react";
 import { Button } from ".";
+import { CheckIcon } from "@heroicons/react/20/solid";
+import { useSongSelectContext } from "@/store/SongSelectContext";
 
 type Base = {
    children: ReactNode;
-   reset: () => void;
 };
 
 type SelectAll = Base & {
-   location: "my-playlist" | "my-songs" | "admin-playlist" | "dashboard-playlist";
+   variant: "my-playlist" | "my-songs" | "admin-playlist" | "dashboard-playlist";
    selectAll: () => void;
 };
 
 type NoSelectAll = Base & {
-   location: "home" | "dashboard-songs";
+   variant: "home" | "dashboard-songs";
 };
 
 type Props = SelectAll | NoSelectAll;
 
-export default function CheckedCta({ children, reset, ...props }: Props) {
-   switch (props.location) {
+export default function CheckedCta({ children, ...props }: Props) {
+   const { isSelectAll, resetSelect } = useSongSelectContext();
+
+   switch (props.variant) {
       case "home":
       case "dashboard-songs":
          return (
             <>
                {children}
 
-               <Button onClick={reset} className={`px-[5px] flex-shrink-0`}>
+               <Button onClick={resetSelect} className={`px-[5px] flex-shrink-0`}>
                   <XMarkIcon className="w-[20px]" />
                </Button>
             </>
@@ -39,12 +42,16 @@ export default function CheckedCta({ children, reset, ...props }: Props) {
          return (
             <>
                <button onClick={props.selectAll} className="ml-[10px]">
-                  <StopIcon className="w-[18px]" />
+                  {isSelectAll ? (
+                     <CheckIcon className="w-[20px]" />
+                  ) : (
+                     <StopIcon className="w-[20px]" />
+                  )}
                </button>
 
                {children}
 
-               <Button onClick={reset} className={`px-[5px] flex-shrink-0`}>
+               <Button onClick={resetSelect} className={`px-[5px] flex-shrink-0`}>
                   <XMarkIcon className="w-[20px]" />
                </Button>
             </>

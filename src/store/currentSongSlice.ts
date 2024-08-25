@@ -12,7 +12,9 @@ type StateType = {
    // playlist: Playlist;
 };
 
-let initSongState: SongWithSongIn & Status = {
+const storage = getLocalStorage();
+
+let initSongState: SongWithSongIn & Status = storage["current"] || {
    ...initSongObject({}),
    currentIndex: 0,
    song_in: "",
@@ -23,15 +25,13 @@ let initSongState: SongWithSongIn & Status = {
 //    current: string;
 // };
 
-const storage = getLocalStorage();
-
-if (storage?.songs) {
-   (storage.songs as SongWithSongIn[]).forEach((s, index) => {
-      if (s.id === storage?.current) {
-         initSongState = { ...s, currentIndex: index };
-      }
-   });
-}
+// if (storage?.songs) {
+//    (storage.songs as SongWithSongIn[]).forEach((s, index) => {
+//       if (s.id === storage?.current) {
+//          initSongState = { ...s, currentIndex: index };
+//       }
+//    });
+// }
 
 const init: StateType = {
    currentSong: initSongState,

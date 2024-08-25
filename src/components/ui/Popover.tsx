@@ -160,7 +160,7 @@ export function PopoverContent({
         <FloatingFocusManager context={context} modal={false}>
           <div
             ref={refs.setFloating}
-            className={`z-[20] ${className}`}
+            className={`${className || 'z-[20]'}`}
             style={{ ...floatingStyles }}
             {...getFloatingProps(props)}
             data-status={status}

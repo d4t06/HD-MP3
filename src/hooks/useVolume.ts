@@ -1,22 +1,36 @@
-import { MouseEvent, MutableRefObject, RefObject, useEffect, useState } from "react";
+import {
+   MouseEvent,
+   RefObject,
+   WheelEvent,
+   useEffect,
+   useState,
+} from "react";
 import useLocalStorage from "./useLocalStorage";
+import { useTheme } from "@/store";
 
 export default function useVolume(
-   volumeLineWidth: MutableRefObject<number | undefined>,
-   volumeProcessLine: RefObject<HTMLDivElement>,
+   // volumeLineWidth: MutableRefObject<number | undefined>,
+   volumeLine: RefObject<HTMLDivElement>,
    audioEle: HTMLAudioElement
 ) {
+   const { theme } = useTheme();
+
    const [isMute, setIsMute] = useState(false);
    const [volume, setVolume] = useLocalStorage("volume", 1);
 
-   const handleSetVolume = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+   const handleSetVolume = (
+      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
+   ) => {
       const node = e.target as HTMLElement;
       const clientRect = node.getBoundingClientRect();
 
-      if (volumeLineWidth.current) {
-         let newVolume = +((e.clientX - clientRect.x) / volumeLineWidth.current).toFixed(
-            2
-         );
+      const volumeLineEle = volumeLine.current as HTMLDivElement;
+
+      if (volumeLineEle) {
+         let newVolume = +(
+            (e.clientX - clientRect.x) /
+            volumeLineEle.clientWidth
+         ).toFixed(2);
 
          if (newVolume > 0.9) newVolume = 1;
          else if (newVolume < 0.05) {
@@ -28,6 +42,28 @@ export default function useVolume(
       }
    };
 
+   const handleWheel = (e: WheelEvent<HTMLDivElement>) => {
+      e.preventDefault();
+
+      const FACTOR = 0.1;
+      let newVolume = volume;
+
+      // scroll down
+      if (e.deltaY > 0) {
+         if (newVolume - FACTOR > 0) newVolume -= FACTOR;
+         else {
+            newVolume = 0;
+         }
+      } else {
+         if (newVolume + FACTOR < 1) newVolume += FACTOR;
+         else {
+            newVolume = 1;
+         }
+      }
+
+      setVolume(+newVolume.toFixed(2));
+   };
+
    const handleMute = () => {
       if (isMute) {
          setIsMute(false);
@@ -37,8 +73,10 @@ export default function useVolume(
    };
 
    useEffect(() => {
-      if (volumeProcessLine.current && audioEle) {
-         volumeProcessLine.current.style.width = volume * 100 + "%";
+      if (volumeLine.current && audioEle) {
+         const ratio = volume * 100;
+
+         volumeLine.current.style.background = `linear-gradient(to right, ${theme.content_code} ${ratio}%, white ${ratio}%, white 100%)`;
          audioEle.volume = volume;
       }
    }, [volume]);
@@ -53,5 +91,5 @@ export default function useVolume(
       }
    }, [isMute]);
 
-   return { volume, handleSetVolume, isMute, handleMute };
+   return { volume, handleSetVolume, isMute, handleMute, handleWheel };
 }

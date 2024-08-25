@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 import {
@@ -11,10 +11,12 @@ import SongQueue from "./SongQueue";
 import useIdle from "../hooks/useIdle";
 import appConfig from "../config/app";
 import { selectCurrentSong } from "@/store/currentSongSlice";
+import { useTheme } from "@/store";
 
 const Player = ({ admin }: { admin?: boolean }) => {
    // store
    const { currentSong } = useSelector(selectCurrentSong);
+   const { isOnMobile } = useTheme();
 
    // state
    const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
@@ -22,11 +24,9 @@ const Player = ({ admin }: { admin?: boolean }) => {
    const [isHasAudioEle, setIsHasAudioEle] = useState(false);
 
    const audioRef = useRef<HTMLAudioElement>(null);
-   const isOnMobile = useMemo(() => {
-      return window.innerWidth < 800;
-   }, []);
 
-   const idle = useIdle(appConfig.scrollSongDelay, isOnMobile, isOpenFullScreen);
+   const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
+   // const idle=false;
 
    const desktopContent = (
       <>

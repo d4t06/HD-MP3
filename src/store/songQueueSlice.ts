@@ -1,3 +1,4 @@
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type StateType = {
@@ -5,8 +6,10 @@ type StateType = {
    from: SongIn[];
 };
 
+const storage = getLocalStorage();
+
 const initialState: StateType = {
-   queueSongs: [],
+   queueSongs: storage["queue"] || [],
    from: [],
 };
 
@@ -22,13 +25,22 @@ const songQueueSlice = createSlice({
 
          state.queueSongs = songs;
          state.from = [songs[0].song_in];
+
+         setLocalStorage("queue", state.queueSongs);
       },
       removeSongFromQueue: (
          state: StateType,
          action: PayloadAction<{ index: number }>
       ) => {
          const { index } = action.payload;
-         state.queueSongs.splice(index, 1);
+         const [removedSong] = state.queueSongs.splice(index, 1);
+
+         setLocalStorage("queue", state.queueSongs);
+
+         const fromIndex = state.from.findIndex((sIn) => sIn === removedSong.song_in);
+         if (fromIndex !== -1) {
+            state.from.slice(index, 1);
+         }
       },
       addSongToQueue: (
          state: StateType,
@@ -40,6 +52,7 @@ const songQueueSlice = createSlice({
          }
 
          state.queueSongs.push(...songs);
+         setLocalStorage("queue", state.queueSongs);
       },
       updateSongInQueue: (
          state: StateType,
@@ -52,6 +65,7 @@ const songQueueSlice = createSlice({
       },
       resetSongQueue: (state: StateType) => {
          state.queueSongs = [];
+         setLocalStorage("queue", []);
       },
    },
 });

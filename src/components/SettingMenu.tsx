@@ -32,7 +32,7 @@ export default function SettingMenu({ setIsOpenModal }: Props) {
    };
 
    const classes = {
-      menuItem: `${theme.content_hover_text} hover:bg-${theme.alpha} rounded-[4px] w-full px-[10px] text-[14px] h-[40px] inline-flex items-center cursor-pointer`,
+      menuItem: `${theme.content_hover_text} hover:bg-${theme.alpha} rounded-[4px] font-[500] w-full px-[10px] text-[14px] h-[40px] inline-flex items-center cursor-pointer`,
       icon: "w-[25px] mr-[8px]",
       divide: `h-[1px]  w-[calc(100%-20px)] my-[4px] mx-auto bg-${theme.alpha}`,
       disable: "opacity-[.6] pointer-events-none",

@@ -8,14 +8,15 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 type Props = {
-   location: "admin-playlist" | "my-playlist" | "dashboard-playlist";
+   variant: "admin-playlist" | "my-playlist" | "dashboard-playlist";
 };
 
 type Modal = "add-song";
 
-export default function PlaylistDetailSongList({ location }: Props) {
+export default function PlaylistDetailSongList({ variant }: Props) {
    // use store
    const dispatch = useDispatch();
    const { theme } = useTheme();
@@ -65,29 +66,25 @@ export default function PlaylistDetailSongList({ location }: Props) {
    const renderCheckBar = useMemo(() => {
       if (!playlistSongs.length) return <></>;
 
-      switch (location) {
+      switch (variant) {
          case "admin-playlist":
             return (
-               <CheckedBar location={"admin-playlist"}>
-                  <p className="font-semibold opacity-[.6]">
-                     {playlistSongs.length} Songs
-                  </p>
+               <CheckedBar variant={"admin-playlist"}>
+                  <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
                </CheckedBar>
             );
          case "my-playlist":
          case "dashboard-playlist":
             return (
-               <CheckedBar location={"my-playlist"}>
-                  <p className="font-semibold opacity-[.6]">
-                     {playlistSongs.length} Songs
-                  </p>
+               <CheckedBar variant={"my-playlist"}>
+                  <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
                </CheckedBar>
             );
       }
    }, [currentPlaylist, playlistSongs]);
 
    const renderSongList = useMemo(() => {
-      switch (location) {
+      switch (variant) {
          case "admin-playlist":
             return (
                <SongList
@@ -102,7 +99,7 @@ export default function PlaylistDetailSongList({ location }: Props) {
             return (
                <>
                   <SongList
-                     variant={location}
+                     variant={variant}
                      songs={playlistSongs}
                      handleSetSong={handleSetSong}
                      activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
@@ -136,10 +133,10 @@ export default function PlaylistDetailSongList({ location }: Props) {
    }, [isOpenModal, playlistSongs, currentPlaylist]);
 
    return (
-      <>
+      <SongSelectProvider>
          {renderCheckBar}
          {renderSongList}
          {!!isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
-      </>
+      </SongSelectProvider>
    );
 }

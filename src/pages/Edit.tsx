@@ -11,12 +11,9 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function Edit() {
+   // store
    const { theme } = useTheme();
    const { currentSong } = useSelector(selectCurrentSong);
-
-     
-     
-
    const { userSongs } = useSongsStore();
 
    //  state
@@ -28,7 +25,9 @@ export default function Edit() {
    });
    const audioRef = useRef<HTMLAudioElement>(null);
    const [loading, setLoading] = useState(false);
-   const firstTimeRun = useRef<boolean>(true);
+
+   // ref
+   const ranEffect = useRef(false);
 
    //  use hooks
    const { errorMsg, loading: useSongsLoading, initial } = useInitSong({});
@@ -75,9 +74,9 @@ export default function Edit() {
    useEffect(() => {
       if (!initial) return;
 
-      if (firstTimeRun.current) {
+      if (!ranEffect.current) {
+         ranEffect.current = true;
          if (!targetSong) getSong();
-         firstTimeRun.current = false;
       }
    }, [initial]);
 
@@ -89,21 +88,11 @@ export default function Edit() {
       );
    if (errorMsg) return <h1>{errorMsg}</h1>;
 
-   // console.log('edit check lyric', lyric);
-
    return (
       <div className="">
-         {/* audio element always visible */}
          <audio ref={audioRef} src={targetSong?.song_url} className="hidden" />
          {targetSong && (
             <>
-               {/* <Link
-                  to={routes.MySongs}
-                  className={`inline-flex text-[20px] font-bold mb-[14px] ${theme.content_hover_text}`}
-               >
-                  <ChevronLeftIcon className="w-[25px]" />
-                  <span className="ml-[12px]">{targetSong.name}</span>
-               </Link> */}
                <LyricEditor
                   lyric={lyric}
                   audioRef={audioRef}
