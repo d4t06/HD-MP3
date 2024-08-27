@@ -182,10 +182,7 @@ export default function Control({
 
                style={{backgroundColor: `white`}}
             >
-               {/* <div
-                  ref={timeProcessLine}
-                  className={`${classes.processLineCurrent}`}
-               ></div> */}
+              
             </div>
             <div className="w-[46px] pl-[5px]">
                {audioEle && (
@@ -198,9 +195,7 @@ export default function Control({
             {admin && (
                <div className="flex items-center">
                   <PlayPauseButton handlePlayPause={handlePlayPause} />
-                  {/* <button className={`${classes.button}`} onClick={() => handleNext()}>
-                     <ForwardIcon className={classes.icon} />
-                  </button> */}
+                 
                </div>
             )}
          </div>

@@ -31,11 +31,12 @@ export default function useUploadSongs({
 }: Props) {
    // stores
    const { user } = useAuthStore();
-   const {isDev} = useTheme()
+   const { isDev } = useTheme();
 
    const { userSongs, addUserSongs } = useSongsStore();
    const { currentSong } = useSelector(selectCurrentSong);
-   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
+   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } =
+      useUpload();
 
    // state
    const duplicatedFile = useRef<Song[]>([]);
@@ -189,7 +190,9 @@ export default function useUploadSongs({
                };
 
                // generateSongId
-               let songId = generateId(processSongsList[newSongFile.for_song_id].name);
+               let songId = generateId(
+                  processSongsList[newSongFile.for_song_id].name
+               );
 
                if (admin) {
                   songId += "_admin";
@@ -203,7 +206,11 @@ export default function useUploadSongs({
 
                // case song have stock image
                if (targetSong.image_url) {
-                  await handleUploadImage(newSongFile.imageBlob, songId, targetSong);
+                  await handleUploadImage(
+                     newSongFile.imageBlob,
+                     songId,
+                     targetSong
+                  );
                }
 
                //  upload song file
@@ -279,7 +286,10 @@ export default function useUploadSongs({
 
             const finish = Date.now();
             if (isDev)
-               console.log(">>> upload songs finished after", (finish - start) / 1000);
+               console.log(
+                  ">>> upload songs finished after",
+                  (finish - start) / 1000
+               );
          } catch (error) {
             // errorLogger(`catch 2 erorr ${error}`);
             console.log({ message: error });
@@ -397,7 +407,9 @@ export default function useUploadSongs({
    // }, [triggerUpdateActuallySongs?.id]);
 
    useEffect(() => {
-      const firstTempSong = document.querySelector(".temp-song") as HTMLDivElement;
+      const firstTempSong = document.querySelector(
+         ".temp-song"
+      ) as HTMLDivElement;
       if (!firstTempSong) return;
 
       firstTempSong.scrollIntoView({ behavior: "smooth", block: "center" });

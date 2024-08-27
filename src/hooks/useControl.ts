@@ -59,8 +59,6 @@ export default function useControl({
    // state
    const [isLoaded, setIsLoaded] = useState(false);
    const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
-   // const [someThingToUpdateHistory, setSomeThingToUpdateHistory] = useState(0);
-   // const [noLongerPlayRef, setNoLongerPlay] = useState(true);
 
    const noLongerPlayRef = useRef(true);
 
@@ -71,6 +69,7 @@ export default function useControl({
    const prevSeekTime = useRef(0);
    const startFadeWhenEnd = useRef(0);
    const prevVolume = useRef(0);
+   const themeCode = useRef(theme.content_code);
 
    const isEndOfList = useRef(false);
 
@@ -78,11 +77,13 @@ export default function useControl({
    const intervalId = useRef<NodeJS.Timeout>();
 
    // use hook
+
    const location = useLocation();
    const isInEdit = useMemo(
       () => location.pathname.includes("edit"),
       [location]
    );
+
    // const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
 
    const updateProcessLineWidth = () => {
@@ -156,22 +157,19 @@ export default function useControl({
       );
    };
 
-   // const handleWaiting = () => {
-   //    dispatch(setPlayStatus({ isWaiting: true }));
-   // };
-
    const handleResetForNewSong = () => {
-      // const timeProcessLineElement = timeProcessLine.current as HTMLElement;
       setIsLoaded(false);
 
+      setLocalStorage("duration", 0);
+
       if (
-         // timeProcessLineElement &&
+         timelineRef.current &&
          currentTimeRef.current &&
          remainingTimeRef.current
       ) {
          currentTimeRef.current.innerText = "00:00";
          remainingTimeRef.current.innerText = "00:00";
-         // timeProcessLineElement.style.width = "0%";
+         timelineRef.current.style.background = "white";
       }
    };
 
@@ -279,7 +277,7 @@ export default function useControl({
 
       if (durationRef.current && currentTime && timeLine) {
          const ratio = currentTime / (durationRef.current / 100);
-         timeLine.style.background = `linear-gradient(to right, ${theme.content_code} ${ratio}%, white ${ratio}%, white 100%)`;
+         timeLine.style.background = `linear-gradient(to right, ${themeCode.current} ${ratio}%, white ${ratio}%, white 100%)`;
       }
 
       if (currentTimeRef.current) {
@@ -351,26 +349,19 @@ export default function useControl({
       if (isInEdit || noLongerPlayRef.current) {
          dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
 
-         // const storage = getLocalStorage();
-         // const duration = storage["duration"] || 0;
-         const duration = 0;
-         // case first time play then update duration in localStorage
-         // when user clear song queue or first time access website, these cases don't have duration
-         if (noLongerPlayRef.current && duration) {
-            audioEle.currentTime = duration;
-            handleTimeUpdate();
-
-            // case no longer playing and no have queue in localStorage
-         }
-         // else play();
-
          if (noLongerPlayRef.current) {
             noLongerPlayRef.current = false;
 
             const storage = getLocalStorage();
+            if ((storage["current"] as Song).id === currentSong.id) {
+               audioEle.currentTime = storage["duration"] || 0;
+            }
+
+            handleTimeUpdate();
 
             if (!storage["current"]) {
                setLocalStorage("current", currentSong);
+
                play();
             }
          }
@@ -470,6 +461,15 @@ export default function useControl({
 
       return () => audioEle.removeEventListener("timeupdate", handleTimeUpdate);
    }, [isCrossFade]);
+
+   // update time line background color
+   useEffect(() => {
+      themeCode.current = theme.content_code;
+
+      if (!isPlaying) {
+         handleTimeUpdate();
+      }
+   }, [theme]);
 
    // prevent song autoplay after edit finish
    useEffect(() => {

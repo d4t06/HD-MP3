@@ -1,15 +1,8 @@
-import {
-   MouseEvent,
-   RefObject,
-   WheelEvent,
-   useEffect,
-   useState,
-} from "react";
+import { MouseEvent, RefObject, WheelEvent, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import { useTheme } from "@/store";
 
 export default function useVolume(
-   // volumeLineWidth: MutableRefObject<number | undefined>,
    volumeLine: RefObject<HTMLDivElement>,
    audioEle: HTMLAudioElement
 ) {
@@ -65,11 +58,12 @@ export default function useVolume(
    };
 
    const handleMute = () => {
-      if (isMute) {
-         setIsMute(false);
-      } else {
-         setIsMute(true);
-      }
+      if (!audioEle) return;
+
+      const newValue = !isMute;
+
+      setIsMute(newValue);
+      audioEle.muted = newValue;
    };
 
    useEffect(() => {
@@ -78,18 +72,11 @@ export default function useVolume(
 
          volumeLine.current.style.background = `linear-gradient(to right, ${theme.content_code} ${ratio}%, white ${ratio}%, white 100%)`;
          audioEle.volume = volume;
-      }
-   }, [volume]);
 
-   useEffect(() => {
-      if (!audioEle) return;
-
-      if (isMute) {
-         audioEle.muted = true;
-      } else {
-         audioEle.muted = false;
+         if (volume === 0) setIsMute(true);
+         else setIsMute(false);
       }
-   }, [isMute]);
+   }, [volume, theme]);
 
    return { volume, handleSetVolume, isMute, handleMute, handleWheel };
 }

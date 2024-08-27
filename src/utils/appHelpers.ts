@@ -1,5 +1,5 @@
 import { Timestamp } from "firebase/firestore";
-import { fromFile } from "id3js";
+import { parseBlob } from "music-metadata";
 import { nanoid } from "nanoid";
 import axios from "axios";
 import { SetStateAction, Dispatch } from "react";
@@ -7,7 +7,9 @@ import { SetStateAction, Dispatch } from "react";
 const isDev: boolean = import.meta.env.DEV;
 
 export const request = axios.create({
-   baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
+   baseURL:
+      import.meta.env.VITE_ENDPOINT ||
+      "https://express-zingmp3-awx6.vercel.app",
 });
 export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
@@ -37,7 +39,9 @@ export const generateId = (name: string): string => {
       return newString;
    };
    return (
-      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4)
+      convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") +
+      "_" +
+      nanoid(4)
    );
 };
 
@@ -48,10 +52,14 @@ type ParserSong = {
 };
 export const parserSong = async (songFile: File) => {
    if (!songFile) return;
-   const tags = await fromFile(songFile);
-   if (!tags) return;
+   const result = await parseBlob(songFile);
 
-   const { title, artist, images } = tags;
+   if (!result) return;
+
+   const {
+      common: { title, artist },
+   } = result;
+
    const data: ParserSong = { name: "", singer: "", image: null };
 
    if (!title || !artist) {
@@ -61,9 +69,9 @@ export const parserSong = async (songFile: File) => {
    data.name = title || songFile.name;
    data.singer = artist || "...";
 
-   if (images.length) {
-      data.image = images[0].data;
-   }
+   // if (picture?.length) {
+   //    data.image = picture[0].data;
+   // }
 
    return data;
 };
@@ -89,7 +97,9 @@ export const optimizeImage = async (imageFile: File) => {
    const start = Date.now();
 
    if (isDev) console.log(">>> api: optimize image");
-   const res = await request.post("/api/image/optimize", fd, { responseType: "blob" });
+   const res = await request.post("/api/image/optimize", fd, {
+      responseType: "blob",
+   });
 
    let imageBlob;
    if (res) {
@@ -138,10 +148,15 @@ export const updateSongsListValue = (song: Song, songList: Song[]) => {
    return index;
 };
 
-export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) => {
+export const updatePlaylistsValue = (
+   playlist: Playlist,
+   playlists: Playlist[]
+) => {
    if (isDev) console.log("update playlist value");
 
-   const index = playlists.findIndex((playlistItem) => playlistItem.id === playlist.id);
+   const index = playlists.findIndex(
+      (playlistItem) => playlistItem.id === playlist.id
+   );
    if (index == -1) return;
    playlists[index] = playlist;
 };
