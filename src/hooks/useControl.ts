@@ -60,7 +60,7 @@ export default function useControl({
    const [isLoaded, setIsLoaded] = useState(false);
    const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
 
-   const noLongerPlayRef = useRef(true);
+   const firstTimeSongLoaded = useRef(true);
 
    // ref
    const currentIndex = useRef(0);
@@ -151,7 +151,7 @@ export default function useControl({
    };
 
    const handlePlaying = () => {
-      noLongerPlayRef.current = false;
+      firstTimeSongLoaded.current = false;
       dispatch(
          setPlayStatus({ isPlaying: true, isWaiting: false, isError: false })
       );
@@ -160,7 +160,7 @@ export default function useControl({
    const handleResetForNewSong = () => {
       setIsLoaded(false);
 
-      setLocalStorage("duration", 0);
+      if (!firstTimeSongLoaded.current) setLocalStorage("duration", 0);
 
       if (
          timelineRef.current &&
@@ -328,6 +328,9 @@ export default function useControl({
       const audioDuration = audioEle.duration;
 
       setIsLoaded(true);
+      const storage = getLocalStorage();
+      const currentSongLocal = storage["current"];
+
       // update text
       durationRef.current = audioDuration;
       remainingTimeEle.innerText = handleTimeText(audioDuration);
@@ -336,7 +339,8 @@ export default function useControl({
       timelineRefWidth.current = timelineRef.current?.offsetWidth;
       startFadeWhenEnd.current = audioDuration - 3;
 
-      if (!noLongerPlayRef.current) setLocalStorage("current", currentSong);
+      if (!firstTimeSongLoaded.current || !currentSongLocal)
+         setLocalStorage("current", currentSong);
 
       // case end of list
       if (isEndOfList.current) {
@@ -345,28 +349,27 @@ export default function useControl({
          return;
       }
 
-      // case in edit page or (no longer play and have queue localStorage )
-      if (isInEdit || noLongerPlayRef.current) {
+      if (isInEdit || firstTimeSongLoaded.current) {
          dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
 
-         if (noLongerPlayRef.current) {
-            noLongerPlayRef.current = false;
+         if (firstTimeSongLoaded.current) {
+            firstTimeSongLoaded.current = false;
 
-            const storage = getLocalStorage();
-            if ((storage["current"] as Song).id === currentSong.id) {
+            // if user have play any song before
+            // on the other hand the localStore have current song value
+            // then update audio current time
+            if (currentSongLocal && currentSongLocal.id === currentSong.id) {
                audioEle.currentTime = storage["duration"] || 0;
+               // update time line ui
+               handleTimeUpdate();
+               return;
             }
 
-            handleTimeUpdate();
-
-            if (!storage["current"]) {
-               setLocalStorage("current", currentSong);
-
-               play();
-            }
+            // the first time user click any song
+            // the current song in localStorage is empty
+            // then play the song
+            play();
          }
-
-         return;
       }
 
       // normal click play case
