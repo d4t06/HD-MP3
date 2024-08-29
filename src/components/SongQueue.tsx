@@ -8,18 +8,33 @@ import {
 } from "react";
 import { useAuthStore, useTheme } from "../store";
 import { Button, Modal, SongList, Tabs, TimerModal } from ".";
-import { ArrowPathIcon, ClockIcon } from "@heroicons/react/24/outline";
+import {
+   ArrowPathIcon,
+   ClockIcon,
+   TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import Skeleton from "./skeleton";
-import { selectAllPlayStatusStore, setPlayStatus } from "../store/PlayStatusSlice";
+import {
+   selectAllPlayStatusStore,
+   setPlayStatus,
+} from "../store/PlayStatusSlice";
 import { getLocalStorage, setLocalStorage, sleep } from "../utils/appHelpers";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import { mySetDoc } from "../utils/firebaseHelpers";
 import { useLocalStorage } from "../hooks";
-import { resetCurrentSong, selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { addSongToQueue, resetSongQueue, selectSongQueue } from "@/store/songQueueSlice";
+import {
+   resetCurrentSong,
+   selectCurrentSong,
+   setSong,
+} from "@/store/currentSongSlice";
+import {
+   addSongToQueue,
+   resetSongQueue,
+   selectSongQueue,
+} from "@/store/songQueueSlice";
 
 type Props = {
    isOpenSongQueue: boolean;
@@ -46,7 +61,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    const [historySongs, setHistorySongs] = useState<Song[]>([]);
    const [loading, setLoading] = useState(false);
 
-   const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
+   const [_playHistory, setPlayHistory] = useLocalStorage<string[]>(
+      "play_history",
+      []
+   );
    const [fetchLoading, setFetchLoading] = useState(false);
 
    const closeModal = () => setIsOpenModal("");
@@ -54,7 +72,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
    const handleSetSong = useCallback(
       (song: Song, index: number) => {
          if (index !== currentSong.currentIndex) {
-            dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+            dispatch(
+               setSong({ ...(song as SongWithSongIn), currentIndex: index })
+            );
          }
       },
       [currentSong]
@@ -237,9 +257,10 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                         <Button
                            onClick={clearSongQueue}
                            size={"small"}
-                           className={`${theme.content_bg} rounded-full mt-[24px]`}
+                           className={`${theme.content_bg} rounded-full mt-5 space-x-1 text-sm`}
                         >
-                           Clear
+                           <TrashIcon className="w-5" />
+                           <span>Clear</span>
                         </Button>
                      )}
                   </div>

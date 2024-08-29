@@ -9,7 +9,7 @@ import {
 } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
-import { useAuthStore, useTheme } from "../store";
+import { useAuthStore, useTheme, useToast } from "../store";
 
 import {
    getLocalStorage,
@@ -60,9 +60,8 @@ export default function useControl({
    const [isLoaded, setIsLoaded] = useState(false);
    const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
 
-   const firstTimeSongLoaded = useRef(true);
-
    // ref
+   const firstTimeSongLoaded = useRef(true);
    const currentIndex = useRef(0);
    const durationRef = useRef(0);
    const timelineRefWidth = useRef<number>();
@@ -79,6 +78,7 @@ export default function useControl({
    // use hook
 
    const location = useLocation();
+   const { setErrorToast } = useToast();
    const isInEdit = useMemo(
       () => location.pathname.includes("edit"),
       [location]
@@ -403,8 +403,12 @@ export default function useControl({
    // handle when song error
    useEffect(() => {
       if (!someThingToTriggerError) return;
-      if (currentSong.name)
-         dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+      if (currentSong.name) {
+         if (queueSongs.length > 1) {
+            handleNext();
+            setErrorToast({ message: "Có lỗi do đường truyền mạng" });
+         } else dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+      }
    }, [someThingToTriggerError]);
 
    // update audio src, currentIndex, reset song
@@ -433,7 +437,7 @@ export default function useControl({
       };
 
       // use combine dependencies in other to prevent reload after edit song
-   }, [currentSong.id + currentSong.song_in]);
+   }, [currentSong.id + currentSong.song_in + currentSong.currentIndex]);
 
    // update site title
    useEffect(() => {

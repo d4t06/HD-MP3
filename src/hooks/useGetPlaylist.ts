@@ -15,7 +15,10 @@ import {
 export default function useGetPlaylist() {
    // store
    const dispatch = useDispatch();
-   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+
+   const { currentPlaylist, playlistSongs } = useSelector(
+      selectCurrentPlaylist
+   );
 
    // hooks
    const params = useParams<PlaylistParamsType>();
@@ -40,10 +43,13 @@ export default function useGetPlaylist() {
    const getSongs = async (playlist: Playlist) => {
       if (!playlist.song_ids.length) return [];
 
-      console.log(">>> api: get playlist songs");
+      console.log(">>> api: get playlist songs", playlist.song_ids);
       const songsRef = collection(db, "songs");
 
-      const queryGetSongs = query(songsRef, where("id", "in", playlist.song_ids));
+      const queryGetSongs = query(
+         songsRef,
+         where("id", "in", playlist.song_ids)
+      );
       const songsSnap = await getDocs(queryGetSongs);
 
       if (songsSnap.docs.length) {
@@ -74,7 +80,6 @@ export default function useGetPlaylist() {
          let targetPlaylist: Playlist | undefined;
 
          const isInStore = currentPlaylist.id === params.id;
-
          setIsFetching(true);
 
          if (!isInStore) targetPlaylist = await getPlaylist();
@@ -86,7 +91,10 @@ export default function useGetPlaylist() {
 
          if (!isInStore)
             dispatch(
-               setCurrentPlaylist({ playlist: targetPlaylist, songs: playlistSongs })
+               setCurrentPlaylist({
+                  playlist: targetPlaylist,
+                  songs: playlistSongs,
+               })
             );
 
          dispatch(setPlaylistSongs({ songs: playlistSongs }));

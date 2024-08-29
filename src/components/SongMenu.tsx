@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 type Base = {
    song: Song;
    handleOpenModal: (name: SongItemModal) => void;
+   closeMenu: () => void;
 };
 
 type QueueMenu = Base & {
@@ -70,7 +71,7 @@ type Props =
    | DashboardSongMenu
    | DashboardPlaylistMenu;
 
-function SongMenu({ song, ...props }: Props) {
+function SongMenu({ song, closeMenu, ...props }: Props) {
    // store
    const dispatch = useDispatch();
    const { user } = useAuthStore();
@@ -80,6 +81,8 @@ function SongMenu({ song, ...props }: Props) {
 
    const handleAddToQueue = () => {
       dispatch(addSongToQueue({ songs: [song] }));
+      closeMenu();
+
       setSuccessToast({ message: `Song added to queue` });
    };
 
@@ -134,21 +137,28 @@ function SongMenu({ song, ...props }: Props) {
                         {!!userPlaylists?.length && (
                            <>
                               {userPlaylists.map((playlist, index) => {
-                                 const isAdded = playlist.song_ids.includes(song.id);
+                                 const isAdded = playlist.song_ids.includes(
+                                    song.id
+                                 );
 
                                  return (
                                     <li
                                        key={index}
                                        onClick={() =>
                                           !isAdded &&
-                                          props.handleAddSongToPlaylist(playlist)
+                                          props.handleAddSongToPlaylist(
+                                             playlist
+                                          )
                                        }
                                        className={`list-none w-full flex rounded-[4px] p-[5px] ${
-                                          isAdded && "opacity-60 pointer-events-none"
+                                          isAdded &&
+                                          "opacity-60 pointer-events-none"
                                        } ${classes.menuItem}`}
                                     >
                                        <span>
-                                          <MusicalNoteIcon className={classes.menuIcon} />
+                                          <MusicalNoteIcon
+                                             className={classes.menuIcon}
+                                          />
                                        </span>
                                        <p className="line-clamp-1 text-left">
                                           {playlist.name} {isAdded && "(Added)"}
@@ -220,7 +230,10 @@ function SongMenu({ song, ...props }: Props) {
                      Edit
                   </Button>
                   <Link to={`edit/${song.id}`}>
-                     <Button className={` ${classes.menuItem} `} variant={"list"}>
+                     <Button
+                        className={` ${classes.menuItem} `}
+                        variant={"list"}
+                     >
                         <DocumentTextIcon className={classes.menuIcon} />
                         {song.lyric_id ? "Edit lyric" : "Add lyric"}
                      </Button>
@@ -260,7 +273,9 @@ function SongMenu({ song, ...props }: Props) {
             return (
                <div className="pl-[10px] py-[6px]">
                   <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-                  <p className="text-[14px] opacity-50 line-clamp-1">{song.singer}</p>
+                  <p className="text-[14px] opacity-50 line-clamp-1">
+                     {song.singer}
+                  </p>
                </div>
             );
       }
@@ -268,7 +283,11 @@ function SongMenu({ song, ...props }: Props) {
 
    return (
       <>
-         <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
+         <div
+            className={` ${
+               props.variant === "queue" ? "w-[140px]" : "w-[200px]"
+            } `}
+         >
             {renderSongInfo}
             {renderMenuItem}
 

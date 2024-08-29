@@ -20,21 +20,14 @@ const useSongItemActions = ({ song, closeModal, setIsOpenPopup }: Props) => {
    const { setErrorToast, setSuccessToast } = useToast();
    const { currentSong } = useSelector(selectCurrentSong);
    const { userSongs, setUserSongs } = useSongsStore();
-   // const { playlistSongs } = useSelector(selectCurrentPlaylist);
 
    // state
+
    const [loading, setLoading] = useState(false);
 
    // hook
-   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } = usePlaylistActions();
-
-   // closure
-   // const logger = (type: "error" | "success") => {
-   //    const log = (msg: string) => console.log(`[${type}]: ${msg}`);
-   //    return log;
-   // };
-   // const errorLogger = logger("error");
-   // const successLogger = logger("success");
+   const { addSongToPlaylistSongItem, deleteSongFromPlaylist } =
+      usePlaylistActions();
 
    const updateAndSetUserSongs = useCallback(
       async ({ song }: { song: Song }) => {
@@ -86,6 +79,7 @@ const useSongItemActions = ({ song, closeModal, setIsOpenPopup }: Props) => {
          await deleteSong(song);
 
          setUserSongs(newSongs);
+         // no handle song queue
 
          if (currentSong.id === song.id) dispatch(resetCurrentSong());
 

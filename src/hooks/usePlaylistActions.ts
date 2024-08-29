@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { useAuthStore, useSongsStore, useToast } from "../store";
 import { generateId, initPlaylistObject } from "../utils/appHelpers";
-import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "../utils/firebaseHelpers";
+import {
+   myDeleteDoc,
+   mySetDoc,
+   setUserPlaylistIdsDoc,
+} from "../utils/firebaseHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
    addSongsAndUpdateCurrent,
    resetCurrentPlaylist,
    selectCurrentPlaylist,
+   setCurrentPlaylist,
    setPlaylistSongsAndUpdateCurrent,
    updateCurrentPlaylist,
 } from "@/store/currentPlaylistSlice";
@@ -18,9 +23,12 @@ export default function usePlaylistActions() {
    // store
    const dispatch = useDispatch();
    const { user } = useAuthStore();
-   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+   const { currentPlaylist, playlistSongs } = useSelector(
+      selectCurrentPlaylist
+   );
    const { currentSong } = useSelector(selectCurrentSong);
-   const { userPlaylists, updateUserPlaylist, setUserPlaylists } = useSongsStore();
+   const { userPlaylists, updateUserPlaylist, setUserPlaylists } =
+      useSongsStore();
 
    // state
    const [isFetching, setIsFetching] = useState(false);
@@ -29,7 +37,9 @@ export default function usePlaylistActions() {
    const { setErrorToast, setSuccessToast } = useToast();
    const navigate = useNavigate();
 
-   const setPlaylistDocAndUpdateUserPlaylist = async (newPlaylist: Playlist) => {
+   const setPlaylistDocAndUpdateUserPlaylist = async (
+      newPlaylist: Playlist
+   ) => {
       await mySetDoc({
          collection: "playlist",
          data: newPlaylist,
@@ -71,7 +81,9 @@ export default function usePlaylistActions() {
       if (!user) return;
 
       setIsFetching(true);
-      const newUserPlaylist = userPlaylists.filter((pl) => pl.id !== currentPlaylist.id);
+      const newUserPlaylist = userPlaylists.filter(
+         (pl) => pl.id !== currentPlaylist.id
+      );
 
       await myDeleteDoc({
          collection: "playlist",
@@ -141,8 +153,14 @@ export default function usePlaylistActions() {
       try {
          setIsFetching(true);
 
+         const newSongIds = [...playlist.song_ids, song.id];
+
          const newPlaylist = { ...playlist };
-         newPlaylist.song_ids.push(song.id);
+         newPlaylist.song_ids = newSongIds;
+
+         if (playlist.id === currentPlaylist.id) {
+            dispatch(updateCurrentPlaylist({ song_ids: newSongIds }));
+         }
 
          await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
       } catch (error) {

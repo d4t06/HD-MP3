@@ -19,6 +19,8 @@ export default function usePlaylistDetail() {
       const firstSongHasImage = playlistSongs.find((song) => song.image_url);
       if (!firstSongHasImage) return;
 
+      console.log("get playlist image");
+
       // case both images are same
       if (
          currentPlaylist.image_url &&
@@ -39,7 +41,9 @@ export default function usePlaylistDetail() {
          msg: ">>> api: update playlist doc",
       });
 
-      dispatch(updateCurrentPlaylist({ image_url: firstSongHasImage.image_url }));
+      dispatch(
+         updateCurrentPlaylist({ image_url: firstSongHasImage.image_url })
+      );
    };
 
    const checkPlaylistSongs = async () => {
@@ -62,7 +66,9 @@ export default function usePlaylistDetail() {
             });
          }
 
-         dispatch(updateCurrentPlaylist({ image_url: "", blurhash_encode: "" }));
+         dispatch(
+            updateCurrentPlaylist({ image_url: "", blurhash_encode: "" })
+         );
          return;
       }
 
@@ -89,7 +95,7 @@ export default function usePlaylistDetail() {
       if (!playlistSongs.length || !currentPlaylist) return;
 
       handleGetPlaylistImage();
-   }, [playlistSongs]);
+   }, [playlistSongs, isFetching]);
 
    useEffect(() => {
       if (isFetching) return;

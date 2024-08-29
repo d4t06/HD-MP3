@@ -6,7 +6,10 @@ import {
    MusicalNoteIcon,
    StopIcon,
 } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid, PlayIcon } from "@heroicons/react/24/solid";
+import {
+   HeartIcon as HeartIconSolid,
+   PlayIcon,
+} from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { handleTimeText } from "../utils/appHelpers";
 
@@ -48,7 +51,14 @@ type Props = {
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-function SongItem({ song, onClick, active = true, index, className, ...props }: Props) {
+function SongItem({
+   song,
+   onClick,
+   active = true,
+   index,
+   className,
+   ...props
+}: Props) {
    // store
    const dispatch = useDispatch();
    const { theme, isOnMobile } = useTheme();
@@ -65,6 +75,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
    const { setErrorToast } = useToast();
 
    const closeModal = () => setIsOpenModal("");
+   const closeMenu = () => setIsOpenPopup(false);
 
    const {
       handleDeleteSong,
@@ -76,6 +87,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
    const handleOpenModal = (modal: SongItemModal) => {
       setIsOpenModal(modal);
+      closeMenu();
    };
 
    const isSelected = useMemo(() => {
@@ -184,7 +196,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                <>
                   <button
                      onClick={() => handleSelect(song)}
-                     className={`${classes.songListButton} ${!isSelected && "hidden"} group-hover/main:block`}
+                     className={`${classes.songListButton} ${
+                        !isSelected && "hidden"
+                     } group-hover/main:block`}
                   >
                      {!isSelected ? (
                         <StopIcon className="w-[18px]" />
@@ -193,7 +207,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                      )}
                   </button>
                   <button
-                     className={`${classes.songListButton} ${isSelected && "hidden"} group-hover/main:hidden group-hover/main:mr-[0px]`}
+                     className={`${classes.songListButton} ${
+                        isSelected && "hidden"
+                     } group-hover/main:hidden group-hover/main:mr-[0px]`}
                   >
                      <MusicalNoteIcon className="w-[18px]" />
                   </button>
@@ -213,7 +229,11 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                ${!active ? "hidden group-hover/main:flex" : ""}`}
                >
                   {active ? (
-                     <img src={playingIcon} alt="" className="h-[18px] w-[18px]" />
+                     <img
+                        src={playingIcon}
+                        alt=""
+                        className="h-[18px] w-[18px]"
+                     />
                   ) : (
                      <div
                         onClick={onClick}
@@ -233,18 +253,25 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
          <div
             className="flex flex-grow "
-            onClick={isOnMobile && props.variant !== "uploading" ? onClick : () => {}}
+            onClick={
+               isOnMobile && props.variant !== "uploading" ? onClick : () => {}
+            }
          >
             {/* song image */}
             <div className={`${classes.imageFrame}`}>
-               <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
+               <Image
+                  src={song.image_url}
+                  blurHashEncode={song.blurhash_encode}
+               />
 
                {imageOverlay}
             </div>
 
             {/* song name and singer */}
             <div
-               className={`ml-[10px] ${props.variant === "queue" ? "max-w-[96px]" : ""}`}
+               className={`ml-[10px] ${
+                  props.variant === "queue" ? "max-w-[96px]" : ""
+               }`}
             >
                <h5
                   className={`font-[500] line-clamp-1 overflow-hidden ${
@@ -253,7 +280,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                >
                   {song.name}
                </h5>
-               <p className="text-[14px] opacity-[.5] line-clamp-1">{song.singer}</p>
+               <p className="text-[14px] opacity-[.5] line-clamp-1">
+                  {song.singer}
+               </p>
             </div>
          </div>
       </div>
@@ -308,6 +337,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
          case "dashboard-songs":
             return (
                <SongMenu
+                  closeMenu={closeMenu}
                   variant={props.variant}
                   handleAddSongToPlaylist={handleAddSongToPlaylist}
                   handleOpenModal={handleOpenModal}
@@ -319,6 +349,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
          case "favorite":
             return (
                <SongMenu
+                  closeMenu={closeMenu}
                   variant="my-songs"
                   handleAddSongToPlaylist={handleAddSongToPlaylist}
                   handleOpenModal={handleOpenModal}
@@ -331,6 +362,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
          case "dashboard-playlist":
             return (
                <SongMenu
+                  closeMenu={closeMenu}
                   variant="playlist"
                   handleRemoveSongFromPlaylist={handleRemoveSongFromPlaylist}
                   handleOpenModal={handleOpenModal}
@@ -340,6 +372,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
          case "queue":
             return (
                <SongMenu
+                  closeMenu={closeMenu}
                   handleRemoveSongFromQueue={handleRemoveFromQueue}
                   variant="queue"
                   handleOpenModal={handleOpenModal}
@@ -402,7 +435,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                      <Popover
                         isOpenFromParent={isOpenPopup}
                         setIsOpenFromParent={setIsOpenPopup}
-                        placement={props.variant === "queue" ? "bottom-end" : "left"}
+                        placement={
+                           props.variant === "queue" ? "bottom-end" : "left"
+                        }
                      >
                         <PopoverTrigger asChild>
                            <button
@@ -466,7 +501,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             return (
                <div
                   className={`${classes.itemContainer} group/main py-[6px] ${
-                     active ? `${theme.content_bg} text-white` : `hover:bg-${theme.alpha}`
+                     active
+                        ? `${theme.content_bg} text-white`
+                        : `hover:bg-${theme.alpha}`
                   }`}
                >
                   {left()}
@@ -478,7 +515,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                <div
                   className={`${classes.itemContainer} ${className || ""} 
                group/main ${
-                  active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
+                  active || isSelected
+                     ? `bg-${theme.alpha}`
+                     : `hover:bg-${theme.alpha}`
                }
                `}
                >

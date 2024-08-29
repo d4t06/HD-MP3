@@ -49,6 +49,7 @@ type ParserSong = {
    name: string;
    singer: string;
    image: ArrayBuffer | null;
+   duration: number;
 };
 export const parserSong = async (songFile: File) => {
    if (!songFile) return;
@@ -58,9 +59,10 @@ export const parserSong = async (songFile: File) => {
 
    const {
       common: { title, artist },
+      format: { duration },
    } = result;
 
-   const data: ParserSong = { name: "", singer: "", image: null };
+   const data: ParserSong = { name: "", singer: "", image: null, duration: 0 };
 
    if (!title || !artist) {
       if (isDev) console.log("song don't have tags");
@@ -68,10 +70,7 @@ export const parserSong = async (songFile: File) => {
 
    data.name = title || songFile.name;
    data.singer = artist || "...";
-
-   // if (picture?.length) {
-   //    data.image = picture[0].data;
-   // }
+   data.duration = duration || 0;
 
    return data;
 };

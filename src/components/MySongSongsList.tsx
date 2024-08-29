@@ -27,11 +27,11 @@ export default function MySongSongsList({ initialLoading }: Props) {
    const { user } = useAuthStore();
    const { userSongs } = useSongsStore();
    const { currentSong } = useSelector(selectCurrentSong);
-   const { from } = useSelector(selectSongQueue);
+   const { from, queueSongs } = useSelector(selectSongQueue);
 
    //    state
    const [songTab, setSongTab] = useState<Tab>("mine");
-   const [favoriteSongs, setFavoriteSongs] = useState<SongWithSongIn[]>([]);
+   // const [favoriteSongs, setFavoriteSongs] = useState<SongWithSongIn[]>([]);
    const [songLoading, setSongLoading] = useState(false);
 
    // hooks
@@ -54,53 +54,57 @@ export default function MySongSongsList({ initialLoading }: Props) {
 
    const handleGetFavorite = async () => {
       if (!user) return;
-      if (!user.like_song_ids.length) return setFavoriteSongs([]);
+      // if (!user.like_song_ids.length) return setFavoriteSongs([]);
+      // setFavoriteSongs([]);
+      await sleep(300);
 
-      try {
-         const queryGetFavorites = query(
-            collection(db, "songs"),
-            where("id", "in", user.like_song_ids)
-         );
-         const favoritesSnap = await getDocs(queryGetFavorites);
+      return setSongLoading(false);
 
-         let userLikeSongIdsChange = false;
-         let userLikeSongIds: string[] = [];
+      // try {
+      //    const queryGetFavorites = query(
+      //       collection(db, "songs"),
+      //       where("id", "in", user.like_song_ids)
+      //    );
+      //    const favoritesSnap = await getDocs(queryGetFavorites);
 
-         if (favoritesSnap.docs.length) {
-            const favorites = favoritesSnap.docs.map(
-               (s) => ({ ...s.data(), song_in: "favorite" } as SongWithSongIn)
-            );
+      //    let userLikeSongIdsChange = false;
+      //    let userLikeSongIds: string[] = [];
 
-            setFavoriteSongs(favorites);
-            //   handle update user like_song_ids when song have been remove
-            if (favoriteSongs.length < user.like_song_ids.length) {
-               const newUserLikeSongIds = favorites.map((s) => s.id);
-               userLikeSongIdsChange = true;
-               userLikeSongIds = newUserLikeSongIds;
-            }
-            //   handle update user like_song_ids
-         } else if (user.like_song_ids) {
-            userLikeSongIdsChange = true;
-            userLikeSongIds = [];
-         }
+      //    if (favoritesSnap.docs.length) {
+      //       const favorites = favoritesSnap.docs.map(
+      //          (s) => ({ ...s.data(), song_in: "favorite" } as SongWithSongIn)
+      //       );
 
-         if (userLikeSongIdsChange) {
-            await mySetDoc({
-               collection: "users",
-               data: { like_song_ids: userLikeSongIds } as Partial<User>,
-               id: user.email,
-               msg: ">>> api: update user like song ids",
-            });
+      //       setFavoriteSongs(favorites);
+      //       //   handle update user like_song_ids when song have been remove
+      //       if (favoriteSongs.length < user.like_song_ids.length) {
+      //          const newUserLikeSongIds = favorites.map((s) => s.id);
+      //          userLikeSongIdsChange = true;
+      //          userLikeSongIds = newUserLikeSongIds;
+      //       }
+      //       //   handle update user like_song_ids
+      //    } else if (user.like_song_ids) {
+      //       userLikeSongIdsChange = true;
+      //       userLikeSongIds = [];
+      //    }
 
-            // setUser();
+      //    if (userLikeSongIdsChange) {
+      //       await mySetDoc({
+      //          collection: "users",
+      //          data: { like_song_ids: userLikeSongIds } as Partial<User>,
+      //          id: user.email,
+      //          msg: ">>> api: update user like song ids",
+      //       });
 
-            // console.log("get favorite set user info");
-         }
-      } catch (error) {
-         console.log("error");
-      } finally {
-         setSongLoading(false);
-      }
+      //       // setUser();
+
+      //       // console.log("get favorite set user info");
+      //    }
+      // } catch (error) {
+      //    console.log("error");
+      // } finally {
+      //    setSongLoading(false);
+      // }
    };
 
    const handleSetTab = async (name: Tab) => {
@@ -115,17 +119,17 @@ export default function MySongSongsList({ initialLoading }: Props) {
    };
 
    const handleSetSong = (song: Song, index: number) => {
-      // console.log("check set song", from, currentSong.by);
-
-      const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
-      if (isQueueHaveOtherSongs) {
-         dispatch(setQueue({ songs: userSongs }));
-         // console.log("setActuallySongs");
-      }
+      const isSetQueue =
+         from.length > 1 ||
+         userSongs.length !== queueSongs.length ||
+         from[0] != "user";
+      if (isSetQueue) dispatch(setQueue({ songs: userSongs }));
 
       // song in playlist and song in user are two difference case
       if (currentSong.id !== song.id || currentSong.song_in !== "user") {
-         dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+         dispatch(
+            setSong({ ...(song as SongWithSongIn), currentIndex: index })
+         );
       }
    };
 
@@ -165,7 +169,9 @@ export default function MySongSongsList({ initialLoading }: Props) {
                      key={index}
                      onClick={() => handleSetTab(tab)}
                      className={`text-[14px] font-[500] px-[10px] 
-                        ${theme.content_border} border py-[4px] rounded-[99px] ${
+                        ${
+                           theme.content_border
+                        } border py-[4px] rounded-[99px] ${
                         active ? theme.content_bg : ""
                      }
                     `}
@@ -198,17 +204,13 @@ export default function MySongSongsList({ initialLoading }: Props) {
                      </>
                   )}
 
-                  {/* {songTab === "favorite" && !!favoriteSongsFiltered.length && (
-                     <SongList
-                        // variant="favorite"
-                        activeExtend={
-                           currentSong.song_in === "user" ||
-                           currentSong.song_in === "favorite"
-                        }
-                        handleSetSong={handleSetFavoriteSong}
-                        songs={favoriteSongsFiltered}
+                  {songTab === "favorite" && (
+                     <img
+                        className="mx-auto my-5"
+                        src="https://d4t06.github.io/Vue-Mobile/assets/search-empty-ChRLxitn.png"
+                        alt=""
                      />
-                  )} */}
+                  )}
                </>
             )}
          </div>

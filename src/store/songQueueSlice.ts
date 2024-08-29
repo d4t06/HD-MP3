@@ -33,20 +33,39 @@ const songQueueSlice = createSlice({
          action: PayloadAction<{ index: number }>
       ) => {
          const { index } = action.payload;
-         const [removedSong] = state.queueSongs.splice(index, 1);
 
+         // update songs
+         // const indexList: number[] = [];
+         // state.queueSongs.forEach((s, index) => {
+         //    if (s.id === id) indexList.push(index);
+         // });
+
+         // indexList.forEach((index) => {
+         //    state.queueSongs.splice(index, 1);
+         // });
+
+         state.queueSongs.splice(index, 1);
+         
+         // update local storage
          setLocalStorage("queue", state.queueSongs);
 
-         const fromIndex = state.from.findIndex((sIn) => sIn === removedSong.song_in);
-         if (fromIndex !== -1) {
-            state.from.slice(index, 1);
-         }
+         // update from
+         const newSongFrom: StateType["from"] = [];
+         state.queueSongs.forEach((s) => {
+            if (!newSongFrom.includes(s.song_in)) {
+               newSongFrom.push(s.song_in);
+            }
+         });
+
+         state.from = newSongFrom;
       },
       addSongToQueue: (
          state: StateType,
          action: PayloadAction<{ songs: SongWithSongIn[] }>
       ) => {
          const { songs } = action.payload;
+
+         // only can add songs from same place
          if (!state.from.includes(songs[0].song_in)) {
             state.from.push(songs[0].song_in);
          }
@@ -70,7 +89,8 @@ const songQueueSlice = createSlice({
    },
 });
 
-export const selectSongQueue = (state: { songQueue: StateType }) => state.songQueue;
+export const selectSongQueue = (state: { songQueue: StateType }) =>
+   state.songQueue;
 
 export const {
    addSongToQueue,

@@ -1,4 +1,9 @@
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import {
+   deleteObject,
+   getDownloadURL,
+   ref,
+   uploadBytes,
+} from "firebase/storage";
 import { db, store } from "../config/firebase";
 import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
@@ -65,7 +70,9 @@ export const uploadFile = async ({
 
    // define ref
    const fileName =
-      email.replace("@gmail.com", "") + "_" + file.name.replaceAll(" ", "").toLowerCase();
+      email.replace("@gmail.com", "") +
+      "_" +
+      file.name.replaceAll(" ", "").toLowerCase();
    const fileRef = ref(store, `${folder + fileName}`);
 
    const fileRes = await uploadBytes(fileRef, file);
@@ -153,7 +160,10 @@ export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
    });
 };
 
-export const setUserPlaylistIdsDoc = async (playlists: Playlist[], user: User) => {
+export const setUserPlaylistIdsDoc = async (
+   playlists: Playlist[],
+   user: User
+) => {
    const newPlaylistIds = playlists.map((playlist) => playlist.id);
    await mySetDoc({
       collection: "users",
