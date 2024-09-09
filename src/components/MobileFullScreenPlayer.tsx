@@ -158,7 +158,6 @@ export default function MobileFullScreenPlayer({
       main: "h-[calc(100%-65px)] relative px-[15px] overflow-hidden",
       songImage: "flex-shrink-0 transition-[height, width] origin-top-left",
       nameAndSinger: "flex flex-grow justify-between items-center",
-      scrollText: "h-[30px] mask-image-horizontal",
       control: "absolute bottom-0 left-[15px] right-[15px]",
       lyricContainer:
          "absolute top-[65px] bottom-[120px] py-[16px] left-[15px] right-[15px]",
@@ -243,25 +242,25 @@ export default function MobileFullScreenPlayer({
                         }`}
                      >
                         <div className="group flex-grow overflow-hidden">
-                           <div className={classes.scrollText}>
+                           <div className={'h-[36px]'}>
                               <ScrollText
                                  autoScroll
                                  className={`${
                                     activeTab === "Playing" || isLandscape
-                                       ? "text-[24px] leading-[30px]"
+                                       ? "text-[24px]"
                                        : "text-[20px]"
                                  } font-[500]`}
                                  content={currentSong.name || "..."}
                               />
                            </div>
-                           <div className={classes.scrollText}>
+                           <div className={'h-[33px]'}>
                               <ScrollText
                                  autoScroll
-                                 className={`${
+                                 className={`opacity-60 ${
                                     activeTab === "Playing" || isLandscape
                                        ? "text-[22px]"
-                                       : "text-[16px] opacity-60"
-                                 } font-[400]`}
+                                       : "text-[16px]"
+                                 }`}
                                  content={currentSong.singer || "..."}
                               />
                            </div>

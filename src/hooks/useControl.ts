@@ -167,8 +167,8 @@ export default function useControl({
          currentTimeRef.current &&
          remainingTimeRef.current
       ) {
-         currentTimeRef.current.innerText = "00:00";
-         remainingTimeRef.current.innerText = "00:00";
+         currentTimeRef.current.innerText = "0:00";
+         remainingTimeRef.current.innerText = "0:00";
          timelineRef.current.style.background = "white";
       }
    };

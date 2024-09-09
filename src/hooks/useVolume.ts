@@ -11,9 +11,7 @@ export default function useVolume(
    const [isMute, setIsMute] = useState(false);
    const [volume, setVolume] = useLocalStorage("volume", 1);
 
-   const handleSetVolume = (
-      e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>
-   ) => {
+   const handleSetVolume = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
       const node = e.target as HTMLElement;
       const clientRect = node.getBoundingClientRect();
 
@@ -35,7 +33,7 @@ export default function useVolume(
       }
    };
 
-   const handleWheel = (e: WheelEvent<HTMLDivElement>) => {
+   const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
 
       const FACTOR = 0.1;

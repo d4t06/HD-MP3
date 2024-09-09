@@ -1,10 +1,4 @@
-import {
-   Dispatch,
-   SetStateAction,
-   memo,
-   useMemo,
-   useRef,
-} from "react";
+import { Dispatch, SetStateAction, memo, useMemo, useRef } from "react";
 import {
    SpeakerWaveIcon,
    SpeakerXMarkIcon,
@@ -49,21 +43,13 @@ function BottomPlayer({
       playStatus: { isPlaying, isWaiting },
    } = useSelector(selectAllPlayStatusStore);
 
-   // const volumeLineWidth = useRef<number>();
    const volumeLine = useRef<HTMLDivElement>(null);
 
-   // use hooks
    const location = useLocation();
    const { handleSetVolume, isMute, handleMute, handleWheel } = useVolume(
-      // volumeLineWidth,
       volumeLine,
       audioEle
    );
-   // const updateProcessLineWidth = () => {
-   //    volumeLineWidth.current = volumeLine.current?.offsetWidth;
-   // };
-
-   // useWindowResize(updateProcessLineWidth, []);
 
    const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
@@ -71,11 +57,6 @@ function BottomPlayer({
       if (isOpenSongQueue) setIsOpenSongQueue(false);
       setIsOpenFullScreen(true);
    };
-
-   // update process lines width
-   // useEffect(() => {
-   //    volumeLineWidth.current = volumeLine.current?.offsetWidth;
-   // }, [isOpenFullScreen]);
 
    const classes = {
       before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
@@ -107,22 +88,18 @@ function BottomPlayer({
 
    return (
       <div
-         className={`${classes.wrapper} ${
-            isOpenFullScreen && "border-transparent"
-         } ${inEdit && "translate-y-[100%] "} bg-transparent`}
+         className={`${classes.wrapper} ${isOpenFullScreen && "border-transparent"} ${
+            inEdit && "translate-y-[100%] "
+         } bg-transparent`}
       >
          <div
             className={`${classes.blurBg} ${
-               isOpenFullScreen
-                  ? "opacity-0 transition-opacity delay-[.2s]"
-                  : ""
+               isOpenFullScreen ? "opacity-0 transition-opacity delay-[.2s]" : ""
             }`}
          ></div>
          <div
             className={`${classes.container} ${
-               isOpenFullScreen
-                  ? "justify-center text-white"
-                  : "justify-between"
+               isOpenFullScreen ? "justify-center text-white" : "justify-between"
             } ${idle && "transition-opacity duration-[.3s] opacity-0"}`}
          >
             <SongInfo isOpenFullScreen={isOpenFullScreen} admin={admin} />
@@ -147,12 +124,10 @@ function BottomPlayer({
             </div>
 
             <div
-               className={`${classes.volumeWrapper}  ${
-                  isOpenFullScreen ? "hidden" : ""
-               }`}
+               className={`${classes.volumeWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}
             >
                <div className="flex flex-grow items-center max-w-[150px]">
-                  <button onClick={() => handleMute()}>
+                  <button onWheel={handleWheel} onClick={() => handleMute()}>
                      {isMute ? (
                         <SpeakerXMarkIcon className="w-[24px]" />
                      ) : (
@@ -161,7 +136,6 @@ function BottomPlayer({
                   </button>
                   <div
                      onClick={(e) => handleSetVolume(e)}
-                     onWheel={handleWheel}
                      ref={volumeLine}
                      className={`${classes.volumeLineBase} ${classes.before}`}
                      style={{ backgroundColor: `white` }}
@@ -176,9 +150,7 @@ function BottomPlayer({
                            className={`h-[35px] w-[35px] rounded-[99px] ${
                               theme.side_bar_bg
                            }  ${theme.content_hover_bg} p-[7px] ${
-                              currentSong.name
-                                 ? ""
-                                 : "opacity-20 pointer-events-none"
+                              currentSong.name ? "" : "opacity-20 pointer-events-none"
                            }`}
                         >
                            <ChevronUpIcon className="w-full" />
@@ -193,14 +165,8 @@ function BottomPlayer({
                            className={`${
                               theme.content_hover_bg
                            } h-[35px] w-[35px] p-[8px] rounded-[4px] ${
-                              currentSong.name
-                                 ? ""
-                                 : "opacity-20 pointer-events-none"
-                           } ${
-                              isOpenSongQueue
-                                 ? theme.content_bg
-                                 : theme.side_bar_bg
-                           }`}
+                              currentSong.name ? "" : "opacity-20 pointer-events-none"
+                           } ${isOpenSongQueue ? theme.content_bg : theme.side_bar_bg}`}
                         >
                            <QueueListIcon className="w-full" />
                         </TooltipTrigger>

@@ -20,8 +20,6 @@ import { useEditForm } from "../../hooks";
 import { getBlurhashEncode, optimizeImage } from "../../utils/appHelpers";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { updateSongInQueue } from "@/store/songQueueSlice";
-// import { updateSongInQueue } from "@/store/songQueueSlice";
 
 type Props = {
    song: Song;
@@ -52,11 +50,6 @@ export default function SongItemEditForm({ song, close }: Props) {
    });
 
    const inputFileRef = useRef<HTMLInputElement>(null);
-
-   // const targetSongs = useMemo(
-   //    () => (admin ? adminSongs : userSongs),
-   //    [admin, admin, userSongs]
-   // );
 
    // use hooks
    const {
