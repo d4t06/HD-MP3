@@ -55,7 +55,7 @@ export default function Sidebar() {
 
    return (
       <div className={`${classes.container} ${classes.text}`}>
-         <div className="px-[10px] h-[60px] flex items-center">
+         <div className="px-[10px] h-[60px] flex items-center justify-center">
             <Link to={"/"} className="text-[24px] font-semibold">
                HD
                <span className={`${theme.content_text} ml-[4px]`}>MP3</span>

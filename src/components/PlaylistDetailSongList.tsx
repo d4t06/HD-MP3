@@ -21,8 +21,10 @@ export default function PlaylistDetailSongList({ variant }: Props) {
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { currentSong } = useSelector(selectCurrentSong);
-   const { from } = useSelector(selectSongQueue);
-   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+   const { from, queueSongs } = useSelector(selectSongQueue);
+   const { currentPlaylist, playlistSongs } = useSelector(
+      selectCurrentPlaylist
+   );
 
    // state
    // const { playlistSongs, setPlaylistSongs } = usePlaylistContext();
@@ -47,8 +49,11 @@ export default function PlaylistDetailSongList({ variant }: Props) {
             })
          );
 
-         const isQueueHaveOtherSongs = from.length > 1 || from[0] != newSongIn;
-         if (isQueueHaveOtherSongs) {
+         const shouldReplaceQueue =
+            from.length > 1 ||
+            from[0] != newSongIn ||
+            playlistSongs.length !== queueSongs.length;
+         if (shouldReplaceQueue) {
             dispatch(setQueue({ songs: playlistSongs }));
          }
       }
@@ -70,14 +75,18 @@ export default function PlaylistDetailSongList({ variant }: Props) {
          case "admin-playlist":
             return (
                <CheckedBar variant={"admin-playlist"}>
-                  <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
+                  <p className="font-[500] opacity-[.5]">
+                     {playlistSongs.length} Songs
+                  </p>
                </CheckedBar>
             );
          case "my-playlist":
          case "dashboard-playlist":
             return (
                <CheckedBar variant={"my-playlist"}>
-                  <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
+                  <p className="font-[500] opacity-[.5]">
+                     {playlistSongs.length} Songs
+                  </p>
                </CheckedBar>
             );
       }
@@ -91,7 +100,9 @@ export default function PlaylistDetailSongList({ variant }: Props) {
                   variant="admin-playlist"
                   songs={playlistSongs}
                   handleSetSong={handleSetSong}
-                  activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
+                  activeExtend={currentSong.song_in.includes(
+                     currentPlaylist.id
+                  )}
                />
             );
          case "my-playlist":
@@ -102,7 +113,9 @@ export default function PlaylistDetailSongList({ variant }: Props) {
                      variant={variant}
                      songs={playlistSongs}
                      handleSetSong={handleSetSong}
-                     activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
+                     activeExtend={currentSong.song_in.includes(
+                        currentPlaylist.id
+                     )}
                      deleteFromPlaylist={handleDeleteSongFromPlaylist}
                   />
 
@@ -127,7 +140,10 @@ export default function PlaylistDetailSongList({ variant }: Props) {
             return <></>;
          case "add-song":
             return (
-               <AddSongsToPlaylist close={closeModal} playlistSongs={playlistSongs} />
+               <AddSongsToPlaylist
+                  close={closeModal}
+                  playlistSongs={playlistSongs}
+               />
             );
       }
    }, [isOpenModal, playlistSongs, currentPlaylist]);

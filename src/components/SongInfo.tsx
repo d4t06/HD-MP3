@@ -24,8 +24,16 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
    };
 
    return (
-      <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
-         <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
+      <div
+         className={`${classes.songInfoWrapper}  ${
+            isOpenFullScreen ? "hidden" : ""
+         }`}
+      >
+         <div
+            className={`${classes.songInfoChild} ${
+               isOpenFullScreen ? "hidden" : ""
+            }`}
+         >
             <div className={admin ? `w-[36px]` : "w-[46px]"}>
                <img
                   ref={vinylRef}
@@ -35,19 +43,18 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
             </div>
 
             <div className="ml-[10px] flex-grow">
-               <div className="h-[24px] w-full mask-image-horizontal">
+               <div className="h-[24px]">
                   <ScrollText
-                     autoScroll
-                     classNames="text-[18px] font-[500]"
-                     label={currentSong.name || "name"}
+                     className="text-[18px] font-[500]"
+                     content={currentSong.name || "name"}
                   />
                </div>
 
-               <div className="h-[20px] w-full mask-image-horizontal">
+               <div className="h-[20px]">
                   <ScrollText
                      autoScroll
-                     classNames="text-[14px] opacity-60"
-                     label={currentSong.singer || "singer"}
+                     className="text-[14px] opacity-60"
+                     content={currentSong.singer || "singer"}
                   />
                </div>
             </div>

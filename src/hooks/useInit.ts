@@ -27,6 +27,9 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
          const adminSongs = await appServices.getAdminSongs();
          const adminPlaylists = await appServices.getAdminPLaylist();
 
+         console.log("check admin songs", adminSongs)
+         console.log("check admin playlists", adminPlaylists)
+
          if (admin) {
             initSongsContext({ userSongs: adminSongs, userPlaylists: adminPlaylists });
 

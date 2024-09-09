@@ -403,6 +403,7 @@ export default function useControl({
    // handle when song error
    useEffect(() => {
       if (!someThingToTriggerError) return;
+      if (firstTimeSongLoaded.current) return;
       if (currentSong.name) {
          if (queueSongs.length > 1) {
             handleNext();

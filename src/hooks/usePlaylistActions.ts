@@ -12,7 +12,6 @@ import {
    addSongsAndUpdateCurrent,
    resetCurrentPlaylist,
    selectCurrentPlaylist,
-   setCurrentPlaylist,
    setPlaylistSongsAndUpdateCurrent,
    updateCurrentPlaylist,
 } from "@/store/currentPlaylistSlice";

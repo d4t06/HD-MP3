@@ -163,7 +163,7 @@ export default function Control({
                isError ? "opacity-[.6] pointer-events-none" : ""
             }`}
          >
-            <div className="w-[45px]">
+            <div className="w-[40px]">
                {audioEle && (
                   <span
                      ref={currentTimeRef}

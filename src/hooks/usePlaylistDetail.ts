@@ -19,8 +19,6 @@ export default function usePlaylistDetail() {
       const firstSongHasImage = playlistSongs.find((song) => song.image_url);
       if (!firstSongHasImage) return;
 
-      console.log("get playlist image");
-
       // case both images are same
       if (
          currentPlaylist.image_url &&

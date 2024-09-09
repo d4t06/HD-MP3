@@ -134,7 +134,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                   >
                      {/* playlist */}
                      <ul className="w-full">
-                        {!!userPlaylists?.length && (
+                        {!!userPlaylists?.length ? (
                            <>
                               {userPlaylists.map((playlist, index) => {
                                  const isAdded = playlist.song_ids.includes(
@@ -167,7 +167,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                                  );
                               })}
                            </>
-                        )}
+                        ) : <p>No playlist jet...</p>}
                      </ul>
                   </PopupWrapper>
                </Button>

@@ -194,9 +194,9 @@ export default function SongItemEditForm({ song, close }: Props) {
                newSong.image_file_path = "";
             }
 
-            if (!isImpactOnImage) {
-               updateUserSong(newSong);
-            }
+            // if (!isImpactOnImage) {
+            //    updateUserSong(newSong);
+            // }
          }
 
          // if user upload, change, unset image
@@ -260,7 +260,7 @@ export default function SongItemEditForm({ song, close }: Props) {
          });
 
          updateUserSong(newSong);
-         dispatch(updateSongInQueue({ song: newSong }));
+         // dispatch(updateSongInQueue({ song: newSong }));
 
          if (currentSong.id === newSong.id) {
             dispatch(

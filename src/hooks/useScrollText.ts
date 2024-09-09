@@ -1,116 +1,110 @@
-import { RefObject, useCallback, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { RefObject, useEffect, useRef } from "react";
 
 type Props = {
-   textRef?: RefObject<HTMLDivElement>;
-   textWrapperRef?: RefObject<HTMLDivElement>;
-   autoScroll?: boolean;
+   textRef: RefObject<HTMLDivElement>;
+   textWrapperRef: RefObject<HTMLDivElement>;
+   content: string;
 };
 
-export default function useScrollText({ textRef, textWrapperRef, autoScroll }: Props) {
-   // store
-   const { currentSong } = useSelector(selectCurrentSong);
-   
-   const {
-      playStatus: { isPlaying },
-   } = useSelector(selectAllPlayStatusStore);
-
+export default function useScrollText({
+   textRef,
+   textWrapperRef,
+   content,
+}: Props) {
    // red
    const autoScrollTimerId = useRef<NodeJS.Timeout>();
    const unScrollTimerId = useRef<NodeJS.Timeout>();
+
+   const isOverflow = useRef(false);
+
+   // const innerText = useRef<string>("");
    const duration = useRef<number>(0);
-   const innerText = useRef<string>("");
    const distance = useRef<number>(0);
-   const isScrollRef = useRef(false);
 
-   const unScroll = useCallback(() => {
-      const contentNode = textRef?.current as HTMLElement;
-      if (!contentNode) return;
+   const unScroll = () => {
+      if (!textRef.current) return;
 
-      contentNode.style.transition = `none`;
-      contentNode.style.transform = `translateX(0)`;
-      // contentNode.innerText = innerText.current;
-      isScrollRef.current = false;
-   }, [textRef]);
+      textRef.current.style.transition = `none`;
+      textRef.current.style.transform = `translateX(5px)`;
+   };
 
    const scroll = () => {
-      if (!textRef) {
-         console.log("lack of prop");
+      if (
+         // !isOverflow.current ||
+         !duration.current ||
+         !distance.current ||
+         !textRef.current
+      )
          return;
-      }
 
-      if (!duration.current && !distance.current) return;
-      const contentNode = textRef.current as HTMLElement;
-      if (!contentNode) return;
-      console.log("scroll");
+      textRef.current.style.transition = `transform linear ${duration.current}s`;
+      textRef.current.style.transform = `translateX(-${distance.current}px)`;
 
-      // duplicate innerText
-      contentNode.innerHTML = innerText.current + "&nbsp; &nbsp; &nbsp;" + innerText.current;
-      isScrollRef.current = true;
-      // add animation
-      contentNode.style.transition = `transform linear ${duration.current}s`;
-      contentNode.style.transform = `translateX(-${distance.current}px)`;
-
-      unScrollTimerId.current = setTimeout(() => {
-         unScroll();
-         console.log("call unscroll");
-      }, duration.current * 1000);
+      unScrollTimerId.current = setTimeout(unScroll, duration.current * 1000);
    };
 
-   const reScroll = () => {
-      if (!autoScroll) return;
-      if (!textRef || !textWrapperRef) return;
-      if (isScrollRef.current) {
-         console.log("reScroll cancel cause is scroll");
-         return;
-      }
+   const calc = () => {
+      if (!textRef.current || !textWrapperRef.current) return;
 
-      const contentNode = textRef.current as HTMLElement;
-      const wrapperNode = textWrapperRef.current as HTMLElement;
-
-      let isOverFlow = contentNode.offsetWidth - wrapperNode.offsetWidth > 0 ? true : false;
-      // if innerText less than container
-      if (!isOverFlow) return;
-      // assign stock text
-      innerText.current = contentNode.innerText;
-      // scroll distance
-      distance.current = contentNode.offsetWidth + 20;
+      distance.current = textRef.current.offsetWidth + 20;
       duration.current = Math.ceil(distance.current / 35);
-
-      // console.log("reScroll dis", distance.current);
    };
 
-   const resetScroll = () => {
-      unScroll();
+   const handleReset = () => {
+      if (!isOverflow.current) return;
+
+      console.log("handleReset");
+
+      clearInterval(autoScrollTimerId.current);
+      clearTimeout(unScrollTimerId.current);
       duration.current = 0;
       distance.current = 0;
+      isOverflow.current = false;
+
+      unScroll();
    };
 
+   const handleScroll = () => {
+      if (!textRef.current || !textWrapperRef.current || !content) return;
+
+      if (isOverflow.current) return;
+
+      const newOverflow =
+         textRef.current.offsetWidth - 5 > textWrapperRef.current.offsetWidth;
+      if (!newOverflow) return;
+
+      isOverflow.current = true;
+
+      calc();
+
+      console.log("handle");
+
+      textRef.current.innerHTML =
+         textRef.current.innerText +
+         "&nbsp; &nbsp; &nbsp;" +
+         textRef.current.innerText;
+
+      setTimeout(scroll, 1000);
+
+      autoScrollTimerId.current = setInterval(
+         scroll,
+         duration.current * 1000 + 3000
+      );
+   };
+
+   // useEffect(() => {
+   //    if (textRef?.current && textWrapperRef?.current) {
+   //       textWrapperRef.current.style.height =
+   //          textRef.current.clientHeight + "px";
+   //    }
+   // }, [content]);
+
    useEffect(() => {
-      if (!currentSong.name || !isPlaying) return;
-
-      reScroll();
-      if (!distance.current) return;
-
-      if (autoScroll) {
-         if (duration.current && !isScrollRef.current) {
-            setTimeout(() => {
-               scroll();
-            }, 1000);
-
-            autoScrollTimerId.current = setInterval(() => {
-               scroll();
-            }, duration.current * 1000 + 3000 + 1000);
-         }
-      }
+      // if (isOverflow.current) return;
+      handleScroll();
 
       return () => {
-         clearInterval(autoScrollTimerId.current);
-         clearTimeout(unScrollTimerId.current);
-
-         resetScroll();
+         handleReset();
       };
-   }, [currentSong, isPlaying]);
-} 
+   }, [content]);
+}

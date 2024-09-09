@@ -56,7 +56,9 @@ export default function MobileFullScreenPlayer({
    const { queueSongs } = useSelector(selectSongQueue);
 
    // state
-   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
+   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">(
+      "Playing"
+   );
    const [scalingImage, _setScalingImage] = useState(false);
    const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
@@ -109,7 +111,11 @@ export default function MobileFullScreenPlayer({
 
       setTimeout(() => {
          dispatch(
-            setSong({ ...song, currentIndex: index, song_in: currentSong.song_in })
+            setSong({
+               ...song,
+               currentIndex: index,
+               song_in: currentSong.song_in,
+            })
          );
       }, 250);
    };
@@ -238,36 +244,26 @@ export default function MobileFullScreenPlayer({
                      >
                         <div className="group flex-grow overflow-hidden">
                            <div className={classes.scrollText}>
-                              {useMemo(
-                                 () => (
-                                    <ScrollText
-                                       autoScroll
-                                       classNames={`${
-                                          activeTab === "Playing" || isLandscape
-                                             ? "text-[24px] leading-[30px]"
-                                             : "text-[20px]"
-                                       } font-[500]`}
-                                       label={currentSong.name || "..."}
-                                    />
-                                 ),
-                                 [currentSong, activeTab]
-                              )}
+                              <ScrollText
+                                 autoScroll
+                                 className={`${
+                                    activeTab === "Playing" || isLandscape
+                                       ? "text-[24px] leading-[30px]"
+                                       : "text-[20px]"
+                                 } font-[500]`}
+                                 content={currentSong.name || "..."}
+                              />
                            </div>
                            <div className={classes.scrollText}>
-                              {useMemo(
-                                 () => (
-                                    <ScrollText
-                                       autoScroll
-                                       classNames={`${
-                                          activeTab === "Playing" || isLandscape
-                                             ? "text-[22px]"
-                                             : "text-[16px] opacity-60"
-                                       } font-[400]`}
-                                       label={currentSong.singer || "..."}
-                                    />
-                                 ),
-                                 [currentSong, activeTab]
-                              )}
+                              <ScrollText
+                                 autoScroll
+                                 className={`${
+                                    activeTab === "Playing" || isLandscape
+                                       ? "text-[22px]"
+                                       : "text-[16px] opacity-60"
+                                 } font-[400]`}
+                                 content={currentSong.singer || "..."}
+                              />
                            </div>
                         </div>
                      </div>
@@ -286,7 +282,9 @@ export default function MobileFullScreenPlayer({
                               active={activeTab === "Lyric"}
                               className="h-[100%]"
                               audioEle={audioEle}
-                              isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
+                              isOpenFullScreen={
+                                 isOpenFullScreen && activeTab === "Lyric"
+                              }
                            />
                         ),
                         [isOpenFullScreen, activeTab, isLandscape]
@@ -300,7 +298,9 @@ export default function MobileFullScreenPlayer({
                      }`}
                   >
                      <div className="relative">
-                        <h3 className="text-white text-[16px] my-[10px]">Playing next</h3>
+                        <h3 className="text-white text-[16px] my-[10px]">
+                           Playing next
+                        </h3>
                         <div className="h-[calc(100vh-170px)] pb-[30px] no-scrollbar overflow-auto">
                            {songsListItemTab}
                         </div>

@@ -112,27 +112,30 @@ export const optimizeImage = async (imageFile: File) => {
    return imageBlob;
 };
 
-export const handleTimeText = (duration: number) => {
-   if (!duration) return "";
+export const handleTimeText = (time: number) => {
+   const minutes = Math.floor(time / 60);
+   const seconds = Math.floor(time % 60);
+   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+   // if (!duration) return "";
 
-   let minute = 0;
-   let fixedDuration = +duration.toFixed(0);
-   while (fixedDuration >= 60) {
-      fixedDuration -= 60;
-      minute++;
-   }
+   // let minute = 0;
+   // let fixedDuration = +duration.toFixed(0);
+   // while (fixedDuration >= 60) {
+   //    fixedDuration -= 60;
+   //    minute++;
+   // }
 
-   if (minute < 10) {
-      if (fixedDuration >= 10) {
-         return `0${minute}:${fixedDuration}`;
-      }
-      return `0${minute}:0${fixedDuration}`;
-   } else {
-      if (fixedDuration >= 10) {
-         return `${minute}:${fixedDuration}`;
-      }
-      return `${minute}:0${fixedDuration}`;
-   }
+   // if (minute < 10) {
+   //    if (fixedDuration >= 10) {
+   //       return `0${minute}:${fixedDuration}`;
+   //    }
+   //    return `0${minute}:0${fixedDuration}`;
+   // } else {
+   //    if (fixedDuration >= 10) {
+   //       return `${minute}:${fixedDuration}`;
+   //    }
+   //    return `${minute}:0${fixedDuration}`;
+   // }
 };
 
 export const updateSongsListValue = (song: Song, songList: Song[]) => {

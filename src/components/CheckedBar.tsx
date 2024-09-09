@@ -8,7 +8,11 @@ import { deleteSong } from "../utils/firebaseHelpers";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { addSongToQueue, selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import {
+   addSongToQueue,
+   selectSongQueue,
+   setQueue,
+} from "@/store/songQueueSlice";
 import { useSongSelectContext } from "@/store/SongSelectContext";
 
 type Home = {
@@ -55,9 +59,8 @@ export default function CheckedBar({
    const dispatch = useDispatch();
    const { theme } = useTheme();
    const { user } = useAuthStore();
-   const { isChecked, selectedSongs, selectAll, resetSelect } = useSongSelectContext();
-   const { currentSong } = useSelector(selectCurrentSong);
-   const { queueSongs } = useSelector(selectSongQueue);
+   const { isChecked, selectedSongs, selectAll, resetSelect } =
+      useSongSelectContext();
    const { playlistSongs } = useSelector(selectCurrentPlaylist);
    const { userSongs, setUserSongs } = useSongsStore();
 
@@ -101,15 +104,17 @@ export default function CheckedBar({
          // >>> api
          for (let song of selectedSongs) await deleteSong(song);
 
-         const newSongs = userSongs.filter((s) => !selectedSongIds.includes(s.id));
+         const newSongs = userSongs.filter(
+            (s) => !selectedSongIds.includes(s.id)
+         );
 
          // handle song queue
-         if (currentSong.song_in === "user") {
-            const newQueue = queueSongs.filter((s) => !selectedSongIds.includes(s.id));
-            if (newQueue.length !== queueSongs.length)
-               dispatch(setQueue({ songs: newQueue }));
-         }
-         if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
+         // if (currentSong.song_in === "user") {
+         //    const newQueue = queueSongs.filter((s) => !selectedSongIds.includes(s.id));
+         //    if (newQueue.length !== queueSongs.length)
+         //       dispatch(setQueue({ songs: newQueue }));
+         // }
+         // if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
 
          setUserSongs(newSongs);
          setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
@@ -136,8 +141,8 @@ export default function CheckedBar({
    };
 
    const classes = {
-      outlineButton: `border-${theme.alpha} ${theme.side_bar_bg}`,
-      icon: "w-[20px] mr-[6px]",
+      outlineButton: `border-${theme.alpha} ${theme.side_bar_bg} space-x-1`,
+      icon: "w-[20px]",
    };
 
    const renderModal = useMemo(() => {
@@ -172,11 +177,15 @@ export default function CheckedBar({
          case "home":
             return (
                <>
-                  {!isChecked && <h3 className="text-2xl font-bold !mr-[14px]">Songs</h3>}
+                  {!isChecked && (
+                     <h3 className="text-2xl font-bold !mr-[14px]">Songs</h3>
+                  )}
 
                   {isChecked && (
                      <CheckedCta variant={props.variant}>
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-[500] !mr-[14px]">
+                           {selectedSongs.length}
+                        </p>
 
                         <Button
                            onClick={addSongsToQueue}
@@ -185,7 +194,7 @@ export default function CheckedBar({
                            className={classes.outlineButton}
                         >
                            <PlusIcon className={classes.icon} />
-                           Add to songs queue
+                           <span className="hidden sm:block">Add to queue</span>
                         </Button>
                      </CheckedCta>
                   )}
@@ -207,7 +216,7 @@ export default function CheckedBar({
                            className={classes.outlineButton}
                         >
                            <TrashIcon className={classes.icon} />
-                           Delete
+                           <span className="hidden sm:block">Delete</span>
                         </Button>
                      </CheckedCta>
                   )}
@@ -223,7 +232,9 @@ export default function CheckedBar({
                         selectAll={handleSelectUserSongs}
                         variant={props.variant}
                      >
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-[500] !mr-[14px]">
+                           {selectedSongs.length}
+                        </p>
 
                         <Button
                            variant={"outline"}
@@ -232,17 +243,19 @@ export default function CheckedBar({
                            className={classes.outlineButton}
                         >
                            <PlusIcon className={classes.icon} />
-                           Add to songs queue
+                           <span className="hidden sm:block">Add to queue</span>
                         </Button>
 
                         <Button
                            variant={"outline"}
                            size="small"
-                           onClick={() => setIsOpenModal("delete-selected-songs")}
+                           onClick={() =>
+                              setIsOpenModal("delete-selected-songs")
+                           }
                            className={classes.outlineButton}
                         >
                            <TrashIcon className={classes.icon} />
-                           Delete
+                           <span className="hidden sm:block">Delete</span>
                         </Button>
                      </CheckedCta>
                   )}
@@ -260,7 +273,9 @@ export default function CheckedBar({
                         selectAll={handleSelectAllPlaylistSongs}
                         variant={props.variant}
                      >
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-[500] !mr-[14px]">
+                           {selectedSongs.length}
+                        </p>
                         {props.variant !== "dashboard-playlist" && (
                            <Button
                               variant={"outline"}
@@ -276,7 +291,9 @@ export default function CheckedBar({
                         <Button
                            variant={"outline"}
                            size="small"
-                           onClick={() => setIsOpenModal("remove-selects-songs")}
+                           onClick={() =>
+                              setIsOpenModal("remove-selects-songs")
+                           }
                            className={classes.outlineButton}
                         >
                            <MinusIcon className={classes.icon} />
@@ -289,7 +306,9 @@ export default function CheckedBar({
          case "admin-playlist":
             return (
                <>
-                  {!isChecked && <h3 className="font-[500] !mr-[14px]">Songs</h3>}
+                  {!isChecked && (
+                     <h3 className="font-[500] !mr-[14px]">Songs</h3>
+                  )}
 
                   {isChecked && (
                      <CheckedCta
@@ -316,7 +335,9 @@ export default function CheckedBar({
 
    return (
       <>
-         <div className="flex items-center space-x-[8px] py-[10px]">{content}</div>
+         <div className="flex items-center space-x-[8px] h-[48px] pt-[10px]">
+            {content}
+         </div>
 
          {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
       </>
