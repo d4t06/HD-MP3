@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
@@ -19,6 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useAuthActions } from "@/store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
+import { ModalRef } from "./Modal";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -28,12 +29,20 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   //  state
   const [scroll, setScroll] = useState(0);
   const [loggedInUser, loading] = useAuthState(auth);
-  const [isOpenModal, setIsOpenModal] = useState<HeaderModal | "">("");
+  const [modal, setModal] = useState<HeaderModal | "">("");
+  const [isOpenMenu, setIsOpenMenu] = useState(false);
+
+  const modalRef = useRef<ModalRef>(null);
 
   //  use hooks
   const { logOut, logIn } = useAuthActions();
 
-  const closeModal = () => setIsOpenModal("");
+  const openModal = (modal: HeaderModal) => {
+    setModal(modal);
+    modalRef.current?.toggle();
+
+    setIsOpenMenu(false);
+  };
 
   const handleSignOut = async () => {
     try {
@@ -41,7 +50,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     } catch (error) {
       console.log("signOut error", { messsage: error });
     } finally {
-      closeModal();
+      modalRef.current?.toggle();
     }
   };
 
@@ -65,17 +74,17 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const AvatarSkeleton = <Skeleton className="w-[35px] h-[35px] rounded-full" />;
 
   const renderModal = useMemo(() => {
-    switch (isOpenModal) {
+    switch (modal) {
       case "":
         return <></>;
       case "theme":
-        return <Appearance close={closeModal} />;
+        return <Appearance close={() => modalRef.current?.toggle()} />;
       case "info":
-        return <AppInfo close={closeModal} />;
+        return <AppInfo close={() => modalRef.current?.toggle()} />;
       case "confirm":
         return (
           <ConfirmModal
-            close={closeModal}
+            close={() => modalRef.current?.toggle()}
             callback={handleSignOut}
             loading={false}
             label="Sign out ?"
@@ -84,7 +93,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           />
         );
     }
-  }, [isOpenModal]);
+  }, [modal]);
 
   useEffect(() => {
     contentRef.current?.addEventListener("scroll", handleScroll);
@@ -119,14 +128,18 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           <div className=""></div>
           {/* right */}
           <div className="flex gap-[16px]">
-            <Popover placement="bottom-end">
+            <Popover
+              isOpenFromParent={isOpenMenu}
+              setIsOpenFromParent={setIsOpenMenu}
+              placement="bottom-end"
+            >
               <PopoverTrigger
                 className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
               >
                 <AdjustmentsHorizontalIcon className="w-full" />
               </PopoverTrigger>
               <PopoverContent>
-                <SettingMenu setIsOpenModal={setIsOpenModal} loggedIn={false} />
+                <SettingMenu openModal={openModal} loggedIn={false} />
               </PopoverContent>
             </Popover>
 
@@ -154,7 +167,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                         <div className={classes.divide}></div>
                         <button
                           className={`${classes.menuItem}`}
-                          onClick={() => setIsOpenModal("confirm")}
+                          onClick={() => setModal("confirm")}
                         >
                           <ArrowRightOnRectangleIcon className={classes.icon} />
                           Log out
@@ -176,7 +189,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         </div>
       </div>
 
-      {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
+      <Modal variant="animation" ref={modalRef}>
+        {renderModal}
+      </Modal>
     </>
   );
 }

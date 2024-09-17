@@ -1,10 +1,11 @@
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import { useTheme } from "@/store";
-import { useState } from "react";
+import { useRef } from "react";
 import { Modal, Switch, TimerModal } from ".";
 import useCountDown from "@/hooks/useCountDown";
 import { formatTime } from "@/utils/appHelpers";
+import { ModalRef } from "./Modal";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -14,17 +15,15 @@ type Props = {
 export default function SleepTimerButton({ audioEle, variant = "desktop" }: Props) {
   const { theme } = useTheme();
 
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const modalRef = useRef<ModalRef>(null);
 
   const { countDown, isActive, handleEndTimer, setIsActive } = useCountDown({ audioEle });
-
-  const closeModal = () => setIsOpenModal(false);
 
   const activeTimer = (t: number) => setIsActive(t);
 
   const handleTriggerClick = () => {
     if (isActive) handleEndTimer(true);
-    else setIsOpenModal(true);
+    else modalRef.current?.toggle();
   };
 
   const classes = {
@@ -85,11 +84,10 @@ export default function SleepTimerButton({ audioEle, variant = "desktop" }: Prop
   return (
     <>
       {renderElement()}
-      {isOpenModal && (
-        <Modal closeModal={closeModal}>
-          <TimerModal active={activeTimer} close={closeModal} />
-        </Modal>
-      )}
+
+      <Modal ref={modalRef} variant="animation">
+        <TimerModal active={activeTimer} close={() => modalRef.current?.toggle()} />
+      </Modal>
     </>
   );
 }

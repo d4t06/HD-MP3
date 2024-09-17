@@ -46,9 +46,9 @@ export default function Sidebar() {
    //  define styles
    const classes = {
       container: `w-[180px] relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
-      button: `w-full text-[14px] font-[600] ${theme.content_hover_text}`,
+      button: `w-full ${theme.content_hover_text}`,
       text: theme.type === "light" ? "text-[#333]" : "text-white",
-      icon: "w-[25px] mr-[5px]",
+      icon: "w-7 mr-2",
       menuItem: "w-full font-playwriteCU  border-l-[4px] h-[44px] inline-flex items-center",
       activeMenu: `${theme.content_text} ${theme.container} ${theme.content_border}`,
    };

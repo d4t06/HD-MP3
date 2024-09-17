@@ -138,13 +138,11 @@ function BottomPlayer({
           </div>
 
           {!admin && (
-            <div className="flex items-center">
+            <div className={`flex items-center ${currentSong.name ? '' : 'disable'}`}>
               <Tooltip placement="top">
                 <TooltipTrigger
                   onClick={handleOpenFullScreen}
-                  className={` ml-1 rounded-[99px]  hover:bg-${theme.alpha}  p-[5px] ${
-                    currentSong.name ? "" : "opacity-20 pointer-events-none"
-                  }`}
+                  className={` ml-1 rounded-[99px]  hover:bg-${theme.alpha}  p-[5px]`}
                 >
                   <ChevronUpIcon className="w-6" />
                 </TooltipTrigger>
@@ -155,9 +153,7 @@ function BottomPlayer({
               <Tooltip placement="top">
                 <TooltipTrigger
                   onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                  className={` hover:bg-${theme.alpha}   p-[5px]  rounded-[4px] ${
-                    currentSong.name ? "" : "opacity-20 pointer-events-none"
-                  }`}
+                  className={` hover:bg-${theme.alpha} rounded-md p-[5px]`}
                 >
                   <QueueListIcon className="w-6" />
                 </TooltipTrigger>

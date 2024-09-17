@@ -6,21 +6,28 @@ import {
 import { AppInfo, Appearance, Avatar, ConfirmModal, Modal } from "..";
 import { useAuthStore, useTheme } from "@/store";
 import { MobileLinkSkeleton } from "../skeleton";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useAuthActions } from "@/store/AuthContext";
+import { ModalRef } from "../Modal";
 
 type Modal = "theme" | "info" | "logout";
 
 export default function MobileSetting() {
   const { theme } = useTheme();
   const { loading: userLoading, user } = useAuthStore();
+  const modalRef = useRef<ModalRef>(null);
 
   //    hooks
   const { logOut } = useAuthActions();
 
-  const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
+  const [modal, setModal] = useState<Modal | "">("");
 
-  const closeModal = () => setIsOpenModal("");
+  const closeModal = () => modalRef.current?.toggle();
+
+  const openModal = (modal: Modal) => {
+    setModal(modal);
+    modalRef.current?.toggle();
+  };
 
   const handleSignOut = async () => {
     try {
@@ -33,7 +40,7 @@ export default function MobileSetting() {
   };
 
   const renderModal = useMemo(() => {
-    switch (isOpenModal) {
+    switch (modal) {
       case "theme":
         return <Appearance close={closeModal} />;
       case "info":
@@ -49,7 +56,7 @@ export default function MobileSetting() {
           />
         );
     }
-  }, [isOpenModal]);
+  }, [modal]);
 
   // define styles
   const classes = {
@@ -76,21 +83,18 @@ export default function MobileSetting() {
           [...Array(3).keys()].map(() => MobileLinkSkeleton)
         ) : (
           <>
-            <button className={classes.linkItem} onClick={() => setIsOpenModal("theme")}>
+            <button className={classes.linkItem} onClick={() => openModal("theme")}>
               <PaintBrushIcon className={classes.icon} />
               <span>Theme</span>
             </button>
 
-            <button className={classes.linkItem} onClick={() => setIsOpenModal("info")}>
+            <button className={classes.linkItem} onClick={() => openModal("info")}>
               <InformationCircleIcon className={classes.icon} />
               <span>Info</span>
             </button>
 
             {user && (
-              <button
-                className={classes.linkItem}
-                onClick={() => setIsOpenModal("logout")}
-              >
+              <button className={classes.linkItem} onClick={() => openModal("logout")}>
                 <ArrowRightOnRectangleIcon className={classes.icon} />
                 <span>Logout</span>
               </button>
@@ -99,7 +103,11 @@ export default function MobileSetting() {
         )}
       </div>
 
-      {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
+      {
+        <Modal ref={modalRef} variant="animation">
+          {renderModal}
+        </Modal>
+      }
     </>
   );
 }

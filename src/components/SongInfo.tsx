@@ -43,9 +43,9 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
             </div>
 
             <div className="ml-2 flex-grow">
-               <div className="h-[26px]">
+               <div className="h-[32px]">
                   <ScrollText
-                     className="text-[14px] font-playwriteCU font-[600]"
+                     className="leading-[1.5] font-playwriteCU"
                      content={currentSong.name || "Name"}
                   />
                </div>
@@ -53,7 +53,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                <div className="h-[20px]">
                   <ScrollText
                      autoScroll
-                     className="text-[15px] font-[600] opacity-70"
+                     className="font-[600] opacity-70 leading-[1.2]"
                      content={currentSong.singer || "..."}
                   />
                </div>

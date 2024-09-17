@@ -251,13 +251,19 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         {/* song name and singer */}
         <div className={`ml-[10px]  ${props.variant === "queue" ? "" : ""}`}>
           <h5
-            className={`line-clamp-1 font-medium overflow-hidden ${
-              props.variant === "queue" ? "text-sm" : "text-base"
+            className={`line-clamp-1  leading-[1.2] font-medium overflow-hidden ${
+              props.variant === "queue" ? "text-sm" : "text-lg"
             }`}
           >
             {song.name}
           </h5>
-          <p className="text-sm opacity-[.7] line-clamp-1">{song.singer}</p>
+          <p
+            className={`opacity-[.7] line-clamp-1 
+               ${props.variant === "queue" ? "text-sm" : ""}
+                       `}
+          >
+            {song.singer}
+          </p>
         </div>
       </div>
     </>

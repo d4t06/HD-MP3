@@ -99,11 +99,7 @@ export default function MobileFullScreenPlayer({
     }
   };
 
-  const activeSong = (
-    e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,
-    song: Song,
-    index: number
-  ) => {
+  const activeSong = (e: MouseEvent, song: Song, index: number) => {
     const ele = e.target as HTMLDivElement;
     const parent = findParent(ele);
 
@@ -134,11 +130,11 @@ export default function MobileFullScreenPlayer({
                   if (index > currentSong.currentIndex) {
                     return (
                       <MobileSongItem
+                        variant="playing-next"
                         key={index}
                         theme={theme}
-                        data={song}
+                        song={song}
                         onClick={(e) => activeSong(e, song, index)}
-                        active={false}
                       />
                     );
                   }
@@ -167,16 +163,15 @@ export default function MobileFullScreenPlayer({
   }, [isOpenFullScreen]);
 
   const classes = {
-    headerWrapper: "h-[65px] p-[15px]",
+    headerWrapper: "h-[65px] p-4",
     header: "relative w-full",
 
     // add padding to detect if container is overflow
-    main: "h-[calc(100%-65px)] relative px-[15px] overflow-hidden",
+    container: "flex-grow flex flex-col relative px-4 overflow-hidden",
     songImage: "flex-shrink-0 transition-[height, width] origin-top-left",
     nameAndSinger: "flex flex-grow justify-between items-center",
-    control: "absolute bottom-0 left-[15px] right-[15px]",
-    lyricContainer:
-      "absolute top-[65px] bottom-[120px] py-[16px] left-[15px] right-[15px]",
+    control: "absolute bottom-0 left-4 right-4",
+    lyricContainer: "absolute top-[65px] bottom-[120px] py-[16px] left-4 right-4",
     bgImage:
       "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
     overlay:
@@ -189,14 +184,13 @@ export default function MobileFullScreenPlayer({
     <>
       <div
         ref={wrapperRef}
-        className={`fixed inset-0 bg-zinc-900 text-white overflow-hidden  ${
-          isOpenFullScreen ? "" : ""
-        } transition-[transform] duration-[.5s] ease-linear`}
+        style={{ transform: "translate(0, 100%)", zIndex: "-10" }}
+        className={`fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
       >
         <div ref={bgRef} className={classes.bgImage}></div>
         <div className={classes.overlay}></div>
 
-        <div className="absolute inset-0 z-10">
+        <div className="absolute inset-0 z-10 flex flex-col">
           {/* header */}
           <div className={classes.headerWrapper}>
             <div className={classes.header}>
@@ -230,7 +224,7 @@ export default function MobileFullScreenPlayer({
           </div>
 
           {/* container */}
-          <div ref={containerRef} className={classes.main}>
+          <div ref={containerRef} className={classes.container}>
             {/* songImage, name and singer */}
             <div
               className={`${
@@ -303,15 +297,15 @@ export default function MobileFullScreenPlayer({
 
             {/* song list tab */}
             <div
-              className={`absolute left-[15px] right-[15px] ${
-                activeTab === "Songs" ? "block" : "hidden"
+              className={`${
+                activeTab === "Songs" ? "flex-grow flex flex-col" : "hidden"
               }`}
             >
-              <div className="relative">
-                <h3 className="text-white text-[16px] my-[10px]">Playing next</h3>
-                <div className="h-[calc(100vh-170px)] pb-[30px] no-scrollbar overflow-auto">
-                  {songsListItemTab}
-                </div>
+              <div className="leading-[2.2] text-sm font-playwriteCU my-2">
+                Playing next
+              </div>
+              <div className="flex-grow pb-[30px] no-scrollbar overflow-auto">
+                {songsListItemTab}
               </div>
             </div>
 

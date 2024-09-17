@@ -14,14 +14,14 @@ import { HeaderModal } from "./Header";
 
 type Props = {
    loggedIn: boolean;
-   setIsOpenModal: (modal: HeaderModal) => void;
+   openModal: (modal: HeaderModal) => void;
 };
 
-export default function SettingMenu({ setIsOpenModal }: Props) {
+export default function SettingMenu({ openModal }: Props) {
    const { theme } = useTheme();
    const dispatch = useDispatch();
    const handleSetModal = (modal: HeaderModal) => {
-      setIsOpenModal(modal);
+      openModal(modal);
    };
 
    const [isCrossFade, setIsCrossFade] = useLocalStorage("isCrossFade", false);
