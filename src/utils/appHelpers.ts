@@ -11,6 +11,7 @@ export const request = axios.create({
       import.meta.env.VITE_ENDPOINT ||
       "https://express-zingmp3-awx6.vercel.app",
 });
+
 export const convertTimestampToString = (timeStamp: Timestamp) => {
    return new Date(timeStamp.toDate().getTime()).toLocaleString();
 };
@@ -51,6 +52,7 @@ type ParserSong = {
    image: ArrayBuffer | null;
    duration: number;
 };
+
 export const parserSong = async (songFile: File) => {
    if (!songFile) return;
    const result = await parseBlob(songFile);
@@ -74,68 +76,10 @@ export const parserSong = async (songFile: File) => {
 
    return data;
 };
-
-export const getBlurhashEncode = async (blob: Blob) => {
-   if (isDev) console.log(">>> api: get blurHash encode");
-   const start = Date.now();
-
-   const res = await request.post("/api/image/encode", blob);
-   let encode;
-   if (res) {
-      encode = res.data.encode;
-   }
-
-   const consuming = (Date.now() - start) / 1000;
-   console.log(">>> api: get blurHash encode finished after", consuming);
-   return { encode };
-};
-
-export const optimizeImage = async (imageFile: File) => {
-   const fd = new FormData();
-   fd.append("file", imageFile);
-   const start = Date.now();
-
-   if (isDev) console.log(">>> api: optimize image");
-   const res = await request.post("/api/image/optimize", fd, {
-      responseType: "blob",
-   });
-
-   let imageBlob;
-   if (res) {
-      // if use fetch => await res.blob()
-      imageBlob = res.data;
-   }
-
-   const consuming = (Date.now() - start) / 1000;
-   console.log(">>> api: optimize finished after", consuming);
-
-   return imageBlob;
-};
-
-export const handleTimeText = (time: number) => {
+export const formatTime = (time: number) => {
    const minutes = Math.floor(time / 60);
    const seconds = Math.floor(time % 60);
    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-   // if (!duration) return "";
-
-   // let minute = 0;
-   // let fixedDuration = +duration.toFixed(0);
-   // while (fixedDuration >= 60) {
-   //    fixedDuration -= 60;
-   //    minute++;
-   // }
-
-   // if (minute < 10) {
-   //    if (fixedDuration >= 10) {
-   //       return `0${minute}:${fixedDuration}`;
-   //    }
-   //    return `0${minute}:0${fixedDuration}`;
-   // } else {
-   //    if (fixedDuration >= 10) {
-   //       return `${minute}:${fixedDuration}`;
-   //    }
-   //    return `${minute}:0${fixedDuration}`;
-   // }
 };
 
 export const updateSongsListValue = (song: Song, songList: Song[]) => {
@@ -198,9 +142,8 @@ export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
    return { ...playlist, ...value } as Playlist;
 };
 
-export const sleep = async (delay: number) => {
-   await new Promise<void>((rs) => setTimeout(rs, delay));
-};
+export const sleep = async (delay: number) =>
+   new Promise((rs) => setTimeout(rs, delay));
 
 export const selectSongs = (
    song: Song,

@@ -5,8 +5,8 @@ import {
   PauseCircleIcon,
   StopIcon,
 } from "@heroicons/react/24/outline";
-import Image from "./ui/Image";
-import { selectSongs } from "../utils/appHelpers";
+import Image from "@/components/ui/Image";
+import { selectSongs } from "@/utils/appHelpers";
 
 type Props = {
   data: Song;

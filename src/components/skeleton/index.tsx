@@ -1,4 +1,4 @@
-import { useTheme } from "../../store/ThemeContext";
+import { useTheme } from "@/store/ThemeContext";
 
 type Props = {
    className: string;

@@ -3,13 +3,13 @@ import {
    PaintBrushIcon,
    PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useTheme } from "../store/ThemeContext";
+import { useTheme } from "@/store/ThemeContext";
 
 import PopupWrapper from "./ui/PopupWrapper";
 import { useLocalStorage } from "../hooks";
 import { Switch } from ".";
 import { useDispatch } from "react-redux";
-import { setPlayStatus } from "../store/PlayStatusSlice";
+import { setPlayStatus } from "@/store/PlayStatusSlice";
 import { HeaderModal } from "./Header";
 
 type Props = {

@@ -7,7 +7,7 @@ function Footer() {
    };
    return (
       <div className={`${classes.container}`}>
-         <p className={classes.copyRightText}>Make with Make with ❤️ by datnh <br/> © All rights no reserved ¯\_(ツ)_/¯</p>
+         <p className={classes.copyRightText}>Make with ❤️ by d4t06 <br/> © All rights no reserved ¯\_(ツ)_/¯</p>
 
          <div className="flex mt-[20px] md:mt-0 space-x-[10px]">
             <a href="https://facebook.com/DAtdz06" target="_blank">

@@ -1,5 +1,5 @@
 // import { useEffect, useRef, useState } from "react";
-// import { myGetDoc } from "../utils/firebaseHelpers";
+// import { myGetDoc } from "@/services/firebaseService";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthStore, useTheme } from "../store";
 import loadingGif from "../assets/loading.gif";

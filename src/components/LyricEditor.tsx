@@ -18,7 +18,7 @@ import {
    ConfirmModal,
 } from "../components";
 
-import { myDeleteDoc, mySetDoc } from "../utils/firebaseHelpers";
+import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 import { useSongsStore, useToast } from "../store";
 import { updateSongsListValue } from "../utils/appHelpers";
 import { useNavigate } from "react-router-dom";

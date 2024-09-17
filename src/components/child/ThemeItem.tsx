@@ -10,7 +10,7 @@ type Props = {
 export default function ThemeItem({ onClick, theme, active }: Props) {
    return (
       <>
-         <div className="w-[25%] px-[10px] max-[549px]:w-[50%]">
+         <div className="w-[25%] px-2 mt-3 max-[549px]:w-[50%]">
             <div
                onClick={() => onClick(theme)}
                className={`relative border-l-[20px] ${theme.content_border} pt-[100%] rounded-xl ${
@@ -23,7 +23,7 @@ export default function ThemeItem({ onClick, theme, active }: Props) {
                   </div>
                )}
             </div>
-            <p className="text-[14px] mt-[6px]">{theme.name}</p>
+            <p className="text-base font-[500] mt-1">{theme.name}</p>
          </div>
       </>
    );

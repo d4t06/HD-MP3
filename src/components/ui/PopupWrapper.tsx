@@ -5,7 +5,7 @@ import { VariantProps, cva } from "class-variance-authority";
 const popupVariant = cva("", {
   variants: {
     variant: {
-      default: "py-[20px] px-[14px]",
+      default: "p-4",
       thin: "p-[6px]",
     },
   },

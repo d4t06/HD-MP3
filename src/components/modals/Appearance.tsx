@@ -1,8 +1,8 @@
-import { themes } from "../../config/themes";
-import { useTheme } from "../../store";
+import { themes } from "@/constants/themes";
+import { useTheme } from "@/store";
 import ThemeItem from "../child/ThemeItem";
 import ModalHeader from "./ModalHeader";
-import { setLocalStorage } from "../../utils/appHelpers";
+import { setLocalStorage } from "@/utils/appHelpers";
 ;
 
 export default function Appearance({
@@ -23,7 +23,7 @@ export default function Appearance({
       icon: `w-6 h-6 mr-2 inline`,
       popupWrapper: "w-[900px] max-w-[calc(90vw-40px)]",
       themeContainer: "overflow-y-auto overflow-x-hidden no-scrollbar h-[calc(70vh-60px)]  pb-[5vh]",
-      themeList: "flex flex-row -mx-[10px] flex-wrap",
+      themeList: "flex flex-row -mx-2 -mt-3 flex-wrap",
       linkItem: `py-[10px] border-b border-${themeInStore.alpha} last:border-none`,
    };
 
@@ -48,10 +48,10 @@ export default function Appearance({
       <div className={classes.popupWrapper}>
          <ModalHeader close={close} title="Themes" />
          <div className={classes.themeContainer}>
-            <h2 className="text-md font-semibold mb-[10px]">Dark</h2>
+            <h2 className="text-lg font-semibold mb-[10px]">Dark</h2>
             <div className={classes.themeList}>{darkThemes}</div>
 
-            <h2 className="text-md font-semibold mb-[10px] mt-[30px]">Light</h2>
+            <h2 className="text-lg font-semibold mb-[10px] mt-[30px]">Light</h2>
             <div className={classes.themeList}>{lightThemes}</div>
          </div>
       </div>

@@ -3,7 +3,7 @@ import LyricItem from "./child/LyricItem";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
 interface Props {

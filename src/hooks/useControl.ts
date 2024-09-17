@@ -13,7 +13,7 @@ import { useAuthStore, useTheme, useToast } from "../store";
 
 import {
    getLocalStorage,
-   handleTimeText,
+   formatTime,
    setLocalStorage,
 } from "../utils/appHelpers";
 
@@ -21,7 +21,7 @@ import { useLocation } from "react-router-dom";
 import {
    selectAllPlayStatusStore,
    setPlayStatus,
-} from "../store/PlayStatusSlice";
+} from "@/store/PlayStatusSlice";
 import useWindowResize from "./useWindowResize";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
@@ -169,7 +169,7 @@ export default function useControl({
       ) {
          currentTimeRef.current.innerText = "0:00";
          remainingTimeRef.current.innerText = "0:00";
-         timelineRef.current.style.background = "white";
+         timelineRef.current.style.background = "#e1e1e1";
       }
    };
 
@@ -277,12 +277,12 @@ export default function useControl({
 
       if (durationRef.current && currentTime && timeLine) {
          const ratio = currentTime / (durationRef.current / 100);
-         timeLine.style.background = `linear-gradient(to right, ${themeCode.current} ${ratio}%, white ${ratio}%, white 100%)`;
+         timeLine.style.background = `linear-gradient(to right, ${themeCode.current} ${ratio}%, #e1e1e1 ${ratio}%, #e1e1e1 100%)`;
       }
 
       if (currentTimeRef.current) {
          currentTimeRef.current.innerText =
-            handleTimeText(currentTime!) || "00:00";
+            formatTime(currentTime!) || "00:00";
       }
 
       if (isCrossFade) handleFade(currentTime);
@@ -333,7 +333,7 @@ export default function useControl({
 
       // update text
       durationRef.current = audioDuration;
-      remainingTimeEle.innerText = handleTimeText(audioDuration);
+      remainingTimeEle.innerText = formatTime(audioDuration);
 
       // update control props
       timelineRefWidth.current = timelineRef.current?.offsetWidth;
@@ -364,6 +364,9 @@ export default function useControl({
                handleTimeUpdate();
                return;
             }
+
+            console.log('play');
+            
 
             // the first time user click any song
             // the current song in localStorage is empty

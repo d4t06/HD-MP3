@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 
 type Props = {
    vinylRef: RefObject<HTMLImageElement>;

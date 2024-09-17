@@ -1,11 +1,11 @@
 import { useParams } from "react-router-dom";
-import { myGetDoc } from "../utils/firebaseHelpers";
+import { myGetDoc } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch, useSelector } from "react-redux";
 import { useToast } from "../store";
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { db } from "../firebase";
 import {
    selectCurrentPlaylist,
    setCurrentPlaylist,

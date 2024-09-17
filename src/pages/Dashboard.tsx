@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
-import { useTheme } from "../store/ThemeContext";
+import { useTheme } from "@/store/ThemeContext";
 
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { db } from "../config/firebase";
+import { db } from "../firebase";
 
 import { Button, Image } from "../components";
 

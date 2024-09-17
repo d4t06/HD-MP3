@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
-import logo from '../../assets/logo.png'
+import logo from '@/assets/logo.png'
 
 type Props = {
    src?: string;

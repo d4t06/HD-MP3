@@ -6,13 +6,15 @@ type Props = {
    content: string;
 };
 
-export default function useScrollText({ textRef, textWrapperRef, content }: Props) {
+export default function useScrollText({
+   textRef,
+   textWrapperRef,
+   content,
+}: Props) {
    const autoScrollTimerId = useRef<NodeJS.Timeout>();
    const unScrollTimerId = useRef<NodeJS.Timeout>();
 
    const isOverflow = useRef(false); // prevent unNecessary method call
-
-   const ranReset = useRef(false); // prevent unNecessary method call
 
    const baseWith = useRef(0); // for calc distance
    const duration = useRef(0);
@@ -42,7 +44,8 @@ export default function useScrollText({ textRef, textWrapperRef, content }: Prop
    };
 
    const handleReset = () => {
-      if (!isOverflow.current || !textRef.current || !textWrapperRef.current) return;
+      if (!isOverflow.current || !textRef.current || !textWrapperRef.current)
+         return;
 
       duration.current = 0;
       distance.current = 0;
@@ -53,10 +56,7 @@ export default function useScrollText({ textRef, textWrapperRef, content }: Prop
 
       textWrapperRef.current.classList.remove("mask-image-horizontal");
 
-      if (!ranReset.current) {
-         ranReset.current = true;
-         textRef.current.innerText = content;
-      }
+      textRef.current.innerText = content;
 
       unScroll();
    };
@@ -64,7 +64,8 @@ export default function useScrollText({ textRef, textWrapperRef, content }: Prop
    const handleScroll = () => {
       if (!textRef.current || !textWrapperRef.current || !content) return;
 
-      const isOverF = textRef.current.offsetWidth > textWrapperRef.current.offsetWidth;
+      const isOverF =
+         textRef.current.offsetWidth > textWrapperRef.current.offsetWidth;
       if (!isOverF) return;
 
       isOverflow.current = true;
@@ -74,17 +75,21 @@ export default function useScrollText({ textRef, textWrapperRef, content }: Prop
       baseWith.current = textRef.current.clientWidth;
 
       textRef.current.innerHTML =
-         textRef.current.innerText + "&nbsp; &nbsp; &nbsp;" + textRef.current.innerText;
+         textRef.current.innerText +
+         "&nbsp; &nbsp; &nbsp;" +
+         textRef.current.innerText;
 
       calc();
 
       setTimeout(scroll, 1000);
 
-      autoScrollTimerId.current = setInterval(scroll, duration.current * 1000 + 3000);
+      autoScrollTimerId.current = setInterval(
+         scroll,
+         duration.current * 1000 + 3000
+      );
    };
 
    useEffect(() => {
-      //
       handleScroll();
 
       return handleReset;

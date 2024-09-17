@@ -1,7 +1,7 @@
-import { useSongsStore } from "../store/SongsContext";
+import { useSongsStore } from "@/store/SongsContext";
 import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { useToast } from "../store";
-import { deleteSong } from "../utils/firebaseHelpers";
+import { deleteSong } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 
 import usePlaylistActions from "./usePlaylistActions";

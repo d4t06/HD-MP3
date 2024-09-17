@@ -4,7 +4,7 @@ import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteSong } from "../utils/firebaseHelpers";
+import { deleteSong } from "@/services/firebaseService";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { addSongToQueue } from "@/store/songQueueSlice";
@@ -169,11 +169,11 @@ export default function CheckedBar({
          case "home":
             return (
                <>
-                  {!isChecked && <h3 className="text-2xl font-bold !mr-[14px]">Songs</h3>}
+                  {!isChecked && <h3 className="text-xl font-playwriteCU !mr-[14px]">Songs</h3>}
 
                   {isChecked && (
                      <CheckedCta variant={props.variant}>
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-playwriteCU mr-1">{selectedSongs.length}</p>
 
                         <Button
                            onClick={addSongsToQueue}
@@ -195,7 +195,7 @@ export default function CheckedBar({
                   {!isChecked && children}
                   {isChecked && (
                      <CheckedCta variant={props.variant}>
-                        <p className="font-[500]">{selectedSongs.length}</p>
+                        <p className="font-playwriteCU">{selectedSongs.length}</p>
 
                         <Button
                            variant={"outline"}
@@ -220,7 +220,7 @@ export default function CheckedBar({
                         selectAll={handleSelectUserSongs}
                         variant={props.variant}
                      >
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-playwriteCU !mr-[14px]">{selectedSongs.length}</p>
 
                         <Button
                            variant={"outline"}
@@ -257,7 +257,7 @@ export default function CheckedBar({
                         selectAll={handleSelectAllPlaylistSongs}
                         variant={props.variant}
                      >
-                        <p className="font-[500] !mr-[14px]">{selectedSongs.length}</p>
+                        <p className="font-playwriteCU !mr-[14px]">{selectedSongs.length}</p>
                         {props.variant !== "dashboard-playlist" && (
                            <Button
                               variant={"outline"}
@@ -286,7 +286,7 @@ export default function CheckedBar({
          case "admin-playlist":
             return (
                <>
-                  {!isChecked && <h3 className="font-[500] !mr-[14px]">Songs</h3>}
+                  {!isChecked && <h3 className="font-playwriteCU text-xl !mr-[14px]">Songs</h3>}
 
                   {isChecked && (
                      <CheckedCta
@@ -313,7 +313,7 @@ export default function CheckedBar({
 
    return (
       <>
-         <div className="flex items-center space-x-[8px] h-[48px] pt-[10px]">
+         <div className="flex items-center space-x-2 h-[40px]">
             {content}
          </div>
 

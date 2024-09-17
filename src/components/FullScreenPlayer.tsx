@@ -218,7 +218,7 @@ function FullScreenPlayer({
                         </PopoverTrigger>
 
                         <PopoverContent className="z-[99]">
-                           <FullScreenPlayerSetting />
+                           <FullScreenPlayerSetting audioEle={audioEle} />
                         </PopoverContent>
                      </Popover>
 

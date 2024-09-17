@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 ;
-import { myGetDoc } from "../utils/firebaseHelpers";
+import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "../store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useSongLyric({

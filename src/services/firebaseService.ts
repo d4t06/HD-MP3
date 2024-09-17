@@ -4,7 +4,7 @@ import {
    ref,
    uploadBytes,
 } from "firebase/storage";
-import { db, store } from "../config/firebase";
+import { db, store } from "../firebase";
 import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
 type collectionVariant = "songs" | "playlist" | "lyrics" | "users";

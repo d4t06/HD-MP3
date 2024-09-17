@@ -1,5 +1,5 @@
 import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
-import { db } from "../config/firebase";
+import { db } from "../firebase";
 
 const songsCollectionRef = collection(db, "songs");
 const playlistCollectionRef = collection(db, "playlist");

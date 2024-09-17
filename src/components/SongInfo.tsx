@@ -20,7 +20,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
 
    const classes = {
       songInfoWrapper: `${admin ? "w-1/4" : "w-1/4 "}`,
-      songInfoChild: "flex flex-row items-center h-full origin-center",
+      songInfoChild: "flex flex-row",
    };
 
    return (
@@ -34,7 +34,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                isOpenFullScreen ? "hidden" : ""
             }`}
          >
-            <div className={admin ? `w-[36px]` : "w-[46px]"}>
+            <div className={admin ? `w-[46px]` : "w-[56px]"}>
                <img
                   ref={vinylRef}
                   src={currentSong.image_url || logo}
@@ -42,19 +42,19 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                />
             </div>
 
-            <div className="ml-[10px] flex-grow">
-               <div className="h-[27px]">
+            <div className="ml-2 flex-grow">
+               <div className="h-[26px]">
                   <ScrollText
-                     className="text-[18px] font-[500]"
-                     content={currentSong.name || "name"}
+                     className="text-[14px] font-playwriteCU font-[600]"
+                     content={currentSong.name || "Name"}
                   />
                </div>
 
                <div className="h-[20px]">
                   <ScrollText
                      autoScroll
-                     className="text-[14px] opacity-60"
-                     content={currentSong.singer || "singer"}
+                     className="text-[15px] font-[600] opacity-70"
+                     content={currentSong.singer || "..."}
                   />
                </div>
             </div>

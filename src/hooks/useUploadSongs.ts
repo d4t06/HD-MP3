@@ -1,11 +1,11 @@
 import { ChangeEvent, RefObject, useRef, useCallback, useEffect } from "react";
 import { generateId, parserSong } from "../utils/appHelpers";
-import { useSongsStore } from "../store/SongsContext";
+import { useSongsStore } from "@/store/SongsContext";
 import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
-import { mySetDoc, uploadFile } from "../utils/firebaseHelpers";
+import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "../utils/appHelpers";
-import { useAuthStore } from "../store/AuthContext";
+import { useAuthStore } from "@/store/AuthContext";
 import { useTheme, useUpload } from "../store";
 import { useSelector } from "react-redux";
 import { selectCurrentSong } from "@/store/currentSongSlice";

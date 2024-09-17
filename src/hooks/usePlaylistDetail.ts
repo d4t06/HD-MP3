@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import useGetPlaylist from "./useGetPlaylist";
-import { mySetDoc } from "@/utils/firebaseHelpers";
+import { mySetDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import {
    selectCurrentPlaylist,

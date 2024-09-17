@@ -49,14 +49,14 @@ export default function Sidebar() {
       button: `w-full text-[14px] font-[600] ${theme.content_hover_text}`,
       text: theme.type === "light" ? "text-[#333]" : "text-white",
       icon: "w-[25px] mr-[5px]",
-      menuItem: "w-full  border-l-[4px] h-[44px] inline-flex items-center",
+      menuItem: "w-full font-playwriteCU  border-l-[4px] h-[44px] inline-flex items-center",
       activeMenu: `${theme.content_text} ${theme.container} ${theme.content_border}`,
    };
 
    return (
       <div className={`${classes.container} ${classes.text}`}>
          <div className="px-[10px] h-[60px] flex items-center justify-center">
-            <Link to={"/"} className="text-[24px] font-semibold">
+            <Link to={"/"} className="text-[24px] font-bold">
                HD
                <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
             </Link>

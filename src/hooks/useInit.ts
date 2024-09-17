@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSongsStore } from "../store/SongsContext";
+import { useSongsStore } from "@/store/SongsContext";
 import { useToast } from "../store/ToastContext";
-import { useAuthStore } from "../store/AuthContext";
+import { useAuthStore } from "@/store/AuthContext";
 import { sleep } from "../utils/appHelpers";
 import appConfig from "../config/app";
-import * as appServices from "../services/appServices";
+import * as appService from "../services/appService";
 
 export default function useInitSong({ admin }: { admin?: boolean }) {
    const { setErrorToast } = useToast();
@@ -24,8 +24,8 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
 
    const initSongsAndPlaylists = async () => {
       try {
-         const adminSongs = await appServices.getAdminSongs();
-         const adminPlaylists = await appServices.getAdminPLaylist();
+         const adminSongs = await appService.getAdminSongs();
+         const adminPlaylists = await appService.getAdminPLaylist();
 
          console.log("check admin songs", adminSongs)
          console.log("check admin playlists", adminPlaylists)
@@ -44,7 +44,7 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
             await sleep(appConfig.loadingDuration);
             initSongsContext({ adminSongs, adminPlaylists });
          } else {
-            const userSongsAndPlaylist = await appServices.getUserSongsAndPlaylists(user);
+            const userSongsAndPlaylist = await appService.getUserSongsAndPlaylists(user);
 
             initSongsContext({ ...userSongsAndPlaylist, adminSongs, adminPlaylists });
          }

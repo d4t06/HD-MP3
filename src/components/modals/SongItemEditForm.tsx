@@ -11,13 +11,13 @@ import {
    mySetDoc,
    uploadBlob,
    uploadFile,
-} from "../../utils/firebaseHelpers";
+} from "@/services/firebaseService";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Image, Button } from "..";
-import { useToast, useAuthStore, useSongsStore, useTheme } from "../../store";
-import { useEditForm } from "../../hooks";
-import { getBlurhashEncode, optimizeImage } from "../../utils/appHelpers";
+import { useToast, useAuthStore, useSongsStore, useTheme } from "@/store";
+import { useEditForm } from "@/hooks";
+import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 
@@ -232,7 +232,7 @@ export default function SongItemEditForm({ song, close }: Props) {
                   songId: newSong.id,
                });
 
-               const { encode } = await getBlurhashEncode(imageBlob);
+               const { encode } = await getBlurHashEncode(imageBlob);
                if (encode) {
                   newSong.blurhash_encode = encode;
                   console.log("check encode", encode);

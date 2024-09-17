@@ -37,7 +37,6 @@ interface Props
    extends ButtonHTMLAttributes<HTMLButtonElement>,
       VariantProps<typeof buttonVariant> {
    children: ReactNode;
-   // classNames: any;
    isLoading?: boolean;
    onClick?: MouseEventHandler;
    ref?: (node: ReferenceType | null) => void;
@@ -48,6 +47,7 @@ const Button: FC<Props> = ({
    children,
    variant,
    size,
+   disabled,
    isLoading,
    hover,
    onClick,
@@ -59,9 +59,11 @@ const Button: FC<Props> = ({
          onClick={(e) => (onClick ? onClick(e) : "")}
          {...props}
          className={buttonVariant({ variant, size, hover, className })}
-         disabled={isLoading}
+         disabled={isLoading || disabled}
       >
-         {isLoading ? <ArrowPathIcon className="w-[22px] animate-spin" /> : null}
+         {isLoading ? (
+            <ArrowPathIcon className="w-[22px] animate-spin" />
+         ) : null}
          {!isLoading && children}
       </button>
    );

@@ -1,7 +1,7 @@
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../config/firebase";
+import { auth } from "@/firebase";
 import { Image } from "..";
-import userImage from "../../assets/user-default.png";
+import userImage from "@/assets/user-default.png";
 
 export default function Avatar({ className }: { className?: string }) {
    const [loggedInUser] = useAuthState(auth);
@@ -14,7 +14,7 @@ export default function Avatar({ className }: { className?: string }) {
 
    return (
       <div className={classes.imageFrame}>
-         <Image src={loggedInUser?.photoURL! || userImage} classNames="w-full" />
+         <Image src={loggedInUser?.photoURL || userImage} classNames="w-full" />
       </div>
    );
 }

@@ -10,7 +10,7 @@ import {
    useHover,
 } from "@floating-ui/react";
 import { HTMLProps, ReactNode, createContext, useContext, useState } from "react";
-import { useTheme } from "../../store";
+import { useTheme } from "@/store";
 
 interface TooltipOptions {
    initialOpen?: boolean;
@@ -117,7 +117,7 @@ export function TooltipContent({
 
    return (
       <FloatingFocusManager context={context} modal={false}>
-         <div className={`${classes.container}  text-[12px] font-semibold px-[6px] py-[3px] rounded-[4px]`} ref={refs.setFloating} style={{ ...floatingStyles }} {...getFloatingProps(props)}>
+         <div className={`${classes.container}  text-[13px] font-semibold px-[6px] py-[3px] rounded-[4px]`} ref={refs.setFloating} style={{ ...floatingStyles }} {...getFloatingProps(props)}>
             {children}
          </div>
       </FloatingFocusManager>

@@ -1,5 +1,5 @@
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
-import { themes } from "../config/themes";
+import { themes } from "../constants/themes";
 import { getLocalStorage } from "../utils/appHelpers";
 
 type StateType = {

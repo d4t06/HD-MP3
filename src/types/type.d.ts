@@ -44,8 +44,6 @@ type Playlist = {
    image_url: string;
    blurhash_encode: string;
    song_ids: Array<string>;
-   // time: number;
-   // count: number;
    by: "admin" | string;
 };
 
@@ -61,7 +59,13 @@ interface RealTimeLyric {
    text: string;
 }
 
-type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray" | "white" | "black";
+type ThemeKeyType =
+   | "red"
+   | "green_light"
+   | "deep_blue"
+   | "gray"
+   | "white"
+   | "black";
 
 type ThemeType = {
    name: string;

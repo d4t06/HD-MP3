@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import ToastItem from "./child/ToastItem";
 import { useToast } from "../store/ToastContext";
-import { useTheme } from "../store/ThemeContext";
+import { useTheme } from "@/store/ThemeContext";
 
 interface Props {
    time?: number;

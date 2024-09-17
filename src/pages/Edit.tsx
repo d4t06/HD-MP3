@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { routes } from "../routes";
 
 import LyricEditor from "../components/LyricEditor";
-import { myGetDoc } from "../utils/firebaseHelpers";
+import { myGetDoc } from "@/services/firebaseService";
 import { useSongsStore, useTheme } from "../store";
 import { useInitSong } from "../hooks";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";

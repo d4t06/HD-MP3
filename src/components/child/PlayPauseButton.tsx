@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { memo, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "../../store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
@@ -20,24 +20,24 @@ function PlayPauseButton({ handlePlayPause }: Props) {
 
    const renderIcon = useMemo(() => {
       if (isWaiting) {
-         return <ArrowPathIcon className={"w-[36px] max-[549px]:w-[46px] animate-spin"} />;
+         return <ArrowPathIcon className={"w-10 animate-spin"} />;
       } else if (isError && currentSong.name) {
-         return <ExclamationCircleIcon className="w-[30px] max-[549px]:w-[40px]" />;
+         return <ExclamationCircleIcon className="w-10" />;
       }
 
       return isPlaying ? (
-         <PauseCircleIcon className={"w-[50px] max-[549px]:w-[60px] max-[350px]:w-[45px]"} />
+         <PauseCircleIcon className={"w-10"} />
       ) : (
-         <PlayCircleIcon className={"w-[50px] max-[549px]:w-[60px] max-[350px]:w-[45px]"} />
+         <PlayCircleIcon className={"w-10"} />
       );
    }, [isWaiting, isError, isPlaying, currentSong]);
 
    return (
       <>
          <button
-            className={`p-[5px] ${
+            className={`p-1 ${
                isWaiting && "pointer-events-none"
-            } inline-flex items-center justify-center w-[50px] max-[549px]:w-[60px] max-[350px]:w-[45px]`}
+            } inline-flex items-center justify-center`}
             onClick={() => handlePlayPause()}
          >
             {renderIcon}

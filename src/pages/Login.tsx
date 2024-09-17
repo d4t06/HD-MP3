@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components";
-import { useAuthActions } from "../store/AuthContext";
+import { useAuthActions } from "@/store/AuthContext";
 import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../config/firebase";
+import { auth } from "../firebase";
 
 function Login() {
    const [loggedInUser] = useAuthState(auth);

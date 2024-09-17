@@ -2,8 +2,8 @@ import { Outlet } from "react-router-dom";
 import { useAuthStore } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect } from "react";
-import { auth } from "../config/firebase";
-import { myGetDoc } from "../utils/firebaseHelpers";
+import { auth } from "../firebase";
+import { myGetDoc } from "@/services/firebaseService";
 import { sleep } from "../utils/appHelpers";
 
 export default function PersistLogin() {

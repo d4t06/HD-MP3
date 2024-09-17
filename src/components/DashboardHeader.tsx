@@ -1,12 +1,12 @@
 import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../config/firebase";
+import { auth } from "../firebase";
 
 import { useMemo, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
 
-import { useAuthActions } from "../store/AuthContext";
+import { useAuthActions } from "@/store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { Link } from "react-router-dom";
 
@@ -57,7 +57,8 @@ export default function DashboardHeader() {
 
    const classes = {
       header: `${theme.side_bar_bg} fixed top-0 z-10 left-0 right-0`,
-      container: "container mx-auto px-[40px] flex justify-between items-center h-[50px]",
+      container:
+         "container mx-auto px-[40px] flex justify-between items-center h-[50px]",
       avatarFrame: "w-[34px] h-[34px] rounded-full",
       settingBtn: ` flex ml-[12px] justify-center items-center hover:brightness-75 bg-${theme.alpha}`,
    };
@@ -66,10 +67,6 @@ export default function DashboardHeader() {
       <>
          <div className={`${classes.header}`}>
             <div className={classes.container}>
-               {/* <div className="flex">
-             </div> */}
-               {/* <img className="w-[30px]" src={siteLogo} alt="" />
-            <h1 className="text-[20px] uppercase ml-[10px]">Zing admin</h1> */}
                <Link to={"/dashboard"} className="text-[24px] font-semibold">
                   HD
                   <span className={`${theme.content_text} ml-[4px] uppercase`}>
@@ -79,11 +76,17 @@ export default function DashboardHeader() {
 
                <div className="flex items-center">
                   {loggedInUser?.displayName && (
-                     <p className="text-[14px] mr-[8px]">{loggedInUser.displayName}</p>
+                     <p className="text-[14px] mr-[8px]">
+                        {loggedInUser.displayName}
+                     </p>
                   )}
                   <div className={`${classes.avatarFrame} overflow-hidden `}>
                      {loggedInUser?.photoURL && (
-                        <img src={loggedInUser.photoURL!} className="w-full" alt="" />
+                        <img
+                           src={loggedInUser.photoURL!}
+                           className="w-full"
+                           alt=""
+                        />
                      )}
                   </div>
 
@@ -95,7 +98,10 @@ export default function DashboardHeader() {
                      </PopoverTrigger>
 
                      <PopoverContent>
-                        <SettingMenu loggedIn={false} setIsOpenModal={() => {}} />
+                        <SettingMenu
+                           loggedIn={false}
+                           setIsOpenModal={() => {}}
+                        />
                      </PopoverContent>
                   </Popover>
                </div>

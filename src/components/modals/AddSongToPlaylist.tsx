@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { useSongsStore } from "../../store/SongsContext";
+import { useSongsStore } from "@/store/SongsContext";
 import Button from "../ui/Button";
-import MobileSongItem from "../MobileSongItem";
-import usePlaylistActions from "../../hooks/usePlaylistActions";
+import MobileSongItem from "../mobile/MobileSongItem";
+import usePlaylistActions from "@/hooks/usePlaylistActions";
 import ModalHeader from "./ModalHeader";
-import { useTheme } from "../../store";
+import { useTheme } from "@/store";
 
 type Props = {
    close: () => void;

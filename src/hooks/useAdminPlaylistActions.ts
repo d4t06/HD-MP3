@@ -7,7 +7,7 @@ import {
    // generatePlaylistAfterChangeSongs,
    initPlaylistObject,
 } from "../utils/appHelpers";
-import { myDeleteDoc, mySetDoc } from "../utils/firebaseHelpers";
+import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {

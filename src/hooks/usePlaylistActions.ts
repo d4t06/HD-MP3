@@ -5,7 +5,7 @@ import {
    myDeleteDoc,
    mySetDoc,
    setUserPlaylistIdsDoc,
-} from "../utils/firebaseHelpers";
+} from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {

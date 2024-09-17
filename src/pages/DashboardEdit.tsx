@@ -5,7 +5,7 @@ import { useTheme, useAuthStore } from "../store";
 
 import LyricEditor from "../components/LyricEditor";
 import { routes } from "../routes";
-import { myGetDoc } from "../utils/firebaseHelpers";
+import { myGetDoc } from "@/services/firebaseService";
 
 export default function Edit() {
    const { theme } = useTheme();
