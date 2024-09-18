@@ -20,6 +20,7 @@ import {
 import { useAuthActions } from "@/store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { ModalRef } from "./Modal";
+import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -30,7 +31,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const [scroll, setScroll] = useState(0);
   const [loggedInUser, loading] = useAuthState(auth);
   const [modal, setModal] = useState<HeaderModal | "">("");
-  const [isOpenMenu, setIsOpenMenu] = useState(false);
+  // const [isOpenMenu, setIsOpenMenu] = useState(false);
+  const triggerRef = useRef<TriggerRef>(null);
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -41,7 +43,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     setModal(modal);
     modalRef.current?.toggle();
 
-    setIsOpenMenu(false);
+    // setIsOpenMenu(false);
+    triggerRef.current?.close();
   };
 
   const handleSignOut = async () => {
@@ -128,20 +131,38 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           <div className=""></div>
           {/* right */}
           <div className="flex gap-[16px]">
-            <Popover
+            {/* <Popover
               isOpenFromParent={isOpenMenu}
               setIsOpenFromParent={setIsOpenMenu}
               placement="bottom-end"
             >
-              <PopoverTrigger
-                className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
-              >
-                <AdjustmentsHorizontalIcon className="w-full" />
+              <PopoverTrigger asChild className={``}>
+                <button
+                  className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
+                >
+                  <AdjustmentsHorizontalIcon className="w-full" />
+                </button>
               </PopoverTrigger>
               <PopoverContent>
                 <SettingMenu openModal={openModal} loggedIn={false} />
               </PopoverContent>
-            </Popover>
+            </Popover> */}
+
+            <MyPopup>
+              <MyPopupTrigger ref={triggerRef}>
+                <button
+                  className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
+                >
+                  <AdjustmentsHorizontalIcon className="w-full" />
+                </button>
+              </MyPopupTrigger>
+              <MyPopupContent
+                className="top-[calc(100%+8px)] right-0"
+                animationClassName="origin-top-right"
+              >
+                <SettingMenu openModal={openModal} loggedIn={false} />
+              </MyPopupContent>
+            </MyPopup>
 
             <Popover placement="bottom-end">
               <PopoverTrigger

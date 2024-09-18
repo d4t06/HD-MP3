@@ -72,10 +72,10 @@ export default function MobileNav() {
             ) : (
               <Button
                 onClick={handleLogIn}
-                className={`${theme.content_bg} rounded-md space-x-1`}
+                className={`${theme.content_bg} rounded-md space-x-1 py-1`}
               >
-                <ArrowRightOnRectangleIcon className="w-6" />
-                <span className="font-playwriteCU leading-[2.2] text-sm">Login</span>
+                <ArrowRightOnRectangleIcon className="w-7" />
+                <span className="font-playwriteCU leading-[2.2]">Login</span>
               </Button>
             )}
           </>

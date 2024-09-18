@@ -30,7 +30,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
   const { currentSong } = useSelector(selectCurrentSong);
 
-//   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
+  //   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
   const [activeTab, setActiveTab] = useState<"Queue" | "Recent">("Queue");
   //   const [historySongs, setHistorySongs] = useState<Song[]>([]);
@@ -39,7 +39,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   //   const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
   //   const [fetchLoading, setFetchLoading] = useState(false);
 
-//   const closeModal = () => setIsOpenModal("");
+  //   const closeModal = () => setIsOpenModal("");
 
   const handleSetSong = useCallback(
     (song: Song, index: number) => {
@@ -221,16 +221,22 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
       <div className={classes.songListContainer}>
         {activeTab === "Queue" && (
           <>
-            <SongList variant="queue" songs={queueSongs} handleSetSong={handleSetSong} />
+            <div className="">
+              <SongList
+                variant="queue"
+                songs={queueSongs}
+                handleSetSong={handleSetSong}
+              />
+            </div>
             <div className="text-center">
               {!!queueSongs.length && (
                 <Button
                   onClick={clearSongQueue}
                   size={"small"}
-                  className={`${theme.content_bg} rounded-full my-5 space-x-1`}
+                  className={`${theme.content_bg} rounded-full my-5 py-1 space-x-1`}
                 >
                   <TrashIcon className="w-6" />
-                  <span className="font-playwriteCU text-sm leading-[2.2]">Clear</span>
+                  <span className="font-playwriteCU leading-[2.2]">Clear</span>
                 </Button>
               )}
             </div>
@@ -268,7 +274,6 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
                </>
             )} */}
       </div>
-     
     </div>
   );
 }

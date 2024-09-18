@@ -149,12 +149,12 @@ export default function PLaylistInfo({ loading, type }: Props) {
         return (
           <Button
             onClick={handlePlayPlaylist}
-            className={`rounded-full px-[20px] space-x-1 py-[6px] ${theme.content_bg} ${
+            className={`rounded-full px-[20px] space-x-1 py-1 ${theme.content_bg} ${
               !currentPlaylist.song_ids.length && "disable"
             }`}
           >
-            <PlayIcon className="w-[22px]" />
-            <span className="font-playwriteCU">Play</span>
+            <PlayIcon className="w-7" />
+            <span className="font-playwriteCU leading-[2.2]">Play</span>
           </Button>
         );
     }
