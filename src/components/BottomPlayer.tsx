@@ -13,10 +13,10 @@ import { Control } from ".";
 
 import useVolume from "../hooks/useVolume";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
-import SongInfo from "./SongInfo";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 import SleepTimerButton from "./SleepTimerButton";
+import MyTooltip from "./MyTooltip";
+import SongInfo from "./SongInfo";
 interface Props {
   admin?: boolean;
   idle: boolean;
@@ -138,28 +138,24 @@ function BottomPlayer({
           </div>
 
           {!admin && (
-            <div className={`flex items-center ${currentSong.name ? '' : 'disable'}`}>
-              <Tooltip placement="top">
-                <TooltipTrigger
+            <div className={`flex items-center ${currentSong.name ? "" : "disable"}`}>
+              <MyTooltip content="Fullscreen mode">
+                <button
                   onClick={handleOpenFullScreen}
-                  className={` ml-1 rounded-[99px]  hover:bg-${theme.alpha}  p-[5px]`}
+                  className={`rounded-[99px]  hover:bg-${theme.alpha}  p-[5px]`}
                 >
                   <ChevronUpIcon className="w-6" />
-                </TooltipTrigger>
+                </button>
+              </MyTooltip>
 
-                <TooltipContent>Fullscreen mode</TooltipContent>
-              </Tooltip>
-
-              <Tooltip placement="top">
-                <TooltipTrigger
+              <MyTooltip content="Queue">
+                <button
                   onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                  className={` hover:bg-${theme.alpha} rounded-md p-[5px]`}
+                  className={`ml-1 hover:bg-${theme.alpha} rounded-md p-[5px]`}
                 >
                   <QueueListIcon className="w-6" />
-                </TooltipTrigger>
-
-                <TooltipContent>Queue</TooltipContent>
-              </Tooltip>
+                </button>
+              </MyTooltip>
 
               <div className={`w-[2px] h-[26px] mx-3 bg-${theme.alpha}`}></div>
 

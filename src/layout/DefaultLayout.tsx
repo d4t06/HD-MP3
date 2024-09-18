@@ -17,7 +17,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const classes = {
-    container: ` main-container sm:overflow-auto no-scrollbar main-content w-full ${
+    container: ` main-container sm:overflow-auto no-scrollbar w-full ${
       inEdit ? "" : "min-h-[100vh] pb-[90px]"
     } max-[549px]:h-full `,
     content: "px-[40px] max-[549px]:px-[15px] mt-[60px]",

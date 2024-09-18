@@ -27,7 +27,6 @@ import {
   //   TimerModal,
 } from "@/components";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/Popover";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
@@ -167,7 +166,6 @@ export default function MobileFullScreenPlayer({
 
   const classes = {
     headerWrapper: "h-[65px] p-4 flex ",
-    header: "relative w-full",
 
     // add padding to detect if container is overflow
     container: "flex-grow flex flex-col relative px-4 overflow-hidden",
@@ -221,7 +219,7 @@ export default function MobileFullScreenPlayer({
             />
 
             <button
-              className={`${classes.button} p-[6px] right-0 bg-gray-500 bg-opacity-20`}
+              className={`${classes.button} p-[6px] right-4 bg-gray-500 bg-opacity-20`}
               onClick={() => setIsOpenFullScreen(false)}
             >
               <ChevronDownIcon className="w-[20px]" />

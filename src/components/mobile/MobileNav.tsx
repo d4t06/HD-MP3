@@ -24,14 +24,13 @@ export default function MobileNav() {
     } catch (error) {
       console.log(error);
     } finally {
-      //    setIsOpenModal(false);
     }
   };
 
   // define styles
   const classes = {
-    icon: `w-6 h-6 mr-2 inline`,
-    linkItem: `py-[10px] border-b border-${theme.alpha} last:border-none`,
+    icon: `w-7 mr-2 inline`,
+    linkItem: `py-[10px] border-b text-lg border-${theme.alpha} last:border-none`,
     button: `${theme.content_bg} rounded-full`,
   };
 
@@ -40,7 +39,7 @@ export default function MobileNav() {
       <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Library</div>
       <div className="flex flex-col space-y-3 items-start ">
         {userLoading ? (
-          [...Array(3).keys()].map(() => MobileLinkSkeleton)
+          [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
         ) : (
           <>
             {user ? (

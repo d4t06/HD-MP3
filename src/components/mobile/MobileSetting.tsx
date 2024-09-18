@@ -60,8 +60,8 @@ export default function MobileSetting() {
 
   // define styles
   const classes = {
-    linkItem: `py-[10px] w-full border-b border-${theme.alpha} space-x-2 last:border-none flex items-center`,
-    icon: `w-6`,
+    linkItem: `py-2 text-lg w-full border-b border-${theme.alpha} space-x-2 last:border-none flex items-center`,
+    icon: `w-7`,
   };
 
   return (
@@ -73,14 +73,14 @@ export default function MobileSetting() {
           <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-2`}>
             <Avatar className="h-[65px] w-[65px]" />
             <div className="ml-3">
-              <p className="text-lg font-[500]">{user ? user.display_name : "Guest"}</p>
-              <p className="opacity-70 font-[500]">Vip member 💗</p>
+              <p className="text-lg font-[500]">{user.display_name}</p>
+              <p className="opacity-70 font-[500]">Vip member ❤️</p>
             </div>
           </div>
         )}
 
         {userLoading ? (
-          [...Array(3).keys()].map(() => MobileLinkSkeleton)
+          [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
         ) : (
           <>
             <button className={classes.linkItem} onClick={() => openModal("theme")}>

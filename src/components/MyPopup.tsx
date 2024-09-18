@@ -13,6 +13,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { createPortal } from "react-dom";
 
 type StateType = {
   isMounted: boolean;
@@ -21,12 +22,11 @@ type StateType = {
 
 // context
 type PopupProps = {
-  isOpenFromParent?: boolean;
-  setIsOpenFromParent?: (v: boolean) => void;
   relativeWrap?: boolean;
+  appendOnPortal?: boolean;
 };
 
-const usePopup = ({ isOpenFromParent, setIsOpenFromParent }: PopupProps) => {
+const usePopup = ({ appendOnPortal }: PopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -41,13 +41,23 @@ const usePopup = ({ isOpenFromParent, setIsOpenFromParent }: PopupProps) => {
     contentRef.current = ele;
   };
 
+  const close = () => {
+    setIsMounted(false);
+  };
+
+  const toggle = () => {
+    if (isMounted) setIsMounted(false);
+    if (!isOpen) setIsOpen(true);
+  };
+
   return {
     refs: { triggerRef, contentRef, setTriggerRef, setContentRef },
     state: { isMounted, isOpen } as StateType,
-    isMounted,
     setIsMounted,
-    isOpen: isOpen || isOpenFromParent,
-    setIsOpen: setIsOpenFromParent || setIsOpen,
+    setIsOpen,
+    appendOnPortal,
+    close,
+    toggle,
   };
 };
 
@@ -87,16 +97,14 @@ export const MyPopupTrigger = forwardRef(function (
   { children }: TriggerProps,
   ref: Ref<TriggerRef>
 ) {
-  const { refs, isMounted, setIsMounted, setIsOpen, isOpen } = usePopoverContext();
-
-  const close = () => {
-    setIsMounted(false);
-  };
-
-  const toggle = () => {
-    if (isMounted) setIsMounted(false);
-    if (!isOpen) setIsOpen(true);
-  };
+  const {
+    refs,
+    setIsMounted,
+    setIsOpen,
+    close,
+    toggle,
+    state: { isMounted, isOpen },
+  } = usePopoverContext();
 
   useImperativeHandle(ref, () => ({ close }));
 
@@ -168,27 +176,92 @@ export function MyPopupContent({
   className,
   animationClassName,
 }: ContentProps) {
-  const { isMounted, isOpen, refs } = usePopoverContext();
+  const {
+    state: { isMounted, isOpen },
+    refs,
+    close,
+    appendOnPortal,
+  } = usePopoverContext();
+
+  const animationRef = useRef<ElementRef<"div">>(null);
+
+  const setContentPos = () => {
+    const triggerEle = refs.triggerRef.current;
+    const contentEle = refs.contentRef.current;
+    const animationEle = animationRef.current;
+
+    if (!triggerEle || !contentEle) return;
+
+    const triggerRect = triggerEle.getBoundingClientRect();
+
+    console.log('chekc rect', triggerRect);
+    
+
+
+    const contentPos = {
+      top: triggerRect.top + triggerEle.clientHeight,
+      left: triggerRect.left - contentEle.clientWidth,
+    };
+
+    const isOverScreenHeight =
+      contentPos.top + contentEle.clientHeight > window.innerHeight - 90;
+    if (isOverScreenHeight) {
+      contentPos.top = contentPos.top - contentEle.clientHeight;
+    }
+
+    contentEle.style.left = `${contentPos.left}px`;
+    contentEle.style.top = `${contentPos.top}px`;
+
+    if (animationEle) {
+      animationEle.style.transformOrigin = isOverScreenHeight
+        ? "bottom right"
+        : `top right`;
+    }
+  };
+
+  const handleWheel: EventListener = close;
 
   const classes = {
     unMountedContent: "opacity-0 scale-[.95]",
     mountedContent: "opacity-100 scale-[1]",
   };
 
+  const content = (
+    <div ref={refs.setContentRef} className={`${appendOnPortal ? 'fixed' : 'absolute'} ${className || ""}`}>
+      <div
+        ref={animationRef}
+        className={` transition-[transform,opacity] duration-[.25s] ease-linear ${
+          animationClassName || ""
+        } ${isMounted ? classes.mountedContent : classes.unMountedContent}`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+
+  useEffect(() => {
+    if (!appendOnPortal) return;
+
+    if (isOpen) setContentPos();
+    else return;
+
+    const mainContainer = document.querySelector(".main-container");
+    if (!mainContainer) return;
+
+    mainContainer.addEventListener("wheel", handleWheel);
+
+    return () => {
+      if (mainContainer) mainContainer.removeEventListener("wheel", handleWheel);
+    };
+  }, [isOpen]);
+
+  if (!isOpen) return <></>;
+
   return (
     <>
-      {isOpen && (
-        <div className={`absolute ${className}`}>
-          <div
-            ref={refs.setContentRef}
-            className={` transition-[transform,opacity] duration-[.25s] ease-linear ${animationClassName} ${
-              isMounted ? classes.mountedContent : classes.unMountedContent
-            }`}
-          >
-            {children}
-          </div>
-        </div>
-      )}
+      {appendOnPortal
+        ? createPortal(content, document.querySelector("#portals")!)
+        : content}
     </>
   );
 }

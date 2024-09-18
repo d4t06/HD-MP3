@@ -6,7 +6,6 @@ import { SongThumbnail, Tabs, LyricsList, Button } from ".";
 import { useScrollSong, useBgImage } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 import logoIcon from "../assets/siteLogo.png";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";

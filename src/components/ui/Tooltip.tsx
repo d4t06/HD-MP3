@@ -110,7 +110,7 @@ export function TooltipContent({
    const { context, refs, getFloatingProps, floatingStyles, isOpen } = useTooltipContext();
 
    const classes = {
-      container: `${theme.type === 'dark' ? 'bg-white/70 text-[#333]' : 'bg-black/70 text-white'}`
+      container: `${theme.type === 'dark' ? 'bg-white text-[#333]' : 'bg-slate-600 text-white'}`
    }
 
    if (!isOpen) return;

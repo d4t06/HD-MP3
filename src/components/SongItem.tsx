@@ -20,7 +20,6 @@ import {
   PlaylistListModal,
 } from "../components";
 
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import SongMenu from "./SongMenu";
 import { useSongItemActions } from "../hooks";
 import { useDispatch } from "react-redux";
@@ -28,6 +27,7 @@ import { removeSongFromQueue } from "@/store/songQueueSlice";
 import { Bars3Icon, CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
+import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
 
 type Props = {
   className?: string;
@@ -417,7 +417,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             {renderHeartIcon}
 
             <div className={classes.menuBtnWrapper}>
-              <Popover
+              {/* <Popover
                 isOpenFromParent={isOpenPopup}
                 setIsOpenFromParent={setIsOpenPopup}
                 placement={props.variant === "queue" ? "bottom-end" : "left"}
@@ -451,7 +451,39 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                     )}
                   </PopupWrapper>
                 </PopoverContent>
-              </Popover>
+              </Popover> */}
+
+              <MyPopup appendOnPortal>
+                <MyPopupTrigger>
+                  <button
+                    className={`block group-hover/main:block ${classes.button} ${
+                      isOpenPopup || props.variant === "queue"
+                        ? `md:block`
+                        : "md:hidden max-[549px]:!bg-transparent"
+                    }`}
+                  >
+                    <Bars3Icon className="w-[20px]" />
+                  </button>
+                </MyPopupTrigger>
+                <MyPopupContent>
+                  <PopupWrapper
+                    className={`${actionLoading ? "overflow-hidden relative" : ""}`}
+                    variant={"thin"}
+                    color="sidebar"
+                    theme={theme}
+                  >
+                    {renderMenu}
+
+                    {actionLoading && (
+                      <div className={classes.overlay}>
+                        <div
+                          className={`h-[25px] w-[25px] border-[2px] border-r-black rounded-[50%] animate-spin`}
+                        ></div>
+                      </div>
+                    )}
+                  </PopupWrapper>
+                </MyPopupContent>
+              </MyPopup>
 
               <span
                 className={`text-[12px] font-[500] hidden  group-hover/main:hidden ${

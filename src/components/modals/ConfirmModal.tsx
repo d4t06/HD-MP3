@@ -29,19 +29,19 @@ export default function ConfirmModal({
       <div className="text-xl font-playwriteCU leading-[2.2] mb-3">
         {label || "Wait a minute"}
       </div>
-      {desc && <p className="font-semibold text-red-500">{desc}</p>}
+      {desc && <p className="font-semibold text-lg text-red-500">{desc}</p>}
 
       <div className="flex space-x-3 mt-5">
         <Button
           onClick={close}
-          className={`${theme.content_bg} rounded-full text-[14px]`}
+          className={`${theme.content_bg} rounded-full text-lg`}
           variant={"primary"}
         >
           Close
         </Button>
         <Button
           isLoading={loading}
-          className={` text-[#fff] bg-red-500 rounded-full text-[14px] font-bold`}
+          className={` text-[#fff] bg-red-500 rounded-full text-lg`}
           variant={"primary"}
           onClick={callback}
         >

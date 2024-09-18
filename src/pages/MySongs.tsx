@@ -6,10 +6,10 @@ import { useInitSong } from "../hooks";
 import { BackBtn } from "../components";
 import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
-import { PlusIcon } from "@heroicons/react/20/solid";
 import MySongSongsList from "../components/MySongSongsList";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 export default function MySongsPage() {
   // store
@@ -56,10 +56,10 @@ export default function MySongsPage() {
           <label
             className={`${theme.content_bg} ${
               status === "uploading" || initialLoading ? "disable" : ""
-            } items-center hover:opacity-60 py-1 rounded-full flex px-3 cursor-pointer`}
+            } items-center hover:opacity-60 py-1 rounded-full flex px-4 cursor-pointer`}
             htmlFor="song_upload"
           >
-            <PlusIcon className="w-7 mr-`" />
+            <ArrowUpTrayIcon className="w-7 mr-1" />
             <span className=" font-playwriteCU leading-[2.2]">Upload</span>
           </label>
         </div>
