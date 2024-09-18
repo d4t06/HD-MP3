@@ -1,32 +1,31 @@
 import ModalHeader from "./ModalHeader";
-;
 import { MusicalNoteIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  close: () => void;
+  closeModal: () => void;
   handleAddSongToPlaylist: (playlist: Playlist) => void;
   userPlaylists: Playlist[];
   song: Song;
   loading: boolean;
-}
+};
 
 function PlaylistList({
-  close,
+  closeModal,
   handleAddSongToPlaylist,
   userPlaylists,
   song,
   loading,
-}: Props ) {
+}: Props) {
   return (
     <div
       className={`w-[400px] max-w-[calc(90vw-40px)] ${
-        loading ? "opacity-60 pointer-events-none" : ""
+        loading ? "disable" : ""
       }`}
     >
-      <ModalHeader close={close} title={"Playlist"} />
+      <ModalHeader close={closeModal} title={"Playlist"} />
       <div className="max-h-[60vh]">
         <ul className="">
-          {!!userPlaylists?.length && (
+          {!!userPlaylists?.length ? (
             <>
               {userPlaylists.map((playlist, index) => {
                 const isAdded = playlist.song_ids.includes(song.id);
@@ -47,6 +46,8 @@ function PlaylistList({
                 );
               })}
             </>
+          ) : (
+            "No playlist jet..."
           )}
         </ul>
       </div>

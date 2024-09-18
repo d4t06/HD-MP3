@@ -55,7 +55,7 @@ export default function EditPlaylist({ playlist, close }: Props) {
             action=""
             onSubmit={handleEditPlaylist}
             className={`${classes.editContainer} ${
-               isFetching ? "opacity-60 pointer-events-none" : ""
+               isFetching ? "disable" : ""
             }`}
          >
             <input
@@ -73,7 +73,7 @@ export default function EditPlaylist({ playlist, close }: Props) {
                variant={"primary"}
                isLoading={isFetching}
                className={`${theme.content_bg} rounded-full self-end mt-[15px] ${
-                  isAbleToSubmit ? "" : "opacity-60 pointer-events-none"
+                  isAbleToSubmit ? "" : "disable"
                }`}
             >
                Save

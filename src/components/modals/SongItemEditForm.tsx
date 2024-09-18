@@ -287,7 +287,7 @@ export default function SongItemEditForm({ song, close }: Props) {
    return (
       <div
          className={`w-[500px] max-w-[calc(90vw-40px)] h-[auto] ${
-            loading ? "opacity-60 pointer-events-none" : ""
+            loading ? "disable" : ""
          }`}
       >
          <input
@@ -394,7 +394,7 @@ export default function SongItemEditForm({ song, close }: Props) {
                      onClick={handleEditSong}
                      className={`${theme.content_bg} rounded-full text-[14px] ${
                         !isAbleToSubmit
-                           ? !isImpactOnImage && "pointer-events-none opacity-60"
+                           ? !isImpactOnImage && "disable"
                            : ""
                      }`}
                      variant={"primary"}

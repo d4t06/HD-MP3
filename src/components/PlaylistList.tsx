@@ -2,128 +2,123 @@ import { useSelector } from "react-redux";
 import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
 import { useTheme } from "../store";
 import { PlaylistSkeleton } from "./skeleton";
-import { useState } from "react";
+import { useRef } from "react";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 import usePlaylistActions from "@/hooks/usePlaylistActions";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
+import { ModalRef } from "./Modal";
 
 type Base = {
-   className?: string;
-   playlist: Playlist[];
-   loading: boolean;
-   activeCondition?: boolean;
+  className?: string;
+  playlist: Playlist[];
+  loading: boolean;
+  activeCondition?: boolean;
 };
 
 type InHome = Base & {
-   location: "home";
+  location: "home";
 };
 
 type InMySongs = Base & {
-   location: "my-songs";
+  location: "my-songs";
 };
 
 type InDashboard = Base & {
-   location: "dashboard";
+  location: "dashboard";
 };
 
 type Props = InHome | InMySongs | InDashboard;
 
 export default function PlaylistList({
-   playlist,
-   loading,
-   activeCondition = true,
-   className,
-   ...props
+  playlist,
+  loading,
+  activeCondition = true,
+  className,
+  ...props
 }: Props) {
-   // store
-   const { theme } = useTheme();
-   const { currentSong } = useSelector(selectCurrentSong);
+  // store
+  const { theme } = useTheme();
+  const { currentSong } = useSelector(selectCurrentSong);
 
-   // state
-   const [isOpenModal, setIsOpenModal] = useState(false);
+  // ref
+  const modalRef = useRef<ModalRef>(null);
 
-   // hook
-   const { addPlaylist, isFetching } = usePlaylistActions();
-   const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
+  // hook
+  const { addPlaylist, isFetching } = usePlaylistActions();
+  const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
-   const closeModal = () => setIsOpenModal(false);
+  const closeModal = () => modalRef.current?.toggle();
 
-   const classes = {
-      playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
-   };
+  const classes = {
+    playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
+  };
 
-   return (
-      <>
-         <div className={`flex flex-row flex-wrap -mx-[8px] ${className}`}>
-            {loading && PlaylistSkeleton}
-            {!loading && (
-               <>
-                  {!!playlist.length
-                     ? playlist.map((playlist, index) => {
-                          const active =
-                             activeCondition && currentSong.song_in.includes(playlist.id);
+  return (
+    <>
+      <div className={`flex flex-row flex-wrap -mx-[8px] ${className}`}>
+        {loading && PlaylistSkeleton}
+        {!loading && (
+          <>
+            {!!playlist.length
+              ? playlist.map((playlist, index) => {
+                  const active =
+                    activeCondition && currentSong.song_in.includes(playlist.id);
 
-                          switch (props.location) {
-                             case "home":
-                             case "my-songs":
-                                return (
-                                   <div key={index} className={classes.playlistItem}>
-                                      <PlaylistItem
-                                         active={active}
-                                         theme={theme}
-                                         data={playlist}
-                                      />
-                                   </div>
-                                );
+                  switch (props.location) {
+                    case "home":
+                    case "my-songs":
+                      return (
+                        <div key={index} className={classes.playlistItem}>
+                          <PlaylistItem active={active} theme={theme} data={playlist} />
+                        </div>
+                      );
 
-                             case "dashboard":
-                                return (
-                                   <div key={index} className={classes.playlistItem}>
-                                      <PlaylistItem
-                                         active={active}
-                                         theme={theme}
-                                         data={playlist}
-                                         link={`/dashboard/playlist/${playlist.id}`}
-                                      />
-                                   </div>
-                                );
-                          }
-                       })
-                     : props.location === "home" && (
-                          <p className="text-center w-full">...</p>
-                       )}
-                  {props.location !== "home" && (
-                     <div className={`${classes.playlistItem} mb-[25px]`}>
-                        <Empty
-                           theme={theme}
-                           className="pt-[100%]"
-                           onClick={() => setIsOpenModal(true)}
-                        />
-                     </div>
-                  )}
-               </>
+                    case "dashboard":
+                      return (
+                        <div key={index} className={classes.playlistItem}>
+                          <PlaylistItem
+                            active={active}
+                            theme={theme}
+                            data={playlist}
+                            link={`/dashboard/playlist/${playlist.id}`}
+                          />
+                        </div>
+                      );
+                  }
+                })
+              : props.location === "home" && <p className="text-center w-full">...</p>}
+            {props.location !== "home" && (
+              <div className={`${classes.playlistItem} mb-[25px]`}>
+                <Empty
+                  theme={theme}
+                  className="pt-[100%]"
+                  onClick={() => modalRef.current?.toggle()}
+                />
+              </div>
             )}
-         </div>
+          </>
+        )}
+      </div>
 
-         {props.location !== "home" && isOpenModal && (
-            <Modal closeModal={closeModal}>
-               {props.location === "my-songs" && (
-                  <AddPlaylist
-                     addPlaylist={addPlaylist}
-                     isFetching={isFetching}
-                     close={closeModal}
-                  />
-               )}
+      {props.location !== "home" && (
+        <Modal variant="animation" ref={modalRef}>
+          {props.location === "my-songs" && (
+            <AddPlaylist
+              addPlaylist={addPlaylist}
+              isFetching={isFetching}
+              close={closeModal}
+            />
+          )}
 
-               {props.location === "dashboard" && (
-                  <AddPlaylist
-                     addPlaylist={addAdminPlaylist}
-                     isFetching={adminIsFetching}
-                     close={closeModal}
-                  />
-               )}
-            </Modal>
-         )}
-      </>
-   );
+          {props.location === "dashboard" && (
+            <AddPlaylist
+              addPlaylist={addAdminPlaylist}
+              isFetching={adminIsFetching}
+              close={closeModal}
+            />
+          )}
+        </Modal>
+      )}
+    </>
+  );
 }

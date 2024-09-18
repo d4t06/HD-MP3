@@ -23,10 +23,10 @@ export default function ConfirmModal({
   return (
     <div
       className={`${className || "w-[400px] max-w-[calc(90vw-40px)]"} ${
-        loading ? "opacity-60 pointer-events-none" : ""
+        loading ? "disable" : ""
       }`}
     >
-      <div className="text-xl font-playwriteCU leading-[2.2]">
+      <div className="text-xl font-playwriteCU leading-[2.2] mb-3">
         {label || "Wait a minute"}
       </div>
       {desc && <p className="font-semibold text-red-500">{desc}</p>}

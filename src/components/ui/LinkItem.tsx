@@ -20,11 +20,8 @@ export default function LinkItem({
 }: Props) {
   if (to)
     return (
-      <Link
-        className={"w-full flex flex-row justify-between items-center " + className}
-        to={to}
-      >
-        <div className="inline-flex">
+      <Link className={`w-full flex  justify-between  ${className}`} to={to}>
+        <div className="inline-flex items-center ">
           {icon}
           <span className="text-lg font-medium">{label}</span>
         </div>

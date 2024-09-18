@@ -126,7 +126,7 @@ const MobileBottomPlayer: FC<Props> = ({
         {/* cta */}
         <div
           className={`${classes.cta} ${
-            !currentSong.name && "opacity-60 pointer-events-none"
+            !currentSong.name && "disable"
           }`}
         >
           <button className={` p-[4px]`} onClick={() => handlePlayPause()}>

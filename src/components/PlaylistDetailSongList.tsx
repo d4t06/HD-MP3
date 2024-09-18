@@ -122,15 +122,6 @@ export default function PlaylistDetailSongList({ variant }: Props) {
     }
   }, [currentPlaylist, playlistSongs, currentSong]);
 
-  // const renderModal = useMemo(() => {
-  //   switch (isOpenModal) {
-  //     case "":
-  //       return <></>;
-  //     case "add-song":
-  //       return
-  //   }
-  // }, [isOpenModal, playlistSongs, currentPlaylist]);
-
   return (
     <>
       <SongSelectProvider>
@@ -138,9 +129,9 @@ export default function PlaylistDetailSongList({ variant }: Props) {
         {renderSongList}
       </SongSelectProvider>
 
-      <Modal>
+      <Modal ref={modalRef} variant="animation">
         <SongSelectProvider>
-          <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />;
+          <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
         </SongSelectProvider>
       </Modal>
     </>

@@ -55,14 +55,12 @@ export default function MySongsPage() {
           <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Songs</h3>
           <label
             className={`${theme.content_bg} ${
-              status === "uploading" || initialLoading
-                ? "opacity-60 pointer-events-none"
-                : ""
+              status === "uploading" || initialLoading ? "disable" : ""
             } items-center hover:opacity-60 rounded-full flex px-3 cursor-pointer`}
             htmlFor="song_upload"
           >
             <PlusIcon className="w-6 mr-[5px]" />
-            <span className=" font-playwriteCU leading-[2.2]">Upload</span>
+            <span className=" font-playwriteCU text-sm leading-[2.2] py-1">Upload</span>
           </label>
         </div>
 

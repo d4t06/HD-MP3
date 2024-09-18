@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { Button, ConfirmModal, Modal, PlaylistItem, Skeleton } from ".";
 import { PencilSquareIcon, PlayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import EditPlaylist from "./modals/EditPlaylist";
 import usePlaylistActions from "../hooks/usePlaylistActions";
@@ -11,6 +11,7 @@ import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { setQueue } from "@/store/songQueueSlice";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
+import { ModalRef } from "./Modal";
 
 type Modal = "edit" | "delete";
 
@@ -39,7 +40,10 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
   // state
-  const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
+  const [modal, setModal] = useState<Modal | "">("");
+
+  // ref
+  const modalRef = useRef<ModalRef>(null);
 
   // hooks
   const params = useParams();
@@ -51,7 +55,11 @@ export default function PLaylistInfo({ loading, type }: Props) {
     [playlistSongs]
   );
 
-  const closeModal = () => setIsOpenModal("");
+  const openModal = (modal: Modal) => {
+    setModal(modal);
+    modalRef.current?.toggle();
+  };
+  const closeModal = () => modalRef.current?.toggle();
 
   const handleSetSong = (song: Song, index: number) => {
     // case user play user songs then play playlist song
@@ -116,21 +124,21 @@ export default function PLaylistInfo({ loading, type }: Props) {
             <Button
               onClick={handlePlayPlaylist}
               className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
-                !currentPlaylist.song_ids.length && "opacity-60 pointer-events-none"
+                !currentPlaylist.song_ids.length && "disable"
               }`}
             >
               <PlayIcon className="w-[22px]" />
               <span className="font-playwriteCU">Play</span>
             </Button>
             <Button
-              onClick={() => setIsOpenModal("delete")}
+              onClick={() => openModal("delete")}
               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
             >
               <TrashIcon className="w-[22px]" />
             </Button>
 
             <Button
-              onClick={() => setIsOpenModal("edit")}
+              onClick={() => openModal("edit")}
               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
             >
               <PencilSquareIcon className="w-[22px]" />
@@ -142,7 +150,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
           <Button
             onClick={handlePlayPlaylist}
             className={`rounded-full px-[20px] space-x-1 py-[6px] ${theme.content_bg} ${
-              !currentPlaylist.song_ids.length && "opacity-60 pointer-events-none"
+              !currentPlaylist.song_ids.length && "disable"
             }`}
           >
             <PlayIcon className="w-[22px]" />
@@ -153,7 +161,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
   }, [loading, playlistSongs]);
 
   const renderModal = useMemo(() => {
-    switch (isOpenModal) {
+    switch (modal) {
       case "":
         return <></>;
       case "edit":
@@ -181,7 +189,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
             />
           );
     }
-  }, [isOpenModal, isFetching, adminIsFetching]);
+  }, [modal, isFetching, adminIsFetching]);
 
   const classes = {
     container:
@@ -218,7 +226,9 @@ export default function PLaylistInfo({ loading, type }: Props) {
         </div>
       </div>
 
-      {!!isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
+      <Modal variant="animation" ref={modalRef}>
+        {renderModal}
+      </Modal>
     </>
   );
 }

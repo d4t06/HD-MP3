@@ -52,16 +52,6 @@ type DashboardSongMenu = Base & {
    handleAddSongToPlaylist: (playlist: Playlist) => void;
 };
 
-// type Props = {
-//    songData: Song;
-//    isOnMobile: boolean;
-//    inQueue?: boolean;
-//    admin?: boolean;
-//    inPlaylist?: Playlist;
-//    handleOpenModal: (name: SongItemModal) => void;
-//    handleAddSongToPlaylist: (playlist: Playlist) => void;
-//    handleRemoveSongFromPlaylist: () => void;
-// };
 
 type Props =
    | HomeMenu
@@ -152,7 +142,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                                        }
                                        className={`list-none w-full flex rounded-[4px] p-[5px] ${
                                           isAdded &&
-                                          "opacity-60 pointer-events-none"
+                                          "disable"
                                        } ${classes.menuItem}`}
                                     >
                                        <span>
@@ -272,8 +262,8 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
          default:
             return (
                <div className="pl-[10px] py-[6px]">
-                  <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-                  <p className="text-[14px] opacity-50 line-clamp-1">
+                  <h5 className="line-clamp-1 font-[500] text-lg">{song.name}</h5>
+                  <p className="text-base opacity-70 line-clamp-1">
                      {song.singer}
                   </p>
                </div>

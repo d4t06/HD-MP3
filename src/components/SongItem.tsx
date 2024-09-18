@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import {
   ArrowPathIcon,
@@ -27,6 +27,7 @@ import { useDispatch } from "react-redux";
 import { removeSongFromQueue } from "@/store/songQueueSlice";
 import { Bars3Icon, CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/store/SongSelectContext";
+import { ModalRef } from "./Modal";
 
 type Props = {
   className?: string;
@@ -59,12 +60,15 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   // state
   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
-  const [isOpenModal, setIsOpenModal] = useState<SongItemModal | "">("");
+  const [modal, setModal] = useState<SongItemModal | "">("");
+
+  // ref
+  const modalRef = useRef<ModalRef>(null);
 
   // hooks
   const { setErrorToast } = useToast();
 
-  const closeModal = () => setIsOpenModal("");
+  const closeModal = () => modalRef.current?.toggle();
   const closeMenu = () => setIsOpenPopup(false);
 
   const {
@@ -76,8 +80,10 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   } = useSongItemActions({ song, closeModal, setIsOpenPopup });
 
   const handleOpenModal = (modal: SongItemModal) => {
-    setIsOpenModal(modal);
+    setModal(modal);
     closeMenu();
+
+    modalRef.current?.toggle();
   };
 
   const isSelected = useMemo(() => {
@@ -215,8 +221,8 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       default:
         return (
           <div
-            className={`${classes.overlay} 
-               ${!active ? "hidden group-hover/main:flex" : ""}`}
+            className={` ${classes.overlay} 
+               ${!active ? "hidden sm:group-hover/main:flex" : ""}`}
           >
             {active ? (
               <img src={playingIcon} alt="" className="h-[18px] w-[18px]" />
@@ -366,7 +372,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   }, [props.variant, song, isOpenPopup]);
 
   const renderModal = useMemo(() => {
-    switch (isOpenModal) {
+    switch (modal) {
       case "":
         return <></>;
       case "edit":
@@ -387,13 +393,13 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
           <PlaylistListModal
             loading={actionLoading}
             handleAddSongToPlaylist={handleAddSongToPlaylistMobile}
-            close={close}
+            closeModal={closeModal}
             song={song}
             userPlaylists={userPlaylists}
           />
         );
     }
-  }, [isOpenModal, actionLoading]);
+  }, [modal, actionLoading]);
 
   const right = () => {
     switch (props.variant) {
@@ -501,7 +507,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   return (
     <>
       {renderContainer()}
-      {isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
+      <Modal ref={modalRef} variant="animation">
+        {renderModal}
+      </Modal>
     </>
   );
 }

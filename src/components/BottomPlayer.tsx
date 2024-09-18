@@ -74,7 +74,7 @@ function BottomPlayer({
         ? "max-w-[600px] flex-col-reverse pb-[10px]"
         : "flex-col justify-center"
     }`,
-    controlWrapperChild_2: `${!currentSong.song_url && "pointer-events-none opacity-60"}`,
+    controlWrapperChild_2: `${!currentSong.song_url && "disable"}`,
 
     right: `${admin ? "w-1/4" : "w-1/4 "} flex items-center justify-end`,
     volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full`,

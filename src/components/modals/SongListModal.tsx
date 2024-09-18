@@ -43,7 +43,7 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
 
   return (
     <div className={classes.addSongContainer}>
-      <ModalHeader close={close} title="Add song to playlist" />
+      <ModalHeader close={closeModal} title="Add song to playlist" />
 
       <div className={classes.addSongContent}>
         <Button
@@ -53,22 +53,26 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
           className={`rounded-full ${
             theme.content_bg
           } absolute bottom-0 right-[15px] min-w-[34px] h-[32px] ${
-            !isAbleToSubmit && "opacity-60 pointer-events-none"
+            !isAbleToSubmit && "disable"
           }`}
         >
           Add
           {`${selectedSongs.length ? ` (${selectedSongs.length})` : ""}`}
         </Button>
-        {userSongs.map((song, index) => {
-          const isDifferenceSong =
-            playlistSongs.findIndex((s) => s.id === song.id) === -1;
+        {userSongs.length ? (
+          userSongs.map((song, index) => {
+            const isDifferenceSong =
+              playlistSongs.findIndex((s) => s.id === song.id) === -1;
 
-          if (isDifferenceSong) {
-            return (
-              <MobileSongItem key={index} song={song} variant="select" theme={theme} />
-            );
-          }
-        })}
+            if (isDifferenceSong) {
+              return (
+                <MobileSongItem key={index} song={song} variant="select" theme={theme} />
+              );
+            }
+          })
+        ) : (
+          <p>No song jet...</p>
+        )}
       </div>
     </div>
   );

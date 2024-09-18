@@ -29,7 +29,7 @@ function BackBtn({ to }: Props) {
          <button
             onClick={() => handleNavigate("back")}
             className={`${classes.button} ${
-               location.pathname === "/" ? "opacity-60 pointer-events-none" : ""
+               location.pathname === "/" ? "disable" : ""
             }`}
          >
             <ChevronLeftIcon />

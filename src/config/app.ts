@@ -1,8 +1,8 @@
 const appConfig = {
-   isDev: true,
-   focusDelay: 3000,
-   scrollSongDelay: 4000,
-   loadingDuration: 200,
-}
+  isDev: false,
+  focusDelay: 3000,
+  scrollSongDelay: 4000,
+  loadingDuration: 200,
+};
 
-export default appConfig
+export default appConfig;

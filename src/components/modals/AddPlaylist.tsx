@@ -48,7 +48,7 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
                   isLoading={isFetching}
                   variant={"primary"}
                   className={`${theme.content_bg} rounded-full ${
-                     !playlistName ? "opacity-[.6] pointer-events-none" : ""
+                     !playlistName ? "disable" : ""
                   }`}
                >
                   Save

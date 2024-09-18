@@ -2,13 +2,14 @@ import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
 
 import { useAuthActions } from "@/store/AuthContext";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { Link } from "react-router-dom";
+import { ModalRef } from "./Modal";
 
 type Modal = "logout" | "info" | "theme";
 
@@ -16,12 +17,16 @@ export default function DashboardHeader() {
    const { theme } = useTheme();
    const [loggedInUser] = useAuthState(auth);
 
-   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
+   const [modal, setModal] = useState<Modal | "">("");
+
+   const modalRef = useRef<ModalRef>(null)
 
    // hook
    const { logOut } = useAuthActions();
 
-   const closeModal = () => setIsOpenModal("");
+   const closeModal = () => modalRef.current?.toggle()
+   const openModal = (modal: Modal) => setModal(modal) 
+
 
    const handleSignOut = async () => {
       try {
@@ -34,7 +39,7 @@ export default function DashboardHeader() {
    };
 
    const renderModal = useMemo(() => {
-      switch (isOpenModal) {
+      switch (modal) {
          case "":
             return <></>;
          case "logout":
@@ -53,7 +58,7 @@ export default function DashboardHeader() {
             <Appearance close={closeModal} />;
             return;
       }
-   }, [isOpenModal]);
+   }, [modal]);
 
    const classes = {
       header: `${theme.side_bar_bg} fixed top-0 z-10 left-0 right-0`,
@@ -100,7 +105,7 @@ export default function DashboardHeader() {
                      <PopoverContent>
                         <SettingMenu
                            loggedIn={false}
-                           setIsOpenModal={() => {}}
+                           openModal={openModal}
                         />
                      </PopoverContent>
                   </Popover>
@@ -108,7 +113,7 @@ export default function DashboardHeader() {
             </div>
          </div>
 
-         {!!isOpenModal && <Modal closeModal={closeModal}>{renderModal}</Modal>}
+         <Modal variant="animation" ref={modalRef}>{renderModal}</Modal>
       </>
    );
 }

@@ -78,7 +78,7 @@ export default function MobileFullScreenPlayer({
   const findParent = (ele: HTMLDivElement) => {
     let i = 0;
     let parent = ele.parentElement as HTMLDivElement;
-    while (!parent.classList.contains("item-container") && i < 5) {
+    while (!parent.classList.contains("target-class") && i < 5) {
       parent = parent.parentElement as HTMLDivElement;
       i++;
     }
@@ -87,6 +87,7 @@ export default function MobileFullScreenPlayer({
 
   const hideSongItemStyle = {
     opacity: "0",
+    transform: 'translate(-100%, 0)'
   };
 
   const hideSibling = (ele: HTMLDivElement) => {
@@ -101,6 +102,7 @@ export default function MobileFullScreenPlayer({
 
   const activeSong = (e: MouseEvent, song: Song, index: number) => {
     const ele = e.target as HTMLDivElement;
+
     const parent = findParent(ele);
 
     hideSibling(parent);
@@ -265,8 +267,8 @@ export default function MobileFullScreenPlayer({
                       autoScroll
                       className={`opacity-60 ${
                         activeTab === "Playing" || isLandscape
-                          ? "text-[22px]"
-                          : "text-[16px]"
+                          ? "text-lg"
+                          : "text-base"
                       }`}
                       content={currentSong.singer || "..."}
                     />
@@ -298,7 +300,7 @@ export default function MobileFullScreenPlayer({
             {/* song list tab */}
             <div
               className={`${
-                activeTab === "Songs" ? "flex-grow flex flex-col" : "hidden"
+                activeTab === "Songs" ? "flex-grow flex flex-col overflow-hidden" : "hidden"
               }`}
             >
               <div className="leading-[2.2] text-sm font-playwriteCU my-2">
@@ -327,12 +329,6 @@ export default function MobileFullScreenPlayer({
           </div>
         </div>
       </div>
-
-      {/* {!!isOpenModal && (
-        <Modal closeModal={closeModal}>
-          <TimerModal close={closeModal} />
-        </Modal>
-      )} */}
     </>
   );
 }

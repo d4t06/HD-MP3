@@ -180,7 +180,7 @@ export default function DashBoard() {
                            <label
                               className={`${theme.content_bg} ${
                                  status === "uploading" || initialLoading
-                                    ? "opacity-60 pointer-events-none"
+                                    ? "disable"
                                     : ""
                               } rounded-full flex px-[20px] py-[4px] cursor-pointer`}
                               htmlFor="song_upload"

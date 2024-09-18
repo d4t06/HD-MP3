@@ -50,7 +50,7 @@ export default function MobileNav() {
                   to={routes.MySongs}
                   icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
                   label="All songs"
-                  arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                  arrowIcon={<ChevronRightIcon className="w-6" />}
                 />
 
                 <LinkItem
@@ -58,7 +58,7 @@ export default function MobileNav() {
                   to={routes.MySongs}
                   icon={<HeartIcon className={classes.icon + theme.content_text} />}
                   label="Favorite"
-                  arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                  arrowIcon={<ChevronRightIcon className="w-6" />}
                 />
 
                 <LinkItem
@@ -66,7 +66,7 @@ export default function MobileNav() {
                   to={routes.MySongs}
                   icon={<ClockIcon className={classes.icon + theme.content_text} />}
                   label="Recent"
-                  arrowIcon={<ChevronRightIcon className="w-5 h-5 text-gray-500" />}
+                  arrowIcon={<ChevronRightIcon className="w-6" />}
                 />
               </>
             ) : (
