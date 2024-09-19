@@ -50,6 +50,9 @@ function MyToolTip(
   useEffect(() => {
     const cloneEle = cloneEleRef.current as HTMLButtonElement;
 
+    console.log(cloneEle);
+    
+
     if (!cloneEle) return;
 
     cloneEle.addEventListener("mouseenter", handleMouseEnter);

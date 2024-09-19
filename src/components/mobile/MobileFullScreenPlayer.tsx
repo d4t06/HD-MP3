@@ -33,6 +33,7 @@ import { selectSongQueue } from "@/store/songQueueSlice";
 import useDisableOverflow from "@/hooks/useDisableOverflow";
 import useMobileRotate from "@/hooks/useMobileRotate";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
+import SleepTimerButton from "../SleepTimerButton";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -60,13 +61,12 @@ export default function MobileFullScreenPlayer({
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
   const [scalingImage, _setScalingImage] = useState(false);
-  //   const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
 
   // ref
   const wrapperRef = useRef<ElementRef<"div">>(null);
   const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const lyricContainerRef = useRef<HTMLDivElement>(null);
+  const currentSongRef = useRef<ElementRef<"div">>(null);
 
   // use hooks
   useDisableOverflow({ isOpenFullScreen });
@@ -75,9 +75,11 @@ export default function MobileFullScreenPlayer({
 
   //   const closeModal = () => setIsOpenModal("");
 
+  const notPlayingOrLandscape = (activeTab != "Playing" && !scalingImage) || isLandscape;
+
   const findParent = (ele: HTMLDivElement) => {
     let i = 0;
-    let parent = ele.parentElement as HTMLDivElement;
+    let parent = ele;
     while (!parent.classList.contains("target-class") && i < 5) {
       parent = parent.parentElement as HTMLDivElement;
       i++;
@@ -104,9 +106,12 @@ export default function MobileFullScreenPlayer({
     const ele = e.target as HTMLDivElement;
 
     const parent = findParent(ele);
-
     hideSibling(parent);
     Object.assign(parent.style, hideSongItemStyle);
+
+    if (currentSongRef.current) {
+      currentSongRef.current.style.opacity = "0";
+    }
 
     setTimeout(() => {
       dispatch(
@@ -116,38 +121,42 @@ export default function MobileFullScreenPlayer({
           song_in: currentSong.song_in,
         })
       );
-    }, 250);
+    }, 500);
   };
 
-  const songsListItemTab = useMemo(() => {
-    return (
+  const songsListItemTab = useMemo(
+    () => (
       <>
         {currentSong && (
           <>
             {currentSong.currentIndex === queueSongs.length - 1 ? (
               <p>...</p>
             ) : (
-              <>
-                {queueSongs.map((song, index) => {
-                  if (index > currentSong.currentIndex) {
-                    return (
-                      <MobileSongItem
-                        variant="playing-next"
-                        key={index}
-                        theme={theme}
-                        song={song}
-                        onClick={(e) => activeSong(e, song, index)}
-                      />
-                    );
-                  }
-                })}
-              </>
+              queueSongs.map((song, index) => {
+                if (index > currentSong.currentIndex)
+                  return (
+                    <MobileSongItem
+                      variant="playing-next"
+                      key={index}
+                      theme={theme}
+                      song={song}
+                      onClick={(e) => activeSong(e, song, index)}
+                    />
+                  );
+              })
             )}
           </>
         )}
       </>
-    );
-  }, [currentSong, queueSongs]);
+    ),
+    [currentSong, queueSongs]
+  );
+
+  useEffect(() => {
+    if (currentSongRef.current) {
+      currentSongRef.current.style.opacity = "1";
+    }
+  }, [currentSong]);
 
   useEffect(() => {
     const wrapperEle = wrapperRef.current;
@@ -165,19 +174,15 @@ export default function MobileFullScreenPlayer({
   }, [isOpenFullScreen]);
 
   const classes = {
-    headerWrapper: "h-[65px] p-4 flex ",
-
-    // add padding to detect if container is overflow
-    container: "flex-grow flex flex-col relative px-4 overflow-hidden",
+    headerWrapper: "flex mb-4",
+    container: "flex-grow flex flex-col relative overflow-hidden",
     songImage: "flex-shrink-0 transition-[height, width] origin-top-left",
-    nameAndSinger: "flex flex-grow justify-between items-center",
-    control: "absolute bottom-0 left-4 right-4",
-    lyricContainer: "absolute top-[65px] bottom-[120px] py-[16px] left-4 right-4",
+    control: "flex flex-col-reverse justify-center",
     bgImage:
       "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
     overlay:
       "absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply overflow-hidden",
-    button: "inline-flex justify-center items-center rounded-full absolute w-[32px]",
+    button: "flex justify-center items-center rounded-full w-[35px]",
   };
 
   return (
@@ -190,21 +195,18 @@ export default function MobileFullScreenPlayer({
         <div ref={bgRef} className={classes.bgImage}></div>
         <div className={classes.overlay}></div>
 
-        <div className="absolute inset-0 z-10 flex flex-col">
+        <div className="absolute inset-0 z-10 p-4 flex flex-col">
           <div className={classes.headerWrapper}>
-            <MyPopup>
+            <MyPopup appendOnPortal>
               <MyPopupTrigger>
                 <button
                   className={`${classes.button} p-[6px] left-0 bg-gray-500 bg-opacity-20`}
                 >
-                  <Cog6ToothIcon className="w-[20px]" />
+                  <Cog6ToothIcon className="w-full" />
                 </button>
               </MyPopupTrigger>
 
-              <MyPopupContent
-                className="top-[calc(100%+8px)] left-0 z-[99]"
-                animationClassName="origin-top-left"
-              >
+              <MyPopupContent appendTo="portal" position="right-bottom" origin="top left">
                 <FullScreenPlayerSetting audioEle={audioEle} />
               </MyPopupContent>
             </MyPopup>
@@ -219,10 +221,10 @@ export default function MobileFullScreenPlayer({
             />
 
             <button
-              className={`${classes.button} p-[6px] right-4 bg-gray-500 bg-opacity-20`}
+              className={`${classes.button} p-[6px] bg-gray-500 bg-opacity-20`}
               onClick={() => setIsOpenFullScreen(false)}
             >
-              <ChevronDownIcon className="w-[20px]" />
+              <ChevronDownIcon className="w-full" />
             </button>
           </div>
 
@@ -230,99 +232,101 @@ export default function MobileFullScreenPlayer({
           <div ref={containerRef} className={classes.container}>
             {/* song info */}
             <div
-              className={`${
-                (activeTab != "Playing" && !scalingImage) || isLandscape ? "flex" : ""
+              ref={currentSongRef}
+              className={`transition-opacity duration-300 ${
+                notPlayingOrLandscape ? "flex " : ""
               }`}
             >
               {useMemo(
                 () => (
                   <MobileSongThumbnail
-                    active={activeTab === "Playing" && !isLandscape}
+                    expand={activeTab === "Playing" && !isLandscape}
                     data={currentSong}
                   />
                 ),
                 [currentSong, isPlaying, activeTab, isLandscape]
               )}
 
-              {/* name and singer */}
-              <div
-                className={`${classes.nameAndSinger} ${
-                  activeTab != "Playing" || isLandscape
-                    ? "ml-[10px]"
-                    : "mt-[15px] min-[549px]:mt-0"
-                }`}
-              >
-                <div className="group flex-grow overflow-hidden">
-                  <div className={"h-[34px]"}>
-                    <ScrollText
-                      autoScroll
-                      className={`${
-                        activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
-                      } leading-[1.5] font-playwriteCU`}
-                      content={currentSong.name || "..."}
-                    />
-                  </div>
-                  <div className={"h-[33px]"}>
-                    <ScrollText
-                      autoScroll
-                      className={`opacity-60 ${
-                        activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
-                      }`}
-                      content={currentSong.singer || "..."}
-                    />
-                  </div>
-                </div>
+              <div className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden"}`}>
+                <div className="font-playwriteCU">{currentSong.name}</div>
+                <div className="opacity-70">{currentSong.singer}</div>
               </div>
             </div>
 
-            {/* lyric tab */}
             <div
-              ref={lyricContainerRef}
-              className={`${classes.lyricContainer} ${
-                activeTab === "Lyric" ? "block" : "hidden"
+              className={`mt-3 justify-between items-center ${
+                activeTab != "Playing" ? "hidden" : "flex"
               }`}
             >
-              {useMemo(
-                () => (
-                  <LyricsList
-                    active={activeTab === "Lyric"}
-                    className="h-[100%]"
-                    audioEle={audioEle}
-                    isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
+              <div className="flex-grow">
+                <div className={"h-[34px]"}>
+                  <ScrollText
+                    autoScroll
+                    className={`${
+                      activeTab === "Playing" || isLandscape ? "text-lg" : ""
+                    } leading-[1.5] font-playwriteCU`}
+                    content={currentSong.name || "..."}
                   />
-                ),
-                [isOpenFullScreen, activeTab, isLandscape]
-              )}
+                </div>
+                <div className={"h-[33px]"}>
+                  <ScrollText
+                    autoScroll
+                    className={`opacity-60 ${
+                      activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
+                    }`}
+                    content={currentSong.singer || "..."}
+                  />
+                </div>
+              </div>
+
+              <SleepTimerButton audioEle={audioEle} />
             </div>
+            {/* </div> */}
+
+            {/* lyric tab */}
+            {useMemo(
+              () => (
+                <LyricsList
+                  active={activeTab === "Lyric"}
+                  className={`${
+                    activeTab === "Lyric" ? "flex-1 transition-all block" : "hidden"
+                  }`}
+                  audioEle={audioEle}
+                  isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
+                />
+              ),
+              [isOpenFullScreen, activeTab, isLandscape]
+            )}
 
             {/* song list tab */}
             <div
-              className={`${
-                activeTab === "Songs"
-                  ? "flex-grow flex flex-col overflow-hidden"
-                  : "hidden"
+              className={`leading-[2.2] font-playwriteCU my-2 ${
+                activeTab === "Songs" ? "" : "hidden"
               }`}
             >
-              <div className="leading-[2.2] font-playwriteCU mb-2 mt-1">Playing next</div>
-              <div className="flex-grow pb-[30px] no-scrollbar overflow-auto">
-                {songsListItemTab}
-              </div>
+              Playing next
+            </div>
+
+            <div
+              className={`flex-grow no-scrollbar overflow-auto ${
+                activeTab === "Songs" ? "" : "hidden"
+              }`}
+            >
+              {songsListItemTab}
             </div>
 
             {/* control */}
             <div
               className={`${classes.control} ${
-                activeTab === "Songs" && "opacity-0 pointer-events-none h-[0px] mb-[0px]"
-              }`}
+                activeTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
+              } ${activeTab === "Playing" ? "flex-grow" : ""}`}
             >
-              <div className="h-[120px]">
-                {useMemo(
-                  () => (
-                    <Control audioEle={audioEle} isOpenFullScreen={true} idle={false} />
-                  ),
-                  [isOpenFullScreen]
-                )}
-              </div>
+              {useMemo(
+                () => (
+                  <Control audioEle={audioEle} isOpenFullScreen={false} />
+                ),
+                [isOpenFullScreen]
+              )}
             </div>
           </div>
         </div>

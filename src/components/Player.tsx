@@ -66,7 +66,6 @@ const Player = ({ admin }: { admin?: boolean }) => {
 
       <MobileBottomPlayer
         audioEle={audioRef.current as HTMLAudioElement}
-        idle={idle && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />

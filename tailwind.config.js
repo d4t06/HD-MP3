@@ -1,7 +1,5 @@
 /** @type {import('tailwindcss').Config} */
 
-const defaultTheme = require("tailwindcss/defaultTheme");
-
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
@@ -19,7 +17,7 @@ export default {
       colors: {},
       fontFamily: {
         sans: ["Nunito", "system-ui"],
-        playwriteCU: ["PlaywriteCU", "system-ui"],
+        playwriteCU: ["Playwrite CU", "system-ui"],
       },
     },
   },

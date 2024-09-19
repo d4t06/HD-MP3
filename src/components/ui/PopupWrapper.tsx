@@ -1,16 +1,23 @@
 import { ReactNode } from "react";
-;
 import { VariantProps, cva } from "class-variance-authority";
 
 const popupVariant = cva("", {
   variants: {
-    variant: {
-      default: "p-4",
-      thin: "p-[6px]",
+    p: {
+      3: "p-3",
+      2: "p-2",
+      1: "p-1",
+    },
+    rounded: {
+      xl: "rounded-xl",
+      lg: "rounded-lg",
+      md: "rounded-md",
+      sm: "rounded-sm",
     },
   },
   defaultVariants: {
-    variant: "default",
+    p: 3,
+    rounded: "xl",
   },
 });
 
@@ -28,7 +35,8 @@ export default function PopupWrapper({
   theme,
   className,
   color = "container",
-  variant,
+  p,
+  rounded,
 }: Props) {
   const bgColorMap: Record<typeof color, string> = {
     black: "bg-[#292929]",
@@ -38,10 +46,11 @@ export default function PopupWrapper({
 
   return (
     <div
-      className={`rounded-[6px]  ${
-        theme.type === "light" ? "text-[#333]" : "text-white"
-      } ${bgColorMap[color]} border-[1px] border-${theme.alpha} ${popupVariant({
-        variant,
+      className={`  ${theme.type === "light" ? "text-[#333]" : "text-white"} ${
+        bgColorMap[color]
+      } border-[1px] border-${theme.alpha} ${popupVariant({
+        p,
+        rounded,
         className,
       })}`}
     >

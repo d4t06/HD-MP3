@@ -7,17 +7,13 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
 import siteLogo from "@/assets/siteLogo.png";
-import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "@/store/ThemeContext";
-import { useSongsStore } from "@/store/SongsContext";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { useLocation } from "react-router-dom";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { Image } from "..";
+import useAudioControl from "@/hooks/useAudioControl";
 
 interface Props {
   audioEle: HTMLAudioElement;
-  idle: boolean;
   isOpenFullScreen: boolean;
   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
 }
@@ -27,64 +23,38 @@ const MobileBottomPlayer: FC<Props> = ({
   setIsOpenFullScreen,
   isOpenFullScreen,
 }) => {
-  const dispatch = useDispatch();
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { theme } = useTheme();
 
   const {
-    playStatus: { isPlaying, isError, isWaiting },
-  } = useSelector(selectAllPlayStatusStore);
-
-  const { userSongs } = useSongsStore();
-  const { theme } = useTheme();
+    handleNext,
+    currentSong,
+    handlePlayPause,
+    playStatus: { isPlaying, isWaiting, isError },
+  } = useAudioControl({ audioEle });
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
-  const play = () => {
-    audioEle?.play();
-  };
-  const pause = () => {
-    audioEle?.pause();
-  };
-
-  const handlePlayPause = () => {
-    isPlaying ? pause() : play();
-  };
-
-  const handleNext = () => {
-    let newIndex = currentSong.currentIndex! + 1;
-    let newSong;
-    if (newIndex < userSongs.length) {
-      newSong = userSongs[newIndex];
-    } else {
-      newSong = userSongs[0];
-      newIndex = 0;
-    }
-    dispatch(
-      setSong({ ...newSong, currentIndex: newIndex, song_in: currentSong.song_in })
-    );
-  };
-
   const renderIcon = useMemo(() => {
     if (isWaiting) {
-      return <ArrowPathIcon className={"w-[36px] animate-spin"} />;
+      return <ArrowPathIcon className={"w-10 animate-spin"} />;
     } else if (isError && currentSong.name) {
-      return <ExclamationCircleIcon className="w-[36px] " />;
+      return <ExclamationCircleIcon className="w-10 " />;
     }
 
     return isPlaying ? (
-      <PauseCircleIcon className={"w-[36px] "} />
+      <PauseCircleIcon className={"w-10 "} />
     ) : (
-      <PlayCircleIcon className={"w-[36px]"} />
+      <PlayCircleIcon className={"w-10"} />
     );
   }, [isWaiting, isError, isPlaying]);
 
   const classes = {
-    wrapper: `fixed bottom-0 transition-transform w-full h-[70px] border-t border-${theme.alpha} z-40  px-[20px]`,
+    wrapper: `fixed bottom-0 transition-transform w-full h-[80px] border-t border-${theme.alpha} z-40  px-4`,
     container: `absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
-    image: `w-[46px] h-[46px] flex-shrink-0`,
-    cta: `mobile-bottom-player flex items-center h-full pl-[15px] gap-[10px]`,
+    image: `w-[54px] h-[54px] flex-shrink-0`,
+    cta: `pl-2 flex-shrink-0`,
   };
 
   return (
@@ -95,7 +65,7 @@ const MobileBottomPlayer: FC<Props> = ({
         }`}
       ></div>
 
-      <div className={`flex flex-row  h-full`}>
+      <div className={`flex items-center  h-full`}>
         <div
           onClick={() => setIsOpenFullScreen(true)}
           className={`mobile-current-song flex-grow`}
@@ -114,7 +84,7 @@ const MobileBottomPlayer: FC<Props> = ({
                       {currentSong.name || "name"}
                     </div>
                   </div>
-                  <p className={`text-[14px] opacity-70 line-clamp-1`}>
+                  <p className={`opacity-70 line-clamp-1`}>
                     {currentSong.singer || "singer"}
                   </p>
                 </>
@@ -124,16 +94,12 @@ const MobileBottomPlayer: FC<Props> = ({
         </div>
 
         {/* cta */}
-        <div
-          className={`${classes.cta} ${
-            !currentSong.name && "disable"
-          }`}
-        >
-          <button className={` p-[4px]`} onClick={() => handlePlayPause()}>
+        <div className={`${classes.cta} ${!currentSong.name && "disable"}`}>
+          <button className={`p-[4px]`} onClick={() => handlePlayPause()}>
             {renderIcon}
           </button>
-          <button onClick={handleNext} className={` p-[4px]`}>
-            <ForwardIcon className="w-[35px]" />
+          <button onClick={handleNext} className={`p-[4px]`}>
+            <ForwardIcon className="w-10" />
           </button>
         </div>
       </div>

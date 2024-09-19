@@ -18,17 +18,22 @@ function PlayPauseButton({ handlePlayPause }: Props) {
   } = useSelector(selectAllPlayStatusStore);
   const { currentSong } = useSelector(selectCurrentSong);
 
+
+  const classes ={
+    icon: 'w-[50px] sm:w-10'
+  }
+
   const renderIcon = useMemo(() => {
     if (isWaiting) {
-      return <ArrowPathIcon className={"w-10 animate-spin"} />;
+      return <ArrowPathIcon className={`${classes.icon} animate-spin`} />;
     } else if (isError && currentSong.name) {
-      return <ExclamationCircleIcon className="w-10" />;
+      return <ExclamationCircleIcon className={`${classes.icon}`} />;
     }
 
     return isPlaying ? (
-      <PauseCircleIcon className={"w-10"} />
+      <PauseCircleIcon className={`${classes.icon}`} />
     ) : (
-      <PlayCircleIcon className={"w-10"} />
+      <PlayCircleIcon className={`${classes.icon}`} />
     );
   }, [isWaiting, isError, isPlaying, currentSong]);
 

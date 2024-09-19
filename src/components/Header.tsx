@@ -157,6 +157,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 </button>
               </MyPopupTrigger>
               <MyPopupContent
+                appendTo="parent"
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
@@ -171,7 +172,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 {loading ? AvatarSkeleton : <Avatar />}
               </PopoverTrigger>
               <PopoverContent>
-                <PopupWrapper color="sidebar" variant={"thin"} theme={theme}>
+                <PopupWrapper color="sidebar" theme={theme}>
                   <div className="w-[250px] max-h-[50vh]">
                     {loggedInUser && (
                       <>

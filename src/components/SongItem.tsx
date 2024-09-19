@@ -465,10 +465,10 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                     <Bars3Icon className="w-[20px]" />
                   </button>
                 </MyPopupTrigger>
-                <MyPopupContent>
+                <MyPopupContent appendTo="portal">
                   <PopupWrapper
                     className={`${actionLoading ? "overflow-hidden relative" : ""}`}
-                    variant={"thin"}
+                    p={2}
                     color="sidebar"
                     theme={theme}
                   >
@@ -486,7 +486,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
               </MyPopup>
 
               <span
-                className={`text-[12px] font-[500] hidden  group-hover/main:hidden ${
+                className={`text-sm font-[500] hidden  group-hover/main:hidden ${
                   isOpenPopup || props.variant === "queue" ? "hidden" : "md:block"
                 }`}
               >

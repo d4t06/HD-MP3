@@ -1,95 +1,60 @@
-import { useCallback, useRef } from "react";
+import { useRef } from "react";
 import {
   ArrowPathRoundedSquareIcon,
   ArrowTrendingUpIcon,
   BackwardIcon,
   ForwardIcon,
 } from "@heroicons/react/24/outline";
-import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 
 import PlayPauseButton from "./child/PlayPauseButton";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
-// import { Countdown } from "./";
-import useControl from "../hooks/useControl";
-import { setLocalStorage } from "../utils/appHelpers";
-import { selectCurrentSong } from "@/store/currentSongSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import useAudioEvent from "../hooks/useAudioEvent";
+import useAudioControl from "@/hooks/useAudioControl";
 
 interface Props {
   admin?: boolean;
   audioEle: HTMLAudioElement;
-  idle: boolean;
   isOpenFullScreen: boolean;
 }
 
 export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
-  // use store
-  const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { queueSongs } = useSelector(selectSongQueue);
-  const {
-    playStatus: { isPlaying, isRepeat, isShuffle, isError },
-  } = useSelector(selectAllPlayStatusStore);
-  const { currentSong } = useSelector(selectCurrentSong);
 
   // ref
   const timelineRef = useRef<HTMLDivElement>(null);
-
   const currentTimeRef = useRef<HTMLDivElement>(null);
   const remainingTimeRef = useRef<HTMLDivElement>(null);
 
-  const { handleNext, handlePrevious, handleSeek, play, pause, isLoaded } = useControl({
+  const {
+    handleNext,
+    handlePrevious,
+    handleRepeatSong,
+    handleShuffle,
+    playStatus: { isRepeat, isShuffle, isError, isWaiting },
+    currentSong,
+    queueSongs,
+  } = useAudioControl({
     audioEle,
-    isOpenFullScreen,
-    admin,
+  });
+
+  const { handleSeek, handlePlayPause } = useAudioEvent({
+    audioEle,
     timelineRef,
     currentTimeRef,
     remainingTimeRef,
   });
 
-  // >>> click handle
-  const handlePlayPause = useCallback(() => {
-    isPlaying ? pause() : play();
-  }, [isPlaying]);
-
-  const handleRepeatSong = () => {
-    let value: typeof isRepeat;
-    switch (isRepeat) {
-      case "no":
-        value = "one";
-        break;
-      case "one":
-        value = "all";
-        break;
-      case "all":
-        value = "no";
-        break;
-      default:
-        value = "no";
-    }
-
-    setLocalStorage("isRepeat", value);
-    dispatch(setPlayStatus({ isRepeat: value }));
-  };
-
-  const handleShuffle = () => {
-    const newValue = !isShuffle;
-    dispatch(setPlayStatus({ isShuffle: newValue }));
-
-    setLocalStorage("isShuffle", newValue);
-  };
-
   const classes = {
     button: `p-1`,
-    buttonsContainer: `w-full flex justify-center items-center space-x-5 mb-5 sm:mb-0`,
-    progressContainer: `flex w-full flex-row items-center mb-2 ${admin ? "h-full" : ""}`,
-    processLineBase: `h-[4px] flex-grow relative cursor-pointer rounded-[99px] `,
+    buttonsContainer: `w-full flex justify-center items-center space-x-3`,
+    progressContainer: `flex w-full flex-row items-center mb-5 ${isOpenFullScreen ? 'mb-0' : 'sm:mb-2'}  ${
+      admin ? "h-full" : ""
+    }`,
+    processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
     processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
     currentTime: `opacity-60 text-[14px] font-semibold`,
-    duration: `text-[14px] font-semibold`,
-    icon: "w-10 sm:w-7",
-    before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
+    icon: "w-[44px] sm:w-7",
+    before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
 
   return (
@@ -140,29 +105,26 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       </div>
 
       {/* process */}
-      <div
-        className={`${classes.progressContainer} ${
-          isError ? "disable" : ""
-        }`}
-      >
-        <div className="w-[36px]">
+      <div className={`${classes.progressContainer} ${isError ? "disable" : ""}`}>
+        <div className="w-[44px] sm:w-[36px]">
           {audioEle && (
-            <span ref={currentTimeRef} className={`${classes.currentTime}`}>
-              00:00
+            <span ref={currentTimeRef} className={`text-lg sm:text-sm`}>
+              0:00
             </span>
           )}
         </div>
         <div
           ref={timelineRef}
+          style={{background: '#e1e1e1'}}
           onClick={(e) => handleSeek(e)}
-          className={`${classes.processLineBase} ${!isLoaded && "disable"}  ${
+          className={`${classes.processLineBase} ${isWaiting ? "disable" : ""}  ${
             classes.before
           }`}
         ></div>
-        <div className="w-[36px] text-right pl-[5px]">
+        <div className="w-[44px] sm:w-[36px] text-right">
           {audioEle && (
-            <span ref={remainingTimeRef} className={classes.duration}>
-              00:00
+            <span ref={remainingTimeRef} className={"text-lg sm:text-sm"}>
+              0:00
             </span>
           )}
         </div>

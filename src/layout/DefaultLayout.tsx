@@ -20,7 +20,7 @@ const DefaultLayout: FC<Props> = ({ children }) => {
     container: ` main-container sm:overflow-auto no-scrollbar w-full ${
       inEdit ? "" : "min-h-[100vh] pb-[90px]"
     } max-[549px]:h-full `,
-    content: "px-[40px] max-[549px]:px-[15px] mt-[60px]",
+    content: "px-[40px] max-[549px]:px-4 mt-[60px]",
     page: `flex min-h-[100vh] sm:h-[100vh] sm:overflow-hidden ${
       theme.type === "dark" ? "text-white" : "text-[#333]"
     } ${theme.container}`,

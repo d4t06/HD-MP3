@@ -31,14 +31,14 @@ export default function SettingMenu({ openModal }: Props) {
   };
 
   const classes = {
-    menuItem: `${theme.content_hover_text} hover:bg-${theme.alpha} rounded-[4px] font-[500] w-full px-[10px] text-[14px] h-[40px] inline-flex items-center cursor-pointer`,
+    menuItem: `${theme.content_hover_text} hover:bg-${theme.alpha} rounded-md font-[500] w-full px-[10px] text-[14px] h-[40px] inline-flex items-center cursor-pointer`,
     icon: "w-[25px] mr-[8px]",
     divide: `h-[1px]  w-[calc(100%-20px)] my-[4px] mx-auto bg-${theme.alpha}`,
   };
 
   return (
     <>
-      <PopupWrapper variant={"thin"} color="sidebar" theme={theme}>
+      <PopupWrapper color="sidebar" theme={theme}>
         <ul className="flex flex-col w-[200px]">
           <li className={`${classes.menuItem} justify-between hover:bg-[unset]`}>
             <div className="flex items-center">

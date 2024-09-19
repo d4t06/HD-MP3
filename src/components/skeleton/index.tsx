@@ -30,7 +30,7 @@ export const SongItemSkeleton = [...Array(4).keys()].map((index) => {
 
 export const MobileLinkSkeleton = () => {
   return (
-    <div className="py-2">
+    <div className="py-3">
       <Skeleton className="w-full h-[28px]" />
     </div>
   );

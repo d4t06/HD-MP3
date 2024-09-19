@@ -68,7 +68,7 @@ const Context = createContext<ContextType | null>(null);
 const usePopoverContext = () => {
   const context = useContext(Context);
   if (context == null) {
-    throw new Error("Popover components must be wrapped in <MyPopup />");
+    throw new Error("Popover components must be parent in <MyPopup />");
   }
   return context;
 };
@@ -76,11 +76,12 @@ const usePopoverContext = () => {
 export default function MyPopup({
   children,
   relativeWrap = true,
+  appendOnPortal,
   ...rest
 }: { children: ReactNode } & PopupProps) {
   return (
-    <Context.Provider value={usePopup(rest)}>
-      {relativeWrap ? <div className="relative">{children}</div> : children}
+    <Context.Provider value={usePopup({ ...rest, appendOnPortal })}>
+      {!appendOnPortal ? <div className="relative">{children}</div> : children}
     </Context.Provider>
   );
 }
@@ -166,15 +167,30 @@ export const MyPopupTrigger = forwardRef(function (
   return <></>;
 });
 
-type ContentProps = {
+type BaseContentProps = {
   children: ReactNode;
   className?: string;
   animationClassName?: string;
 };
+
+type WrappedContent = BaseContentProps & {
+  appendTo: "parent";
+};
+
+type PortalContent = BaseContentProps & {
+  appendTo: "portal";
+  position?: "left-bottom" | "right-bottom";
+  origin?: "bottom right" | "bottom left" | "top right" | "top left";
+  spacer?: number;
+};
+
+type ContentProps = WrappedContent | PortalContent;
+
 export function MyPopupContent({
   children,
   className,
   animationClassName,
+  ...props
 }: ContentProps) {
   const {
     state: { isMounted, isOpen },
@@ -194,29 +210,45 @@ export function MyPopupContent({
 
     const triggerRect = triggerEle.getBoundingClientRect();
 
-    console.log('chekc rect', triggerRect);
-    
-
-
+    // default is left bottom
     const contentPos = {
       top: triggerRect.top + triggerEle.clientHeight,
       left: triggerRect.left - contentEle.clientWidth,
     };
 
-    const isOverScreenHeight =
-      contentPos.top + contentEle.clientHeight > window.innerHeight - 90;
-    if (isOverScreenHeight) {
-      contentPos.top = contentPos.top - contentEle.clientHeight;
+    if (props.appendTo === "portal") {
+      const { origin = "top right", position, spacer = 8 } = props;
+
+      switch (position) {
+        // case "left-bottom": {}
+        case "right-bottom": {
+          contentPos.top = triggerRect.top + triggerEle.clientHeight + spacer;
+          contentPos.left = triggerRect.left;
+          break;
+        }
+      }
+
+      const isOverScreenHeight =
+        contentPos.top + contentEle.clientHeight > window.innerHeight - 90;
+      if (isOverScreenHeight) {
+        contentPos.top =
+          contentPos.top - contentEle.clientHeight - triggerEle.clientHeight;
+      }
+
+      if (animationEle) {
+        let finalOrigin = origin;
+
+        if (isOverScreenHeight) finalOrigin = "bottom right";
+
+        animationEle.style.transformOrigin = finalOrigin;
+      }
     }
+
+    // const isOverScreenWidth =
+    //   contentPos.left + contentEle.clientHeight > window.innerHeight - 90;
 
     contentEle.style.left = `${contentPos.left}px`;
     contentEle.style.top = `${contentPos.top}px`;
-
-    if (animationEle) {
-      animationEle.style.transformOrigin = isOverScreenHeight
-        ? "bottom right"
-        : `top right`;
-    }
   };
 
   const handleWheel: EventListener = close;
@@ -227,7 +259,10 @@ export function MyPopupContent({
   };
 
   const content = (
-    <div ref={refs.setContentRef} className={`${appendOnPortal ? 'fixed' : 'absolute'} ${className || ""}`}>
+    <div
+      ref={refs.setContentRef}
+      className={`${appendOnPortal ? "fixed z-[99]" : "absolute"} ${className || ""}`}
+    >
       <div
         ref={animationRef}
         className={` transition-[transform,opacity] duration-[.25s] ease-linear ${
@@ -260,7 +295,7 @@ export function MyPopupContent({
   return (
     <>
       {appendOnPortal
-        ? createPortal(content, document.querySelector("#portals")!)
+        ? createPortal(content, document.getElementById("portals")!)
         : content}
     </>
   );

@@ -12,7 +12,6 @@ import { useLocation } from "react-router-dom";
 import { Control } from ".";
 
 import useVolume from "../hooks/useVolume";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
@@ -40,9 +39,6 @@ function BottomPlayer({
 }: Props) {
   const { theme } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
-  const {
-    playStatus: { isPlaying, isWaiting },
-  } = useSelector(selectAllPlayStatusStore);
 
   const volumeLine = useRef<HTMLDivElement>(null);
 
@@ -63,7 +59,7 @@ function BottomPlayer({
     before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
     wrapper: `border-${
       theme.alpha
-    } fixed bottom-0 w-full border-t transition-transform z-50 px-10 ${
+    } fixed bottom-0 w-full border-t transition-transform z-50 px-6 ${
       admin ? "h-[60px]" : "h-[90px]"
     }`,
     container: `flex flex-row gap-[10px] h-full items-center`,
@@ -112,11 +108,10 @@ function BottomPlayer({
               <Control
                 admin={admin}
                 audioEle={audioEle}
-                idle={false}
                 isOpenFullScreen={isOpenFullScreen}
               />
             ),
-            [isPlaying, isOpenFullScreen, isWaiting]
+            [isOpenFullScreen]
           )}
         </div>
 
@@ -157,9 +152,9 @@ function BottomPlayer({
                 </button>
               </MyTooltip>
 
-              <div className={`w-[2px] h-[26px] mx-3 bg-${theme.alpha}`}></div>
+              <div className={`w-[2px] h-[26px] ml-2 bg-${theme.alpha}`}></div>
 
-              <SleepTimerButton variant="desktop" audioEle={audioEle} />
+              <SleepTimerButton audioEle={audioEle} />
             </div>
           )}
         </div>

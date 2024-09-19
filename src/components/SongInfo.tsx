@@ -53,7 +53,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                <div className="h-[20px]">
                   <ScrollText
                      autoScroll
-                     className="font-[600] opacity-70 leading-[1.2]"
+                     className="opacity-70 leading-[1.2]"
                      content={currentSong.singer || "..."}
                   />
                </div>

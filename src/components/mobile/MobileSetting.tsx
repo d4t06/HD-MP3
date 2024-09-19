@@ -60,7 +60,7 @@ export default function MobileSetting() {
 
   // define styles
   const classes = {
-    linkItem: `py-2 text-lg w-full border-b border-${theme.alpha} space-x-2 last:border-none flex items-center`,
+    linkItem: `py-3 text-lg w-full border-b border-${theme.alpha} space-x-2 last:border-none flex items-center`,
     icon: `w-7`,
   };
 
@@ -82,7 +82,7 @@ export default function MobileSetting() {
         {userLoading ? (
           [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
         ) : (
-          <>
+          <div className="">
             <button className={classes.linkItem} onClick={() => openModal("theme")}>
               <PaintBrushIcon className={classes.icon} />
               <span>Theme</span>
@@ -99,7 +99,7 @@ export default function MobileSetting() {
                 <span>Logout</span>
               </button>
             )}
-          </>
+          </div>
         )}
       </div>
 

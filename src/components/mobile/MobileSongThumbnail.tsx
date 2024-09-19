@@ -2,28 +2,25 @@ import { Image } from "..";
 
 interface Props {
   data?: Song;
-  active: boolean;
+  expand: boolean;
   classNames?: string;
 }
 
-export default function MobileSongThumbnail({ data, active }: Props) {
-  const classes = {
-    container: "flex flex-col",
-    imageFrame: "rounded-[4px] overflow-hidden",
-    image: "select-none object-cover object-center w-full",
-  };
+export default function MobileSongThumbnail({ data, expand }: Props) {
+  // const classes = {
+  //   container: "transition-[width,height,padding] duration-500 origin-top-left",
+  //   image: "select-none object-cover object-center w-full",
+  // };
 
   if (!data) return;
 
   return (
     <div
-      className={`${classes.container} ${
-        active ? "w-full px-[20px]" : "w-[60px] h-[60px] flex-shrink-0"
+      className={` ${
+        expand ? "w-full h-auto px-[20px]" : "w-[60px] h-[60px] p-0 flex-shrink-0"
       }`}
     >
-      <div className={`${classes.imageFrame}`}>
-        <Image src={data.image_url} classNames="w-full" />
-      </div>
+      <Image src={data.image_url} classNames="w-full rounded-md" />
     </div>
   );
 }

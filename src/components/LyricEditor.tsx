@@ -418,7 +418,7 @@ window after doing something */}
             {playSpeed}x
           </PopoverTrigger>
           <PopoverContent>
-            <PopupWrapper variant={"thin"} theme={theme}>
+            <PopupWrapper theme={theme}>
               <div className="flex justify-center gap-[8px]">
                 <Button
                   variant="circle"

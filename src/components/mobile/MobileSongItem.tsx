@@ -80,7 +80,7 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
 
   return (
     <>
-      <div onClick={handleItemClick} className={`target-class opacity-100 transition-[opacity,transform] duration-300 ${classes.itemContainer} `}>
+      <div onClick={handleItemClick} className={`target-class opacity-100 transition-[opacity,transform] duration-500 ${classes.itemContainer} `}>
         <div className={`flex flex-row w-[100%]`}>
           {renderCheckBox()}
 
