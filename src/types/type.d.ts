@@ -80,6 +80,7 @@ type ThemeType = {
    content_hover_border: string;
    content_bg: string;
    content_code: string;
+   container_code: string;
    content_hover_bg: string;
 };
 

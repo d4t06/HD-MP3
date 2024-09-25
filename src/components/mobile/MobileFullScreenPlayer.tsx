@@ -92,21 +92,21 @@ export default function MobileFullScreenPlayer({
     transform: "translate(-100%, 0)",
   };
 
-  const hideSibling = (ele: HTMLDivElement) => {
-    let i = 0;
-    let node = ele.previousElementSibling as HTMLElement | null;
-    while (node && i < 100) {
-      Object.assign(node.style, hideSongItemStyle);
-      i++;
-      node = node.previousElementSibling as HTMLElement;
-    }
-  };
+  // const hideSibling = (ele: HTMLDivElement) => {
+  //   let i = 0;
+  //   let node = ele.previousElementSibling as HTMLElement | null;
+  //   while (node && i < 100) {
+  //     Object.assign(node.style, hideSongItemStyle);
+  //     i++;
+  //     node = node.previousElementSibling as HTMLElement;
+  //   }
+  // };
 
   const activeSong = (e: MouseEvent, song: Song, index: number) => {
     const ele = e.target as HTMLDivElement;
 
     const parent = findParent(ele);
-    hideSibling(parent);
+    // hideSibling(parent);
     Object.assign(parent.style, hideSongItemStyle);
 
     if (currentSongRef.current) {
@@ -182,7 +182,7 @@ export default function MobileFullScreenPlayer({
       "absolute inset-0 bg-no-repeat bg-cover bg-center blur-[50px] transition-[background-image] duration-[.3s ]",
     overlay:
       "absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply overflow-hidden",
-    button: "flex justify-center items-center rounded-full w-[35px]",
+    button: "flex justify-center items-center rounded-full w-[38px]",
   };
 
   return (
@@ -207,7 +207,7 @@ export default function MobileFullScreenPlayer({
               </MyPopupTrigger>
 
               <MyPopupContent appendTo="portal" position="right-bottom" origin="top left">
-                <FullScreenPlayerSetting  />
+                <FullScreenPlayerSetting />
               </MyPopupContent>
             </MyPopup>
 
@@ -248,7 +248,9 @@ export default function MobileFullScreenPlayer({
               )}
 
               <div className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden"}`}>
-                <div className="font-playwriteCU">{currentSong.name}</div>
+                <div className="h-[30px]">
+                  <p className="font-playwriteCU leading-[1.5]">{currentSong.name}</p>
+                </div>
                 <div className="opacity-70">{currentSong.singer}</div>
               </div>
             </div>

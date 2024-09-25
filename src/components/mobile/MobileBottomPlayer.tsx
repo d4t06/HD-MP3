@@ -67,7 +67,7 @@ const MobileBottomPlayer: FC<Props> = ({
 
       <div className={`flex items-center  h-full`}>
         <div
-          onClick={() => setIsOpenFullScreen(true)}
+          onClick={() => (currentSong.name ? setIsOpenFullScreen(true) : {})}
           className={`mobile-current-song flex-grow`}
         >
           {/* song image, name and singer */}

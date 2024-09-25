@@ -46,8 +46,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
   const classes = {
     button: `p-1`,
-    buttonsContainer: `w-full flex justify-center items-center space-x-3 ${admin ? 'hidden' : ''}`,
-    progressContainer: `flex w-full flex-row items-center ${isOpenFullScreen ? 'mb-0' : 'mb-5 sm:mb-2'}  ${
+    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${admin ? 'hidden' : ''}`,
+    progressContainer: `flex w-full flex-row items-center   ${
       admin ? "h-full" : ""
     }`,
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
@@ -105,7 +105,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       </div>
 
       {/* process */}
-      <div className={`${classes.progressContainer} ${isError ? "disable" : ""}`}>
+      <div className={`${classes.progressContainer} ${isOpenFullScreen ? 'mb-0' : 'mb-5 sm:mb-2'} ${isError ? "disable" : ""}`}>
         <div className="w-[44px] sm:w-[36px]">
           {audioEle && (
             <span ref={currentTimeRef} className={`text-lg sm:text-sm`}>

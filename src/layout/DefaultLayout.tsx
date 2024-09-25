@@ -1,4 +1,4 @@
-import { FC, ReactNode, useMemo, useRef } from "react";
+import { FC, ReactNode, useEffect, useMemo, useRef } from "react";
 import { useTheme } from "@/store/ThemeContext";
 import { Sidebar, Player, UploadSongPortal, Header } from "../components";
 import { useLocation } from "react-router-dom";
@@ -25,6 +25,13 @@ const DefaultLayout: FC<Props> = ({ children }) => {
       theme.type === "dark" ? "text-white" : "text-[#333]"
     } ${theme.container}`,
   };
+
+  useEffect(() => {
+    const meta = document.querySelector(".my-tag");
+    if (meta) {
+      meta.setAttribute("content", theme.container_code);
+    }
+  }, [theme]);
 
   return (
     <>

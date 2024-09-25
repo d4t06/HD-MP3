@@ -227,7 +227,7 @@ export default function CheckedBar({
                   className={classes.outlineButton}
                 >
                   <PlusIcon className={classes.icon} />
-                  <span className="hidden sm:block">Add to queue</span>
+                  <span className="">Add to queue</span>
                 </Button>
 
                 <Button
