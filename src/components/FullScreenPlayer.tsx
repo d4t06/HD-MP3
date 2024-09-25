@@ -17,8 +17,8 @@ import {
   Cog6ToothIcon,
   DocumentTextIcon,
 } from "@heroicons/react/20/solid";
-import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/Tooltip";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
+import MyTooltip from "./MyTooltip";
 
 interface Props {
   isOpenFullScreen: boolean;
@@ -88,7 +88,7 @@ function FullScreenPlayer({
   };
 
   const classes = {
-    button: `h-[35px] w-[35px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
+    button: `w-[44px] h-[44px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
     wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
     } transition-transform duration-[.7s] linear delay-100`,
     bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px]`,
@@ -170,13 +170,12 @@ function FullScreenPlayer({
         {/* header */}
         <div className={classes.headerWrapper}>
           {/* left */}
-          {true && (
+          {idle && (
             <div className={`absolute flex items-center left-4`}>
               <img className={`${classes.logo}`} src={logoIcon} alt="" />
               {activeTab === "Lyric" && (
                 <>
                   <p className={`font-playwriteCU text-sm`}>{currentSong.name} </p>
-
                   <p className="opacity-70">&nbsp;- {currentSong.singer}</p>
                 </>
               )}
@@ -198,51 +197,41 @@ function FullScreenPlayer({
             }`}
           >
             {currentSong.by !== "admin" && activeTab === "Lyric" && (
-              <Tooltip placement="bottom">
-                <TooltipTrigger
+              <MyTooltip position="top-[calc(100%+8px)]" content="Edit lyrics">
+                <button
                   onClick={() => handleEdit()}
-                  className={`p-[8px] ${classes.button}`}
+                  className={`p-3 ${classes.button}`}
                 >
                   <DocumentTextIcon />
-                </TooltipTrigger>
-                <TooltipContent>Lyric</TooltipContent>
-              </Tooltip>
+                </button>
+              </MyTooltip>
             )}
 
             <MyPopup>
               <MyPopupTrigger>
-                <button className={`${classes.button} p-[8px]`}>
-                  <Cog6ToothIcon />
-                </button>
+                <MyTooltip position="top-[calc(100%+8px)]" content="Settings">
+                  <button className={`${classes.button} p-3`}>
+                    <Cog6ToothIcon />
+                  </button>
+                </MyTooltip>
               </MyPopupTrigger>
               <MyPopupContent
                 appendTo="parent"
                 className="top-[calc(100%+8px)] right-0 z-[99]"
                 animationClassName="origin-top-right"
               >
-                <FullScreenPlayerSetting audioEle={audioEle} />
+                <FullScreenPlayerSetting  />
               </MyPopupContent>
             </MyPopup>
 
-            {/* <Popover placement="bottom-end">
-                        <PopoverTrigger className={`${classes.button} p-[8px]`}>
-                           <Cog6ToothIcon />c
-                        </PopoverTrigger>
-
-                        <PopoverContent className="z-[99]">
-                           <FullScreenPlayerSetting audioEle={audioEle} />
-                        </PopoverContent>
-                     </Popover> */}
-
-            <Tooltip placement="bottom">
-              <TooltipTrigger
+            <MyTooltip position="top-[calc(100%+8px)]" content="Close">
+              <button
                 onClick={() => setIsOpenFullScreen(false)}
-                className={`p-[4px] ${classes.button}`}
+                className={`p-2 ${classes.button}`}
               >
                 <ChevronDownIcon />
-              </TooltipTrigger>
-              <TooltipContent>Close</TooltipContent>
-            </Tooltip>
+              </button>
+            </MyTooltip>
           </div>
         </div>
 
@@ -294,9 +283,10 @@ function FullScreenPlayer({
           </div>
         </div>
 
-        {isOpenFullScreen && activeTab === "Lyric" && !idle && (
-          <p className={`pt-[20px] text-center ${idle && classes.fadeTransition}`}>
-            {currentSong.name}<span className="opacity-70">&nbsp;- {currentSong.singer}</span>
+        {activeTab !== "Songs" && (
+          <p className={`text-center ${idle && classes.fadeTransition}`}>
+            {currentSong.name}
+            <span className="opacity-70">&nbsp;- {currentSong.singer}</span>
           </p>
         )}
       </div>

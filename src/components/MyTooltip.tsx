@@ -11,12 +11,16 @@ import {
   useRef,
   useState,
 } from "react";
+import { usePopoverContext } from "./MyPopup";
+
+type PropsFromPopup = {
+  onClick?: () => void;
+};
 
 type Props = {
   children: ReactNode;
   className?: string;
   position?: string;
-  isOpen?: boolean;
   isWrapped?: boolean;
   content: string;
 };
@@ -26,16 +30,18 @@ function MyToolTip(
     children,
     className = "px-2 py-1 text-sm font-[600]",
     position = "bottom-[calc(100%+8px)]",
-    isOpen = false,
-    isWrapped = false,
     content,
+    isWrapped,
     ...rest
   }: Props,
-  _ref: Ref<any>
+  _ref: Ref<ElementRef<"button">>
 ) {
   const [open, setOpen] = useState(false);
 
   const { theme } = useTheme();
+
+  const { setTriggerRef, state } = usePopoverContext();
+  const { onClick } = rest as PropsFromPopup;
 
   const cloneEleRef = useRef<ElementRef<"button">>(null);
 
@@ -50,10 +56,11 @@ function MyToolTip(
   useEffect(() => {
     const cloneEle = cloneEleRef.current as HTMLButtonElement;
 
-    console.log(cloneEle);
-    
-
     if (!cloneEle) return;
+
+    if (setTriggerRef) {
+      setTriggerRef(cloneEle);
+    }
 
     cloneEle.addEventListener("mouseenter", handleMouseEnter);
     cloneEle.addEventListener("mouseleave", handleMouseLeave);
@@ -66,7 +73,7 @@ function MyToolTip(
 
   const classes = {
     container: `${
-      theme.type === "dark" ? "bg-white text-[#333]" : "bg-slate-600 text-white"
+      theme.type === "dark" ? "bg-white text-[#333]" : "bg-slate-700 text-white"
     }`,
   };
 
@@ -74,12 +81,16 @@ function MyToolTip(
     <>
       {isValidElement(children) && (
         <>
-          {cloneElement(children, {
-            ref: cloneEleRef,
-            ...rest,
-          } as HTMLProps<HTMLButtonElement>)}
+          {Object.keys(rest).length
+            ? cloneElement(children, {
+                ref: cloneEleRef,
+                onClick,
+              } as HTMLProps<HTMLButtonElement>)
+            : cloneElement(children, {
+                ref: cloneEleRef,
+              } as HTMLProps<HTMLButtonElement>)}
 
-          {!isOpen && open && (
+          {!state?.isOpen && open && (
             <div
               className={`${classes.container} absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md ${position} ${className}`}
             >

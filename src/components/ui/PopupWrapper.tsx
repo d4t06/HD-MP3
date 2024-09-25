@@ -7,6 +7,7 @@ const popupVariant = cva("", {
       3: "p-3",
       2: "p-2",
       1: "p-1",
+      clear: "",
     },
     rounded: {
       xl: "rounded-xl",

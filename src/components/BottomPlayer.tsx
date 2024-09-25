@@ -59,12 +59,10 @@ function BottomPlayer({
     before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
     wrapper: `border-${
       theme.alpha
-    } fixed bottom-0 w-full border-t transition-transform z-50 px-6 ${
-      admin ? "h-[60px]" : "h-[90px]"
-    }`,
+    } fixed bottom-0 w-full border-t transition-transform z-50 px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
-    controlWrapper: `flex max-w-[450px] flex-grow`,
+    controlWrapper: `flex max-w-[420px] flex-grow`,
     controlWrapperChild_1: `${
       isOpenFullScreen
         ? "max-w-[600px] flex-col-reverse pb-[10px]"

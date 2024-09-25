@@ -7,13 +7,8 @@ import {
   togglePlayControl,
 } from "@/store/PlayStatusSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
-import SleepTimerButton from "../SleepTimerButton";
 
-type Props = {
-  audioEle: HTMLAudioElement;
-};
-
-export default function FullScreenPlayerSetting({ audioEle }: Props) {
+export default function FullScreenPlayerSetting() {
   const { theme, isOnMobile } = useTheme();
   const dispatch = useDispatch();
 
@@ -29,7 +24,7 @@ export default function FullScreenPlayerSetting({ audioEle }: Props) {
   const classes = {
     disableBtn: "bg-white/10 bg-opacity-20",
     lyricSizeBtn: `group/text !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
-    itemContainer: "flex justify-between items-center min-h-[30px]",
+    itemContainer: `flex justify-between  px-3 py-2 items-center min-h-[30px] hover:bg-${theme.alpha}`,
     text: "text-base text-[#ccc]",
   };
 
@@ -37,12 +32,12 @@ export default function FullScreenPlayerSetting({ audioEle }: Props) {
     <>
       <div className="w-[240px] sm:w-[220px]">
         <PopupWrapper
-          variant={"default"}
+          p={"clear"}
           color="black"
-          className="space-y-[6px] text-white"
+          className="space-y-[6px] text-white py-3"
           theme={theme}
         >
-          <div className={classes.itemContainer}>
+          <div className={`${classes.itemContainer}`}>
             <p className={classes.text}>Lyric size</p>
             <div className="flex space-x-[8px]">
               <Button
@@ -97,8 +92,6 @@ export default function FullScreenPlayerSetting({ audioEle }: Props) {
               />
             </div>
           )}
-
-          <SleepTimerButton audioEle={audioEle} variant="mobile" />
         </PopupWrapper>
       </div>
     </>

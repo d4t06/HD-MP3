@@ -32,7 +32,7 @@ const SongThumbnail = (
             : "inset-0 hidden bg-opacity-60 bg-[#333] items-center justify-center"
       }   group-hover:flex`,
       playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
-      title: "text-[22px] text-white mt-[10px] font-bold text-ellipsis line-clamp-1",
+      title: "text-2xl text-white mt-3 font-bold text-ellipsis line-clamp-1",
    };
 
    if (!data) return;

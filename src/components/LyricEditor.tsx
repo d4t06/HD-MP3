@@ -26,8 +26,8 @@ import { useNavigate } from "react-router-dom";
 import tutorial1 from "../assets/tutorial/tutorial1.png";
 import tutorial2 from "../assets/tutorial/tutorial2.png";
 import ModalHeader from "./modals/ModalHeader";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { ModalRef } from "./Modal";
+import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 
 type Props = {
   theme: ThemeType & { alpha: string };
@@ -51,7 +51,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   const [realTimeLyrics, setRealTimeLyrics] = useState<RealTimeLyric[]>(
     lyric ? lyric.real_time : []
   );
-  const [openSpeedSetting, setOpenSpeedSetting] = useState(false);
+  //   const [openSpeedSetting, setOpenSpeedSetting] = useState(false);
   const [playSpeed, setPlaySpeed] = useState(1);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState<Modal | "">("");
@@ -68,6 +68,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   const start = useRef(0);
   const scrollBehavior = useRef<ScrollBehavior>("smooth");
   const modalRef = useRef<ModalRef>(null);
+  const triggerRef = useRef<TriggerRef>(null);
 
   // hook
   const { setSuccessToast, setErrorToast } = useToast();
@@ -86,7 +87,10 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   }, [isFinish, baseLyricArr, isClickPlay]);
 
   const closeModal = () => modalRef.current?.toggle();
-
+  const openModal = (modal: Modal) => {
+    setModal(modal);
+    modalRef.current?.toggle();
+  };
   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
 
   const play = () => {
@@ -113,7 +117,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
       setPlaySpeed(speed);
     }
 
-    setOpenSpeedSetting(false);
+    triggerRef.current?.close();
   };
 
   const handleAddBaseLyric = () => {
@@ -263,7 +267,7 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
 
   const handleNavigateBack = () => {
     if (isChange) {
-      setModal("confirm-navigate");
+      openModal("confirm-navigate");
     } else navigateBack();
   };
 
@@ -403,21 +407,17 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   const ctaComponent = (
     <div className={`${classes.ctaContainer} ${text}`}>
       <div className="left flex flex-wrap gap-[10px]">
-        <button onClick={() => setModal("add-base-lyric")} className={classes.button}>
+        <button onClick={() => openModal("add-base-lyric")} className={classes.button}>
           {baseLyric ? "Change lyric" : "Add lyric"}
         </button>
 
-        {/* the purpose of pass is open from parent is want to auto close
-window after doing something */}
-        <Popover
-          isOpenFromParent={openSpeedSetting}
-          setIsOpenFromParent={setOpenSpeedSetting}
-          placement="bottom-start"
-        >
-          <PopoverTrigger className={`${classes.button} ${classes.changeSpeedBtn}`}>
-            {playSpeed}x
-          </PopoverTrigger>
-          <PopoverContent>
+        <MyPopup>
+          <MyPopupTrigger ref={triggerRef}>
+            <button className={`${classes.button} ${classes.changeSpeedBtn}`}>
+              {playSpeed}x
+            </button>
+          </MyPopupTrigger>
+          <MyPopupContent appendTo="parent">
             <PopupWrapper theme={theme}>
               <div className="flex justify-center gap-[8px]">
                 <Button
@@ -449,8 +449,8 @@ window after doing something */}
                 </Button>
               </div>
             </PopupWrapper>
-          </PopoverContent>
-        </Popover>
+          </MyPopupContent>
+        </MyPopup>
 
         {isPlaying ? (
           <Button
@@ -508,7 +508,7 @@ window after doing something */}
         </Button>
       </div>
 
-      <button onClick={() => setModal("tutorial")}>
+      <button onClick={() => openModal("tutorial")}>
         <QuestionMarkCircleIcon className="w-[20px]" />
       </button>
     </div>
@@ -583,7 +583,7 @@ window after doing something */}
         Delete
       </Button>
 
-      <Modal variant="animation" className="w-[700px] max-w-[calc(100vw-40px)]">
+      <Modal ref={modalRef} variant="animation" className="w-[700px] max-w-[calc(100vw-40px)]">
         {renderModal}
       </Modal>
     </div>

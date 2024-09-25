@@ -42,14 +42,14 @@ export default function SleepTimerButton({ audioEle }: Props) {
                 {formatTime(countDown)}
               </span>
               <span className={`hidden group-hover:block ${classes.button}`}>
-                <XMarkIcon className="w-6" />
+                <XMarkIcon className="w-8 sm:w-6" />
               </span>
             </button>
           </MyTooltip>
         ) : (
           <MyTooltip content="Sleep timer">
             <button onClick={handleTriggerClick} className={classes.button}>
-              <ClockIcon className="w-6" />
+              <ClockIcon className="w-8 sm:w-6" />
             </button>
           </MyTooltip>
         )}

@@ -15,7 +15,7 @@ function TimerModal({ close, active }: Props) {
   };
 
   const handleSetTimer = (minute: number) => {
-    active(minute);
+    active(minute * 60);
     close();
   };
 
@@ -24,6 +24,14 @@ function TimerModal({ close, active }: Props) {
       <ModalHeader close={close} title="Sleep timer" />
       <div>
         <div className="flex space-x-[10px] mb-[12px]">
+          <button
+            type="button"
+            onClick={() => handleSetTimer(15 / 60)}
+            className={`${classes.button} `}
+          >
+            15 s
+          </button>
+
           <button
             type="button"
             onClick={() => handleSetTimer(15)}

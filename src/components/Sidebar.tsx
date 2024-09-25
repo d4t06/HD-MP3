@@ -48,7 +48,7 @@ export default function Sidebar() {
     container: `w-[180px] relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
     navItem: `  px-3 py-2 leading-[2.2] font-playwriteCU flex items-center ${theme.content_hover_text}`,
     text: theme.type === "light" ? "text-[#333]" : "text-white",
-    icon: "w-7 mr-1",
+    icon: "w-7 mr-2",
     link: "w-full border-l-[4px]",
     activeLink: `${theme.content_text} ${theme.container} ${theme.content_border}  `,
   };

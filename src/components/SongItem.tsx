@@ -28,6 +28,7 @@ import { Bars3Icon, CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
+import MyTooltip from "./MyTooltip";
 
 type Props = {
   className?: string;
@@ -159,7 +160,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     }`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",
-    menuBtnWrapper: "w-[50px] flex justify-center ",
+    menuBtnWrapper: "w-[50px] flex justify-center relative",
   };
 
   const renderCheckBox = () => {
@@ -455,15 +456,17 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
               <MyPopup appendOnPortal>
                 <MyPopupTrigger>
-                  <button
-                    className={`block group-hover/main:block ${classes.button} ${
-                      isOpenPopup || props.variant === "queue"
-                        ? `md:block`
-                        : "md:hidden max-[549px]:!bg-transparent"
-                    }`}
-                  >
-                    <Bars3Icon className="w-[20px]" />
-                  </button>
+                  <MyTooltip isWrapped content="Menu">
+                    <button
+                      className={`block group-hover/main:block ${classes.button} ${
+                        isOpenPopup || props.variant === "queue"
+                          ? `md:block`
+                          : "md:hidden max-[549px]:!bg-transparent"
+                      }`}
+                    >
+                      <Bars3Icon className="w-[20px]" />
+                    </button>
+                  </MyTooltip>
                 </MyPopupTrigger>
                 <MyPopupContent appendTo="portal">
                   <PopupWrapper

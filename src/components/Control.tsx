@@ -46,8 +46,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
   const classes = {
     button: `p-1`,
-    buttonsContainer: `w-full flex justify-center items-center space-x-3`,
-    progressContainer: `flex w-full flex-row items-center mb-5 ${isOpenFullScreen ? 'mb-0' : 'sm:mb-2'}  ${
+    buttonsContainer: `w-full flex justify-center items-center space-x-3 ${admin ? 'hidden' : ''}`,
+    progressContainer: `flex w-full flex-row items-center ${isOpenFullScreen ? 'mb-0' : 'mb-5 sm:mb-2'}  ${
       admin ? "h-full" : ""
     }`,
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
@@ -130,7 +130,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
         </div>
 
         {admin && (
-          <div className="flex items-center">
+          <div className="flex items-center ml-3">
             <PlayPauseButton handlePlayPause={handlePlayPause} />
           </div>
         )}

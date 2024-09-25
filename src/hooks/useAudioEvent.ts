@@ -209,11 +209,13 @@ export default function useAudioEvent({
     }
 
     if (currentIndex.current === queueSongs.length - 1) {
-      if (isRepeat === "all") isEndOfList.current = false;
+      const timer = storage["timer"];
+
+      if (isRepeat === "all" || !!timer) isEndOfList.current = false;
       else isEndOfList.current = true;
     }
 
-    // return handleNext();
+    return handleNext();
   };
 
   const handleLoaded = () => {

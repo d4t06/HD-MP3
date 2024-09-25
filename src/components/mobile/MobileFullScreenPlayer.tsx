@@ -207,7 +207,7 @@ export default function MobileFullScreenPlayer({
               </MyPopupTrigger>
 
               <MyPopupContent appendTo="portal" position="right-bottom" origin="top left">
-                <FullScreenPlayerSetting audioEle={audioEle} />
+                <FullScreenPlayerSetting  />
               </MyPopupContent>
             </MyPopup>
 
@@ -254,17 +254,15 @@ export default function MobileFullScreenPlayer({
             </div>
 
             <div
-              className={`mt-3 justify-between items-center ${
+              className={`mt-5 justify-between items-center ${
                 activeTab != "Playing" ? "hidden" : "flex"
               }`}
             >
               <div className="flex-grow">
-                <div className={"h-[34px]"}>
+                <div className={"h-[40px]"}>
                   <ScrollText
                     autoScroll
-                    className={`${
-                      activeTab === "Playing" || isLandscape ? "text-lg" : ""
-                    } leading-[1.5] font-playwriteCU`}
+                    className={`text-xl leading-[1.5] font-playwriteCU`}
                     content={currentSong.name || "..."}
                   />
                 </div>

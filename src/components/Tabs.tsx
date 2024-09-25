@@ -44,7 +44,7 @@ function Tabs<T>({
               : "opacity-60"
           }`}
         >
-          <span className="leading-[27px] font-normal sm:font-semibold">
+          <span className="leading-[30px] font-normal sm:font-bold">
             {render(item)}
           </span>
         </li>

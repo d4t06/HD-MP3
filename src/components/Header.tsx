@@ -18,9 +18,9 @@ import {
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthActions } from "@/store/AuthContext";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/Popover";
 import { ModalRef } from "./Modal";
 import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
+import MyTooltip from "./MyTooltip";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -74,7 +74,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     setScroll(scrollTop);
   };
 
-  const AvatarSkeleton = <Skeleton className="w-[35px] h-[35px] rounded-full" />;
+  const AvatarSkeleton = <Skeleton className="h-[40px] w-[40px] rounded-full" />;
 
   const renderModal = useMemo(() => {
     switch (modal) {
@@ -107,7 +107,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
-    button: `h-[35px] w-[35px] rounded-full`,
+    button: `h-[40px] w-[40px] rounded-full`,
     menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} rounded-[4px] w-full px-[10px] h-[44px] inline-flex items-center font-[500]`,
     icon: "w-[25px] mr-[5px]",
     divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-${theme.alpha}`,
@@ -126,35 +126,18 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           } bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
         ></div>
 
-        <div className="px-[40px] flex items-center justify-between h-full">
-          {/* left */}
-          <div className=""></div>
+        <div className="px-[40px] flex h-full">
           {/* right */}
-          <div className="flex gap-[16px]">
-            {/* <Popover
-              isOpenFromParent={isOpenMenu}
-              setIsOpenFromParent={setIsOpenMenu}
-              placement="bottom-end"
-            >
-              <PopoverTrigger asChild className={``}>
-                <button
-                  className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
-                >
-                  <AdjustmentsHorizontalIcon className="w-full" />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent>
-                <SettingMenu openModal={openModal} loggedIn={false} />
-              </PopoverContent>
-            </Popover> */}
-
+          <div className="flex items-center space-x-3 ml-auto">
             <MyPopup>
               <MyPopupTrigger ref={triggerRef}>
-                <button
-                  className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
-                >
-                  <AdjustmentsHorizontalIcon className="w-full" />
-                </button>
+                <MyTooltip isWrapped position="top-[calc(100%+8px)]" content="Settings">
+                  <button
+                    className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
+                  >
+                    <AdjustmentsHorizontalIcon className="w-full" />
+                  </button>
+                </MyTooltip>
               </MyPopupTrigger>
               <MyPopupContent
                 appendTo="parent"
@@ -165,13 +148,29 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
               </MyPopupContent>
             </MyPopup>
 
-            <Popover placement="bottom-end">
+            {/* <Popover placement="bottom-end">
               <PopoverTrigger
                 className={`flex login-trigger items-center hover:brightness-75 ${classes.button}`}
               >
                 {loading ? AvatarSkeleton : <Avatar />}
               </PopoverTrigger>
               <PopoverContent>
+                
+              </PopoverContent>
+            </Popover> */}
+
+            <MyPopup>
+              <MyPopupTrigger className="flex items-center">
+                <button className="flex hover:brightness-90">
+                  {loading ? AvatarSkeleton : <Avatar className="w-[40px] h-[40px]" />}
+                </button>
+              </MyPopupTrigger>
+
+              <MyPopupContent
+                appendTo="parent"
+                className="top-[calc(100%+8px)] right-0"
+                animationClassName="origin-top-right"
+              >
                 <PopupWrapper color="sidebar" theme={theme}>
                   <div className="w-[250px] max-h-[50vh]">
                     {loggedInUser && (
@@ -205,8 +204,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                     )}
                   </div>
                 </PopupWrapper>
-              </PopoverContent>
-            </Popover>
+              </MyPopupContent>
+            </MyPopup>
           </div>
         </div>
       </div>

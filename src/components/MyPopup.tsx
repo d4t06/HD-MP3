@@ -51,7 +51,9 @@ const usePopup = ({ appendOnPortal }: PopupProps) => {
   };
 
   return {
-    refs: { triggerRef, contentRef, setTriggerRef, setContentRef },
+    refs: { triggerRef, contentRef },
+    setTriggerRef,
+    setContentRef,
     state: { isMounted, isOpen } as StateType,
     setIsMounted,
     setIsOpen,
@@ -65,12 +67,11 @@ type ContextType = ReturnType<typeof usePopup>;
 
 const Context = createContext<ContextType | null>(null);
 
-const usePopoverContext = () => {
+export const usePopoverContext = () => {
   const context = useContext(Context);
-  if (context == null) {
-    throw new Error("Popover components must be parent in <MyPopup />");
-  }
-  return context;
+
+  if (context) return context;
+  else return {} as ContextType;
 };
 
 export default function MyPopup({
@@ -89,13 +90,14 @@ export default function MyPopup({
 type TriggerProps = {
   children: ReactNode;
   className?: string;
+  needButton?: boolean;
 };
 export type TriggerRef = {
   close: () => void;
 };
 
 export const MyPopupTrigger = forwardRef(function (
-  { children }: TriggerProps,
+  { children, needButton }: TriggerProps,
   ref: Ref<TriggerRef>
 ) {
   const {
@@ -156,15 +158,19 @@ export const MyPopupTrigger = forwardRef(function (
     };
   }, [isOpen]);
 
-  if (isValidElement(children)) {
-    return cloneElement(children, {
-      ref: refs.setTriggerRef,
-      onClick: toggle,
-      ...children.props,
-    } as HTMLProps<Element>);
-  }
+  if (!needButton)
+    if (isValidElement(children)) {
+      return cloneElement(children, {
+        onClick: toggle,
+        ref: refs.triggerRef,
+      } as HTMLProps<Element>);
+    }
 
-  return <></>;
+  return (
+    <button ref={refs.triggerRef} onClick={toggle}>
+      {children}
+    </button>
+  );
 });
 
 type BaseContentProps = {
@@ -197,6 +203,7 @@ export function MyPopupContent({
     refs,
     close,
     appendOnPortal,
+    setContentRef,
   } = usePopoverContext();
 
   const animationRef = useRef<ElementRef<"div">>(null);
@@ -231,8 +238,11 @@ export function MyPopupContent({
       const isOverScreenHeight =
         contentPos.top + contentEle.clientHeight > window.innerHeight - 90;
       if (isOverScreenHeight) {
-        contentPos.top =
-          contentPos.top - contentEle.clientHeight - triggerEle.clientHeight;
+        let newTop = contentPos.top - contentEle.clientHeight - triggerEle.clientHeight;
+
+        if (newTop - 60 < 0) newTop = 60;
+
+        contentPos.top = newTop;
       }
 
       if (animationEle) {
@@ -243,9 +253,6 @@ export function MyPopupContent({
         animationEle.style.transformOrigin = finalOrigin;
       }
     }
-
-    // const isOverScreenWidth =
-    //   contentPos.left + contentEle.clientHeight > window.innerHeight - 90;
 
     contentEle.style.left = `${contentPos.left}px`;
     contentEle.style.top = `${contentPos.top}px`;
@@ -260,7 +267,7 @@ export function MyPopupContent({
 
   const content = (
     <div
-      ref={refs.setContentRef}
+      ref={setContentRef}
       className={`${appendOnPortal ? "fixed z-[99]" : "absolute"} ${className || ""}`}
     >
       <div

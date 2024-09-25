@@ -123,12 +123,13 @@ export default function PLaylistInfo({ loading, type }: Props) {
           <>
             <Button
               onClick={handlePlayPlaylist}
-              className={`rounded-full px-[20px] py-[6px] ${theme.content_bg} ${
+              size={"clear"}
+              className={`rounded-full px-[20px] py-1 ${theme.content_bg} ${
                 !currentPlaylist.song_ids.length && "disable"
               }`}
             >
               <PlayIcon className="w-[22px]" />
-              <span className="font-playwriteCU">Play</span>
+              <span className="font-playwriteCU leading-[2.2]">Play</span>
             </Button>
             <Button
               onClick={() => openModal("delete")}
@@ -149,6 +150,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
         return (
           <Button
             onClick={handlePlayPlaylist}
+            size={"clear"}
             className={`rounded-full px-[20px] space-x-1 py-1 ${theme.content_bg} ${
               !currentPlaylist.song_ids.length && "disable"
             }`}
