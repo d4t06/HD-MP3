@@ -60,7 +60,7 @@ export default function DashboardHeader() {
   }, [modal]);
 
   const classes = {
-    header: `${theme.side_bar_bg} fixed top-0 z-10 left-0 right-0`,
+    header: `${theme.side_bar_bg}`,
     container: "container mx-auto px-[40px] flex justify-between items-center h-[50px]",
     avatarFrame: "w-[34px] h-[34px] rounded-full",
     settingBtn: ` flex ml-[12px] justify-center items-center hover:brightness-75 bg-${theme.alpha}`,

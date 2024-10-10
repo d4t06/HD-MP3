@@ -135,7 +135,7 @@ export default function DashBoard() {
 
    return (
       <>
-         <div className={`container mx-auto pb-[60px]`}>
+         <div className={`pb-[100px]`}>
             {/* tabs */}
             <div className="mb-[20px]">
                <Button

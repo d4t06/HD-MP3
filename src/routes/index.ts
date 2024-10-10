@@ -1,6 +1,6 @@
 import DashBoardLayout from "../layout/DashBoardLayout";
 
-import { Home, Edit, Dashboard, PlaylistDetail, MySongs, DashboardEdit } from "../pages";
+import { Home, Dashboard, PlaylistDetail, MySongs, DashboardSongLyric, SongLyric } from "../pages";
 
 const routes = {
    Home: "/",
@@ -24,7 +24,7 @@ const publicRoutes = [
    { path: routes.MySongs, component: MySongs, layout: "" },
    { path: routes.Playlist, component: PlaylistDetail, layout: "" },
 
-   { path: routes.Edit, component: Edit, layout: "" },
+   { path: routes.Edit, component: SongLyric, layout: "" },
 ];
 
 const privateRoutes = [
@@ -34,7 +34,7 @@ const privateRoutes = [
       component: PlaylistDetail,
       layout: DashBoardLayout,
    },
-   { path: routes.DashboardEdit, component: DashboardEdit, layout: DashBoardLayout },
+   { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },
 ];
 
 export { publicRoutes, privateRoutes, routes };

@@ -1,4 +1,4 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   ChevronDoubleLeftIcon,
@@ -31,7 +31,7 @@ import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 
 type Props = {
   theme: ThemeType & { alpha: string };
-  audioRef: RefObject<HTMLAudioElement>;
+  audioEle: HTMLAudioElement;
   lyric: Lyric;
   song: Song;
   admin?: boolean;
@@ -39,7 +39,7 @@ type Props = {
 
 type Modal = "tutorial" | "add-base-lyric" | "delete-lyric" | "confirm-navigate";
 
-export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Props) {
+export default function LyricEditor({ audioEle, theme, song, admin, lyric }: Props) {
   //   store
   const { userSongs, setUserSongs } = useSongsStore();
 
@@ -94,28 +94,17 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   const isCanPlay = useMemo(() => !!baseLyricArr.length, [baseLyricArr]);
 
   const play = () => {
-    const audioEle = audioRef.current;
-    if (audioEle) {
-      audioEle.play();
-      setIsPlaying(true);
-      setIsClickPlay(true);
-    }
+    audioEle.play();
+    setIsPlaying(true);
+    setIsClickPlay(true);
   };
   const pause = () => {
-    const audioEle = audioRef.current;
-
-    if (audioEle) {
-      audioEle.pause();
-      setIsPlaying(false);
-    }
+    audioEle.pause();
+    setIsPlaying(false);
   };
   const handlePlaySpeed = (speed: number) => {
-    const audioEle = audioRef.current;
-
-    if (audioEle) {
-      audioEle.playbackRate = speed;
-      setPlaySpeed(speed);
-    }
+    audioEle.playbackRate = speed;
+    setPlaySpeed(speed);
 
     triggerRef.current?.close();
   };
@@ -126,18 +115,12 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   };
 
   const handleSetTime = (time: number) => {
-    const audioEle = audioRef.current;
-    if (audioEle) {
-      audioEle.currentTime = time;
-    }
+    audioEle.currentTime = time;
   };
 
   const addLyric = useCallback(() => {
     // if song no has lyric
     if (!baseLyricArr.length) return;
-
-    const audioEle = audioRef.current;
-    if (!audioEle) return;
 
     // if end of the song
     if (isFinish) return;
@@ -164,17 +147,14 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
 
   const removeLyric = () => {
     if (currentLyricIndex <= 0) return;
-    const audioEle = audioRef.current;
 
-    if (audioEle) {
-      start.current = realTimeLyrics[currentLyricIndex - 1].start;
-      end.current = 0;
+    start.current = realTimeLyrics[currentLyricIndex - 1].start;
+    end.current = 0;
 
-      const previousLyricResult = realTimeLyrics.slice(0, currentLyricIndex - 1);
+    const previousLyricResult = realTimeLyrics.slice(0, currentLyricIndex - 1);
 
-      setRealTimeLyrics(previousLyricResult);
-      setCurrentLyricIndex(currentLyricIndex - 1);
-    }
+    setRealTimeLyrics(previousLyricResult);
+    setCurrentLyricIndex(currentLyricIndex - 1);
   };
 
   const updateSongStore = (song: Song) => {
@@ -260,7 +240,6 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   };
 
   const seekSong = (direction: "next" | "prev") => {
-    const audioEle = audioRef.current as HTMLAudioElement;
     if (direction === "next") audioEle.currentTime += 2;
     else audioEle.currentTime -= 2;
   };
@@ -284,9 +263,6 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
   }, [baseLyric]);
 
   useEffect(() => {
-    const audioEle = audioRef.current;
-    if (!audioEle) return;
-
     if (realTimeLyrics.length) {
       const latestTime = realTimeLyrics[realTimeLyrics.length - 1].end;
 
@@ -583,7 +559,11 @@ export default function LyricEditor({ audioRef, theme, song, admin, lyric }: Pro
         Delete
       </Button>
 
-      <Modal ref={modalRef} variant="animation" className="w-[700px] max-w-[calc(100vw-40px)]">
+      <Modal
+        ref={modalRef}
+        variant="animation"
+        className="w-[700px] max-w-[calc(100vw-40px)]"
+      >
         {renderModal}
       </Modal>
     </div>
