@@ -18,7 +18,7 @@ import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
-import useAudioControl from "./useAudioControl";
+import usePlayerControl from "./usePlayerControl";
 
 interface Props {
   audioEle: HTMLAudioElement;
@@ -60,7 +60,7 @@ export default function useAudioEvent({
   const intervalId = useRef<NodeJS.Timeout>(); // for update local storage
 
   // use hook
-  const { handleNext } = useAudioControl({ audioEle });
+  const { handleNext } = usePlayerControl();
   const location = useLocation();
   const { setErrorToast } = useToast();
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -297,7 +297,7 @@ export default function useAudioEvent({
     if (currentSong.name) {
       if (queueSongs.length > 1) {
         handleNext();
-        setErrorToast({ message: "Có lỗi do đường truyền mạng" });
+        setErrorToast("Có lỗi do đường truyền mạng");
       } else dispatch(setPlayStatus({ isWaiting: false, isError: true }));
     }
   }, [someThingToTriggerError]);

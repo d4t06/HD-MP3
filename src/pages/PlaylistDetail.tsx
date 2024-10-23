@@ -7,54 +7,56 @@ import PLaylistInfo from "@/components/PlaylistInfo";
 import { SongItemSkeleton } from "@/components/skeleton";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
 import { useLocation } from "react-router-dom";
+import Footer from "@/components/Footer";
 
 export default function PlaylistDetail() {
-   // us store
-   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
-   // hooks
-   const { loading: usePlaylistLoading } = usePlaylistDetail();
-   const variant = useLocation();
+  // us store
+  const { currentPlaylist } = useSelector(selectCurrentPlaylist);
+  // hooks
+  const { loading: usePlaylistLoading } = usePlaylistDetail();
+  const variant = useLocation();
 
-   const isInDashboard = useMemo(
-      () => variant.pathname.includes("/dashboard/playlist"),
-      [variant]
-   );
+  const isInDashboard = useMemo(
+    () => variant.pathname.includes("/dashboard/playlist"),
+    [variant]
+  );
 
-   const renderPlaylistInfo = useMemo(() => {
-      if (isInDashboard)
-         return <PLaylistInfo loading={usePlaylistLoading} type="dashboard-playlist" />;
+  const renderPlaylistInfo = useMemo(() => {
+    if (isInDashboard)
+      return <PLaylistInfo loading={usePlaylistLoading} type="dashboard-playlist" />;
 
-      if (currentPlaylist.by === "admin")
-         return <PLaylistInfo loading={usePlaylistLoading} type="admin-playlist" />;
+    if (currentPlaylist.by === "admin")
+      return <PLaylistInfo loading={usePlaylistLoading} type="admin-playlist" />;
 
-      return <PLaylistInfo loading={usePlaylistLoading} type="my-playlist" />;
-   }, [usePlaylistLoading]);
+    return <PLaylistInfo loading={usePlaylistLoading} type="my-playlist" />;
+  }, [usePlaylistLoading]);
 
-   const renderSongList = useMemo(() => {
-      if (usePlaylistLoading)
-         return (
-            <>
-               <div className="h-[30px] mb-[10px] flex items-center">
-                  <Skeleton className="h-[20px] w-[90px]" />
-               </div>
+  const renderSongList = useMemo(() => {
+    if (usePlaylistLoading)
+      return (
+        <>
+          <div className="h-[30px] mb-[10px] flex items-center">
+            <Skeleton className="h-[20px] w-[90px]" />
+          </div>
 
-               {SongItemSkeleton}
-            </>
-         );
+          {SongItemSkeleton}
+        </>
+      );
 
-      if (isInDashboard) return <PlaylistDetailSongList variant="dashboard-playlist" />;
+    if (isInDashboard) return <PlaylistDetailSongList variant="dashboard-playlist" />;
 
-      if (currentPlaylist.by === "admin")
-         return <PlaylistDetailSongList variant="admin-playlist" />;
-      else return <PlaylistDetailSongList variant="my-playlist" />;
-   }, [usePlaylistLoading]);
+    if (currentPlaylist.by === "admin")
+      return <PlaylistDetailSongList variant="admin-playlist" />;
+    else return <PlaylistDetailSongList variant="my-playlist" />;
+  }, [usePlaylistLoading]);
 
-   return (
-      <div className="min-h-screen">
-         <BackBtn />
+  return (
+    <div className="md:pb-[90px]">
+      <BackBtn />
 
-         {renderPlaylistInfo}
-         <div className="pb-[50px] mt-[20px]">{renderSongList}</div>
-      </div>
-   );
+      {renderPlaylistInfo}
+      <div className="mt-[30px]">{renderSongList}</div>
+      <Footer />
+    </div>
+  );
 }

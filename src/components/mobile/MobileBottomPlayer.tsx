@@ -11,6 +11,7 @@ import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
 import useAudioControl from "@/hooks/useAudioControl";
+import usePlayerControl from "@/hooks/usePlayerControl";
 
 interface Props {
   audioEle: HTMLAudioElement;
@@ -28,9 +29,9 @@ const MobileBottomPlayer: FC<Props> = ({
   const {
     handleNext,
     currentSong,
-    handlePlayPause,
     playStatus: { isPlaying, isWaiting, isError },
-  } = useAudioControl({ audioEle });
+  } = usePlayerControl();
+  const { handlePlayPause } = useAudioControl({ audioEle });
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);

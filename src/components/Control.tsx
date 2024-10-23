@@ -9,7 +9,7 @@ import { useTheme } from "../store";
 
 import PlayPauseButton from "./child/PlayPauseButton";
 import useAudioEvent from "../hooks/useAudioEvent";
-import useAudioControl from "@/hooks/useAudioControl";
+import usePlayerControl from "@/hooks/usePlayerControl";
 
 interface Props {
   admin?: boolean;
@@ -33,9 +33,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     playStatus: { isRepeat, isShuffle, isError, isWaiting },
     currentSong,
     queueSongs,
-  } = useAudioControl({
-    audioEle,
-  });
+  } = usePlayerControl();
 
   const { handleSeek, handlePlayPause } = useAudioEvent({
     audioEle,
@@ -46,10 +44,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
 
   const classes = {
     button: `p-1`,
-    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${admin ? 'hidden' : ''}`,
-    progressContainer: `flex w-full flex-row items-center   ${
-      admin ? "h-full" : ""
+    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
+      admin ? "hidden" : ""
     }`,
+    progressContainer: `flex w-full flex-row items-center   ${admin ? "h-full" : ""}`,
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
     processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
     currentTime: `opacity-60 text-[14px] font-semibold`,
@@ -105,7 +103,11 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       </div>
 
       {/* process */}
-      <div className={`${classes.progressContainer} ${isOpenFullScreen ? 'mb-0' : 'mb-5 sm:mb-2'} ${isError ? "disable" : ""}`}>
+      <div
+        className={`${classes.progressContainer} ${
+          isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
+        } ${isError ? "disable" : ""}`}
+      >
         <div className="w-[44px] sm:w-[36px]">
           {audioEle && (
             <span ref={currentTimeRef} className={`text-lg sm:text-sm`}>
@@ -115,7 +117,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
         </div>
         <div
           ref={timelineRef}
-          style={{background: '#e1e1e1'}}
+          style={{ background: "#e1e1e1" }}
           onClick={(e) => handleSeek(e)}
           className={`${classes.processLineBase} ${isWaiting ? "disable" : ""}  ${
             classes.before

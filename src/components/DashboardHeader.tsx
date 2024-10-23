@@ -1,10 +1,10 @@
 import { useTheme } from "../store";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase";
+// import { useAuthState } from "react-firebase-hooks/auth";
+// import { auth } from "../firebase";
 
 import { useMemo, useRef, useState } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { AppInfo, Appearance, ConfirmModal, Modal, SettingMenu } from ".";
+import { AppInfo, Appearance, Button, ConfirmModal, Modal, SettingMenu } from ".";
 
 import { useAuthActions } from "@/store/AuthContext";
 import { Link } from "react-router-dom";
@@ -15,7 +15,7 @@ type Modal = "logout" | "info" | "theme";
 
 export default function DashboardHeader() {
   const { theme } = useTheme();
-  const [loggedInUser] = useAuthState(auth);
+//   const [loggedInUser] = useAuthState(auth);
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -60,10 +60,8 @@ export default function DashboardHeader() {
   }, [modal]);
 
   const classes = {
-    header: `${theme.side_bar_bg}`,
-    container: "container mx-auto px-[40px] flex justify-between items-center h-[50px]",
-    avatarFrame: "w-[34px] h-[34px] rounded-full",
-    settingBtn: ` flex ml-[12px] justify-center items-center hover:brightness-75 bg-${theme.alpha}`,
+    header: `${theme.side_bar_bg} fixed top-0 w-full z-[99]`,
+    container: "container flex justify-between items-center h-[60px]",
   };
 
   return (
@@ -75,49 +73,33 @@ export default function DashboardHeader() {
             <span className={`${theme.content_text} ml-[4px] uppercase`}>Dashboard</span>
           </Link>
 
-          <div className="flex items-center">
-            {loggedInUser?.displayName && (
+          {/* <div className="flex items-center"> */}
+          {/* {loggedInUser?.displayName && (
               <p className="text-[14px] mr-[8px]">{loggedInUser.displayName}</p>
-            )}
-            <div className={`${classes.avatarFrame} overflow-hidden `}>
-              {loggedInUser?.photoURL && (
-                <img src={loggedInUser.photoURL!} className="w-full" alt="" />
-              )}
-            </div>
+            )} */}
 
-            {/* <Popover placement="bottom-end">
-                     <PopoverTrigger
-                        className={`${classes.avatarFrame} ${classes.settingBtn}`}
-                     >
-                        <Cog6ToothIcon className="w-[24px]" />
-                     </PopoverTrigger>
-
-                     <PopoverContent>
-                        <SettingMenu
-                           loggedIn={false}
-                           openModal={openModal}
-                        />
-                     </PopoverContent>
-                  </Popover> */}
-
-            <MyPopup>
-              <MyPopupTrigger>
-                <button className={`${classes.avatarFrame} ${classes.settingBtn}`}>
-                  <Cog6ToothIcon className="w-[24px]" />
-                </button>
-              </MyPopupTrigger>
-
-              <MyPopupContent
-                className="top-[calc(100%+8px)] right-0"
-                animationClassName="origin-top-right"
-                appendTo="parent"
+          <MyPopup>
+            <MyPopupTrigger>
+              <Button
+                size={"clear"}
+                variant={"circle"}
+                className={`p-2 ${theme.content_hover_bg} bg-${theme.alpha}`}
               >
-                <SettingMenu loggedIn={false} openModal={openModal} />
-              </MyPopupContent>
-            </MyPopup>
-          </div>
+                <Cog6ToothIcon className="w-6" />
+              </Button>
+            </MyPopupTrigger>
+
+            <MyPopupContent
+              className="top-[calc(100%+8px)] right-0"
+              animationClassName="origin-top-right"
+              appendTo="parent"
+            >
+              <SettingMenu loggedIn={false} openModal={openModal} />
+            </MyPopupContent>
+          </MyPopup>
         </div>
       </div>
+      {/* </div> */}
 
       <Modal variant="animation" ref={modalRef}>
         {renderModal}

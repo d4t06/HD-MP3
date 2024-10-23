@@ -2,11 +2,11 @@
 function Footer() {
    const classes = {
       container: `my-[30px] flex flex-col md:flex-row md:justify-between items-start`,
-      icon: "w-[26px] sm:w-[20px] scale-[1] hover:scale-[1.1] transition linear ",
-      copyRightText: "text-[14px]",
+      icon: "w-[26px] sm:w-5 scale-[1] hover:scale-[1.1] transition linear ",
+      copyRightText: "text-sm",
    };
    return (
-      <div className={`${classes.container}`}>
+      <div className={`${classes.container}`}>  
          <p className={classes.copyRightText}>Make with ❤️ by d4t06 <br/> © All rights no reserved ¯\_(ツ)_/¯</p>
 
          <div className="flex mt-[20px] md:mt-0 space-x-[10px]">

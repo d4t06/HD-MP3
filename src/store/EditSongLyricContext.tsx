@@ -1,9 +1,10 @@
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
 const useEditLyric = () => {
+  const [song, setSong] = useState<Song>();
   const [baseLyric, setBaseLyric] = useState<string>("");
   const [baseLyricArr, setBaseLyricArr] = useState<string[]>([]);
-  const [lyrics, setLyrics] = useState<Lyric[]>([]);
+  const [lyrics, setLyrics] = useState<RealTimeLyric[]>([]);
   const [currentLyricIndex, setCurrentLyricIndex] = useState<number>(0);
   const [isFetching, setIsFetching] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
@@ -20,6 +21,8 @@ const useEditLyric = () => {
   };
 
   return {
+    song,
+    setSong,
     baseLyric,
     setBaseLyric,
     baseLyricArr,

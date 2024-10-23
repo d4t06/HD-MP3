@@ -5,18 +5,7 @@ import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectCurrentSong } from "@/store/currentSongSlice";
-
-// const LyricListVariant = cva("no-scrollbar pt-[20px] mask-image", {
-//   variants: {
-//     _className: {
-//       primary: "overflow-y-auto overflow-x-hidden",
-//       clear: "",
-//     },
-//   },
-//   defaultVariants: {
-//     _className: "primary",
-//   },
-// });
+import { LyricStatus } from "./LyricEditor";
 
 interface Props {
   audioEle: HTMLAudioElement;
@@ -62,25 +51,28 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
   };
 
   const renderItem = () => {
-    return songLyric.real_time.map((lyricItem, index) => {
+    return songLyric.real_time.map((l, index) => {
       const bounce = 0.5;
       // display lyric early
       // ex start: 10 - 2s
       //    end: 20 - 2s
-      const inRange =
-        currentTime >= lyricItem.start - bounce && currentTime < lyricItem.end - bounce;
+      const inRange = currentTime >= l.start - bounce && currentTime < l.end - bounce;
+
+      let status: LyricStatus = "coming";
+
+      if (inRange && currentTime) status = "active";
+      else if (currentTime > l.end - bounce) status = "done";
+
       return (
         <LyricItem
+          status={status}
           key={index}
-          done={!inRange && currentTime > lyricItem.end - bounce}
-          active={inRange}
+          text={l.text}
           scrollBehavior={scrollBehavior}
-          className={`${lyricSizeMap[lyricSize || "medium"]} ${
+          className={`font-[700] ${lyricSizeMap[lyricSize || "medium"]} ${
             inRange ? "active" : ""
           } mb-[30px]`}
-        >
-          {lyricItem.text}
-        </LyricItem>
+        />
       );
     });
   };

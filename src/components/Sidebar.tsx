@@ -54,7 +54,7 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`${classes.container} ${classes.text}`}>
+    <div className={`hidden md:block ${classes.container} ${classes.text}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
         <Link to={"/"} className="text-[24px] font-bold">
           HD

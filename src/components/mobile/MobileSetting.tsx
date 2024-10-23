@@ -66,42 +66,40 @@ export default function MobileSetting() {
 
   return (
     <>
-      <div className="pb-[30px]">
-        <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>
+      <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>
 
-        {user && (
-          <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-2`}>
-            <Avatar className="h-[65px] w-[65px]" />
-            <div className="ml-3">
-              <p className="text-lg font-[500]">{user.display_name}</p>
-              <p className="opacity-70 font-[500]">Vip member ❤️</p>
-            </div>
+      {user && (
+        <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-2`}>
+          <Avatar className="h-[65px] w-[65px]" />
+          <div className="ml-3">
+            <p className="text-lg font-[500]">{user.display_name}</p>
+            <p className="opacity-70 font-[500]">Vip member ❤️</p>
           </div>
-        )}
+        </div>
+      )}
 
-        {userLoading ? (
-          [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
-        ) : (
-          <div className="">
-            <button className={classes.linkItem} onClick={() => openModal("theme")}>
-              <PaintBrushIcon className={classes.icon} />
-              <span>Theme</span>
+      {userLoading ? (
+        [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
+      ) : (
+        <div className="">
+          <button className={classes.linkItem} onClick={() => openModal("theme")}>
+            <PaintBrushIcon className={classes.icon} />
+            <span>Theme</span>
+          </button>
+
+          <button className={classes.linkItem} onClick={() => openModal("info")}>
+            <InformationCircleIcon className={classes.icon} />
+            <span>Info</span>
+          </button>
+
+          {user && (
+            <button className={classes.linkItem} onClick={() => openModal("logout")}>
+              <ArrowRightOnRectangleIcon className={classes.icon} />
+              <span>Logout</span>
             </button>
-
-            <button className={classes.linkItem} onClick={() => openModal("info")}>
-              <InformationCircleIcon className={classes.icon} />
-              <span>Info</span>
-            </button>
-
-            {user && (
-              <button className={classes.linkItem} onClick={() => openModal("logout")}>
-                <ArrowRightOnRectangleIcon className={classes.icon} />
-                <span>Logout</span>
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {
         <Modal ref={modalRef} variant="animation">

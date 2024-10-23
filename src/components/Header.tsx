@@ -116,9 +116,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`${theme.container} ${
-          scroll ? "shadow-lg" : ""
-        } h-[60px] fixed right-0 ${scroll ? "bg-transparent" : ""} left-[180px] z-[20]`}
+        className={`hidden md:block h-[60px] fixed top-0 right-0 left-[180px] z-[20] ${
+          theme.container
+        } ${scroll ? "shadow-lg bg-transparent" : ""}`}
       >
         <div
           className={`${scroll ? "" : "hidden "} absolute  inset-0 ${
@@ -147,17 +147,6 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 <SettingMenu openModal={openModal} loggedIn={false} />
               </MyPopupContent>
             </MyPopup>
-
-            {/* <Popover placement="bottom-end">
-              <PopoverTrigger
-                className={`flex login-trigger items-center hover:brightness-75 ${classes.button}`}
-              >
-                {loading ? AvatarSkeleton : <Avatar />}
-              </PopoverTrigger>
-              <PopoverContent>
-                
-              </PopoverContent>
-            </Popover> */}
 
             <MyPopup>
               <MyPopupTrigger className="flex items-center">

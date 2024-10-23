@@ -1,4 +1,11 @@
-import { ButtonHTMLAttributes, FC, MouseEventHandler, ReactNode } from "react";
+import {
+  ButtonHTMLAttributes,
+  ElementRef,
+  MouseEventHandler,
+  ReactNode,
+  Ref,
+  forwardRef,
+} from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
@@ -6,18 +13,17 @@ const buttonVariant = cva("inline-flex font-[500] items-center ", {
   variants: {
     variant: {
       default: "",
-      circle: "rounded-[99px] justify-center",
+      circle: "rounded-full",
       list: "flex items-center py-[5px] w-full",
-      primary: "px-[16px] py-[4px]",
       outline: `border rounded-full`,
+      primary: "",
     },
     size: {
-      clear: "",
+      primary: "px-4 py-[6px]",
+      small: "px-2 py-1",
       half: "w-1/2",
       full: "w-full",
-      small: "px-[10px] py-[3px]",
-      normal: "px-[16px] py-[4px]",
-      large: "h-[40px] w-[40px]",
+      clear: "",
     },
     hover: {
       default: "hover:brightness-90",
@@ -27,7 +33,7 @@ const buttonVariant = cva("inline-flex font-[500] items-center ", {
   },
   defaultVariants: {
     variant: "default",
-    size: "normal",
+    size: "primary",
     hover: "default",
   },
 });
@@ -40,29 +46,33 @@ interface Props
   onClick?: MouseEventHandler;
 }
 
-const Button: FC<Props> = ({
-  className,
-  children,
-  variant,
-  size,
-  disabled,
-  isLoading,
-  hover,
-  onClick,
-  ...props
-}) => {
+function Button(
+  {
+    className,
+    children,
+    variant,
+    size,
+    disabled,
+    isLoading,
+    hover,
+    onClick,
+    ...props
+  }: Props,
+  ref: Ref<ElementRef<"button">>
+) {
   return (
     <button
+      ref={ref}
       type="button"
       onClick={(e) => (onClick ? onClick(e) : "")}
       {...props}
       className={buttonVariant({ variant, size, hover, className })}
       disabled={isLoading || disabled}
     >
-      {isLoading ? <ArrowPathIcon className="w-[22px] animate-spin" /> : null}
+      {isLoading ? <ArrowPathIcon className="w-6 animate-spin" /> : null}
       {!isLoading && children}
     </button>
   );
-};
+}
 
-export default Button;
+export default forwardRef(Button);

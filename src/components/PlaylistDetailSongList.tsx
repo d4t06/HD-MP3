@@ -59,7 +59,7 @@ export default function PlaylistDetailSongList({ variant }: Props) {
       await deleteSongFromPlaylist(song);
     } catch (error) {
       console.log(error);
-      setErrorToast({});
+      setErrorToast("");
     }
   };
 
@@ -110,10 +110,8 @@ export default function PlaylistDetailSongList({ variant }: Props) {
               <Button
                 onClick={() => modalRef.current?.toggle()}
                 className={`${theme.content_bg} rounded-full`}
-                variant={"primary"}
-                size={"clear"}
               >
-                <PlusIcon className="w-6 mr-[5px]" />
+                <PlusIcon className="w-6 mr-1" />
                 <span className="font-playwriteCU leading-[2.2] text-sm">Add song</span>
               </Button>
             </div>

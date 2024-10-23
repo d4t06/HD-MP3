@@ -1,7 +1,8 @@
 import { useSongsStore, useAuthStore, useTheme } from "../store";
 import { useInitSong } from "../hooks";
-import {PlaylistList, HomeSongList} from "../components";
+import { PlaylistList, HomeSongList } from "../components";
 import { MobileNav, MobileSetting } from "@/components";
+import Footer from "@/components/Footer";
 
 export default function HomePage() {
   // store
@@ -13,7 +14,7 @@ export default function HomePage() {
   const { loading: useSongLoading } = useInitSong({});
 
   return (
-    <>
+    <div className="md:pb-[80px]">
       {isOnMobile && <MobileNav />}
       <div className="pb-[30px]">
         <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
@@ -24,11 +25,11 @@ export default function HomePage() {
           location="home"
         />
       </div>
-      <div className="pb-[30px]">
-        <HomeSongList loading={useSongLoading} />
-      </div>
+      <HomeSongList loading={useSongLoading} />
 
       {isOnMobile && <MobileSetting />}
-    </>
+
+      <Footer />
+    </div>
   );
 }

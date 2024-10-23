@@ -8,14 +8,13 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <div
-        className={`${theme.container} fixed inset-0 flex flex-col ${
+        className={`${theme.container} fixed inset-0  ${
           theme.type === "dark" ? "text-white" : "text-[#333]"
         }`}
       >
         <DashboardHeader />
-        <div className="flex-grow flex flex-col no-scrollbar overflow-auto">
-         <div className="mt-[60px]"></div>
-          <div className="container mx-[auto] px-10">{children}</div>
+        <div className="h-full  pt-[60px] overflow-auto no-scrollbar">
+          <div className="container max-w-[800px] h-full">{children}</div>
         </div>
 
         <Player admin />
