@@ -72,7 +72,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     dispatch(addSongToQueue({ songs: [song] }));
     closeMenu();
 
-    setSuccessToast({ message: `Song added to queue` });
+    setSuccessToast(`Song added to queue`);
   };
 
   // define style

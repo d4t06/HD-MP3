@@ -8,14 +8,14 @@ type Props = {
 
 export default function useVinyl({ vinylRef }: Props) {
    const {
-      playStatus: { isPlaying },
+      playStatus: { playStatus },
    } = useSelector(selectAllPlayStatusStore);
 
    useEffect(() => {
       const vinylEle = vinylRef.current;
       if (!vinylEle) return;
 
-      if (isPlaying) vinylEle.style.animationPlayState = "running";
+      if (playStatus === "playing") vinylEle.style.animationPlayState = "running";
       else vinylEle.style.animationPlayState = "paused";
-   }, [isPlaying]);
+   }, [playStatus === "playing"]);
 }

@@ -47,7 +47,7 @@ type Playlist = {
   by: "admin" | string;
 };
 
-type Lyric = {
+type SongLyric = {
   id: string;
   base: string;
   real_time: RealTimeLyric[];

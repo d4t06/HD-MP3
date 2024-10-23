@@ -39,7 +39,7 @@ export default function useAudioEvent({
   const { user } = useAuthStore();
   const { queueSongs } = useSelector(selectSongQueue);
   const {
-    playStatus: { isPlaying, isRepeat, isShuffle, isCrossFade },
+    playStatus: { playStatus, isRepeat, isShuffle, isCrossFade },
   } = useSelector(selectAllPlayStatusStore);
 
   const { currentSong } = useSelector(selectCurrentSong);
@@ -57,7 +57,6 @@ export default function useAudioEvent({
   const themeCode = useRef(theme.content_code); // for update timeline background
   const isEndOfList = useRef(false); // handle end song
   const isPlayingNewSong = useRef(true); // for cross fade
-  const intervalId = useRef<NodeJS.Timeout>(); // for update local storage
 
   // use hook
   const { handleNext } = usePlayerControl();
@@ -65,17 +64,16 @@ export default function useAudioEvent({
   const { setErrorToast } = useToast();
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
-  const play = () => {
+  const play = async () => {
     try {
-      audioEle.play();
+      firstTimeSongLoaded.current = false;
+
+      await audioEle.play();
 
       if (!user) return;
-
       if (isPlayingNewSong.current) {
         if (isCrossFade) audioEle.volume = 0;
-
         isPlayingNewSong.current = false;
-        // setSomeThingToUpdateHistory(Math.floor(Math.random() * 10));
       }
     } catch (error) {}
   };
@@ -89,23 +87,18 @@ export default function useAudioEvent({
   };
 
   const handlePlayPause = useCallback(() => {
-    isPlaying ? pause() : play();
-  }, [isPlaying]);
+    playStatus === "playing" ? pause() : playStatus === "paused" && play();
+  }, [playStatus]);
 
   const handlePause = () => {
-    dispatch(setPlayStatus({ isPlaying: false }));
-
-    if (intervalId.current) clearInterval(intervalId.current);
+    dispatch(setPlayStatus({ playStatus: "paused" }));
   };
 
   const handlePlaying = () => {
-    firstTimeSongLoaded.current = false;
-    dispatch(setPlayStatus({ isPlaying: true, isWaiting: false, isError: false }));
+    dispatch(setPlayStatus({ playStatus: "playing" }));
   };
 
   const handleResetForNewSong = () => {
-    // setIsLoaded(false);
-
     if (!firstTimeSongLoaded.current) setLocalStorage("duration", 0);
 
     if (timelineRef.current && currentTimeRef.current && remainingTimeRef.current) {
@@ -166,23 +159,31 @@ export default function useAudioEvent({
     }
   };
 
+  const updateTimeProgressEle = (time: number) => {
+    const timeLine = timelineRef.current;
+    const currentTimeEle = currentTimeRef.current;
+
+    if (audioEle.duration && timeLine) {
+      const ratio = time / (audioEle.duration / 100);
+      timeLine.style.background = `linear-gradient(to right, #fde68a ${ratio}%, rgba(255,255,255, .3) ${ratio}%, rgba(255,255,255, .3) 100%)`;
+    }
+
+    if (currentTimeEle) currentTimeEle.innerText = formatTime(time) || "0:00";
+  };
+
   const handleTimeUpdate = () => {
     const currentTime = audioEle.currentTime;
-    const timeLine = timelineRef.current as HTMLElement;
 
-    if (audioEle.duration && currentTime && timeLine) {
-      const ratio = currentTime / (audioEle.duration / 100);
-      timeLine.style.background = `linear-gradient(to right, ${themeCode.current} ${ratio}%, #e1e1e1 ${ratio}%, #e1e1e1 100%)`;
-    }
-
-    if (currentTimeRef.current) {
-      currentTimeRef.current.innerText = formatTime(currentTime!) || "00:00";
-    }
+    updateTimeProgressEle(currentTime);
 
     if (isCrossFade) handleFade(currentTime);
+
+    if (Math.round(currentTime) % 3 === 0)
+      setLocalStorage("duration", Math.round(currentTime));
   };
 
   const handleEnded = () => {
+    if (!currentSong) return;
     const storage = getLocalStorage();
     const volInStore = storage["volume"] || 1;
 
@@ -218,7 +219,15 @@ export default function useAudioEvent({
     return handleNext();
   };
 
+  const handleLoadStart = () => {
+    console.log("load start");
+
+    dispatch(setPlayStatus({ playStatus: "loading" }));
+  };
+
   const handleLoaded = () => {
+    console.log("loaded");
+
     const remainingTimeEle = remainingTimeRef.current as HTMLDivElement;
     const audioDuration = audioEle.duration;
 
@@ -238,32 +247,42 @@ export default function useAudioEvent({
     // case end of list
     if (isEndOfList.current) {
       isEndOfList.current = false;
-      dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
+      dispatch(setPlayStatus({ playStatus: "paused" }));
       return;
     }
 
     if (isInEdit || firstTimeSongLoaded.current) {
-      dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
+      console.log("go here");
+
+      dispatch(setPlayStatus({ playStatus: "paused" }));
 
       if (firstTimeSongLoaded.current) {
-        firstTimeSongLoaded.current = false;
+        /** update 23/10/2024
+         *  update it when click play button
+         */
+        // firstTimeSongLoaded.current = false;
 
         // if user have play any song before
         // on the other hand the localStore have current song value
         // then update audio current time
-        if (currentSongLocal && currentSongLocal.id === currentSong.id) {
-          audioEle.currentTime = storage["duration"] || 0;
+
+        /** update 23/10/2024
+         * do not update song' current time here
+         * cause' it cause error on iphone
+         * update it when user click play song
+         */
+        if (currentSongLocal && currentSongLocal.id === currentSong?.id) {
           // update time line ui
-          handleTimeUpdate();
+          updateTimeProgressEle(storage["duration"] || 0);
           return;
         }
-
-        console.log("play");
 
         // the first time user click any song
         // the current song in localStorage is empty
         // then play the song
-        play();
+        // play();
+
+        // return;
       }
     }
 
@@ -277,16 +296,22 @@ export default function useAudioEvent({
 
   // add events listener
   useEffect(() => {
+    if (!currentSong) firstTimeSongLoaded.current = false;
+
     audioEle.addEventListener("error", handleError);
     audioEle.addEventListener("pause", handlePause);
     audioEle.addEventListener("playing", handlePlaying);
+    audioEle.addEventListener("loadstart", handleLoadStart);
+    /** should not add 'waiting event'
+     * is cause error on iphone
+     */
     // audioEle.addEventListener("waiting", handleWaiting);
 
     return () => {
       audioEle.removeEventListener("error", handleError);
       audioEle.removeEventListener("pause", handlePause);
       audioEle.removeEventListener("playing", handlePlaying);
-      // audioEle.removeEventListener("waiting", handleWaiting);
+      audioEle.removeEventListener("loadstart", handleLoadStart);
     };
   }, []);
 
@@ -294,61 +319,54 @@ export default function useAudioEvent({
   useEffect(() => {
     if (!someThingToTriggerError) return;
     if (firstTimeSongLoaded.current) return;
-    if (currentSong.name) {
+    if (currentSong?.name) {
       if (queueSongs.length > 1) {
         handleNext();
-        setErrorToast("Có lỗi do đường truyền mạng");
-      } else dispatch(setPlayStatus({ isWaiting: false, isError: true }));
+        setErrorToast("Found internet error");
+      } else dispatch(setPlayStatus({ playStatus: "error" }));
     }
   }, [someThingToTriggerError]);
 
   // update audio src, currentIndex, reset song
   useEffect(() => {
-    if (!currentSong.name) {
-      dispatch(setPlayStatus({ isWaiting: false, isPlaying: false }));
+    if (!currentSong) {
+      dispatch(setPlayStatus({ playStatus: "paused" }));
       return;
     }
 
-    pause();
-    dispatch(setPlayStatus({ isWaiting: true, isError: false, isPlaying: false }));
-
     audioEle.src = currentSong.song_url;
     currentIndex.current = currentSong.currentIndex;
-
-    if (currentSong.name) {
-      document.title = `${currentSong.name} - ${currentSong.singer}`;
-    }
+    document.title = `${currentSong.name} - ${currentSong.singer}`;
 
     return () => {
       handleResetForNewSong();
-      clearInterval(intervalId.current);
       isPlayingNewSong.current = true;
     };
 
     // use combine dependencies in other to prevent reload after edit song
-  }, [currentSong.id + currentSong.song_in + currentSong.currentIndex]);
+  }, [currentSong]);
 
   // update site title
   useEffect(() => {
-    if (!currentSong.name) return;
+    if (!currentSong) return;
 
     let myTitle = `${currentSong.name} - ${currentSong.singer}`;
     if (
-      !isPlaying &&
+      playStatus !== "playing" &&
       currentPlaylist.name &&
       currentSong.song_in.includes(currentPlaylist.id)
     ) {
       myTitle = `${currentPlaylist.name}`;
     }
     document.title = myTitle;
-  }, [isPlaying]);
+  }, [playStatus]);
 
   // update song end event
   useEffect(() => {
     audioEle.addEventListener("ended", handleEnded);
 
     return () => audioEle.removeEventListener("ended", handleEnded);
-  }, [isRepeat, isShuffle, currentSong.song_in, queueSongs]);
+  }, [isRepeat, isShuffle, currentSong, queueSongs]);
 
   // update time update event
   useEffect(() => {
@@ -361,7 +379,7 @@ export default function useAudioEvent({
   useEffect(() => {
     themeCode.current = theme.content_code;
 
-    if (!isPlaying) {
+    if (playStatus !== "playing") {
       handleTimeUpdate();
     }
   }, [theme]);
@@ -369,7 +387,7 @@ export default function useAudioEvent({
   // prevent song autoplay after edit finish
   useEffect(() => {
     if (isInEdit) {
-      if (isPlaying) pause();
+      if (playStatus === "playing") pause();
     }
 
     audioEle.addEventListener("loadedmetadata", handleLoaded);
@@ -377,25 +395,7 @@ export default function useAudioEvent({
     return () => {
       audioEle.removeEventListener("loadedmetadata", handleLoaded);
     };
-  }, [isInEdit, currentSong.id, isCrossFade]);
-
-  // update play history
-  // useEffect(() => {
-  //    if (!someThingToTriggerError) return;
-
-  //    updateHistory();
-  // }, [someThingToUpdateHistory]);
-
-  // update duration in local storage
-  useEffect(() => {
-    if (isPlaying) {
-      intervalId.current = setInterval(() => {
-        setLocalStorage("duration", audioEle.currentTime.toFixed(1));
-      }, 3000);
-    }
-
-    return () => clearInterval(intervalId.current);
-  }, [isPlaying]);
+  }, [isInEdit, currentSong, isCrossFade]);
 
   return { handleSeek, play, pause, handlePlayPause };
 }

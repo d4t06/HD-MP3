@@ -55,7 +55,7 @@ export default function useAdminPlaylistActions() {
          setUserPlaylists(newPlaylists);
       } catch (error) {
          console.log({ message: error });
-         setErrorToast({});
+         setErrorToast("");
       } finally {
          setIsFetching(false);
       }
@@ -75,7 +75,7 @@ export default function useAdminPlaylistActions() {
       setUserPlaylists(newPlaylists);
 
       dispatch(resetCurrentPlaylist());
-      if (currentSong.song_in === `playlist_${currentPlaylist.id}`)
+      if (currentSong?.song_in === `playlist_${currentPlaylist.id}`)
          dispatch(resetCurrentSong());
 
       setIsFetching(false);

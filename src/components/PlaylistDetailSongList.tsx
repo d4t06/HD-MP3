@@ -35,7 +35,7 @@ export default function PlaylistDetailSongList({ variant }: Props) {
     // case user play user songs then play playlist song
     const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
 
-    if (currentSong.id !== song.id || currentSong.song_in !== newSongIn) {
+    if (currentSong?.id !== song.id || currentSong.song_in !== newSongIn) {
       dispatch(
         setSong({
           ...song,
@@ -91,7 +91,7 @@ export default function PlaylistDetailSongList({ variant }: Props) {
             variant="admin-playlist"
             songs={playlistSongs}
             handleSetSong={handleSetSong}
-            activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
+            activeExtend={currentSong?.song_in.includes(currentPlaylist.id)}
           />
         );
       case "my-playlist":
@@ -102,7 +102,7 @@ export default function PlaylistDetailSongList({ variant }: Props) {
               variant={variant}
               songs={playlistSongs}
               handleSetSong={handleSetSong}
-              activeExtend={currentSong.song_in.includes(currentPlaylist.id)}
+              activeExtend={currentSong?.song_in.includes(currentPlaylist.id)}
               deleteFromPlaylist={handleDeleteSongFromPlaylist}
             />
 

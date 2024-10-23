@@ -123,7 +123,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
       if (isSetQueue) dispatch(setQueue({ songs: userSongs }));
 
       // song in playlist and song in user are two difference case
-      if (currentSong.id !== song.id || currentSong.song_in !== "user") {
+      if (currentSong?.id !== song.id || currentSong?.song_in !== "user") {
          dispatch(
             setSong({ ...(song as SongWithSongIn), currentIndex: index })
          );
@@ -191,8 +191,8 @@ export default function MySongSongsList({ initialLoading }: Props) {
                            variant="my-songs"
                            handleSetSong={handleSetSong}
                            activeExtend={
-                              currentSong.song_in === "user" ||
-                              currentSong.song_in === "favorite"
+                              currentSong?.song_in === "user" ||
+                              currentSong?.song_in === "favorite"
                            }
                            songs={userSongs}
                            tempSongs={tempSongs}

@@ -11,12 +11,13 @@ export default function usePlayerControl() {
   const { currentSong } = useSelector(selectCurrentSong);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  //   ref
   const currentIndex = useRef(0);
 
   const { isRepeat, isShuffle } = useMemo(() => playStatus, [playStatus]);
 
   const handleNext = useCallback(() => {
+    if (!currentSong) return;
+
     let newIndex = currentIndex.current + 1;
     let newSong: Song;
 
@@ -37,6 +38,8 @@ export default function usePlayerControl() {
   }, [currentSong, queueSongs]);
 
   const handlePrevious = useCallback(() => {
+    if (!currentSong) return;
+
     let newIndex = currentIndex.current! - 1;
     let newSong: Song;
     if (newIndex >= 0) {
@@ -82,8 +85,9 @@ export default function usePlayerControl() {
     dispatch(setPlayStatus({ isRepeat: value }));
   };
 
+  // update current index ref
   useEffect(() => {
-    if (currentSong.name) {
+    if (currentSong) {
       currentIndex.current = currentSong.currentIndex;
     }
   }, [currentSong]);

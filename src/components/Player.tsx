@@ -79,7 +79,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
 
   return (
     <div className="absolute">
-      <audio ref={audioRef} src={currentSong.song_url} className="hd-mp3 hidden"></audio>
+      <audio ref={audioRef} src={currentSong?.song_url} className="hd-mp3 hidden"></audio>
       {isHasAudioEle ? (isOnMobile ? mobileContent : desktopContent) : ""}
     </div>
   );

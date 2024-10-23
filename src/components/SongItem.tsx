@@ -138,7 +138,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       //  });
     } catch (error) {
       console.log(error);
-      setErrorToast({ message: "Error when liked song" });
+      setErrorToast("Error when liked song");
     } finally {
       setLoading(false);
     }

@@ -3,112 +3,106 @@ import { useSelector } from "react-redux";
 import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
-   containerRef?: RefObject<HTMLDivElement>;
-   songItemRef?: RefObject<HTMLDivElement>;
-   isOpenFullScreen?: boolean;
-   idle: boolean;
+  containerRef?: RefObject<HTMLDivElement>;
+  songItemRef?: RefObject<HTMLDivElement>;
+  isOpenFullScreen?: boolean;
+  idle: boolean;
 };
 
 const handleTouchPadScroll = () => {
-   window.dispatchEvent(new Event("mousemove"));
+  window.dispatchEvent(new Event("mousemove"));
 };
 
 const scrollToActiveSong = (
-   songItemEle: HTMLDivElement,
-   containerEle: HTMLDivElement,
-   idle: boolean = false
+  songItemEle: HTMLDivElement,
+  containerEle: HTMLDivElement,
+  idle: boolean = false
 ) => {
-   const windowWidth = window.innerWidth;
+  const windowWidth = window.innerWidth;
 
-   if (!songItemEle || !containerEle) {
-      console.log("ele not found");
-      return;
-   }
+  if (!songItemEle || !containerEle) {
+    console.log("ele not found");
+    return;
+  }
 
-   const rect = songItemEle.getBoundingClientRect();
-   const lefDiff = rect.left;
-   const rightDiff = windowWidth - (lefDiff + songItemEle.offsetWidth);
+  const rect = songItemEle.getBoundingClientRect();
+  const lefDiff = rect.left;
+  const rightDiff = windowWidth - (lefDiff + songItemEle.offsetWidth);
 
-   const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
+  const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
 
-   // case element position don't change
-   if (needToScroll < 5) return false;
+  // case element position don't change
+  if (needToScroll < 5) return false;
 
-   if (idle) {
-      containerEle.onscroll = () => {};
-      setTimeout(() => {
-         // console.log("add event again");
-         containerEle.onscroll = handleTouchPadScroll;
-      }, 900);
-   }
+  if (idle) {
+    containerEle.onscroll = () => {};
+    setTimeout(() => {
+      // console.log("add event again");
+      containerEle.onscroll = handleTouchPadScroll;
+    }, 900);
+  }
 
-   // case element not in view
-   if (idle || Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
-      containerEle.style.scrollBehavior = "auto";
-   } else {
-      containerEle.style.scrollBehavior = "smooth";
-   }
+  // case element not in view
+  if (idle || Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
+    containerEle.style.scrollBehavior = "auto";
+  } else {
+    containerEle.style.scrollBehavior = "smooth";
+  }
 
-   // case in view
-   //on the left side
-   let newScroll = containerEle.scrollLeft;
-   if (rightDiff > lefDiff) {
-      setTimeout(() => {
-         containerEle.scrollLeft = newScroll - needToScroll;
-      }, 300);
+  // case in view
+  //on the left side
+  let newScroll = containerEle.scrollLeft;
+  if (rightDiff > lefDiff) {
+    setTimeout(() => {
+      containerEle.scrollLeft = newScroll - needToScroll;
+    }, 300);
 
-      // on the right side
-   } else if (rightDiff < lefDiff) {
-      // newScroll += needToScroll;
-      setTimeout(() => {
-         containerEle.scrollLeft = newScroll + needToScroll;
-      }, 300);
-   }
+    // on the right side
+  } else if (rightDiff < lefDiff) {
+    // newScroll += needToScroll;
+    setTimeout(() => {
+      containerEle.scrollLeft = newScroll + needToScroll;
+    }, 300);
+  }
 
-   return true;
+  return true;
 };
 
 export default function useScrollSong({
-   containerRef,
-   songItemRef,
-   isOpenFullScreen,
-   idle,
+  containerRef,
+  songItemRef,
+  isOpenFullScreen,
+  idle,
 }: Props) {
-   const { currentSong } = useSelector(selectCurrentSong);
+  const { currentSong } = useSelector(selectCurrentSong);
 
-   const handleScrollToActiveSong = () => {
-      const songItemEle = songItemRef?.current as HTMLDivElement;
-      const containerEle = containerRef?.current as HTMLDivElement;
+  const handleScrollToActiveSong = () => {
+    const songItemEle = songItemRef?.current as HTMLDivElement;
+    const containerEle = containerRef?.current as HTMLDivElement;
 
-      scrollToActiveSong(songItemEle, containerEle, idle);
-   };
+    scrollToActiveSong(songItemEle, containerEle, idle);
+  };
 
-   useEffect(() => {
-      if (!isOpenFullScreen) return;
-      if (!scroll || !containerRef?.current || !songItemRef?.current) {
-         console.log("lack props");
-         return;
-      }
+  useEffect(() => {
+    if (!currentSong || !isOpenFullScreen) return;
+    if (!scroll || !containerRef?.current || !songItemRef?.current) {
+      console.log("lack props");
+      return;
+    }
 
-      if (!currentSong.name) return;
+    handleScrollToActiveSong();
+  }, [currentSong, isOpenFullScreen]);
 
-      if (!isOpenFullScreen) {
-         return;
-      }
+  useEffect(() => {
+    const containerEle = containerRef?.current as HTMLDivElement;
+    if (!containerEle) return;
 
-      handleScrollToActiveSong();
-   }, [currentSong, isOpenFullScreen]);
+    containerEle.onscroll = handleTouchPadScroll;
 
-   useEffect(() => {
-      const containerEle = containerRef?.current as HTMLDivElement;
-      if (!containerEle) return;
-
-      containerEle.onscroll = handleTouchPadScroll;
-
-      return () => {
-         containerEle.onscroll = () => {};
-      };
-   }, []);
+    return () => {
+      containerEle.onscroll = () => {};
+    };
+  }, []);
 }
 
 export { scrollToActiveSong };

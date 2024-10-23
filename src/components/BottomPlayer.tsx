@@ -57,9 +57,7 @@ function BottomPlayer({
 
   const classes = {
     before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
-    wrapper: `border-${
-      theme.alpha
-    } fixed bottom-0 w-full border-t transition-transform z-50 px-6 h-[90px]`,
+    wrapper: `border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
     controlWrapper: `flex max-w-[420px] flex-grow`,
@@ -68,7 +66,7 @@ function BottomPlayer({
         ? "max-w-[600px] flex-col-reverse pb-[10px]"
         : "flex-col justify-center"
     }`,
-    controlWrapperChild_2: `${!currentSong.song_url && "disable"}`,
+    controlWrapperChild_2: `${!currentSong && "disable"}`,
 
     right: `${admin ? "w-1/4" : "w-1/4 "} flex items-center justify-end`,
     volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full`,
@@ -131,7 +129,7 @@ function BottomPlayer({
           </div>
 
           {!admin && (
-            <div className={`flex items-center ${currentSong.name ? "" : "disable"}`}>
+            <div className={`flex items-center ${!currentSong ? "disable" : ""}`}>
               <MyTooltip content="Fullscreen mode">
                 <button
                   onClick={handleOpenFullScreen}

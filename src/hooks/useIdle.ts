@@ -52,7 +52,7 @@ export default function useIdle(
 
    useEffect(() => {
       if (!isOpenFullScreen) return;
-      if (isOnMobile || !currentSong.id) return;
+      if (isOnMobile || !currentSong?.id) return;
 
       setTimeout(() => {
          window.addEventListener("mousemove", handleMouseMove);

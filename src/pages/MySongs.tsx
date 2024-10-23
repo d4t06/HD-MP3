@@ -43,7 +43,7 @@ export default function MySongsPage() {
       <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Playlist</h3>
 
       <PlaylistList
-        activeCondition={!!currentSong.song_in}
+        activeCondition={!!currentSong?.song_in}
         loading={initialLoading}
         playlist={userPlaylists}
         location="my-songs"

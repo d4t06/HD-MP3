@@ -85,7 +85,7 @@ export default function CheckedBar({
     let songsWithSongIn = selectedSongs;
 
     dispatch(addSongToQueue({ songs: songsWithSongIn }));
-    setSuccessToast({ message: "songs added to queue" });
+    setSuccessToast("songs added to queue");
     resetSelect();
   };
 
@@ -109,10 +109,10 @@ export default function CheckedBar({
       // if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
 
       setUserSongs(newSongs);
-      setSuccessToast({ message: `${selectedSongs.length} songs deleted` });
+      setSuccessToast(`${selectedSongs.length} songs deleted`);
     } catch (error) {
       console.log({ message: error });
-      setErrorToast({});
+      setErrorToast();
     } finally {
       resetSelect();
       setIsFetching(false);
@@ -125,7 +125,7 @@ export default function CheckedBar({
       await deleteSongsFromPlaylist(selectedSongs);
     } catch (error) {
       console.log(error);
-      setErrorToast({ message: "Error when delete song" });
+      setErrorToast("Error when delete song");
     } finally {
       closeModal();
       resetSelect();
@@ -313,7 +313,7 @@ export default function CheckedBar({
     <>
       <div className="flex items-center space-x-2 h-[44px] mb-3">{content}</div>
 
-      {<Modal variant="animation" >{renderModal}</Modal>}
+      {<Modal variant="animation">{renderModal}</Modal>}
     </>
   );
 }

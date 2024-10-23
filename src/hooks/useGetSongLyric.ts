@@ -13,10 +13,10 @@ export default function useSongLyric({
 }) {
   const { currentSong } = useSelector(selectCurrentSong);
   const {
-    playStatus: { isError },
+    playStatus: { playStatus },
   } = useSelector(selectAllPlayStatusStore);
 
-  const [songLyric, setSongLyric] = useState<Lyric>({
+  const [songLyric, setSongLyric] = useState<SongLyric>({
     id: "",
     base: "",
     real_time: [],
@@ -27,6 +27,11 @@ export default function useSongLyric({
   const timerId = useRef<NodeJS.Timeout>();
 
   const getLyric = async () => {
+    if (!currentSong) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -37,7 +42,7 @@ export default function useSongLyric({
       });
 
       if (lyricSnap.exists()) {
-        const lyricData = lyricSnap.data() as Lyric;
+        const lyricData = lyricSnap.data() as SongLyric;
         setSongLyric(lyricData);
       }
     } catch (error) {
@@ -70,7 +75,7 @@ export default function useSongLyric({
 
   //  api get lyric
   useEffect(() => {
-    if (!currentSong.lyric_id && isSongLoaded) {
+    if (!currentSong?.lyric_id && isSongLoaded) {
       setLoading(false);
       return;
     }
@@ -84,14 +89,14 @@ export default function useSongLyric({
 
   //  reset
   useEffect(() => {
-    if (isError) {
+    if (playStatus === "error") {
       setLoading(false);
       return;
     }
     return () => {
       resetForNewSong();
     };
-  }, [currentSong, isError]);
+  }, [currentSong, playStatus === "error"]);
 
   return { songLyric, loading };
 }

@@ -64,7 +64,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const handleSetSong = (song: Song, index: number) => {
     // case user play user songs then play playlist song
     const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
-    if (currentSong.id !== song.id || currentSong.song_in !== newSongIn) {
+    if (currentSong?.id !== song.id || currentSong?.song_in !== newSongIn) {
       dispatch(
         setSong({
           ...song,
@@ -73,7 +73,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
         })
       );
 
-      if (currentSong.song_in !== newSongIn) {
+      if (currentSong?.song_in !== newSongIn) {
         dispatch(setQueue({ songs: playlistSongs }));
         console.log("setActuallySongs when playlist list");
       }
@@ -83,7 +83,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const handlePlayPlaylist = () => {
     const firstSong = playlistSongs[0];
 
-    if (currentSong.song_in.includes(params.name as string)) return;
+    if (currentSong?.song_in.includes(params.name as string)) return;
     handleSetSong(firstSong, 0);
   };
 
@@ -212,7 +212,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
           ) : (
             <PlaylistItem
               data={currentPlaylist}
-              active={currentSong.song_in === `playlist_${currentPlaylist.id}`}
+              active={currentSong?.song_in === `playlist_${currentPlaylist.id}`}
               inDetail
               theme={theme}
             />

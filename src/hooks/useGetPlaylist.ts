@@ -69,7 +69,7 @@ export default function useGetPlaylist() {
          //      await handlePlaylistWhenSongsModified(songs);
          //   }
       } else {
-         if (playlist.song_ids.length) setErrorToast({});
+         if (playlist.song_ids.length) setErrorToast();
          return [];
       }
    };
@@ -101,7 +101,7 @@ export default function useGetPlaylist() {
          // setPlaylistSongs(playlistSongs);
       } catch (error) {
          console.log({ message: error });
-         setErrorToast({});
+         setErrorToast();
       } finally {
          setIsFetching(false);
       }

@@ -37,7 +37,7 @@ export default function InputModal({
   };
 
   return (
-    <div className="w-[400px] max-w-[85vw]">
+    <div className="w-[500px] max-w-[85vw]">
       <h1 className="text-xl font-medium ">{title || "Title"}</h1>
 
       <form action="" onSubmit={handleSubmit}>
@@ -55,7 +55,7 @@ export default function InputModal({
           <textarea
             //  @ts-ignore
             ref={inputRef}
-            className={`${classes.input} min-h-[50vh]`}
+            className={`${classes.input} min-h-[50vh] no-scrollbar`}
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />

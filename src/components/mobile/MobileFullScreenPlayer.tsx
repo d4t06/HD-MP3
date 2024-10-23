@@ -54,7 +54,7 @@ export default function MobileFullScreenPlayer({
   const { currentSong } = useSelector(selectCurrentSong);
 
   const {
-    playStatus: { isPlaying },
+    playStatus: { playStatus },
   } = useSelector(selectAllPlayStatusStore);
   const { queueSongs } = useSelector(selectSongQueue);
 
@@ -103,6 +103,8 @@ export default function MobileFullScreenPlayer({
   // };
 
   const activeSong = (e: MouseEvent, song: Song, index: number) => {
+    if (!currentSong) return;
+
     const ele = e.target as HTMLDivElement;
 
     const parent = findParent(ele);
@@ -244,14 +246,14 @@ export default function MobileFullScreenPlayer({
                     data={currentSong}
                   />
                 ),
-                [currentSong, isPlaying, activeTab, isLandscape]
+                [currentSong, playStatus, activeTab, isLandscape]
               )}
 
               <div className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden"}`}>
                 <div className="h-[30px]">
-                  <p className="font-playwriteCU leading-[1.5]">{currentSong.name}</p>
+                  <p className="font-playwriteCU leading-[1.5]">{currentSong?.name}</p>
                 </div>
-                <div className="opacity-70">{currentSong.singer}</div>
+                <div className="opacity-70">{currentSong?.singer}</div>
               </div>
             </div>
 
@@ -265,7 +267,7 @@ export default function MobileFullScreenPlayer({
                   <ScrollText
                     autoScroll
                     className={`text-xl leading-[1.5] font-playwriteCU`}
-                    content={currentSong.name || "..."}
+                    content={currentSong?.name || "..."}
                   />
                 </div>
                 <div className={"h-[33px]"}>
@@ -274,7 +276,7 @@ export default function MobileFullScreenPlayer({
                     className={`opacity-60 ${
                       activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
                     }`}
-                    content={currentSong.singer || "..."}
+                    content={currentSong?.singer || "..."}
                   />
                 </div>
               </div>

@@ -1,4 +1,4 @@
-import { RefObject } from "react";
+import { RefObject, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useEditLyricContext } from "@/store/EditSongLyricContext";
 import { AddLyricItem, LyricItem } from ".";
@@ -12,6 +12,8 @@ export default function LyricEditorList({ controlRef }: Props) {
   const { theme } = useTheme();
 
   const { baseLyricArr, lyrics, currentLyricIndex, updateLyric } = useEditLyricContext();
+
+  const scrollBehavior = useRef<ScrollBehavior>("instant");
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
@@ -39,6 +41,7 @@ export default function LyricEditorList({ controlRef }: Props) {
                     key={index}
                     status={status}
                     text={lyric}
+                    scrollBehavior={scrollBehavior}
                   />
                 );
               })}

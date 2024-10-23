@@ -62,7 +62,7 @@ export default function PlaylistList({
             {!!playlist.length
               ? playlist.map((playlist, index) => {
                   const active =
-                    activeCondition && currentSong.song_in.includes(playlist.id);
+                    activeCondition && currentSong?.song_in.includes(playlist.id);
 
                   switch (props.location) {
                     case "home":

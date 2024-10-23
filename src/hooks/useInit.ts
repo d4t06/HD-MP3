@@ -21,7 +21,7 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
   const handleErrorMsg = (msg: string) => {
     setLoading(false);
     setErrorMsg(msg);
-    setErrorToast({ message: "Use song error" });
+    setErrorToast("Use song error");
   };
 
   const initSongsAndPlaylists = async () => {

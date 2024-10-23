@@ -6,12 +6,11 @@ type LyricSize = "small" | "medium" | "large";
 
 type StateType = {
   playStatus: {
-    isPlaying: boolean;
-    isWaiting: boolean;
-    isError: boolean;
+    /** update 23/10/2024 */
+    playStatus: "playing" | "error" | "loading" | "paused";
     lyricSize: LyricSize;
-     isRepeat: Repeat;
-     isShuffle: boolean;
+    isRepeat: Repeat;
+    isShuffle: boolean;
     isLoaded: boolean;
     //  isTimer: number;
     isCrossFade: boolean;
@@ -37,9 +36,7 @@ const init = () => {
 
   const state: StateType = {
     playStatus: {
-      isError: false,
-      isPlaying: false,
-      isWaiting: false,
+      playStatus: "paused",
       lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
       isLoaded: true,
       isRepeat: (storage["isRepeat"] || "no") as Repeat,

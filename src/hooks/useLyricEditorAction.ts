@@ -85,10 +85,17 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       setIsFetching(true);
       if (!song) return;
 
+      const newSongLyric = {
+        real_time: lyrics,
+        base: baseLyric,
+      };
+
       await mySetDoc({
         collection: "lyrics",
-        data: { real_time: lyrics, base: baseLyric },
+        data: newSongLyric,
         id: song.id,
+      }).catch(() => {
+        throw { ...newSongLyric, id: song.id };
       });
 
       await mySetDoc({
@@ -99,14 +106,21 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
 
       setSuccessToast("Add lyric successful");
       setIsChanged(false);
-    } catch (error) {
-      console.log({ message: error });
+
+      setLocalStorage("temp-lyric", "");
+    } catch (error: any) {
+      setLocalStorage("temp-lyric", {
+        ...error,
+        real_time: JSON.stringify(error.real_time),
+      } as SongLyric);
+
       setErrorToast();
     } finally {
       setIsFetching(false);
     }
   };
 
+  // load localStorage
   useEffect(() => {
     const { edit_lyric_audio_speed, edit_lyric_audio_volume } = getLocalStorage();
 

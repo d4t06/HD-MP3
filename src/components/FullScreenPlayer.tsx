@@ -64,7 +64,7 @@ function FullScreenPlayer({
   const handleClickPrevious = useDebounce(() => handleScroll("previous"), 200);
 
   const handleSetSongWhenClick = (song: Song, index: number) => {
-    if (currentSong.id === song.id) return;
+    if (!currentSong || currentSong.id === song.id) return;
     dispatch(setSong({ ...song, currentIndex: index, song_in: currentSong.song_in }));
   };
 
@@ -79,7 +79,9 @@ function FullScreenPlayer({
     }
   };
 
+  /** navigate to edit lyric page */
   const handleEdit = () => {
+    if (!currentSong) return;
     setIsOpenFullScreen(false);
 
     setTimeout(() => {
@@ -109,7 +111,7 @@ function FullScreenPlayer({
 
   // define jsx
   const renderSongsList = useMemo(() => {
-    if (!currentSong.id) return;
+    if (!currentSong) return;
     if (!queueSongs.length) return;
 
     return queueSongs.map((song, index) => {
@@ -175,8 +177,10 @@ function FullScreenPlayer({
               <img className={`${classes.logo}`} src={logoIcon} alt="" />
               {activeTab === "Lyric" && (
                 <>
-                  <p className={`font-playwriteCU text-sm`}>{currentSong.name} </p>
-                  <p className="opacity-70">&nbsp;- {currentSong.singer}</p>
+                  <p className={`font-playwriteCU text-sm`}>
+                    {currentSong?.name || "..."}{" "}
+                  </p>
+                  <p className="opacity-70">&nbsp;- {currentSong?.singer || "..."}</p>
                 </>
               )}
             </div>
@@ -196,12 +200,9 @@ function FullScreenPlayer({
               idle && classes.fadeTransition
             }`}
           >
-            {currentSong.by !== "admin" && activeTab === "Lyric" && (
+            {currentSong?.by !== "admin" && activeTab === "Lyric" && (
               <MyTooltip position="top-[calc(100%+8px)]" content="Edit lyrics">
-                <button
-                  onClick={() => handleEdit()}
-                  className={`p-3 ${classes.button}`}
-                >
+                <button onClick={() => handleEdit()} className={`p-3 ${classes.button}`}>
                   <DocumentTextIcon />
                 </button>
               </MyTooltip>
@@ -220,7 +221,7 @@ function FullScreenPlayer({
                 className="top-[calc(100%+8px)] right-0 z-[99]"
                 animationClassName="origin-top-right"
               >
-                <FullScreenPlayerSetting  />
+                <FullScreenPlayerSetting />
               </MyPopupContent>
             </MyPopup>
 
@@ -285,8 +286,8 @@ function FullScreenPlayer({
 
         {activeTab !== "Songs" && (
           <p className={`text-center ${idle && classes.fadeTransition}`}>
-            {currentSong.name}
-            <span className="opacity-70">&nbsp;- {currentSong.singer}</span>
+            {currentSong?.name || '...'}
+            <span className="opacity-70">&nbsp;- {currentSong?.singer || '...'}</span>
           </p>
         )}
       </div>

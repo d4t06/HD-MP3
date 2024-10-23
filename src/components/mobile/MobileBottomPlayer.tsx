@@ -29,7 +29,7 @@ const MobileBottomPlayer: FC<Props> = ({
   const {
     handleNext,
     currentSong,
-    playStatus: { isPlaying, isWaiting, isError },
+    playStatus: { playStatus },
   } = usePlayerControl();
   const { handlePlayPause } = useAudioControl({ audioEle });
 
@@ -37,18 +37,17 @@ const MobileBottomPlayer: FC<Props> = ({
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
   const renderIcon = useMemo(() => {
-    if (isWaiting) {
-      return <ArrowPathIcon className={"w-10 animate-spin"} />;
-    } else if (isError && currentSong.name) {
-      return <ExclamationCircleIcon className="w-10 " />;
+    switch (playStatus) {
+      case "playing":
+        return <PauseCircleIcon className="w-10" />;
+      case "error":
+        return <ExclamationCircleIcon className="w-10" />;
+      case "loading":
+        return <ArrowPathIcon className="w-10 animate-spin" />;
+      case "paused":
+        return <PlayCircleIcon className="w-10" />;
     }
-
-    return isPlaying ? (
-      <PauseCircleIcon className={"w-10 "} />
-    ) : (
-      <PlayCircleIcon className={"w-10"} />
-    );
-  }, [isWaiting, isError, isPlaying]);
+  }, [playStatus]);
 
   const classes = {
     wrapper: `fixed bottom-0 transition-transform w-full h-[80px] border-t border-${theme.alpha} z-40  px-4`,
@@ -68,25 +67,25 @@ const MobileBottomPlayer: FC<Props> = ({
 
       <div className={`flex items-center  h-full`}>
         <div
-          onClick={() => (currentSong.name ? setIsOpenFullScreen(true) : {})}
+          onClick={() => (currentSong?.name ? setIsOpenFullScreen(true) : {})}
           className={`mobile-current-song flex-grow`}
         >
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image src={currentSong.image_url || siteLogo} classNames="rounded-full" />
+              <Image src={currentSong?.image_url || siteLogo} classNames="rounded-full" />
             </div>
 
             <div className="flex-grow  ml-[10px]">
-              {currentSong.song_url && (
+              {currentSong?.song_url && (
                 <>
                   <div className="h-[30px] relative overflow-hidden">
                     <div className="absolute left-0 whitespace-nowrap font-playwriteCU leading-[1.5]">
-                      {currentSong.name || "name"}
+                      {currentSong?.name || "name"}
                     </div>
                   </div>
                   <p className={`opacity-70 line-clamp-1`}>
-                    {currentSong.singer || "singer"}
+                    {currentSong?.singer || "singer"}
                   </p>
                 </>
               )}
@@ -95,7 +94,7 @@ const MobileBottomPlayer: FC<Props> = ({
         </div>
 
         {/* cta */}
-        <div className={`${classes.cta} ${!currentSong.name && "disable"}`}>
+        <div className={`${classes.cta} ${!currentSong?.name && "disable"}`}>
           <button className={`p-[4px]`} onClick={() => handlePlayPause()}>
             {renderIcon}
           </button>

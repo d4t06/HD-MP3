@@ -245,7 +245,7 @@ export default function SongItemEditForm({ song, close }: Props) {
       updateUserSong(newSong);
       // dispatch(updateSongInQueue({ song: newSong }));
 
-      if (currentSong.id === newSong.id) {
+      if (currentSong?.id === newSong.id) {
         dispatch(
           setSong({
             ...newSong,

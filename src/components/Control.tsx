@@ -30,7 +30,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     handlePrevious,
     handleRepeatSong,
     handleShuffle,
-    playStatus: { isRepeat, isShuffle, isError, isWaiting },
+    playStatus: { isRepeat, isShuffle, playStatus },
     currentSong,
     queueSongs,
   } = usePlayerControl();
@@ -70,7 +70,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             >
               <ArrowPathRoundedSquareIcon className={classes.icon} />
               <span className="absolute font-bold text-[12px] font-playwriteCU top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                {currentSong.name &&
+                {currentSong &&
                   (isRepeat === "one" ? "1" : isRepeat === "all" ? "--" : "")}
               </span>
             </button>
@@ -106,7 +106,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       <div
         className={`${classes.progressContainer} ${
           isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
-        } ${isError ? "disable" : ""}`}
+        } ${playStatus === "error" ? "disable" : ""}`}
       >
         <div className="w-[44px] sm:w-[36px]">
           {audioEle && (
@@ -119,9 +119,9 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
           ref={timelineRef}
           style={{ background: "#e1e1e1" }}
           onClick={(e) => handleSeek(e)}
-          className={`${classes.processLineBase} ${isWaiting ? "disable" : ""}  ${
-            classes.before
-          }`}
+          className={`${classes.processLineBase} ${
+            playStatus === "loading" ? "disable" : ""
+          }  ${classes.before}`}
         ></div>
         <div className="w-[44px] sm:w-[36px] text-right">
           {audioEle && (

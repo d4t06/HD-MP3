@@ -1,12 +1,17 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthStore } from "@/store";
 import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { getLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
   admin?: boolean;
+};
+
+type TempLyric = Omit<SongLyric, "real_time"> & {
+  real_time: string;
 };
 
 export default function useLyricEditor({ audioRef, admin }: Props) {
@@ -21,12 +26,12 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
     setLyrics,
     setCurrentLyricIndex,
     isChanged,
+    setIsChanged,
     isFetching: isSubmitting,
     start,
   } = useEditLyricContext();
 
-  //   const [hasAudioEle, setHasAudioEle] = useState(false);
-  const [lyricsRes, setLyricRes] = useState<Lyric>();
+  const [lyricsRes, setLyricRes] = useState<SongLyric>();
   const [isFetching, setIsFetching] = useState(true);
 
   const ranUseEffect = useRef(false);
@@ -52,7 +57,7 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
-          const lyricData = lyricSnapshot.data() as Lyric;
+          const lyricData = lyricSnapshot.data() as SongLyric;
           setLyricRes(lyricData);
         }
       }
@@ -75,7 +80,30 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
     }
   }, [user]);
 
-  //  init state
+  // load localStorage
+  useEffect(() => {
+    const songLyricInStorage = (getLocalStorage()["temp-lyric"] as TempLyric) || null;
+
+    if (songLyricInStorage && songLyricInStorage.id === song?.id) {
+      try {
+        const songLyric = {
+          ...songLyricInStorage,
+          real_time: JSON.parse(songLyricInStorage.real_time),
+        } as SongLyric;
+
+        if (song?.id === songLyric.id) {
+          setLyricRes(songLyric);
+          setIsChanged(true);
+        }
+
+        return;
+      } catch (error) {
+        console.log({ message: error });
+      }
+    }
+  }, [song]);
+
+  // init state
   useEffect(() => {
     if (lyricsRes) {
       const { base, real_time } = lyricsRes;
@@ -103,6 +131,7 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
     setBaseLyricArr(filteredLyric);
   }, [baseLyric]);
 
+  // ask when user going to reload the page
   useEffect(() => {
     if (!isChanged) return;
 
@@ -110,7 +139,7 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
       e.preventDefault();
     };
 
-    window.addEventListener("re", handleWindowReload);
+    window.addEventListener("beforeunload", handleWindowReload);
 
     return () => {
       window.removeEventListener("beforeunload", handleWindowReload);

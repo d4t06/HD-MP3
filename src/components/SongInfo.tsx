@@ -37,7 +37,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
             <div className={admin ? `w-[46px]` : "w-[56px]"}>
                <img
                   ref={vinylRef}
-                  src={currentSong.image_url || logo}
+                  src={currentSong?.image_url || logo}
                   className={`rounded-full w-full animate-[spin_8s_linear_infinite]`}
                />
             </div>
@@ -46,7 +46,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                <div className="h-[32px]">
                   <ScrollText
                      className="leading-[1.5] font-playwriteCU"
-                     content={currentSong.name || "Name"}
+                     content={currentSong?.name || "Name"}
                   />
                </div>
 
@@ -54,7 +54,7 @@ export default function SongInfo({ isOpenFullScreen, admin }: Props) {
                   <ScrollText
                      autoScroll
                      className="opacity-70 leading-[1.2]"
-                     content={currentSong.singer || "..."}
+                     content={currentSong?.singer || "..."}
                   />
                </div>
             </div>

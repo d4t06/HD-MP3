@@ -1,7 +1,6 @@
-import { FC, ReactNode, useEffect, useMemo, useRef } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import { useTheme } from "@/store/ThemeContext";
 import { Sidebar, Player, UploadSongPortal, Header } from "../components";
-import Footer from "@/components/Footer";
 
 interface Props {
   children: ReactNode;
@@ -9,9 +8,6 @@ interface Props {
 
 const DefaultLayout: FC<Props> = ({ children }) => {
   const { theme } = useTheme();
-  //   const location = useLocation();
-
-  //   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -36,7 +32,6 @@ const DefaultLayout: FC<Props> = ({ children }) => {
           {/* hide in mobile */}
           <Header contentRef={containerRef} />
           {children}
-          {/* <Footer /> */}
         </div>
         <Player />
       </div>

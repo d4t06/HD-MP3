@@ -102,13 +102,13 @@ function SongList({ songs, ...props }: Props) {
     const { handleSetSong, activeExtend = true } = props;
 
     return songs.map((song, index) => {
-      let active = activeExtend && currentSong.id === song.id;
+      let active = activeExtend && currentSong?.id === song.id;
       // let active = false;
 
       if (props.variant === "queue")
-        active = active && currentSong.currentIndex === index;
+        active = active && currentSong?.currentIndex === index;
 
-      const isLastIndexInQueue = currentSong.currentIndex === queueSongs.length - 1;
+      const isLastIndexInQueue = currentSong?.currentIndex === queueSongs.length - 1;
 
       if (props.variant === "queue" && active && !isLastIndexInQueue) {
         return (
