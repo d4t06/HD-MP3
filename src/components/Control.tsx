@@ -1,15 +1,15 @@
-import { useRef } from "react";
-import {
-  ArrowPathRoundedSquareIcon,
-  ArrowTrendingUpIcon,
-  BackwardIcon,
-  ForwardIcon,
-} from "@heroicons/react/24/outline";
+// import { useRef } from "react";
+// import {
+//   ArrowPathRoundedSquareIcon,
+//   ArrowTrendingUpIcon,
+//   BackwardIcon,
+//   ForwardIcon,
+// } from "@heroicons/react/24/outline";
 import { useTheme } from "../store";
 
-import PlayPauseButton from "./child/PlayPauseButton";
-import useAudioEvent from "../hooks/useAudioEvent";
-import usePlayerControl from "@/hooks/usePlayerControl";
+// import PlayPauseButton from "./child/PlayPauseButton";
+import { useControl } from "../hooks";
+import { formatTime } from "@/utils/appHelpers";
 
 interface Props {
   admin?: boolean;
@@ -21,25 +21,36 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   const { theme } = useTheme();
 
   // ref
-  const timelineRef = useRef<HTMLDivElement>(null);
-  const currentTimeRef = useRef<HTMLDivElement>(null);
-  const remainingTimeRef = useRef<HTMLDivElement>(null);
+
+  // const {
+  //   handleNext,
+  //   handlePrevious,
+  //   handleRepeatSong,
+  //   handleShuffle,
+  //   playStatus: { isRepeat, isShuffle, playStatus },
+  //   currentSong,
+  //   queueSongs,
+  // } = usePlayerControl();
 
   const {
-    handleNext,
-    handlePrevious,
-    handleRepeatSong,
-    handleShuffle,
-    playStatus: { isRepeat, isShuffle, playStatus },
+    handleSeek,
     currentSong,
-    queueSongs,
-  } = usePlayerControl();
 
-  const { handleSeek, handlePlayPause } = useAudioEvent({
+    // handlePlayPause,
+
+    // handleNext,
+    // handlePrevious,
+    // handleRepeatSong,
+    // handleShuffle,
+    // isRepeat,
+    // isShuffle,
+    // playStatus,
+    // currentSong,
+    // queueSongs,
+    currentTimeEleRef,
+    timelineEleRef,
+  } = useControl({
     audioEle,
-    timelineRef,
-    currentTimeRef,
-    remainingTimeRef,
   });
 
   const classes = {
@@ -55,10 +66,12 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
 
+  console.log("control render");
+
   return (
     <>
       {/* buttons */}
-      <div className={`${classes.buttonsContainer}`}>
+      {/* <div className={`${classes.buttonsContainer}`}>
         {!admin && (
           <>
             <button
@@ -82,7 +95,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
               <BackwardIcon className={classes.icon} />
             </button>
 
-            <PlayPauseButton handlePlayPause={handlePlayPause} />
+            <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
 
             <button
               disabled={queueSongs.length <= 1}
@@ -100,42 +113,38 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             </button>
           </>
         )}
-      </div>
+      </div> */}
 
       {/* process */}
       <div
         className={`${classes.progressContainer} ${
           isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
-        } ${playStatus === "error" ? "disable" : ""}`}
+        } ${false ? "disable" : ""}`}
       >
         <div className="w-[44px] sm:w-[36px]">
-          {audioEle && (
-            <span ref={currentTimeRef} className={`text-lg sm:text-sm`}>
-              0:00
-            </span>
-          )}
+          <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
+            0:00
+          </span>
         </div>
         <div
-          ref={timelineRef}
-          style={{ background: "#e1e1e1" }}
+          ref={timelineEleRef}
+          style={{ background: "rgba(255, 255, 255, 0.3)" }}
           onClick={(e) => handleSeek(e)}
-          className={`${classes.processLineBase} ${
-            playStatus === "loading" ? "disable" : ""
-          }  ${classes.before}`}
+          className={`${classes.processLineBase} ${false ? "disable" : ""} ${
+            classes.before
+          }`}
         ></div>
         <div className="w-[44px] sm:w-[36px] text-right">
-          {audioEle && (
-            <span ref={remainingTimeRef} className={"text-lg sm:text-sm"}>
-              0:00
-            </span>
-          )}
+          <span className={"text-lg sm:text-sm"}>
+            {currentSong ? formatTime(currentSong?.duration) : "0:00"}
+          </span>
         </div>
-
+        {/* 
         {admin && (
           <div className="flex items-center ml-3">
-            <PlayPauseButton handlePlayPause={handlePlayPause} />
+            <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
           </div>
-        )}
+        )} */}
       </div>
     </>
   );

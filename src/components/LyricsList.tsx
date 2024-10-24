@@ -4,7 +4,6 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useGetSongLyric } from "../hooks";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import { LyricStatus } from "./LyricEditor";
 
 interface Props {
@@ -17,16 +16,15 @@ interface Props {
 const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }) => {
   // state
   const {
-    playStatus: { lyricSize },
+   lyricSize, songImage 
   } = useSelector(selectAllPlayStatusStore);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const scrollBehavior = useRef<ScrollBehavior>("instant");
   const containerRef = useRef<HTMLDivElement>(null);
-  const { currentSong } = useSelector(selectCurrentSong);
 
   const prevTime = useRef(0);
 
-  const { loading, songLyric } = useGetSongLyric({
+  const { loading, songLyrics } = useGetSongLyric({
     audioEle,
     isOpenFullScreen,
   });
@@ -36,7 +34,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
     setCurrentTime(currentTime);
 
     // disable animation
-    if (Math.abs(currentTime - prevTime.current) > 5) {
+    if (Math.abs(currentTime - prevTime.current) > 20) {
       scrollBehavior.current = "instant";
       prevTime.current = currentTime;
       return;
@@ -51,14 +49,11 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
   };
 
   const renderItem = () => {
-    return songLyric.real_time.map((l, index) => {
-      const bounce = 0.5;
-      // display lyric early
-      // ex start: 10 - 2s
-      //    end: 20 - 2s
-      const inRange = currentTime >= l.start - bounce && currentTime < l.end - bounce;
+    return songLyrics.map((l, index) => {
+      const bounce = 0.3;
 
       let status: LyricStatus = "coming";
+      const inRange = currentTime >= l.start - bounce && currentTime < l.end - bounce;
 
       if (inRange && currentTime) status = "active";
       else if (currentTime > l.end - bounce) status = "done";
@@ -69,9 +64,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
           key={index}
           text={l.text}
           scrollBehavior={scrollBehavior}
-          className={`font-[700] ${lyricSizeMap[lyricSize || "medium"]} ${
-            inRange ? "active" : ""
-          } mb-[30px]`}
+          className={`font-[700] ${lyricSizeMap[lyricSize || "medium"]} mb-[30px]`}
         />
       );
     });
@@ -79,18 +72,19 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
 
   // add event listeners
   useEffect(() => {
-    if (!audioEle) return;
-
     audioEle.addEventListener("timeupdate", handleUpdateTime);
 
     return () => {
-      if (audioEle) audioEle.removeEventListener("timeupdate", handleUpdateTime);
+      audioEle.removeEventListener("timeupdate", handleUpdateTime);
     };
-  }, []);
+  }, [active]);
 
-  // scroll to active lyric when change between lyric tab and others
+  /**
+   * scroll to active lyric instant
+   * cause' the song may in chorus
+   */
   useEffect(() => {
-    const activeLyric = document.querySelector(".active.lyric");
+    const activeLyric = document.querySelector(".active-lyric");
     if (activeLyric) {
       activeLyric.scrollIntoView({
         behavior: "instant",
@@ -99,11 +93,6 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
     }
   }, [active]);
 
-  // disable animation when first time load lyric
-  useEffect(() => {
-    if (scrollBehavior.current !== "instant") scrollBehavior.current = "instant";
-  }, [currentSong]);
-
   const classes = {
     container: "no-scrollbar pt-[20px] mask-image overflow-y-auto overflow-x-hidden",
     loadingContainer: "flex justify-center items-center h-full w-full",
@@ -111,7 +100,10 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
   };
 
   return (
-    <div ref={containerRef} className={`${classes.container} ${className}`}>
+    <div
+      ref={containerRef}
+      className={`${classes.container} ${!songImage ? "text-center" : ""} ${className}`}
+    >
       {loading && (
         <div className={classes.loadingContainer}>
           <span>
@@ -122,7 +114,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
 
       {!loading && (
         <>
-          {songLyric.real_time.length ? (
+          {songLyrics.length ? (
             renderItem()
           ) : (
             <div className={classes.loadingContainer}>

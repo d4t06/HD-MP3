@@ -13,7 +13,7 @@ export default function FullScreenPlayerSetting() {
   const dispatch = useDispatch();
 
   const {
-    playStatus: { lyricSize, songBackground, songImage },
+ lyricSize, songBackground, songImage 
   } = useSelector(selectAllPlayStatusStore);
 
   const handleChangeLyricSize = (size: typeof lyricSize) => {
@@ -23,7 +23,7 @@ export default function FullScreenPlayerSetting() {
 
   const classes = {
     disableBtn: "bg-white/10 bg-opacity-20",
-    lyricSizeBtn: `group/text !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
+    lyricSizeBtn: `group/text justify-center !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
     itemContainer: `flex justify-between  px-3 py-2 items-center min-h-[30px] hover:bg-${theme.alpha}`,
     text: "text-base text-[#ccc]",
   };
@@ -48,7 +48,7 @@ export default function FullScreenPlayerSetting() {
                   lyricSize === "small" ? theme.content_bg : classes.disableBtn
                 } ${classes.lyricSizeBtn}`}
               >
-                <h1 className="leading-[1] text-[11px]">A</h1>
+                <span className="leading-[1] text-[11px]">A</span>
               </Button>
               <Button
                 onClick={() => handleChangeLyricSize("medium")}
@@ -58,7 +58,7 @@ export default function FullScreenPlayerSetting() {
                   lyricSize === "medium" ? theme.content_bg : classes.disableBtn
                 } ${classes.lyricSizeBtn}`}
               >
-                <h1 className="leading-[1] text-[13px]">A</h1>
+                <span className="leading-[1] text-[13px]">A</span>
               </Button>
               <Button
                 onClick={() => handleChangeLyricSize("large")}
@@ -68,7 +68,7 @@ export default function FullScreenPlayerSetting() {
                   lyricSize === "large" ? theme.content_bg : classes.disableBtn
                 } ${classes.lyricSizeBtn}`}
               >
-                <h1 className="leading-[1] text-[15px]">A</h1>
+                <span className="leading-[1] text-[15px]">A</span>
               </Button>
             </div>
           </div>

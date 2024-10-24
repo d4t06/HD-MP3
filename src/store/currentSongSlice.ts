@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getLocalStorage, initSongObject } from "../utils/appHelpers";
+import { initSongObject } from "../utils/appHelpers";
 
 export type Status = {
   currentIndex: number;
@@ -11,12 +11,8 @@ type StateType = {
   currentSong: SongStore | null;
 };
 
-const storage = getLocalStorage();
-
-let initSongState: Song & Status = storage["current"] || null;
-
 const init: StateType = {
-  currentSong: initSongState,
+  currentSong: null,
 };
 
 const SongSlice = createSlice({

@@ -39,7 +39,7 @@ function FullScreenPlayer({
   const { currentSong } = useSelector(selectCurrentSong);
   const { queueSongs } = useSelector(selectSongQueue);
   const {
-    playStatus: { songImage },
+   songImage 
   } = useSelector(selectAllPlayStatusStore);
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");

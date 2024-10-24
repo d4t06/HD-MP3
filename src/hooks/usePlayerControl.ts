@@ -2,18 +2,16 @@ import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function usePlayerControl() {
   const dispatch = useDispatch();
   const { queueSongs } = useSelector(selectSongQueue);
   const { currentSong } = useSelector(selectCurrentSong);
-  const { playStatus } = useSelector(selectAllPlayStatusStore);
+  const { isRepeat, isShuffle, playStatus } = useSelector(selectAllPlayStatusStore);
 
   const currentIndex = useRef(0);
-
-  const { isRepeat, isShuffle } = useMemo(() => playStatus, [playStatus]);
 
   const handleNext = useCallback(() => {
     if (!currentSong) return;

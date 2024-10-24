@@ -98,12 +98,6 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
         throw { ...newSongLyric, id: song.id };
       });
 
-      await mySetDoc({
-        collection: "songs",
-        data: { lyric_id: song.id },
-        id: song.id,
-      });
-
       setSuccessToast("Add lyric successful");
       setIsChanged(false);
 

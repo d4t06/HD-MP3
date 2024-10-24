@@ -1,26 +1,27 @@
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
-  PauseCircleIcon,
   PlayCircleIcon,
+  PauseCircleIcon,
 } from "@heroicons/react/24/outline";
-import { memo, useMemo } from "react";
-import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+// import { useSelector } from "react-redux";
+import { PlayStatus } from "@/store/PlayStatusSlice";
 
 type Props = {
   handlePlayPause: () => void;
+  playStatus: PlayStatus;
 };
-function PlayPauseButton({ handlePlayPause }: Props) {
-  const {
-    playStatus: { playStatus },
-  } = useSelector(selectAllPlayStatusStore);
-  //
+
+function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
+  // const {
+  //   playStatus: { playStatus },
+  // } = useSelector(selectAllPlayStatusStore);
+
   const classes = {
     icon: "w-[50px] sm:w-10",
   };
 
-  const renderIcon = useMemo(() => {
+  const renderIcon = () => {
     switch (playStatus) {
       case "playing":
         return <PauseCircleIcon className={`${classes.icon}`} />;
@@ -31,23 +32,18 @@ function PlayPauseButton({ handlePlayPause }: Props) {
       case "paused":
         return <PlayCircleIcon className={`${classes.icon}`} />;
     }
-  }, [playStatus]);
-
-
-  console.log("check play status", playStatus)
+  };
 
   return (
     <>
       <button
-        className={`p-1 ${
-          playStatus === "loading" && "disable"
-        } inline-flex items-center justify-center`}
+        className={`p-1  inline-flex items-center justify-center`}
         onClick={() => handlePlayPause()}
       >
-        {renderIcon}
+        {renderIcon()}
       </button>
     </>
   );
 }
 
-export default memo(PlayPauseButton);
+export default PlayPauseButton;

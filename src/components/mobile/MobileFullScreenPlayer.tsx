@@ -3,37 +3,34 @@ import {
   SetStateAction,
   useRef,
   useState,
-  useMemo,
-  MouseEvent,
+  // useMemo,
+  // MouseEvent,
   useEffect,
   ElementRef,
 } from "react";
 
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 
-import { useDispatch, useSelector } from "react-redux";
-import { useTheme } from "@/store";
+import {  useSelector } from "react-redux";
+// import { useTheme } from "@/store";
 
 import { useBgImage } from "@/hooks";
 
 import {
   Tabs,
-  ScrollText,
+  // ScrollText,
   Control,
-  LyricsList,
-  MobileSongItem,
+  // LyricsList,
+  // MobileSongItem,
   MobileSongThumbnail,
-  //   Modal,
-  //   TimerModal,
 } from "@/components";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectCurrentSong } from "@/store/currentSongSlice";
+// import { selectSongQueue } from "@/store/songQueueSlice";
 import useDisableOverflow from "@/hooks/useDisableOverflow";
-import useMobileRotate from "@/hooks/useMobileRotate";
+// import useMobileRotate from "@/hooks/useMobileRotate";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
-import SleepTimerButton from "../SleepTimerButton";
+// import SleepTimerButton from "../SleepTimerButton";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -49,14 +46,10 @@ export default function MobileFullScreenPlayer({
   setIsOpenFullScreen,
 }: Props) {
   // use store
-  const dispatch = useDispatch();
-  const { theme } = useTheme();
+  // const dispatch = useDispatch();
+  // const { theme } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
-
-  const {
-    playStatus: { playStatus },
-  } = useSelector(selectAllPlayStatusStore);
-  const { queueSongs } = useSelector(selectSongQueue);
+  // const { queueSongs } = useSelector(selectSongQueue);
 
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
@@ -71,26 +64,28 @@ export default function MobileFullScreenPlayer({
   // use hooks
   useDisableOverflow({ isOpenFullScreen });
   useBgImage({ bgRef, currentSong });
-  const { isLandscape } = useMobileRotate();
+  // const { isLandscape } = useMobileRotate();
+
+  const isLandscape = false;
 
   //   const closeModal = () => setIsOpenModal("");
 
   const notPlayingOrLandscape = (activeTab != "Playing" && !scalingImage) || isLandscape;
 
-  const findParent = (ele: HTMLDivElement) => {
-    let i = 0;
-    let parent = ele;
-    while (!parent.classList.contains("target-class") && i < 5) {
-      parent = parent.parentElement as HTMLDivElement;
-      i++;
-    }
-    return parent;
-  };
+  // const findParent = (ele: HTMLDivElement) => {
+  //   let i = 0;
+  //   let parent = ele;
+  //   while (!parent.classList.contains("target-class") && i < 5) {
+  //     parent = parent.parentElement as HTMLDivElement;
+  //     i++;
+  //   }
+  //   return parent;
+  // };
 
-  const hideSongItemStyle = {
-    opacity: "0",
-    transform: "translate(-100%, 0)",
-  };
+  // const hideSongItemStyle = {
+  //   opacity: "0",
+  //   transform: "translate(-100%, 0)",
+  // };
 
   // const hideSibling = (ele: HTMLDivElement) => {
   //   let i = 0;
@@ -102,57 +97,57 @@ export default function MobileFullScreenPlayer({
   //   }
   // };
 
-  const activeSong = (e: MouseEvent, song: Song, index: number) => {
-    if (!currentSong) return;
+  // const activeSong = (e: MouseEvent, song: Song, index: number) => {
+  //   if (!currentSong) return;
 
-    const ele = e.target as HTMLDivElement;
+  //   const ele = e.target as HTMLDivElement;
 
-    const parent = findParent(ele);
-    // hideSibling(parent);
-    Object.assign(parent.style, hideSongItemStyle);
+  //   const parent = findParent(ele);
+  //   // hideSibling(parent);
+  //   Object.assign(parent.style, hideSongItemStyle);
 
-    if (currentSongRef.current) {
-      currentSongRef.current.style.opacity = "0";
-    }
+  //   if (currentSongRef.current) {
+  //     currentSongRef.current.style.opacity = "0";
+  //   }
 
-    setTimeout(() => {
-      dispatch(
-        setSong({
-          ...song,
-          currentIndex: index,
-          song_in: currentSong.song_in,
-        })
-      );
-    }, 500);
-  };
+  //   setTimeout(() => {
+  //     dispatch(
+  //       setSong({
+  //         ...song,
+  //         currentIndex: index,
+  //         song_in: currentSong.song_in,
+  //       })
+  //     );
+  //   }, 500);
+  // };
 
-  const songsListItemTab = useMemo(
-    () => (
-      <>
-        {currentSong && (
-          <>
-            {currentSong.currentIndex === queueSongs.length - 1 ? (
-              <p>...</p>
-            ) : (
-              queueSongs.map((song, index) => {
-                if (index > currentSong.currentIndex)
-                  return (
-                    <MobileSongItem
-                      variant="playing-next"
-                      key={index}
-                      theme={theme}
-                      song={song}
-                      onClick={(e) => activeSong(e, song, index)}
-                    />
-                  );
-              })
-            )}
-          </>
-        )}
-      </>
-    ),
-    [currentSong, queueSongs]
-  );
+  // const songsListItemTab = useMemo(
+  //   () => (
+  //     <>
+  //       {currentSong && (
+  //         <>
+  //           {currentSong.currentIndex === queueSongs.length - 1 ? (
+  //             <p>...</p>
+  //           ) : (
+  //             queueSongs.map((song, index) => {
+  //               if (index > currentSong.currentIndex)
+  //                 return (
+  //                   <MobileSongItem
+  //                     variant="playing-next"
+  //                     key={index}
+  //                     theme={theme}
+  //                     song={song}
+  //                     onClick={(e) => activeSong(e, song, index)}
+  //                   />
+  //                 );
+  //             })
+  //           )}
+  //         </>
+  //       )}
+  //     </>
+  //   ),
+  //   [currentSong, queueSongs]
+  // );
 
   useEffect(() => {
     if (currentSongRef.current) {
@@ -186,6 +181,12 @@ export default function MobileFullScreenPlayer({
       "absolute inset-0 bg-zinc-900 bg-opacity-60 bg-blend-multiply overflow-hidden",
     button: "flex justify-center items-center rounded-full w-[38px]",
   };
+
+
+  console.log('MobileFullScreenPlayer render');
+
+  // return <></>
+  
 
   return (
     <>
@@ -239,15 +240,10 @@ export default function MobileFullScreenPlayer({
                 notPlayingOrLandscape ? "flex " : ""
               }`}
             >
-              {useMemo(
-                () => (
-                  <MobileSongThumbnail
-                    expand={activeTab === "Playing" && !isLandscape}
-                    data={currentSong}
-                  />
-                ),
-                [currentSong, playStatus, activeTab, isLandscape]
-              )}
+              <MobileSongThumbnail
+                expand={activeTab === "Playing" && !isLandscape}
+                data={currentSong}
+              />
 
               <div className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden"}`}>
                 <div className="h-[30px]">
@@ -257,7 +253,7 @@ export default function MobileFullScreenPlayer({
               </div>
             </div>
 
-            <div
+            {/* <div
               className={`mt-5 justify-between items-center ${
                 activeTab != "Playing" ? "hidden" : "flex"
               }`}
@@ -282,26 +278,22 @@ export default function MobileFullScreenPlayer({
               </div>
 
               <SleepTimerButton audioEle={audioEle} />
-            </div>
+            </div> */}
             {/* </div> */}
 
             {/* lyric tab */}
-            {useMemo(
-              () => (
-                <LyricsList
-                  active={activeTab === "Lyric"}
-                  className={`${
-                    activeTab === "Lyric" ? "flex-1 transition-all block" : "hidden"
-                  }`}
-                  audioEle={audioEle}
-                  isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
-                />
-              ),
-              [isOpenFullScreen, activeTab, isLandscape]
-            )}
+
+            {/* <LyricsList
+              active={activeTab === "Lyric"}
+              className={`${
+                activeTab === "Lyric" ? "flex-1 transition-all block" : "hidden"
+              }`}
+              audioEle={audioEle}
+              isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
+            /> */}
 
             {/* song list tab */}
-            <div
+            {/* <div
               className={`leading-[2.2] font-playwriteCU my-2 ${
                 activeTab === "Songs" ? "" : "hidden"
               }`}
@@ -315,7 +307,7 @@ export default function MobileFullScreenPlayer({
               }`}
             >
               {songsListItemTab}
-            </div>
+            </div> */}
 
             {/* control */}
             <div
@@ -323,12 +315,7 @@ export default function MobileFullScreenPlayer({
                 activeTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
               } ${activeTab === "Playing" ? "flex-grow" : ""}`}
             >
-              {useMemo(
-                () => (
-                  <Control audioEle={audioEle} isOpenFullScreen={false} />
-                ),
-                [isOpenFullScreen]
-              )}
+              <Control audioEle={audioEle} isOpenFullScreen={false} />
             </div>
           </div>
         </div>

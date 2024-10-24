@@ -21,18 +21,18 @@ const Player = ({ admin }: { admin?: boolean }) => {
   // state
   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
   const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
-  const [isHasAudioEle, setIsHasAudioEle] = useState(false);
+  const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
   // const idle=false;
 
-  const desktopContent = (
+  const desktopContent = audioRef.current && (
     <>
       {!admin && (
         <FullScreenPlayer
-          audioEle={audioRef.current as HTMLAudioElement}
+          audioEle={audioRef.current}
           idle={idle}
           isOpenFullScreen={isOpenFullScreen}
           setIsOpenFullScreen={setIsOpenFullScreen}
@@ -46,7 +46,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
 
       <BottomPlayer
         admin={admin}
-        audioEle={audioRef.current as HTMLAudioElement}
+        audioEle={audioRef.current}
         idle={idle && isOpenFullScreen}
         isOpenFullScreen={isOpenFullScreen}
         isOpenSongQueue={isOpenSongQueue}
@@ -56,16 +56,16 @@ const Player = ({ admin }: { admin?: boolean }) => {
     </>
   );
 
-  const mobileContent = (
+  const mobileContent = audioRef.current && (
     <>
       <MobileFullScreenPlayer
-        audioEle={audioRef.current as HTMLAudioElement}
+        audioEle={audioRef.current}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />
 
       <MobileBottomPlayer
-        audioEle={audioRef.current as HTMLAudioElement}
+        audioEle={audioRef.current}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />
@@ -73,14 +73,15 @@ const Player = ({ admin }: { admin?: boolean }) => {
   );
 
   useEffect(() => {
-    if (isHasAudioEle) return;
     if (audioRef.current) setIsHasAudioEle(true);
   }, []);
+
+  console.log("player render");
 
   return (
     <div className="absolute">
       <audio ref={audioRef} src={currentSong?.song_url} className="hd-mp3 hidden"></audio>
-      {isHasAudioEle ? (isOnMobile ? mobileContent : desktopContent) : ""}
+      {audioRef.current && (isOnMobile ? mobileContent : desktopContent)}
     </div>
   );
 };

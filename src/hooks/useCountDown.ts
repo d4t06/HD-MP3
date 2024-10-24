@@ -11,7 +11,7 @@ export default function useCountDown({ audioEle }: Props) {
   const ranEffect = useRef(false);
 
   const {
-    playStatus: { playStatus },
+   playStatus 
   } = useSelector(selectAllPlayStatusStore);
 
   const [isActive, setIsActive] = useState(0);

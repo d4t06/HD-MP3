@@ -535,6 +535,8 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     }
   };
 
+  console.log('song item render')
+
   return (
     <>
       {renderContainer()}

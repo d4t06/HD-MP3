@@ -4,19 +4,19 @@ import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 type Repeat = "one" | "all" | "no";
 type LyricSize = "small" | "medium" | "large";
 
+export type PlayStatus = "playing" | "error" | "loading" | "paused";
+
 type StateType = {
-  playStatus: {
-    /** update 23/10/2024 */
-    playStatus: "playing" | "error" | "loading" | "paused";
-    lyricSize: LyricSize;
-    isRepeat: Repeat;
-    isShuffle: boolean;
-    isLoaded: boolean;
-    //  isTimer: number;
-    isCrossFade: boolean;
-    songBackground: boolean;
-    songImage: boolean;
-  };
+  /** update 23/10/2024 */
+  playStatus: PlayStatus;
+  lyricSize: LyricSize;
+  isRepeat: Repeat;
+  isShuffle: boolean;
+  isLoaded: boolean;
+  //  isTimer: number;
+  isCrossFade: boolean;
+  songBackground: boolean;
+  songImage: boolean;
 };
 
 // init {
@@ -35,17 +35,15 @@ const init = () => {
   const storage = getLocalStorage();
 
   const state: StateType = {
-    playStatus: {
-      playStatus: "paused",
-      lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
-      isLoaded: true,
-      isRepeat: (storage["isRepeat"] || "no") as Repeat,
-      isShuffle: storage["isShuffle"] || false,
-      // isTimer: 0,
-      isCrossFade: storage["isCrossFade"] || false,
-      songBackground: storage["songBackground"] || false,
-      songImage: storage["songImage"] || false,
-    },
+    playStatus: "paused",
+    lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
+    isLoaded: true,
+    isRepeat: (storage["isRepeat"] || "no") as Repeat,
+    isShuffle: storage["isShuffle"] || false,
+    // isTimer: 0,
+    isCrossFade: storage["isCrossFade"] || false,
+    songBackground: storage["songBackground"] || false,
+    songImage: storage["songImage"] || false,
   };
 
   return state;
@@ -55,23 +53,20 @@ const PlayStatusSlice = createSlice({
   name: "playStatus",
   initialState: () => init(),
   reducers: {
-    setPlayStatus(
-      state,
-      action: { type: string; payload: Partial<StateType["playStatus"]> }
-    ) {
-      state.playStatus = { ...state.playStatus, ...action.payload };
+    setPlayStatus(state, action: { type: string; payload: Partial<StateType> }) {
+      Object.assign(state, action.payload);
     },
     togglePlayControl(
       state: StateType,
-      action: PayloadAction<{ variant: keyof StateType["playStatus"] }>
+      action: PayloadAction<{ variant: keyof StateType }>
     ) {
       const { variant } = action.payload;
 
       switch (variant) {
         default:
-          if (typeof state.playStatus[variant] === "boolean") {
-            const value = !state.playStatus[variant] as boolean;
-            (state.playStatus[variant] as boolean) = value;
+          if (typeof state[variant] === "boolean") {
+            const value = !state[variant] as boolean;
+            (state[variant] as boolean) = value;
             setLocalStorage(variant, value);
           }
       }

@@ -26,11 +26,7 @@ const MobileBottomPlayer: FC<Props> = ({
 }) => {
   const { theme } = useTheme();
 
-  const {
-    handleNext,
-    currentSong,
-    playStatus: { playStatus },
-  } = usePlayerControl();
+  const { handleNext, currentSong, playStatus } = usePlayerControl();
   const { handlePlayPause } = useAudioControl({ audioEle });
 
   const location = useLocation();

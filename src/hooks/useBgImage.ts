@@ -9,7 +9,7 @@ export default function useBgImage({
   currentSong: Song | null;
 }) {
   const {
-    playStatus: { songBackground },
+     songBackground 
   } = useSelector(selectAllPlayStatusStore);
 
   useEffect(() => {

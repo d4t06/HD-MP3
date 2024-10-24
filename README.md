@@ -87,13 +87,23 @@
 
 ### update Wednesday 23/10/2024
 
-- [x] Store temp song lyric in case the submit process error
-- [x] Refactoring set song's current time to localStorage
-- [x] Fix restore song's current time by the previous playing
+- Store temp song lyric in case the submit process error
+- Refactoring set song's current time to localStorage
+- Fix restore song's current time by the previous playing
+- Instant scroll to active lyric when go to edit lyric page
+- Refactoring playStatusSlice
+- Refactoring get song lyric
 - [] Fix mobile ui
-- [] Fix bug can't get song lyric when admin's song lyric had 
-- [x] Instant scroll to active lyric when go to edit lyric page
-- [x] Refactoring playStatusSlice
+  -  song list
+  - lyric
+  - control
+    - all *
+    - seek
+    - hide play pause, process ok
+      - hide play pause lag
+        - get playstatus from parent lag
+      - hide process lag
+  
 
 ### Song
 

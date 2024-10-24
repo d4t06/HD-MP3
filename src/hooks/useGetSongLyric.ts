@@ -13,40 +13,32 @@ export default function useSongLyric({
 }) {
   const { currentSong } = useSelector(selectCurrentSong);
   const {
-    playStatus: { playStatus },
+    playStatus
   } = useSelector(selectAllPlayStatusStore);
 
-  const [songLyric, setSongLyric] = useState<SongLyric>({
-    id: "",
-    base: "",
-    real_time: [],
-  });
+  const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [isSongLoaded, setIsSongLoaded] = useState(false);
   const timerId = useRef<NodeJS.Timeout>();
 
   const getLyric = async () => {
-    if (!currentSong) {
-      setLoading(false);
-      return;
-    }
-
-    setLoading(true);
-
     try {
+      if (!currentSong) return setLoading(false);
+      setLoading(true);
+
       const lyricSnap = await myGetDoc({
         collection: "lyrics",
-        id: currentSong.lyric_id,
+        id: currentSong.id,
         msg: ">>> api: get lyric doc",
       });
 
       if (lyricSnap.exists()) {
         const lyricData = lyricSnap.data() as SongLyric;
-        setSongLyric(lyricData);
+        setSongLyrics(lyricData.real_time);
       }
     } catch (error) {
-      console.log("[error] get lyric error");
+      console.log({ message: error });
     } finally {
       setLoading(false);
     }
@@ -56,7 +48,7 @@ export default function useSongLyric({
     clearTimeout(timerId.current);
     setIsSongLoaded(false);
     setLoading(true);
-    setSongLyric({ base: "", real_time: [], id: "" });
+    setSongLyrics([]);
   };
 
   //  add event
@@ -79,7 +71,7 @@ export default function useSongLyric({
       setLoading(false);
       return;
     }
-    if (songLyric.real_time.length) return;
+    if (songLyrics.length) return;
     if (isSongLoaded && isOpenFullScreen) {
       timerId.current = setTimeout(() => {
         getLyric();
@@ -98,5 +90,5 @@ export default function useSongLyric({
     };
   }, [currentSong, playStatus === "error"]);
 
-  return { songLyric, loading };
+  return { songLyrics, loading };
 }

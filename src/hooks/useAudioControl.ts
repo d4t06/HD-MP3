@@ -12,7 +12,10 @@ export default function useAudioControl({ audioEle }: Props) {
 
    const play = () => {
       try {
-         audioEle?.play();
+         console.log('play');
+         
+
+         audioEle.play();
          setIsClickPlay(true);
       } catch (error) {}
    };
@@ -22,6 +25,9 @@ export default function useAudioControl({ audioEle }: Props) {
    };
 
    const handlePlayPause = () => {
+      console.log(status);
+      
+
       status === "playing" ? pause() : status === "paused" && play();
    };
 
