@@ -6,6 +6,7 @@ type Props = {
   text: string;
   status: LyricStatus;
   className?: string;
+  activeColor?: string;
   scrollBehavior?: MutableRefObject<ScrollBehavior>;
 };
 
@@ -14,6 +15,7 @@ export default function LyricItem({
   className = "",
   status,
   scrollBehavior,
+  activeColor,
 }: Props) {
   const lyricRef = useRef<HTMLParagraphElement>(null);
 
@@ -30,7 +32,7 @@ export default function LyricItem({
       case "coming":
         return "";
       case "active":
-        return "text-[#ffed00] active-lyric";
+        return `${activeColor || 'text-[#ffed00]'} active-lyric`;
       case "done":
         return "disable";
     }
@@ -43,10 +45,7 @@ export default function LyricItem({
   }, [status]);
 
   return (
-    <p
-      ref={lyricRef}
-      className={`${className} select-none  font-[500] ${getClass()}`}
-    >
+    <p ref={lyricRef} className={`${className} select-none  font-[700] ${getClass()}`}>
       {text}
     </p>
   );

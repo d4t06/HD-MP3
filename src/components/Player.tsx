@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
 
 import {
   BottomPlayer,
@@ -10,12 +9,10 @@ import {
 import SongQueue from "./SongQueue";
 import useIdle from "../hooks/useIdle";
 import appConfig from "../config/app";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import { useTheme } from "@/store";
 
 const Player = ({ admin }: { admin?: boolean }) => {
   // store
-  const { currentSong } = useSelector(selectCurrentSong);
   const { isOnMobile } = useTheme();
 
   // state
@@ -76,13 +73,11 @@ const Player = ({ admin }: { admin?: boolean }) => {
     if (audioRef.current) setIsHasAudioEle(true);
   }, []);
 
-  console.log("player render");
-
   return (
-    <div className="absolute">
-      <audio ref={audioRef} src={currentSong?.song_url} className="hd-mp3 hidden"></audio>
+    <>
+      <audio ref={audioRef} className="hidden" />
       {audioRef.current && (isOnMobile ? mobileContent : desktopContent)}
-    </div>
+    </>
   );
 };
 

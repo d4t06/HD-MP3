@@ -13,7 +13,7 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
         }`}
       >
         <DashboardHeader />
-        <div className="h-full  pt-[60px] overflow-auto no-scrollbar">
+        <div className="h-full pt-[60px] overflow-auto no-scrollbar">
           <div className="container max-w-[800px] h-full">{children}</div>
         </div>
 

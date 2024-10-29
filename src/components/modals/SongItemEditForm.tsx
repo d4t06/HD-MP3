@@ -268,15 +268,26 @@ export default function SongItemEditForm({ song, close }: Props) {
     }
   };
 
+  const getIcon = (v: boolean) => {
+    return v ? (
+      <CheckIcon className="w-[20px] text-emerald-500 ml-[10px]" />
+    ) : (
+      <XMarkIcon className="w-[20px] text-red-500 ml-[10px]" />
+    );
+  };
+
   // define style
   const classes = {
     textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
-    input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-[14px] font-[500]`,
+    input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-lg font-[500]`,
+    lable: "text-lg inline-flex",
   };
 
   return (
     <div
-      className={`w-[500px] max-w-[calc(90vw-40px)] h-[auto] ${loading ? "disable" : ""}`}
+      className={`w-[500px] max-h-[90vh] max-w-[calc(90vw-40px)] overflow-hidden flex flex-col md:block ${
+        loading ? "disable" : ""
+      }`}
     >
       <input
         ref={inputFileRef}
@@ -286,49 +297,51 @@ export default function SongItemEditForm({ song, close }: Props) {
         onChange={uploadImageFromLocal}
         className="hidden"
       />
-      <h1 className="text-[20px] font-semibold">Edit</h1>
-      <div className="flex gap-[20px] mt-[10px] max-[800px]:flex-col">
-        <div className="w-[30%] max-[800px]:flex max-[800px]:w-full max-[800px]:gap-[12px]">
-          <div className="w-full rounded-[5px] overflow-hidden">
-            <Image
-              classNames="object-cover object-center w-full h-full"
-              onError={() => setValidURL(false)}
-              src={imageToDisplay}
-              blurHashEncode={song.blurhash_encode}
-            />
+      <h1 className="text-xl font-playwriteCU font-[600] leading-[2.4]">Edit song</h1>
+
+      <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
+        <div className="w-full md:w-[30%]">
+          <div className="w-[70%] mx-auto md:w-full">
+            <div className="pt-[100%] relative">
+              <div className="absolute inset-0">
+                <Image
+                  className="object-cover rounded-md object-center w-full h-full"
+                  onError={() => setValidURL(false)}
+                  src={imageToDisplay}
+                  blurHashEncode={song.blurhash_encode}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="md:mt-[10px]">
-            <div className="flex gap-[10px]">
+          <div className="mt-3">
+            <div className="flex space-x-2">
               <label
                 htmlFor="editImageInput"
                 className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] bg-${theme.alpha} rounded-full text-[14px]`}
               >
-                <ArrowUpTrayIcon className="w-[15px]" />
+                <ArrowUpTrayIcon className="w-5" />
               </label>
               {isShowRemoveImageButton && (
                 <Button
                   onClick={() => handleUnsetImage()}
                   className={`inline-block hover:brightness-90 px-[20px] py-[5px] ${theme.content_bg} rounded-full text-[14px]`}
                 >
-                  <XMarkIcon className="w-[15px]" />
+                  <XMarkIcon className="w-5" />
                 </Button>
               )}
             </div>
-            <p className={`text-[12px] ${classes.textColor} mt-[10px]`}>
+            <p className={`text-sm ${classes.textColor} mt-[10px]`}>
               * Image from URL will not be apply until you remove current image
             </p>
           </div>
         </div>
-        <div className="flex flex-col flex-grow gap-[10px]">
+
+        <div className="pt-5 md:pt-0 md:pl-5 flex flex-col md:flex-grow space-y-3">
           <div className="flex flex-col gap-[5px]">
-            <p className="text-[14px] inline-flex">
+            <p className={classes.lable}>
               Name:
-              {validName ? (
-                <CheckIcon className="w-[20px] text-emerald-500 ml-[10px]" />
-              ) : (
-                <XMarkIcon className="w-[20px] text-red-500 ml-[10px]" />
-              )}
+              {getIcon(validName)}
             </p>
             <input
               className={`${classes.input} ${classes.textColor}`}
@@ -339,13 +352,9 @@ export default function SongItemEditForm({ song, close }: Props) {
             />
           </div>
           <div className="flex flex-col gap-[5px]">
-            <p className="inline-flex text-[14px]">
+            <p className={classes.lable}>
               Singer:
-              {validSinger ? (
-                <CheckIcon className="w-[20px] text-emerald-500 ml-[10px]" />
-              ) : (
-                <XMarkIcon className="w-[20px] text-red-500 ml-[10px]" />
-              )}
+              {getIcon(validSinger)}
             </p>
             <input
               className={classes.input}
@@ -356,17 +365,9 @@ export default function SongItemEditForm({ song, close }: Props) {
             />
           </div>
           <div className="flex flex-col gap-[5px]">
-            <p className="inline-flex text-[14px]">
+            <p className={classes.lable}>
               Image URL:
-              {inputFields.image_url && (
-                <>
-                  {validURL ? (
-                    <CheckIcon className="w-[20px] text-emerald-500 ml-[10px]" />
-                  ) : (
-                    <XMarkIcon className="w-[20px] text-red-500 ml-[10px]" />
-                  )}
-                </>
-              )}
+              {inputFields.image_url && <>{getIcon(validURL)}</>}
             </p>
             <input
               className={classes.input}
@@ -375,28 +376,27 @@ export default function SongItemEditForm({ song, close }: Props) {
               type="text"
             />
           </div>
-
-          <div className="flex gap-[10px] mt-[10px]">
-            <Button
-              isLoading={loading}
-              onClick={handleEditSong}
-              className={`${theme.content_bg} rounded-full text-[14px] ${
-                !isAbleToSubmit ? !isImpactOnImage && "disable" : ""
-              }`}
-              variant={"primary"}
-            >
-              Save
-            </Button>
-
-            <Button
-              onClick={handleCloseEditForm}
-              className={`bg-${theme.alpha} rounded-full hover:bg-red-500 hover:text-[#fff] text-[14px]`}
-              variant={"primary"}
-            >
-              Close
-            </Button>
-          </div>
         </div>
+      </div>
+      <div className="flex mt-5 space-x-2 justify-end">
+        <Button
+          isLoading={loading}
+          onClick={handleEditSong}
+          className={`${theme.content_bg} rounded-full ${
+            !isAbleToSubmit ? !isImpactOnImage && "disable" : ""
+          }`}
+          variant={"primary"}
+        >
+          Save
+        </Button>
+
+        <Button
+          onClick={handleCloseEditForm}
+          className={`bg-${theme.alpha} rounded-full`}
+          variant={"primary"}
+        >
+          Close
+        </Button>
       </div>
     </div>
   );

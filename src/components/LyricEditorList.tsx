@@ -19,10 +19,15 @@ export default function LyricEditorList({ controlRef }: Props) {
     controlRef.current?.seek(second);
   };
 
+  const getBg = () => {
+    if (theme.type === "dark") return "bg-white/10";
+    else return "bg-black/10";
+  };
+
   return (
     <>
       <div
-        className={`flex flex-grow overflow-auto no-scrollbar rounded-xl pt-3 mt-3 bg-black/10`}
+        className={`flex flex-grow overflow-auto no-scrollbar rounded-xl pt-3 mt-3 ${getBg()}`}
       >
         <div className={"w-1/2 px-2"}>
           {!!baseLyricArr.length ? (
@@ -37,6 +42,7 @@ export default function LyricEditorList({ controlRef }: Props) {
 
                 return (
                   <LyricItem
+                    activeColor={theme.type === 'light' ? theme.content_text : ''}
                     className="pt-[37px] text-[18px] mr-[24px]"
                     key={index}
                     status={status}

@@ -71,8 +71,8 @@ export const parserSong = async (songFile: File) => {
   return data;
 };
 export const formatTime = (time: number) => {
-  const minutes = Math.floor(time / 60);
-  const seconds = Math.floor(time % 60);
+  const minutes = (time / 60).toFixed(0);
+  const seconds = Math.round(time % 60);
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
@@ -171,4 +171,8 @@ export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]
     behavior: behavior || "smooth",
     block: "center",
   });
+};
+
+export const getLinearBg = (color: string, progress: number) => {
+  return `linear-gradient(to right, ${color} ${progress}%, rgba(255,255,255, .3) ${progress}%, rgba(255,255,255, .3) 100%)`;
 };

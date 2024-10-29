@@ -5,12 +5,12 @@ import logo from '@/assets/logo.png'
 
 type Props = {
    src?: string;
-   classNames?: string;
+   className?: string;
    blurHashEncode?: string;
    onError?: () => void;
 };
 
-export default function Image({ src, classNames, blurHashEncode, onError }: Props) {
+export default function Image({ src, className, blurHashEncode, onError }: Props) {
    const [imageLoaded, setImageLoaded] = useState(false);
    const imageRef = useRef<HTMLImageElement>(null);
 
@@ -47,7 +47,7 @@ export default function Image({ src, classNames, blurHashEncode, onError }: Prop
          <img
             onLoad={handleLoadImage}
             onError={handleError}
-            className={`${classNames ? classNames : ""} w-full ${
+            className={`${className || ""} w-full ${
                !imageLoaded ? "hidden" : ""
             }`}
             src={src || logo}

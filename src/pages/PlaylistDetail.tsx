@@ -51,7 +51,7 @@ export default function PlaylistDetail() {
   }, [usePlaylistLoading]);
 
   return (
-    <div className="md:pb-[90px]">
+    <div className="pb-[80px]">
       <BackBtn />
 
       {renderPlaylistInfo}

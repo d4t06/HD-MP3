@@ -1,13 +1,12 @@
-// import { useRef } from "react";
-// import {
-//   ArrowPathRoundedSquareIcon,
-//   ArrowTrendingUpIcon,
-//   BackwardIcon,
-//   ForwardIcon,
-// } from "@heroicons/react/24/outline";
+import {
+  ArrowPathRoundedSquareIcon,
+  ArrowTrendingUpIcon,
+  BackwardIcon,
+  ForwardIcon,
+} from "@heroicons/react/24/outline";
 import { useTheme } from "../store";
 
-// import PlayPauseButton from "./child/PlayPauseButton";
+import PlayPauseButton from "./child/PlayPauseButton";
 import { useControl } from "../hooks";
 import { formatTime } from "@/utils/appHelpers";
 
@@ -20,33 +19,18 @@ interface Props {
 export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   const { theme } = useTheme();
 
-  // ref
-
-  // const {
-  //   handleNext,
-  //   handlePrevious,
-  //   handleRepeatSong,
-  //   handleShuffle,
-  //   playStatus: { isRepeat, isShuffle, playStatus },
-  //   currentSong,
-  //   queueSongs,
-  // } = usePlayerControl();
-
   const {
     handleSeek,
+    handlePlayPause,
+    handleNext,
+    handlePrevious,
+    handleRepeatSong,
+    handleShuffle,
+    isRepeat,
+    isShuffle,
+    playStatus,
     currentSong,
-
-    // handlePlayPause,
-
-    // handleNext,
-    // handlePrevious,
-    // handleRepeatSong,
-    // handleShuffle,
-    // isRepeat,
-    // isShuffle,
-    // playStatus,
-    // currentSong,
-    // queueSongs,
+    queueSongs,
     currentTimeEleRef,
     timelineEleRef,
   } = useControl({
@@ -66,12 +50,10 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
 
-  console.log("control render");
-
   return (
     <>
       {/* buttons */}
-      {/* <div className={`${classes.buttonsContainer}`}>
+      <div className={`${classes.buttonsContainer}`}>
         {!admin && (
           <>
             <button
@@ -113,7 +95,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             </button>
           </>
         )}
-      </div> */}
+      </div>
 
       {/* process */}
       <div
@@ -139,12 +121,12 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
             {currentSong ? formatTime(currentSong?.duration) : "0:00"}
           </span>
         </div>
-        {/* 
+
         {admin && (
           <div className="flex items-center ml-3">
             <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
           </div>
-        )} */}
+        )}
       </div>
     </>
   );

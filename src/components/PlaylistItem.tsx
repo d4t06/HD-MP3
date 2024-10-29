@@ -26,7 +26,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, theme, active, link }) => {
    const content = (
       <div className={classes.imageContainer}>
          <Image
-            classNames="group-hover:scale-[1.05] transition-[transform] duration-[.25s]"
+            className="group-hover:scale-[1.05] transition-[transform] duration-[.25s]"
             src={data.image_url}
             blurHashEncode={data.blurhash_encode}
          />

@@ -69,7 +69,7 @@ const MobileBottomPlayer: FC<Props> = ({
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image src={currentSong?.image_url || siteLogo} classNames="rounded-full" />
+              <Image src={currentSong?.image_url || siteLogo} className="rounded-full" />
             </div>
 
             <div className="flex-grow  ml-[10px]">

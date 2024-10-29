@@ -14,7 +14,7 @@ export default function HomePage() {
   const { loading: useSongLoading } = useInitSong({});
 
   return (
-    <div className="md:pb-[80px]">
+    <div className="pb-[80px]">
       {isOnMobile && <MobileNav />}
       <div className="pb-[30px]">
         <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>

@@ -38,8 +38,10 @@ export default function MySongsPage() {
   if (errorMsg) return <h1>{errorMsg}</h1>;
 
   return (
-    <div className="md:pb-[80px]">
-      {window.innerWidth < 800 && <BackBtn to="" />}
+    <div className="pb-[80px]">
+      <div className="mb-[30px]  md:hidden">
+        <BackBtn />
+      </div>
       <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Playlist</h3>
 
       <PlaylistList

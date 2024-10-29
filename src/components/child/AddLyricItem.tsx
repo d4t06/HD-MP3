@@ -41,7 +41,7 @@ function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
       </button>
 
       {!isEditing && (
-        <p className="font-[500] text-[18px] select-none flex items-center">
+        <p className="font-[700] text-[18px] select-none flex items-center">
           {lyric.text}
 
           <button onClick={() => setIsEditing(true)} className="ml-1">

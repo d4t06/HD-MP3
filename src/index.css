@@ -1,20 +1,17 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"); */
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Playwrite+CU:wght@400&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400..700&display=swap');
-
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Playwrite+CU&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* @font-face {
+/* 
+@font-face {
   font-family: "PlaywriteCU";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
   src: url(./assets/fonts/PlaywriteCU-Regular.ttf);
-} */
-/* 
+}
+
 @font-face {
   font-family: "Nunito";
   font-style: normal;
@@ -86,4 +83,8 @@
 button[disabled] {
   pointer-events: none;
   opacity: 0.6;
+}
+
+.translate-3d-0 {
+  transform: translate3d(0, 0, 0);
 }

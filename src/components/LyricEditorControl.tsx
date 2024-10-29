@@ -1,5 +1,12 @@
 import { useTheme } from "@/store";
-import { Ref, forwardRef, useImperativeHandle, useRef, useState } from "react";
+import {
+  ElementRef,
+  Ref,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
 import { Button, Modal, PopupWrapper } from ".";
 import {
@@ -42,9 +49,10 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
+  const progressLineRef = useRef<ElementRef<"div">>(null);
 
   const { backward, forward, handlePlayPause, pause, seek, status, isClickPlay } =
-    useAudioControl({ audioEle });
+    useAudioControl({ audioEle, progressLineRef });
 
   const {
     addLyric,
@@ -62,6 +70,14 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
   });
 
   useImperativeHandle(ref, () => ({ seek, pause, submit }));
+
+  const _handlePlayPaused = () => {
+    if (!isClickPlay) {
+      const latestTime = lyrics[lyrics.length - 1].end;
+      audioEle.currentTime = latestTime;
+    }
+    handlePlayPause();
+  };
 
   const closeModal = () => modalRef.current?.toggle();
 
@@ -85,12 +101,12 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         );
       case "tutorial":
         return (
-          <>
+          <div className="w-[500px] max-w-[90vw]">
             <ModalHeader title="Tutorial" close={closeModal} />
             <div className="h-[500px] max-h-[75vh] overflow-y-auto no-scrollbar">
               <img className="w-full border rounded-[16px]" src={tutorial} alt="" />
             </div>
-          </>
+          </div>
         );
     }
   };
@@ -124,10 +140,10 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
 
   return (
     <>
-      <div className="flex items-start flex-wrap -mt-2">
+      <div className="flex items-start flex-wrap -mt-2 -ml-2">
         <MyPopup>
           <MyPopupTrigger>
-            <Button className={`h-ful ${classes.button} !ml-0`}>
+            <Button className={`h-ful ${classes.button}`}>
               <Cog6ToothIcon className="w-6" />
             </Button>
           </MyPopupTrigger>
@@ -165,7 +181,7 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
           </MyPopupContent>
         </MyPopup>
 
-        <Button className={classes.button} onClick={handlePlayPause}>
+        <Button className={classes.button} onClick={_handlePlayPaused}>
           {renderPlayPausedButton()}
         </Button>
         <Button disabled={!isEnableAddBtn} onClick={addLyric} className={classes.button}>
@@ -194,10 +210,15 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
           <span>Edit lyric</span>
         </Button>
 
-        <button onClick={() => openModal("tutorial")} className={`self-center ml-auto`}>
+        <button
+          onClick={() => openModal("tutorial")}
+          className={`self-center ml-auto mt-2`}
+        >
           <QuestionMarkCircleIcon className="w-6" />
         </button>
       </div>
+
+      <div ref={progressLineRef} className={`h-1 rounded-full mt-3 w-full`}></div>
 
       <Modal variant="animation" ref={modalRef}>
         {renderModal()}

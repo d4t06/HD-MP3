@@ -8,13 +8,11 @@ export default function useBgImage({
   bgRef: RefObject<HTMLDivElement>;
   currentSong: Song | null;
 }) {
-  const {
-     songBackground 
-  } = useSelector(selectAllPlayStatusStore);
+  const { songBackground } = useSelector(selectAllPlayStatusStore);
 
   useEffect(() => {
     if (!songBackground) return;
-    if (currentSong) {
+    if (currentSong && currentSong.image_url) {
       const node = bgRef.current as HTMLElement;
       if (node) {
         node.style.backgroundImage = `url(${currentSong.image_url})`;

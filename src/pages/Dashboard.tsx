@@ -86,7 +86,7 @@ export default function DashBoard() {
         <tr className={``} key={index}>
           <td className={classes.td}>
             <div className="h-[44px] w-[44px] ml-[20px]">
-              <Image classNames="rounded-[4px]" src={user.photoURL} />
+              <Image className="rounded-[4px]" src={user.photoURL} />
             </div>
           </td>
           <td className={classes.td}>{user.display_name}</td>

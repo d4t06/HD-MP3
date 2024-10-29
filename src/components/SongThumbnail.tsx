@@ -49,7 +49,7 @@ const SongThumbnail = (
           }`}
         >
           <Image
-            classNames="rounded-[6px]"
+            className="rounded-[6px]"
             src={data.image_url}
             blurHashEncode={data.blurhash_encode}
           />

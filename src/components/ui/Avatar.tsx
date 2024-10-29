@@ -14,7 +14,7 @@ export default function Avatar({ className }: { className?: string }) {
 
    return (
       <div className={classes.imageFrame}>
-         <Image src={loggedInUser?.photoURL || userImage} classNames="w-full" />
+         <Image src={loggedInUser?.photoURL || userImage} className="w-full" />
       </div>
    );
 }

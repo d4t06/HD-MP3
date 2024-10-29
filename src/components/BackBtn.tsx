@@ -1,41 +1,37 @@
-import { redirect, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../store";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
-type Props = {
-   to?: string;
-};
+function BackBtn() {
+  const { theme } = useTheme();
 
-function BackBtn({ to }: Props) {
-   const { theme } = useTheme();
-   const navigate = useNavigate();
-   const location = useLocation();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-   const handleNavigate = (direction: "back" | "forward") => {
-      if (typeof to === "string") {
-         redirect(to);
-      }
-      if (direction === "back") {
-         navigate(-1);
-      }
-   };
+  const handleNavigate = () => {
+    const currentPath = location.pathname;
 
-   const classes = {
-      button: `h-[36px] w-[36px] p-[4px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`,
-   };
+    let index = currentPath.lastIndexOf("/");
+    let prevPath = currentPath.substring(0, index);
+    if (currentPath.includes("playlist")) {
+      prevPath = "/mysongs";
+    }
 
-   return (
-      <div className="flex gap-[10px] mb-[30px]">
-         <button
-            onClick={() => handleNavigate("back")}
-            className={`${classes.button} ${
-               location.pathname === "/" ? "disable" : ""
-            }`}
-         >
-            <ChevronLeftIcon />
-         </button>
-      </div>
-   );
+    navigate(prevPath || "/");
+  };
+
+  const classes = {
+    button: `h-[36px] w-[36px] p-[4px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`,
+  };
+
+  return (
+    <button
+      onClick={handleNavigate}
+      className={`${classes.button} ${location.pathname === "/" ? "disable" : ""}`}
+    >
+      <ChevronLeftIcon />
+    </button>
+  );
 }
 
 export default BackBtn;

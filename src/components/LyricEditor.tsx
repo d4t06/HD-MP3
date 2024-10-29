@@ -15,6 +15,7 @@ export type LyricStatus = "active" | "done" | "coming";
 
 export default function LyricEditor({ admin }: Props) {
   const { theme } = useTheme();
+
   const controlRef = useRef<LyricEditorControlRef>(null);
   const audioRef = useRef<ElementRef<"audio">>(null);
 

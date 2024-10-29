@@ -154,7 +154,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const classes = {
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
     songListButton: `p-1 mr-1 text-[inherit]`,
-    itemContainer: `group/container flex flex-row rounded justify-between px-[10px] py-[10px] w-full border-b border-${theme.alpha} last:border-none p-[0px]`,
+    itemContainer: `w-full sm:group/container flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
     imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
       props.variant === "queue" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
     }`,
@@ -281,7 +281,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       case "queue":
         return leftElement;
       default:
-        return <div className="flex flex-grow">{leftElement}</div>;
+        return <div className="flex flex-grow overflow-hidden">{leftElement}</div>;
     }
   };
 
@@ -456,7 +456,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
               <MyPopup appendOnPortal>
                 <MyPopupTrigger>
-                  <MyTooltip isWrapped content="Menu">
+                  <MyTooltip  isWrapped content="Menu">
                     <button
                       className={`block group-hover/main:block ${classes.button} ${
                         isOpenPopup || props.variant === "queue"
@@ -525,7 +525,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return (
           <div
             className={`${classes.itemContainer} ${className || ""} group/main ${
-              active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
+              active || isSelected ? `bg-${theme.alpha}` : `sm:hover:bg-${theme.alpha}`
             }`}
           >
             {left()}

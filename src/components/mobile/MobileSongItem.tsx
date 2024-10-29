@@ -46,14 +46,12 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
   }, [selectedSongs]);
 
   const classes = {
-    itemContainer: `hover:bg-${
-      theme.alpha
-    } items-center justify-between cursor-pointer  border-b 
+    itemContainer: `items-center justify-between cursor-pointer  border-b 
     last:border-none border-${theme.alpha} 
     flex rounded-md p-2 ${isChecked && "bg-" + theme.alpha}`,
     button: `${theme.content_bg} rounded-full`,
     songListButton: `mr-[10px] px-[5px]`,
-    imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden group/image flex-shrink-0`,
+    imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden flex-shrink-0`,
     before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
   };
 

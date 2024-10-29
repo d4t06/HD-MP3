@@ -15,9 +15,7 @@ interface Props {
 
 const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }) => {
   // state
-  const {
-   lyricSize, songImage 
-  } = useSelector(selectAllPlayStatusStore);
+  const { lyricSize, songImage } = useSelector(selectAllPlayStatusStore);
   const [currentTime, setCurrentTime] = useState<number>(0);
   const scrollBehavior = useRef<ScrollBehavior>("instant");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,7 +100,9 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
   return (
     <div
       ref={containerRef}
-      className={`${classes.container} ${!songImage ? "text-center" : ""} ${className}`}
+      className={`${classes.container} ${
+        songImage ? "text-left" : "text-center"
+      } ${className}`}
     >
       {loading && (
         <div className={classes.loadingContainer}>
