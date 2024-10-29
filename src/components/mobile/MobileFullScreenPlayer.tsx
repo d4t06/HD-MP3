@@ -1,16 +1,18 @@
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { useBgImage } from "@/hooks";
+// import { useBgImage } from "@/hooks";
 
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
 import { selectCurrentSong } from "@/store/currentSongSlice";
-import useDisableOverflow from "@/hooks/useDisableOverflow";
+// import useDisableOverflow from "@/hooks/useDisableOverflow";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
+import { Blurhash } from "react-blurhash";
+import { defaultBlurHash } from "@/constants/blurhash";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -31,12 +33,11 @@ export default function MobileFullScreenPlayer({
   const [scalingImage, _setScalingImage] = useState(false);
 
   // ref
-  const bgRef = useRef<HTMLDivElement>(null);
+  // const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // use hooks
-  useDisableOverflow({ isOpenFullScreen });
-  useBgImage({ bgRef, currentSong });
+  // useBgImage({ bgRef, currentSong });
   const { wrapperRef } = useMobileFullScreenPlayer({ isOpenFullScreen });
 
   const isLandscape = false;
@@ -46,8 +47,8 @@ export default function MobileFullScreenPlayer({
     headerWrapper: "flex mb-4",
     container: "flex-grow flex flex-col relative overflow-hidden",
     control: "flex flex-col-reverse justify-center",
-    bgImage:
-      "absolute inset-0 z-[-1] bg-cover bg-center bg-no-repeat brightness-[60%] blur-[50px] translate-3d-0",
+
+    bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
     button: "flex justify-center items-center rounded-full w-[38px]",
   };
 
@@ -58,7 +59,13 @@ export default function MobileFullScreenPlayer({
         style={{ transform: "translate(0, 100%)", zIndex: "-10" }}
         className={`fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
       >
-        <div ref={bgRef} className={classes.bgImage}></div>
+        <div className={classes.bgImage}>
+          <Blurhash
+            width={"100%"}
+            height={"100%"}
+            hash={currentSong?.blurhash_encode || defaultBlurHash}
+          />
+        </div>
 
         <div className="h-full z-10 p-4 flex flex-col">
           <div className={classes.headerWrapper}>
@@ -96,24 +103,23 @@ export default function MobileFullScreenPlayer({
           {/* container */}
           <div ref={containerRef} className={classes.container}>
             {/* song info */}
-            <div className={`${notPlayingOrLandscape ? "flex " : ""}`}>
-              <MobileSongThumbnail
-                expand={activeTab === "Playing" && !isLandscape}
-                data={currentSong}
-              />
+            <div className={`${notPlayingOrLandscape ? "flex" : "sm:flex"}`}>
+              <MobileSongThumbnail expand={activeTab === "Playing"} data={currentSong} />
 
-              <div className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden"}`}>
-                <div className="h-[30px]">
-                  <p className="font-playwriteCU leading-[1.5]">{currentSong?.name}</p>
-                </div>
-                <div className="opacity-70">{currentSong?.singer}</div>
+              <div
+                className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden sm:block"}`}
+              >
+                <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
+                  {currentSong?.name}
+                </p>
+                <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">{currentSong?.singer}</div>
               </div>
             </div>
 
             {/* song name */}
             <div
               className={`mt-5 justify-between items-center ${
-                activeTab != "Playing" ? "hidden" : "flex"
+                activeTab != "Playing" ? "hidden" : "flex sm:hidden"
               }`}
             >
               <div className="flex-grow">
@@ -124,7 +130,7 @@ export default function MobileFullScreenPlayer({
                     content={currentSong?.name || "..."}
                   />
                 </div>
-                <div className={"h-[33px]"}>
+                <div className={"h-[28px]"}>
                   <ScrollText
                     autoScroll
                     className={`opacity-60 ${
@@ -141,8 +147,8 @@ export default function MobileFullScreenPlayer({
             {/* lyric tab */}
             <LyricsList
               active={activeTab === "Lyric"}
-              className={`${
-                activeTab === "Lyric" ? "flex-1 transition-all block" : "hidden"
+              className={`text-center ${
+                activeTab === "Lyric" ? "flex-1 block" : "hidden"
               }`}
               audioEle={audioEle}
               isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}

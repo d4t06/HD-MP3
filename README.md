@@ -93,17 +93,11 @@
 - Instant scroll to active lyric when go to edit lyric page
 - Refactoring playStatusSlice
 - Refactoring get song lyric
-- [] Fix mobile ui
-  -  song list
-  - lyric
-  - control
-    - all *
-    - seek
-    - hide play pause, process ok
-      - hide play pause lag
-        - get playstatus from parent lag
-      - hide process lag
-  
+- blur filter cause lag on iphone => fix: translate3d 0
+
+### update Tuesday 29/10/2024
+
+- Fix bug
 
 ### Song
 

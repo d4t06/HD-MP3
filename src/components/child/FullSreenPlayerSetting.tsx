@@ -9,11 +9,11 @@ import {
 import { setLocalStorage } from "@/utils/appHelpers";
 
 export default function FullScreenPlayerSetting() {
-  const { theme, isOnMobile } = useTheme();
+  const { theme } = useTheme();
   const dispatch = useDispatch();
 
   const {
- lyricSize, songBackground, songImage 
+ lyricSize, songBackground 
   } = useSelector(selectAllPlayStatusStore);
 
   const handleChangeLyricSize = (size: typeof lyricSize) => {
@@ -81,7 +81,7 @@ export default function FullScreenPlayerSetting() {
               cb={() => dispatch(togglePlayControl({ variant: "songBackground" }))}
             />
           </div>
-          {!isOnMobile && (
+          {/* {!isOnMobile && (
             <div className={`${classes.itemContainer}`}>
               <p className={classes.text}>Song image</p>
               <Switch
@@ -91,7 +91,7 @@ export default function FullScreenPlayerSetting() {
                 cb={() => dispatch(togglePlayControl({ variant: "songImage" }))}
               />
             </div>
-          )}
+          )} */}
         </PopupWrapper>
       </div>
     </>

@@ -6,38 +6,23 @@ import {
   useRef,
   useState,
 } from "react";
-import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Image, Button } from "..";
-import { useToast, useAuthStore, useSongsStore, useTheme } from "@/store";
+import { useTheme } from "@/store";
 import { useEditForm } from "@/hooks";
-import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+import ModalHeader from "./ModalHeader";
+import { getDisable } from "@/utils/appHelpers";
 
 type Props = {
   song: Song;
   admin?: boolean;
-  close: () => void;
+  closeModal: () => void;
 };
 
-export default function SongItemEditForm({ song, close }: Props) {
-  // use store
-  const dispatch = useDispatch();
+export default function SongItemEditForm({ song, closeModal }: Props) {
   const { theme } = useTheme();
-  const { user } = useAuthStore();
-  const { setErrorToast, setSuccessToast } = useToast();
-  const { currentSong } = useSelector(selectCurrentSong);
-  const { updateUserSong } = useSongsStore();
 
-  // state
-  const [loading, setLoading] = useState(false);
-  const [isImpactOnImage, setIsImpactOnImage] = useState(false);
-
-  const [stockImageURL, setStockImageURL] = useState(song.image_url);
-  const [imageURLFromLocal, setImageURLFromLocal] = useState("");
-  const [imageFileFromLocal, setImageFileFromLocal] = useState<File>();
   const [inputFields, setInputFields] = useState({
     name: song.name,
     singer: song.singer,
@@ -52,12 +37,20 @@ export default function SongItemEditForm({ song, close }: Props) {
     validName,
     validSinger,
     validURL,
-    isChangeInEdit,
-    setValidURL,
-  } = useEditForm({
-    data: song,
-    inputFields,
     imageURLFromLocal,
+    isImpactOnImage,
+    setImageFileFromLocal,
+    setImageURLFromLocal,
+    setStockImageURL,
+    setIsImpactOnImage,
+    stockImageURL,
+    setValidURL,
+    isFetching,
+    handleSubmit,
+  } = useEditForm({
+    song,
+    inputFields,
+    closeModal,
   });
 
   // priority order
@@ -112,182 +105,29 @@ export default function SongItemEditForm({ song, close }: Props) {
     setImageFileFromLocal(imageFileFromLocal);
   }, []);
 
-  const closeModal = () => {
-    setLoading(false);
-    close();
-  };
-
   const handleCloseEditForm: MouseEventHandler = (e) => {
     e.stopPropagation();
     closeModal();
   };
 
-  const handleEditSong = async () => {
-    if (!user) return;
-
-    if (!song.id) {
-      setErrorToast("Edit song wrong data id");
-      return;
-    }
-
-    try {
-      // const newTargetSongs: Song[] = [...targetSongs];
-      let newSong: Song = { ...song };
-
-      if (isChangeInEdit) {
-        console.log("is change in edit");
-
-        // check valid input
-        if (!inputFields.name || !inputFields.singer) {
-          console.log("input invalid");
-          setErrorToast("");
-          return;
-        }
-
-        const songImageUrl =
-          !!inputFields.image_url && validURL ? inputFields.image_url : newSong.image_url;
-
-        setLoading(true);
-        newSong = {
-          ...newSong,
-          name: inputFields.name,
-          singer: inputFields.singer,
-          image_url: songImageUrl,
-        };
-
-        // check valid
-        if (newSong.name !== inputFields.name || newSong.singer !== inputFields.singer) {
-          console.log("input invalid");
-          setErrorToast();
-          return;
-        }
-
-        // user upload song from local
-        if (imageFileFromLocal && isImpactOnImage) {
-          const { filePath, fileURL } = await uploadFile({
-            file: imageFileFromLocal,
-            folder: "/images/",
-            email: user.email,
-          });
-          newSong.image_file_path = filePath;
-          newSong.image_url = fileURL;
-
-          // if user remove image
-        } else if (isImpactOnImage) {
-          newSong.image_file_path = "";
-        }
-
-        // if (!isImpactOnImage) {
-        //    updateUserSong(newSong);
-        // }
-      }
-
-      // if user upload, change, unset image
-      if (isImpactOnImage) {
-        setLoading(true);
-
-        console.log("isImpactOnImage");
-
-        // >>> handle delete song file
-        // when user upload new image
-        if (song.image_file_path) {
-          newSong.image_file_path = "";
-          newSong.image_url = "";
-
-          await deleteFile({
-            filePath: song.image_file_path,
-            msg: ">>> api: delete song's image file",
-          });
-        }
-
-        // when user remove current image url and no upload image from local
-        if (!stockImageURL && !imageFileFromLocal) {
-          console.log("remove current image url");
-
-          newSong.image_file_path = "";
-          newSong.image_url = "";
-        }
-
-        // >>> handle add new song file if exist
-        // handle upload image upload from local
-        if (imageFileFromLocal) {
-          console.log("upload new file");
-
-          const imageBlob = await optimizeImage(imageFileFromLocal);
-          if (imageBlob == undefined) return;
-
-          const uploadProcess = uploadBlob({
-            blob: imageBlob,
-            folder: "/images/",
-            songId: newSong.id,
-          });
-
-          const { encode } = await getBlurHashEncode(imageBlob);
-          if (encode) {
-            newSong.blurhash_encode = encode;
-            console.log("check encode", encode);
-          }
-
-          const { filePath, fileURL } = await uploadProcess;
-          newSong.image_file_path = filePath;
-          newSong.image_url = fileURL;
-        }
-      }
-
-      // >>> api
-      await mySetDoc({
-        collection: "songs",
-        data: newSong,
-        id: newSong.id,
-        msg: ">>> api: update song doc",
-      });
-
-      updateUserSong(newSong);
-      // dispatch(updateSongInQueue({ song: newSong }));
-
-      if (currentSong?.id === newSong.id) {
-        dispatch(
-          setSong({
-            ...newSong,
-            currentIndex: currentSong.currentIndex,
-            song_in: currentSong.song_in,
-          })
-        );
-      }
-      // }
-
-      // >>> finish
-      setSuccessToast(`Song edited`);
-      closeModal();
-    } catch (error) {
-      console.log({ message: error });
-
-      setErrorToast();
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getIcon = (v: boolean) => {
     return v ? (
-      <CheckIcon className="w-[20px] text-emerald-500 ml-[10px]" />
+      <CheckIcon className="w-6 text-emerald-500 ml-2" />
     ) : (
-      <XMarkIcon className="w-[20px] text-red-500 ml-[10px]" />
+      <XMarkIcon className="w-6 text-red-500 ml-2" />
     );
   };
 
   // define style
   const classes = {
     textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
-    input: `px-[10px] py-[5px] rounded-[4px] bg-transparent border border-${theme.alpha} text-lg font-[500]`,
-    lable: "text-lg inline-flex",
+    input: `px-[10px] py-1 outline-none rounded-[4px] text-lg ${theme.side_bar_bg} border border-${theme.alpha} font-[500]`,
+    label: "text-lg inline-flex",
   };
 
   return (
     <div
-      className={`w-[500px] max-h-[90vh] max-w-[calc(90vw-40px)] overflow-hidden flex flex-col md:block ${
-        loading ? "disable" : ""
-      }`}
+      className={`${getDisable(isFetching)} w-[500px] max-h-[80vh] max-w-[90vw] overflow-hidden flex flex-col md:block`}
     >
       <input
         ref={inputFileRef}
@@ -297,7 +137,8 @@ export default function SongItemEditForm({ song, close }: Props) {
         onChange={uploadImageFromLocal}
         className="hidden"
       />
-      <h1 className="text-xl font-playwriteCU font-[600] leading-[2.4]">Edit song</h1>
+
+      <ModalHeader title="Edit song" close={closeModal} />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="w-full md:w-[30%]">
@@ -339,37 +180,40 @@ export default function SongItemEditForm({ song, close }: Props) {
 
         <div className="pt-5 md:pt-0 md:pl-5 flex flex-col md:flex-grow space-y-3">
           <div className="flex flex-col gap-[5px]">
-            <p className={classes.lable}>
-              Name:
+            <label htmlFor="name" className={classes.label}>
+              Name
               {getIcon(validName)}
-            </p>
+            </label>
             <input
               className={`${classes.input} ${classes.textColor}`}
               value={inputFields.name}
               type="text"
+              id="name"
               onChange={(e) => handleInput("name", e.target.value)}
               placeholder={song.name}
             />
           </div>
           <div className="flex flex-col gap-[5px]">
-            <p className={classes.lable}>
-              Singer:
+            <label htmlFor="singer" className={classes.label}>
+              Singer
               {getIcon(validSinger)}
-            </p>
+            </label>
             <input
               className={classes.input}
               value={inputFields.singer}
               onChange={(e) => handleInput("singer", e.target.value)}
               type="text"
+              id="singer"
               placeholder={song.singer}
             />
           </div>
           <div className="flex flex-col gap-[5px]">
-            <p className={classes.lable}>
-              Image URL:
+            <label htmlFor="image-url" className={classes.label}>
+              Image URL
               {inputFields.image_url && <>{getIcon(validURL)}</>}
-            </p>
+            </label>
             <input
+              id="image-url"
               className={classes.input}
               value={inputFields.image_url}
               onChange={(e) => handleInput("image_url", e.target.value)}
@@ -380,8 +224,8 @@ export default function SongItemEditForm({ song, close }: Props) {
       </div>
       <div className="flex mt-5 space-x-2 justify-end">
         <Button
-          isLoading={loading}
-          onClick={handleEditSong}
+          isLoading={isFetching}
+          onClick={handleSubmit}
           className={`${theme.content_bg} rounded-full ${
             !isAbleToSubmit ? !isImpactOnImage && "disable" : ""
           }`}

@@ -21,5 +21,16 @@ export default function useMobileFullScreenPlayer({ isOpenFullScreen }: Props) {
     }
   }, [isOpenFullScreen]);
 
+  const handleOverflow = () => {
+    const body = document.querySelector("body");
+    if (body) {
+      if (isOpenFullScreen) body.style.overflow = "hidden";
+      else body.style.overflow = "auto";
+    }
+  };
+  useEffect(() => {
+    handleOverflow();
+  }, [isOpenFullScreen]);
+
   return { wrapperRef };
 }

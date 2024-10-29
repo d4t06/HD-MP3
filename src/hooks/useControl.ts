@@ -37,7 +37,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
 
   const firstTimeSongLoaded = useRef(true);
-  const currentIndex = useRef(0); // update current index
+  const currentIndexRef = useRef(0); // update current index
 
   const prevSeekTime = useRef(0); // prevent double click
   const startFadeWhenEnd = useRef(0); // for cross fade
@@ -196,8 +196,8 @@ export default function useAudioEvent({ audioEle }: Props) {
     }
 
     if (isShuffle) {
-      let randomIndex: number = currentIndex.current!;
-      while (randomIndex === currentIndex.current) {
+      let randomIndex: number = currentIndexRef.current!;
+      while (randomIndex === currentIndexRef.current) {
         randomIndex = Math.floor(Math.random() * queueSongs.length);
       }
 
@@ -211,7 +211,7 @@ export default function useAudioEvent({ audioEle }: Props) {
       );
     }
 
-    if (currentIndex.current === queueSongs.length - 1) {
+    if (currentIndexRef.current === queueSongs.length - 1) {
       const timer = storage["timer"];
 
       if (isRepeat === "all" || !!timer) isEndOfList.current = false;
@@ -222,7 +222,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleLoadStart = () => {
-    if (currentSong) dispatch(setPlayStatus({ playStatus: "loading" }));
+    if (currentIndexRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
   };
 
   const handleLoaded = () => {
@@ -312,7 +312,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     }
   }, [someThingToTriggerError]);
 
-  // update audio src, currentIndex, reset song
+  // update audio src, currentIndexRef, reset song
   useEffect(() => {
     if (!currentSong) {
       dispatch(setPlayStatus({ playStatus: "paused" }));
@@ -320,7 +320,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     }
 
     audioEle.src = currentSong.song_url;
-    currentIndex.current = currentSong.currentIndex;
+    currentIndexRef.current = currentSong.currentIndex;
     document.title = `${currentSong.name} - ${currentSong.singer}`;
 
     return () => {

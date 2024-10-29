@@ -256,14 +256,14 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         {/* song name and singer */}
         <div className={`ml-[10px]  ${props.variant === "queue" ? "" : ""}`}>
           <h5
-            className={`line-clamp-1  leading-[1.2] font-medium overflow-hidden ${
+            className={`line-clamp-1 font-medium overflow-hidden ${
               props.variant === "queue" ? "text-sm" : "text-lg"
             }`}
           >
             {song.name}
           </h5>
           <p
-            className={`opacity-[.7] line-clamp-1 
+            className={`opacity-[.7] leading-[1.2] line-clamp-1 
                ${props.variant === "queue" ? "text-sm" : ""}
                        `}
           >
@@ -375,7 +375,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       case "":
         return <></>;
       case "edit":
-        return <SongItemEditForm close={closeModal} song={song} />;
+        return <SongItemEditForm closeModal={closeModal} song={song} />;
       case "delete":
         return (
           <ConfirmModal
@@ -418,45 +418,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             {renderHeartIcon}
 
             <div className={classes.menuBtnWrapper}>
-              {/* <Popover
-                isOpenFromParent={isOpenPopup}
-                setIsOpenFromParent={setIsOpenPopup}
-                placement={props.variant === "queue" ? "bottom-end" : "left"}
-              >
-                <PopoverTrigger asChild>
-                  <button
-                    className={`block group-hover/main:block ${classes.button} ${
-                      isOpenPopup || props.variant === "queue"
-                        ? `md:block`
-                        : "md:hidden max-[549px]:!bg-transparent"
-                    }`}
-                  >
-                    <Bars3Icon className="w-[20px]" />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent>
-                  <PopupWrapper
-                    className={`${actionLoading ? "overflow-hidden relative" : ""}`}
-                    variant={"thin"}
-                    color="sidebar"
-                    theme={theme}
-                  >
-                    {renderMenu}
-
-                    {actionLoading && (
-                      <div className={classes.overlay}>
-                        <div
-                          className={`h-[25px] w-[25px] border-[2px] border-r-black rounded-[50%] animate-spin`}
-                        ></div>
-                      </div>
-                    )}
-                  </PopupWrapper>
-                </PopoverContent>
-              </Popover> */}
-
               <MyPopup appendOnPortal>
                 <MyPopupTrigger>
-                  <MyTooltip  isWrapped content="Menu">
+                  <MyTooltip isWrapped content="Menu">
                     <button
                       className={`block group-hover/main:block ${classes.button} ${
                         isOpenPopup || props.variant === "queue"
@@ -525,7 +489,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return (
           <div
             className={`${classes.itemContainer} ${className || ""} group/main ${
-              active || isSelected ? `bg-${theme.alpha}` : `sm:hover:bg-${theme.alpha}`
+              active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
             }`}
           >
             {left()}
@@ -534,8 +498,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         );
     }
   };
-
-  console.log('song item render')
 
   return (
     <>

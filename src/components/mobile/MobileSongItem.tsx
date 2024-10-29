@@ -28,7 +28,7 @@ type Props = Default | PlayingNext | Select;
 
 // alway in state ready for select
 export default function MobileSongItem({ song, theme, ...props }: Props) {
-  const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
+  const { selectedSongs, selectSong } = useSongSelectContext();
 
   const handleItemClick: MouseEventHandler = (e) => {
     switch (props.variant) {
@@ -46,9 +46,10 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
   }, [selectedSongs]);
 
   const classes = {
-    itemContainer: `items-center justify-between cursor-pointer  border-b 
-    last:border-none border-${theme.alpha} 
-    flex rounded-md p-2 ${isChecked && "bg-" + theme.alpha}`,
+    itemContainer: `items-center justify-between cursor-pointer border-b 
+    last:border-none border-${theme.alpha} flex rounded-md p-2 ${
+      isSelected && "bg-" + theme.alpha
+    }`,
     button: `${theme.content_bg} rounded-full`,
     songListButton: `mr-[10px] px-[5px]`,
     imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden flex-shrink-0`,
@@ -58,18 +59,15 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
   const renderCheckBox = () => {
     switch (props.variant) {
       case "select": {
-        if (isChecked) return <StopIcon className="w-[18px] " />;
-        else {
-          return (
-            <>
-              {!isSelected ? (
-                <StopIcon className="w-[18px]" />
-              ) : (
-                <CheckIcon className="w-[18px]" />
-              )}
-            </>
-          );
-        }
+        return (
+          <>
+            {!isSelected ? (
+              <StopIcon className="w-5 mr-1" />
+            ) : (
+              <CheckIcon className="w-5 mr-1" />
+            )}
+          </>
+        );
       }
       default:
         return <></>;
@@ -78,7 +76,10 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
 
   return (
     <>
-      <div onClick={handleItemClick} className={`target-class opacity-100 transition-[opacity,transform] duration-500 ${classes.itemContainer} `}>
+      <div
+        onClick={handleItemClick}
+        className={`target-class opacity-100 transition-[opacity,transform] duration-500 ${classes.itemContainer} `}
+      >
         <div className={`flex flex-row w-[100%]`}>
           {renderCheckBox()}
 
@@ -89,12 +90,10 @@ export default function MobileSongItem({ song, theme, ...props }: Props) {
 
             {/* song info */}
             <div className={`ml-[10px]`}>
-              <h5 className={`text-mg line-clamp-1 ${isSelected && theme.content_text}`}>
+              <h5 className={`text-lg line-clamp-1 ${isSelected && theme.content_text}`}>
                 {song.name}
               </h5>
-              <p className="text-xs opacity-60 bg-blend-lighten line-clamp-1">
-                {song.singer}
-              </p>
+              <p className="opacity-60 bg-blend-lighten line-clamp-1">{song.singer}</p>
             </div>
           </div>
         </div>

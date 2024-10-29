@@ -28,6 +28,8 @@ type Props = NoAnimation | WithAnimation;
 
 export type ModalRef = {
   toggle: () => void;
+  close: () => void;
+  open: () => void;
 };
 
 function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
@@ -57,6 +59,8 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
 
   useImperativeHandle(ref, () => ({
     toggle,
+    close,
+    open,
   }));
 
   useEffect(() => {

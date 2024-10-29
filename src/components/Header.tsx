@@ -177,7 +177,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                         <div className={classes.divide}></div>
                         <button
                           className={`${classes.menuItem}`}
-                          onClick={() => setModal("confirm")}
+                          onClick={() => openModal("confirm")}
                         >
                           <ArrowRightOnRectangleIcon className={classes.icon} />
                           Log out

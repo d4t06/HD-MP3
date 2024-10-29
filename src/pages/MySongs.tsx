@@ -27,11 +27,9 @@ export default function MySongsPage() {
   // route guard
   useEffect(() => {
     if (userLoading) return;
-    if (!user) return;
 
-    if (!user.email) {
+    if (!user) {
       navigate(routes.Home);
-      console.log(">>> navigate to home");
     }
   }, [userLoading, initial]);
 

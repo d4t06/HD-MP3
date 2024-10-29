@@ -37,7 +37,7 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
     } catch (error) {
       console.log({ message: error });
     } finally {
-      close();
+      closeModal();
     }
   };
 

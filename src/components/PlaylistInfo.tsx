@@ -9,7 +9,7 @@ import usePlaylistActions from "../hooks/usePlaylistActions";
 import { formatTime } from "../utils/appHelpers";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { setQueue } from "@/store/songQueueSlice";
+import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
 
@@ -38,6 +38,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const { theme, isOnMobile } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+  const { queueSongs, from } = useSelector(selectSongQueue);
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -81,9 +82,17 @@ export default function PLaylistInfo({ loading, type }: Props) {
   };
 
   const handlePlayPlaylist = () => {
+
+    console.log(from, currentSong);
+    
+
+    if (playlistSongs.length !== queueSongs.length)
+      dispatch(setQueue({ songs: playlistSongs }));
+
     const firstSong = playlistSongs[0];
 
     if (currentSong?.song_in.includes(params.name as string)) return;
+
     handleSetSong(firstSong, 0);
   };
 

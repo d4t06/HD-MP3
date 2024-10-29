@@ -89,6 +89,10 @@ function SongList({ songs, ...props }: Props) {
   const empty = <p className="text-center my-[60px]">... ¯\_(ツ)_/¯</p>;
 
   const renderSongList = useMemo(() => {
+
+    
+
+
     if (props.variant === "uploading") return <></>;
 
     switch (props.variant) {
@@ -102,6 +106,8 @@ function SongList({ songs, ...props }: Props) {
     const { handleSetSong, activeExtend = true } = props;
 
     return songs.map((song, index) => {
+    console.log(currentSong?.currentIndex === index);
+
       let active = activeExtend && currentSong?.id === song.id;
       // let active = false;
 

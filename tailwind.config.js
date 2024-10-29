@@ -20,7 +20,7 @@ export default {
       },
       colors: {},
       fontFamily: {
-        sans: ["Nunito", "system-ui"],
+        sans: ["Inter", "system-ui"],
         playwriteCU: ["Playwrite CU", "system-ui"],
       },
     },

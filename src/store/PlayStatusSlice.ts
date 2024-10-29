@@ -16,7 +16,6 @@ type StateType = {
   //  isTimer: number;
   isCrossFade: boolean;
   songBackground: boolean;
-  songImage: boolean;
 };
 
 // init {
@@ -43,7 +42,6 @@ const init = () => {
     // isTimer: 0,
     isCrossFade: storage["isCrossFade"] || false,
     songBackground: storage["songBackground"] || false,
-    songImage: storage["songImage"] || false,
   };
 
   return state;

@@ -52,7 +52,9 @@ export default function PlaylistDetail() {
 
   return (
     <div className="pb-[80px]">
-      <BackBtn />
+      <div className="mb-[30px]">
+        <BackBtn />
+      </div>
 
       {renderPlaylistInfo}
       <div className="mt-[30px]">{renderSongList}</div>

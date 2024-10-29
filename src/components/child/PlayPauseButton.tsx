@@ -34,6 +34,10 @@ function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
     }
   };
 
+
+  console.log('chekc status', playStatus);
+  
+
   return (
     <>
       <button

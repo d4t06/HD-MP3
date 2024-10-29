@@ -3,13 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { SongThumbnail, Tabs, LyricsList, Button } from ".";
-import { useScrollSong, useBgImage } from "../hooks";
+import { useScrollSong } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
 import logoIcon from "../assets/siteLogo.png";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import {
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -19,6 +18,8 @@ import {
 } from "@heroicons/react/20/solid";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
 import MyTooltip from "./MyTooltip";
+import { Blurhash } from "react-blurhash";
+import { defaultBlurHash } from "@/constants/blurhash";
 
 interface Props {
   isOpenFullScreen: boolean;
@@ -38,19 +39,16 @@ function FullScreenPlayer({
   const { theme } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
   const { queueSongs } = useSelector(selectSongQueue);
-  const {
-   songImage 
-  } = useSelector(selectAllPlayStatusStore);
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
   //  ref
-  const bgRef = useRef<HTMLDivElement>(null);
+  // const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const activeSongRef = useRef<HTMLDivElement>(null);
 
   // use hooks
   const navigate = useNavigate();
-  useBgImage({ bgRef, currentSong });
+  // useBgImage({ bgRef, currentSong });
   // dùng hook ở component cha thay vì dùng ở mỗi child
   useScrollSong({
     containerRef,
@@ -93,7 +91,7 @@ function FullScreenPlayer({
     button: `w-[44px] h-[44px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
     wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
     } transition-transform duration-[.7s] linear delay-100`,
-    bg: `-z-10 bg-no-repeat bg-cover bg-center blur-[50px]`,
+    bg: `absolute inset-0 -z-10 brightness-[70%]`,
     overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,
     container: "absolute w-full top-0 bottom-[90px] flex flex-col",
 
@@ -146,11 +144,11 @@ function FullScreenPlayer({
   const renderLyricTab = (
     <div className={classes.lyricTabContainer}>
       {/* left */}
-      {songImage && <SongThumbnail active={true} data={currentSong} />}
+      <SongThumbnail active={true} data={currentSong} />
 
       {/* right */}
       <LyricsList
-        className={`w-full ml-[40px] h-full ${!songImage && "text-center"}`}
+        className={`w-full ml-[40px] h-full`}
         audioEle={audioEle}
         isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
         active={activeTab === "Lyric"}
@@ -165,8 +163,14 @@ function FullScreenPlayer({
       }`}
     >
       {/* bg image */}
-      <div ref={bgRef} className={`absolute inset-0 ${classes.bg}`}></div>
-      <div className={`absolute inset-0 ${classes.overplay}`}></div>
+      <div className={` ${classes.bg}`}>
+        <Blurhash
+          radioGroup=""
+          height={"100%"}
+          width={"100%"}
+          hash={currentSong?.blurhash_encode || defaultBlurHash}
+        />
+      </div>
 
       <div className={classes.container}>
         {/* header */}
@@ -286,8 +290,8 @@ function FullScreenPlayer({
 
         {activeTab !== "Songs" && (
           <p className={`text-center ${idle && classes.fadeTransition}`}>
-            {currentSong?.name || '...'}
-            <span className="opacity-70">&nbsp;- {currentSong?.singer || '...'}</span>
+            {currentSong?.name || "..."}
+            <span className="opacity-70">&nbsp;- {currentSong?.singer || "..."}</span>
           </p>
         )}
       </div>

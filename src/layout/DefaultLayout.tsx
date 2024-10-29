@@ -21,19 +21,15 @@ const DefaultLayout: FC<Props> = ({ children }) => {
   };
 
   const classes = {
-    page: `left-0 top-0 right-0 bottom-0 md:relative md:flex md:h-screen md:overflow-hidden ${textColor()}`,
+    page: `left-0 top-0 right-0 bottom-0 md:relative md:flex md:h-screen md:overflow-hidden ${
+      theme.container
+    } ${textColor()}`,
     container: `h-full md:w-full px-[10px] md:px-[40px] pt-[60px] md:overflow-auto md:no-scrollbar`,
   };
 
   useEffect(() => {
     const meta = document.querySelector(".my-tag");
-    const body = document.querySelector("body");
-
-    if (meta) {
-      meta.setAttribute("content", theme.container_code);
-    }
-
-    body!.style.backgroundColor = theme.container_code;
+    if (meta) meta.setAttribute("content", theme.container_code);
   }, [theme]);
 
   return (
