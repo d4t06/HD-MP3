@@ -47,14 +47,13 @@ export default function Sidebar() {
   const classes = {
     container: `w-[180px] relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
     navItem: `  px-3 py-2 leading-[2.2] font-playwriteCU flex items-center ${theme.content_hover_text}`,
-    text: theme.type === "light" ? "text-[#333]" : "text-white",
     icon: "w-7 mr-2",
     link: "w-full border-l-[4px]",
     activeLink: `${theme.content_text} ${theme.container} ${theme.content_border}  `,
   };
 
   return (
-    <div className={`hidden md:block ${classes.container} ${classes.text}`}>
+    <div className={`hidden md:block ${classes.container} ${theme.text_color}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
         <Link to={"/"} className="text-[24px] font-bold">
           HD

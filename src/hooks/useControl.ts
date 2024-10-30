@@ -337,8 +337,8 @@ export default function useAudioEvent({ audioEle }: Props) {
 
     let myTitle = `${currentSong.name} - ${currentSong.singer}`;
     if (
-      playStatus !== "playing" &&
-      currentPlaylist.name &&
+      playStatus === "paused" &&
+      currentPlaylist &&
       currentSong.song_in.includes(currentPlaylist.id)
     ) {
       myTitle = `${currentPlaylist.name}`;

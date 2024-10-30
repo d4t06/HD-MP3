@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { useTheme } from "../store";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
@@ -27,7 +26,6 @@ type DashboardSong = Base & {
 
 type DashboardPlaylist = Base & {
   variant: "dashboard-playlist";
-  deleteFromPlaylist: (song: Song) => Promise<void>;
 };
 
 type Favorite = Base & {
@@ -44,7 +42,6 @@ type AdminPlaylist = Base & {
 
 type MyPlaylist = Base & {
   variant: "my-playlist";
-  deleteFromPlaylist: (song: Song) => Promise<void>;
 };
 
 type Uploading = {
@@ -69,7 +66,7 @@ function SongList({ songs, ...props }: Props) {
   const { currentSong } = useSelector(selectCurrentSong);
   const { queueSongs } = useSelector(selectSongQueue);
 
-  const renderTempSongsList = useMemo(() => {
+  const renderTempSongsList = () => {
     if (props.variant !== "uploading") return <></>;
 
     return songs.map((song, index) => {
@@ -84,15 +81,11 @@ function SongList({ songs, ...props }: Props) {
 
       return <SongItem variant="uploading" {...songItemProps} />;
     });
-  }, [props]);
+  };
 
   const empty = <p className="text-center my-[60px]">... ¯\_(ツ)_/¯</p>;
 
-  const renderSongList = useMemo(() => {
-
-    
-
-
+  const renderSongList = () => {
     if (props.variant === "uploading") return <></>;
 
     switch (props.variant) {
@@ -106,8 +99,6 @@ function SongList({ songs, ...props }: Props) {
     const { handleSetSong, activeExtend = true } = props;
 
     return songs.map((song, index) => {
-    console.log(currentSong?.currentIndex === index);
-
       let active = activeExtend && currentSong?.id === song.id;
       // let active = false;
 
@@ -147,12 +138,12 @@ function SongList({ songs, ...props }: Props) {
         />
       );
     });
-  }, [currentSong, props, queueSongs, theme]);
+  };
 
   return (
     <>
-      {renderSongList}
-      {renderTempSongsList}
+      {renderSongList()}
+      {renderTempSongsList()}
     </>
   );
 }

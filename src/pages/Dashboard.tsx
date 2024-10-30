@@ -55,31 +55,6 @@ export default function DashBoard() {
     }
   };
 
-  // const closeModal = () => setIsOpenModal("");
-
-  // //  no need to handle song queue
-  // const handleDeleteSongs = async () => {
-  //    try {
-  //       const newuserSongs = [...userSongs];
-
-  //       setLoading(true);
-  //       for (let song of selectedSongs) {
-  //          await deleteSong(song);
-
-  //          const index = userSongs.findIndex((item) => item.id === song.id);
-  //          newuserSongs.splice(index, 1);
-  //       }
-
-  //       // setActuallySongs(newuserSongs);
-  //       console.log("setActuallySongs");
-  //       // setuserSongs(newuserSongs);
-  //    } catch (error) {
-  //       console.log({ message: error });
-  //    } finally {
-  //       closeModal();
-  //    }
-  // };
-
   const renderUsersList = () => {
     return users.map((user, index) => {
       return (

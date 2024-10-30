@@ -34,9 +34,7 @@ function Login() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center ${
-        theme.container
-      } ${theme.type === "dark" ? "text-white" : "text-black"}`}
+      className={`min-h-screen flex flex-col items-center justify-center ${theme.container} ${theme.text_color}`}
     >
       <Button
         onClick={handleLogIn}

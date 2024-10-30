@@ -18,11 +18,7 @@ function Unauthorized() {
     <div
       className={`${theme.container} flex flex-col justify-center items-center min-h-screen`}
     >
-      <h1
-        className={`text-[30px] font-bold border p-[10px] ${
-          theme.type === "light" ? "text-[#333]" : "text-white"
-        }`}
-      >
+      <h1 className={`text-[30px] font-bold border p-[10px] ${theme.text_color}`}>
         Unauthorized
       </h1>
       <Button

@@ -1,15 +1,14 @@
 import { useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useToast, useTheme } from "../store";
+import { useTheme } from "../store";
 import { SongListModal, Button, Modal, SongList } from "../components";
-import usePlaylistActions from "../hooks/usePlaylistActions";
 import CheckedBar from "./CheckedBar";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
+import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 
 type Props = {
   variant: "admin-playlist" | "my-playlist" | "dashboard-playlist";
@@ -22,19 +21,14 @@ export default function PlaylistDetailSongList({ variant }: Props) {
   const { currentSong } = useSelector(selectCurrentSong);
   const { from, queueSongs } = useSelector(selectSongQueue);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
-
   const modalRef = useRef<ModalRef>(null);
 
   const closeModal = () => modalRef.current?.toggle();
 
-  // use hooks
-  const { setErrorToast } = useToast();
-  const { deleteSongFromPlaylist } = usePlaylistActions();
-
   const handleSetSong = (song: Song, index: number) => {
-    // case user play user songs then play playlist song
-    const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
+    if (!currentPlaylist) return;
 
+    const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
     if (currentSong?.id !== song.id || currentSong.song_in !== newSongIn) {
       dispatch(
         setSong({
@@ -51,15 +45,6 @@ export default function PlaylistDetailSongList({ variant }: Props) {
       if (shouldReplaceQueue) {
         dispatch(setQueue({ songs: playlistSongs }));
       }
-    }
-  };
-
-  const handleDeleteSongFromPlaylist = async (song: Song) => {
-    try {
-      await deleteSongFromPlaylist(song);
-    } catch (error) {
-      console.log(error);
-      setErrorToast("");
     }
   };
 
@@ -83,7 +68,7 @@ export default function PlaylistDetailSongList({ variant }: Props) {
     }
   }, [currentPlaylist, playlistSongs]);
 
-  const renderSongList = useMemo(() => {
+  const renderSongList = () => {
     switch (variant) {
       case "admin-playlist":
         return (
@@ -91,7 +76,6 @@ export default function PlaylistDetailSongList({ variant }: Props) {
             variant="admin-playlist"
             songs={playlistSongs}
             handleSetSong={handleSetSong}
-            activeExtend={currentSong?.song_in.includes(currentPlaylist.id)}
           />
         );
       case "my-playlist":
@@ -102,8 +86,6 @@ export default function PlaylistDetailSongList({ variant }: Props) {
               variant={variant}
               songs={playlistSongs}
               handleSetSong={handleSetSong}
-              activeExtend={currentSong?.song_in.includes(currentPlaylist.id)}
-              deleteFromPlaylist={handleDeleteSongFromPlaylist}
             />
 
             <div className="flex justify-center mt-[20px]">
@@ -111,20 +93,20 @@ export default function PlaylistDetailSongList({ variant }: Props) {
                 onClick={() => modalRef.current?.toggle()}
                 className={`${theme.content_bg} rounded-full`}
               >
-                <PlusIcon className="w-6 mr-1" />
-                <span className="font-playwriteCU leading-[2.2] text-sm">Add song</span>
+                <PlusIcon className="w-7 mr-1" />
+                <span className="font-playwriteCU leading-[2.2]">Add song</span>
               </Button>
             </div>
           </>
         );
     }
-  }, [currentPlaylist, playlistSongs, currentSong]);
+  };
 
   return (
     <>
       <SongSelectProvider>
         {renderCheckBar}
-        {renderSongList}
+        {renderSongList()}
       </SongSelectProvider>
 
       <Modal ref={modalRef} variant="animation">

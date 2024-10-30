@@ -120,7 +120,6 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
 
   // define style
   const classes = {
-    textColor: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
     input: `px-[10px] py-1 outline-none rounded-[4px] text-lg ${theme.side_bar_bg} border border-${theme.alpha} font-[500]`,
     label: "text-lg inline-flex",
   };
@@ -172,7 +171,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
                 </Button>
               )}
             </div>
-            <p className={`text-sm ${classes.textColor} mt-[10px]`}>
+            <p className={`text-sm ${theme.text_color} mt-[10px]`}>
               * Image from URL will not be apply until you remove current image
             </p>
           </div>
@@ -185,7 +184,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
               {getIcon(validName)}
             </label>
             <input
-              className={`${classes.input} ${classes.textColor}`}
+              className={`${classes.input} ${theme.text_color}`}
               value={inputFields.name}
               type="text"
               id="name"

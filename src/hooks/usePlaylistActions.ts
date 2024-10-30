@@ -1,25 +1,25 @@
 import { useState } from "react";
 import { useAuthStore, useSongsStore, useToast } from "../store";
 import { generateId, initPlaylistObject } from "../utils/appHelpers";
-import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
+import {
+  myDeleteDoc,
+  myGetDoc,
+  mySetDoc,
+  setUserPlaylistIdsDoc,
+} from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-  addSongsAndUpdateCurrent,
-  resetCurrentPlaylist,
+  addSongsToPlaylist,
   selectCurrentPlaylist,
-  setPlaylistSongsAndUpdateCurrent,
-  updateCurrentPlaylist,
+  setPlaylistSong,
 } from "@/store/currentPlaylistSlice";
-import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
-import { addSongToQueue } from "@/store/songQueueSlice";
 
 export default function usePlaylistActions() {
   // store
   const dispatch = useDispatch();
   const { user } = useAuthStore();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { currentSong } = useSelector(selectCurrentSong);
   const { userPlaylists, updateUserPlaylist, setUserPlaylists } = useSongsStore();
 
   // state
@@ -28,17 +28,6 @@ export default function usePlaylistActions() {
   // hooks
   const { setErrorToast, setSuccessToast } = useToast();
   const navigate = useNavigate();
-
-  const setPlaylistDocAndUpdateUserPlaylist = async (newPlaylist: Playlist) => {
-    await mySetDoc({
-      collection: "playlist",
-      data: newPlaylist,
-      id: newPlaylist.id,
-      msg: ">>> api: set playlist doc",
-    });
-
-    updateUserPlaylist(newPlaylist);
-  };
 
   const addPlaylist = async (playlistName: string) => {
     if (!user) throw new Error("user not found");
@@ -68,7 +57,7 @@ export default function usePlaylistActions() {
   };
 
   const deletePlaylist = async () => {
-    if (!user) return;
+    if (!user || !currentPlaylist) return;
 
     setIsFetching(true);
     const newUserPlaylist = userPlaylists.filter((pl) => pl.id !== currentPlaylist.id);
@@ -81,39 +70,36 @@ export default function usePlaylistActions() {
 
     await setUserPlaylistIdsDoc(newUserPlaylist, user);
 
-    setUserPlaylists(newUserPlaylist);
-    dispatch(resetCurrentPlaylist());
-
-    if (currentSong?.song_in === `playlist_${currentPlaylist.id}`)
-      dispatch(resetCurrentSong());
-
     setIsFetching(false);
     navigate("/mysongs");
   };
 
-  // before (playlistSongs, selectedSongs)
-  const addSongsToPlaylist = async (selectSongs: Song[]) => {
-    setIsFetching(true);
+  const addSongs = async (selectSongs: Song[]) => {
+    try {
+      if (!currentPlaylist) return;
 
-    const newPlaylist = { ...currentPlaylist };
+      setIsFetching(true);
+      const newSongIds = [
+        ...playlistSongs.map((s) => s.id),
+        ...selectSongs.map((s) => s.id),
+      ];
 
-    newPlaylist.song_ids = [...currentPlaylist.song_ids, ...selectSongs.map((s) => s.id)];
+      await mySetDoc({
+        collection: "playlist",
+        id: currentPlaylist?.id,
+        data: { song_ids: newSongIds } as Partial<Playlist>,
+        msg: ">>> api: update playlist doc",
+      });
 
-    await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
+      dispatch(addSongsToPlaylist(selectSongs));
 
-    console.log(">>> playlist songs", playlistSongs.length);
-
-    dispatch(addSongsAndUpdateCurrent({ songs: selectSongs }));
-
-    if (currentSong?.song_in === `playlist_${currentPlaylist.id}`) {
-      const newSongs = selectSongs.map(
-        (s) => ({ ...s, song_in: `playlist_${currentPlaylist.id}` } as Song)
-      );
-      dispatch(addSongToQueue({ songs: newSongs }));
+      setSuccessToast(`${selectSongs.length} songs added`);
+    } catch (error) {
+      console.log({ message: error });
+      setErrorToast();
+    } finally {
+      setIsFetching(false);
     }
-
-    setIsFetching(false);
-    setSuccessToast(`${selectSongs.length} songs added`);
   };
 
   const editPlaylist = async (playlistName: string, playlist: Playlist) => {
@@ -121,9 +107,14 @@ export default function usePlaylistActions() {
       setIsFetching(true);
       const newPlaylist: Playlist = { ...playlist, name: playlistName };
 
-      await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
+      await mySetDoc({
+        collection: "playlist",
+        data: newPlaylist,
+        id: newPlaylist.id,
+        msg: ">>> api: set playlist doc",
+      });
 
-      dispatch(updateCurrentPlaylist(newPlaylist));
+      updateUserPlaylist(newPlaylist);
 
       setSuccessToast("Playlist edited");
     } catch (error) {
@@ -134,20 +125,23 @@ export default function usePlaylistActions() {
     }
   };
 
-  const addSongToPlaylistSongItem = async (song: Song, playlist: Playlist) => {
+  const addSongsSongItem = async (song: Song, playlist: Playlist) => {
     try {
       setIsFetching(true);
 
-      const newSongIds = [...playlist.song_ids, song.id];
+      const _playlist = await myGetDoc({ collection: "playlist", id: playlist.id });
+      if (!_playlist.exists()) return;
 
-      const newPlaylist = { ...playlist };
-      newPlaylist.song_ids = newSongIds;
+      const _playlistData = _playlist.data() as Playlist;
 
-      if (playlist.id === currentPlaylist.id) {
-        dispatch(updateCurrentPlaylist({ song_ids: newSongIds }));
-      }
+      const newSongIds = [..._playlistData.song_ids, song.id];
 
-      await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
+      await mySetDoc({
+        collection: "playlist",
+        id: _playlistData.id,
+        data: { song_ids: newSongIds } as Partial<Playlist>,
+        msg: ">>> api: update playlist doc",
+      });
     } catch (error) {
       console.log({ message: error });
       throw new Error("Error when edit playlist");
@@ -156,60 +150,68 @@ export default function usePlaylistActions() {
     }
   };
 
-  const deleteSongFromPlaylist = async (song: Song) => {
-    setIsFetching(true);
-    const newPlaylistSongs = playlistSongs.filter((s) => s.id !== song.id);
+  //   _setIsFetching use for song item
+  const removeSong = async (song: Song, _setIsFetching?: (v: boolean) => void) => {
+    try {
+      if (!currentPlaylist) return;
+      _setIsFetching ? _setIsFetching(true) : setIsFetching(true);
 
-    console.log(
-      "delete songs",
-      playlistSongs.map((s) => s.id),
-      newPlaylistSongs.map((s) => s.id)
-    );
+      const newPlaylistSongs = playlistSongs.filter((s) => s.id !== song.id);
 
-    const newPlaylist = { ...currentPlaylist };
-    newPlaylist.song_ids = newPlaylistSongs.map((s) => s.id);
+      await mySetDoc({
+        collection: "playlist",
+        id: currentPlaylist.id,
+        data: { song_ids: newPlaylistSongs.map((s) => s.id) } as Partial<Playlist>,
+        msg: ">>> api: update playlist doc",
+      });
 
-    await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
+      dispatch(setPlaylistSong(newPlaylistSongs));
 
-    dispatch(setPlaylistSongsAndUpdateCurrent({ songs: newPlaylistSongs }));
-
-    // >>> finish
-    setIsFetching(false);
-    setSuccessToast(`'${song.name}' removed`);
+      setSuccessToast(`'${song.name}' removed`);
+    } catch (error) {
+      console.log({ message: error });
+      // setErrorToast("");
+    } finally {
+      _setIsFetching ? _setIsFetching(false) : setIsFetching(false);
+    }
   };
 
-  const deleteSongsFromPlaylist = async (selectedSongs: Song[]) => {
-    console.log("playlist action deleteManyFromPlaylist");
-    if (!currentPlaylist.song_ids) {
-      console.log("Wrong playlist data");
+  const removeSelectSongs = async (
+    selectedSongs: Song[],
+    _setIsFetching?: (v: boolean) => void
+  ) => {
+    try {
+      if (!currentPlaylist || !playlistSongs.length) return;
+
+      if (selectedSongs.length === 1) return removeSong(selectedSongs[0]);
+
+      _setIsFetching ? _setIsFetching(true) : setIsFetching(true);
+
+      const selectedSongIds = selectedSongs.map((s) => s.id);
+      const newPlaylistSongs = [...playlistSongs].filter(
+        (s) => !selectedSongIds.includes(s.id)
+      );
+      const newSongIds = newPlaylistSongs.map((s) => s.id);
+
+      await mySetDoc({
+        collection: "playlist",
+        id: currentPlaylist.id,
+        data: { song_ids: newSongIds } as Partial<Playlist>,
+        msg: ">>> api: update playlist doc",
+      });
+
+      dispatch(setPlaylistSong(newPlaylistSongs));
+
+      setIsFetching(false);
+      setSuccessToast(`${selectedSongs.length} songs removed`);
+
+      return newPlaylistSongs;
+    } catch (error) {
       setErrorToast();
-      throw new Error("Wrong playlist data");
+      console.log({ message: error });
+    } finally {
+      _setIsFetching ? _setIsFetching(false) : setIsFetching(false);
     }
-
-    // *** case one song selected
-    if (selectedSongs.length === 1) {
-      return deleteSongFromPlaylist(selectedSongs[0]);
-    }
-
-    const selectedSongIds = selectedSongs.map((s) => s.id);
-
-    const newPlaylistSongs = playlistSongs.filter((s) => !selectedSongIds.includes(s.id));
-
-    // *** handle playlist
-    const newPlaylist = { ...currentPlaylist };
-    newPlaylist.song_ids = newPlaylistSongs.map((s) => s.id);
-
-    setIsFetching(true);
-
-    await setPlaylistDocAndUpdateUserPlaylist(newPlaylist);
-
-    dispatch(setPlaylistSongsAndUpdateCurrent({ songs: newPlaylistSongs }));
-
-    // finish
-    setIsFetching(false);
-    setSuccessToast(`${selectedSongs.length} songs removed`);
-
-    return newPlaylistSongs;
   };
 
   return {
@@ -217,10 +219,9 @@ export default function usePlaylistActions() {
     addPlaylist,
     editPlaylist,
     deletePlaylist,
-    addSongsToPlaylist,
-    deleteSongsFromPlaylist,
-    deleteSongFromPlaylist,
-    addSongToPlaylistSongItem,
-    setPlaylistDocAndUpdateUserPlaylist,
+    addSongs,
+    removeSelectSongs,
+    removeSong,
+    addSongsSongItem,
   };
 }

@@ -76,6 +76,7 @@ type ThemeType = {
   content_code: string;
   container_code: string;
   content_hover_bg: string;
+  text_color: string;
 };
 
 type Toast = {

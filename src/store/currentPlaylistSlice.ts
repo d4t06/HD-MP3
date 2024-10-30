@@ -1,86 +1,62 @@
-import { createSlice, current, PayloadAction } from "@reduxjs/toolkit";
-import { initPlaylistObject } from "../utils/appHelpers";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 type StateType = {
-   currentPlaylist: Playlist;
-   playlistSongs: Song[];
+  currentPlaylist: Playlist | null;
+  playlistSongs: Song[];
 };
 
 const initialState: StateType = {
-   currentPlaylist: initPlaylistObject({}),
-   playlistSongs: [],
+  currentPlaylist: null,
+  playlistSongs: [],
 };
 
 const currentPlaylistSlice = createSlice({
-   name: "currentPlaylist",
-   initialState,
-   reducers: {
-      setCurrentPlaylist(
-         state,
-         action: PayloadAction<{ playlist: Playlist; songs: Song[] }>
-      ) {
-         const { playlist, songs } = action.payload;
-         state.currentPlaylist = playlist;
-         state.playlistSongs = songs;
-      },
-      updateCurrentPlaylist: (state, action: PayloadAction<Partial<Playlist>>) => {
-         const payload = action.payload;
+  name: "currentPlaylist",
+  initialState,
+  reducers: {
+    setCurrentPlaylist(
+      state,
+      action: PayloadAction<{ playlist: Playlist; songs: Song[] }>
+    ) {
+      const { playlist, songs } = action.payload;
+      state.currentPlaylist = playlist;
+      state.playlistSongs = songs;
+    },
+    updateCurrentPlaylist: (state, action: PayloadAction<Partial<Playlist>>) => {
+      if (!state.currentPlaylist) return state;
+      Object.assign(state.currentPlaylist, action.payload);
+    },
+    addSongsToPlaylist(state, action: PayloadAction<Song[]>) {
+      if (!state.currentPlaylist) return state;
 
-         Object.assign(state.currentPlaylist, payload);
-      },
-      addSongsAndUpdateCurrent(state, action: PayloadAction<{ songs: Song[] }>) {
-         const { songs } = action.payload;
-         const newSongs = songs.map(
-            (s) => ({ ...s, song_in: `playlist_${state.currentPlaylist.id}` } as Song)
-         );
+      const newSongs = action.payload.map(
+        (s) => ({ ...s, song_in: `playlist_${state.currentPlaylist!.id}` } as Song)
+      );
+      state.playlistSongs.push(...newSongs);
+    },
+    setPlaylistSong(state, action: PayloadAction<Song[]>) {
+      state.playlistSongs = action.payload;
+    },
+    removeSong(state, action: PayloadAction<{ index: number }>) {
+      const { index } = action.payload;
+      state.playlistSongs.splice(index, 1);
+    },
 
-         console.log("current", current(state.playlistSongs).map((s) => s.id));
-
-         console.log(
-            "add playlist songs",
-            songs.map((s) => s.id)
-         );
-
-         state.playlistSongs.push(...newSongs);
-         state.currentPlaylist.song_ids.push(...songs.map((s) => s.id));
-      },
-      setPlaylistSongs(state, action: PayloadAction<{ songs: Song[] }>) {
-         const { songs } = action.payload;
-         state.playlistSongs = songs;
-      },
-      removeSong(state, action: PayloadAction<{ index: number }>) {
-         const { index } = action.payload;
-         state.playlistSongs.splice(index, 1);
-      },
-      setPlaylistSongsAndUpdateCurrent(state, action: PayloadAction<{ songs: Song[] }>) {
-         const { songs } = action.payload;
-
-         console.log("current", current(state.playlistSongs).map((s) => s.id));
-
-         console.log(
-            "set playlist songs",
-            songs.map((s) => s.id)
-         );
-
-         state.playlistSongs = songs;
-         state.currentPlaylist.song_ids = songs.map((s) => s.id);
-      },
-      resetCurrentPlaylist: (state: StateType) => {
-         state.currentPlaylist = initialState.currentPlaylist;
-         state.playlistSongs = initialState.playlistSongs;
-      },
-   },
+    resetCurrentPlaylist: (state: StateType) => {
+      state.currentPlaylist = initialState.currentPlaylist;
+      state.playlistSongs = initialState.playlistSongs;
+    },
+  },
 });
 
 export const selectCurrentPlaylist = (state: { currentPlaylist: StateType }) =>
-   state.currentPlaylist;
+  state.currentPlaylist;
 export const {
-   addSongsAndUpdateCurrent,
-   removeSong,
-   setCurrentPlaylist,
-   updateCurrentPlaylist,
-   resetCurrentPlaylist,
-   setPlaylistSongs,
-   setPlaylistSongsAndUpdateCurrent,
+  addSongsToPlaylist,
+  removeSong,
+  setCurrentPlaylist,
+  updateCurrentPlaylist,
+  resetCurrentPlaylist,
+  setPlaylistSong,
 } = currentPlaylistSlice.actions;
 export default currentPlaylistSlice.reducer;

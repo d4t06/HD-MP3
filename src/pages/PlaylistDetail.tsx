@@ -8,13 +8,16 @@ import { SongItemSkeleton } from "@/components/skeleton";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
 import { useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
+import useGetPlaylist from "@/hooks/useGetPlaylist";
 
 export default function PlaylistDetail() {
   // us store
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
-  // hooks
-  const { loading: usePlaylistLoading } = usePlaylistDetail();
+
+  //   hooks
+  usePlaylistDetail();
   const variant = useLocation();
+  const { isFetching } = useGetPlaylist();
 
   const isInDashboard = useMemo(
     () => variant.pathname.includes("/dashboard/playlist"),
@@ -23,16 +26,16 @@ export default function PlaylistDetail() {
 
   const renderPlaylistInfo = useMemo(() => {
     if (isInDashboard)
-      return <PLaylistInfo loading={usePlaylistLoading} type="dashboard-playlist" />;
+      return <PLaylistInfo loading={isFetching} type="dashboard-playlist" />;
 
-    if (currentPlaylist.by === "admin")
-      return <PLaylistInfo loading={usePlaylistLoading} type="admin-playlist" />;
+    if (currentPlaylist?.by === "admin")
+      return <PLaylistInfo loading={isFetching} type="admin-playlist" />;
 
-    return <PLaylistInfo loading={usePlaylistLoading} type="my-playlist" />;
-  }, [usePlaylistLoading]);
+    return <PLaylistInfo loading={isFetching} type="my-playlist" />;
+  }, [isFetching]);
 
-  const renderSongList = useMemo(() => {
-    if (usePlaylistLoading)
+  const renderSongList = () => {
+    if (isFetching)
       return (
         <>
           <div className="h-[30px] mb-[10px] flex items-center">
@@ -45,10 +48,10 @@ export default function PlaylistDetail() {
 
     if (isInDashboard) return <PlaylistDetailSongList variant="dashboard-playlist" />;
 
-    if (currentPlaylist.by === "admin")
+    if (currentPlaylist?.by === "admin")
       return <PlaylistDetailSongList variant="admin-playlist" />;
     else return <PlaylistDetailSongList variant="my-playlist" />;
-  }, [usePlaylistLoading]);
+  };
 
   return (
     <div className="pb-[80px]">
@@ -57,7 +60,7 @@ export default function PlaylistDetail() {
       </div>
 
       {renderPlaylistInfo}
-      <div className="mt-[30px]">{renderSongList}</div>
+      <div className="mt-[30px]">{renderSongList()}</div>
       <Footer />
     </div>
   );

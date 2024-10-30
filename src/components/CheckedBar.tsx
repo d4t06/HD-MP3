@@ -1,14 +1,13 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useMemo, useRef, useState } from "react";
 import { Button, ConfirmModal, Modal } from ".";
-import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
+import { useSongsStore, useTheme } from "../store";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteSong } from "@/services/firebaseService";
-import usePlaylistActions from "../hooks/usePlaylistActions";
+import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { addSongToQueue } from "@/store/songQueueSlice";
 import { useSongSelectContext } from "@/store/SongSelectContext";
+import useCheckBar from "@/hooks/useCheckBar";
+import { ModalRef } from "./Modal";
 
 type Home = {
   variant: "home";
@@ -51,24 +50,32 @@ export default function CheckedBar({
   children?: ReactNode;
 }) {
   // store
-  const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { user } = useAuthStore();
   const { isChecked, selectedSongs, selectAll, resetSelect } = useSongSelectContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { userSongs, setUserSongs } = useSongsStore();
+  const { userSongs } = useSongsStore();
 
   // state
-  const [isFetching, setIsFetching] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState<Modal | "">("");
+  const [modal, setModal] = useState<Modal | "">("");
 
-  // hooks
-  const { setErrorToast, setSuccessToast } = useToast();
-  const { deleteSongsFromPlaylist, isFetching: playlistActionLoading } =
-    usePlaylistActions();
+  // ref
+  const modalRef = useRef<ModalRef>(null);
+
+  // hook
+  const {
+    isFetching,
+    addSongsToQueue,
+    deleteSelectedSong,
+    removeSelectedSongFromPlaylist,
+  } = useCheckBar({ modalRef });
 
   const closeModal = () => {
-    setIsOpenModal("");
+    modalRef.current?.close();
+  };
+
+  const openModal = (modal: Modal) => {
+    setModal(modal);
+    modalRef.current?.open();
   };
 
   const handleSelectUserSongs = () => {
@@ -81,57 +88,6 @@ export default function CheckedBar({
     else resetSelect();
   };
 
-  const addSongsToQueue = () => {
-    let songsWithSongIn = selectedSongs;
-
-    dispatch(addSongToQueue({ songs: songsWithSongIn }));
-    setSuccessToast("songs added to queue");
-    resetSelect();
-  };
-
-  const handleDeleteSelectedSong = async () => {
-    if (!user) return;
-
-    try {
-      setIsFetching(true);
-      const selectedSongIds = selectedSongs.map((s) => s.id);
-      // >>> api
-      for (let song of selectedSongs) await deleteSong(song);
-
-      const newSongs = userSongs.filter((s) => !selectedSongIds.includes(s.id));
-
-      // handle song queue
-      // if (currentSong.song_in === "user") {
-      //    const newQueue = queueSongs.filter((s) => !selectedSongIds.includes(s.id));
-      //    if (newQueue.length !== queueSongs.length)
-      //       dispatch(setQueue({ songs: newQueue }));
-      // }
-      // if (selectedSongIds.includes(currentSong.id)) dispatch(resetCurrentSong());
-
-      setUserSongs(newSongs);
-      setSuccessToast(`${selectedSongs.length} songs deleted`);
-    } catch (error) {
-      console.log({ message: error });
-      setErrorToast();
-    } finally {
-      resetSelect();
-      setIsFetching(false);
-      closeModal();
-    }
-  };
-
-  const handleDeleteManyFromPlaylist = async () => {
-    try {
-      await deleteSongsFromPlaylist(selectedSongs);
-    } catch (error) {
-      console.log(error);
-      setErrorToast("Error when delete song");
-    } finally {
-      closeModal();
-      resetSelect();
-    }
-  };
-
   const classes = {
     title: "text-xl leading-[2.2] font-playwriteCU",
     outlineButton: `border-${theme.alpha} ${theme.side_bar_bg} space-x-1`,
@@ -139,31 +95,31 @@ export default function CheckedBar({
   };
 
   const renderModal = useMemo(() => {
-    if (!isOpenModal) return;
+    if (!modal) return;
 
-    switch (isOpenModal) {
+    switch (modal) {
       case "delete-selected-songs":
         return (
           <ConfirmModal
             loading={isFetching}
             label={`Delete ${selectedSongs.length} songs ?`}
             theme={theme}
-            callback={handleDeleteSelectedSong}
+            callback={deleteSelectedSong}
             close={closeModal}
           />
         );
       case "remove-selects-songs":
         return (
           <ConfirmModal
-            loading={playlistActionLoading}
+            loading={isFetching}
             label={`Remove ${selectedSongs.length} songs ?`}
             theme={theme}
-            callback={handleDeleteManyFromPlaylist}
+            callback={removeSelectedSongFromPlaylist}
             close={closeModal}
           />
         );
     }
-  }, [isOpenModal, playlistActionLoading, isFetching]);
+  }, [modal, isFetching]);
 
   const content = useMemo(() => {
     switch (props.variant) {
@@ -233,7 +189,7 @@ export default function CheckedBar({
                 <Button
                   variant={"outline"}
                   size="small"
-                  onClick={() => setIsOpenModal("delete-selected-songs")}
+                  onClick={() => openModal("delete-selected-songs")}
                   className={classes.outlineButton}
                 >
                   <TrashIcon className={classes.icon} />
@@ -271,7 +227,7 @@ export default function CheckedBar({
                 <Button
                   variant={"outline"}
                   size="small"
-                  onClick={() => setIsOpenModal("remove-selects-songs")}
+                  onClick={() => openModal("remove-selects-songs")}
                   className={classes.outlineButton}
                 >
                   <MinusIcon className={classes.icon} />
@@ -313,7 +269,11 @@ export default function CheckedBar({
     <>
       <div className="flex items-center space-x-2 h-[44px] mb-3">{content}</div>
 
-      {<Modal variant="animation">{renderModal}</Modal>}
+      {
+        <Modal ref={modalRef} variant="animation">
+          {renderModal}
+        </Modal>
+      }
     </>
   );
 }

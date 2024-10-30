@@ -1,90 +1,92 @@
 import { useState } from "react";
 import { useSongsStore, useToast } from "../store";
 import {
-   // countSongsListTimeIds,
-   generateId,
-   // generatePlaylistAfterChangeSong,
-   // generatePlaylistAfterChangeSongs,
-   initPlaylistObject,
+  // countSongsListTimeIds,
+  generateId,
+  // generatePlaylistAfterChangeSong,
+  // generatePlaylistAfterChangeSongs,
+  initPlaylistObject,
 } from "../utils/appHelpers";
 import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
-   resetCurrentPlaylist,
-   selectCurrentPlaylist,
+  resetCurrentPlaylist,
+  selectCurrentPlaylist,
 } from "@/store/currentPlaylistSlice";
 import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useAdminPlaylistActions() {
-   // store
-   const dispatch = useDispatch();
-   const { userPlaylists, setUserPlaylists } = useSongsStore();
-   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
-   const { currentSong } = useSelector(selectCurrentSong);
+  // store
+  const dispatch = useDispatch();
+  const { userPlaylists, setUserPlaylists } = useSongsStore();
+  const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
-   // state
-   const [isFetching, setIsFetching] = useState(false);
+  const { currentSong } = useSelector(selectCurrentSong);
 
-   // hooks
-   const navigate = useNavigate();
-   const { setErrorToast } = useToast();
+  // state
+  const [isFetching, setIsFetching] = useState(false);
 
-   const addAdminPlaylist = async (playlistName: string) => {
-      try {
-         if (!playlistName) throw new Error("playlist name invalid");
+  // hooks
+  const navigate = useNavigate();
+  const { setErrorToast } = useToast();
 
-         const playlistId = generateId(playlistName) + "_admin";
+  const addAdminPlaylist = async (playlistName: string) => {
+    try {
+      if (!playlistName) throw new Error("playlist name invalid");
 
-         const addedPlaylist = initPlaylistObject({
-            id: playlistId,
-            by: "admin",
-            name: playlistName,
-         });
+      const playlistId = generateId(playlistName) + "_admin";
 
-         setIsFetching(true);
-         const newPlaylists = [...userPlaylists, addedPlaylist];
-
-         await mySetDoc({
-            collection: "playlist",
-            data: addedPlaylist,
-            id: playlistId,
-            msg: ">>> api: set playlist doc",
-         });
-
-         setUserPlaylists(newPlaylists);
-      } catch (error) {
-         console.log({ message: error });
-         setErrorToast("");
-      } finally {
-         setIsFetching(false);
-      }
-   };
-
-   const deleteAdminPlaylist = async () => {
-      setIsFetching(true);
-
-      // >>> api
-      await myDeleteDoc({
-         collection: "playlist",
-         id: currentPlaylist.id,
-         msg: ">>> api: delete playlist doc",
+      const addedPlaylist = initPlaylistObject({
+        id: playlistId,
+        by: "admin",
+        name: playlistName,
       });
 
-      const newPlaylists = userPlaylists.filter((p) => p.id !== currentPlaylist.id);
+      setIsFetching(true);
+      const newPlaylists = [...userPlaylists, addedPlaylist];
+
+      await mySetDoc({
+        collection: "playlist",
+        data: addedPlaylist,
+        id: playlistId,
+        msg: ">>> api: set playlist doc",
+      });
+
       setUserPlaylists(newPlaylists);
-
-      dispatch(resetCurrentPlaylist());
-      if (currentSong?.song_in === `playlist_${currentPlaylist.id}`)
-         dispatch(resetCurrentSong());
-
+    } catch (error) {
+      console.log({ message: error });
+      setErrorToast("");
+    } finally {
       setIsFetching(false);
-      navigate("/dashboard");
-   };
+    }
+  };
 
-   return {
-      isFetching,
-      addAdminPlaylist,
-      deleteAdminPlaylist,
-   };
+  const deleteAdminPlaylist = async () => {
+    if (!currentPlaylist) return;
+    setIsFetching(true);
+
+    // >>> api
+    await myDeleteDoc({
+      collection: "playlist",
+      id: currentPlaylist.id,
+      msg: ">>> api: delete playlist doc",
+    });
+
+    const newPlaylists = userPlaylists.filter((p) => p.id !== currentPlaylist.id);
+    setUserPlaylists(newPlaylists);
+
+    dispatch(resetCurrentPlaylist());
+    if (currentSong?.song_in === `playlist_${currentPlaylist.id}`)
+      dispatch(resetCurrentSong());
+
+    setIsFetching(false);
+    navigate("/dashboard");
+  };
+
+  return {
+    isFetching,
+    addAdminPlaylist,
+    deleteAdminPlaylist,
+  };
 }

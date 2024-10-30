@@ -38,7 +38,6 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const { theme, isOnMobile } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { queueSongs, from } = useSelector(selectSongQueue);
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -63,6 +62,8 @@ export default function PLaylistInfo({ loading, type }: Props) {
   const closeModal = () => modalRef.current?.toggle();
 
   const handleSetSong = (song: Song, index: number) => {
+    if (!currentPlaylist) return;
+
     // case user play user songs then play playlist song
     const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
     if (currentSong?.id !== song.id || currentSong?.song_in !== newSongIn) {
@@ -82,17 +83,8 @@ export default function PLaylistInfo({ loading, type }: Props) {
   };
 
   const handlePlayPlaylist = () => {
-
-    console.log(from, currentSong);
-    
-
-    if (playlistSongs.length !== queueSongs.length)
-      dispatch(setQueue({ songs: playlistSongs }));
-
-    const firstSong = playlistSongs[0];
-
     if (currentSong?.song_in.includes(params.name as string)) return;
-
+    const firstSong = playlistSongs[0];
     handleSetSong(firstSong, 0);
   };
 
@@ -110,19 +102,19 @@ export default function PLaylistInfo({ loading, type }: Props) {
     return (
       <>
         <div className="text-xl leading-[2.2] font-playwriteCU">
-          {currentPlaylist.name}
+          {currentPlaylist?.name}
         </div>
         {!isOnMobile && (
           <p className="text-lg leading-[1] font-[500]">{formatTime(playlistTime)}</p>
         )}
         <p className="hidden md:block opacity-60 leading-[1]">
-          created by {currentPlaylist.by}
+          created by {currentPlaylist?.by}
         </p>
       </>
     );
   }, [loading, currentPlaylist]);
 
-  const renderCta = useMemo(() => {
+  const renderCta = () => {
     if (loading) return <></>;
 
     switch (type) {
@@ -134,7 +126,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
               onClick={handlePlayPlaylist}
               size={"clear"}
               className={`rounded-full px-[20px] py-1 ${theme.content_bg} ${
-                !currentPlaylist.song_ids.length && "disable"
+                !playlistSongs.length && "disable"
               }`}
             >
               <PlayIcon className="w-[22px]" />
@@ -161,7 +153,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
             onClick={handlePlayPlaylist}
             size={"clear"}
             className={`rounded-full px-[20px] space-x-1 py-1 ${theme.content_bg} ${
-              !currentPlaylist.song_ids.length && "disable"
+              !playlistSongs.length && "disable"
             }`}
           >
             <PlayIcon className="w-7" />
@@ -169,14 +161,16 @@ export default function PLaylistInfo({ loading, type }: Props) {
           </Button>
         );
     }
-  }, [loading, playlistSongs]);
+  };
 
   const renderModal = useMemo(() => {
     switch (modal) {
       case "":
         return <></>;
       case "edit":
-        return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
+        if (currentPlaylist)
+          return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
+        else return <></>;
 
       case "delete":
         if (type === "my-playlist")
@@ -219,12 +213,13 @@ export default function PLaylistInfo({ loading, type }: Props) {
           {loading ? (
             <Skeleton className="pt-[100%] rounded-[8px]" />
           ) : (
-            <PlaylistItem
-              data={currentPlaylist}
-              active={currentSong?.song_in === `playlist_${currentPlaylist.id}`}
-              inDetail
-              theme={theme}
-            />
+            currentPlaylist && (
+              <PlaylistItem
+                data={currentPlaylist}
+                active={currentSong?.song_in === `playlist_${currentPlaylist?.id}`}
+                inDetail
+              />
+            )
           )}
         </div>
 
@@ -233,7 +228,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
           <div className={classes.infoTop}>{renderInfo}</div>
 
           {/* cta */}
-          <div className={`${classes.ctaContainer} `}>{renderCta}</div>
+          <div className={`${classes.ctaContainer} `}>{renderCta()}</div>
         </div>
       </div>
 

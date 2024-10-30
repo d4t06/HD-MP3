@@ -1,16 +1,11 @@
 import { useMemo, useRef, useState } from "react";
 
-import {
-  ArrowPathIcon,
-  HeartIcon,
-  MusicalNoteIcon,
-  StopIcon,
-} from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid, PlayIcon } from "@heroicons/react/24/solid";
+import { ArrowPathIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { formatTime } from "../utils/appHelpers";
 
-import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
+import { useSongsStore, useTheme } from "../store";
 import {
   PopupWrapper,
   Image,
@@ -54,12 +49,11 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   // store
   const dispatch = useDispatch();
   const { theme, isOnMobile } = useTheme();
-  const { user } = useAuthStore();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
   const { userPlaylists } = useSongsStore();
 
   // state
-  const [loading, setLoading] = useState<boolean>(false);
+  //   const [loading, setLoading] = useState<boolean>(false);
   const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
   const [modal, setModal] = useState<SongItemModal | "">("");
 
@@ -67,7 +61,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const modalRef = useRef<ModalRef>(null);
 
   // hooks
-  const { setErrorToast } = useToast();
 
   const closeModal = () => modalRef.current?.toggle();
   const closeMenu = () => setIsOpenPopup(false);
@@ -92,56 +85,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     return selectedSongs.indexOf(song) != -1;
   }, [selectedSongs]);
 
-  const isLiked = useMemo(
-    () => (user ? user.like_song_ids.includes(song.id) : false),
-    [user?.like_song_ids, song]
-  );
-
   const handleRemoveFromQueue = () => {
     if (index === undefined) return;
     dispatch(removeSongFromQueue({ index }));
-    // setSuccessToast({ message: `'${song.name}' removed from queue` });
-  };
-
-  const handleLikeSong = async () => {
-    if (!user) return;
-
-    try {
-      // setLoading(true);
-      // const newUserLikeSongIds = [...user.like_song_ids];
-      // const index = newUserLikeSongIds.indexOf(song.id);
-      // if (index === -1) {
-      //    newUserLikeSongIds.push(song.id);
-      //    if (queueSongs) {
-      //       const index = queueSongs.find((s) => s.id === song.id);
-      //       if (!index) {
-      //          console.log("like songs, add to queue");
-      //          handleAddToQueue();
-      //       }
-      //    }
-      // } else {
-      //    newUserLikeSongIds.splice(index, 1);
-      //    if (queueSongs) {
-      //       const index = queueSongs.find((s) => s.id === song.id);
-      //       if (index) {
-      //          console.log("unlike songs remove from queue");
-      //          // dispatch(removeSongFromQueue({ song }));
-      //          // handleRemoveFromQueue
-      //       }
-      //    }
-      // }
-      //  setUser();
-      //  await mySetDoc({
-      //     collection: "users",
-      //     data: { like_song_ids: newUserLikeSongIds } as Partial<User>,
-      //     id: user.email,
-      //  });
-    } catch (error) {
-      console.log(error);
-      setErrorToast("Error when liked song");
-    } finally {
-      setLoading(false);
-    }
   };
 
   //selectedSong
@@ -253,18 +199,18 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
           {imageOverlay}
         </div>
 
-        {/* song name and singer */}
+        {/* song info */}
         <div className={`ml-[10px]  ${props.variant === "queue" ? "" : ""}`}>
           <h5
             className={`line-clamp-1 font-medium overflow-hidden ${
-              props.variant === "queue" ? "text-sm" : "text-lg"
+              props.variant === "queue" ? "text-sm" : ""
             }`}
           >
             {song.name}
           </h5>
           <p
             className={`opacity-[.7] leading-[1.2] line-clamp-1 
-               ${props.variant === "queue" ? "text-sm" : ""}
+               ${props.variant === "queue" ? "text-xs" : ""}
                        `}
           >
             {song.singer}
@@ -285,39 +231,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     }
   };
 
-  const renderHeartIcon = useMemo(() => {
-    if (loading) return <ArrowPathIcon className="w-[20px] animate-spin" />;
-
-    switch (props.variant) {
-      case "dashboard-songs":
-      case "dashboard-playlist":
-        return <></>;
-      default:
-        if (!!user)
-          return (
-            <button
-              onClick={handleLikeSong}
-              className={`${classes.button} max-[549px]:!bg-transparent group`}
-            >
-              <HeartIconSolid
-                className={`w-[20px]  ${
-                  isLiked
-                    ? `${theme.content_text} block group-hover:hidden`
-                    : `text-white hidden group-hover:block`
-                }`}
-              />
-              <HeartIcon
-                className={`w-[20px] ${
-                  isLiked ? "hidden group-hover:block" : "block group-hover:hidden"
-                }`}
-              />
-            </button>
-          );
-        return <></>;
-    }
-  }, [handleLikeSong, isLiked]);
-
-  const renderMenu = useMemo(() => {
+  const renderMenu = () => {
     switch (props.variant) {
       case "home":
       case "dashboard-songs":
@@ -368,7 +282,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       default:
         return <></>;
     }
-  }, [props.variant, song, isOpenPopup]);
+  };
 
   const renderModal = useMemo(() => {
     switch (modal) {
@@ -415,8 +329,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       default:
         return (
           <div className={classes.ctaWrapper}>
-            {renderHeartIcon}
-
             <div className={classes.menuBtnWrapper}>
               <MyPopup appendOnPortal>
                 <MyPopupTrigger>
@@ -439,7 +351,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                     color="sidebar"
                     theme={theme}
                   >
-                    {renderMenu}
+                    {renderMenu()}
 
                     {actionLoading && (
                       <div className={classes.overlay}>

@@ -36,7 +36,6 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   }, []);
 
   const classes = {
-    textColor: `${theme.type === "dark" ? "text-white" : "text-[#333]"} `,
     mainContainer: `fixed w-[300px] flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
     songListContainer:
       "flex-grow overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar",
@@ -44,7 +43,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
 
   return (
     <div
-      className={`${classes.textColor} ${classes.mainContainer} ${
+      className={`${theme.text_color} ${classes.mainContainer} ${
         isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
       }     `}
     >
@@ -59,8 +58,8 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
             {!!queueSongs.length && (
               <Button
                 onClick={clearSongQueue}
-                size={"small"}
-                className={`${theme.content_bg} rounded-full my-5 py-1 space-x-1`}
+                size={"clear"}
+                className={`${theme.content_bg} rounded-full my-5 px-3 py-1 space-x-1`}
               >
                 <TrashIcon className="w-6" />
                 <span className="font-playwriteCU leading-[2.2]">Clear</span>

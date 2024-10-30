@@ -124,24 +124,16 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                 {!!userPlaylists?.length ? (
                   <>
                     {userPlaylists.map((playlist, index) => {
-                      const isAdded = playlist.song_ids.includes(song.id);
-
                       return (
                         <li
                           key={index}
-                          onClick={() =>
-                            !isAdded && props.handleAddSongToPlaylist(playlist)
-                          }
-                          className={`list-none w-full flex rounded-[4px] p-[5px] ${
-                            isAdded && "disable"
-                          } ${classes.menuItem}`}
+                          onClick={() => props.handleAddSongToPlaylist(playlist)}
+                          className={`list-none w-full flex rounded-[4px] p-[5px] ${classes.menuItem}`}
                         >
                           <span>
                             <MusicalNoteIcon className={classes.menuIcon} />
                           </span>
-                          <p className="line-clamp-1 text-left">
-                            {playlist.name} {isAdded && "(Added)"}
-                          </p>
+                          <p className="line-clamp-1 text-left">{playlist.name}</p>
                         </li>
                       );
                     })}
@@ -156,7 +148,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     }
   }, [userPlaylists]);
 
-  const renderMenuItem = useMemo(() => {
+  const renderMenuItem = () => {
     switch (props.variant) {
       case "home":
         return (
@@ -247,7 +239,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
           </>
         );
     }
-  }, [props]);
+  };
 
   const renderSongInfo = useMemo(() => {
     switch (props.variant) {
@@ -267,7 +259,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     <>
       <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
         {renderSongInfo}
-        {renderMenuItem}
+        {renderMenuItem()}
 
         <a
           target="_blank"

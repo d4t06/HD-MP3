@@ -18,7 +18,7 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
 
   // hook
   const { userSongs } = useSongsStore();
-  const { addSongsToPlaylist, isFetching } = usePlaylistActions();
+  const { addSongs, isFetching } = usePlaylistActions();
 
   const classes = {
     addSongContainer: "pb-[40px] relative",
@@ -28,17 +28,8 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
   const isAbleToSubmit = useMemo(() => !!selectedSongs.length, [selectedSongs]);
 
   const handleAddSongsToPlaylist = async () => {
-    try {
-      if (!selectedSongs.length) {
-        return;
-      }
-
-      await addSongsToPlaylist(selectedSongs);
-    } catch (error) {
-      console.log({ message: error });
-    } finally {
-      closeModal();
-    }
+    await addSongs(selectedSongs);
+    closeModal();
   };
 
   return (

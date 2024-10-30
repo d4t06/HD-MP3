@@ -7,11 +7,7 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      <div
-        className={`${theme.container} fixed inset-0  ${
-          theme.type === "dark" ? "text-white" : "text-[#333]"
-        }`}
-      >
+      <div className={`${theme.container} fixed inset-0  ${theme.text_color}`}>
         <DashboardHeader />
         <div className="h-full pt-[60px] overflow-auto no-scrollbar">
           <div className="container max-w-[800px] h-full">{children}</div>

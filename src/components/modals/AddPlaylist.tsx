@@ -30,12 +30,12 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
    }, []);
 
    return (
-      <div className="w-[300px] max-w-[calc(100vw-40px)]:">
+      <div className="w-[400px] max-w-[calc(100vw-40px)]:">
          <ModalHeader close={close} title="Add playlist" />
          <form action="" onSubmit={handleAddPlaylist}>
             <input
                ref={inputRef}
-               className={`bg-${theme.alpha} px-[20px] rounded-full outline-none mt-[10px] text-[16px]  h-[35px] w-full`}
+               className={`bg-${theme.alpha} px-[20px] text-lg rounded-full outline-none  h-[35px] w-full`}
                type="text"
                placeholder="name..."
                value={playlistName}
@@ -47,7 +47,7 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
                   type="submit"
                   isLoading={isFetching}
                   variant={"primary"}
-                  className={`${theme.content_bg} rounded-full ${
+                  className={`${theme.content_bg} font-playwriteCU rounded-full ${
                      !playlistName ? "disable" : ""
                   }`}
                >

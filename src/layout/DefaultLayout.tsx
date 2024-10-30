@@ -11,19 +11,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const textColor = () => {
-    switch (theme.type) {
-      case "light":
-        return "text-[#333]";
-      case "dark":
-        return "text-white";
-    }
-  };
-
   const classes = {
-    page: `left-0 top-0 right-0 bottom-0 md:relative md:flex md:h-screen md:overflow-hidden ${
-      theme.container
-    } ${textColor()}`,
+    page: `left-0 top-0 right-0 bottom-0 md:relative md:flex md:h-screen md:overflow-hidden ${theme.container} ${theme.text_color}`,
     container: `h-full md:w-full px-[10px] md:px-[40px] pt-[60px] md:overflow-auto md:no-scrollbar`,
   };
 

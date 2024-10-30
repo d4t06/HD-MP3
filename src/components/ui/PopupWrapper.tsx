@@ -47,9 +47,9 @@ export default function PopupWrapper({
 
   return (
     <div
-      className={`  ${theme.type === "light" ? "text-[#333]" : "text-white"} ${
-        bgColorMap[color]
-      } border-[1px] border-${theme.alpha} ${popupVariant({
+      className={`  ${theme.text_color} ${bgColorMap[color]} border-[1px] border-${
+        theme.alpha
+      } ${popupVariant({
         p,
         rounded,
         className,

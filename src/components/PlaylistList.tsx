@@ -69,7 +69,7 @@ export default function PlaylistList({
                     case "my-songs":
                       return (
                         <div key={index} className={classes.playlistItem}>
-                          <PlaylistItem active={active} theme={theme} data={playlist} />
+                          <PlaylistItem active={active} data={playlist} />
                         </div>
                       );
 
@@ -78,7 +78,6 @@ export default function PlaylistList({
                         <div key={index} className={classes.playlistItem}>
                           <PlaylistItem
                             active={active}
-                            theme={theme}
                             data={playlist}
                             link={`/dashboard/playlist/${playlist.id}`}
                           />
@@ -89,11 +88,7 @@ export default function PlaylistList({
               : props.location === "home" && <p className="text-center w-full">...</p>}
             {props.location !== "home" && (
               <div className={`${classes.playlistItem} mb-[25px]`}>
-                <Empty
-                  theme={theme}
-                  className="pt-[100%]"
-                  onClick={() => modalRef.current?.toggle()}
-                />
+                <Empty theme={theme} onClick={() => modalRef.current?.toggle()} />
               </div>
             )}
           </>
