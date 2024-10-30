@@ -9,30 +9,30 @@ import usePlaylistActions from "../hooks/usePlaylistActions";
 import { formatTime } from "../utils/appHelpers";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { setQueue } from "@/store/songQueueSlice";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
 
 type Modal = "edit" | "delete";
 
 type MyPlaylist = {
-  type: "my-playlist";
+  variant: "my-playlist";
   loading: boolean;
 };
 
 type AdminPlaylist = {
-  type: "admin-playlist";
+  variant: "admin-playlist";
   loading: boolean;
 };
 
 type DashboardPlaylist = {
-  type: "dashboard-playlist";
+  variant: "dashboard-playlist";
   loading: boolean;
 };
 
 type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
-export default function PLaylistInfo({ loading, type }: Props) {
+export default function PLaylistInfo({ loading, ...props }: Props) {
   // store
   const dispatch = useDispatch();
   const { theme, isOnMobile } = useTheme();
@@ -96,7 +96,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
     </>
   );
 
-  const renderInfo = useMemo(() => {
+  const renderInfo = () => {
     if (loading) return playlistInfoSkeleton;
 
     return (
@@ -107,19 +107,20 @@ export default function PLaylistInfo({ loading, type }: Props) {
         {!isOnMobile && (
           <p className="text-lg leading-[1] font-[500]">{formatTime(playlistTime)}</p>
         )}
-        <p className="hidden md:block opacity-60 leading-[1]">
-          created by {currentPlaylist?.by}
-        </p>
+        {props.variant !== "dashboard-playlist" && (
+          <p className="hidden md:block opacity-60 leading-[1]">
+            created by {currentPlaylist?.by}
+          </p>
+        )}
       </>
     );
-  }, [loading, currentPlaylist]);
+  };
 
   const renderCta = () => {
     if (loading) return <></>;
 
-    switch (type) {
+    switch (props.variant) {
       case "my-playlist":
-      case "dashboard-playlist":
         return (
           <>
             <Button
@@ -132,6 +133,24 @@ export default function PLaylistInfo({ loading, type }: Props) {
               <PlayIcon className="w-[22px]" />
               <span className="font-playwriteCU leading-[2.2]">Play</span>
             </Button>
+            <Button
+              onClick={() => openModal("delete")}
+              className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+            >
+              <TrashIcon className="w-[22px]" />
+            </Button>
+
+            <Button
+              onClick={() => openModal("edit")}
+              className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
+            >
+              <PencilSquareIcon className="w-[22px]" />
+            </Button>
+          </>
+        );
+      case "dashboard-playlist":
+        return (
+          <>
             <Button
               onClick={() => openModal("delete")}
               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
@@ -173,7 +192,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
         else return <></>;
 
       case "delete":
-        if (type === "my-playlist")
+        if (props.variant === "my-playlist")
           return (
             <ConfirmModal
               loading={isFetching}
@@ -183,7 +202,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
               close={closeModal}
             />
           );
-        if (type === "dashboard-playlist")
+        if (props.variant === "dashboard-playlist")
           return (
             <ConfirmModal
               loading={adminIsFetching}
@@ -225,7 +244,7 @@ export default function PLaylistInfo({ loading, type }: Props) {
 
         {/* desktop playlist info */}
         <div className={classes.playlistInfoContainer}>
-          <div className={classes.infoTop}>{renderInfo}</div>
+          <div className={classes.infoTop}>{renderInfo()}</div>
 
           {/* cta */}
           <div className={`${classes.ctaContainer} `}>{renderCta()}</div>

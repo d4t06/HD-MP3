@@ -1,103 +1,100 @@
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 type StateType = {
-   queueSongs: SongWithSongIn[];
-   from: SongIn[];
+  queueSongs: QueueSong[];
+  current_id: string | null;
 };
 
 const storage = getLocalStorage();
 
 const initialState: StateType = {
-   queueSongs: storage["queue"] || [],
-   from: [],
+  queueSongs: storage["queue"] || [],
+  current_id: null,
 };
 
+const getQueueSongs = (songs: Song[]) =>
+  songs.map((s) => {
+    return { ...s, queue_id: nanoid(4) } as QueueSong;
+  });
+
 const songQueueSlice = createSlice({
-   name: "songQueue",
-   initialState,
-   reducers: {
-      setQueue: (
-         state: StateType,
-         action: PayloadAction<{ songs: SongWithSongIn[] }>
-      ) => {
-         const { songs } = action.payload;
+  name: "songQueue",
+  initialState,
+  reducers: {
+    setQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
+      const { songs } = action.payload;
 
-         state.queueSongs = songs;
-         state.from = [songs[0].song_in];
+      const queueSongs = getQueueSongs(songs);
 
-         setLocalStorage("queue", state.queueSongs);
-      },
-      removeSongFromQueue: (
-         state: StateType,
-         action: PayloadAction<{ index: number }>
-      ) => {
-         const { index } = action.payload;
+      state.queueSongs = queueSongs;
 
-         // update songs
-         // const indexList: number[] = [];
-         // state.queueSongs.forEach((s, index) => {
-         //    if (s.id === id) indexList.push(index);
-         // });
+      setLocalStorage("queue", state.queueSongs);
+    },
+    removeSongFromQueue: (state: StateType, action: PayloadAction<{ index: number }>) => {
+      const { index } = action.payload;
 
-         // indexList.forEach((index) => {
-         //    state.queueSongs.splice(index, 1);
-         // });
+      // update songs
+      // const indexList: number[] = [];
+      // state.queueSongs.forEach((s, index) => {
+      //    if (s.id === id) indexList.push(index);
+      // });
 
-         state.queueSongs.splice(index, 1);
-         
-         // update local storage
-         setLocalStorage("queue", state.queueSongs);
+      // indexList.forEach((index) => {
+      //    state.queueSongs.splice(index, 1);
+      // });
 
-         // update from
-         const newSongFrom: StateType["from"] = [];
-         state.queueSongs.forEach((s) => {
-            if (!newSongFrom.includes(s.song_in)) {
-               newSongFrom.push(s.song_in);
-            }
-         });
+      state.queueSongs.splice(index, 1);
 
-         state.from = newSongFrom;
-      },
-      addSongToQueue: (
-         state: StateType,
-         action: PayloadAction<{ songs: SongWithSongIn[] }>
-      ) => {
-         const { songs } = action.payload;
+      // update local storage
+      setLocalStorage("queue", state.queueSongs);
 
-         // only can add songs from same place
-         if (!state.from.includes(songs[0].song_in)) {
-            state.from.push(songs[0].song_in);
-         }
+      // update from
+      // const newSongFrom: StateType["from"] = [];
+      // state.queueSongs.forEach((s) => {
+      //   if (!newSongFrom.includes(s.song_in)) {
+      //     newSongFrom.push(s.song_in);
+      //   }
+      // });
 
-         state.queueSongs.push(...songs);
-         setLocalStorage("queue", state.queueSongs);
-      },
-      updateSongInQueue: (
-         state: StateType,
-         action: PayloadAction<{ song: SongWithSongIn }>
-      ) => {
-         const { song } = action.payload;
-         const index = state.queueSongs.findIndex((s) => s.id === song.id);
+      // state.from = newSongFrom;
+    },
+    addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
+      const { songs } = action.payload;
 
-         Object.assign(state.queueSongs[index], song);
-      },
-      resetSongQueue: (state: StateType) => {
-         state.queueSongs = [];
-         setLocalStorage("queue", []);
-      },
-   },
+      // // only can add songs from same place
+      // if (!state.from.includes(songs[0].song_in)) {
+      //   state.from.push(songs[0].song_in);
+      // }
+
+      const queueSongs = getQueueSongs(songs);
+
+      state.queueSongs.push(...queueSongs);
+      setLocalStorage("queue", state.queueSongs);
+    },
+    updateSongInQueue: (state: StateType, action: PayloadAction<{ song: Song }>) => {
+      // const { song } = action.payload;
+      return state;
+      // const index = state.queueSongs.findIndex((s) => s.id === song.id);
+
+      // Object.assign(state.queueSongs[index], song);
+    },
+    resetSongQueue: (state: StateType) => {
+      state.queueSongs = [];
+      setLocalStorage("queue", []);
+    },
+  },
 });
 
-export const selectSongQueue = (state: { songQueue: StateType }) =>
-   state.songQueue;
+export const selectSongQueue = (state: { songQueue: StateType }) => state.songQueue;
 
 export const {
-   addSongToQueue,
-   updateSongInQueue,
-   removeSongFromQueue,
-   setQueue,
-   resetSongQueue,
+  addSongToQueue,
+  updateSongInQueue,
+  removeSongFromQueue,
+  setQueue,
+  resetSongQueue,
 } = songQueueSlice.actions;
 
 export default songQueueSlice.reducer;

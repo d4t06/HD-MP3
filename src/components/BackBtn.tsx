@@ -2,7 +2,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useTheme } from "../store";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
-function BackBtn() {
+type Props = {
+  admin?: boolean;
+};
+
+function BackBtn({ admin }: Props) {
   const { theme } = useTheme();
 
   const navigate = useNavigate();
@@ -14,7 +18,8 @@ function BackBtn() {
     let index = currentPath.lastIndexOf("/");
     let prevPath = currentPath.substring(0, index);
     if (currentPath.includes("playlist")) {
-      prevPath = "/mysongs";
+      if (admin) prevPath = "/dashboard";
+      else prevPath = "/mysongs";
     }
 
     navigate(prevPath || "/");

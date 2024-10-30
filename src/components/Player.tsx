@@ -10,6 +10,7 @@ import SongQueue from "./SongQueue";
 import useIdle from "../hooks/useIdle";
 import appConfig from "../config/app";
 import { useTheme } from "@/store";
+import { ControlRef } from "./Control";
 
 const Player = ({ admin }: { admin?: boolean }) => {
   // store
@@ -21,6 +22,7 @@ const Player = ({ admin }: { admin?: boolean }) => {
   const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
+  const controlRef = useRef<ControlRef>(null);
 
   const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
   // const idle=false;
@@ -56,13 +58,14 @@ const Player = ({ admin }: { admin?: boolean }) => {
   const mobileContent = audioRef.current && (
     <>
       <MobileFullScreenPlayer
+        controlRef={controlRef}
         audioEle={audioRef.current}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />
 
       <MobileBottomPlayer
-        audioEle={audioRef.current}
+        controlRef={controlRef}
         isOpenFullScreen={isOpenFullScreen}
         setIsOpenFullScreen={setIsOpenFullScreen}
       />

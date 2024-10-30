@@ -59,6 +59,11 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   const handleError = () => {
+
+
+    console.log('error');
+    
+
     setStatus("error");
   };
 

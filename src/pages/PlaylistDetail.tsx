@@ -1,12 +1,9 @@
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { BackBtn, Skeleton } from "../components";
+import { BackBtn } from "../components";
 import { useSelector } from "react-redux";
 import { usePlaylistDetail } from "@/hooks";
-import { useMemo } from "react";
 import PLaylistInfo from "@/components/PlaylistInfo";
-import { SongItemSkeleton } from "@/components/skeleton";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
-import { useLocation } from "react-router-dom";
 import Footer from "@/components/Footer";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
 
@@ -15,51 +12,29 @@ export default function PlaylistDetail() {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   //   hooks
-  usePlaylistDetail();
-  const variant = useLocation();
+  usePlaylistDetail({});
   const { isFetching } = useGetPlaylist();
 
-  const isInDashboard = useMemo(
-    () => variant.pathname.includes("/dashboard/playlist"),
-    [variant]
-  );
-
-  const renderPlaylistInfo = useMemo(() => {
-    if (isInDashboard)
-      return <PLaylistInfo loading={isFetching} type="dashboard-playlist" />;
-
+  const renderPlaylistInfo = () => {
     if (currentPlaylist?.by === "admin")
-      return <PLaylistInfo loading={isFetching} type="admin-playlist" />;
+      return <PLaylistInfo loading={isFetching} variant="admin-playlist" />;
 
-    return <PLaylistInfo loading={isFetching} type="my-playlist" />;
-  }, [isFetching]);
+    return <PLaylistInfo loading={isFetching} variant="my-playlist" />;
+  };
 
   const renderSongList = () => {
-    if (isFetching)
-      return (
-        <>
-          <div className="h-[30px] mb-[10px] flex items-center">
-            <Skeleton className="h-[20px] w-[90px]" />
-          </div>
-
-          {SongItemSkeleton}
-        </>
-      );
-
-    if (isInDashboard) return <PlaylistDetailSongList variant="dashboard-playlist" />;
-
     if (currentPlaylist?.by === "admin")
-      return <PlaylistDetailSongList variant="admin-playlist" />;
-    else return <PlaylistDetailSongList variant="my-playlist" />;
+      return <PlaylistDetailSongList loading={isFetching} variant="admin-playlist" />;
+    else return <PlaylistDetailSongList loading={isFetching} variant="my-playlist" />;
   };
 
   return (
-    <div className="pb-[80px]">
+    <div className={`pb-[80px]`}>
       <div className="mb-[30px]">
         <BackBtn />
       </div>
 
-      {renderPlaylistInfo}
+      {renderPlaylistInfo()}
       <div className="mt-[30px]">{renderSongList()}</div>
       <Footer />
     </div>

@@ -2,21 +2,23 @@ import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
-import { useCallback, useEffect, useRef } from "react";
+import { MutableRefObject, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function usePlayerControl() {
+type Props = {
+  currentIndexRef: MutableRefObject<number>;
+};
+
+export default function usePlayerControl({ currentIndexRef }: Props) {
   const dispatch = useDispatch();
   const { queueSongs } = useSelector(selectSongQueue);
   const { currentSong } = useSelector(selectCurrentSong);
   const { isRepeat, isShuffle, playStatus } = useSelector(selectAllPlayStatusStore);
 
-  const currentIndex = useRef(0);
-
   const handleNext = useCallback(() => {
-    if (!currentSong) return;
+    if (currentIndexRef.current === null) return;
 
-    let newIndex = currentIndex.current + 1;
+    let newIndex = currentIndexRef.current + 1;
     let newSong: Song;
 
     if (newIndex < queueSongs.length) {
@@ -30,15 +32,15 @@ export default function usePlayerControl() {
       setSong({
         ...newSong,
         currentIndex: newIndex,
-        song_in: currentSong.song_in,
+        song_in: newSong.song_in,
       })
     );
   }, [currentSong, queueSongs]);
 
   const handlePrevious = useCallback(() => {
-    if (!currentSong) return;
+    if (currentIndexRef.current === null) return;
 
-    let newIndex = currentIndex.current! - 1;
+    let newIndex = currentIndexRef.current! - 1;
     let newSong: Song;
     if (newIndex >= 0) {
       newSong = queueSongs[newIndex];
@@ -51,7 +53,7 @@ export default function usePlayerControl() {
       setSong({
         ...newSong,
         currentIndex: newIndex,
-        song_in: currentSong.song_in,
+        song_in: newSong.song_in,
       })
     );
   }, [currentSong, queueSongs]);
@@ -82,13 +84,6 @@ export default function usePlayerControl() {
     setLocalStorage("isRepeat", value);
     dispatch(setPlayStatus({ isRepeat: value }));
   };
-
-  // update current index ref
-  useEffect(() => {
-    if (currentSong) {
-      currentIndex.current = currentSong.currentIndex;
-    }
-  }, [currentSong]);
 
   return {
     handleNext,

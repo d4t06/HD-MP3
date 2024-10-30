@@ -1,5 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
-
+import { MouseEvent, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAuthStore, useTheme, useToast } from "../store";
 
@@ -34,8 +33,6 @@ export default function useAudioEvent({ audioEle }: Props) {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   // state
-  const [someThingToTriggerError, setSomeThingToTriggerError] = useState(0);
-
   const firstTimeSongLoaded = useRef(true);
   const currentIndexRef = useRef(0); // update current index
 
@@ -44,13 +41,15 @@ export default function useAudioEvent({ audioEle }: Props) {
   const themeCode = useRef(theme.content_code); // for update timeline background
   const isEndOfList = useRef(false); // handle end song
   const isPlayingNewSong = useRef(true); // for cross fade
+  const isSongEnd = useRef(false); // only need song when song error if end event fire
+  const isShowMessageWhenSongError = useRef(false); // for handle song error
 
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
 
   // use hook
   const { currentSong, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
-    usePlayerControl();
+    usePlayerControl({ currentIndexRef });
   const location = useLocation();
   const { setErrorToast } = useToast();
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -69,6 +68,8 @@ export default function useAudioEvent({ audioEle }: Props) {
       }
 
       await audioEle.play();
+      isShowMessageWhenSongError.current = false;
+      isSongEnd.current = false;
 
       if (!user) return;
       if (isPlayingNewSong.current) {
@@ -96,7 +97,9 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handlePlaying = () => {
-    dispatch(setPlayStatus({ playStatus: "playing" }));
+    if (playStatus !== "playing") {
+      dispatch(setPlayStatus({ playStatus: "playing" }));
+    }
   };
 
   const handleResetForNewSong = () => {
@@ -110,13 +113,13 @@ export default function useAudioEvent({ audioEle }: Props) {
     const node = e.target as HTMLElement;
 
     if (timelineEleRef.current) {
-      dispatch(setPlayStatus({ playStatus: "loading" }));
+      dispatch(setPlayStatus({ playStatus: "waiting" }));
 
       const clientRect = node.getBoundingClientRect();
 
       const length = e.clientX - clientRect.left;
       const lengthRatio = length / timelineEleRef.current.offsetWidth;
-      const newSeekTime = Math.ceil(lengthRatio * audioEle.duration);
+      const newSeekTime = Math.round(lengthRatio * audioEle.duration);
 
       const currentTime = audioEle.currentTime;
 
@@ -125,7 +128,6 @@ export default function useAudioEvent({ audioEle }: Props) {
           Math.abs(currentTime - prevSeekTime.current) < 1 &&
           Math.abs(newSeekTime - prevSeekTime.current) < 1
         ) {
-          console.log("no seek");
           return;
         }
       }
@@ -190,6 +192,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     const volInStore = storage["volume"] || 1;
 
     audioEle.volume = volInStore;
+    isSongEnd.current = true;
 
     if (isRepeat === "one") {
       return play();
@@ -271,7 +274,24 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleError = () => {
-    setSomeThingToTriggerError(Math.random());
+    if (currentIndexRef.current === null) return;
+    if (!isShowMessageWhenSongError.current) {
+      isShowMessageWhenSongError.current = true;
+      setErrorToast("Found internet error");
+    }
+
+    // if song end event don't fire
+    if (!isSongEnd.current) return dispatch(setPlayStatus({ playStatus: "error" }));
+
+    if (queueSongs.length > 1) {
+      // case end of list
+      if (currentIndexRef.current === queueSongs.length - 1) {
+        dispatch(setPlayStatus({ playStatus: "error" }));
+        return;
+      }
+
+      handleNext();
+    } else dispatch(setPlayStatus({ playStatus: "error" }));
   };
 
   //   load current song in local storage
@@ -300,18 +320,6 @@ export default function useAudioEvent({ audioEle }: Props) {
     };
   }, []);
 
-  //   handle when song error
-  useEffect(() => {
-    if (!someThingToTriggerError) return;
-    if (firstTimeSongLoaded.current) return;
-    if (currentSong?.name) {
-      if (queueSongs.length > 1) {
-        handleNext();
-        setErrorToast("Found internet error");
-      } else dispatch(setPlayStatus({ playStatus: "error" }));
-    }
-  }, [someThingToTriggerError]);
-
   // update audio src, currentIndexRef, reset song
   useEffect(() => {
     if (!currentSong) {
@@ -320,6 +328,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     }
 
     audioEle.src = currentSong.song_url;
+
     currentIndexRef.current = currentSong.currentIndex;
     document.title = `${currentSong.name} - ${currentSong.singer}`;
 
@@ -327,8 +336,6 @@ export default function useAudioEvent({ audioEle }: Props) {
       handleResetForNewSong();
       isPlayingNewSong.current = true;
     };
-
-    // use combine dependencies in other to prevent reload after edit song
   }, [currentSong]);
 
   // update site title

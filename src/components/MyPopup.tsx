@@ -91,13 +91,14 @@ type TriggerProps = {
   children: ReactNode;
   className?: string;
   needButton?: boolean;
+  setIsOpenParent?: (v: boolean) => void;
 };
 export type TriggerRef = {
   close: () => void;
 };
 
 export const MyPopupTrigger = forwardRef(function (
-  { children, needButton }: TriggerProps,
+  { children, needButton, setIsOpenParent }: TriggerProps,
   ref: Ref<TriggerRef>
 ) {
   const {
@@ -113,6 +114,7 @@ export const MyPopupTrigger = forwardRef(function (
 
   useEffect(() => {
     if (!isMounted) {
+      setIsOpenParent && setIsOpenParent(false);
       setTimeout(() => {
         setIsOpen(false);
       }, 400);
@@ -121,6 +123,7 @@ export const MyPopupTrigger = forwardRef(function (
 
   useEffect(() => {
     if (isOpen) {
+      setIsOpenParent && setIsOpenParent(true);
       setTimeout(() => {
         setIsMounted(true);
       }, 100);

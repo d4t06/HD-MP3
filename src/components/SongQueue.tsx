@@ -22,7 +22,7 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   const handleSetSong = useCallback(
     (song: Song, index: number) => {
       if (index !== currentSong?.currentIndex) {
-        dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+        dispatch(setSong({ ...(song as Song), currentIndex: index }));
       }
     },
     [currentSong]

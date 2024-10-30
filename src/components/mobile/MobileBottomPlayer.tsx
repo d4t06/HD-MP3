@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useMemo } from "react";
+import { Dispatch, FC, RefObject, SetStateAction, useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
@@ -10,24 +10,25 @@ import siteLogo from "@/assets/siteLogo.png";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
-import useAudioControl from "@/hooks/useAudioControl";
-import usePlayerControl from "@/hooks/usePlayerControl";
+import { ControlRef } from "../Control";
+import { useSelector } from "react-redux";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectCurrentSong } from "@/store/currentSongSlice";
 
 interface Props {
-  audioEle: HTMLAudioElement;
   isOpenFullScreen: boolean;
   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
+  controlRef: RefObject<ControlRef>;
 }
 
 const MobileBottomPlayer: FC<Props> = ({
-  audioEle,
   setIsOpenFullScreen,
   isOpenFullScreen,
+  controlRef,
 }) => {
   const { theme } = useTheme();
-
-  const { handleNext, currentSong, playStatus } = usePlayerControl();
-  const { handlePlayPause } = useAudioControl({ audioEle });
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
+  const { currentSong } = useSelector(selectCurrentSong);
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -91,10 +92,13 @@ const MobileBottomPlayer: FC<Props> = ({
 
         {/* cta */}
         <div className={`${classes.cta} ${!currentSong?.name && "disable"}`}>
-          <button className={`p-[4px]`} onClick={() => handlePlayPause()}>
+          <button
+            className={`p-[4px]`}
+            onClick={() => controlRef.current?.handlePlayPause()}
+          >
             {renderIcon}
           </button>
-          <button onClick={handleNext} className={`p-[4px]`}>
+          <button onClick={() => controlRef.current?.handleNext()} className={`p-[4px]`}>
             <ForwardIcon className="w-10" />
           </button>
         </div>

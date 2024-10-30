@@ -9,6 +9,7 @@ import { useTheme } from "../store";
 import PlayPauseButton from "./child/PlayPauseButton";
 import { useControl } from "../hooks";
 import { formatTime } from "@/utils/appHelpers";
+import { forwardRef, Ref, useImperativeHandle } from "react";
 
 interface Props {
   admin?: boolean;
@@ -16,7 +17,12 @@ interface Props {
   isOpenFullScreen: boolean;
 }
 
-export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
+export type ControlRef = {
+  handlePlayPause: () => void;
+  handleNext: () => void;
+};
+
+function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlRef>) {
   const { theme } = useTheme();
 
   const {
@@ -36,6 +42,8 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
   } = useControl({
     audioEle,
   });
+
+  useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
 
   const classes = {
     button: `p-1`,
@@ -101,7 +109,7 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
       <div
         className={`${classes.progressContainer} ${
           isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
-        } ${false ? "disable" : ""}`}
+        } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
         <div className="w-[44px] sm:w-[36px]">
           <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
@@ -131,3 +139,5 @@ export default function Control({ audioEle, admin, isOpenFullScreen }: Props) {
     </>
   );
 }
+
+export default forwardRef(Control);

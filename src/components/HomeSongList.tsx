@@ -3,7 +3,7 @@ import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
 import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { setQueue } from "@/store/songQueueSlice";
 import { useSongsStore } from "@/store";
 import SongSelectProvider from "@/store/SongSelectContext";
 
@@ -14,15 +14,15 @@ type Props = {
 export default function HomeSongList({ loading }: Props) {
   const dispatch = useDispatch();
   const { adminSongs } = useSongsStore();
-  const { from } = useSelector(selectSongQueue);
   const { currentSong } = useSelector(selectCurrentSong);
 
   const handleSetSong = (song: Song, index: number) => {
     // song in playlist and song in user are two difference case
     if (currentSong?.id !== song.id || currentSong.song_in !== "admin") {
-      dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+      dispatch(setSong({ ...song, currentIndex: index }));
 
-      const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
+      // const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
+      const isQueueHaveOtherSongs = true;
       if (isQueueHaveOtherSongs) {
         dispatch(setQueue({ songs: adminSongs }));
       }

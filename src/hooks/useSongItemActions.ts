@@ -1,20 +1,21 @@
 import { useSongsStore } from "@/store/SongsContext";
-import { Dispatch, SetStateAction, useState } from "react";
+import { RefObject, useState } from "react";
 import { useToast } from "../store";
 import { useDispatch, useSelector } from "react-redux";
 
 import usePlaylistActions from "./usePlaylistActions";
 import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 import { deleteSong } from "@/services/firebaseService";
+import { TriggerRef } from "@/components/MyPopup";
 
 type Props = {
   song: Song;
   admin?: boolean;
   closeModal: () => void;
-  setIsOpenPopup: Dispatch<SetStateAction<boolean>>;
+  triggerRef: RefObject<TriggerRef>;
 };
 
-const useSongItemActions = ({ song, closeModal, setIsOpenPopup }: Props) => {
+const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   // store
   const dispatch = useDispatch();
   const { setErrorToast, setSuccessToast } = useToast();
@@ -77,13 +78,12 @@ const useSongItemActions = ({ song, closeModal, setIsOpenPopup }: Props) => {
       throw new Error("Error when add song to playlist");
     } finally {
       setLoading(false);
-      setIsOpenPopup(false);
+      triggerRef.current?.close();
     }
   };
 
   const handleRemoveSongFromPlaylist = async () => {
     await removeSong(song, setLoading);
-    setIsOpenPopup(false);
   };
 
   return {

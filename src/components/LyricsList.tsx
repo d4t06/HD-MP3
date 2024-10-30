@@ -62,7 +62,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
           key={index}
           text={l.text}
           scrollBehavior={scrollBehavior}
-          className={`font-[700] ${lyricSizeMap[lyricSize || "medium"]} mb-[30px]`}
+          className={`font-[700] ${lyricSizeMap[lyricSize || "medium"]} mb-[30px] last:mb-[50vh]`}
         />
       );
     });
@@ -98,10 +98,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, isOpenFullScreen, active }
   };
 
   return (
-    <div
-      ref={containerRef}
-      className={`${classes.container} ${className}`}
-    >
+    <div ref={containerRef} className={`${classes.container} ${className}`}>
       {loading && (
         <div className={classes.loadingContainer}>
           <span>

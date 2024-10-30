@@ -5,7 +5,7 @@ import { SongList } from ".";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
 import CheckedBar from "./CheckedBar";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { setQueue } from "@/store/songQueueSlice";
 
 type Props = {
   initialLoading: boolean;
@@ -17,7 +17,6 @@ export default function MySongSongsList({ initialLoading }: Props) {
   //   store
   const { userSongs } = useSongsStore();
   const { currentSong } = useSelector(selectCurrentSong);
-  const { from, queueSongs } = useSelector(selectSongQueue);
 
   // hooks
   const { tempSongs } = useUpload();
@@ -28,13 +27,14 @@ export default function MySongSongsList({ initialLoading }: Props) {
   }, [tempSongs, userSongs, initialLoading]);
 
   const handleSetSong = (song: Song, index: number) => {
-    const isSetQueue =
-      from.length > 1 || userSongs.length !== queueSongs.length || from[0] != "user";
+    // const isSetQueue =
+    //   from.length > 1 || userSongs.length !== queueSongs.length || from[0] != "user";
+    const isSetQueue = true;
     if (isSetQueue) dispatch(setQueue({ songs: userSongs }));
 
     // song in playlist and song in user are two difference case
     if (currentSong?.id !== song.id || currentSong?.song_in !== "user") {
-      dispatch(setSong({ ...(song as SongWithSongIn), currentIndex: index }));
+      dispatch(setSong({ ...song, currentIndex: index }));
     }
   };
 

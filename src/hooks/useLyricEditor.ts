@@ -50,10 +50,10 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
 
       const songData = songSnapshot.data() as Song;
 
-      if (songData.lyric_id) {
+      if (songData) {
         const lyricSnapshot = await myGetDoc({
           collection: "lyrics",
-          id: songData.lyric_id,
+          id: songData.id,
         });
 
         if (lyricSnapshot.exists()) {

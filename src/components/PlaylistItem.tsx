@@ -23,10 +23,14 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
   };
 
   const content = (
-    <Empty  theme={theme}>
+    <Empty theme={theme}>
       {
         <div className={classes.imageContainer}>
-          <Image className="hover:scale-[1.05] transition-transform duration-300 object-center object-cover" src={data.image_url} blurHashEncode={data.blurhash_encode} />
+          <Image
+            className={`hover:scale-[1.05] transition-transform duration-300 object-center object-cover ${active ? "brightness-[90%]" : ""}`}
+            src={data.image_url}
+            blurHashEncode={data.blurhash_encode}
+          />
 
           {active && <img src={playingIcon} alt="" className=" absolute w-[30px]" />}
         </div>
@@ -38,7 +42,9 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
 
   return (
     <>
-      <Link to={`${link || "/playlist/" + data.id}`} className="">{content}</Link>
+      <Link to={`${link || "/playlist/" + data.id}`} className="">
+        {content}
+      </Link>
 
       <div className="text-xl font-[500] line-clamp-1 leading-[24px]  mt-[6px]">
         {data.name}

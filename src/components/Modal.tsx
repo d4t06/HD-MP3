@@ -45,6 +45,14 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
     if (!isOpen) setIsOpen(true);
   };
 
+  const open = () => {
+    setIsOpen(true);
+  };
+
+  const close = () => {
+    setIsMounted(false);
+  };
+
   const handleOverlayClick: MouseEventHandler = (e) => {
     e.preventDefault();
     e.stopPropagation();

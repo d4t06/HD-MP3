@@ -4,7 +4,6 @@ import {
   DocumentTextIcon,
   MinusCircleIcon,
   MusicalNoteIcon,
-  PlusCircleIcon,
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -81,7 +80,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     level2Menu:
       "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover/add-playlist:block hover:block",
     menuItem: `hover:bg-${theme.alpha} font-[500] ${theme.content_hover_text} max-[549px]:!bg-transparent py-1 pl-2 rounded-md`,
-    menuIcon: "w-5 mr-2",
+    menuIcon: "w-5 mr-3",
     overlay:
       "absolute flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
   };
@@ -100,7 +99,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
               variant={"list"}
               onClick={() => props.handleOpenModal("add-to-playlist")}
             >
-              <PlusCircleIcon className={classes.menuIcon} />
+              <PlusIcon className={classes.menuIcon} />
               Add to playlist
             </Button>
           );
@@ -111,7 +110,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
             variant={"list"}
             size={"clear"}
           >
-            <PlusCircleIcon className={classes.menuIcon} />
+            <PlusIcon className={classes.menuIcon} />
             Add to playlist
             {/* level 2 */}
             <PopupWrapper
@@ -248,8 +247,8 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       default:
         return (
           <div className={`pl-[10px] py-[6px] bg-${theme.alpha} rounded-md mb-3`}>
-            <h5 className="line-clamp-1 font-[500] text-lg">{song.name}</h5>
-            <p className="text-base opacity-70 line-clamp-1">{song.singer}</p>
+            <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
+            <p className="text-sm opacity-70 line-clamp-1">{song.singer}</p>
           </div>
         );
     }

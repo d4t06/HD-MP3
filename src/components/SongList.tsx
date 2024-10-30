@@ -73,7 +73,7 @@ function SongList({ songs, ...props }: Props) {
       const songItemProps = {
         key: index,
         onClick: () => {},
-        song,
+        song: song as Song,
       };
 
       if (index == 0)

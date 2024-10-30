@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import { myGetDoc } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useToast } from "../store";
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import { selectCurrentPlaylist, setCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { resetCurrentPlaylist, setCurrentPlaylist } from "@/store/currentPlaylistSlice";
 
 export default function useGetPlaylist() {
   // store
@@ -35,8 +35,6 @@ export default function useGetPlaylist() {
   const getSongs = async (playlist: Playlist) => {
     if (!playlist.song_ids.length) return [];
 
-    console.log("chekc playlist", playlist);
-
     const songsRef = collection(db, "songs");
 
     const queryGetSongs = query(songsRef, where("id", "in", playlist.song_ids));
@@ -48,7 +46,7 @@ export default function useGetPlaylist() {
           ({
             ...doc.data(),
             song_in: `playlist_${playlist.id}`,
-          } as SongWithSongIn)
+          } as Song)
       );
       return songs;
     }
@@ -65,6 +63,8 @@ export default function useGetPlaylist() {
 
       const playlist = await getPlaylist();
       if (!playlist) throw new Error("");
+
+      console.log("check playlist", { ...playlist });
 
       const playlistSongs = await getSongs(playlist);
 
@@ -88,6 +88,10 @@ export default function useGetPlaylist() {
 
       init();
     }
+
+    return () => {
+      dispatch(resetCurrentPlaylist());
+    };
   }, []);
 
   return { isFetching };

@@ -157,7 +157,7 @@ export default function CheckedBar({
                 <Button
                   variant={"outline"}
                   size="small"
-                  onClick={() => console.log("confirm modal")}
+                  onClick={() => openModal("delete-selected-songs")}
                   className={classes.outlineButton}
                 >
                   <TrashIcon className={classes.icon} />
@@ -212,7 +212,7 @@ export default function CheckedBar({
                 variant={props.variant}
               >
                 <p className="font-playwriteCU !mr-[14px]">{selectedSongs.length}</p>
-                {props.variant !== "dashboard-playlist" && (
+                {props.variant === "my-playlist" && (
                   <Button
                     variant={"outline"}
                     size="small"

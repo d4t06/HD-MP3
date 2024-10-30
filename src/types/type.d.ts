@@ -14,7 +14,6 @@ type User = {
 };
 
 type SongIn = "" | "favorite" | "admin" | "user" | `playlist_${string}`;
-type SongWithSongIn = Song & { song_in: SongIn };
 
 type Song = {
   id: string;
@@ -30,6 +29,10 @@ type Song = {
   blurhash_encode: string;
   size: number;
   song_in: SongIn;
+};
+
+type QueueSong = Song & {
+  queue_id: string;
 };
 
 type ParserSong = {
@@ -80,7 +83,7 @@ type ThemeType = {
 };
 
 type Toast = {
-  title?: "success" | "error" | "warning";
+  title: "success" | "error" | "warning";
   desc: string;
   id: string;
 };

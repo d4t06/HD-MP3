@@ -73,8 +73,10 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
 
   const _handlePlayPaused = () => {
     if (!isClickPlay) {
-      const latestTime = lyrics[lyrics.length - 1].end;
-      audioEle.currentTime = latestTime;
+      if (!!lyrics.length) {
+        const latestTime = lyrics[lyrics.length - 1].end;
+        audioEle.currentTime = latestTime;
+      }
     }
     handlePlayPause();
   };

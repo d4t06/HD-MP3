@@ -22,7 +22,7 @@ import { removeSongFromQueue } from "@/store/songQueueSlice";
 import { Bars3Icon, CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
+import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 import MyTooltip from "./MyTooltip";
 
 type Props = {
@@ -58,12 +58,13 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const [modal, setModal] = useState<SongItemModal | "">("");
 
   // ref
+  const triggerRef = useRef<TriggerRef>(null);
   const modalRef = useRef<ModalRef>(null);
 
   // hooks
 
   const closeModal = () => modalRef.current?.toggle();
-  const closeMenu = () => setIsOpenPopup(false);
+  const closeMenu = () => triggerRef.current?.close();
 
   const {
     handleDeleteSong,
@@ -71,7 +72,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     handleAddSongToPlaylist,
     handleRemoveSongFromPlaylist,
     loading: actionLoading,
-  } = useSongItemActions({ song, closeModal, setIsOpenPopup });
+  } = useSongItemActions({ song, closeModal, triggerRef });
 
   const handleOpenModal = (modal: SongItemModal) => {
     setModal(modal);
@@ -223,7 +224,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const left = () => {
     switch (props.variant) {
       case "uploading":
-        return <div className="opacity-[.7]">{leftElement}</div>;
+        return <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftElement}</div>;
       case "queue":
         return leftElement;
       default:
@@ -327,18 +328,22 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         );
 
       default:
+        const getClickedMenuClass = () => {
+          if (props.variant === "queue") return "";
+          if (isOpenPopup) return `${theme.content_bg}`;
+          else return "hidden";
+        };
+
         return (
           <div className={classes.ctaWrapper}>
             <div className={classes.menuBtnWrapper}>
               <MyPopup appendOnPortal>
-                <MyPopupTrigger>
+                <MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
                   <MyTooltip isWrapped content="Menu">
                     <button
-                      className={`block group-hover/main:block ${classes.button} ${
-                        isOpenPopup || props.variant === "queue"
-                          ? `md:block`
-                          : "md:hidden max-[549px]:!bg-transparent"
-                      }`}
+                      className={`block group-hover/main:block ${
+                        classes.button
+                      } ${getClickedMenuClass()}`}
                     >
                       <Bars3Icon className="w-[20px]" />
                     </button>

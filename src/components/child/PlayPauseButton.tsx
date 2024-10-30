@@ -4,7 +4,6 @@ import {
   PlayCircleIcon,
   PauseCircleIcon,
 } from "@heroicons/react/24/outline";
-// import { useSelector } from "react-redux";
 import { PlayStatus } from "@/store/PlayStatusSlice";
 
 type Props = {
@@ -13,10 +12,6 @@ type Props = {
 };
 
 function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
-  // const {
-  //   playStatus: { playStatus },
-  // } = useSelector(selectAllPlayStatusStore);
-
   const classes = {
     icon: "w-[50px] sm:w-10",
   };
@@ -28,15 +23,12 @@ function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
       case "error":
         return <ExclamationCircleIcon className={`${classes.icon}`} />;
       case "loading":
+      case "waiting":
         return <ArrowPathIcon className={`${classes.icon} animate-spin`} />;
       case "paused":
         return <PlayCircleIcon className={`${classes.icon}`} />;
     }
   };
-
-
-  console.log('chekc status', playStatus);
-  
 
   return (
     <>

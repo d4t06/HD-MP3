@@ -20,6 +20,7 @@ import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
 import MyTooltip from "./MyTooltip";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurHash } from "@/constants/blurhash";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 
 interface Props {
   isOpenFullScreen: boolean;
@@ -39,6 +40,7 @@ function FullScreenPlayer({
   const { theme } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
   const { queueSongs } = useSelector(selectSongQueue);
+  const { songBackground } = useSelector(selectAllPlayStatusStore);
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
   //  ref
@@ -164,12 +166,14 @@ function FullScreenPlayer({
     >
       {/* bg image */}
       <div className={` ${classes.bg}`}>
-        <Blurhash
-          radioGroup=""
-          height={"100%"}
-          width={"100%"}
-          hash={currentSong?.blurhash_encode || defaultBlurHash}
-        />
+        {songBackground && (
+          <Blurhash
+            radioGroup=""
+            height={"100%"}
+            width={"100%"}
+            hash={currentSong?.blurhash_encode || defaultBlurHash}
+          />
+        )}
       </div>
 
       <div className={classes.container}>

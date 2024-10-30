@@ -12,9 +12,7 @@ export default function useSongLyric({
   isOpenFullScreen: boolean;
 }) {
   const { currentSong } = useSelector(selectCurrentSong);
-  const {
-    playStatus
-  } = useSelector(selectAllPlayStatusStore);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
 
@@ -51,10 +49,9 @@ export default function useSongLyric({
     setSongLyrics([]);
   };
 
-  //  add event
+  //  add audio event
   useEffect(() => {
     const handleSongLoaded = async () => {
-      console.log("song loaded");
       setIsSongLoaded(true);
     };
 
@@ -67,10 +64,6 @@ export default function useSongLyric({
 
   //  api get lyric
   useEffect(() => {
-    if (!currentSong?.lyric_id && isSongLoaded) {
-      setLoading(false);
-      return;
-    }
     if (songLyrics.length) return;
     if (isSongLoaded && isOpenFullScreen) {
       timerId.current = setTimeout(() => {

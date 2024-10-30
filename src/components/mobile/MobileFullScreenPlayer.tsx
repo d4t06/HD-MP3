@@ -1,32 +1,34 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-// import { useBgImage } from "@/hooks";
-
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
 import { selectCurrentSong } from "@/store/currentSongSlice";
-// import useDisableOverflow from "@/hooks/useDisableOverflow";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurHash } from "@/constants/blurhash";
+import { ControlRef } from "../Control";
+import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 
 type Props = {
   audioEle: HTMLAudioElement;
   isOpenFullScreen: boolean;
   setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
+  controlRef: RefObject<ControlRef>;
 };
 
 export default function MobileFullScreenPlayer({
   audioEle,
+  controlRef,
   isOpenFullScreen,
   setIsOpenFullScreen,
 }: Props) {
   // use store
   const { currentSong } = useSelector(selectCurrentSong);
+  const { songBackground } = useSelector(selectAllPlayStatusStore);
 
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
@@ -59,13 +61,15 @@ export default function MobileFullScreenPlayer({
         style={{ transform: "translate(0, 100%)", zIndex: "-10" }}
         className={`fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
       >
-        <div className={classes.bgImage}>
-          <Blurhash
-            width={"100%"}
-            height={"100%"}
-            hash={currentSong?.blurhash_encode || defaultBlurHash}
-          />
-        </div>
+        {songBackground && (
+          <div className={classes.bgImage}>
+            <Blurhash
+              width={"100%"}
+              height={"100%"}
+              hash={currentSong?.blurhash_encode || defaultBlurHash}
+            />
+          </div>
+        )}
 
         <div className="h-full z-10 p-4 flex flex-col">
           <div className={classes.headerWrapper}>
@@ -112,7 +116,9 @@ export default function MobileFullScreenPlayer({
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
                   {currentSong?.name}
                 </p>
-                <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">{currentSong?.singer}</div>
+                <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">
+                  {currentSong?.singer}
+                </div>
               </div>
             </div>
 
@@ -179,7 +185,7 @@ export default function MobileFullScreenPlayer({
                 activeTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
               } ${activeTab === "Playing" ? "flex-grow" : ""}`}
             >
-              <Control audioEle={audioEle} isOpenFullScreen={false} />
+              <Control ref={controlRef} audioEle={audioEle} isOpenFullScreen={false} />
             </div>
           </div>
         </div>

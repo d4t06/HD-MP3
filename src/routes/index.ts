@@ -1,3 +1,4 @@
+import DashboardPlaylist from "@/pages/DashboardPlaylist";
 import DashBoardLayout from "../layout/DashBoardLayout";
 
 import {
@@ -38,7 +39,7 @@ const privateRoutes = [
   { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout },
   {
     path: routes.DashboardPlaylist,
-    component: PlaylistDetail,
+    component: DashboardPlaylist,
     layout: DashBoardLayout,
   },
   { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },

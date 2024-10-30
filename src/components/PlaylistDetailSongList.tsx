@@ -5,21 +5,32 @@ import { SongListModal, Button, Modal, SongList } from "../components";
 import CheckedBar from "./CheckedBar";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { selectSongQueue, setQueue } from "@/store/songQueueSlice";
+import { setQueue } from "@/store/songQueueSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import Skeleton, { SongItemSkeleton } from "./skeleton";
 
 type Props = {
   variant: "admin-playlist" | "my-playlist" | "dashboard-playlist";
+  loading: boolean;
 };
 
-export default function PlaylistDetailSongList({ variant }: Props) {
+const playlistSongSkeleton = (
+  <>
+    <div className="h-[30px] mb-[10px] flex items-center">
+      <Skeleton className="h-[20px] w-[90px]" />
+    </div>
+
+    {SongItemSkeleton}
+  </>
+);
+
+export default function PlaylistDetailSongList({ variant, loading }: Props) {
   // use store
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { currentSong } = useSelector(selectCurrentSong);
-  const { from, queueSongs } = useSelector(selectSongQueue);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
   const modalRef = useRef<ModalRef>(null);
 
@@ -38,10 +49,11 @@ export default function PlaylistDetailSongList({ variant }: Props) {
         })
       );
 
-      const shouldReplaceQueue =
-        from.length > 1 ||
-        from[0] != newSongIn ||
-        playlistSongs.length !== queueSongs.length;
+      // const shouldReplaceQueue =
+      //   from.length > 1 ||
+      //   from[0] != newSongIn ||
+      //   playlistSongs.length !== queueSongs.length;
+      const shouldReplaceQueue = true;
       if (shouldReplaceQueue) {
         dispatch(setQueue({ songs: playlistSongs }));
       }
@@ -101,6 +113,8 @@ export default function PlaylistDetailSongList({ variant }: Props) {
         );
     }
   };
+
+  if (loading) return playlistSongSkeleton;
 
   return (
     <>

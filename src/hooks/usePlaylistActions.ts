@@ -109,12 +109,12 @@ export default function usePlaylistActions() {
 
       await mySetDoc({
         collection: "playlist",
-        data: newPlaylist,
+        data: { name: playlistName },
         id: newPlaylist.id,
         msg: ">>> api: set playlist doc",
       });
 
-      updateUserPlaylist(newPlaylist);
+      updateUserPlaylist({ id: playlist.id, playlist: { name: playlistName } });
 
       setSuccessToast("Playlist edited");
     } catch (error) {
@@ -134,8 +134,12 @@ export default function usePlaylistActions() {
 
       const _playlistData = _playlist.data() as Playlist;
 
-      const newSongIds = [..._playlistData.song_ids, song.id];
+      if (_playlistData.song_ids.includes(song.id)) {
+        setIsFetching(false);
+        return;
+      }
 
+      const newSongIds = [..._playlistData.song_ids, song.id];
       await mySetDoc({
         collection: "playlist",
         id: _playlistData.id,
