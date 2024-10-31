@@ -16,6 +16,7 @@ import { selectCurrentSong } from "@/store/currentSongSlice";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";
+import { ControlRef } from "./Control";
 interface Props {
   admin?: boolean;
   idle: boolean;
@@ -41,6 +42,7 @@ function BottomPlayer({
   const { currentSong } = useSelector(selectCurrentSong);
 
   const volumeLine = useRef<HTMLDivElement>(null);
+  const controlRef = useRef<ControlRef>(null);
 
   const location = useLocation();
   const { handleSetVolume, isMute, handleMute, handleWheel } = useVolume(
@@ -99,16 +101,12 @@ function BottomPlayer({
             !admin ? classes.controlWrapperChild_1 : ""
           }  ${classes.controlWrapperChild_2}`}
         >
-          {useMemo(
-            () => (
-              <Control
-                admin={admin}
-                audioEle={audioEle}
-                isOpenFullScreen={isOpenFullScreen}
-              />
-            ),
-            [isOpenFullScreen]
-          )}
+          <Control
+            ref={controlRef}
+            admin={admin}
+            audioEle={audioEle}
+            isOpenFullScreen={isOpenFullScreen}
+          />
         </div>
 
         <div className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}>
@@ -150,7 +148,7 @@ function BottomPlayer({
 
               <div className={`w-[2px] h-[26px] ml-2 bg-${theme.alpha}`}></div>
 
-              <SleepTimerButton audioEle={audioEle} />
+              <SleepTimerButton audioEle={audioEle} controlRef={controlRef} />
             </div>
           )}
         </div>

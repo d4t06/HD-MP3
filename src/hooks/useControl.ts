@@ -38,11 +38,16 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   const prevSeekTime = useRef(0); // prevent double click
   const startFadeWhenEnd = useRef(0); // for cross fade
-  const themeCode = useRef(theme.content_code); // for update timeline background
+  // for update timeline background
+  const themeCode = useRef(theme.content_code); 
   const isEndOfList = useRef(false); // handle end song
   const isPlayingNewSong = useRef(true); // for cross fade
-  const isSongEnd = useRef(false); // only need song when song error if end event fire
-  const isShowMessageWhenSongError = useRef(false); // for handle song error
+  // only need song when song error if end event fire
+  const isSongEnd = useRef(false); 
+  // for handle song error
+  const isShowMessageWhenSongError = useRef(false); 
+  // for not playing status when seek but song paused
+  const shouldSetPlayingStatus = useRef(false); 
 
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
@@ -62,7 +67,9 @@ export default function useAudioEvent({ audioEle }: Props) {
         firstTimeSongLoaded.current = false;
 
         if (updateTime) {
-          const currentTime = memoStorage["current_time"] || 0;
+          const storage = getLocalStorage();
+
+          const currentTime = storage["current_time"] || 0;
           audioEle.currentTime = currentTime;
         }
       }
@@ -113,7 +120,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     const node = e.target as HTMLElement;
 
     if (timelineEleRef.current) {
-      dispatch(setPlayStatus({ playStatus: "waiting" }));
+      if (playStatus === "playing") dispatch(setPlayStatus({ playStatus: "waiting" }));
 
       const clientRect = node.getBoundingClientRect();
 
@@ -134,7 +141,9 @@ export default function useAudioEvent({ audioEle }: Props) {
 
       updateTimeProgressEle(newSeekTime);
 
-      audioEle.currentTime = newSeekTime;
+      if (firstTimeSongLoaded.current) {
+        setLocalStorage("current_time", newSeekTime);
+      } else audioEle.currentTime = newSeekTime;
       prevSeekTime.current = newSeekTime;
     }
   };
@@ -143,7 +152,6 @@ export default function useAudioEvent({ audioEle }: Props) {
     const volInStore = getLocalStorage()["volume"] || 1;
     if (currentTime <= 2) {
       const volumeValue = (currentTime / 2) * volInStore;
-      // console.log("check val", volumeValue.toFixed(2), volInStore);
 
       audioEle.volume = volumeValue;
     } else if (currentTime < startFadeWhenEnd.current) {
@@ -176,12 +184,10 @@ export default function useAudioEvent({ audioEle }: Props) {
   const handleTimeUpdate = () => {
     const currentTime = audioEle.currentTime;
 
+    if (shouldSetPlayingStatus.current) dispatch(setPlayStatus({ playStatus: "playing" }));
     updateTimeProgressEle(currentTime);
 
-    if (playStatus !== "playing") dispatch(setPlayStatus({ playStatus: "playing" }));
-
     if (isCrossFade) handleFade(currentTime);
-
     if (!!currentTime && Math.round(currentTime) % 3 === 0)
       setLocalStorage("current_time", Math.round(currentTime));
   };
@@ -190,13 +196,14 @@ export default function useAudioEvent({ audioEle }: Props) {
     if (!currentSong) return;
     const storage = getLocalStorage();
     const volInStore = storage["volume"] || 1;
+    const timer = storage["timer"];
+
+    if (isRepeat === "one" && !!timer && timer !== 1) {
+      return play();
+    }
 
     audioEle.volume = volInStore;
     isSongEnd.current = true;
-
-    if (isRepeat === "one") {
-      return play();
-    }
 
     if (isShuffle) {
       let randomIndex: number = currentIndexRef.current!;
@@ -214,10 +221,9 @@ export default function useAudioEvent({ audioEle }: Props) {
       );
     }
 
-    if (currentIndexRef.current === queueSongs.length - 1) {
-      const timer = storage["timer"];
-
-      if (isRepeat === "all" || !!timer) isEndOfList.current = false;
+    if (timer === 1) isEndOfList.current = true;
+    else if (currentIndexRef.current === queueSongs.length - 1) {
+      if (isRepeat === "all") isEndOfList.current = false;
       else isEndOfList.current = true;
     }
 
@@ -238,6 +244,10 @@ export default function useAudioEvent({ audioEle }: Props) {
     startFadeWhenEnd.current = audioDuration - 3;
 
     if (currentSong) setLocalStorage("current_song", currentSong);
+
+    // // force paused by timer
+    // if (playStatus === "force-paused")
+    //   return dispatch(setPlayStatus({ playStatus: "paused" }));
 
     // case end of list
     if (isEndOfList.current) {
@@ -305,7 +315,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   useEffect(() => {
     audioEle.addEventListener("error", handleError);
     audioEle.addEventListener("pause", handlePause);
-    audioEle.addEventListener("playing", handlePlaying);
+    audioEle.addEventListener("play", handlePlaying);
     audioEle.addEventListener("loadstart", handleLoadStart);
     /** should not add 'waiting event'
      * is cause error on iphone
@@ -315,7 +325,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     return () => {
       audioEle.removeEventListener("error", handleError);
       audioEle.removeEventListener("pause", handlePause);
-      audioEle.removeEventListener("playing", handlePlaying);
+      audioEle.removeEventListener("play", handlePlaying);
       audioEle.removeEventListener("loadstart", handleLoadStart);
     };
   }, []);
@@ -338,9 +348,12 @@ export default function useAudioEvent({ audioEle }: Props) {
     };
   }, [currentSong]);
 
-  // update site title
+  // update site title, and decide to set waiting status
   useEffect(() => {
     if (!currentSong) return;
+
+    if (playStatus === "paused") shouldSetPlayingStatus.current = false;
+    else if (playStatus === "playing") shouldSetPlayingStatus.current = true;
 
     let myTitle = `${currentSong.name} - ${currentSong.singer}`;
     if (

@@ -1,84 +1,74 @@
+import { ControlRef } from "@/components/Control";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
-import { useEffect, useRef, useState } from "react";
+import { RefObject, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
 type Props = {
+  controlRef: RefObject<ControlRef>;
   audioEle: HTMLAudioElement;
 };
 
-export default function useCountDown({ audioEle }: Props) {
-  const ranEffect = useRef(false);
+export default function useCountDown({ controlRef, audioEle }: Props) {
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  const {
-   playStatus 
-  } = useSelector(selectAllPlayStatusStore);
-
+  // store user timer, decide add song event or not
   const [isActive, setIsActive] = useState(0);
-  const [countDown, setCountDown] = useState(0);
+  const [countDown, setCountDown] = useState(0); // count down
 
-  const timerId = useRef<NodeJS.Timeout>();
+  const isEnd = useRef(false);
 
-  const handleEndTimer = (clearCountDown?: boolean) => {
-    //  setIsActive(0);
-    //  dispatch(setPlayStatus({ isTimer: 0 }));
-    setIsActive(0);
-
+  const clearTimer = (clearCountDown?: boolean) => {
     setLocalStorage("timer", 0);
-    clearInterval(timerId.current);
+    setIsActive(0);
+    isEnd.current = true;
+
     if (clearCountDown) setCountDown(0);
   };
 
-  //   the 2th render, isTimer has value but countdown no
-
-  useEffect(() => {
-    if (!ranEffect.current) return;
-
-    if (!isActive) return;
-
-    //  case user set sleep timer manually
-    if (!countDown) {
-      setCountDown(isActive);
-      if (playStatus !== "playing") {
-        audioEle.play();
+  const handleSongEnd = () => {
+    setCountDown((prev) => {
+      if (prev - 1 > 0) {
+        setLocalStorage("timer", prev - 1);
+        return prev - 1;
       }
 
-      // case load countdown from localStorage
-    } else if (playStatus !== "playing") return;
+      clearTimer();
+      return 0;
+    });
+  };
 
-    timerId.current = setInterval(
-      () =>
-        setCountDown((prev) => {
-          if (prev === 1) {
-            audioEle.pause();
-            handleEndTimer();
-
-            return 0;
-          }
-
-          if (prev === isActive || prev % 5 === 0) setLocalStorage("timer", prev - 1);
-
-          return prev - 1;
-        }),
-      1000
-    );
-
-    return () => {
-      clearInterval(timerId.current);
-    };
-  }, [playStatus, isActive]);
-
+  // load localStorage
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
-
-      const timer = getLocalStorage()["timer"] || 0;
-
-      setCountDown(timer);
-      setIsActive(timer);
-      // dispatch(setPlayStatus({ isTimer: timer }));
-    }
+    const timer = getLocalStorage()["timer"] || 0;
+    setIsActive(timer);
+    setCountDown(timer);
   }, []);
 
-  return { countDown, isActive, handleEndTimer, setIsActive };
+  // add audio event
+  useEffect(() => {
+    if (!isActive) return;
+
+    audioEle.addEventListener("ended", handleSongEnd);
+
+    return () => {
+      audioEle.removeEventListener("ended", handleSongEnd);
+    };
+  }, [isActive]);
+
+  // handle user click
+  useEffect(() => {
+    /** loadLocalStorage:  loadStorage() => setActive(), setCountDown() */
+    /** manual: user choose timer => setIsActive() => setCountDown() */
+    if (!isActive) return;
+
+    if (!countDown) {
+      setCountDown(isActive);
+      setLocalStorage("timer", isActive);
+
+      if (playStatus === "paused") controlRef.current?.handlePlayPause();
+    }
+  }, [isActive]);
+
+  return { countDown, clearTimer, setCountDown, setIsActive, isActive };
 }

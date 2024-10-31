@@ -46,7 +46,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
   useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
 
   const classes = {
-    button: `p-1`,
+    button: `p-[6px] rounded-full hover:bg-${theme.alpha}`,
     buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
       admin ? "hidden" : ""
     }`,
@@ -54,9 +54,11 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
     processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
     currentTime: `opacity-60 text-[14px] font-semibold`,
-    icon: "w-[44px] sm:w-7",
+    icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
+
+  console.log("redner");
 
   return (
     <>
@@ -72,9 +74,9 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
               onClick={handleRepeatSong}
             >
               <ArrowPathRoundedSquareIcon className={classes.icon} />
-              <span className="absolute font-bold text-[12px] font-playwriteCU top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
+              <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
                 {currentSong &&
-                  (isRepeat === "one" ? "1" : isRepeat === "all" ? "--" : "")}
+                  (isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : "")}
               </span>
             </button>
             <button

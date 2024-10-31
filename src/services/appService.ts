@@ -60,7 +60,7 @@ const getUserSongs = async (fullUserInfo: User) => {
 
 // get user songs
 export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
-   const userData: { userSongs: SongWithSongIn[]; userPlaylists: Playlist[] } = {
+   const userData: { userSongs: Song[]; userPlaylists: Playlist[] } = {
       userSongs: [],
       userPlaylists: [],
    };

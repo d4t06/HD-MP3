@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
-import logo from '@/assets/logo.png'
+import songImage from '@/assets/song-image.png'
 
 type Props = {
    src?: string;
@@ -25,7 +25,7 @@ export default function Image({ src, className, blurHashEncode, onError }: Props
 
    const defaultHandleError = () => {
       const imageEle = imageRef.current as HTMLImageElement;
-      imageEle.src = "https://placehold.co/100";
+      imageEle.src = songImage;
       setImageLoaded(true);
    };
 
@@ -50,7 +50,7 @@ export default function Image({ src, className, blurHashEncode, onError }: Props
             className={`${className || ""} w-full ${
                !imageLoaded ? "hidden" : ""
             }`}
-            src={src || logo}
+            src={src || songImage}
             ref={imageRef}
          />
       </>

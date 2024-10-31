@@ -147,7 +147,7 @@ export default function MobileFullScreenPlayer({
                 </div>
               </div>
 
-              <SleepTimerButton audioEle={audioEle} />
+              <SleepTimerButton controlRef={controlRef} audioEle={audioEle} />
             </div>
 
             {/* lyric tab */}

@@ -73,7 +73,7 @@ const songQueueSlice = createSlice({
       state.queueSongs.push(...queueSongs);
       setLocalStorage("queue", state.queueSongs);
     },
-    updateSongInQueue: (state: StateType, action: PayloadAction<{ song: Song }>) => {
+    updateSongInQueue: (state: StateType) => {
       // const { song } = action.payload;
       return state;
       // const index = state.queueSongs.findIndex((s) => s.id === song.id);

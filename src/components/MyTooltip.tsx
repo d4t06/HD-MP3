@@ -53,9 +53,9 @@ function MyToolTip(
     setOpen(false);
   };
 
-  const handleTouchEnd: EventListener = (e) => {
-    e.preventDefault()
-  };
+  // const handleTouchEnd: EventListener = (e) => {
+  //   e.preventDefault()
+  // };
 
   useEffect(() => {
     const cloneEle = cloneEleRef.current as HTMLButtonElement;
@@ -68,12 +68,12 @@ function MyToolTip(
 
     cloneEle.addEventListener("mouseenter", handleMouseEnter);
     cloneEle.addEventListener("mouseleave", handleMouseLeave);
-    cloneEle.addEventListener("touchend", handleTouchEnd);
+    // cloneEle.addEventListener("touchend", handleTouchEnd);
 
     return () => {
       cloneEle.removeEventListener("mouseenter", handleMouseEnter);
       cloneEle.removeEventListener("mouseleave", handleMouseLeave);
-      cloneEle.removeEventListener("touchend", handleTouchEnd);
+      // cloneEle.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 

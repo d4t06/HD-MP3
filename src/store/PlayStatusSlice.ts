@@ -4,7 +4,7 @@ import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 type Repeat = "one" | "all" | "no";
 type LyricSize = "small" | "medium" | "large";
 
-export type PlayStatus = "playing" | "error" | "loading" | "paused" | "waiting";
+export type PlayStatus = "playing" | "error" | "loading" | "paused" | "waiting"
 
 type StateType = {
   /** update 23/10/2024 */

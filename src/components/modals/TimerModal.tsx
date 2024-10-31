@@ -2,60 +2,42 @@ import ModalHeader from "./ModalHeader";
 import { useTheme } from "@/store";
 
 type Props = {
-  close: () => void;
+  closeModal: () => void;
   active: (t: number) => void;
 };
 
-function TimerModal({ close, active }: Props) {
+const COUNT_LIST = [3, 5, 7, 10];
+
+function TimerModal({ closeModal, active }: Props) {
   const { theme } = useTheme();
 
   const classes = {
-    button: `bg-${theme.alpha} ${theme.content_hover_bg} text-[14px] font-[500] px-[10px]  py-[4px] rounded-[99px]`,
-    input: `bg-${theme.alpha} px-[10px] rounded-[4px] outline-none mt-[10px] text-[16px]  h-[35px] w-full`,
+    button: `bg-${theme.alpha} ${theme.content_hover_bg} ml-2 mt-2 px-3  py-1 rounded-[99px]`,
   };
 
-  const handleSetTimer = (minute: number) => {
-    active(minute * 60);
-    close();
+  const handleSetTimer = (songCount: number) => {
+    active(songCount);
+    closeModal();
   };
+
+  const renderItems = COUNT_LIST.map((count) => {
+    return (
+      <button
+        key={count}
+        type="button"
+        onClick={() => handleSetTimer(count)}
+        className={`${classes.button} `}
+      >
+        {count} songs
+      </button>
+    );
+  });
 
   return (
     <div className="w-[300px] max-w-[calc(100vw-40px)]">
-      <ModalHeader close={close} title="Sleep timer" />
+      <ModalHeader close={closeModal} title="Sleep timer" />
       <div>
-        <div className="flex space-x-[10px] mb-[12px]">
-          <button
-            type="button"
-            onClick={() => handleSetTimer(15 / 60)}
-            className={`${classes.button} `}
-          >
-            15 s
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSetTimer(15)}
-            className={`${classes.button} `}
-          >
-            15 min
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSetTimer(20)}
-            className={`${classes.button} `}
-          >
-            20 min
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSetTimer(30)}
-            className={`${classes.button} `}
-          >
-            30 min
-          </button>
-        </div>
+        <div className="flex flex-wrap -mt-2 -ml-2 mb-3">{renderItems}</div>
       </div>
     </div>
   );

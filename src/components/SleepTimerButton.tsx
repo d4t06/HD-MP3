@@ -1,28 +1,32 @@
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "@/store";
-import { useRef } from "react";
+import { RefObject, useRef } from "react";
 import { Modal, TimerModal } from ".";
 import useCountDown from "@/hooks/useCountDown";
-import { formatTime } from "@/utils/appHelpers";
 import { ModalRef } from "./Modal";
 import MyTooltip from "./MyTooltip";
+import { ControlRef } from "./Control";
 
 type Props = {
+  controlRef: RefObject<ControlRef>;
   audioEle: HTMLAudioElement;
 };
 
-export default function SleepTimerButton({ audioEle }: Props) {
+export default function SleepTimerButton({ controlRef, audioEle }: Props) {
   const { theme } = useTheme();
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { countDown, isActive, handleEndTimer, setIsActive } = useCountDown({ audioEle });
+  const { countDown, isActive, clearTimer, setIsActive } = useCountDown({
+    controlRef,
+    audioEle,
+  });
 
   const activeTimer = (t: number) => setIsActive(t);
 
   const handleTriggerClick = () => {
-    if (isActive) handleEndTimer(true);
-    else modalRef.current?.toggle();
+    if (isActive) clearTimer(true);
+    else modalRef.current?.open();
   };
 
   const classes = {
@@ -39,7 +43,7 @@ export default function SleepTimerButton({ audioEle }: Props) {
           <MyTooltip content="Clear timer">
             <button className="group flex items-center" onClick={handleTriggerClick}>
               <span className="text-base opacity-70 sm:text-sm group-hover:hidden">
-                {formatTime(countDown)}
+                {countDown.toString().padStart(2, "0")}
               </span>
               <span className={`hidden group-hover:block ${classes.button}`}>
                 <XMarkIcon className="w-8 sm:w-6" />
@@ -56,7 +60,7 @@ export default function SleepTimerButton({ audioEle }: Props) {
       </div>
 
       <Modal ref={modalRef} variant="animation">
-        <TimerModal active={activeTimer} close={() => modalRef.current?.toggle()} />
+        <TimerModal active={activeTimer} closeModal={() => modalRef.current?.close()} />
       </Modal>
     </>
   );
