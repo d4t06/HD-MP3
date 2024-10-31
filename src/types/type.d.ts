@@ -29,9 +29,6 @@ type Song = {
   blurhash_encode: string;
   size: number;
   song_in: SongIn;
-};
-
-type QueueSong = Song & {
   queue_id: string;
 };
 

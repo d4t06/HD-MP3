@@ -1,33 +1,44 @@
 import CheckedBar from "./CheckedBar";
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { setQueue } from "@/store/songQueueSlice";
+// import { useDispatch, useSelector } from "react-redux";
+// import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+// import { selectSongQueue, setCurrentQueueId, setQueue } from "@/store/songQueueSlice";
 import { useSongsStore } from "@/store";
 import SongSelectProvider from "@/store/SongSelectContext";
+import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
   loading: boolean;
 };
 
 export default function HomeSongList({ loading }: Props) {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { adminSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
 
-  const handleSetSong = (song: Song, index: number) => {
-    // song in playlist and song in user are two difference case
-    if (currentSong?.id !== song.id || currentSong.song_in !== "admin") {
-      dispatch(setSong({ ...song, currentIndex: index }));
+  const { handleSetSong } = useSetSong();
 
-      // const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
-      const isQueueHaveOtherSongs = true;
-      if (isQueueHaveOtherSongs) {
-        dispatch(setQueue({ songs: adminSongs }));
-      }
-    }
-  };
+  // const { currentQueueId, queueSongs } = useSelector(selectSongQueue);
+  // const { currentSong } = useSelector(selectCurrentSong);
+
+  const _handleSetSong = (queueId: string) => {
+    handleSetSong(queueId, adminSongs)
+  }
+
+  // const handleSetSong = (queueId: string) => {
+  //   // song in playlist and song in user are two difference case
+  //   if (currentQueueId !== queueId) {
+  //     dispatch(setCurrentQueueId(queueId));
+
+  //     const currentQueueIdList = queueSongs.map((s) => s.id);
+  //     const isDiff = adminSongs.find((s) => !currentQueueIdList.includes(s.queue_id));
+  //     if (isDiff) {
+  //       console.log("set queue");
+
+  //       dispatch(setQueue({ songs: adminSongs }));
+  //     }
+  //   }
+  // };
 
   return (
     <SongSelectProvider>
@@ -40,14 +51,7 @@ export default function HomeSongList({ loading }: Props) {
         <>
           {!!adminSongs.length ? (
             <>
-              <SongList
-                variant="home"
-                handleSetSong={handleSetSong}
-                activeExtend={
-                  currentSong?.song_in === "admin" || currentSong?.song_in === "favorite"
-                }
-                songs={adminSongs}
-              />
+              <SongList variant="home" handleSetSong={_handleSetSong} songs={adminSongs} />
             </>
           ) : (
             <h1 className="text-[22px] text-center">...</h1>

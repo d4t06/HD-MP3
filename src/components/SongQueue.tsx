@@ -4,8 +4,12 @@ import { Button, SongList } from ".";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocalStorage } from "../utils/appHelpers";
-import { resetCurrentSong, selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { resetSongQueue, selectSongQueue } from "@/store/songQueueSlice";
+import { resetCurrentSong } from "@/store/currentSongSlice";
+import {
+  resetSongQueue,
+  selectSongQueue,
+  setCurrentQueueId,
+} from "@/store/songQueueSlice";
 
 type Props = {
   isOpenSongQueue: boolean;
@@ -16,16 +20,16 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   // store
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { queueSongs } = useSelector(selectSongQueue);
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
+  // const { currentSong } = useSelector(selectCurrentSong);
 
   const handleSetSong = useCallback(
-    (song: Song, index: number) => {
-      if (index !== currentSong?.currentIndex) {
-        dispatch(setSong({ ...(song as Song), currentIndex: index }));
+    (queueId: string) => {
+      if (queueId !== currentQueueId) {
+        dispatch(setCurrentQueueId(queueId));
       }
     },
-    [currentSong]
+    [currentQueueId]
   );
 
   const clearSongQueue = useCallback(() => {

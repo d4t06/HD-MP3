@@ -5,18 +5,20 @@ import {
   ChevronUpIcon,
   QueueListIcon,
 } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
 import { Control } from ".";
 
 import useVolume from "../hooks/useVolume";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+// import { selectCurrentSong } from "@/store/currentSongSlice";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";
 import { ControlRef } from "./Control";
+import { useSelector } from "react-redux";
+import { selectSongQueue } from "@/store/songQueueSlice";
 interface Props {
   admin?: boolean;
   idle: boolean;
@@ -39,7 +41,8 @@ function BottomPlayer({
   setIsOpenSongQueue,
 }: Props) {
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
+  // const { currentSong } = useSelector(selectCurrentSong);
 
   const volumeLine = useRef<HTMLDivElement>(null);
   const controlRef = useRef<ControlRef>(null);
@@ -51,6 +54,11 @@ function BottomPlayer({
   );
 
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+
+  // const menuCurrentSong = useMemo(
+  //   () => queueSongs.find((s) => s.queue_id === currentQueueId),
+  //   [currentQueueId, queueSongs]
+  // );
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);
@@ -68,7 +76,7 @@ function BottomPlayer({
         ? "max-w-[600px] flex-col-reverse pb-[10px]"
         : "flex-col justify-center"
     }`,
-    controlWrapperChild_2: `${!currentSong && "disable"}`,
+    controlWrapperChild_2: `${!currentQueueId && "disable"}`,
 
     right: `${admin ? "w-1/4" : "w-1/4 "} flex items-center justify-end`,
     volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full`,
@@ -93,7 +101,11 @@ function BottomPlayer({
           isOpenFullScreen ? "justify-center text-white" : "justify-between"
         } ${idle && "transition-opacity duration-[.3s] opacity-0"}`}
       >
-        <SongInfo isOpenFullScreen={isOpenFullScreen} admin={admin} />
+        <SongInfo
+          song={currentSongData?.song}
+          isOpenFullScreen={isOpenFullScreen}
+          admin={admin}
+        />
 
         {/* control */}
         <div
@@ -127,7 +139,7 @@ function BottomPlayer({
           </div>
 
           {!admin && (
-            <div className={`flex items-center ${!currentSong ? "disable" : ""}`}>
+            <div className={`flex items-center ${!currentQueueId ? "disable" : ""}`}>
               <MyTooltip content="Fullscreen mode">
                 <button
                   onClick={handleOpenFullScreen}

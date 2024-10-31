@@ -35,7 +35,9 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     isRepeat,
     isShuffle,
     playStatus,
-    currentSong,
+    memoCurrentSongData,
+    // currentSong,
+
     queueSongs,
     currentTimeEleRef,
     timelineEleRef,
@@ -75,8 +77,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
             >
               <ArrowPathRoundedSquareIcon className={classes.icon} />
               <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                {currentSong &&
-                  (isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : "")}
+                {isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : ""}
               </span>
             </button>
             <button
@@ -128,7 +129,9 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
         ></div>
         <div className="w-[44px] sm:w-[36px] text-right">
           <span className={"text-lg sm:text-sm"}>
-            {currentSong ? formatTime(currentSong?.duration) : "0:00"}
+            {memoCurrentSongData?.song
+              ? formatTime(memoCurrentSongData.song?.duration)
+              : "0:00"}
           </span>
         </div>
 

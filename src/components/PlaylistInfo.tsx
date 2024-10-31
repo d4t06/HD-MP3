@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { Button, ConfirmModal, Modal, PlaylistItem, Skeleton } from ".";
 import { PencilSquareIcon, PlayIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -7,11 +7,14 @@ import { useParams } from "react-router-dom";
 import EditPlaylist from "./modals/EditPlaylist";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { formatTime } from "../utils/appHelpers";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
+// import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { setQueue } from "@/store/songQueueSlice";
+// import { selectSongQueue, setCurrentQueueId, setQueue } from "@/store/songQueueSlice";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
+import useSetSong from "@/hooks/useSetSong";
+import { selectSongQueue } from "@/store/songQueueSlice";
+// import useCurrentSong from "@/hooks/useCurrentSong";
 
 type Modal = "edit" | "delete";
 
@@ -34,10 +37,11 @@ type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
 export default function PLaylistInfo({ loading, ...props }: Props) {
   // store
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { theme, isOnMobile } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
+  // const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+  const { currentSongData} = useSelector(selectSongQueue);
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -47,6 +51,8 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
 
   // hooks
   const params = useParams();
+  // const { songData } = useCurrentSong();
+  const { handleSetSong } = useSetSong();
   const { deletePlaylist, isFetching } = usePlaylistActions();
   const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
@@ -61,31 +67,46 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
   };
   const closeModal = () => modalRef.current?.toggle();
 
-  const handleSetSong = (song: Song, index: number) => {
-    if (!currentPlaylist) return;
+  // const handleSetSong = (song: Song, index: number) => {
+  //   if (!currentPlaylist) return;
 
-    // case user play user songs then play playlist song
-    const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
-    if (currentSong?.id !== song.id || currentSong?.song_in !== newSongIn) {
-      dispatch(
-        setSong({
-          ...song,
-          currentIndex: index,
-          song_in: newSongIn,
-        })
-      );
+  //   // case user play user songs then play playlist song
+  //   const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
+  //   if (currentSong?.id !== song.id || currentSong?.song_in !== newSongIn) {
+  //     dispatch(
+  //       setSong({
+  //         ...song,
+  //         currentIndex: index,
+  //         song_in: newSongIn,
+  //       })
+  //     );
 
-      if (currentSong?.song_in !== newSongIn) {
-        dispatch(setQueue({ songs: playlistSongs }));
-        console.log("setActuallySongs when playlist list");
-      }
-    }
-  };
+  //     if (currentSong?.song_in !== newSongIn) {
+  //       dispatch(setQueue({ songs: playlistSongs }));
+  //       console.log("setActuallySongs when playlist list");
+  //     }
+  //   }
+  // };
+
+  // const handleSetSong = (queueId: string) => {
+  //   // song in playlist and song in user are two difference case
+  //   if (currentQueueId !== queueId) {
+  //     dispatch(setCurrentQueueId(queueId));
+
+  //     const currentQueueIdList = queueSongs.map((s) => s.id);
+  //     const isDiff = playlistSongs.find((s) => !currentQueueIdList.includes(s.queue_id));
+  //     if (isDiff) {
+  //       console.log("set queue");
+
+  //       dispatch(setQueue({ songs: playlistSongs }));
+  //     }
+  //   }
+  // };
 
   const handlePlayPlaylist = () => {
-    if (currentSong?.song_in.includes(params.name as string)) return;
+    if (currentSongData?.song.song_in.includes(params.name as string)) return;
     const firstSong = playlistSongs[0];
-    handleSetSong(firstSong, 0);
+    handleSetSong(firstSong.queue_id, playlistSongs);
   };
 
   const playlistInfoSkeleton = (
@@ -235,7 +256,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
             currentPlaylist && (
               <PlaylistItem
                 data={currentPlaylist}
-                active={currentSong?.song_in === `playlist_${currentPlaylist?.id}`}
+                active={currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`}
                 inDetail
               />
             )

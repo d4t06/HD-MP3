@@ -1,12 +1,11 @@
 import { useTheme } from "../store";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+// import useCurrentSong from "@/hooks/useCurrentSong";
 
 type Base = {
-  handleSetSong: (song: Song, index: number) => void;
-  activeExtend?: boolean;
+  handleSetSong: (queueId: string) => void;
   songs: Song[];
 };
 
@@ -63,8 +62,8 @@ type Props =
 function SongList({ songs, ...props }: Props) {
   // store
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
-  const { queueSongs } = useSelector(selectSongQueue);
+  const { queueSongs, currentSongData } = useSelector(selectSongQueue);
+  // const { songData, queueSongs } = useCurrentSong();
 
   const renderTempSongsList = () => {
     if (props.variant !== "uploading") return <></>;
@@ -96,23 +95,19 @@ function SongList({ songs, ...props }: Props) {
         if (!songs.length) return empty;
     }
 
-    const { handleSetSong, activeExtend = true } = props;
+    const { handleSetSong } = props;
 
     return songs.map((song, index) => {
-      let active = activeExtend && currentSong?.id === song.id;
-      // let active = false;
+      const active = song.id === currentSongData?.song.id;
 
-      if (props.variant === "queue")
-        active = active && currentSong?.currentIndex === index;
-
-      const isLastIndexInQueue = currentSong?.currentIndex === queueSongs.length - 1;
+      const isLastIndexInQueue = index === queueSongs.length - 1;
 
       if (props.variant === "queue" && active && !isLastIndexInQueue) {
         return (
           <div key={song.id + song.name.length + index}>
             <SongItem
               active={active}
-              onClick={() => handleSetSong(song, index)}
+              onClick={() => handleSetSong(song.queue_id)}
               variant={props.variant}
               song={song}
               index={index}
@@ -130,7 +125,7 @@ function SongList({ songs, ...props }: Props) {
       return (
         <SongItem
           active={active}
-          onClick={() => handleSetSong(song, index)}
+          onClick={() => handleSetSong(song.queue_id)}
           variant={props.variant}
           song={song}
           index={index}

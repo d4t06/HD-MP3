@@ -6,7 +6,7 @@ import { Image } from ".";
 import { useTheme } from "@/store";
 
 interface Props {
-  data: Song | null;
+  data: Song | undefined;
   active: boolean;
   onClick?: () => void;
   hasTitle?: boolean;

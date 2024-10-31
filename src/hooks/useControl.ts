@@ -11,9 +11,9 @@ import {
 
 import { useLocation } from "react-router-dom";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
-import { setSong } from "@/store/currentSongSlice";
+// import { setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import usePlayerControl from "./usePlayerControl";
 
 interface Props {
@@ -25,7 +25,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { user } = useAuthStore();
-  const { queueSongs } = useSelector(selectSongQueue);
+  const { queueSongs, currentSongData } = useSelector(selectSongQueue);
   const { playStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
     selectAllPlayStatusStore
   );
@@ -34,32 +34,41 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   // state
   const firstTimeSongLoaded = useRef(true);
-  const currentIndexRef = useRef(0); // update current index
+  // const currentIndexRef = useRef(0); // update current index
+  const currentSongQueueIdRef = useRef(""); // update current index
+  const currentSongDataRef = useRef<{ song: Song; index: number }>();
 
   const prevSeekTime = useRef(0); // prevent double click
   const startFadeWhenEnd = useRef(0); // for cross fade
   // for update timeline background
-  const themeCode = useRef(theme.content_code); 
+  const themeCode = useRef(theme.content_code);
   const isEndOfList = useRef(false); // handle end song
   const isPlayingNewSong = useRef(true); // for cross fade
   // only need song when song error if end event fire
-  const isSongEnd = useRef(false); 
+  const isSongEnd = useRef(false);
   // for handle song error
-  const isShowMessageWhenSongError = useRef(false); 
+  const isShowMessageWhenSongError = useRef(false);
   // for not playing status when seek but song paused
-  const shouldSetPlayingStatus = useRef(false); 
+  const shouldSetPlayingStatus = useRef(false);
 
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
 
   // use hook
-  const { currentSong, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
-    usePlayerControl({ currentIndexRef });
+  const { currentQueueId, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
+    usePlayerControl();
   const location = useLocation();
   const { setErrorToast } = useToast();
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
 
   const memoStorage = useMemo(() => getLocalStorage(), []);
+
+  // const currentSongData = useMemo(() => {
+  //   for (let index = 0; index < queueSongs.length; index++) {
+  //     const song = queueSongs[index];
+  //     if (song.queue_id === currentQueueId) return { song, index };
+  //   }
+  // }, [queueSongs, currentQueueId]);
 
   const play = async (updateTime?: boolean) => {
     try {
@@ -184,7 +193,8 @@ export default function useAudioEvent({ audioEle }: Props) {
   const handleTimeUpdate = () => {
     const currentTime = audioEle.currentTime;
 
-    if (shouldSetPlayingStatus.current) dispatch(setPlayStatus({ playStatus: "playing" }));
+    if (shouldSetPlayingStatus.current)
+      dispatch(setPlayStatus({ playStatus: "playing" }));
     updateTimeProgressEle(currentTime);
 
     if (isCrossFade) handleFade(currentTime);
@@ -193,7 +203,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleEnded = () => {
-    if (!currentSong) return;
+    if (!currentSongDataRef.current) return;
     const storage = getLocalStorage();
     const volInStore = storage["volume"] || 1;
     const timer = storage["timer"];
@@ -206,23 +216,17 @@ export default function useAudioEvent({ audioEle }: Props) {
     isSongEnd.current = true;
 
     if (isShuffle) {
-      let randomIndex: number = currentIndexRef.current!;
-      while (randomIndex === currentIndexRef.current) {
-        randomIndex = Math.floor(Math.random() * queueSongs.length);
+      let randomIndex: number = currentSongDataRef.current.index;
+      while (randomIndex === currentSongDataRef.current.index) {
+        randomIndex = Math.round(Math.random() * queueSongs.length - 1);
       }
 
       const newSong = getNewSong(randomIndex);
-      return dispatch(
-        setSong({
-          ...newSong,
-          currentIndex: randomIndex,
-          song_in: currentSong.song_in,
-        })
-      );
+      return dispatch(setCurrentQueueId(newSong.queue_id));
     }
 
     if (timer === 1) isEndOfList.current = true;
-    else if (currentIndexRef.current === queueSongs.length - 1) {
+    else if (currentSongDataRef.current.index === queueSongs.length - 1) {
       if (isRepeat === "all") isEndOfList.current = false;
       else isEndOfList.current = true;
     }
@@ -231,7 +235,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleLoadStart = () => {
-    if (currentIndexRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
+    if (currentSongQueueIdRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
   };
 
   const handleLoaded = () => {
@@ -243,7 +247,8 @@ export default function useAudioEvent({ audioEle }: Props) {
     // update control props
     startFadeWhenEnd.current = audioDuration - 3;
 
-    if (currentSong) setLocalStorage("current_song", currentSong);
+    if (currentSongDataRef)
+      setLocalStorage("current_song", currentSongDataRef.current?.song);
 
     // // force paused by timer
     // if (playStatus === "force-paused")
@@ -266,7 +271,7 @@ export default function useAudioEvent({ audioEle }: Props) {
         // firstTimeSongLoaded.current = false;
 
         const isPlaySongBefore =
-          currentSongLocal && currentSongLocal.id === currentSong?.id;
+          currentSongLocal && currentSongLocal.id === currentSongDataRef.current?.song.id;
         if (isPlaySongBefore) {
           /** update 23/10/2024
            * do not update song' current time here
@@ -284,7 +289,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleError = () => {
-    if (currentIndexRef.current === null) return;
+    if (!currentSongQueueIdRef.current || !currentSongData) return;
     if (!isShowMessageWhenSongError.current) {
       isShowMessageWhenSongError.current = true;
       setErrorToast("Found internet error");
@@ -295,7 +300,7 @@ export default function useAudioEvent({ audioEle }: Props) {
 
     if (queueSongs.length > 1) {
       // case end of list
-      if (currentIndexRef.current === queueSongs.length - 1) {
+      if (currentSongData.index === queueSongs.length - 1) {
         dispatch(setPlayStatus({ playStatus: "error" }));
         return;
       }
@@ -306,9 +311,10 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   //   load current song in local storage
   useEffect(() => {
-    const currentSong = memoStorage["current_song"] || null;
-    if (currentSong) dispatch(setSong(currentSong));
-    else firstTimeSongLoaded.current = false;
+    // const currentSong = (memoStorage["current_song"] as Song) || null;
+    // if (currentSong) dispatch(setCurrentQueueId(currentSong.queue_id));
+    // else
+    firstTimeSongLoaded.current = false;
   }, []);
 
   // add events listener
@@ -317,6 +323,8 @@ export default function useAudioEvent({ audioEle }: Props) {
     audioEle.addEventListener("pause", handlePause);
     audioEle.addEventListener("play", handlePlaying);
     audioEle.addEventListener("loadstart", handleLoadStart);
+    audioEle.addEventListener("loadedmetadata", handleLoaded);
+
     /** should not add 'waiting event'
      * is cause error on iphone
      */
@@ -327,39 +335,39 @@ export default function useAudioEvent({ audioEle }: Props) {
       audioEle.removeEventListener("pause", handlePause);
       audioEle.removeEventListener("play", handlePlaying);
       audioEle.removeEventListener("loadstart", handleLoadStart);
+      audioEle.removeEventListener("loadedmetadata", handleLoaded);
     };
   }, []);
 
   // update audio src, currentIndexRef, reset song
   useEffect(() => {
-    if (!currentSong) {
+    if (!currentSongData || !currentQueueId) {
       dispatch(setPlayStatus({ playStatus: "paused" }));
       return;
     }
 
-    audioEle.src = currentSong.song_url;
-
-    currentIndexRef.current = currentSong.currentIndex;
-    document.title = `${currentSong.name} - ${currentSong.singer}`;
+    currentSongDataRef.current = currentSongData;
+    audioEle.src = currentSongData.song.song_url;
+    currentSongQueueIdRef.current = currentQueueId;
 
     return () => {
       handleResetForNewSong();
       isPlayingNewSong.current = true;
     };
-  }, [currentSong]);
+  }, [currentQueueId]);
 
   // update site title, and decide to set waiting status
   useEffect(() => {
-    if (!currentSong) return;
+    if (!currentSongData) return;
 
     if (playStatus === "paused") shouldSetPlayingStatus.current = false;
     else if (playStatus === "playing") shouldSetPlayingStatus.current = true;
 
-    let myTitle = `${currentSong.name} - ${currentSong.singer}`;
+    let myTitle = `${currentSongData.song.name} - ${currentSongData.song.singer}`;
     if (
       playStatus === "paused" &&
       currentPlaylist &&
-      currentSong.song_in.includes(currentPlaylist.id)
+      currentSongData.song.song_in.includes(currentPlaylist.id)
     ) {
       myTitle = `${currentPlaylist.name}`;
     }
@@ -371,7 +379,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     audioEle.addEventListener("ended", handleEnded);
 
     return () => audioEle.removeEventListener("ended", handleEnded);
-  }, [isRepeat, isShuffle, currentSong, queueSongs]);
+  }, [isRepeat, isShuffle, currentQueueId, queueSongs]);
 
   //   update time update event
   useEffect(() => {
@@ -395,19 +403,19 @@ export default function useAudioEvent({ audioEle }: Props) {
       if (playStatus === "playing") pause();
     }
 
-    audioEle.addEventListener("loadedmetadata", handleLoaded);
+    // audioEle.addEventListener("loadedmetadata", handleLoaded);
 
-    return () => {
-      audioEle.removeEventListener("loadedmetadata", handleLoaded);
-    };
-  }, [isInEdit, currentSong, isCrossFade]);
+    // return () => {
+    //   audioEle.removeEventListener("loadedmetadata", handleLoaded);
+    // };
+  }, [isInEdit]);
 
   return {
     timelineEleRef,
     currentTimeEleRef,
     handleSeek,
     playStatus,
-    currentSong,
+    currentSongData,
     play,
     pause,
     handlePlayPause,
