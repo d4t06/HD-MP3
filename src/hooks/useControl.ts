@@ -35,7 +35,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   // state
   const firstTimeSongLoaded = useRef(true);
   // const currentIndexRef = useRef(0); // update current index
-  const currentSongQueueIdRef = useRef(""); // update current index
+  //   const currentSongQueueIdRef = useRef(""); // update current index
   const currentSongDataRef = useRef<{ song: Song; index: number }>();
 
   const prevSeekTime = useRef(0); // prevent double click
@@ -55,20 +55,13 @@ export default function useAudioEvent({ audioEle }: Props) {
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
 
   // use hook
-  const { currentQueueId, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
-    usePlayerControl();
   const location = useLocation();
   const { setErrorToast } = useToast();
+  const { currentQueueId, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
+    usePlayerControl();
+
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
-
   const memoStorage = useMemo(() => getLocalStorage(), []);
-
-  // const currentSongData = useMemo(() => {
-  //   for (let index = 0; index < queueSongs.length; index++) {
-  //     const song = queueSongs[index];
-  //     if (song.queue_id === currentQueueId) return { song, index };
-  //   }
-  // }, [queueSongs, currentQueueId]);
 
   const play = async (updateTime?: boolean) => {
     try {
@@ -235,24 +228,20 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleLoadStart = () => {
-    if (currentSongQueueIdRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
+    if (currentSongDataRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
   };
 
   const handleLoaded = () => {
-    const audioDuration = audioEle.duration;
+    if (!currentSongDataRef.current) return;
 
+    const audioDuration = audioEle.duration;
     // setIsLoaded(true);
-    const currentSongLocal = memoStorage["current_song"];
+    const localQueueId = memoStorage["current_queue_id"];
 
     // update control props
     startFadeWhenEnd.current = audioDuration - 3;
 
-    if (currentSongDataRef)
-      setLocalStorage("current_song", currentSongDataRef.current?.song);
-
-    // // force paused by timer
-    // if (playStatus === "force-paused")
-    //   return dispatch(setPlayStatus({ playStatus: "paused" }));
+    setLocalStorage("current_queue_id", currentSongDataRef.current.song.queue_id);
 
     // case end of list
     if (isEndOfList.current) {
@@ -271,13 +260,16 @@ export default function useAudioEvent({ audioEle }: Props) {
         // firstTimeSongLoaded.current = false;
 
         const isPlaySongBefore =
-          currentSongLocal && currentSongLocal.id === currentSongDataRef.current?.song.id;
+          localQueueId === currentSongDataRef.current?.song.queue_id;
         if (isPlaySongBefore) {
           /** update 23/10/2024
            * do not update song' current time here
            * cause' it cause error on iphone
            * update it when user click play song
            */
+
+          console.log("go here");
+
           updateTimeProgressEle(memoStorage["current_time"] || 0);
           return;
         }
@@ -289,7 +281,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   };
 
   const handleError = () => {
-    if (!currentSongQueueIdRef.current || !currentSongData) return;
+    if (!currentSongDataRef.current) return;
     if (!isShowMessageWhenSongError.current) {
       isShowMessageWhenSongError.current = true;
       setErrorToast("Found internet error");
@@ -300,7 +292,7 @@ export default function useAudioEvent({ audioEle }: Props) {
 
     if (queueSongs.length > 1) {
       // case end of list
-      if (currentSongData.index === queueSongs.length - 1) {
+      if (currentSongDataRef.current.index === queueSongs.length - 1) {
         dispatch(setPlayStatus({ playStatus: "error" }));
         return;
       }
@@ -311,10 +303,10 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   //   load current song in local storage
   useEffect(() => {
-    // const currentSong = (memoStorage["current_song"] as Song) || null;
-    // if (currentSong) dispatch(setCurrentQueueId(currentSong.queue_id));
-    // else
-    firstTimeSongLoaded.current = false;
+    const currentId = (memoStorage["current_queue_id"] as string) || null;
+    if (currentId && queueSongs.length) {
+      dispatch(setCurrentQueueId(currentId));
+    } else firstTimeSongLoaded.current = false;
   }, []);
 
   // add events listener
@@ -346,15 +338,14 @@ export default function useAudioEvent({ audioEle }: Props) {
       return;
     }
 
-    currentSongDataRef.current = currentSongData;
     audioEle.src = currentSongData.song.song_url;
-    currentSongQueueIdRef.current = currentQueueId;
+    currentSongDataRef.current = currentSongData;
 
     return () => {
       handleResetForNewSong();
       isPlayingNewSong.current = true;
     };
-  }, [currentQueueId]);
+  }, [currentSongData?.song]);
 
   // update site title, and decide to set waiting status
   useEffect(() => {
@@ -392,6 +383,7 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   // update time line background color
   useEffect(() => {
+    if (!currentSongDataRef.current) return;
     themeCode.current = theme.content_code;
     // if user no click play yet
     updateTimeProgressEle(firstTimeSongLoaded.current ? memoStorage["current_time"] : 0);
@@ -402,12 +394,6 @@ export default function useAudioEvent({ audioEle }: Props) {
     if (isInEdit) {
       if (playStatus === "playing") pause();
     }
-
-    // audioEle.addEventListener("loadedmetadata", handleLoaded);
-
-    // return () => {
-    //   audioEle.removeEventListener("loadedmetadata", handleLoaded);
-    // };
   }, [isInEdit]);
 
   return {

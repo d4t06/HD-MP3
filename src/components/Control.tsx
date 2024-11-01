@@ -26,6 +26,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
   const { theme } = useTheme();
 
   const {
+    currentSongData,
     handleSeek,
     handlePlayPause,
     handleNext,
@@ -35,9 +36,6 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     isRepeat,
     isShuffle,
     playStatus,
-    memoCurrentSongData,
-    // currentSong,
-
     queueSongs,
     currentTimeEleRef,
     timelineEleRef,
@@ -48,7 +46,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
   useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
 
   const classes = {
-    button: `p-[6px] rounded-full hover:bg-${theme.alpha}`,
+    button: `p-2 md:p-[6px]  rounded-full bg-${theme.alpha} hover:bg-${theme.alpha} md:bg-transparent `,
     buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
       admin ? "hidden" : ""
     }`,
@@ -59,8 +57,6 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
-
-  console.log("redner");
 
   return (
     <>
@@ -114,7 +110,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
           isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
-        <div className="w-[44px] sm:w-[36px]">
+        <div className="w-10 sm:w-9">
           <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
             0:00
           </span>
@@ -127,11 +123,9 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
             classes.before
           }`}
         ></div>
-        <div className="w-[44px] sm:w-[36px] text-right">
+        <div className="w-10 sm:w-9 text-right">
           <span className={"text-lg sm:text-sm"}>
-            {memoCurrentSongData?.song
-              ? formatTime(memoCurrentSongData.song?.duration)
-              : "0:00"}
+            {currentSongData?.song ? formatTime(currentSongData.song?.duration) : "0:00"}
           </span>
         </div>
 

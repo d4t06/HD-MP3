@@ -52,7 +52,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
   // hooks
   const params = useParams();
   // const { songData } = useCurrentSong();
-  const { handleSetSong } = useSetSong();
+  const { handleSetSong } = useSetSong({variant: 'playlist'});
   const { deletePlaylist, isFetching } = usePlaylistActions();
   const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 

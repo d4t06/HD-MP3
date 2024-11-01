@@ -7,16 +7,13 @@ import { useDispatch, useSelector } from "react-redux";
 
 export default function usePlayerControl() {
   const dispatch = useDispatch();
-  const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
-  // const { currentSong } = useSelector(selectCurrentSong);
+  const { queueSongs, currentQueueId, currentSongData } = useSelector(selectSongQueue);
   const { isRepeat, isShuffle, playStatus } = useSelector(selectAllPlayStatusStore);
 
   const handleNext = useCallback(() => {
-    // if (currentIndexRef.current === null) return;
-    const index = queueSongs.findIndex((s) => s.queue_id === currentQueueId);
-    if (index === -1) return;
+    if (!currentSongData) return;
 
-    let newIndex = index + 1;
+    let newIndex = currentSongData.index + 1;
     let newSong: Song;
 
     if (newIndex < queueSongs.length) {
@@ -27,14 +24,13 @@ export default function usePlayerControl() {
     }
 
     dispatch(setCurrentQueueId(newSong.queue_id));
-  }, [queueSongs, currentQueueId]);
+  }, [currentSongData, queueSongs]);
 
   const handlePrevious = useCallback(() => {
-    const index = queueSongs.findIndex((s) => s.queue_id === currentQueueId);
-    if (index === -1) return;
+    if (!currentSongData) return;
     // if (currentIndexRef.current === null) return;
 
-    let newIndex = index - 1;
+    let newIndex = currentSongData.index - 1;
     let newSong: Song;
     if (newIndex >= 0) {
       newSong = queueSongs[newIndex];
@@ -44,7 +40,7 @@ export default function usePlayerControl() {
     }
 
     dispatch(setCurrentQueueId(newSong.queue_id));
-  }, [currentQueueId, queueSongs]);
+  }, [currentSongData, queueSongs]);
 
   const handleShuffle = () => {
     const newValue = !isShuffle;

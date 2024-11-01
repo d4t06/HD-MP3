@@ -15,7 +15,7 @@ export default function DashboardPlaylist() {
   return (
     <div className={`pb-[80px] pt-10`}>
       <div className="mb-[30px]">
-        <BackBtn admin />
+        <BackBtn variant="dashboard-playlist" />
       </div>
 
       <PLaylistInfo loading={isFetching} variant="dashboard-playlist" />

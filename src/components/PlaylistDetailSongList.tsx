@@ -1,11 +1,9 @@
 import { useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { SongListModal, Button, Modal, SongList } from "../components";
 import CheckedBar from "./CheckedBar";
 import { PlusIcon } from "@heroicons/react/24/outline";
-// import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-// import { setQueue } from "@/store/songQueueSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
@@ -28,16 +26,13 @@ const playlistSongSkeleton = (
 );
 
 export default function PlaylistDetailSongList({ variant, loading }: Props) {
-  // use store
-  // const dispatch = useDispatch();
   const { theme } = useTheme();
-  // const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
   const modalRef = useRef<ModalRef>(null);
 
   const closeModal = () => modalRef.current?.toggle();
 
-  const { handleSetSong } = useSetSong();
+  const { handleSetSong } = useSetSong({ variant: "playlist" });
 
   const _handleSetSong = (queueId: string) => {
     handleSetSong(queueId, playlistSongs);

@@ -16,14 +16,14 @@ export default function HomeSongList({ loading }: Props) {
   // const dispatch = useDispatch();
   const { adminSongs } = useSongsStore();
 
-  const { handleSetSong } = useSetSong();
+  const { handleSetSong } = useSetSong({ variant: "songs" });
 
   // const { currentQueueId, queueSongs } = useSelector(selectSongQueue);
   // const { currentSong } = useSelector(selectCurrentSong);
 
   const _handleSetSong = (queueId: string) => {
-    handleSetSong(queueId, adminSongs)
-  }
+    handleSetSong(queueId, adminSongs);
+  };
 
   // const handleSetSong = (queueId: string) => {
   //   // song in playlist and song in user are two difference case
@@ -51,7 +51,11 @@ export default function HomeSongList({ loading }: Props) {
         <>
           {!!adminSongs.length ? (
             <>
-              <SongList variant="home" handleSetSong={_handleSetSong} songs={adminSongs} />
+              <SongList
+                variant="home"
+                handleSetSong={_handleSetSong}
+                songs={adminSongs}
+              />
             </>
           ) : (
             <h1 className="text-[22px] text-center">...</h1>

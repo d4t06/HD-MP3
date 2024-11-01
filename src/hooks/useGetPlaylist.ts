@@ -66,8 +66,6 @@ export default function useGetPlaylist() {
       const playlist = await getPlaylist();
       if (!playlist) throw new Error("");
 
-      console.log("check playlist", { ...playlist });
-
       const playlistSongs = await getSongs(playlist);
 
       dispatch(

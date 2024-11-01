@@ -1,42 +1,30 @@
 import { useMemo } from "react";
 import { useSongsStore, useUpload } from "../store";
-import { useDispatch, useSelector } from "react-redux";
 import { SongList } from ".";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
 import CheckedBar from "./CheckedBar";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { setQueue } from "@/store/songQueueSlice";
+import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
   initialLoading: boolean;
 };
 
 export default function MySongSongsList({ initialLoading }: Props) {
-  const dispatch = useDispatch();
-
   //   store
   const { userSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
 
   // hooks
   const { tempSongs } = useUpload();
+  const { handleSetSong } = useSetSong({ variant: "songs" });
+
+  const _handleSetSong = (queueId: string) => {
+    handleSetSong(queueId, userSongs);
+  };
 
   const songCount = useMemo(() => {
     if (initialLoading) return 0;
     return tempSongs.length + userSongs.length;
   }, [tempSongs, userSongs, initialLoading]);
-
-  const handleSetSong = (song: Song, index: number) => {
-    // const isSetQueue =
-    //   from.length > 1 || userSongs.length !== queueSongs.length || from[0] != "user";
-    const isSetQueue = true;
-    if (isSetQueue) dispatch(setQueue({ songs: userSongs }));
-
-    // song in playlist and song in user are two difference case
-    if (currentSong?.id !== song.id || currentSong?.song_in !== "user") {
-      dispatch(setSong({ ...song, currentIndex: index }));
-    }
-  };
 
   return (
     <>
@@ -62,10 +50,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
               <>
                 <SongList
                   variant="my-songs"
-                  handleSetSong={handleSetSong}
-                  activeExtend={
-                    currentSong?.song_in === "user" || currentSong?.song_in === "favorite"
-                  }
+                  handleSetSong={_handleSetSong}
                   songs={userSongs}
                   tempSongs={tempSongs}
                 />

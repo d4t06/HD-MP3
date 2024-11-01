@@ -126,7 +126,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
 
   return (
     <div
-      className={`${getDisable(isFetching)} w-[500px] max-h-[80vh] max-w-[90vw] overflow-hidden flex flex-col md:block`}
+      className={`${getDisable(isFetching)} w-[500px] max-h-[80vh] max-w-[90vw] flex flex-col`}
     >
       <input
         ref={inputFileRef}

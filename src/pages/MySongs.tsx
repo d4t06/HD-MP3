@@ -1,13 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import { useTheme, useSongsStore, useAuthStore, useUpload } from "../store";
 import { useInitSong } from "../hooks";
 import { BackBtn } from "../components";
 import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
 import MySongSongsList from "../components/MySongSongsList";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import Footer from "@/components/Footer";
@@ -16,7 +14,7 @@ export default function MySongsPage() {
   // store
   const { theme } = useTheme();
   const { loading: userLoading, user } = useAuthStore();
-  const { currentSong } = useSelector(selectCurrentSong);
+  //   const { currentSong } = useSelector();
   const { userPlaylists } = useSongsStore();
 
   // use hooks
@@ -38,12 +36,11 @@ export default function MySongsPage() {
   return (
     <div className="pb-[80px]">
       <div className="mb-[30px]  md:hidden">
-        <BackBtn />
+        <BackBtn variant="my-songs" />
       </div>
       <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Playlist</h3>
 
       <PlaylistList
-        activeCondition={!!currentSong?.song_in}
         loading={initialLoading}
         playlist={userPlaylists}
         location="my-songs"

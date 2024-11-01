@@ -3,7 +3,7 @@ import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+// import { selectCurrentSong } from "@/store/currentSongSlice";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
@@ -12,6 +12,7 @@ import { Blurhash } from "react-blurhash";
 import { defaultBlurHash } from "@/constants/blurhash";
 import { ControlRef } from "../Control";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -27,7 +28,9 @@ export default function MobileFullScreenPlayer({
   setIsOpenFullScreen,
 }: Props) {
   // use store
-  const { currentSong } = useSelector(selectCurrentSong);
+  //   const { currentSong } = useSelector(selectCurrentSong);
+
+  const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
 
   // state
@@ -66,7 +69,7 @@ export default function MobileFullScreenPlayer({
             <Blurhash
               width={"100%"}
               height={"100%"}
-              hash={currentSong?.blurhash_encode || defaultBlurHash}
+              hash={currentSongData?.song.blurhash_encode || defaultBlurHash}
             />
           </div>
         )}
@@ -108,16 +111,19 @@ export default function MobileFullScreenPlayer({
           <div ref={containerRef} className={classes.container}>
             {/* song info */}
             <div className={`${notPlayingOrLandscape ? "flex" : "sm:flex"}`}>
-              <MobileSongThumbnail expand={activeTab === "Playing"} data={currentSong} />
+              <MobileSongThumbnail
+                expand={activeTab === "Playing"}
+                imageUrl={currentSongData?.song.image_url}
+              />
 
               <div
                 className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden sm:block"}`}
               >
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
-                  {currentSong?.name}
+                  {currentSongData?.song.name}
                 </p>
                 <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">
-                  {currentSong?.singer}
+                  {currentSongData?.song.singer}
                 </div>
               </div>
             </div>
@@ -133,7 +139,7 @@ export default function MobileFullScreenPlayer({
                   <ScrollText
                     autoScroll
                     className={`text-xl leading-[1.5] font-playwriteCU`}
-                    content={currentSong?.name || "..."}
+                    content={currentSongData?.song.name || "..."}
                   />
                 </div>
                 <div className={"h-[28px]"}>
@@ -142,7 +148,7 @@ export default function MobileFullScreenPlayer({
                     className={`opacity-60 ${
                       activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
                     }`}
-                    content={currentSong?.singer || "..."}
+                    content={currentSongData?.song.singer || "..."}
                   />
                 </div>
               </div>
@@ -174,8 +180,8 @@ export default function MobileFullScreenPlayer({
                 activeTab === "Songs" ? "" : "hidden"
               }`}
             >
-              {currentSong && (
-                <MobileFullScreenSongList currentIndex={currentSong.currentIndex} />
+              {currentSongData && (
+                <MobileFullScreenSongList currentIndex={currentSongData.index} />
               )}
             </div>
 

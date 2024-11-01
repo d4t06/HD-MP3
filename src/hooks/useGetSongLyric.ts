@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
+// import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useSongLyric({
   audioEle,
@@ -11,23 +12,25 @@ export default function useSongLyric({
   audioEle: HTMLAudioElement;
   isOpenFullScreen: boolean;
 }) {
-  const { currentSong } = useSelector(selectCurrentSong);
+  //   const { currentSong } = useSelector(selectCurrentSong);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
-
+  const { currentSongData } = useSelector(selectSongQueue);
   const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [isSongLoaded, setIsSongLoaded] = useState(false);
   const timerId = useRef<NodeJS.Timeout>();
 
+  const ranGetLyric = useRef(false);
+
   const getLyric = async () => {
     try {
-      if (!currentSong) return setLoading(false);
+      if (!currentSongData) return setLoading(false);
       setLoading(true);
 
       const lyricSnap = await myGetDoc({
         collection: "lyrics",
-        id: currentSong.id,
+        id: currentSongData.song.id,
         msg: ">>> api: get lyric doc",
       });
 
@@ -47,6 +50,7 @@ export default function useSongLyric({
     setIsSongLoaded(false);
     setLoading(true);
     setSongLyrics([]);
+    ranGetLyric.current = false;
   };
 
   //  add audio event
@@ -66,9 +70,12 @@ export default function useSongLyric({
   useEffect(() => {
     if (songLyrics.length) return;
     if (isSongLoaded && isOpenFullScreen) {
-      timerId.current = setTimeout(() => {
-        getLyric();
-      }, 500);
+      if (!ranGetLyric.current) {
+        ranGetLyric.current = true;
+        timerId.current = setTimeout(() => {
+          getLyric();
+        }, 500);
+      }
     }
   }, [isSongLoaded, isOpenFullScreen]);
 
@@ -81,7 +88,7 @@ export default function useSongLyric({
     return () => {
       resetForNewSong();
     };
-  }, [currentSong, playStatus === "error"]);
+  }, [currentSongData, playStatus === "error"]);
 
   return { songLyrics, loading };
 }

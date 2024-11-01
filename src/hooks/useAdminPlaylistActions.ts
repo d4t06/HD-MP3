@@ -14,15 +14,12 @@ import {
   resetCurrentPlaylist,
   selectCurrentPlaylist,
 } from "@/store/currentPlaylistSlice";
-import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useAdminPlaylistActions() {
   // store
   const dispatch = useDispatch();
   const { userPlaylists, setUserPlaylists } = useSongsStore();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
-
-  const { currentSong } = useSelector(selectCurrentSong);
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -77,8 +74,6 @@ export default function useAdminPlaylistActions() {
     setUserPlaylists(newPlaylists);
 
     dispatch(resetCurrentPlaylist());
-    if (currentSong?.song_in === `playlist_${currentPlaylist.id}`)
-      dispatch(resetCurrentSong());
 
     setIsFetching(false);
     navigate("/dashboard");

@@ -2,8 +2,7 @@ import { useTheme } from "@/store";
 import { MobileSongItem } from "..";
 import { MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setSong } from "@/store/currentSongSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 
 type Props = {
   currentIndex: number;
@@ -39,7 +38,7 @@ export default function MobileFullScreenSongList({ currentIndex }: Props) {
   const { theme } = useTheme();
   const { queueSongs } = useSelector(selectSongQueue);
 
-  const activeSong = (e: MouseEvent, song: Song, index: number) => {
+  const activeSong = (e: MouseEvent, queueId: string) => {
     const ele = e.target as HTMLDivElement;
 
     const parent = findParent(ele);
@@ -47,12 +46,7 @@ export default function MobileFullScreenSongList({ currentIndex }: Props) {
     Object.assign(parent.style, hideSongItemStyle);
 
     setTimeout(() => {
-      dispatch(
-        setSong({
-          ...song,
-          currentIndex: index,
-        })
-      );
+      dispatch(setCurrentQueueId(queueId));
     }, 500);
   };
 
@@ -69,7 +63,7 @@ export default function MobileFullScreenSongList({ currentIndex }: Props) {
                 key={index}
                 theme={theme}
                 song={song}
-                onClick={(e) => activeSong(e, song, index)}
+                onClick={(e) => activeSong(e, song.queue_id)}
               />
             );
         })

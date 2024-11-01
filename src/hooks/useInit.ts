@@ -16,8 +16,6 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [loading, setLoading] = useState(true);
 
-  // const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
-
   const handleErrorMsg = (msg: string) => {
     setLoading(false);
     setErrorMsg(msg);
@@ -36,18 +34,8 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
       const adminSongs = await appService.getAdminSongs();
       const adminPlaylists = await appService.getAdminPLaylist();
 
-
-      console.log(adminSongs);
-      console.log(adminPlaylists);
-      
-
-      // console.log("check admin songs", adminSongs);
-      // console.log("check admin playlists", adminPlaylists);
-
       if (admin) {
         initSongsContext({ userSongs: adminSongs, userPlaylists: adminPlaylists });
-
-        // console.log("admin", adminPlaylists, adminSongs);
 
         setLoading(false);
         return;

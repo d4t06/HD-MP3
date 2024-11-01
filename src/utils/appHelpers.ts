@@ -111,6 +111,7 @@ export const initSongObject = ({ ...value }: Partial<Song>) => {
     song_in: "",
     blurhash_encode: "",
     size: 0,
+    queue_id: "",
   };
   return {
     ...song,

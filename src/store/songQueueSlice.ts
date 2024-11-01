@@ -1,4 +1,4 @@
-import { setLocalStorage } from "@/utils/appHelpers";
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 // import { nanoid } from "nanoid";
 
@@ -8,11 +8,12 @@ type StateType = {
   currentSongData: { song: Song; index: number } | null;
 };
 
-// const storage = getLocalStorage();
+const storage = getLocalStorage();
 
 const initialState: StateType = {
-  // queueSongs: storage["queue"] || [],
-  queueSongs: [],
+  queueSongs: storage["queue"] || [],
+
+  /** update queue id in use */
   currentQueueId: null,
   currentSongData: null,
 };
@@ -34,14 +35,18 @@ const songQueueSlice = createSlice({
   initialState,
   reducers: {
     setQueue(state: StateType, action: PayloadAction<{ songs: Song[] }>) {
-      state.queueSongs = action.payload.songs;
-      setLocalStorage("queue", action.payload.songs);
+      const songs = action.payload.songs;
+      state.queueSongs = songs;
 
       updateCurrentSongData(state);
+      setLocalStorage("queue", songs);
     },
     setCurrentQueueId(state: StateType, action: PayloadAction<string>) {
-      state.currentQueueId = action.payload;
+      const id = action.payload;
+      state.currentQueueId = id;
       updateCurrentSongData(state);
+      // update in use control
+      // setLocalStorage("current_queue_id", id);
     },
     removeSongFromQueue(state: StateType, action: PayloadAction<{ index: number }>) {
       const { index } = action.payload;
@@ -57,7 +62,7 @@ const songQueueSlice = createSlice({
 
     addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
       state.queueSongs.push(...action.payload.songs);
-      setLocalStorage("queue", action.payload.songs);
+      setLocalStorage("queue", state.queueSongs);
     },
     resetSongQueue: (state: StateType) => {
       Object.assign(state, initialState);

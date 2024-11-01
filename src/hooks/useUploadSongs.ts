@@ -7,8 +7,8 @@ import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "@/store/AuthContext";
 import { useTheme, useUpload } from "../store";
-import { useSelector } from "react-redux";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+// import { useSelector } from "react-redux";
+// import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
@@ -27,7 +27,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
   const { isDev } = useTheme();
 
   const { userSongs, addUserSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
+//   const { currentSong } = useSelector(selectCurrentSong);
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
 
   // state
@@ -217,7 +217,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         setErrorToast();
       }
     },
-    [user, userSongs, currentSong]
+    [user, userSongs]
   );
 
   useEffect(() => {
