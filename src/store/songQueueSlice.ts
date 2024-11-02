@@ -8,12 +8,11 @@ type StateType = {
   currentSongData: { song: Song; index: number } | null;
 };
 
-const storage = getLocalStorage();
+const queue = getLocalStorage()["queue"] || [];
 
 const initialState: StateType = {
-  queueSongs: storage["queue"] || [],
-
-  /** update queue id in use */
+  queueSongs: queue,
+  /** update queue id in use control */
   currentQueueId: null,
   currentSongData: null,
 };

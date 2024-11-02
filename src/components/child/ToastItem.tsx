@@ -1,4 +1,4 @@
-import { CheckIcon, ExclamationCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
+// import { CheckIcon, ExclamationCircleIcon, XMarkIcon } from "@heroicons/react/20/solid";
 
 type Props = {
   toast: Toast;
@@ -13,23 +13,23 @@ export default function ToastItem({ toast, theme, onClick }: Props) {
     text: `font-[500] text-sm`,
   };
 
-  const renderIcon = () => {
-    switch (toast.title) {
-      case "success":
-        return <CheckIcon className={`${classes.icon} text-emerald-500 `} />;
-      case "error":
-        return <XMarkIcon className={`${classes.icon} text-red-500`} />;
-      case "warning":
-        return <ExclamationCircleIcon className={`${classes.icon} text-yellow-500`} />;
-    }
-  };
+  // const renderIcon = () => {
+  //   switch (toast.title) {
+  //     case "success":
+  //       return <CheckIcon className={`${classes.icon} text-emerald-500 `} />;
+  //     case "error":
+  //       return <XMarkIcon className={`${classes.icon} text-red-500`} />;
+  //     case "warning":
+  //       return <ExclamationCircleIcon className={`${classes.icon} text-yellow-500`} />;
+  //   }
+  // };
 
   return (
     <div
       onClick={() => (onClick ? onClick(toast.id) : undefined)}
       className={`${classes.container} animate-[fadeIn_0.3s_linear]`}
     >
-      {toast.title && <span className="mr-[10px]">{renderIcon()}</span>}
+      {/* {toast.title && <span className="mr-[10px]">{renderIcon()}</span>} */}
       <p className={classes.text}>{toast.desc}</p>
     </div>
   );

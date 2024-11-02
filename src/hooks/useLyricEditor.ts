@@ -111,6 +111,8 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
       setBaseLyric(base);
       setLyrics(real_time);
 
+      if (!real_time.length) return;
+
       const latestIndex = real_time.length - 1;
       setCurrentLyricIndex(latestIndex + 1);
 

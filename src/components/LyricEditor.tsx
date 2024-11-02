@@ -1,6 +1,6 @@
 import { ElementRef, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { Button } from "../components";
+import { BackBtn, Button } from "../components";
 import { useTheme } from "../store";
 import LyricEditorControl, { LyricEditorControlRef } from "./LyricEditorControl";
 import LyricEditorList from "./LyricEditorList";
@@ -39,7 +39,11 @@ export default function LyricEditor({ admin }: Props) {
       ) : (
         song && (
           <div className="flex flex-col h-full pb-5">
-            <h1 className="text-xl font-playwriteCU mt-5 leading-[2.2]">
+            <div className="mt-3">
+              <BackBtn variant={admin ?  "admin-playlist" : "my-playlist"} />
+            </div>
+
+            <h1 className="text-xl font-playwriteCU mt-3 leading-[2.2]">
               Edit lyric - {song?.name}
             </h1>
 
@@ -52,7 +56,7 @@ export default function LyricEditor({ admin }: Props) {
             <LyricEditorList controlRef={controlRef} />
 
             <Button
-              className={`${theme.content_bg} self-start rounded-full mt-5 `}
+              className={`${theme.content_bg} font-playwriteCU self-start rounded-full mt-5 `}
               variant={"primary"}
               disabled={!isChanged}
               isLoading={isSubmitting}

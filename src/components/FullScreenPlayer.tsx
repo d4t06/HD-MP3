@@ -58,11 +58,6 @@ function FullScreenPlayer({
     idle,
   });
 
-  // const currentSongData?.song = useMemo(
-  //   () => queueSongs.find((s) => s.queue_id === currentQueueId) || null,
-  //   [queueSongs, currentQueueId]
-  // );
-
   // methods
   const handleClickNext = useDebounce(() => handleScroll("next"), 200);
   const handleClickPrevious = useDebounce(() => handleScroll("previous"), 200);
@@ -97,7 +92,7 @@ function FullScreenPlayer({
     button: `w-[44px] h-[44px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
     wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
     } transition-transform duration-[.7s] linear delay-100`,
-    bg: `absolute inset-0 -z-10 brightness-[70%]`,
+    bg: `absolute inset-0 -z-10 brightness-[70%] blur-[4px]`,
     overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,
     container: "absolute w-full top-0 bottom-[90px] flex flex-col",
 

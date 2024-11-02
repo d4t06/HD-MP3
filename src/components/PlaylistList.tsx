@@ -31,7 +31,6 @@ type Props = InHome | InMySongs | InDashboard;
 export default function PlaylistList({ playlist, loading, className, ...props }: Props) {
   // store
   const { theme } = useTheme();
-  //   const { currentSong } = useSelector(selectCurrentSong);
   const { currentSongData } = useSelector(selectSongQueue);
 
   // ref

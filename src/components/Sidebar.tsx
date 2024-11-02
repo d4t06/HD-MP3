@@ -9,7 +9,6 @@ import { Skeleton } from "../components";
 import { useTheme, useAuthStore, useSongsStore } from "../store";
 import ScrollTop from "./ScrollTop";
 import { useDispatch } from "react-redux";
-import { resetCurrentSong } from "@/store/currentSongSlice";
 import { resetCurrentPlaylist } from "@/store/currentPlaylistSlice";
 export default function Sidebar() {
   // store
@@ -23,7 +22,6 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const reset = () => {
-    dispatch(resetCurrentSong());
     dispatch(resetCurrentPlaylist());
     resetSongPlaylistStore();
   };

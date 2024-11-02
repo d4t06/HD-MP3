@@ -4,7 +4,6 @@ import { Button, SongList } from ".";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocalStorage } from "../utils/appHelpers";
-import { resetCurrentSong } from "@/store/currentSongSlice";
 import {
   resetSongQueue,
   selectSongQueue,
@@ -21,7 +20,6 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   const dispatch = useDispatch();
   const { theme } = useTheme();
   const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
-  // const { currentSong } = useSelector(selectCurrentSong);
 
   const handleSetSong = useCallback(
     (queueId: string) => {
@@ -35,7 +33,6 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   const clearSongQueue = useCallback(() => {
     setIsOpenSongQueue(false);
     dispatch(resetSongQueue());
-    dispatch(resetCurrentSong());
     setLocalStorage("duration", 0);
   }, []);
 

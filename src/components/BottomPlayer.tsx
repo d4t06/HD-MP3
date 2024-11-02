@@ -12,7 +12,6 @@ import { useLocation } from "react-router-dom";
 import { Control } from ".";
 
 import useVolume from "../hooks/useVolume";
-// import { selectCurrentSong } from "@/store/currentSongSlice";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";

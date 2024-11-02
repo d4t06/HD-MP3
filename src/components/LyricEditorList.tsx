@@ -3,6 +3,7 @@ import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useEditLyricContext } from "@/store/EditSongLyricContext";
 import { AddLyricItem, LyricItem } from ".";
 import { useTheme } from "@/store";
+import { LyricStatus } from "./LyricEditor";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
@@ -13,7 +14,7 @@ export default function LyricEditorList({ controlRef }: Props) {
 
   const { baseLyricArr, lyrics, currentLyricIndex, updateLyric } = useEditLyricContext();
 
-  const scrollBehavior = useRef<ScrollBehavior>("instant");
+  const scrollBehavior = useRef<ScrollBehavior>("auto");
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
@@ -33,16 +34,18 @@ export default function LyricEditorList({ controlRef }: Props) {
           {!!baseLyricArr.length ? (
             <>
               {baseLyricArr.map((lyric, index) => {
-                const status =
+                let status: LyricStatus =
                   index === currentLyricIndex
                     ? "active"
                     : index < currentLyricIndex
                     ? "done"
                     : "coming";
 
+                if (index === baseLyricArr.length - 1) status = "active";
+
                 return (
                   <LyricItem
-                    activeColor={theme.type === 'light' ? theme.content_text : ''}
+                    activeColor={theme.type === "light" ? theme.content_text : ""}
                     className="pt-[37px] text-[18px] mr-[24px]"
                     key={index}
                     status={status}
@@ -63,6 +66,7 @@ export default function LyricEditorList({ controlRef }: Props) {
               <AddLyricItem
                 seek={handleSeek}
                 lyric={lyric}
+                isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1 }
                 key={index}
                 theme={theme}
                 updateLyric={(text) => updateLyric(index, text)}

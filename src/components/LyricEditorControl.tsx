@@ -220,7 +220,7 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         </button>
       </div>
 
-      <div ref={progressLineRef} className={`h-1 rounded-full mt-3 w-full`}></div>
+      <div ref={progressLineRef} style={{backgroundColor: 'rgba(255,255,255,.3)'}} className={`h-1 rounded-full mt-3 w-full`}></div>
 
       <Modal variant="animation" ref={modalRef}>
         {renderModal()}

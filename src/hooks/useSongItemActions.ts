@@ -1,13 +1,10 @@
 import { useSongsStore } from "@/store/SongsContext";
 import { RefObject, useState } from "react";
 import { useToast } from "../store";
-// import { useDispatch, useSelector } from "react-redux"/;
 
 import usePlaylistActions from "./usePlaylistActions";
-// import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 import { deleteSong } from "@/services/firebaseService";
 import { TriggerRef } from "@/components/MyPopup";
-// import { selectSongQueue } from "@/store/songQueueSlice";
 
 type Props = {
   song: Song;
@@ -18,19 +15,15 @@ type Props = {
 
 const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   // store
-//   const dispatch = useDispatch();
   const { setErrorToast, setSuccessToast } = useToast();
-//   const { currentSongData } = useSelector(selectSongQueue);
   const { userSongs, setUserSongs } = useSongsStore();
 
   // state
-
   const [loading, setLoading] = useState(false);
 
   // hook
   const { removeSong, addSongsSongItem } = usePlaylistActions();
 
-  // must use middle variable 'song' to add to playlist in mobile device
   const handleAddSongToPlaylistMobile = async (playlist: Playlist) => {
     try {
       setLoading(true);

@@ -3,7 +3,6 @@ import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
-// import { selectCurrentSong } from "@/store/currentSongSlice";
 
 export default function useSongLyric({
   audioEle,
@@ -12,7 +11,6 @@ export default function useSongLyric({
   audioEle: HTMLAudioElement;
   isOpenFullScreen: boolean;
 }) {
-  //   const { currentSong } = useSelector(selectCurrentSong);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
   const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);

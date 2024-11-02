@@ -46,7 +46,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
   useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
 
   const classes = {
-    button: `p-2 md:p-[6px]  rounded-full bg-${theme.alpha} hover:bg-${theme.alpha} md:bg-transparent `,
+    button: `p-1 rounded-full md:bg-transparent `,
     buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
       admin ? "hidden" : ""
     }`,

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { scrollToActiveSong } from "./useScrollSong";
 import appConfig from "../config/app";
-// import { selectCurrentSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 
 export default function useIdle(
@@ -11,7 +10,6 @@ export default function useIdle(
   isOpenFullScreen: boolean
 ) {
   // store
-  // const { currentSong } = useSelector(selectCurrentSong);
   const { currentSongData } = useSelector(selectSongQueue);
 
   // state

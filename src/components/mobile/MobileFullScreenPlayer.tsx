@@ -3,7 +3,6 @@ import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
 import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
-// import { selectCurrentSong } from "@/store/currentSongSlice";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
@@ -28,25 +27,18 @@ export default function MobileFullScreenPlayer({
   setIsOpenFullScreen,
 }: Props) {
   // use store
-  //   const { currentSong } = useSelector(selectCurrentSong);
-
   const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
 
   // state
   const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
-  const [scalingImage, _setScalingImage] = useState(false);
+  // const [scalingImage, _setScalingImage] = useState(false);
 
   // ref
-  // const bgRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // use hooks
-  // useBgImage({ bgRef, currentSong });
   const { wrapperRef } = useMobileFullScreenPlayer({ isOpenFullScreen });
-
-  const isLandscape = false;
-  const notPlayingOrLandscape = (activeTab != "Playing" && !scalingImage) || isLandscape;
 
   const classes = {
     headerWrapper: "flex mb-4",
@@ -110,14 +102,14 @@ export default function MobileFullScreenPlayer({
           {/* container */}
           <div ref={containerRef} className={classes.container}>
             {/* song info */}
-            <div className={`${notPlayingOrLandscape ? "flex" : "sm:flex"}`}>
+            <div className={`${activeTab != "Playing" ? "flex" : "sm:flex"}`}>
               <MobileSongThumbnail
                 expand={activeTab === "Playing"}
                 imageUrl={currentSongData?.song.image_url}
               />
 
               <div
-                className={`ml-2 ${notPlayingOrLandscape ? "block" : "hidden sm:block"}`}
+                className={`ml-2 ${activeTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
                   {currentSongData?.song.name}
@@ -146,7 +138,7 @@ export default function MobileFullScreenPlayer({
                   <ScrollText
                     autoScroll
                     className={`opacity-60 ${
-                      activeTab === "Playing" || isLandscape ? "text-lg" : "text-base"
+                      activeTab === "Playing" ? "text-lg" : "text-base"
                     }`}
                     content={currentSongData?.song.singer || "..."}
                   />

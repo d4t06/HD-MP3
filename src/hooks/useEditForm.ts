@@ -1,9 +1,7 @@
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useAuthStore, useSongsStore, useToast } from "@/store";
-// import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { useEffect, useState } from "react";
-// import { useDispatch } from "react-redux";
 
 type Props = {
   song: Song;
@@ -18,10 +16,8 @@ type Props = {
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
 export default function useEditForm({ song, inputFields, closeModal }: Props) {
-  //   const dispatch = useDispatch();
   const { user } = useAuthStore();
   const { updateUserSong } = useSongsStore();
-  //   const { currentSong } = useSelector(selectCurrentSong);
 
   const [validName, setValidName] = useState(!!song.name);
   const [validSinger, setValidSinger] = useState(!!song.singer);

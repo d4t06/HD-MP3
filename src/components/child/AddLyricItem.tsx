@@ -7,9 +7,10 @@ type Props = {
   seek: (time: number) => void;
   theme: ThemeType & { alpha: string };
   updateLyric: (t: string) => void;
+  isLast: boolean
 };
 
-function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
+function AddLyricItem({ lyric, seek, theme, isLast, updateLyric }: Props) {
   const [isEditing, setIsEditing] = useState(false);
   const [text, setText] = useState(lyric.text);
   const textRef = useRef<ElementRef<"textarea">>(null);
@@ -22,7 +23,7 @@ function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
   };
 
   const classes = {
-    input: `bg-${theme.alpha} rounded-[4px] outline-none w-full px-2 py-1`,
+    input: `bg-${theme.alpha} text-lg rounded-[4px] outline-none w-full px-2 py-1`,
   };
 
   useEffect(() => {
@@ -32,7 +33,7 @@ function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
   }, [isEditing]);
 
   return (
-    <div className="pt-[10px]">
+    <div className="pt-[10px] last:mb-[30vh]">
       <button
         className={`text-[18px] ${theme.content_hover_text}`}
         onClick={() => seek(lyric.start)}
@@ -49,6 +50,13 @@ function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
           </button>
         </p>
       )}
+
+      {!isEditing && isLast &&    <button
+        className={`text-[18px] ${theme.content_hover_text}`}
+        onClick={() => seek(lyric.start)}
+      >
+        {formatTime(lyric.end)}
+      </button>}
 
       {isEditing && (
         <form action="" onSubmit={handleEdit}>

@@ -10,8 +10,11 @@ import {
 } from "../utils/appHelpers";
 
 import { useLocation } from "react-router-dom";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
-// import { setSong } from "@/store/currentSongSlice";
+import {
+  PlayStatus,
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "@/store/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import usePlayerControl from "./usePlayerControl";
@@ -26,7 +29,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   const { theme } = useTheme();
   const { user } = useAuthStore();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
-  const { playStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
+  const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
     selectAllPlayStatusStore
   );
 
@@ -34,8 +37,6 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   // state
   const firstTimeSongLoaded = useRef(true);
-  // const currentIndexRef = useRef(0); // update current index
-  //   const currentSongQueueIdRef = useRef(""); // update current index
   const currentSongDataRef = useRef<{ song: Song; index: number }>();
 
   const prevSeekTime = useRef(0); // prevent double click
@@ -53,6 +54,7 @@ export default function useAudioEvent({ audioEle }: Props) {
 
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
+  const playStatusRef = useRef<PlayStatus>("paused");
 
   // use hook
   const location = useLocation();
@@ -183,10 +185,15 @@ export default function useAudioEvent({ audioEle }: Props) {
     if (currentTimeEle) currentTimeEle.innerText = formatTime(currentTime) || "0:00";
   };
 
+  /** still call one when set new song
+   * case glitch play playlist button
+   * fix: dispatch setSong => playStatus = 'loading'
+   * add condition only run timeUpdate when status != "loading"
+   */
   const handleTimeUpdate = () => {
     const currentTime = audioEle.currentTime;
 
-    if (shouldSetPlayingStatus.current)
+    if (shouldSetPlayingStatus.current && playStatusRef.current !== "loading")
       dispatch(setPlayStatus({ playStatus: "playing" }));
     updateTimeProgressEle(currentTime);
 
@@ -362,8 +369,26 @@ export default function useAudioEvent({ audioEle }: Props) {
     ) {
       myTitle = `${currentPlaylist.name}`;
     }
+
     document.title = myTitle;
+    playStatusRef.current = playStatus;
   }, [playStatus]);
+
+  useEffect(() => {
+    if (!triggerPlayStatus || triggerPlayStatus === playStatus) return;
+
+    switch (triggerPlayStatus) {
+      case "playing":
+        play();
+        break;
+      case "paused":
+        pause();
+        break;
+
+      default:
+        console.log("no trigger action");
+    }
+  }, [triggerPlayStatus]);
 
   //   update song end event
   useEffect(() => {

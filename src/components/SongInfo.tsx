@@ -1,9 +1,7 @@
 // import { useSelector } from "react-redux";
-import { ScrollText } from ".";
+import { Image, ScrollText } from ".";
 import { ElementRef, useRef } from "react";
-import siteLogo from "../assets/siteLogo.png";
 import useVinyl from "../hooks/useVinyl";
-// import { selectCurrentSong } from "@/store/currentSongSlice";
 
 type Props = {
   admin?: boolean;
@@ -13,8 +11,6 @@ type Props = {
 
 export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   const vinylRef = useRef<ElementRef<"img">>(null);
-
-  // const { currentSong } = useSelector(selectCurrentSong);
 
   // hook
   useVinyl({ vinylRef });
@@ -27,10 +23,9 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   return (
     <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
       <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
-        <div className={admin ? `w-[46px]` : "w-[56px]"}>
-          <img
-            ref={vinylRef}
-            src={song?.image_url || siteLogo}
+        <div ref={vinylRef} className={admin ? `w-[46px]` : "w-[56px]"}>
+          <Image
+            src={song?.image_url}
             className={`rounded-full w-full animate-[spin_8s_linear_infinite]`}
           />
         </div>
