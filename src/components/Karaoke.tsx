@@ -1,5 +1,4 @@
 import useKaraoke from "@/hooks/useKaraoke";
-import { useLyricContext } from "@/store/LyricContext";
 import { ElementRef, useRef } from "react";
 
 type Props = {
@@ -9,27 +8,27 @@ type Props = {
 export default function Karaoke({ audioEle }: Props) {
   const lyricElementsRef = useRef<ElementRef<"p">[]>([]);
 
-  const { loading, evenOverlay, currentIndex, oddOverlay, textData } = useKaraoke({
+  const { loading, evenOverlay, oddOverlay, textData } = useKaraoke({
     lyricElementsRef,
     audioEle,
   });
 
   const classes = {
-    lyric: "absolute text-[40px] opacity-0 pointer-none whitespace-nowrap",
+    lyric: "relative text-[36px] pointer-none",
   };
 
   if (loading) return "loading";
 
   return (
     <>
-      <div className="relative">
+      <div className={classes.lyric}>
         {textData.even || "..."}
         <p ref={evenOverlay} className="absolute left-0 top-0 h-full">
           {textData.even || "..."}
         </p>
       </div>
 
-      <div className="relative">
+      <div className={classes.lyric}>
         {textData.odd || "..."}
         <p ref={oddOverlay} className="absolute left-0 top-0 h-full">
           {textData.odd || "..."}

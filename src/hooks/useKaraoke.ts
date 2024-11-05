@@ -14,6 +14,8 @@ type Props = {
 //   Object.assign(ele.style, { opacity: "0" });
 // };
 
+const LYRIC_TIME_BOUNDED = 0.3;
+
 const isOdd = (n: number) => {
   return n % 2 !== 0;
 };
@@ -30,6 +32,9 @@ export default function useKaraoke({ audioEle, lyricElementsRef }: Props) {
   // const eventText = useRef<ElementRef<"p">>(null);
   const evenOverlay = useRef<ElementRef<"p">>(null);
 
+  const currentTimeRef = useRef(0);
+  const currentIndexRef = useRef(0);
+
   const textData = useMemo(() => {
     if (!songLyrics.length) return { odd: "", even: "" };
     else
@@ -39,14 +44,50 @@ export default function useKaraoke({ audioEle, lyricElementsRef }: Props) {
       };
   }, [currentIndex, songLyrics]);
 
+
+  const handleAddAnimation = () => {
+    if (isOdd(currentIndex)) {
+      
+    }
+  }
+
   const handleTimeUpdate = () => {
-    const currentTime = audioEle.currentTime;
+    const direction =
+      audioEle.currentTime > currentTimeRef.current ? "forward" : "backward";
 
-    // if (!eventText.current || !oddText.current) return;
+    currentTimeRef.current = audioEle.currentTime;
 
-    // eventText.current.innerText = "asdsad";
-    // oddText.current.innerText = "asdsad";
-    if (Math.round(currentTime) % 5 === 0) setCurrentIndex((prev) => prev + 1);
+    let nextIndex = currentIndexRef.current;
+
+    switch (direction) {
+      case "forward":
+        while (
+          nextIndex < songLyrics.length &&
+          songLyrics[nextIndex + 1] &&
+          songLyrics[nextIndex + 1].start - LYRIC_TIME_BOUNDED <
+            currentTimeRef.current + LYRIC_TIME_BOUNDED
+        ) {
+          nextIndex += 1;
+        }
+        break;
+
+      case "backward":
+        while (
+          nextIndex > 0 &&
+          songLyrics[nextIndex - 1] &&
+          songLyrics[nextIndex - 1].end - LYRIC_TIME_BOUNDED >
+            currentTimeRef.current + LYRIC_TIME_BOUNDED
+        ) {
+          nextIndex -= 1;
+        }
+        break;
+    }
+
+    if (nextIndex !== currentIndexRef.current) {
+      currentIndexRef.current = nextIndex;
+
+      setCurrentIndex(nextIndex);
+    }
   };
 
   useEffect(() => {
@@ -60,6 +101,13 @@ export default function useKaraoke({ audioEle, lyricElementsRef }: Props) {
       audioEle.addEventListener("timeupdate", handleTimeUpdate);
     };
   }, [songLyrics]);
+
+  useEffect(() => {
+    currentIndexRef.current = currentIndex;
+
+    handleAddAnimation()
+
+  }, [currentIndex]);
 
   return {
     loading,
