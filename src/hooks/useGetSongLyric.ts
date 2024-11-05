@@ -3,6 +3,7 @@ import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { useLyricContext } from "@/store/LyricContext";
 
 export default function useSongLyric({
   audioEle,
@@ -13,13 +14,13 @@ export default function useSongLyric({
 }) {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
-  const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
+  const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
+    useLyricContext();
+  // const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [isSongLoaded, setIsSongLoaded] = useState(false);
   const timerId = useRef<NodeJS.Timeout>();
-
-  const ranGetLyric = useRef(false);
 
   const getLyric = async () => {
     try {

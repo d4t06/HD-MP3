@@ -20,6 +20,8 @@ import MyTooltip from "./MyTooltip";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurHash } from "@/constants/blurhash";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import Karaoke from "./Karaoke";
+import LyricContextProvider from "@/store/LyricContext";
 
 interface Props {
   isOpenFullScreen: boolean;
@@ -279,18 +281,20 @@ function FullScreenPlayer({
           )}
 
           {/* lyric tab */}
-          <div
-            className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}
-          >
-            {renderLyricTab}
-          </div>
-          <div
-            className={`absolute inset-0 z-20 ${activeTab === "Karaoke" ? "" : "hidden"}`}
-          >
-            <h1 className="text-center font-semibold opacity-60 relative top-[50%]">
-              Coming soon...
-            </h1>
-          </div>
+          <LyricContextProvider>
+            <div
+              className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}
+            >
+              {renderLyricTab}
+            </div>
+            <div
+              className={`absolute inset-0 z-20 flex flex-col items-center justify-center ${
+                activeTab === "Karaoke" ? "" : "hidden"
+              }`}
+            >
+              <Karaoke audioEle={audioEle} />
+            </div>
+          </LyricContextProvider>
         </div>
 
         {activeTab !== "Songs" && (
