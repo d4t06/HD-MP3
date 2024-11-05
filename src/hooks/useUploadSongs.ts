@@ -182,7 +182,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
             msg: ">>> api: set song doc",
           });
 
-          addUserSongs([targetSong]);
+          addUserSongs([{...targetSong, queue_id: nanoid(4)}]);
 
           shiftSong();
 
