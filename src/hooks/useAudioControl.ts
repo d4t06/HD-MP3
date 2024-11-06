@@ -40,6 +40,8 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   const updateProgress = (progress?: number) => {
+    if (!audioEle) return;
+
     const _progress = +(
       progress || (audioEle.currentTime / audioEle.duration) * 100
     ).toFixed(1);
@@ -59,10 +61,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   const handleError = () => {
-
-
-    console.log('error');
-    
+    console.log("error");
 
     setStatus("error");
   };
@@ -83,18 +82,23 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
   // add events listener
   useEffect(() => {
+    if (!audioEle) return;
+
     audioEle.addEventListener("error", handleError);
     audioEle.addEventListener("pause", handlePaused);
     audioEle.addEventListener("playing", handlePlaying);
-    audioEle.addEventListener("timeupdate", handleTimeUpdate);
+
+    if (progressLineRef?.current)
+      audioEle.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
       audioEle.removeEventListener("error", handleError);
       audioEle.removeEventListener("pause", handlePaused);
       audioEle.removeEventListener("playing", handlePlaying);
-      audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+      if (progressLineRef?.current)
+        audioEle.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, []);
+  }, [audioEle]);
 
   // update time line background color
   useEffect(() => {

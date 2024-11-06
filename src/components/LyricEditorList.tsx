@@ -12,10 +12,9 @@ type Props = {
 export default function LyricEditorList({ controlRef }: Props) {
   const { theme } = useTheme();
 
-  const { baseLyricArr, lyrics, currentLyricIndex, updateLyric } = useEditLyricContext();
+  const { baseLyricArr, lyrics, currentLyricIndex, song } = useEditLyricContext();
 
   const scrollBehavior = useRef<ScrollBehavior>("auto");
-
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
   };
@@ -62,14 +61,16 @@ export default function LyricEditorList({ controlRef }: Props) {
 
         <div className={"w-1/2 px-2"}>
           {!!lyrics?.length &&
+            song &&
             lyrics.map((lyric, index) => (
               <AddLyricItem
+                songUrl={song.song_url}
                 seek={handleSeek}
+                index={index}
                 lyric={lyric}
-                isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1 }
+                isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1}
                 key={index}
                 theme={theme}
-                updateLyric={(text) => updateLyric(index, text)}
               />
             ))}
         </div>
