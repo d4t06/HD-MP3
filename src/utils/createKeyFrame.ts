@@ -1,33 +1,41 @@
-export default function createKeyFrame(growList: number[]) {
+export default function createKeyFrame(growList: number[], widthList: number[]) {
   const style = document.querySelector("style");
 
   if (!style) return;
 
-  let keyFrame = `@keyframes lyric{0%{width:0%}100%{width:100%}`;
+  let keyFrame = `@keyframes lyric{0%{width:0%}`;
 
-//   let minimalAmount = 100 / growList.length;
-//   let totalGrow = growList.reduce((p, c) => p + c, 0);
+  if (!growList.length) {
+    keyFrame += "100%{width:100%}}";
+    style.innerText = keyFrame;
 
-//   const keyFrameData: { progress: number; width: number }[] = [];
+    return;
+  }
 
-//   let sumGrow = 0;
-//   for (let index = 0; index < growList.length - 1; index++) {
-//     const grow = growList[index];
+  let totalGrow = growList.reduce((p, c) => p + c, 0);
 
-//     keyFrameData.push({
-//       progress: Math.round((sumGrow / totalGrow) * 100),
-//       width: Math.round(minimalAmount * (index + 1)),
-//     });
+  const keyFrameData: { progress: number; width: number }[] = [];
 
-//     sumGrow += grow;
-//   }
+  let sumGrow = 0;
+  let sumWidth = 0;
+  for (let index = 0; index < widthList.length - 1; index++) {
+    const textWidth = widthList[index];
+    const textGrow = growList[index];
 
-//   for (const data of keyFrameData) {
-//     keyFrame += `${data.progress}%{width:${data.width}%}`;
-//   }
+    sumWidth += textWidth;
+    sumGrow += textGrow;
 
-//   keyFrame += "100%{width:100%}}";
-//   console.log(keyFrame);
+    keyFrameData.push({
+      progress: Math.round((sumGrow / totalGrow) * 100),
+      width: sumWidth,
+    });
+  }
+
+  for (const data of keyFrameData) {
+    keyFrame += `${data.progress}%{width:${data.width}%}`;
+  }
+
+  keyFrame += "100%{width:100%}}";
 
   style.innerText = keyFrame;
 }

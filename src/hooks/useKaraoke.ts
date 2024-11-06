@@ -1,5 +1,6 @@
 import { useLyricContext } from "@/store/LyricContext";
-import { selectCover } from "music-metadata";
+import createKeyFrame from "@/utils/createKeyFrame";
+import { getWidthList } from "@/utils/getWidthList";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 
 type Props = {
@@ -21,6 +22,9 @@ export default function useKaraoke({ audioEle }: Props) {
   const oddOverlay = useRef<ElementRef<"p">>(null); // const eventText = useRef<ElementRef<"p">>(null);
   const evenOverlay = useRef<ElementRef<"p">>(null);
 
+  const tempEventText = useRef<ElementRef<"div">>(null);
+  const tempOddText = useRef<ElementRef<"div">>(null);
+
   const currentTimeRef = useRef(0);
   const currentIndexRef = useRef(0);
 
@@ -31,8 +35,8 @@ export default function useKaraoke({ audioEle }: Props) {
       if (!songLyrics[currentIndex + 1]) return { odd: "", even: "" };
 
       return {
-        odd: songLyrics[_isOdd ? currentIndex : currentIndex + 1].text,
-        even: songLyrics[_isOdd ? currentIndex + 1 : currentIndex].text,
+        odd: songLyrics[_isOdd ? currentIndex : currentIndex + 1].text.trim(),
+        even: songLyrics[_isOdd ? currentIndex + 1 : currentIndex].text.trim(),
       };
     }
   }, [currentIndex, songLyrics]);
@@ -46,13 +50,9 @@ export default function useKaraoke({ audioEle }: Props) {
     overlay: ElementRef<"p">,
     past: number
   ) => {
-    const style = document.querySelector("style");
-
-    if (!style) return;
-
-    style.innerText = `@keyframes lyric{0%{width:0%}25%{width:25%}50%{width:50%}75%{width:75%}100%{width:100%}}`;
-
-    overlay.style.animation = `lyric ${lyric.end - lyric.start}s linear`;
+    overlay.style.animation = `lyric ${
+      (lyric?.tune?.end || lyric.end) - lyric.start
+    }s linear forwards`;
 
     if (past > 0.2) {
       overlay.style.animationDelay = `-${past}s`;
@@ -96,13 +96,29 @@ export default function useKaraoke({ audioEle }: Props) {
 
       setCurrentIndex(nextIndex);
 
-      if (!oddOverlay.current || !evenOverlay.current) return;
+      if (
+        !oddOverlay.current ||
+        !evenOverlay.current ||
+        !tempOddText.current ||
+        !tempEventText.current
+      )
+        return;
 
       const _isOdd = isOdd(nextIndex);
 
       const nextLyric = songLyrics[nextIndex];
 
-      const past = currentTimeRef.current - nextLyric.start + 0.3;
+      const past =
+        currentTimeRef.current - (nextLyric?.tune ? nextLyric.tune.end : nextLyric.end);
+
+      const widthList = getWidthList(
+        _isOdd ? tempOddText.current : tempEventText.current
+      );
+
+      createKeyFrame(
+        nextLyric.tune ? nextLyric.tune.grow.split("_").map((v) => +v) : [],
+        widthList
+      );
 
       applyAnimation(
         nextLyric,
@@ -137,5 +153,7 @@ export default function useKaraoke({ audioEle }: Props) {
     evenOverlay,
     currentIndex,
     textData,
+    tempEventText,
+    tempOddText,
   };
 }

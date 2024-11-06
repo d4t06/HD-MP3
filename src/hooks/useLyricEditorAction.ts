@@ -86,7 +86,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       if (!song) return;
 
       const newSongLyric = {
-        real_time: lyrics,
+        real_time: JSON.stringify(lyrics),
         base: baseLyric,
       };
 

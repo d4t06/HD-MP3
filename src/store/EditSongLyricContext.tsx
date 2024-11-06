@@ -7,13 +7,13 @@ const useEditLyric = () => {
   const [lyrics, setLyrics] = useState<RealTimeLyric[]>([]);
   const [currentLyricIndex, setCurrentLyricIndex] = useState<number>(0);
   const [isFetching, setIsFetching] = useState(false);
-  const [isChanged, setIsChanged] = useState(false);
+  const [isChanged, setIsChanged] = useState(true);
 
   const start = useRef(0);
 
-  const updateLyric = (index: number, text: string) => {
+  const updateLyric = (index: number, payload : Partial<RealTimeLyric>) => {
     setLyrics((prev) => {
-      const target = { ...prev[index], text };
+      const target = { ...prev[index], ...payload };
       prev[index] = target;
 
       return [...prev];

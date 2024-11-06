@@ -2,6 +2,7 @@ import { useEditLyricContext } from "@/store/EditSongLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
 import { ElementRef, FormEvent, useEffect, useRef, useState } from "react";
 import useAudioControl from "./useAudioControl";
+import { getWidthList } from "@/utils/getWidthList";
 
 type Props = {
   lyric: RealTimeLyric;
@@ -9,7 +10,7 @@ type Props = {
 };
 
 export default function useEditLyricModal({ lyric, index }: Props) {
-  const { updateLyric } = useEditLyricContext();
+  const { updateLyric, setIsChanged } = useEditLyricContext();
 
   const [words, setWords] = useState<string[]>([]);
   const [growList, setGrowList] = useState<number[]>([]);
@@ -24,6 +25,9 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   const actuallyEndRef = useRef(lyric.end);
   const endRefText = useRef<ElementRef<"span">>(null);
 
+  const tempWordRef = useRef<ElementRef<"div">>(null);
+  const wordWidthList = useRef<number[]>([]);
+
   const { play, pause, status } = useAudioControl({ audioEle: audioRef.current! });
 
   const handleUpdateLyricText = (e: FormEvent) => {
@@ -31,18 +35,47 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
     if (!textRef.current) return;
 
-    updateLyric(index, textRef.current.value);
+    updateLyric(index, { text: textRef.current.value });
   };
 
-  const handleGrowWord = (action: "plus" | "minus", index: number) => {
-    if (growList[index] === 1 && action === "minus") return;
+  const updateLyricTune = () => {
+    const newTune: LyricTune = { end: actuallyEndRef.current, grow: growList.join("_") };
+    updateLyric(index, { tune: newTune });
+
+    setIsChanged(true);
+  };
+
+  type Range = {
+    variant: "range";
+    value: number;
+    index: number;
+  };
+
+  type Button = {
+    variant: "button";
+    action: "minus" | "plus";
+    index: number;
+  };
+
+  const handleGrowWord = (props: Range | Button) => {
+    if (props.variant === "range" && props.value < 1) return;
 
     setGrowList((prev) => {
       const _prev = [...prev];
 
-      _prev[index] = +(
-        action === "minus" ? _prev[index] - 0.2 : _prev[index] + 0.2
-      ).toFixed(1);
+      let newValue = _prev[props.index];
+
+      switch (props.variant) {
+        case "range":
+          newValue = props.value;
+          break;
+        case "button":
+          newValue = +(
+            props.action === "minus" ? newValue - 0.2 : newValue + 0.2
+          ).toFixed(1);
+      }
+
+      _prev[props.index] = newValue;
 
       return _prev;
     });
@@ -62,11 +95,13 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     const audioEle = audioRef.current;
 
     audioEle.currentTime = lyric.start;
-    createKeyFrame(growList);
 
-    overlayRef.current.style.animation = `lyric ${
-      actuallyEndRef.current - lyric.start
-    }s linear`;
+    createKeyFrame(growList, wordWidthList.current);
+
+    overlayRef.current.style.animation = `lyric ${(
+      (actuallyEndRef.current - lyric.start) /
+      1.5
+    ).toFixed(1)}s linear`;
 
     play();
   };
@@ -92,9 +127,19 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   }, []);
 
   useEffect(() => {
+    if (!words.length || !tempWordRef.current) return;
+
+    const list = getWidthList(tempWordRef.current);
+
+    wordWidthList.current = list;
+  }, [words]);
+
+  useEffect(() => {
     if (!audioRef.current) return;
 
     audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
+
+    audioRef.current.playbackRate = 1.5;
 
     return () => {
       audioRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
@@ -107,9 +152,7 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     const _words = text.split(" ").filter((w) => w);
     setWords(_words);
 
-    const parseTune = JSON.parse(lyric?.tune || "{}") as Partial<LyricTune>;
-
-    const _growList = parseTune?.grow ? parseTune.grow.split("_").map((v) => +v) : [];
+    const _growList = lyric?.tune ? lyric.tune.grow.split("_").map((v) => +v) : [];
     _words.forEach((_w, index) => {
       if (typeof _growList[index] !== "number") _growList[index] = 1;
     });
@@ -117,20 +160,20 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     setGrowList(_growList);
 
     if (endRefText.current) {
-      actuallyEndRef.current = parseTune?.end || lyric.end;
+      actuallyEndRef.current = lyric?.tune ? lyric.tune.end : lyric.end;
       endRefText.current.innerText = `${actuallyEndRef.current} / ${lyric.end}`;
     }
-  }, [lyric]);
 
-  useEffect(() => {
     if (timeRangeRef.current) {
-      timeRangeRef.current.value = lyric.end + "";
+      timeRangeRef.current.max = lyric.end + "";
+      timeRangeRef.current.value = actuallyEndRef.current + "";
     }
-  }, []);
+  }, [lyric]);
 
   return {
     overlayRef,
     audioRef,
+    tempWordRef,
     textRef,
     timeRangeRef,
     endRefText,
@@ -143,5 +186,6 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     setEndPoint,
     handleUpdateLyricText,
     status,
+    updateLyricTune,
   };
 }

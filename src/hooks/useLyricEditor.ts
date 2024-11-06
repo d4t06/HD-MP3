@@ -57,8 +57,13 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
-          const lyricData = lyricSnapshot.data() as SongLyric;
-          setLyricRes(lyricData);
+          const lyricData = lyricSnapshot.data() as RawSongLyric;
+
+          setLyricRes({
+            base: lyricData.base,
+            id: lyricData.id,
+            real_time: JSON.parse(lyricData.real_time),
+          });
         }
       }
 

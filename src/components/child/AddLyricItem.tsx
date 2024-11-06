@@ -42,7 +42,7 @@ function AddLyricItem({ lyric, seek, theme, isLast, songUrl, index }: Props) {
           className={`text-[18px] ${theme.content_hover_text}`}
           onClick={() => seek(lyric.start)}
         >
-          {formatTime(lyric.start)}
+          {formatTime(+lyric.start)}
         </button>
 
         <p className="font-[700] text-[18px] select-none flex items-center">

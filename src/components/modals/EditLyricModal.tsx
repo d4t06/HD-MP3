@@ -28,6 +28,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     status,
     endRefText,
     timeRangeRef,
+    tempWordRef,
     isEdit,
     setIsEdit,
     setEndPoint,
@@ -38,10 +39,16 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     handleGrowWord,
     textRef,
     handleUpdateLyricText,
+    updateLyricTune,
   } = useEditLyricModal({
     lyric,
     index,
   });
+
+  const handleUpdateLyricTune = () => {
+    updateLyricTune();
+    closeModal();
+  };
 
   const renderItem = () => {
     return words.map((w, index) => (
@@ -68,10 +75,18 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     <>
       <audio ref={audioRef} src={songUrl} className="hidden"></audio>
 
-      <div className="w-[500px] max-w-[90vw]">
+      <div className="max-w-[90vw]">
         <ModalHeader close={closeModal} title="Edit lyric" />
 
-        <div className="flex items-center space-x-2">
+        <div ref={tempWordRef} className="inline-block opacity-0">
+          {words.map((w, i) => (
+            <span className="leading-[1] inline-block" key={i}>
+              {w}
+            </span>
+          ))}
+        </div>
+
+        <div className="flex items-center space-x-2 mt-[-20px]">
           <Button
             disabled={status === "playing"}
             onClick={_play}
@@ -96,8 +111,8 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
           )}
         </div>
 
-        <div className="flex items-center mt-3 space-x-2">
-          <span>{lyric.start}</span>
+        <div className="flex text-xl items-center mt-3 space-x-2">
+          <span className="flex-shrink-0">Start: {lyric.start}</span>
 
           <input
             ref={timeRangeRef}
@@ -109,8 +124,9 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
             onChange={(e) => setEndPoint(+e.target.value)}
           />
 
-          <span ref={endRefText} className="flex-shrink-0 w-[100px] text-right">
-            / {lyric.end}
+          <span className="flex-shrink-0 w-[170px]">
+            End:
+            <span ref={endRefText}>/ {lyric.end}</span>
           </span>
         </div>
 
@@ -121,11 +137,11 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
             </form>
           ) : (
             <>
-              <div className="relative text-2xl font-[700]">
+              <div className="relative whitespace-nowrap text-2xl font-[700]">
                 {lyric.text}
                 <div
                   ref={overlayRef}
-                  className="absolute top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
+                  className="absolute  top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
                 >
                   {lyric.text}
                 </div>
@@ -136,18 +152,43 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
         <div className="flex h-[60px] mt-3">{renderItem()}</div>
 
+        <div className="flex items-center mt-3">
+          <input
+            type="range"
+            min={1}
+            max={30}
+            step={0.2}
+            className="w-full"
+            value={growList[currentIndex] + ""}
+            onChange={(e) =>
+              handleGrowWord({
+                variant: "range",
+                value: +e.target.value,
+                index: currentIndex,
+              })
+            }
+          />
+
+          <div className="text-xl w-[140px] ml-2 leading-[1]">
+            Grow: {growList[currentIndex]}
+          </div>
+        </div>
+
         <div className="flex justify-center items-center space-x-3 mt-3">
           <Button
             disabled={growList[currentIndex] === 1}
-            onClick={() => handleGrowWord("minus", currentIndex)}
+            onClick={() =>
+              handleGrowWord({ variant: "button", action: "minus", index: currentIndex })
+            }
             size={"clear"}
             className={`${theme.content_bg} px-2 rounded-full`}
           >
             <MinusIcon className="w-6" />
           </Button>
-          <div className="text-xl">{growList[currentIndex]}</div>
           <Button
-            onClick={() => handleGrowWord("plus", currentIndex)}
+            onClick={() =>
+              handleGrowWord({ variant: "button", action: "plus", index: currentIndex })
+            }
             size={"clear"}
             className={`${theme.content_bg} px-2 rounded-full`}
           >
@@ -156,7 +197,12 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
         </div>
 
         <div className="text-right">
-          <Button className={`${theme.content_bg} rounded-full mt-5`}>Ok</Button>
+          <Button
+            onClick={handleUpdateLyricTune}
+            className={`${theme.content_bg} font-playwriteCU rounded-full mt-5`}
+          >
+            Ok
+          </Button>
         </div>
       </div>
     </>

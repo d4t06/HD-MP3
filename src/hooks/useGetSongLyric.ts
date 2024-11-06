@@ -34,8 +34,9 @@ export default function useSongLyric({
       });
 
       if (lyricSnap.exists()) {
-        const lyricData = lyricSnap.data() as SongLyric;
-        setSongLyrics(lyricData.real_time);
+        const lyricData = lyricSnap.data() as RawSongLyric;
+
+        setSongLyrics(JSON.parse(lyricData.real_time));
       }
     } catch (error) {
       console.log({ message: error });

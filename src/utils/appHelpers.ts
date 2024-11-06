@@ -71,7 +71,7 @@ export const parserSong = async (songFile: File) => {
   return data;
 };
 export const formatTime = (time: number) => {
-  const minutes = (time / 60).toFixed(0);
+  const minutes = Math.floor(time / 60);
   const seconds = Math.round(time % 60);
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };

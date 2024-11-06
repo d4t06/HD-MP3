@@ -53,6 +53,10 @@ type SongLyric = {
   real_time: RealTimeLyric[];
 };
 
+type RawSongLyric = Omit<SongLyric, "real_time"> & {
+  real_time: string;
+};
+
 type LyricTune = {
   grow: string;
   end: number;
@@ -62,7 +66,7 @@ interface RealTimeLyric {
   start: number;
   end: number;
   text: string;
-  tune?: string;
+  tune?: LyricTune;
 }
 
 type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray" | "white" | "black";
