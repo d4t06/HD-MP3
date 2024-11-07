@@ -1,6 +1,6 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthStore } from "@/store";
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

@@ -144,20 +144,9 @@ function FullScreenPlayer({
     });
   }, [currentSongData?.song, queueSongs, idle]);
 
-  const renderLyricTab = (
-    <div className={classes.lyricTabContainer}>
-      {/* left */}
-      <SongThumbnail active={true} data={currentSongData?.song} />
+  // const renderLyricTab = (
 
-      {/* right */}
-      <LyricsList
-        className={`w-full ml-[40px] h-full`}
-        audioEle={audioEle}
-        isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
-        active={activeTab === "Lyric"}
-      />
-    </div>
-  );
+  // );
 
   return (
     <div
@@ -285,14 +274,28 @@ function FullScreenPlayer({
             <div
               className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}
             >
-              {renderLyricTab}
+              {/* {renderLyricTab} */}
+              <div className={classes.lyricTabContainer}>
+                {/* left */}
+                <SongThumbnail active={true} data={currentSongData?.song} />
+
+                {/* right */}
+                <LyricsList
+                  className={`w-full ml-[40px] h-full`}
+                  audioEle={audioEle}
+                  active={isOpenFullScreen && activeTab === "Lyric"}
+                />
+              </div>
             </div>
             <div
               className={`absolute inset-0 z-20 flex flex-col items-center justify-center ${
                 activeTab === "Karaoke" ? "" : "hidden"
               }`}
             >
-              <Karaoke audioEle={audioEle} />
+              <Karaoke
+                active={isOpenFullScreen && activeTab === "Karaoke"}
+                audioEle={audioEle}
+              />
             </div>
           </LyricContextProvider>
         </div>

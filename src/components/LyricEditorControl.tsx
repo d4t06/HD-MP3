@@ -24,7 +24,7 @@ import {
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
 import { ModalRef } from "./Modal";
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import { useLyricEditorAction } from "@/hooks/useLyricEditorAction";
 import InputModal from "./modals/InputModal";
 import ModalHeader from "./modals/ModalHeader";

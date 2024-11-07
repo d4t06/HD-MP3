@@ -12,6 +12,7 @@ import { defaultBlurHash } from "@/constants/blurhash";
 import { ControlRef } from "../Control";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import LyricContextProvider from "@/store/LyricContext";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -101,7 +102,7 @@ export default function MobileFullScreenPlayer({
 
           {/* container */}
           <div ref={containerRef} className={classes.container}>
-            {/* song info */}
+            {/* >>> song image */}
             <div className={`${activeTab != "Playing" ? "flex" : "sm:flex"}`}>
               <MobileSongThumbnail
                 expand={activeTab === "Playing"}
@@ -120,7 +121,9 @@ export default function MobileFullScreenPlayer({
               </div>
             </div>
 
-            {/* song name */}
+            {/* <<< end song image */}
+
+            {/* >>> song name */}
             <div
               className={`mt-5 justify-between items-center ${
                 activeTab != "Playing" ? "hidden" : "flex sm:hidden"
@@ -147,18 +150,21 @@ export default function MobileFullScreenPlayer({
 
               <SleepTimerButton controlRef={controlRef} audioEle={audioEle} />
             </div>
+            {/* <<< end song name */}
 
-            {/* lyric tab */}
-            <LyricsList
-              active={activeTab === "Lyric"}
-              className={`text-center ${
-                activeTab === "Lyric" ? "flex-1 block" : "hidden"
-              }`}
-              audioEle={audioEle}
-              isOpenFullScreen={isOpenFullScreen && activeTab === "Lyric"}
-            />
+            <LyricContextProvider>
+              {/* >>> lyric tab */}
+              <LyricsList
+                active={isOpenFullScreen && activeTab === "Lyric"}
+                className={`text-center ${
+                  activeTab === "Lyric" ? "flex-1 block" : "hidden"
+                }`}
+                audioEle={audioEle}
+              />
+              {/* <<< end lyric tab */}
+            </LyricContextProvider>
 
-            {/* song list tab */}
+            {/* >>> song list tab */}
             <div
               className={`leading-[2.2] font-playwriteCU my-2 ${
                 activeTab === "Songs" ? "" : "hidden"
@@ -176,6 +182,7 @@ export default function MobileFullScreenPlayer({
                 <MobileFullScreenSongList currentIndex={currentSongData.index} />
               )}
             </div>
+            {/* <<< end song list tab */}
 
             {/* control */}
             <div

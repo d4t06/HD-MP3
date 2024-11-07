@@ -7,19 +7,18 @@ import { useLyricContext } from "@/store/LyricContext";
 
 export default function useSongLyric({
   audioEle,
-  isOpenFullScreen,
+  active,
 }: {
   audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
+  active: boolean;
 }) {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
   const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
     useLyricContext();
-  // const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
 
-  // const [loading, setLoading] = useState(false);
   const [isSongLoaded, setIsSongLoaded] = useState(false);
+
   const timerId = useRef<NodeJS.Timeout>();
 
   const getLyric = async () => {
@@ -69,7 +68,7 @@ export default function useSongLyric({
   //  api get lyric
   useEffect(() => {
     if (songLyrics.length) return;
-    if (isSongLoaded && isOpenFullScreen) {
+    if (isSongLoaded && active) {
       if (!ranGetLyric.current) {
         ranGetLyric.current = true;
         timerId.current = setTimeout(() => {
@@ -77,7 +76,7 @@ export default function useSongLyric({
         }, 500);
       }
     }
-  }, [isSongLoaded, isOpenFullScreen]);
+  }, [isSongLoaded, active]);
 
   //  reset
   useEffect(() => {
@@ -90,5 +89,5 @@ export default function useSongLyric({
     };
   }, [currentSongData, playStatus === "error"]);
 
-  return { songLyrics, loading };
+  return { songLyrics, loading, playStatus };
 }

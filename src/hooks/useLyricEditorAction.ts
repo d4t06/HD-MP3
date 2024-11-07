@@ -1,6 +1,6 @@
 import { mySetDoc } from "@/services/firebaseService";
 import { useToast } from "@/store";
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { useEffect, useState } from "react";
 

@@ -1,10 +1,12 @@
-import { useLyricContext } from "@/store/LyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
 import { getWidthList } from "@/utils/getWidthList";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
+import { useGetSongLyric } from ".";
+import { PlayStatus } from "@/store/PlayStatusSlice";
 
 type Props = {
   audioEle: HTMLAudioElement;
+  active: boolean;
 };
 
 const LYRIC_TIME_BOUNDED = 0.3;
@@ -13,13 +15,10 @@ const isOdd = (n: number) => {
   return n % 2 !== 0;
 };
 
-export default function useKaraoke({ audioEle }: Props) {
-  const { songLyrics, loading } = useLyricContext();
-
+export default function useKaraoke({ audioEle, active }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const curerntIndexReft = useRef(0);
 
-  const oddOverlay = useRef<ElementRef<"p">>(null); // const eventText = useRef<ElementRef<"p">>(null);
+  const oddOverlay = useRef<ElementRef<"p">>(null);
   const evenOverlay = useRef<ElementRef<"p">>(null);
 
   const tempEventText = useRef<ElementRef<"div">>(null);
@@ -27,10 +26,17 @@ export default function useKaraoke({ audioEle }: Props) {
 
   const currentTimeRef = useRef(0);
   const currentIndexRef = useRef(0);
+  const playsStatusRef = useRef<PlayStatus>("paused");
+
+  const isSwitchedTabs = useRef(false); // readd animation when switch between tabs
+
+  const { songLyrics, loading, playStatus } = useGetSongLyric({ active, audioEle });
 
   const textData = useMemo(() => {
     if (!songLyrics.length) return { odd: "", even: "" };
     else {
+      if (currentIndex < 0) return { odd: "", even: "" };
+
       const _isOdd = isOdd(currentIndex);
       if (!songLyrics[currentIndex + 1]) return { odd: "", even: "" };
 
@@ -46,22 +52,28 @@ export default function useKaraoke({ audioEle }: Props) {
   };
 
   const applyAnimation = (
+    name: string,
     lyric: RealTimeLyric,
     overlay: ElementRef<"p">,
-    past: number
+    delay: number
   ) => {
-    overlay.style.animation = `lyric ${
-      (lyric?.tune?.end || lyric.end) - lyric.start
-    }s linear forwards`;
+    let state = "running";
+    if (playsStatusRef.current === "paused") state = "paused";
 
-    if (past > 0.2) {
-      overlay.style.animationDelay = `-${past}s`;
+    overlay.style.animation = `${name} ${
+      (lyric?.tune?.end || lyric.end) - (lyric?.tune?.start || lyric.start) - 0.3
+    }s linear ${state} forwards`;
+
+    const fixedDelay = +delay.toFixed(1);
+
+    if (Math.abs(fixedDelay) > 0.2) {
+      overlay.style.animationDelay = `${fixedDelay}s`;
     }
   };
 
   const handleTimeUpdate = () => {
     const direction =
-      audioEle.currentTime > currentTimeRef.current ? "forward" : "backward";
+      audioEle.currentTime >= currentTimeRef.current ? "forward" : "backward";
 
     currentTimeRef.current = audioEle.currentTime;
 
@@ -91,9 +103,17 @@ export default function useKaraoke({ audioEle }: Props) {
         break;
     }
 
-    if (nextIndex !== currentIndexRef.current) {
-      currentIndexRef.current = nextIndex;
+    /** or difference index or switch between tabs
+     *  only work if next index difference from current */
+    if (
+      nextIndex !== currentIndexRef.current ||
+      isSwitchedTabs.current ||
+      playsStatusRef.current === "paused" ||
+      playsStatusRef.current === "waiting"
+    ) {
+      isSwitchedTabs.current = false;
 
+      currentIndexRef.current = nextIndex;
       setCurrentIndex(nextIndex);
 
       if (
@@ -108,47 +128,71 @@ export default function useKaraoke({ audioEle }: Props) {
 
       const nextLyric = songLyrics[nextIndex];
 
+      const { tune = { grow: "", end: nextLyric.end } } = nextLyric;
       const past =
-        currentTimeRef.current - (nextLyric?.tune ? nextLyric.tune.end : nextLyric.end);
+        currentTimeRef.current +
+        LYRIC_TIME_BOUNDED -
+        (nextLyric?.tune?.start || nextLyric.start);
 
+      const growList = tune.grow
+        .split("_")
+        .filter((v) => v)
+        .map((v) => +v);
       const widthList = getWidthList(
         _isOdd ? tempOddText.current : tempEventText.current
       );
 
-      createKeyFrame(
-        nextLyric.tune ? nextLyric.tune.grow.split("_").map((v) => +v) : [],
-        widthList
-      );
+      const overlayList = _isOdd
+        ? [oddOverlay.current, evenOverlay.current]
+        : [evenOverlay.current, oddOverlay.current];
 
-      applyAnimation(
-        nextLyric,
-        _isOdd ? oddOverlay.current : evenOverlay.current,
-        past > 0 ? Math.abs(past) : 0
-      );
-
-      clearAnimation(_isOdd ? evenOverlay.current : oddOverlay.current);
+      const name = createKeyFrame(growList, widthList);
+      applyAnimation(name, nextLyric, overlayList[0], -past);
+      clearAnimation(overlayList[1]);
     }
   };
 
+  // decide run whatever run animation or not
   useEffect(() => {
-    if (!songLyrics.length) return;
+    if (playsStatusRef.current === "waiting")
+      // need delay for update animation
+      setTimeout(() => {
+        playsStatusRef.current = playStatus;
+      }, 300);
+    else playsStatusRef.current = playStatus;
+  }, [playStatus]);
+
+  // immediately show lyric when tab active
+  useEffect(() => {
+    if (active) {
+      isSwitchedTabs.current = true;
+      if (playStatus === "paused") handleTimeUpdate();
+    }
+  }, [active]);
+
+  // decide whatever run or not
+  useEffect(() => {
+    if (!songLyrics.length || !active) return;
+
     audioEle.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
       audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+    };
+  }, [songLyrics, active]);
 
+  // reset when change song
+  useEffect(() => {
+    return () => {
       currentTimeRef.current = 0;
-      currentIndexRef.current = 0;
+      currentIndexRef.current = -1;
+      setCurrentIndex(0);
     };
   }, [songLyrics]);
 
-  useEffect(() => {
-    currentIndexRef.current = currentIndex;
-  }, [currentIndex]);
-
   return {
     loading,
-    curerntIndexReft,
+    currentIndexRef,
     oddOverlay,
     evenOverlay,
     currentIndex,

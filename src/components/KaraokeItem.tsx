@@ -18,9 +18,6 @@ export default function KaraokeItem({ text, overlayRef }: Props) {
   useEffect(() => {
     if (!text) return;
     setIsMounted(false);
-   //  if (overlayRef.current) {
-   //    overlayRef.current.style.animation = "none";
-   //  }
   }, [text]);
 
   useEffect(() => {
@@ -39,6 +36,13 @@ export default function KaraokeItem({ text, overlayRef }: Props) {
     }
   }, [isMounted]);
 
+  /** because we set class hidden when inactive
+   *  the overlay animation still running
+   *  fix: add active to dependencies ---- no use
+   *  when active change useKaraoke add new animation
+   *  after this component paused animation
+   *  fix in useKaraoke */
+
   useEffect(() => {
     if (playStatus === "waiting") shouldFade.current = false;
 
@@ -50,7 +54,7 @@ export default function KaraokeItem({ text, overlayRef }: Props) {
   }, [playStatus]);
 
   const classes = {
-    lyric: "relative duration-300 text-[44px] font-[700] pointer-none",
+    lyric: "relative duration-300 text-[44px] font-[700] pointer-none whitespace-nowrap",
   };
 
   return (

@@ -60,6 +60,7 @@ type RawSongLyric = Omit<SongLyric, "real_time"> & {
 type LyricTune = {
   grow: string;
   end: number;
+  start: number;
 };
 
 interface RealTimeLyric {

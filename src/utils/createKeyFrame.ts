@@ -1,15 +1,18 @@
+import { nanoid } from "nanoid";
+
 export default function createKeyFrame(growList: number[], widthList: number[]) {
+  const name = `lyric_${nanoid(4)}`;
+
   const style = document.querySelector("style");
+  if (!style) return name;
 
-  if (!style) return;
-
-  let keyFrame = `@keyframes lyric{0%{width:0%}`;
+  let keyFrame = `@keyframes ${name}{0%{width:0%}`;
 
   if (!growList.length) {
     keyFrame += "100%{width:100%}}";
     style.innerText = keyFrame;
 
-    return;
+    return name;
   }
 
   let totalGrow = growList.reduce((p, c) => p + c, 0);
@@ -38,4 +41,6 @@ export default function createKeyFrame(growList: number[], widthList: number[]) 
   keyFrame += "100%{width:100%}}";
 
   style.innerText = keyFrame;
+
+  return name;
 }

@@ -1,4 +1,4 @@
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
 import { ElementRef, FormEvent, useEffect, useRef, useState } from "react";
 import useAudioControl from "./useAudioControl";
@@ -21,8 +21,11 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   const textRef = useRef<ElementRef<"textarea">>(null);
   const overlayRef = useRef<ElementRef<"div">>(null);
   const audioRef = useRef<ElementRef<"audio">>(null);
-  const timeRangeRef = useRef<ElementRef<"input">>(null);
+  const endTimeRangeRef = useRef<ElementRef<"input">>(null);
+  const startTimeRangeRef = useRef<ElementRef<"input">>(null);
   const actuallyEndRef = useRef(lyric.end);
+  const actuallyStartRef = useRef(lyric.start);
+  const startRefText = useRef<ElementRef<"span">>(null);
   const endRefText = useRef<ElementRef<"span">>(null);
 
   const tempWordRef = useRef<ElementRef<"div">>(null);
@@ -39,7 +42,11 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   };
 
   const updateLyricTune = () => {
-    const newTune: LyricTune = { end: actuallyEndRef.current, grow: growList.join("_") };
+    const newTune: LyricTune = {
+      start: actuallyStartRef.current,
+      end: actuallyEndRef.current,
+      grow: growList.join("_"),
+    };
     updateLyric(index, { tune: newTune });
 
     setIsChanged(true);
@@ -91,19 +98,25 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
   const _play = () => {
     if (!audioRef.current || !overlayRef.current) return;
-
     const audioEle = audioRef.current;
 
-    audioEle.currentTime = lyric.start;
+    audioEle.currentTime = actuallyStartRef.current - 0.3;
 
-    createKeyFrame(growList, wordWidthList.current);
+    const name = createKeyFrame(growList, wordWidthList.current);
 
-    overlayRef.current.style.animation = `lyric ${(
-      (actuallyEndRef.current - lyric.start) /
-      1.5
+    overlayRef.current.style.animation = `${name} ${(
+      (actuallyEndRef.current - actuallyStartRef.current - 0.3) /
+      1.2
     ).toFixed(1)}s linear`;
 
     play();
+  };
+
+  const handlePlayPause = () => {
+    if (status === "paused") _play();
+    else {
+      _pause();
+    }
   };
 
   const setEndPoint = (time: number) => {
@@ -112,6 +125,15 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     actuallyEndRef.current = newEnd;
     if (endRefText.current) {
       endRefText.current.textContent = `${newEnd} / ${lyric.end}`;
+    }
+  };
+
+  const setStartPoint = (time: number) => {
+    const newStart = +time.toFixed(1);
+
+    actuallyStartRef.current = newStart;
+    if (startRefText.current) {
+      startRefText.current.textContent = `${lyric.start} / ${newStart}`;
     }
   };
 
@@ -139,7 +161,7 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
     audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
 
-    audioRef.current.playbackRate = 1.5;
+    audioRef.current.playbackRate = 1.2;
 
     return () => {
       audioRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
@@ -159,28 +181,42 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
     setGrowList(_growList);
 
-    if (endRefText.current) {
+    if (
+      endRefText.current &&
+      startRefText.current &&
+      startTimeRangeRef.current &&
+      endTimeRangeRef.current
+    ) {
+      actuallyStartRef.current = lyric?.tune ? lyric.tune.start : lyric.start;
+      startRefText.current.innerText = `${lyric.start} / ${actuallyStartRef.current}`;
+
+      startTimeRangeRef.current.max = lyric.end + "";
+      startTimeRangeRef.current.value = actuallyStartRef.current + "";
+
       actuallyEndRef.current = lyric?.tune ? lyric.tune.end : lyric.end;
       endRefText.current.innerText = `${actuallyEndRef.current} / ${lyric.end}`;
-    }
 
-    if (timeRangeRef.current) {
-      timeRangeRef.current.max = lyric.end + "";
-      timeRangeRef.current.value = actuallyEndRef.current + "";
+      endTimeRangeRef.current.max = lyric.end + "";
+      endTimeRangeRef.current.value = actuallyEndRef.current + "";
     }
   }, [lyric]);
 
   return {
-    overlayRef,
-    audioRef,
-    tempWordRef,
-    textRef,
-    timeRangeRef,
-    endRefText,
+    refs: {
+      overlayRef,
+      tempWordRef,
+      textRef,
+      endTimeRangeRef,
+      startTimeRangeRef,
+      startRefText,
+      endRefText,
+      audioRef,
+    },
+    setStartPoint,
     words,
     isEdit,
     setIsEdit,
-    _play,
+    handlePlayPause,
     growList,
     handleGrowWord,
     setEndPoint,

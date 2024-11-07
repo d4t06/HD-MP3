@@ -19,7 +19,7 @@ export default function LyricContextProvider({ children }: { children: ReactNode
 
 export const useLyricContext = () => {
   const ct = useContext(Context);
-  if (!ct) throw new Error("");
+  if (!ct) throw new Error("Lyric context not found");
 
   return ct;
 };

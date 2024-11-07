@@ -1,5 +1,5 @@
 import LyricEditor from "../components/LyricEditor";
-import EditLyricContextProvider from "@/store/EditSongLyricContext";
+import EditLyricContextProvider from "@/store/EditLyricContext";
 
 export default function DashboardSongLyric() {
   return (

@@ -1,6 +1,6 @@
 import { RefObject, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import { AddLyricItem, LyricItem } from ".";
 import { useTheme } from "@/store";
 import { LyricStatus } from "./LyricEditor";

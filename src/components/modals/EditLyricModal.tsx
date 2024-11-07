@@ -5,6 +5,7 @@ import Button from "../ui/Button";
 import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import {
   CheckIcon,
+  PauseIcon,
   PencilSquareIcon,
   PlayIcon,
   XMarkIcon,
@@ -24,20 +25,16 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const {
-    _play,
+    handlePlayPause,
     status,
-    endRefText,
-    timeRangeRef,
-    tempWordRef,
+    setStartPoint,
+    refs,
     isEdit,
     setIsEdit,
     setEndPoint,
-    audioRef,
-    overlayRef,
     growList,
     words,
     handleGrowWord,
-    textRef,
     handleUpdateLyricText,
     updateLyricTune,
   } = useEditLyricModal({
@@ -66,6 +63,14 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     ));
   };
 
+  const renderIcon = () => {
+    switch (status) {
+      case "playing":
+        return <PauseIcon className="w-6" />;
+      case "paused":
+        return <PlayIcon className="w-6" />;
+    }
+  };
   const classes = {
     input: `bg-${theme.alpha} text-lg rounded-[4px] outline-none w-full px-2 py-1`,
     button: `${theme.content_bg} rounded-full`,
@@ -73,12 +78,12 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
   return (
     <>
-      <audio ref={audioRef} src={songUrl} className="hidden"></audio>
+      <audio ref={refs.audioRef} src={songUrl} className="hidden"></audio>
 
-      <div className="max-w-[90vw]">
+      <div className="max-w-[90vw] select-none">
         <ModalHeader close={closeModal} title="Edit lyric" />
 
-        <div ref={tempWordRef} className="inline-block opacity-0">
+        <div ref={refs.tempWordRef} className="inline-block opacity-0">
           {words.map((w, i) => (
             <span className="leading-[1] inline-block" key={i}>
               {w}
@@ -88,11 +93,10 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
         <div className="flex items-center space-x-2 mt-[-20px]">
           <Button
-            disabled={status === "playing"}
-            onClick={_play}
+            onClick={handlePlayPause}
             className={classes.button}
           >
-            <PlayIcon className="w-6" />
+            {renderIcon()}
           </Button>
 
           {isEdit ? (
@@ -111,48 +115,43 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
           )}
         </div>
 
-        <div className="flex text-xl items-center mt-3 space-x-2">
-          <span className="flex-shrink-0">Start: {lyric.start}</span>
+        <div className="flex items-center mt-5 space-x-2">
+          <span className="flex-shrink-0 w-[140px]">
+            Start:&nbsp;
+            <span ref={refs.startRefText}></span>
+          </span>
 
           <input
-            ref={timeRangeRef}
+            ref={refs.startTimeRangeRef}
             type="range"
             min={lyric.start}
             max={lyric.end}
-            step={0.1}
+            step={0.2}
+            className="w-full"
+            onChange={(e) => setStartPoint(+e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center mt-3 space-x-2">
+          <span className="flex-shrink-0 w-[140px]">
+            End:&nbsp;
+            <span ref={refs.endRefText}></span>
+          </span>
+
+          <input
+            ref={refs.endTimeRangeRef}
+            type="range"
+            min={lyric.start}
+            step={0.2}
             className="w-full"
             onChange={(e) => setEndPoint(+e.target.value)}
           />
-
-          <span className="flex-shrink-0 w-[170px]">
-            End:
-            <span ref={endRefText}>/ {lyric.end}</span>
-          </span>
         </div>
-
-        <div className="flex justify-center items-center space-x-2 mt-3">
-          {isEdit ? (
-            <form action="" onSubmit={handleUpdateLyricText}>
-              <textarea ref={textRef} className={classes.input} />
-            </form>
-          ) : (
-            <>
-              <div className="relative whitespace-nowrap text-2xl font-[700]">
-                {lyric.text}
-                <div
-                  ref={overlayRef}
-                  className="absolute  top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
-                >
-                  {lyric.text}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        <div className="flex h-[60px] mt-3">{renderItem()}</div>
 
         <div className="flex items-center mt-3">
+          <span className="flex-shrink-0 w-[140px] mr-2 leading-[1]">
+            Grow: {growList[currentIndex]}
+          </span>
           <input
             type="range"
             min={1}
@@ -168,11 +167,29 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
               })
             }
           />
-
-          <div className="text-xl w-[140px] ml-2 leading-[1]">
-            Grow: {growList[currentIndex]}
-          </div>
         </div>
+
+        <div className="flex justify-center items-center space-x-2 mt-5">
+          {isEdit ? (
+            <form action="" onSubmit={handleUpdateLyricText}>
+              <textarea ref={refs.textRef} className={classes.input} />
+            </form>
+          ) : (
+            <>
+              <div className="relative whitespace-nowrap text-2xl font-[700]">
+                {lyric.text}
+                <div
+                  ref={refs.overlayRef}
+                  className="absolute  top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
+                >
+                  {lyric.text}
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex h-[60px] mt-3">{renderItem()}</div>
 
         <div className="flex justify-center items-center space-x-3 mt-3">
           <Button
