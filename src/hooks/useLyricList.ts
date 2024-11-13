@@ -54,22 +54,24 @@ export default function useLyricList({ active, audioEle }: Props) {
     }
 
     if (nextIndex !== currentIndexRef.current) {
-      // make scroll instantly
       if (Math.abs(nextIndex - currentIndexRef.current) > 5)
         scrollBehavior.current = "instant";
 
       currentIndexRef.current = nextIndex;
       setCurrentIndex(nextIndex);
 
-      scrollIntoView(lyricRefs.current[nextIndex]);
+      scrollIntoView(lyricRefs.current[nextIndex], scrollBehavior.current);
+
+      if (scrollBehavior.current === "instant") scrollBehavior.current = "smooth";
     }
   };
 
+  //  immediate scroll to active songs when change tab
   useEffect(() => {
     handleTimeUpdate();
   }, [active]);
 
-  // add event listeners
+  //  add event listeners
   useEffect(() => {
     if (!active || !songLyrics.length) return;
     audioEle.addEventListener("timeupdate", handleTimeUpdate);
@@ -79,7 +81,7 @@ export default function useLyricList({ active, audioEle }: Props) {
     };
   }, [active, songLyrics]);
 
-  //   reset when change song
+  //  reset when change song
   useEffect(() => {
     return () => {
       setCurrentIndex(0);

@@ -17,8 +17,10 @@ const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
   // state
   const { lyricSize } = useSelector(selectAllPlayStatusStore);
 
-  const { loading, songLyrics, currentIndex, containerRef, lyricRefs, scrollBehavior } =
-    useLyricList({ active, audioEle });
+  const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyricList({
+    active,
+    audioEle,
+  });
 
   const lyricSizeMap = {
     small: "text-[20px] sm:text-[30px]",
@@ -39,10 +41,7 @@ const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
           status={status}
           key={index}
           text={l.text}
-          scrollBehavior={scrollBehavior}
-          className={`font-[700] ${
-            lyricSizeMap[lyricSize || "medium"]
-          } mb-[30px] last:mb-[50vh]`}
+          className={` mb-[30px] last:mb-[50vh]`}
         />
       );
     });
@@ -53,11 +52,13 @@ const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
   };
 
   return (
-    <div ref={containerRef} className={`${classes.container} ${className}`}>
+    <div ref={containerRef} className={`${classes.container} ${lyricSizeMap[lyricSize || "medium"]} ${className}`}>
       {loading && (
-        <Center>
-          <ArrowPathIcon className="w-7 animate-spin" />
-        </Center>
+        <div className="relative w-full h-full">
+          <Center>
+            <ArrowPathIcon className="w-7 animate-spin" />
+          </Center>
+        </div>
       )}
 
       {!loading && (
@@ -65,9 +66,11 @@ const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
           {songLyrics.length ? (
             renderItem()
           ) : (
-            <Center>
-              <h1 className="text-[30px] opacity-60">...</h1>
-            </Center>
+            <div className="relative w-full h-full">
+              <Center>
+                <h1 className="text-[30px] opacity-60">...</h1>
+              </Center>
+            </div>
           )}
         </>
       )}

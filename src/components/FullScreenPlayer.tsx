@@ -5,7 +5,6 @@ import { useTheme } from "../store";
 import { SongThumbnail, Tabs, LyricsList, Button } from ".";
 import { useScrollSong } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
-import logoIcon from "../assets/siteLogo.png";
 import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import {
@@ -94,19 +93,15 @@ function FullScreenPlayer({
     button: `w-[44px] h-[44px] bg-white/10 rounded-[99px] hover:scale-[1.05] transition-transform ${theme.content_hover_bg}`,
     wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
     } transition-transform duration-[.7s] linear delay-100`,
-    bg: `absolute inset-0 -z-10 brightness-[70%] translate-3d-0 blur-[4px]`,
-    overplay: `bg-zinc-900 bg-opacity-60 bg-blend-multiply`,
+    bg: `absolute inset-0 -z-10 brightness-[70%]`,
     container: "absolute w-full top-0 bottom-[90px] flex flex-col",
-
     headerWrapper: `relative flex py-[25px] px-[40px] w-full items-center`,
-
     content: `flex-grow relative overflow-hidden`,
     songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-350px/2)]`,
     absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-white/30 rounded-full ${theme.content_hover_bg}`,
     lyricTabContainer:
       "px-[40px] min-[1536px]:container  min-[1536px]:px-[200px] h-full flex items-center justify-center flex-row",
     fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
-    before: `before:content-[''] before:w-[50px] before:h-[10px] before:absolute before:bottom-[-7px] `,
     logo: "animate-[spin_8s_linear_infinite] w-[46px] mr-1",
   };
 
@@ -144,10 +139,6 @@ function FullScreenPlayer({
     });
   }, [currentSongData?.song, queueSongs, idle]);
 
-  // const renderLyricTab = (
-
-  // );
-
   return (
     <div
       className={`${classes.wrapper}  ${
@@ -171,9 +162,8 @@ function FullScreenPlayer({
         <div className={classes.headerWrapper}>
           {/* left */}
           {idle && (
-            <div className={`absolute flex items-center left-4`}>
-              <img className={`${classes.logo}`} src={logoIcon} alt="" />
-              {activeTab === "Lyric" && (
+            <div className={`absolute flex left-4`}>
+              {activeTab !== "Songs" && (
                 <>
                   <p className={`font-playwriteCU text-sm`}>
                     {currentSongData?.song?.name || "..."}{" "}

@@ -1,4 +1,4 @@
-import { RefObject, useRef } from "react";
+import { RefObject } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useEditLyricContext } from "@/store/EditLyricContext";
 import { AddLyricItem, LyricItem } from ".";
@@ -14,7 +14,6 @@ export default function LyricEditorList({ controlRef }: Props) {
 
   const { baseLyricArr, lyrics, currentLyricIndex, song } = useEditLyricContext();
 
-  const scrollBehavior = useRef<ScrollBehavior>("auto");
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
   };
@@ -27,7 +26,7 @@ export default function LyricEditorList({ controlRef }: Props) {
   return (
     <>
       <div
-        className={`flex flex-grow overflow-auto no-scrollbar rounded-xl pt-3 mt-3 ${getBg()}`}
+        className={`flex flex-grow overflow-auto no-scrollbar text-[18px] rounded-xl pt-3 mt-3 ${getBg()}`}
       >
         <div className={"w-1/2 px-2"}>
           {!!baseLyricArr.length ? (
@@ -45,11 +44,10 @@ export default function LyricEditorList({ controlRef }: Props) {
                 return (
                   <LyricItem
                     activeColor={theme.type === "light" ? theme.content_text : ""}
-                    className="pt-[37px] text-[18px] mr-[24px]"
+                    className="pt-[37px] mr-[24px]"
                     key={index}
                     status={status}
                     text={lyric}
-                    scrollBehavior={scrollBehavior}
                   />
                 );
               })}
@@ -59,7 +57,7 @@ export default function LyricEditorList({ controlRef }: Props) {
           )}
         </div>
 
-        <div className={"w-1/2 px-2"}>
+        <div className={"w-1/2 px-2 "}>
           {!!lyrics?.length &&
             song &&
             lyrics.map((lyric, index) => (

@@ -28,39 +28,16 @@ const playlistSongSkeleton = (
 export default function PlaylistDetailSongList({ variant, loading }: Props) {
   const { theme } = useTheme();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+
   const modalRef = useRef<ModalRef>(null);
 
-  const closeModal = () => modalRef.current?.toggle();
-
   const { handleSetSong } = useSetSong({ variant: "playlist" });
+
+  const closeModal = () => modalRef.current?.toggle();
 
   const _handleSetSong = (queueId: string) => {
     handleSetSong(queueId, playlistSongs);
   };
-
-  // const handleSetSong = (song: Song, index: number) => {
-  //   if (!currentPlaylist) return;
-
-  //   const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
-  //   if (currentSong?.id !== song.id || currentSong.song_in !== newSongIn) {
-  //     dispatch(
-  //       setSong({
-  //         ...song,
-  //         currentIndex: index,
-  //         song_in: newSongIn,
-  //       })
-  //     );
-
-  //     // const shouldReplaceQueue =
-  //     //   from.length > 1 ||
-  //     //   from[0] != newSongIn ||
-  //     //   playlistSongs.length !== queueSongs.length;
-  //     const shouldReplaceQueue = true;
-  //     if (shouldReplaceQueue) {
-  //       dispatch(setQueue({ songs: playlistSongs }));
-  //     }
-  //   }
-  // };
 
   const renderCheckBar = useMemo(() => {
     if (!playlistSongs.length) return <></>;

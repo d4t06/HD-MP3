@@ -3,12 +3,12 @@ import { useTheme } from "../store";
 import { Button, SongList } from ".";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
-import { setLocalStorage } from "../utils/appHelpers";
 import {
   resetSongQueue,
   selectSongQueue,
   setCurrentQueueId,
 } from "@/store/songQueueSlice";
+import { setPlayStatus } from "@/store/PlayStatusSlice";
 
 type Props = {
   isOpenSongQueue: boolean;
@@ -31,9 +31,9 @@ function SongQueue({ isOpenSongQueue, setIsOpenSongQueue }: Props) {
   );
 
   const clearSongQueue = useCallback(() => {
-    setIsOpenSongQueue(false);
     dispatch(resetSongQueue());
-    setLocalStorage("duration", 0);
+    dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+    setIsOpenSongQueue(false);
   }, []);
 
   const classes = {

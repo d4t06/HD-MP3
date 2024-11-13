@@ -1,13 +1,4 @@
-import { scrollIntoView } from "@/utils/appHelpers";
-import {
-  ElementRef,
-  MutableRefObject,
-  Ref,
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-} from "react";
+import { Ref, forwardRef, useEffect } from "react";
 import { LyricStatus } from "../LyricEditor";
 
 type Props = {
@@ -15,25 +6,12 @@ type Props = {
   status: LyricStatus;
   className?: string;
   activeColor?: string;
-  scrollBehavior?: MutableRefObject<ScrollBehavior>;
 };
 
 function LyricItem(
-  { text, className = "", status, scrollBehavior, activeColor }: Props,
+  { text, className = "", status, activeColor }: Props,
   ref: Ref<HTMLParagraphElement>
 ) {
-  const lyricRef = useRef<ElementRef<"p">>(null);
-
-  useImperativeHandle(ref, () => lyricRef.current!, []);
-
-  const scroll = () => {
-    const ele = lyricRef.current as HTMLElement;
-    if (ele) {
-      scrollIntoView(ele, scrollBehavior?.current || "smooth");
-      if (scrollBehavior?.current === "instant") scrollBehavior.current = "smooth";
-    }
-  };
-
   const getClass = () => {
     switch (status) {
       case "coming":
@@ -52,7 +30,7 @@ function LyricItem(
   }, [status]);
 
   return (
-    <p ref={lyricRef} className={`${className} select-none  font-[700] ${getClass()}`}>
+    <p ref={ref} className={`${className} select-none  font-[700] ${getClass()}`}>
       {text}
     </p>
   );

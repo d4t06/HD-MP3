@@ -14,9 +14,10 @@ import { setPlayStatus } from "@/store/PlayStatusSlice";
 type Props = {
   loggedIn: boolean;
   openModal: (modal: any) => void;
+  admin?: boolean;
 };
 
-export default function SettingMenu({ openModal }: Props) {
+export default function SettingMenu({ openModal, admin }: Props) {
   const { theme } = useTheme();
   const dispatch = useDispatch();
   const handleSetModal = (modal: any) => {
@@ -40,22 +41,26 @@ export default function SettingMenu({ openModal }: Props) {
     <>
       <PopupWrapper color="sidebar" theme={theme}>
         <ul className="flex flex-col w-[200px]">
-          <li className={`${classes.menuItem} justify-between cursor-default`}>
-            <div className="flex items-center">
-              <PlayCircleIcon className={classes.icon} />
-              Cross fade
-            </div>
-            <Switch active={isCrossFade} cb={handleSetCrossFade} />
-          </li>
+          {!admin && (
+            <li className={`${classes.menuItem} justify-between cursor-default`}>
+              <div className="flex items-center">
+                <PlayCircleIcon className={classes.icon} />
+                Cross fade
+              </div>
+              <Switch active={isCrossFade} cb={handleSetCrossFade} />
+            </li>
+          )}
           <li className={`${classes.menuItem}`} onClick={() => handleSetModal("theme")}>
             <PaintBrushIcon className={classes.icon} />
             Themes
           </li>
           <div className={classes.divide}></div>
-          <li className={`${classes.menuItem}`} onClick={() => handleSetModal("info")}>
-            <InformationCircleIcon className={classes.icon} />
-            Info
-          </li>
+          {!admin && (
+            <li className={`${classes.menuItem}`} onClick={() => handleSetModal("info")}>
+              <InformationCircleIcon className={classes.icon} />
+              Info
+            </li>
+          )}
         </ul>
       </PopupWrapper>
     </>

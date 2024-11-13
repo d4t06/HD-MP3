@@ -1,23 +1,17 @@
 import { Dispatch, SetStateAction, memo, useMemo, useRef } from "react";
-import {
-  SpeakerWaveIcon,
-  SpeakerXMarkIcon,
-  ChevronUpIcon,
-  QueueListIcon,
-} from "@heroicons/react/24/outline";
-// import { useSelector } from "react-redux";
+import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
 import { Control } from ".";
 
-import useVolume from "../hooks/useVolume";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";
 import { ControlRef } from "./Control";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { VolumeButton } from "./VolumeButton";
 interface Props {
   admin?: boolean;
   idle: boolean;
@@ -41,23 +35,12 @@ function BottomPlayer({
 }: Props) {
   const { theme } = useTheme();
   const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
-  // const { currentSong } = useSelector(selectCurrentSong);
 
-  const volumeLine = useRef<HTMLDivElement>(null);
   const controlRef = useRef<ControlRef>(null);
 
   const location = useLocation();
-  const { handleSetVolume, isMute, handleMute, handleWheel } = useVolume(
-    volumeLine,
-    audioEle
-  );
 
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
-
-  // const menuCurrentSong = useMemo(
-  //   () => queueSongs.find((s) => s.queue_id === currentQueueId),
-  //   [currentQueueId, queueSongs]
-  // );
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);
@@ -65,7 +48,6 @@ function BottomPlayer({
   };
 
   const classes = {
-    before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
     wrapper: `border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
@@ -78,8 +60,6 @@ function BottomPlayer({
     controlWrapperChild_2: `${!currentQueueId && "disable"}`,
 
     right: `${admin ? "w-1/4" : "w-1/4 "} flex items-center justify-end`,
-    volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full`,
-    volumeLineCurrent: `absolute left-0 top-0 h-full w-full `,
 
     blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 ${theme.bottom_player_bg}`,
   };
@@ -121,21 +101,7 @@ function BottomPlayer({
         </div>
 
         <div className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}>
-          <div className="flex flex-grow items-center max-w-[120px] mr-2">
-            <button onWheel={handleWheel} onClick={() => handleMute()}>
-              {isMute ? (
-                <SpeakerXMarkIcon className="w-6" />
-              ) : (
-                <SpeakerWaveIcon className="w-6" />
-              )}
-            </button>
-            <div
-              onClick={(e) => handleSetVolume(e)}
-              ref={volumeLine}
-              className={`${classes.volumeLineBase} ${classes.before}`}
-              style={{ background: `#e1e1e1` }}
-            ></div>
-          </div>
+          <VolumeButton audioEle={audioEle} />
 
           {!admin && (
             <div className={`flex items-center ${!currentQueueId ? "disable" : ""}`}>

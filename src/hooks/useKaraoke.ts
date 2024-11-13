@@ -40,9 +40,17 @@ export default function useKaraoke({ audioEle, active }: Props) {
       const _isOdd = isOdd(currentIndex);
       if (!songLyrics[currentIndex + 1]) return { odd: "", even: "" };
 
+      const indexArr = _isOdd
+        ? [currentIndex, currentIndex + 1]
+        : [currentIndex + 1, currentIndex];
+
+      const odd = songLyrics[indexArr[0]].text.trim();
+
+      const even = songLyrics[indexArr[1]].text.trim();
+
       return {
-        odd: songLyrics[_isOdd ? currentIndex : currentIndex + 1].text.trim(),
-        even: songLyrics[_isOdd ? currentIndex + 1 : currentIndex].text.trim(),
+        odd,
+        even,
       };
     }
   }, [currentIndex, songLyrics]);
@@ -61,7 +69,7 @@ export default function useKaraoke({ audioEle, active }: Props) {
     if (playsStatusRef.current === "paused") state = "paused";
 
     overlay.style.animation = `${name} ${
-      (lyric?.tune?.end || lyric.end) - (lyric?.tune?.start || lyric.start) - 0.3
+      (lyric?.tune?.end || lyric.end) - (lyric?.tune?.start || lyric.start)
     }s linear ${state} forwards`;
 
     const fixedDelay = +delay.toFixed(1);

@@ -57,12 +57,17 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
-          const lyricData = lyricSnapshot.data() as RawSongLyric;
+          const lyricData = lyricSnapshot.data();
+
+          const lyrics =
+            typeof lyricData.real_time === "string"
+              ? JSON.parse(lyricData.real_time)
+              : lyricData.real_time;
 
           setLyricRes({
             base: lyricData.base,
             id: lyricData.id,
-            real_time: JSON.parse(lyricData.real_time),
+            real_time: lyrics,
           });
         }
       }
@@ -124,7 +129,7 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
       if (audioRef.current) {
         const latestEndTime = real_time[latestIndex].end;
 
-        audioRef.current.currentTime = latestEndTime;
+        //   audioRef.current.currentTime = latestEndTime;
         start.current = latestEndTime;
       }
     }

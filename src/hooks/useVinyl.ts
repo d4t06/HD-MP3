@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 
 type Props = {
-  vinylRef: RefObject<HTMLImageElement>;
+  vinylRef: RefObject<HTMLDivElement>;
 };
 
 export default function useVinyl({ vinylRef }: Props) {
@@ -15,5 +15,5 @@ export default function useVinyl({ vinylRef }: Props) {
 
     if (playStatus === "playing") vinylEle.style.animationPlayState = "running";
     else vinylEle.style.animationPlayState = "paused";
-  }, [playStatus === "playing"]);
+  }, [playStatus]);
 }

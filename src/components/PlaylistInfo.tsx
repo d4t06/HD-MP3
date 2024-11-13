@@ -180,15 +180,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
       case "my-playlist":
         return (
           <>
-            <Button
-              onClick={handlePlayPlaylist}
-              size={"clear"}
-              className={`rounded-full px-[20px] py-1 ${theme.content_bg} ${
-                !playlistSongs.length && "disable"
-              }`}
-            >
-              {renderPlayPlaylistBtn()}
-            </Button>
+            {renderPlayPlaylistBtn()}
             <Button
               onClick={() => openModal("delete")}
               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}

@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
-  const vinylRef = useRef<ElementRef<"img">>(null);
+  const vinylRef = useRef<ElementRef<"div">>(null);
 
   // hook
   useVinyl({ vinylRef });
@@ -23,10 +23,10 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   return (
     <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
       <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
-        <div ref={vinylRef} className={admin ? `w-[46px]` : "w-[56px]"}>
+        <div ref={vinylRef} className={`${admin ? `w-[46px]` : "w-[56px]"}  animate-[spin_8s_linear_infinite]`}>
           <Image
             src={song?.image_url}
-            className={`rounded-full w-full animate-[spin_8s_linear_infinite]`}
+            className={`rounded-full w-full`}
           />
         </div>
 

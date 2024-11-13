@@ -21,9 +21,10 @@ import usePlayerControl from "./usePlayerControl";
 
 interface Props {
   audioEle: HTMLAudioElement;
+  isOpenFullScreen: boolean;
 }
 
-export default function useAudioEvent({ audioEle }: Props) {
+export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
   // use store
   const dispatch = useDispatch();
   const { theme } = useTheme();
@@ -49,8 +50,6 @@ export default function useAudioEvent({ audioEle }: Props) {
   const isSongEnd = useRef(false);
   // for handle song error
   const isShowMessageWhenSongError = useRef(false);
-  // for not playing status when seek but song paused
-  const shouldSetPlayingStatus = useRef(false);
 
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
@@ -124,8 +123,6 @@ export default function useAudioEvent({ audioEle }: Props) {
     const node = e.target as HTMLElement;
 
     if (timelineEleRef.current) {
-      if (playStatus === "playing") dispatch(setPlayStatus({ playStatus: "waiting" }));
-
       const clientRect = node.getBoundingClientRect();
 
       const length = e.clientX - clientRect.left;
@@ -193,7 +190,7 @@ export default function useAudioEvent({ audioEle }: Props) {
   const handleTimeUpdate = () => {
     const currentTime = audioEle.currentTime;
 
-    if (shouldSetPlayingStatus.current && playStatusRef.current !== "loading")
+    if (playStatusRef.current !== "paused")
       dispatch(setPlayStatus({ playStatus: "playing" }));
     updateTimeProgressEle(currentTime);
 
@@ -247,14 +244,13 @@ export default function useAudioEvent({ audioEle }: Props) {
 
     // update control props
     startFadeWhenEnd.current = audioDuration - 3;
-
     setLocalStorage("current_queue_id", currentSongDataRef.current.song.queue_id);
 
     // case end of list
     if (isEndOfList.current) {
       isEndOfList.current = false;
-      dispatch(setPlayStatus({ playStatus: "paused" }));
-      return;
+
+      return dispatch(setPlayStatus({ playStatus: "paused" }));
     }
 
     if (isInEdit || firstTimeSongLoaded.current) {
@@ -275,8 +271,6 @@ export default function useAudioEvent({ audioEle }: Props) {
            * update it when user click play song
            */
 
-          console.log("go here");
-
           updateTimeProgressEle(memoStorage["current_time"] || 0);
           return;
         }
@@ -285,6 +279,10 @@ export default function useAudioEvent({ audioEle }: Props) {
 
     // normal active song case
     play();
+  };
+
+  const handleWaiting = () => {
+    dispatch(setPlayStatus({ playStatus: "waiting" }));
   };
 
   const handleError = () => {
@@ -323,11 +321,7 @@ export default function useAudioEvent({ audioEle }: Props) {
     audioEle.addEventListener("play", handlePlaying);
     audioEle.addEventListener("loadstart", handleLoadStart);
     audioEle.addEventListener("loadedmetadata", handleLoaded);
-
-    /** should not add 'waiting event'
-     * is cause error on iphone
-     */
-    // audioEle.addEventListener("waiting", handleWaiting);
+    audioEle.addEventListener("waiting", handleWaiting);
 
     return () => {
       audioEle.removeEventListener("error", handleError);
@@ -335,6 +329,7 @@ export default function useAudioEvent({ audioEle }: Props) {
       audioEle.removeEventListener("play", handlePlaying);
       audioEle.removeEventListener("loadstart", handleLoadStart);
       audioEle.removeEventListener("loadedmetadata", handleLoaded);
+      audioEle.addEventListener("waiting", handleWaiting);
     };
   }, []);
 
@@ -357,9 +352,6 @@ export default function useAudioEvent({ audioEle }: Props) {
   // update site title, and decide to set waiting status
   useEffect(() => {
     if (!currentSongData) return;
-
-    if (playStatus === "paused") shouldSetPlayingStatus.current = false;
-    else if (playStatus === "playing") shouldSetPlayingStatus.current = true;
 
     let myTitle = `${currentSongData.song.name} - ${currentSongData.song.singer}`;
     if (
@@ -409,10 +401,12 @@ export default function useAudioEvent({ audioEle }: Props) {
   // update time line background color
   useEffect(() => {
     if (!currentSongDataRef.current) return;
-    themeCode.current = theme.content_code;
+
+    if (isOpenFullScreen) themeCode.current = "#fff";
+    else themeCode.current = theme.content_code;
     // if user no click play yet
     updateTimeProgressEle(firstTimeSongLoaded.current ? memoStorage["current_time"] : 0);
-  }, [theme]);
+  }, [theme, isOpenFullScreen]);
 
   // prevent song autoplay after edit finish
   useEffect(() => {

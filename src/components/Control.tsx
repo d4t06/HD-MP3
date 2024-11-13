@@ -41,6 +41,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     timelineEleRef,
   } = useControl({
     audioEle,
+    isOpenFullScreen
   });
 
   useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
@@ -52,8 +53,6 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     }`,
     progressContainer: `flex w-full flex-row items-center   ${admin ? "h-full" : ""}`,
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
-    processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
-    currentTime: `opacity-60 text-[14px] font-semibold`,
     icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
