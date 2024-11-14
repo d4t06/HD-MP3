@@ -31,7 +31,9 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   const tempWordRef = useRef<ElementRef<"div">>(null);
   const wordWidthList = useRef<number[]>([]);
 
-  const { play, pause, status } = useAudioControl({ audioEle: audioRef.current! });
+  const { play, pause, status, statusRef } = useAudioControl({
+    audioEle: audioRef.current!,
+  });
 
   const handleUpdateLyricText = (e: FormEvent) => {
     e.preventDefault();
@@ -113,7 +115,7 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   };
 
   const handlePlayPause = () => {
-    if (status === "paused") _play();
+    if (statusRef.current === "paused") _play();
     else {
       _pause();
     }
@@ -143,6 +145,21 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     if (+audioRef.current.currentTime.toFixed(1) >= actuallyEndRef.current)
       return _pause();
   };
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === " ") {
+      e.preventDefault();
+      handlePlayPause();
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [hadAudioEle]);
 
   useEffect(() => {
     setHadAudioEle(true);

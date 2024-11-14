@@ -15,6 +15,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   const [isClickPlay, setIsClickPlay] = useState(false);
 
   const themeCode = useRef("");
+  const statusRef = useRef<Status>(status);
 
   const play = () => {
     try {
@@ -107,6 +108,10 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     if (status !== "playing") updateProgress();
   }, [theme]);
 
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
+
   return {
     play,
     pause,
@@ -116,5 +121,6 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     forward,
     backward,
     isClickPlay,
+    statusRef,
   };
 }

@@ -80,6 +80,8 @@ export default function useKaraoke({ audioEle, active }: Props) {
   };
 
   const handleTimeUpdate = () => {
+    if (!songLyrics.length) return;
+
     const direction =
       audioEle.currentTime >= currentTimeRef.current ? "forward" : "backward";
 

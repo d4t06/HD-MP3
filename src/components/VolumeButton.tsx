@@ -18,7 +18,7 @@ export function VolumeButton({ audioEle }: Props) {
 
   const classes = {
     before: `before:content-[''] before:w-[100%] before:h-[16px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
-    volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full`,
+    volumeLineBase: `ml-1 w-full relative h-[4px] cursor-pointer rounded-full shadow-[2px_2px_10px_rgba(0,0,0,.15)]`,
   };
 
   return (

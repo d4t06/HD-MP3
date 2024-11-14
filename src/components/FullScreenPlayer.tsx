@@ -50,8 +50,6 @@ function FullScreenPlayer({
 
   // use hooks
   const navigate = useNavigate();
-  // useBgImage({ bgRef, currentSongData?.song });
-  // dùng hook ở component cha thay vì dùng ở mỗi child
   useScrollSong({
     containerRef,
     songItemRef: activeSongRef,

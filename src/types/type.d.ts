@@ -70,7 +70,14 @@ interface RealTimeLyric {
   tune?: LyricTune;
 }
 
-type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray" | "white" | "black";
+type ThemeKeyType =
+  | "red"
+  | "green_light"
+  | "deep_blue"
+  | "gray"
+  | "white"
+  | "black"
+  | "tet";
 
 type ThemeType = {
   name: string;
@@ -88,6 +95,7 @@ type ThemeType = {
   container_code: string;
   content_hover_bg: string;
   text_color: string;
+  image?: string;
 };
 
 type Toast = {

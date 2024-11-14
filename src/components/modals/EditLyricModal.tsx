@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ElementRef, useRef, useState } from "react";
 import ModalHeader from "./ModalHeader";
 import { useTheme } from "@/store";
 import Button from "../ui/Button";
@@ -24,6 +24,8 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const growInputRef = useRef<ElementRef<"input">>(null);
+
   const {
     handlePlayPause,
     status,
@@ -47,12 +49,18 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     closeModal();
   };
 
+  const handleWordList = (i: number) => {
+    setCurrentIndex(i);
+
+    growInputRef.current?.focus();
+  };
+
   const renderItem = () => {
     return words.map((w, index) => (
       <Button
         style={{ flexGrow: growList[index] }}
         key={index}
-        onClick={() => setCurrentIndex(index)}
+        onClick={() => handleWordList(index)}
         size={"clear"}
         className={`justify-center ${theme.side_bar_bg} border border-${theme.alpha} ${
           currentIndex === index ? theme.content_bg : ""
@@ -80,7 +88,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     <>
       <audio ref={refs.audioRef} src={songUrl} className="hidden"></audio>
 
-      <div className="max-w-[90vw] select-none">
+      <div className="max-w-[90vw] min-w-[400px]">
         <ModalHeader close={closeModal} title="Edit lyric" />
 
         <div ref={refs.tempWordRef} className="inline-block opacity-0">
@@ -92,10 +100,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
         </div>
 
         <div className="flex items-center space-x-2 mt-[-20px]">
-          <Button
-            onClick={handlePlayPause}
-            className={classes.button}
-          >
+          <Button onClick={handlePlayPause} className={classes.button}>
             {renderIcon()}
           </Button>
 
@@ -116,14 +121,15 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
         </div>
 
         <div className="flex items-center mt-5 space-x-2">
-          <span className="flex-shrink-0 w-[140px]">
+          <label htmlFor="start" className="flex-shrink-0 w-[140px]">
             Start:&nbsp;
             <span ref={refs.startRefText}></span>
-          </span>
+          </label>
 
           <input
             ref={refs.startTimeRangeRef}
             type="range"
+            id="start"
             min={lyric.start}
             max={lyric.end}
             step={0.2}
@@ -133,12 +139,13 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
         </div>
 
         <div className="flex items-center mt-3 space-x-2">
-          <span className="flex-shrink-0 w-[140px]">
+          <label htmlFor="end" className="flex-shrink-0 w-[140px]">
             End:&nbsp;
             <span ref={refs.endRefText}></span>
-          </span>
+          </label>
 
           <input
+            id="end"
             ref={refs.endTimeRangeRef}
             type="range"
             min={lyric.start}
@@ -149,11 +156,13 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
         </div>
 
         <div className="flex items-center mt-3">
-          <span className="flex-shrink-0 w-[140px] mr-2 leading-[1]">
+          <label htmlFor="grow" className="flex-shrink-0 w-[140px] mr-2 leading-[1]">
             Grow: {growList[currentIndex]}
-          </span>
+          </label>
           <input
+            ref={growInputRef}
             type="range"
+            id="grow"
             min={1}
             max={30}
             step={0.2}

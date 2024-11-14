@@ -12,6 +12,7 @@ import { ControlRef } from "./Control";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { VolumeButton } from "./VolumeButton";
+import useThemeBgImage from "@/hooks/useThemeBgImage";
 interface Props {
   admin?: boolean;
   idle: boolean;
@@ -37,6 +38,7 @@ function BottomPlayer({
   const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
 
   const controlRef = useRef<ControlRef>(null);
+  const { containerRef } = useThemeBgImage();
 
   const location = useLocation();
 
@@ -66,15 +68,18 @@ function BottomPlayer({
 
   return (
     <div
-      className={`${classes.wrapper} ${isOpenFullScreen && "border-transparent"} ${
+      ref={containerRef}
+      className={`${classes.wrapper} ${isOpenFullScreen ? "border-transparent" : theme.image ? theme.bottom_player_bg : '' } ${
         inEdit && "translate-y-[100%] "
-      } bg-transparent`}
+      } `}
     >
-      <div
-        className={`${classes.blurBg} ${
-          isOpenFullScreen ? "opacity-0 transition-opacity delay-[.2s]" : ""
-        }`}
-      ></div>
+      {!theme.image && (
+        <div
+          className={`${classes.blurBg} ${
+            isOpenFullScreen ? "opacity-0 transition-opacity delay-[.2s]" : ""
+          }`}
+        ></div>
+      )}
       <div
         className={`${classes.container} ${
           isOpenFullScreen ? "justify-center text-white" : "justify-between"

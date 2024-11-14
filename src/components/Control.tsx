@@ -52,7 +52,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
       admin ? "hidden" : ""
     }`,
     progressContainer: `flex w-full flex-row items-center   ${admin ? "h-full" : ""}`,
-    processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
+    processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] shadow-[2px_2px_10px_rgba(0,0,0,.15)] `,
     icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };

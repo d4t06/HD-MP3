@@ -1,6 +1,6 @@
-import { ElementRef, useRef } from "react";
+import { ElementRef, ReactNode, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { BackBtn, Button } from "../components";
+import { Button } from "../components";
 import { useTheme } from "../store";
 import LyricEditorControl, { LyricEditorControlRef } from "./LyricEditorControl";
 import LyricEditorList from "./LyricEditorList";
@@ -9,11 +9,12 @@ import useLyricEditor from "@/hooks/useLyricEditor";
 
 type Props = {
   admin?: boolean;
+  children?: ReactNode;
 };
 
 export type LyricStatus = "active" | "done" | "coming";
 
-export default function LyricEditor({ admin }: Props) {
+export default function LyricEditor({ admin, children }: Props) {
   const { theme } = useTheme();
 
   const controlRef = useRef<LyricEditorControlRef>(null);
@@ -39,10 +40,7 @@ export default function LyricEditor({ admin }: Props) {
       ) : (
         song && (
           <div className="flex flex-col h-full pb-5">
-            <div className="mt-3">
-              <BackBtn variant={admin ?  "admin-playlist" : "my-playlist"} />
-            </div>
-
+            {children}
             <h1 className="text-xl font-playwriteCU mt-3 leading-[2.2]">
               Edit lyric - {song?.name}
             </h1>
@@ -67,17 +65,6 @@ export default function LyricEditor({ admin }: Props) {
           </div>
         )
       )}
-
-      {/* <Modal variant="animation" ref={modalRef} >
-      <ConfirmModal
-            loading={no}
-            label={"Your change not save"}
-            theme={theme}
-            buttonLabel="Close and don't save"
-            callback={navigateBack}
-            close={closeModal}
-          />
-      </Modal> */}
     </>
   );
 }

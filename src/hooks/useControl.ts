@@ -140,7 +140,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
         }
       }
 
-      updateTimeProgressEle(newSeekTime);
+      updateProgressElement(newSeekTime);
 
       if (firstTimeSongLoaded.current) {
         setLocalStorage("current_time", newSeekTime);
@@ -168,7 +168,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
     }
   };
 
-  const updateTimeProgressEle = (time?: number) => {
+  const updateProgressElement = (time?: number) => {
     const timeLine = timelineEleRef.current;
     const currentTimeEle = currentTimeEleRef.current;
 
@@ -192,7 +192,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
 
     if (playStatusRef.current !== "paused")
       dispatch(setPlayStatus({ playStatus: "playing" }));
-    updateTimeProgressEle(currentTime);
+    updateProgressElement(currentTime);
 
     if (isCrossFade) handleFade(currentTime);
     if (!!currentTime && Math.round(currentTime) % 3 === 0)
@@ -271,7 +271,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
            * update it when user click play song
            */
 
-          updateTimeProgressEle(memoStorage["current_time"] || 0);
+          updateProgressElement(memoStorage["current_time"] || 0);
           return;
         }
       }
@@ -405,7 +405,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
     if (isOpenFullScreen) themeCode.current = "#fff";
     else themeCode.current = theme.content_code;
     // if user no click play yet
-    updateTimeProgressEle(firstTimeSongLoaded.current ? memoStorage["current_time"] : 0);
+    updateProgressElement(firstTimeSongLoaded.current ? memoStorage["current_time"] : 0);
   }, [theme, isOpenFullScreen]);
 
   // prevent song autoplay after edit finish
