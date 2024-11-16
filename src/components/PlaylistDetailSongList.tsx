@@ -103,9 +103,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
       </SongSelectProvider>
 
       <Modal ref={modalRef} variant="animation">
-        <SongSelectProvider>
-          <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
-        </SongSelectProvider>
+        <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
       </Modal>
     </>
   );

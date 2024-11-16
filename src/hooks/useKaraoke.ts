@@ -3,9 +3,9 @@ import { getWidthList } from "@/utils/getWidthList";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { useGetSongLyric } from ".";
 import { PlayStatus } from "@/store/PlayStatusSlice";
+import { usePlayerContext } from "@/store";
 
 type Props = {
-  audioEle: HTMLAudioElement;
   active: boolean;
 };
 
@@ -15,7 +15,10 @@ const isOdd = (n: number) => {
   return n % 2 !== 0;
 };
 
-export default function useKaraoke({ audioEle, active }: Props) {
+export default function useKaraoke({ active }: Props) {
+  const { audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("useKaraoke !audioRef.current")
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const oddOverlay = useRef<ElementRef<"p">>(null);
@@ -30,7 +33,7 @@ export default function useKaraoke({ audioEle, active }: Props) {
 
   const isSwitchedTabs = useRef(false); // readd animation when switch between tabs
 
-  const { songLyrics, loading, playStatus } = useGetSongLyric({ active, audioEle });
+  const { songLyrics, loading, playStatus } = useGetSongLyric({ active });
 
   const textData = useMemo(() => {
     if (!songLyrics.length) return { odd: "", even: "" };
@@ -83,9 +86,9 @@ export default function useKaraoke({ audioEle, active }: Props) {
     if (!songLyrics.length) return;
 
     const direction =
-      audioEle.currentTime >= currentTimeRef.current ? "forward" : "backward";
+      audioRef.current!.currentTime >= currentTimeRef.current ? "forward" : "backward";
 
-    currentTimeRef.current = audioEle.currentTime;
+    currentTimeRef.current = audioRef.current!.currentTime;
 
     let nextIndex = currentIndexRef.current;
 
@@ -184,10 +187,10 @@ export default function useKaraoke({ audioEle, active }: Props) {
   useEffect(() => {
     if (!songLyrics.length || !active) return;
 
-    audioEle.addEventListener("timeupdate", handleTimeUpdate);
+    audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+      audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [songLyrics, active]);
 

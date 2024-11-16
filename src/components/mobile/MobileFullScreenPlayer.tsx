@@ -1,4 +1,4 @@
-import { Dispatch, RefObject, SetStateAction, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
@@ -9,25 +9,14 @@ import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurHash } from "@/constants/blurhash";
-import { ControlRef } from "../Control";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import LyricContextProvider from "@/store/LyricContext";
+import { usePlayerContext } from "@/store";
 
-type Props = {
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
-  setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-  controlRef: RefObject<ControlRef>;
-};
-
-export default function MobileFullScreenPlayer({
-  audioEle,
-  controlRef,
-  isOpenFullScreen,
-  setIsOpenFullScreen,
-}: Props) {
+export default function MobileFullScreenPlayer() {
   // use store
+  const { controlRef, setIsOpenFullScreen, isOpenFullScreen } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
 
@@ -148,7 +137,7 @@ export default function MobileFullScreenPlayer({
                 </div>
               </div>
 
-              <SleepTimerButton controlRef={controlRef} audioEle={audioEle} />
+              <SleepTimerButton />
             </div>
             {/* <<< end song name */}
 
@@ -159,7 +148,6 @@ export default function MobileFullScreenPlayer({
                 className={`text-center ${
                   activeTab === "Lyric" ? "flex-1 block" : "hidden"
                 }`}
-                audioEle={audioEle}
               />
               {/* <<< end lyric tab */}
             </LyricContextProvider>
@@ -190,7 +178,7 @@ export default function MobileFullScreenPlayer({
                 activeTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
               } ${activeTab === "Playing" ? "flex-grow" : ""}`}
             >
-              <Control ref={controlRef} audioEle={audioEle} isOpenFullScreen={false} />
+              <Control variant="mobile" ref={controlRef} />
             </div>
           </div>
         </div>

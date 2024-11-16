@@ -1,16 +1,13 @@
 import { useEditLyricContext } from "@/store/EditLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
-import { ElementRef, FormEvent, useEffect, useRef, useState } from "react";
+import { ElementRef, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import useAudioControl from "./useAudioControl";
 import { getWidthList } from "@/utils/getWidthList";
 
-type Props = {
-  lyric: RealTimeLyric;
-  index: number;
-};
+export default function useEditLyricModal() {
+  const { updateLyric, setIsChanged, lyrics, selectLyricIndex } = useEditLyricContext();
 
-export default function useEditLyricModal({ lyric, index }: Props) {
-  const { updateLyric, setIsChanged } = useEditLyricContext();
+  if (selectLyricIndex === undefined) throw new Error("");
 
   const [words, setWords] = useState<string[]>([]);
   const [growList, setGrowList] = useState<number[]>([]);
@@ -23,33 +20,46 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   const audioRef = useRef<ElementRef<"audio">>(null);
   const endTimeRangeRef = useRef<ElementRef<"input">>(null);
   const startTimeRangeRef = useRef<ElementRef<"input">>(null);
-  const actuallyEndRef = useRef(lyric.end);
-  const actuallyStartRef = useRef(lyric.start);
+  const actuallyEndRef = useRef(0);
+  const actuallyStartRef = useRef(0);
   const startRefText = useRef<ElementRef<"span">>(null);
   const endRefText = useRef<ElementRef<"span">>(null);
 
   const tempWordRef = useRef<ElementRef<"div">>(null);
   const wordWidthList = useRef<number[]>([]);
+  const growListRef = useRef<number[]>([]);
+  const isChanged = useRef(false);
+
+  const currentLyric = useMemo(
+    () => lyrics[selectLyricIndex],
+    [selectLyricIndex, lyrics]
+  );
 
   const { play, pause, status, statusRef } = useAudioControl({
     audioEle: audioRef.current!,
   });
 
   const handleUpdateLyricText = (e: FormEvent) => {
+    if (!selectLyricIndex) return;
+
     e.preventDefault();
 
     if (!textRef.current) return;
 
-    updateLyric(index, { text: textRef.current.value });
+    updateLyric(selectLyricIndex, { text: textRef.current.value });
   };
 
   const updateLyricTune = () => {
+
+   console.log('update tune');
+   
+
     const newTune: LyricTune = {
       start: actuallyStartRef.current,
       end: actuallyEndRef.current,
       grow: growList.join("_"),
     };
-    updateLyric(index, { tune: newTune });
+    updateLyric(selectLyricIndex, { tune: newTune });
 
     setIsChanged(true);
   };
@@ -68,6 +78,8 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
   const handleGrowWord = (props: Range | Button) => {
     if (props.variant === "range" && props.value < 1) return;
+
+    isChanged.current = true;
 
     setGrowList((prev) => {
       const _prev = [...prev];
@@ -104,11 +116,11 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
     audioEle.currentTime = actuallyStartRef.current - 0.3;
 
-    const name = createKeyFrame(growList, wordWidthList.current);
+    const name = createKeyFrame(growListRef.current, wordWidthList.current);
 
     overlayRef.current.style.animation = `${name} ${(
-      (actuallyEndRef.current - actuallyStartRef.current - 0.3) /
-      1.2
+      (actuallyEndRef.current - actuallyStartRef.current) /
+      audioRef.current.playbackRate
     ).toFixed(1)}s linear`;
 
     play();
@@ -123,19 +135,21 @@ export default function useEditLyricModal({ lyric, index }: Props) {
 
   const setEndPoint = (time: number) => {
     const newEnd = +time.toFixed(1);
+    isChanged.current = true;
 
     actuallyEndRef.current = newEnd;
     if (endRefText.current) {
-      endRefText.current.textContent = `${newEnd} / ${lyric.end}`;
+      endRefText.current.textContent = `${newEnd} / ${currentLyric.end}`;
     }
   };
 
   const setStartPoint = (time: number) => {
     const newStart = +time.toFixed(1);
+    isChanged.current = true;
 
     actuallyStartRef.current = newStart;
     if (startRefText.current) {
-      startRefText.current.textContent = `${lyric.start} / ${newStart}`;
+      startRefText.current.textContent = `${currentLyric.start} / ${newStart}`;
     }
   };
 
@@ -174,6 +188,10 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   }, [words]);
 
   useEffect(() => {
+    growListRef.current = growList;
+  }, [growList]);
+
+  useEffect(() => {
     if (!audioRef.current) return;
 
     audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
@@ -186,12 +204,14 @@ export default function useEditLyricModal({ lyric, index }: Props) {
   }, [hadAudioEle]);
 
   useEffect(() => {
-    const text = lyric.text.trim();
+    const text = currentLyric.text.trim();
 
     const _words = text.split(" ").filter((w) => w);
     setWords(_words);
 
-    const _growList = lyric?.tune ? lyric.tune.grow.split("_").map((v) => +v) : [];
+    const _growList = currentLyric?.tune
+      ? currentLyric.tune.grow.split("_").map((v) => +v)
+      : [];
     _words.forEach((_w, index) => {
       if (typeof _growList[index] !== "number") _growList[index] = 1;
     });
@@ -204,19 +224,23 @@ export default function useEditLyricModal({ lyric, index }: Props) {
       startTimeRangeRef.current &&
       endTimeRangeRef.current
     ) {
-      actuallyStartRef.current = lyric?.tune ? lyric.tune.start : lyric.start;
-      startRefText.current.innerText = `${lyric.start} / ${actuallyStartRef.current}`;
+      actuallyStartRef.current = currentLyric?.tune
+        ? currentLyric.tune.start
+        : currentLyric.start;
+      startRefText.current.innerText = `${currentLyric.start} / ${actuallyStartRef.current}`;
 
-      startTimeRangeRef.current.max = lyric.end + "";
+      startTimeRangeRef.current.max = currentLyric.end + "";
       startTimeRangeRef.current.value = actuallyStartRef.current + "";
 
-      actuallyEndRef.current = lyric?.tune ? lyric.tune.end : lyric.end;
-      endRefText.current.innerText = `${actuallyEndRef.current} / ${lyric.end}`;
+      actuallyEndRef.current = currentLyric?.tune
+        ? currentLyric.tune.end
+        : currentLyric.end;
+      endRefText.current.innerText = `${actuallyEndRef.current} / ${currentLyric.end}`;
 
-      endTimeRangeRef.current.max = lyric.end + "";
+      endTimeRangeRef.current.max = currentLyric.end + "";
       endTimeRangeRef.current.value = actuallyEndRef.current + "";
     }
-  }, [lyric]);
+  }, [selectLyricIndex]);
 
   return {
     refs: {
@@ -228,7 +252,9 @@ export default function useEditLyricModal({ lyric, index }: Props) {
       startRefText,
       endRefText,
       audioRef,
+      isChanged,
     },
+    pause,
     setStartPoint,
     words,
     isEdit,
@@ -240,5 +266,6 @@ export default function useEditLyricModal({ lyric, index }: Props) {
     handleUpdateLyricText,
     status,
     updateLyricTune,
+    currentLyric,
   };
 }

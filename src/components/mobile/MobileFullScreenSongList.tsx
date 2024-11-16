@@ -3,6 +3,7 @@ import { MobileSongItem } from "..";
 import { MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 type Props = {
   currentIndex: number;
@@ -71,5 +72,9 @@ export default function MobileFullScreenSongList({ currentIndex }: Props) {
     </>
   );
 
-  return renderSongItems();
+  return (
+    <>
+      <SongSelectProvider>{renderSongItems()}</SongSelectProvider>
+    </>
+  );
 }

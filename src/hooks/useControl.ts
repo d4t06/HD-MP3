@@ -1,13 +1,8 @@
 import { MouseEvent, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAuthStore, useTheme, useToast } from "../store";
+import { useAuthStore, usePlayerContext, useTheme, useToast } from "../store";
 
-import {
-  formatTime,
-  getLinearBg,
-  getLocalStorage,
-  setLocalStorage,
-} from "../utils/appHelpers";
+import { formatTime, getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 
 import { useLocation } from "react-router-dom";
 import {
@@ -18,13 +13,12 @@ import {
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import usePlayerControl from "./usePlayerControl";
+import { getLinearBg } from "@/utils/getLinearBg";
 
-interface Props {
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
-}
+export default function useAudioEvent() {
+  const { isOpenFullScreen, audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("Use Control audioRef.current is undefined");
 
-export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
   // use store
   const dispatch = useDispatch();
   const { theme } = useTheme();
@@ -73,24 +67,24 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
           const storage = getLocalStorage();
 
           const currentTime = storage["current_time"] || 0;
-          audioEle.currentTime = currentTime;
+          audioRef.current!.currentTime = currentTime;
         }
       }
 
-      await audioEle.play();
+      await audioRef.current!.play();
       isShowMessageWhenSongError.current = false;
       isSongEnd.current = false;
 
       if (!user) return;
       if (isPlayingNewSong.current) {
-        if (isCrossFade) audioEle.volume = 0;
+        if (isCrossFade) audioRef.current!.volume = 0;
         isPlayingNewSong.current = false;
       }
     } catch (error) {}
   };
 
   const pause = () => {
-    audioEle.pause();
+    audioRef.current!.pause();
   };
 
   const getNewSong = (index: number) => {
@@ -127,9 +121,9 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
 
       const length = e.clientX - clientRect.left;
       const lengthRatio = length / timelineEleRef.current.offsetWidth;
-      const newSeekTime = Math.round(lengthRatio * audioEle.duration);
+      const newSeekTime = Math.round(lengthRatio * audioRef.current!.duration);
 
-      const currentTime = audioEle.currentTime;
+      const currentTime = audioRef.current!.currentTime;
 
       if (prevSeekTime.current) {
         if (
@@ -144,7 +138,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
 
       if (firstTimeSongLoaded.current) {
         setLocalStorage("current_time", newSeekTime);
-      } else audioEle.currentTime = newSeekTime;
+      } else audioRef.current!.currentTime = newSeekTime;
       prevSeekTime.current = newSeekTime;
     }
   };
@@ -154,17 +148,17 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
     if (currentTime <= 2) {
       const volumeValue = (currentTime / 2) * volInStore;
 
-      audioEle.volume = volumeValue;
+      audioRef.current!.volume = volumeValue;
     } else if (currentTime < startFadeWhenEnd.current) {
-      const curAudioVolume = audioEle.volume;
-      if (curAudioVolume != volInStore) audioEle.volume = volInStore;
+      const curAudioVolume = audioRef.current!.volume;
+      if (curAudioVolume != volInStore) audioRef.current!.volume = volInStore;
       return;
     }
 
     if (currentTime >= startFadeWhenEnd.current) {
-      const volumeValue = ((audioEle.duration - currentTime) / 2) * volInStore;
+      const volumeValue = ((audioRef.current!.duration - currentTime) / 2) * volInStore;
       // console.log("check val", volumeValue.toFixed(2), volInStore);
-      audioEle.volume = volumeValue;
+      audioRef.current!.volume = volumeValue;
     }
   };
 
@@ -172,10 +166,10 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
     const timeLine = timelineEleRef.current;
     const currentTimeEle = currentTimeEleRef.current;
 
-    const currentTime = time || audioEle.currentTime;
+    const currentTime = time || audioRef.current!.currentTime;
 
-    if (audioEle.duration && timeLine) {
-      const ratio = currentTime / (audioEle.duration / 100);
+    if (audioRef.current!.duration && timeLine) {
+      const ratio = currentTime / (audioRef.current!.duration / 100);
       timeLine.style.background = getLinearBg(themeCode.current, +ratio.toFixed(1));
     }
 
@@ -188,7 +182,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
    * add condition only run timeUpdate when status != "loading"
    */
   const handleTimeUpdate = () => {
-    const currentTime = audioEle.currentTime;
+    const currentTime = audioRef.current!.currentTime;
 
     if (playStatusRef.current !== "paused")
       dispatch(setPlayStatus({ playStatus: "playing" }));
@@ -209,7 +203,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
       return play();
     }
 
-    audioEle.volume = volInStore;
+    audioRef.current!.volume = volInStore;
     isSongEnd.current = true;
 
     if (isShuffle) {
@@ -238,7 +232,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
   const handleLoaded = () => {
     if (!currentSongDataRef.current) return;
 
-    const audioDuration = audioEle.duration;
+    const audioDuration = audioRef.current!.duration;
     // setIsLoaded(true);
     const localQueueId = memoStorage["current_queue_id"];
 
@@ -316,20 +310,20 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
 
   // add events listener
   useEffect(() => {
-    audioEle.addEventListener("error", handleError);
-    audioEle.addEventListener("pause", handlePause);
-    audioEle.addEventListener("play", handlePlaying);
-    audioEle.addEventListener("loadstart", handleLoadStart);
-    audioEle.addEventListener("loadedmetadata", handleLoaded);
-    audioEle.addEventListener("waiting", handleWaiting);
+    audioRef.current!.addEventListener("error", handleError);
+    audioRef.current!.addEventListener("pause", handlePause);
+    audioRef.current!.addEventListener("play", handlePlaying);
+    audioRef.current!.addEventListener("loadstart", handleLoadStart);
+    audioRef.current!.addEventListener("loadedmetadata", handleLoaded);
+    audioRef.current!.addEventListener("waiting", handleWaiting);
 
     return () => {
-      audioEle.removeEventListener("error", handleError);
-      audioEle.removeEventListener("pause", handlePause);
-      audioEle.removeEventListener("play", handlePlaying);
-      audioEle.removeEventListener("loadstart", handleLoadStart);
-      audioEle.removeEventListener("loadedmetadata", handleLoaded);
-      audioEle.addEventListener("waiting", handleWaiting);
+      audioRef.current!.removeEventListener("error", handleError);
+      audioRef.current!.removeEventListener("pause", handlePause);
+      audioRef.current!.removeEventListener("play", handlePlaying);
+      audioRef.current!.removeEventListener("loadstart", handleLoadStart);
+      audioRef.current!.removeEventListener("loadedmetadata", handleLoaded);
+      audioRef.current!.addEventListener("waiting", handleWaiting);
     };
   }, []);
 
@@ -340,7 +334,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
       return;
     }
 
-    audioEle.src = currentSongData.song.song_url;
+    audioRef.current!.src = currentSongData.song.song_url;
     currentSongDataRef.current = currentSongData;
 
     return () => {
@@ -384,17 +378,17 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
 
   //   update song end event
   useEffect(() => {
-    audioEle.addEventListener("ended", handleEnded);
+    audioRef.current!.addEventListener("ended", handleEnded);
 
-    return () => audioEle.removeEventListener("ended", handleEnded);
+    return () => audioRef.current!.removeEventListener("ended", handleEnded);
   }, [isRepeat, isShuffle, currentQueueId, queueSongs]);
 
   //   update time update event
   useEffect(() => {
-    audioEle.addEventListener("timeupdate", handleTimeUpdate);
+    audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+      audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [isCrossFade]);
 
@@ -416,6 +410,7 @@ export default function useAudioEvent({ audioEle, isOpenFullScreen }: Props) {
   }, [isInEdit]);
 
   return {
+    isOpenFullScreen,
     timelineEleRef,
     currentTimeEleRef,
     handleSeek,

@@ -1,4 +1,4 @@
-import { Dispatch, FC, RefObject, SetStateAction, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
@@ -10,25 +10,16 @@ import siteLogo from "@/assets/siteLogo.png";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
-import { ControlRef } from "../Control";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { usePlayerContext } from "@/store";
 
-interface Props {
-  isOpenFullScreen: boolean;
-  setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-  controlRef: RefObject<ControlRef>;
-}
-
-const MobileBottomPlayer: FC<Props> = ({
-  setIsOpenFullScreen,
-  isOpenFullScreen,
-  controlRef,
-}) => {
+const MobileBottomPlayer = () => {
   const { theme } = useTheme();
+  const { controlRef, isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
-  const { currentSongData} = useSelector(selectSongQueue);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -70,7 +61,10 @@ const MobileBottomPlayer: FC<Props> = ({
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image src={currentSongData?.song.image_url || siteLogo} className="rounded-full" />
+              <Image
+                src={currentSongData?.song.image_url || siteLogo}
+                className="rounded-full"
+              />
             </div>
 
             <div className="flex-grow  ml-[10px]">

@@ -2,25 +2,25 @@ import { ElementRef, useRef, useState } from "react";
 import ModalHeader from "./ModalHeader";
 import { useTheme } from "@/store";
 import Button from "../ui/Button";
-import { MinusIcon, PlusIcon } from "@heroicons/react/20/solid";
 import {
   CheckIcon,
+  ForwardIcon,
   PauseIcon,
   PencilSquareIcon,
   PlayIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import useEditLyricModal from "@/hooks/useEditLyricModal";
+import AudioSetting from "../AudioSetting";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 
 type Props = {
-  lyric: RealTimeLyric;
   closeModal: () => void;
-  songUrl: string;
-  index: number;
 };
 
-export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Props) {
+export default function EditLyricModal({ closeModal }: Props) {
   const { theme } = useTheme();
+  const { setSelectLyricIndex, selectLyricIndex, lyrics, song } = useEditLyricContext();
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -29,6 +29,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
   const {
     handlePlayPause,
     status,
+    pause,
     setStartPoint,
     refs,
     isEdit,
@@ -39,20 +40,42 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
     handleGrowWord,
     handleUpdateLyricText,
     updateLyricTune,
-  } = useEditLyricModal({
-    lyric,
-    index,
-  });
+    currentLyric,
+  } = useEditLyricModal();
 
   const handleUpdateLyricTune = () => {
     updateLyricTune();
     closeModal();
   };
 
-  const handleWordList = (i: number) => {
+  const handleSelectWord = (i: number) => {
     setCurrentIndex(i);
 
     growInputRef.current?.focus();
+  };
+
+  const handleNavigate = (action: "next" | "prev") => {
+    if (typeof selectLyricIndex !== "number") return;
+
+    if (refs.isChanged.current) {
+      refs.isChanged.current = false;
+      updateLyricTune();
+    }
+
+    pause();
+
+    switch (action) {
+      case "next":
+        if (selectLyricIndex === lyrics.length - 1) return;
+
+        setSelectLyricIndex((prev) => prev! + 1);
+        break;
+      case "prev":
+        if (selectLyricIndex === 0) return;
+
+        setSelectLyricIndex((prev) => prev! - 1);
+        break;
+    }
   };
 
   const renderItem = () => {
@@ -60,7 +83,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
       <Button
         style={{ flexGrow: growList[index] }}
         key={index}
-        onClick={() => handleWordList(index)}
+        onClick={() => handleSelectWord(index)}
         size={"clear"}
         className={`justify-center ${theme.side_bar_bg} border border-${theme.alpha} ${
           currentIndex === index ? theme.content_bg : ""
@@ -86,11 +109,12 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
   return (
     <>
-      <audio ref={refs.audioRef} src={songUrl} className="hidden"></audio>
+      <audio ref={refs.audioRef} src={song?.song_url} className="hidden"></audio>
 
-      <div className="max-w-[90vw] min-w-[400px]">
+      <div className="max-w-[90vw] w-[600px]">
         <ModalHeader close={closeModal} title="Edit lyric" />
 
+        {/* temp words */}
         <div ref={refs.tempWordRef} className="inline-block opacity-0">
           {words.map((w, i) => (
             <span className="leading-[1] inline-block" key={i}>
@@ -103,6 +127,13 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
           <Button onClick={handlePlayPause} className={classes.button}>
             {renderIcon()}
           </Button>
+
+          {refs.audioRef.current && (
+            <AudioSetting
+              audioEle={refs.audioRef.current}
+              postLocalStorageKey="edit_lyric_tune"
+            />
+          )}
 
           {isEdit ? (
             <>
@@ -130,8 +161,8 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
             ref={refs.startTimeRangeRef}
             type="range"
             id="start"
-            min={lyric.start}
-            max={lyric.end}
+            min={currentLyric.start}
+            max={currentLyric.end}
             step={0.2}
             className="w-full"
             onChange={(e) => setStartPoint(+e.target.value)}
@@ -148,7 +179,7 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
             id="end"
             ref={refs.endTimeRangeRef}
             type="range"
-            min={lyric.start}
+            min={currentLyric.start}
             step={0.2}
             className="w-full"
             onChange={(e) => setEndPoint(+e.target.value)}
@@ -185,13 +216,13 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
             </form>
           ) : (
             <>
-              <div className="relative whitespace-nowrap text-2xl font-[700]">
-                {lyric.text}
+              <div className="relative whitespace-nowrap  sm:text-2xl font-[700]">
+                {currentLyric.text}
                 <div
                   ref={refs.overlayRef}
                   className="absolute  top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
                 >
-                  {lyric.text}
+                  {currentLyric.text}
                 </div>
               </div>
             </>
@@ -200,29 +231,21 @@ export default function EditLyricModal({ lyric, closeModal, songUrl, index }: Pr
 
         <div className="flex h-[60px] mt-3">{renderItem()}</div>
 
-        <div className="flex justify-center items-center space-x-3 mt-3">
+        <div className="flex justify-end space-x-2">
           <Button
-            disabled={growList[currentIndex] === 1}
-            onClick={() =>
-              handleGrowWord({ variant: "button", action: "minus", index: currentIndex })
-            }
-            size={"clear"}
-            className={`${theme.content_bg} px-2 rounded-full`}
+            onClick={() => handleNavigate("prev")}
+            className={`${theme.content_bg} font-playwriteCU space-x-1 rounded-full mt-5`}
           >
-            <MinusIcon className="w-6" />
+            <ForwardIcon className="w-6" />
+            <span>Previous</span>
           </Button>
           <Button
-            onClick={() =>
-              handleGrowWord({ variant: "button", action: "plus", index: currentIndex })
-            }
-            size={"clear"}
-            className={`${theme.content_bg} px-2 rounded-full`}
+            onClick={() => handleNavigate("next")}
+            className={`${theme.content_bg} font-playwriteCU space-x-1 rounded-full mt-5`}
           >
-            <PlusIcon className="w-6" />
+            <span>Next</span>
+            <ForwardIcon className="w-6" />
           </Button>
-        </div>
-
-        <div className="text-right">
           <Button
             onClick={handleUpdateLyricTune}
             className={`${theme.content_bg} font-playwriteCU rounded-full mt-5`}

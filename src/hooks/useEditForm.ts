@@ -1,7 +1,9 @@
+import { ModalRef } from "@/components/Modal";
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useAuthStore, useSongsStore, useToast } from "@/store";
-import { useEffect, useState } from "react";
+import { sleep } from "@/utils/appHelpers";
+import { RefObject, useEffect, useState } from "react";
 
 type Props = {
   song: Song;
@@ -10,12 +12,12 @@ type Props = {
     singer: string;
     image_url: string;
   };
-  closeModal: () => void;
+  modalRef: RefObject<ModalRef>;
 };
 
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-export default function useEditForm({ song, inputFields, closeModal }: Props) {
+export default function useEditForm({ song, inputFields, modalRef }: Props) {
   const { user } = useAuthStore();
   const { updateUserSong } = useSongsStore();
 
@@ -42,7 +44,9 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
     }
 
     try {
-      // const newTargetSongs: Song[] = [...targetSongs];
+      setIsFetching(true);
+      modalRef.current?.setModalPersist(true);
+
       let newSongData: Partial<Song> = {
         name: song.name,
         singer: song.singer,
@@ -64,7 +68,7 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
         const songImageUrl =
           !!inputFields.image_url && validURL ? inputFields.image_url : song.image_url;
 
-        setIsFetching(true);
+        await sleep(1000);
 
         Object.assign(newSongData, {
           name: inputFields.name,
@@ -162,7 +166,7 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
 
       // >>> finish
       setSuccessToast(`Song edited`);
-      closeModal();
+      modalRef.current?.close();
     } catch (error) {
       console.log({ message: error });
 

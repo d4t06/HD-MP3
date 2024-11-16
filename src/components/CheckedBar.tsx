@@ -51,7 +51,7 @@ export default function CheckedBar({
 }) {
   // store
   const { theme } = useTheme();
-  const { isChecked, selectedSongs, selectAll, resetSelect } = useSongSelectContext();
+  const { isChecked, selectedSongs, selectAllSong, resetSelect } = useSongSelectContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
   const { userSongs } = useSongsStore();
 
@@ -79,12 +79,12 @@ export default function CheckedBar({
   };
 
   const handleSelectUserSongs = () => {
-    if (selectedSongs.length < userSongs.length) selectAll(userSongs);
+    if (selectedSongs.length < userSongs.length) selectAllSong(userSongs);
     else resetSelect();
   };
 
   const handleSelectAllPlaylistSongs = () => {
-    if (selectedSongs.length < playlistSongs.length) selectAll(playlistSongs);
+    if (selectedSongs.length < playlistSongs.length) selectAllSong(playlistSongs);
     else resetSelect();
   };
 

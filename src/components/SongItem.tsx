@@ -10,7 +10,7 @@ import {
   PopupWrapper,
   Image,
   Modal,
-  SongItemEditForm,
+  EditSongModal,
   ConfirmModal,
   PlaylistListModal,
 } from "../components";
@@ -291,7 +291,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       case "":
         return <></>;
       case "edit":
-        return <SongItemEditForm closeModal={closeModal} song={song} />;
+        return <EditSongModal modalRef={modalRef} song={song} />;
       case "delete":
         return (
           <ConfirmModal

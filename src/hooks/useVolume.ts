@@ -1,7 +1,7 @@
 import { MouseEvent, RefObject, WheelEvent, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import { useTheme } from "@/store";
-import { getLinearBg } from "@/utils/appHelpers";
+import { getLinearBg } from "@/utils/getLinearBg";
 
 type Props = {
   audioEle: HTMLAudioElement;

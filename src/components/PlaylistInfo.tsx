@@ -91,9 +91,8 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
   );
 
   const isActivePlaylist =
-    playStatus === "playing" ||
-    (playStatus === "waiting" &&
-      currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`);
+    (playStatus === "playing" || playStatus === "waiting") &&
+    currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`;
 
   const openModal = (modal: Modal) => {
     setModal(modal);

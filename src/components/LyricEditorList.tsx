@@ -1,21 +1,47 @@
-import { RefObject } from "react";
+import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useEditLyricContext } from "@/store/EditLyricContext";
 import { AddLyricItem, LyricItem } from ".";
 import { useTheme } from "@/store";
 import { LyricStatus } from "./LyricEditor";
+import { ModalRef } from "./Modal";
+// import { useLyricContext } from "@/store/LyricContext";
+import { scrollIntoView } from "@/utils/appHelpers";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
+  modalRef: RefObject<ModalRef>;
 };
 
-export default function LyricEditorList({ controlRef }: Props) {
-  const { theme } = useTheme();
+function useLyricEditorList() {
+  const { lyrics } = useEditLyricContext();
 
-  const { baseLyricArr, lyrics, currentLyricIndex, song } = useEditLyricContext();
+  const activeLyricRef = useRef<ElementRef<"p">>(null);
+
+  useEffect(() => {
+    if (!activeLyricRef.current) return;
+
+    scrollIntoView(activeLyricRef.current);
+  }, [lyrics.length]);
+
+  return { activeLyricRef };
+}
+
+export default function LyricEditorList({ controlRef, modalRef }: Props) {
+  const { theme } = useTheme();
+  const { baseLyricArr, lyrics, setSelectLyricIndex, song } = useEditLyricContext();
+
+  const { activeLyricRef } = useLyricEditorList();
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
+  };
+
+  const handleOpenEditLyricModal = (index: number) => {
+    if (typeof index !== "number") return;
+
+    setSelectLyricIndex(index);
+    modalRef.current?.open();
   };
 
   const getBg = () => {
@@ -33,9 +59,9 @@ export default function LyricEditorList({ controlRef }: Props) {
             <>
               {baseLyricArr.map((lyric, index) => {
                 let status: LyricStatus =
-                  index === currentLyricIndex
+                  index === lyrics.length
                     ? "active"
-                    : index < currentLyricIndex
+                    : index < lyrics.length - 1
                     ? "done"
                     : "coming";
 
@@ -43,6 +69,7 @@ export default function LyricEditorList({ controlRef }: Props) {
 
                 return (
                   <LyricItem
+                    ref={status === "active" ? activeLyricRef : null}
                     activeColor={theme.type === "light" ? theme.content_text : ""}
                     className="pt-[37px] mr-[24px]"
                     key={index}
@@ -62,9 +89,8 @@ export default function LyricEditorList({ controlRef }: Props) {
             song &&
             lyrics.map((lyric, index) => (
               <AddLyricItem
-                songUrl={song.song_url}
+                openModal={() => handleOpenEditLyricModal(index)}
                 seek={handleSeek}
-                index={index}
                 lyric={lyric}
                 isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1}
                 key={index}

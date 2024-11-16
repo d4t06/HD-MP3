@@ -1,5 +1,5 @@
 import { useTheme } from "@/store";
-import { getLinearBg } from "@/utils/appHelpers";
+import { getLinearBg } from "@/utils/getLinearBg";
 import { RefObject, useEffect, useRef, useState } from "react";
 
 type Props = {

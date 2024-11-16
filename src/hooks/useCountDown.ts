@@ -1,15 +1,13 @@
-import { ControlRef } from "@/components/Control";
+import { usePlayerContext } from "@/store";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 
-type Props = {
-  controlRef: RefObject<ControlRef>;
-  audioEle: HTMLAudioElement;
-};
+export default function useCountDown() {
+   const {audioRef, controlRef} = usePlayerContext()
+   if (!audioRef.current) throw new Error("useCountDown audioRef.current is undefined")
 
-export default function useCountDown({ controlRef, audioEle }: Props) {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   // store user timer, decide add song event or not
@@ -49,10 +47,10 @@ export default function useCountDown({ controlRef, audioEle }: Props) {
   useEffect(() => {
     if (!isActive) return;
 
-    audioEle.addEventListener("ended", handleSongEnd);
+    audioRef.current!.addEventListener("ended", handleSongEnd);
 
     return () => {
-      audioEle.removeEventListener("ended", handleSongEnd);
+      audioRef.current!.removeEventListener("ended", handleSongEnd);
     };
   }, [isActive]);
 

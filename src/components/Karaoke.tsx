@@ -4,13 +4,12 @@ import { Center } from "./ui/Center";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 type Props = {
-  audioEle: HTMLAudioElement;
   active: boolean;
 };
 
-export default function Karaoke({ audioEle, active }: Props) {
+export default function Karaoke({ active }: Props) {
   const { loading, evenOverlay, oddOverlay, tempEventText, tempOddText, textData } =
-    useKaraoke({ audioEle, active });
+    useKaraoke({ active });
 
   if (loading)
     return (

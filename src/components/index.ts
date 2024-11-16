@@ -10,7 +10,7 @@ export { default as SongListModal } from "./modals/SongListModal";
 
 export { default as LyricItem } from "./child/LyricItem";
 export { default as PlayPauseButton } from "./child/PlayPauseButton";
-export { default as SongItemEditForm } from "./modals/SongItemEditForm";
+export { default as EditSongModal } from "./modals/EditSongModal";
 export { default as ToastItem } from "./child/ToastItem";
 export { default as AddLyricItem } from "./child/AddLyricItem";
 export { default as Switch } from "./ui/Switch";

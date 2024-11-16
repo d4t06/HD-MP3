@@ -99,7 +99,7 @@ type ThemeType = {
 };
 
 type Toast = {
-  title: "success" | "error" | "warning";
+  variant: "success" | "error";
   desc: string;
   id: string;
 };

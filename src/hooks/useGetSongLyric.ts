@@ -4,14 +4,12 @@ import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { useLyricContext } from "@/store/LyricContext";
+import { usePlayerContext } from "@/store";
 
-export default function useSongLyric({
-  audioEle,
-  active,
-}: {
-  audioEle: HTMLAudioElement;
-  active: boolean;
-}) {
+export default function useSongLyric({ active }: { active: boolean }) {
+  const { audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
+
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
   const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
@@ -60,10 +58,10 @@ export default function useSongLyric({
       setIsSongLoaded(true);
     };
 
-    if (audioEle) audioEle.addEventListener("loadeddata", handleSongLoaded);
+    audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
 
     return () => {
-      if (audioEle) audioEle.removeEventListener("loadeddata", handleSongLoaded);
+      audioRef.current!.removeEventListener("loadeddata", handleSongLoaded);
     };
   }, []);
 

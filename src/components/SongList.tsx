@@ -96,9 +96,12 @@ function SongList({ songs, ...props }: Props) {
     }
 
     return songs.map((song, index) => {
-      const active = song.id === currentSongData?.song.id;
+      let active = song.id === currentSongData?.song.id;
 
       const isLastIndexInQueue = index === queueSongs.length - 1;
+
+      if (props.variant === "queue")
+        active = active && currentSongData?.song.queue_id === song.queue_id;
 
       switch (props.variant) {
         case "dashboard-songs":

@@ -13,8 +13,7 @@ import { forwardRef, Ref, useImperativeHandle } from "react";
 
 interface Props {
   admin?: boolean;
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
+  variant: "mobile" | "desktop";
 }
 
 export type ControlRef = {
@@ -22,10 +21,11 @@ export type ControlRef = {
   handleNext: () => void;
 };
 
-function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlRef>) {
+function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
   const { theme } = useTheme();
 
   const {
+    isOpenFullScreen,
     currentSongData,
     handleSeek,
     handlePlayPause,
@@ -39,10 +39,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     queueSongs,
     currentTimeEleRef,
     timelineEleRef,
-  } = useControl({
-    audioEle,
-    isOpenFullScreen
-  });
+  } = useControl();
 
   useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
 
@@ -106,7 +103,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
       {/* process */}
       <div
         className={`${classes.progressContainer} ${
-          isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
+          variant === "desktop" && isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
         <div className="w-10 sm:w-9">

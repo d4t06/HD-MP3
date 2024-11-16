@@ -1,8 +1,6 @@
 import { Timestamp } from "firebase/firestore";
-import { parseBlob } from "music-metadata";
 import { nanoid } from "nanoid";
 import axios from "axios";
-import { SetStateAction, Dispatch } from "react";
 
 const isDev: boolean = import.meta.env.DEV;
 
@@ -40,36 +38,6 @@ export const generateId = (name: string): string => {
   return convertToEn(name).toLocaleLowerCase().replaceAll(/[\W_]/g, "") + "_" + nanoid(4);
 };
 
-type ParserSong = {
-  name: string;
-  singer: string;
-  image: ArrayBuffer | null;
-  duration: number;
-};
-
-export const parserSong = async (songFile: File) => {
-  if (!songFile) return;
-  const result = await parseBlob(songFile);
-
-  if (!result) return;
-
-  const {
-    common: { title, artist },
-    format: { duration },
-  } = result;
-
-  const data: ParserSong = { name: "", singer: "", image: null, duration: 0 };
-
-  if (!title || !artist) {
-    if (isDev) console.log("song don't have tags");
-  }
-
-  data.name = title || songFile.name;
-  data.singer = artist || "...";
-  data.duration = duration || 0;
-
-  return data;
-};
 export const formatTime = (time: number) => {
   const minutes = Math.floor(time / 60);
   const seconds = Math.round(time % 60);
@@ -134,48 +102,11 @@ export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
 
 export const sleep = async (delay: number) => new Promise((rs) => setTimeout(rs, delay));
 
-export const selectSongs = (
-  song: Song,
-  isChecked: boolean,
-  setIsChecked: Dispatch<SetStateAction<boolean>>,
-  selectedSong: Song[],
-  setSelectedSongs: Dispatch<SetStateAction<Song[]>>
-) => {
-  if (!setSelectedSongs || !selectedSong) {
-    console.log("song list item lack of props");
-    return;
-  }
-
-  if (!isChecked) {
-    setIsChecked && setIsChecked(true);
-  }
-
-  let list = [...selectedSong];
-  const index = list.indexOf(song);
-
-  // if no present
-  if (index === -1) {
-    list.push(song);
-
-    // if present
-  } else {
-    list.splice(index, 1);
-  }
-  setSelectedSongs(list);
-  if (!list.length) {
-    setIsChecked && setIsChecked(false);
-  }
-};
-
 export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]) => {
   el.scrollIntoView({
     behavior: behavior || "smooth",
     block: "center",
   });
-};
-
-export const getLinearBg = (color: string, progress: number) => {
-  return `linear-gradient(to right, ${color} ${progress}%, rgba(255,255,255,.15) ${progress}%, rgba(255,255,255,.15) 100%)`;
 };
 
 export const getDisable = (v: boolean) => (v ? "disable" : "");

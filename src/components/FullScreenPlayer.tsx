@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, memo, useMemo, useRef, useState } from "react";
+import { memo, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
@@ -21,24 +21,16 @@ import { defaultBlurHash } from "@/constants/blurhash";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import Karaoke from "./Karaoke";
 import LyricContextProvider from "@/store/LyricContext";
+import { usePlayerContext } from "@/store";
 
 interface Props {
-  isOpenFullScreen: boolean;
-  setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
   idle: boolean;
-  audioEle: HTMLAudioElement;
-  setIsPlaying?: () => void;
 }
-function FullScreenPlayer({
-  isOpenFullScreen,
-  setIsOpenFullScreen,
-  idle,
-  audioEle,
-}: Props) {
+function FullScreenPlayer({ idle }: Props) {
   // use store
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  // const { currentSongData?.song } = useSelector(selectcurrentSongData?.song);
+  const { isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { queueSongs, currentQueueId, currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
   // state
@@ -53,7 +45,6 @@ function FullScreenPlayer({
   useScrollSong({
     containerRef,
     songItemRef: activeSongRef,
-    isOpenFullScreen: isOpenFullScreen,
     idle,
   });
 
@@ -270,7 +261,6 @@ function FullScreenPlayer({
                 {/* right */}
                 <LyricsList
                   className={`w-full ml-[40px] h-full`}
-                  audioEle={audioEle}
                   active={isOpenFullScreen && activeTab === "Lyric"}
                 />
               </div>
@@ -280,10 +270,7 @@ function FullScreenPlayer({
                 activeTab === "Karaoke" ? "" : "hidden"
               }`}
             >
-              <Karaoke
-                active={isOpenFullScreen && activeTab === "Karaoke"}
-                audioEle={audioEle}
-              />
+              <Karaoke active={isOpenFullScreen && activeTab === "Karaoke"} />
             </div>
           </LyricContextProvider>
         </div>

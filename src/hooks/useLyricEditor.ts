@@ -24,7 +24,6 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
     setBaseLyricArr,
     setBaseLyric,
     setLyrics,
-    setCurrentLyricIndex,
     isChanged,
     setIsChanged,
     isFetching: isSubmitting,
@@ -124,7 +123,6 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
       if (!real_time.length) return;
 
       const latestIndex = real_time.length - 1;
-      setCurrentLyricIndex(latestIndex + 1);
 
       if (audioRef.current) {
         const latestEndTime = real_time[latestIndex].end;

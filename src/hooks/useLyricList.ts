@@ -1,15 +1,19 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useGetSongLyric } from ".";
 import { scrollIntoView } from "@/utils/appHelpers";
+import { usePlayerContext } from "@/store";
 
 interface Props {
-  audioEle: HTMLAudioElement;
   active: boolean;
 }
 
 const LYRIC_TIME_BOUNDED = 0.3;
 
-export default function useLyricList({ active, audioEle }: Props) {
+export default function useLyricList({ active }: Props) {
+  const { audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
+  
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const scrollBehavior = useRef<ScrollBehavior>("instant");
@@ -19,15 +23,14 @@ export default function useLyricList({ active, audioEle }: Props) {
   const currentIndexRef = useRef(0);
 
   const { loading, songLyrics } = useGetSongLyric({
-    audioEle,
     active,
   });
 
   const handleTimeUpdate = () => {
     const direction =
-      audioEle.currentTime > currentTimeRef.current ? "forward" : "backward";
+      audioRef.current!.currentTime > currentTimeRef.current ? "forward" : "backward";
 
-    currentTimeRef.current = audioEle.currentTime;
+    currentTimeRef.current = audioRef.current!.currentTime;
 
     let nextIndex = currentIndexRef.current;
 
@@ -74,10 +77,10 @@ export default function useLyricList({ active, audioEle }: Props) {
   //  add event listeners
   useEffect(() => {
     if (!active || !songLyrics.length) return;
-    audioEle.addEventListener("timeupdate", handleTimeUpdate);
+    audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+      audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [active, songLyrics]);
 

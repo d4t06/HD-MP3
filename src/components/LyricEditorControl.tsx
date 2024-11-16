@@ -7,12 +7,10 @@ import {
   useRef,
   useState,
 } from "react";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
-import { Button, Modal, PopupWrapper } from ".";
+import { Button, Modal } from ".";
 import {
   ArrowPathIcon,
   BackwardIcon,
-  Cog6ToothIcon,
   DocumentTextIcon,
   ExclamationCircleIcon,
   ForwardIcon,
@@ -29,6 +27,7 @@ import { useLyricEditorAction } from "@/hooks/useLyricEditorAction";
 import InputModal from "./modals/InputModal";
 import ModalHeader from "./modals/ModalHeader";
 import tutorial from "@/assets/tutorial/tutorial1.png";
+import AudioSetting from "./AudioSetting";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -54,16 +53,7 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
   const { backward, forward, handlePlayPause, pause, seek, status, isClickPlay } =
     useAudioControl({ audioEle, progressLineRef });
 
-  const {
-    addLyric,
-    removeLyric,
-    isEnableAddBtn,
-    speed,
-    volume,
-    changeSpeed,
-    changeVolume,
-    submit,
-  } = useLyricEditorAction({
+  const { addLyric, removeLyric, isEnableAddBtn, submit } = useLyricEditorAction({
     audioEle,
     isClickPlay,
     song,
@@ -143,45 +133,11 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
   return (
     <>
       <div className="flex items-start flex-wrap -mt-2 -ml-2">
-        <MyPopup>
-          <MyPopupTrigger>
-            <Button className={`h-ful ${classes.button}`}>
-              <Cog6ToothIcon className="w-6" />
-            </Button>
-          </MyPopupTrigger>
-
-          <MyPopupContent className="top-[calc(100%+8px)] left-0 z-[9]" appendTo="parent">
-            <PopupWrapper className="w-[240px]" theme={theme}>
-              <div className="space-y-[6px]">
-                <div className={`flex space-x-1`}>
-                  <div className="w-[110px] flex-shrink-0">Speed {speed}x</div>
-                  <input
-                    className="w-full"
-                    type="range"
-                    step={0.1}
-                    min={1}
-                    max={1.5}
-                    value={speed}
-                    onChange={(e) => changeSpeed(+e.target.value)}
-                  />
-                </div>
-
-                <div className={`flex space-x-1`}>
-                  <div className="w-[110px] flex-shrink-0">Volume {volume}%</div>
-                  <input
-                    className="w-full"
-                    type="range"
-                    step={1}
-                    min={1}
-                    max={100}
-                    value={volume}
-                    onChange={(e) => changeVolume(+e.target.value)}
-                  />
-                </div>
-              </div>
-            </PopupWrapper>
-          </MyPopupContent>
-        </MyPopup>
+        <AudioSetting
+          className="mt-2 ml-2"
+          audioEle={audioEle}
+          postLocalStorageKey="edit_lyric"
+        />
 
         <Button className={classes.button} onClick={_handlePlayPaused}>
           {renderPlayPausedButton()}

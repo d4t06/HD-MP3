@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSongsStore } from "@/store/SongsContext";
-import { useToast } from "../store/ToastContext";
-import { useAuthStore } from "@/store/AuthContext";
+import { useToast, useSongsStore, useAuthStore } from "../store";
 import { sleep } from "../utils/appHelpers";
 import appConfig from "../config/app";
 import * as appService from "../services/appService";

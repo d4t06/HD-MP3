@@ -1,39 +1,15 @@
 import { formatTime } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
-import { useRef } from "react";
-import Modal, { ModalRef } from "../Modal";
-import EditLyricModal from "../modals/EditLyricModal";
 
 type Props = {
   lyric: RealTimeLyric;
   seek: (time: number) => void;
   theme: ThemeType & { alpha: string };
   isLast: boolean;
-  songUrl: string;
-  index: number;
+  openModal: () => void;
 };
 
-function AddLyricItem({ lyric, seek, theme, isLast, songUrl, index }: Props) {
-  const modalRef = useRef<ModalRef>(null);
-
-  const closeModal = () => modalRef.current?.close();
-
-  //   e.preventDefault();
-
-  //   updateLyric(text);
-  //   setIsEditing(false);
-  // };
-
-  // const classes = {
-  //   input: `bg-${theme.alpha} text-lg rounded-[4px] outline-none w-full px-2 py-1`,
-  // };
-
-  // useEffect(() => {
-  //   if (isEditing) {
-  //     textRef.current?.focus();
-  //   }
-  // }, [isEditing]);
-
+function AddLyricItem({ lyric, openModal, seek, theme, isLast }: Props) {
   return (
     <>
       <div className="pt-[10px] last:mb-[30vh]">
@@ -47,7 +23,7 @@ function AddLyricItem({ lyric, seek, theme, isLast, songUrl, index }: Props) {
         <p className="font-[700] select-none flex items-center">
           {lyric.text}
 
-          <button onClick={() => modalRef.current?.open()} className="ml-1">
+          <button onClick={openModal} className="ml-1">
             <PencilSquareIcon className="w-5" />
           </button>
         </p>
@@ -61,15 +37,6 @@ function AddLyricItem({ lyric, seek, theme, isLast, songUrl, index }: Props) {
           </button>
         )}
       </div>
-
-      <Modal variant="animation" ref={modalRef}>
-        <EditLyricModal
-          index={index}
-          songUrl={songUrl}
-          closeModal={closeModal}
-          lyric={lyric}
-        />
-      </Modal>
     </>
   );
 }

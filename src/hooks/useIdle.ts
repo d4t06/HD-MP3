@@ -3,14 +3,15 @@ import { useSelector } from "react-redux";
 import { scrollToActiveSong } from "./useScrollSong";
 import appConfig from "../config/app";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { usePlayerContext } from "@/store/PlayerContext";
 
 export default function useIdle(
   delay: number,
   isOnMobile: boolean,
-  isOpenFullScreen: boolean
 ) {
   // store
   const { currentSongData } = useSelector(selectSongQueue);
+  const {isOpenFullScreen} = usePlayerContext()
 
   // state
   const [idle, setIdle] = useState(false);

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, memo, useMemo, useRef } from "react";
+import { memo, useMemo } from "react";
 import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
@@ -8,36 +8,31 @@ import { Control } from ".";
 import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";
-import { ControlRef } from "./Control";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { VolumeButton } from "./VolumeButton";
 import useThemeBgImage from "@/hooks/useThemeBgImage";
+import { usePlayerContext } from "@/store";
+
 interface Props {
   admin?: boolean;
   idle: boolean;
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
-  isOpenSongQueue: boolean;
-  setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-  setIsOpenSongQueue: Dispatch<SetStateAction<boolean>>;
 }
 
-function BottomPlayer({
-  idle,
-  audioEle,
-  admin,
+function BottomPlayer({ idle, admin }: Props) {
+  const { audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("BottomPlayer !audioRef.current");
 
-  isOpenFullScreen,
-  setIsOpenFullScreen,
-
-  isOpenSongQueue,
-  setIsOpenSongQueue,
-}: Props) {
   const { theme } = useTheme();
+  const {
+    isOpenFullScreen,
+    controlRef,
+    isOpenSongQueue,
+    setIsOpenFullScreen,
+    setIsOpenSongQueue,
+  } = usePlayerContext();
   const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
 
-  const controlRef = useRef<ControlRef>(null);
   const { containerRef } = useThemeBgImage();
 
   const location = useLocation();
@@ -69,9 +64,13 @@ function BottomPlayer({
   return (
     <div
       ref={containerRef}
-      className={`${classes.wrapper} ${isOpenFullScreen ? "border-transparent" : theme.image ? theme.bottom_player_bg : '' } ${
-        inEdit && "translate-y-[100%] "
-      } `}
+      className={`${classes.wrapper} ${
+        isOpenFullScreen
+          ? "border-transparent"
+          : theme.image
+          ? theme.bottom_player_bg
+          : ""
+      } ${inEdit && "translate-y-[100%] "} `}
     >
       {!theme.image && (
         <div
@@ -97,16 +96,11 @@ function BottomPlayer({
             !admin ? classes.controlWrapperChild_1 : ""
           }  ${classes.controlWrapperChild_2}`}
         >
-          <Control
-            ref={controlRef}
-            admin={admin}
-            audioEle={audioEle}
-            isOpenFullScreen={isOpenFullScreen}
-          />
+          <Control variant="desktop" ref={controlRef} admin={admin} />
         </div>
 
         <div className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}>
-          <VolumeButton audioEle={audioEle} />
+          <VolumeButton audioEle={audioRef.current} />
 
           {!admin && (
             <div className={`flex items-center ${!currentQueueId ? "disable" : ""}`}>
@@ -130,7 +124,7 @@ function BottomPlayer({
 
               <div className={`w-[2px] h-[26px] ml-2 bg-${theme.alpha}`}></div>
 
-              <SleepTimerButton audioEle={audioEle} controlRef={controlRef} />
+              <SleepTimerButton />
             </div>
           )}
         </div>

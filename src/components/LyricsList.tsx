@@ -8,18 +8,16 @@ import useLyricList from "@/hooks/useLyricList";
 import { Center } from "./ui/Center";
 
 interface Props {
-  audioEle: HTMLAudioElement;
   className: string;
   active: boolean;
 }
 
-const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
+const LyricsList: FC<Props> = ({ className, active }) => {
   // state
   const { lyricSize } = useSelector(selectAllPlayStatusStore);
 
   const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyricList({
     active,
-    audioEle,
   });
 
   const lyricSizeMap = {
@@ -52,7 +50,12 @@ const LyricsList: FC<Props> = ({ audioEle, className, active }) => {
   };
 
   return (
-    <div ref={containerRef} className={`${classes.container} ${lyricSizeMap[lyricSize || "medium"]} ${className}`}>
+    <div
+      ref={containerRef}
+      className={`${classes.container} ${
+        lyricSizeMap[lyricSize || "medium"]
+      } ${className}`}
+    >
       {loading && (
         <div className="relative w-full h-full">
           <Center>

@@ -4,6 +4,7 @@ import { SongList } from ".";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
 import CheckedBar from "./CheckedBar";
 import useSetSong from "@/hooks/useSetSong";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 type Props = {
   initialLoading: boolean;
@@ -27,7 +28,7 @@ export default function MySongSongsList({ initialLoading }: Props) {
   }, [tempSongs, userSongs, initialLoading]);
 
   return (
-    <>
+    <SongSelectProvider>
       <CheckedBar variant="my-songs">
         {initialLoading ? (
           <>
@@ -60,6 +61,6 @@ export default function MySongSongsList({ initialLoading }: Props) {
           </>
         )}
       </div>
-    </>
+    </SongSelectProvider>
   );
 }
