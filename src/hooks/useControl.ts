@@ -106,7 +106,7 @@ export default function useAudioEvent() {
     }
   };
 
-  const handleResetForNewSong = () => {
+  const resetForNewSong = () => {
     if (timelineEleRef.current && currentTimeEleRef.current) {
       currentTimeEleRef.current.innerText = "0:00";
       timelineEleRef.current.style.background = "rgba(255, 255, 255, 0.3)";
@@ -318,19 +318,22 @@ export default function useAudioEvent() {
     audioRef.current!.addEventListener("waiting", handleWaiting);
 
     return () => {
-      audioRef.current!.removeEventListener("error", handleError);
-      audioRef.current!.removeEventListener("pause", handlePause);
-      audioRef.current!.removeEventListener("play", handlePlaying);
-      audioRef.current!.removeEventListener("loadstart", handleLoadStart);
-      audioRef.current!.removeEventListener("loadedmetadata", handleLoaded);
-      audioRef.current!.addEventListener("waiting", handleWaiting);
+      audioRef.current?.removeEventListener("error", handleError);
+      audioRef.current?.removeEventListener("pause", handlePause);
+      audioRef.current?.removeEventListener("play", handlePlaying);
+      audioRef.current?.removeEventListener("loadstart", handleLoadStart);
+      audioRef.current?.removeEventListener("loadedmetadata", handleLoaded);
+      audioRef.current?.addEventListener("waiting", handleWaiting);
     };
   }, []);
 
   // update audio src, currentIndexRef, reset song
   useEffect(() => {
+    // this line handle fist time load song or clear queue
     if (!currentSongData || !currentQueueId) {
-      dispatch(setPlayStatus({ playStatus: "paused" }));
+      playStatusRef.current = "paused";
+      pause();
+
       return;
     }
 
@@ -338,14 +341,19 @@ export default function useAudioEvent() {
     currentSongDataRef.current = currentSongData;
 
     return () => {
-      handleResetForNewSong();
+      resetForNewSong();
       isPlayingNewSong.current = true;
     };
   }, [currentSongData?.song]);
 
   // update site title, and decide to set waiting status
   useEffect(() => {
-    if (!currentSongData) return;
+    if (!currentSongData) {
+      // this line reset song after clear queue
+      if (playStatus === "paused") resetForNewSong();
+
+      return;
+    }
 
     let myTitle = `${currentSongData.song.name} - ${currentSongData.song.singer}`;
     if (
@@ -380,7 +388,7 @@ export default function useAudioEvent() {
   useEffect(() => {
     audioRef.current!.addEventListener("ended", handleEnded);
 
-    return () => audioRef.current!.removeEventListener("ended", handleEnded);
+    return () => audioRef.current?.removeEventListener("ended", handleEnded);
   }, [isRepeat, isShuffle, currentQueueId, queueSongs]);
 
   //   update time update event
@@ -388,7 +396,8 @@ export default function useAudioEvent() {
     audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
+      // audio possible undefine when component unmounted
+      audioRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
     };
   }, [isCrossFade]);
 
@@ -426,6 +435,7 @@ export default function useAudioEvent() {
     handleRepeatSong,
     handleShuffle,
     queueSongs,
+    resetForNewSong,
     handleNext,
   };
 }

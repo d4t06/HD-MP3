@@ -19,6 +19,8 @@ interface Props {
 export type ControlRef = {
   handlePlayPause: () => void;
   handleNext: () => void;
+  pause: () => void;
+  resetForNewSong: () => void;
 };
 
 function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
@@ -39,9 +41,16 @@ function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
     queueSongs,
     currentTimeEleRef,
     timelineEleRef,
+    resetForNewSong,
+    pause,
   } = useControl();
 
-  useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
+  useImperativeHandle(ref, () => ({
+    handlePlayPause,
+    handleNext,
+    pause,
+    resetForNewSong,
+  }));
 
   const classes = {
     button: `p-1 rounded-full md:bg-transparent `,

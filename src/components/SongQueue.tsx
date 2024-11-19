@@ -8,14 +8,13 @@ import {
   selectSongQueue,
   setCurrentQueueId,
 } from "@/store/songQueueSlice";
-import { setPlayStatus } from "@/store/PlayStatusSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 
 function SongQueue() {
   // store
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { isOpenSongQueue, setIsOpenSongQueue } = usePlayerContext();
+  const { isOpenSongQueue, setIsOpenSongQueue, controlRef } = usePlayerContext();
   const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
 
   const handleSetSong = useCallback(
@@ -29,7 +28,8 @@ function SongQueue() {
 
   const clearSongQueue = useCallback(() => {
     dispatch(resetSongQueue());
-    dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+    controlRef.current?.resetForNewSong()
+    
     setIsOpenSongQueue(false);
   }, []);
 

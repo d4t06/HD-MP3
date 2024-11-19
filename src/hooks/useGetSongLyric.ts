@@ -61,7 +61,8 @@ export default function useSongLyric({ active }: { active: boolean }) {
     audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
 
     return () => {
-      audioRef.current!.removeEventListener("loadeddata", handleSongLoaded);
+      // audio possible undefine when component unmounted
+      audioRef.current?.removeEventListener("loadeddata", handleSongLoaded);
     };
   }, []);
 

@@ -26,6 +26,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
   const pause = () => {
     audioEle?.pause();
+    handlePaused();
   };
 
   const handlePlayPause = () => {
