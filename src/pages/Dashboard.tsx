@@ -2,15 +2,12 @@ import { useTheme } from "@/store/ThemeContext";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { useSongsStore } from "../store";
 import { useInitSong } from "../hooks";
-import { useSelector } from "react-redux";
 import PlaylistList from "../components/PlaylistList";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import DashboardSongList from "@/components/DashboardSongList";
 
 export default function DashBoard() {
   //  store
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
   const { userPlaylists } = useSongsStore();
 
   // use hooks
@@ -26,7 +23,6 @@ export default function DashBoard() {
             <div className="text-xl font-playwriteCU leading-[2.4] mb-3">Playlist</div>
 
             <PlaylistList
-              activeCondition={!!currentSong?.song_in}
               loading={initialLoading}
               playlist={userPlaylists}
               location="dashboard"

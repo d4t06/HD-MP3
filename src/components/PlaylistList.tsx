@@ -3,16 +3,15 @@ import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
 import { useTheme } from "../store";
 import { PlaylistSkeleton } from "./skeleton";
 import { useRef } from "react";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import usePlaylistActions from "@/hooks/usePlaylistActions";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
+import { selectSongQueue } from "@/store/songQueueSlice";
 
 type Base = {
   className?: string;
   playlist: Playlist[];
   loading: boolean;
-  activeCondition?: boolean;
 };
 
 type InHome = Base & {
@@ -29,16 +28,10 @@ type InDashboard = Base & {
 
 type Props = InHome | InMySongs | InDashboard;
 
-export default function PlaylistList({
-  playlist,
-  loading,
-  activeCondition = true,
-  className,
-  ...props
-}: Props) {
+export default function PlaylistList({ playlist, loading, className, ...props }: Props) {
   // store
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   // ref
   const modalRef = useRef<ModalRef>(null);
@@ -61,8 +54,7 @@ export default function PlaylistList({
           <>
             {!!playlist.length
               ? playlist.map((playlist, index) => {
-                  const active =
-                    activeCondition && currentSong?.song_in.includes(playlist.id);
+                  const active = currentSongData?.song.song_in.includes(playlist.id);
 
                   switch (props.location) {
                     case "home":

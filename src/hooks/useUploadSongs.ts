@@ -1,14 +1,12 @@
 import { ChangeEvent, RefObject, useRef, useCallback, useEffect } from "react";
-import { generateId, parserSong } from "../utils/appHelpers";
+import { generateId } from "../utils/appHelpers";
 import { useSongsStore } from "@/store/SongsContext";
-import { useToast } from "../store/ToastContext";
 import { nanoid } from "nanoid";
 import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "@/store/AuthContext";
-import { useTheme, useUpload } from "../store";
-import { useSelector } from "react-redux";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { useTheme, useUpload, useToast } from "../store";
+import { parserSong } from "@/utils/parseSong";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
@@ -27,7 +25,6 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
   const { isDev } = useTheme();
 
   const { userSongs, addUserSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
 
   // state
@@ -36,7 +33,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
   const isDuplicate = useRef(false);
 
   // hooks
-  const { setErrorToast, setSuccessToast, setToasts } = useToast();
+  const { setErrorToast, setSuccessToast } = useToast();
 
   const finishAndClear = (sts: typeof status) => {
     if (!inputRef.current) return;
@@ -185,7 +182,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
             msg: ">>> api: set song doc",
           });
 
-          addUserSongs([targetSong]);
+          addUserSongs([{ ...targetSong, queue_id: nanoid(4) }]);
 
           shiftSong();
 
@@ -197,10 +194,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
 
         if (isDuplicate.current) {
           finishAndClear("finish-error");
-          setToasts((t) => [
-            ...t,
-            { id: nanoid(4), title: "warning", desc: "Song duplicate" },
-          ]);
+          setSuccessToast();
         } else {
           finishAndClear("finish");
           setSuccessToast(`${processSongsList.length} songs uploaded`);
@@ -217,7 +211,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         setErrorToast();
       }
     },
-    [user, userSongs, currentSong]
+    [user, userSongs]
   );
 
   useEffect(() => {

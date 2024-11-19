@@ -1,15 +1,14 @@
 import { useMemo, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { SongListModal, Button, Modal, SongList } from "../components";
 import CheckedBar from "./CheckedBar";
 import { PlusIcon } from "@heroicons/react/24/outline";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { setQueue } from "@/store/songQueueSlice";
 import SongSelectProvider from "@/store/SongSelectContext";
 import { ModalRef } from "./Modal";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
+import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
   variant: "admin-playlist" | "my-playlist" | "dashboard-playlist";
@@ -27,37 +26,17 @@ const playlistSongSkeleton = (
 );
 
 export default function PlaylistDetailSongList({ variant, loading }: Props) {
-  // use store
-  const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+
   const modalRef = useRef<ModalRef>(null);
+
+  const { handleSetSong } = useSetSong({ variant: "playlist" });
 
   const closeModal = () => modalRef.current?.toggle();
 
-  const handleSetSong = (song: Song, index: number) => {
-    if (!currentPlaylist) return;
-
-    const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
-    if (currentSong?.id !== song.id || currentSong.song_in !== newSongIn) {
-      dispatch(
-        setSong({
-          ...song,
-          currentIndex: index,
-          song_in: newSongIn,
-        })
-      );
-
-      // const shouldReplaceQueue =
-      //   from.length > 1 ||
-      //   from[0] != newSongIn ||
-      //   playlistSongs.length !== queueSongs.length;
-      const shouldReplaceQueue = true;
-      if (shouldReplaceQueue) {
-        dispatch(setQueue({ songs: playlistSongs }));
-      }
-    }
+  const _handleSetSong = (queueId: string) => {
+    handleSetSong(queueId, playlistSongs);
   };
 
   const renderCheckBar = useMemo(() => {
@@ -87,7 +66,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
           <SongList
             variant="admin-playlist"
             songs={playlistSongs}
-            handleSetSong={handleSetSong}
+            handleSetSong={_handleSetSong}
           />
         );
       case "my-playlist":
@@ -97,7 +76,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
             <SongList
               variant={variant}
               songs={playlistSongs}
-              handleSetSong={handleSetSong}
+              handleSetSong={_handleSetSong}
             />
 
             <div className="flex justify-center mt-[20px]">
@@ -124,9 +103,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
       </SongSelectProvider>
 
       <Modal ref={modalRef} variant="animation">
-        <SongSelectProvider>
-          <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
-        </SongSelectProvider>
+        <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
       </Modal>
     </>
   );

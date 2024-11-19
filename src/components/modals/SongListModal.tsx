@@ -5,14 +5,14 @@ import MobileSongItem from "../mobile/MobileSongItem";
 import usePlaylistActions from "@/hooks/usePlaylistActions";
 import ModalHeader from "./ModalHeader";
 import { useTheme } from "@/store";
-import { useSongSelectContext } from "@/store/SongSelectContext";
+import SongSelectProvider, { useSongSelectContext } from "@/store/SongSelectContext";
 
 type Props = {
   closeModal: () => void;
   playlistSongs: Song[];
 };
 
-export default function SongListModal({ closeModal, playlistSongs }: Props) {
+function SongList({ closeModal, playlistSongs }: Props) {
   const { theme } = useTheme();
   const { selectedSongs } = useSongSelectContext();
 
@@ -66,5 +66,13 @@ export default function SongListModal({ closeModal, playlistSongs }: Props) {
         )}
       </div>
     </div>
+  );
+}
+
+export default function SongListModal({ closeModal, playlistSongs }: Props) {
+  return (
+    <SongSelectProvider>
+      <SongList closeModal={closeModal} playlistSongs={playlistSongs} />
+    </SongSelectProvider>
   );
 }

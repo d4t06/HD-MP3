@@ -6,24 +6,30 @@ import PLaylistInfo from "@/components/PlaylistInfo";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
 import Footer from "@/components/Footer";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
+import { useMemo } from "react";
 
 export default function PlaylistDetail() {
   // us store
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
+
+  const isAdminPlaylist = useMemo(
+    () => currentPlaylist?.by === "admin",
+    [currentPlaylist]
+  );
 
   //   hooks
   usePlaylistDetail({});
   const { isFetching } = useGetPlaylist();
 
   const renderPlaylistInfo = () => {
-    if (currentPlaylist?.by === "admin")
+    if (isAdminPlaylist)
       return <PLaylistInfo loading={isFetching} variant="admin-playlist" />;
 
     return <PLaylistInfo loading={isFetching} variant="my-playlist" />;
   };
 
   const renderSongList = () => {
-    if (currentPlaylist?.by === "admin")
+    if (isAdminPlaylist)
       return <PlaylistDetailSongList loading={isFetching} variant="admin-playlist" />;
     else return <PlaylistDetailSongList loading={isFetching} variant="my-playlist" />;
   };
@@ -31,7 +37,7 @@ export default function PlaylistDetail() {
   return (
     <div className={`pb-[80px]`}>
       <div className="mb-[30px]">
-        <BackBtn />
+        <BackBtn variant={isAdminPlaylist ? "admin-playlist" : "my-playlist"} />
       </div>
 
       {renderPlaylistInfo()}

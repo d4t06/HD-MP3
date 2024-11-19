@@ -1,3 +1,4 @@
+import { nanoid } from "nanoid/non-secure";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 
 type StateType = {
@@ -51,7 +52,8 @@ type SetUserSong = {
 type UpdateUserSong = {
   type: REDUCER_ACTION_TYPE.UPDATEUSERSONG;
   payload: {
-    song: Song;
+    song: Partial<Song>;
+    id: string;
   };
 };
 
@@ -108,13 +110,13 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
       };
     }
     case REDUCER_ACTION_TYPE.UPDATEUSERSONG: {
-      const { song } = action.payload;
+      const { song, id } = action.payload;
 
       const newSongs = [...state.userSongs];
-      const index = newSongs.findIndex((s) => s.id === song.id);
-
+      const index = newSongs.findIndex((s) => s.id === id);
       if (index === -1) return state;
-      newSongs[index] = song;
+
+      newSongs[index] = { ...newSongs[index], ...song, queue_id: nanoid(4) };
 
       return { ...state, userSongs: newSongs };
     }
@@ -178,12 +180,15 @@ const useSongsActions = () => {
     });
   }, []);
 
-  const updateUserSong = useCallback((song: Song) => {
-    return dispatch({
-      type: REDUCER_ACTION_TYPE.UPDATEUSERSONG,
-      payload: { song },
-    });
-  }, []);
+  const updateUserSong = useCallback(
+    ({ id, song }: { song: Partial<Song>; id: string }) => {
+      return dispatch({
+        type: REDUCER_ACTION_TYPE.UPDATEUSERSONG,
+        payload: { song, id },
+      });
+    },
+    []
+  );
 
   const addUserPlaylist = useCallback((playlist: Playlist) => {
     return dispatch({

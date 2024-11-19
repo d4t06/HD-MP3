@@ -1,11 +1,14 @@
 import { MouseEvent, RefObject, WheelEvent, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
 import { useTheme } from "@/store";
+import { getLinearBg } from "@/utils/getLinearBg";
 
-export default function useVolume(
-  volumeLine: RefObject<HTMLDivElement>,
-  audioEle: HTMLAudioElement
-) {
+type Props = {
+  audioEle: HTMLAudioElement;
+  volumeLineRef: RefObject<HTMLDivElement>;
+};
+
+export default function useVolume({ audioEle, volumeLineRef }: Props) {
   const { theme } = useTheme();
 
   const [isMute, setIsMute] = useState(false);
@@ -15,7 +18,7 @@ export default function useVolume(
     const node = e.target as HTMLElement;
     const clientRect = node.getBoundingClientRect();
 
-    const volumeLineEle = volumeLine.current as HTMLDivElement;
+    const volumeLineEle = volumeLineRef.current as HTMLDivElement;
 
     if (volumeLineEle) {
       let newVolume = +((e.clientX - clientRect.x) / volumeLineEle.clientWidth).toFixed(
@@ -57,11 +60,10 @@ export default function useVolume(
   const handleMute = () => setIsMute(!isMute);
 
   useEffect(() => {
-    if (volumeLine.current && audioEle) {
+    if (volumeLineRef.current && audioEle) {
       const ratio = volume * 100;
 
-      volumeLine.current.style.background = `linear-gradient(to right, ${theme.content_code} ${ratio}%, #e1e1e1 ${ratio}%, #e1e1e1 100%)`;
-
+      volumeLineRef.current.style.background = getLinearBg(theme.content_code, ratio);
       audioEle.volume = volume;
 
       if (volume === 0) setIsMute(true);

@@ -1,88 +1,74 @@
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
+// import { nanoid } from "nanoid";
 
 type StateType = {
-  queueSongs: QueueSong[];
-  current_id: string | null;
+  queueSongs: Song[];
+  currentQueueId: string | null;
+  currentSongData: { song: Song; index: number } | null;
 };
 
-const storage = getLocalStorage();
+const queue = getLocalStorage()["queue"] || [];
 
 const initialState: StateType = {
-  queueSongs: storage["queue"] || [],
-  current_id: null,
+  queueSongs: queue,
+  /** update queue id in use control */
+  currentQueueId: null,
+  currentSongData: null,
 };
 
-const getQueueSongs = (songs: Song[]) =>
-  songs.map((s) => {
-    return { ...s, queue_id: nanoid(4) } as QueueSong;
-  });
+function updateCurrentSongData(state: StateType) {
+  for (let index = 0; index < state.queueSongs.length; index++) {
+    const song = state.queueSongs[index];
+    if (song.queue_id === state.currentQueueId) {
+      state.currentSongData = { song, index };
+      return;
+    }
+  }
+
+  state.currentSongData = null;
+}
 
 const songQueueSlice = createSlice({
   name: "songQueue",
   initialState,
   reducers: {
-    setQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
-      const { songs } = action.payload;
+    setQueue(state: StateType, action: PayloadAction<{ songs: Song[] }>) {
+      const songs = action.payload.songs;
+      state.queueSongs = songs;
 
-      const queueSongs = getQueueSongs(songs);
-
-      state.queueSongs = queueSongs;
-
-      setLocalStorage("queue", state.queueSongs);
+      updateCurrentSongData(state);
+      setLocalStorage("queue", songs);
     },
-    removeSongFromQueue: (state: StateType, action: PayloadAction<{ index: number }>) => {
+    setCurrentQueueId(state: StateType, action: PayloadAction<string>) {
+      const id = action.payload;
+      state.currentQueueId = id;
+      updateCurrentSongData(state);
+      // update in use control
+      // setLocalStorage("current_queue_id", id);
+    },
+    removeSongFromQueue(state: StateType, action: PayloadAction<{ index: number }>) {
       const { index } = action.payload;
 
-      // update songs
-      // const indexList: number[] = [];
-      // state.queueSongs.forEach((s, index) => {
-      //    if (s.id === id) indexList.push(index);
-      // });
-
-      // indexList.forEach((index) => {
-      //    state.queueSongs.splice(index, 1);
-      // });
-
       state.queueSongs.splice(index, 1);
-
-      // update local storage
       setLocalStorage("queue", state.queueSongs);
 
-      // update from
-      // const newSongFrom: StateType["from"] = [];
-      // state.queueSongs.forEach((s) => {
-      //   if (!newSongFrom.includes(s.song_in)) {
-      //     newSongFrom.push(s.song_in);
-      //   }
-      // });
-
-      // state.from = newSongFrom;
+      if (state.currentSongData)
+        if (index <= state.currentSongData.index) {
+          updateCurrentSongData(state);
+        }
     },
+
     addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
-      const { songs } = action.payload;
 
-      // // only can add songs from same place
-      // if (!state.from.includes(songs[0].song_in)) {
-      //   state.from.push(songs[0].song_in);
-      // }
+      const _songs = action.payload.songs.map((s) => ({...s, queue_id: nanoid(4)}))
 
-      const queueSongs = getQueueSongs(songs);
-
-      state.queueSongs.push(...queueSongs);
+      state.queueSongs.push(..._songs);
       setLocalStorage("queue", state.queueSongs);
-    },
-    updateSongInQueue: (state: StateType) => {
-      // const { song } = action.payload;
-      return state;
-      // const index = state.queueSongs.findIndex((s) => s.id === song.id);
-
-      // Object.assign(state.queueSongs[index], song);
     },
     resetSongQueue: (state: StateType) => {
-      state.queueSongs = [];
-      setLocalStorage("queue", []);
+      Object.assign(state, initialState);
     },
   },
 });
@@ -91,7 +77,7 @@ export const selectSongQueue = (state: { songQueue: StateType }) => state.songQu
 
 export const {
   addSongToQueue,
-  updateSongInQueue,
+  setCurrentQueueId,
   removeSongFromQueue,
   setQueue,
   resetSongQueue,

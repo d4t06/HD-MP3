@@ -1,33 +1,28 @@
 import { useSongsStore, useUpload } from "@/store";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import CheckedBar from "./CheckedBar";
 import { Skeleton, SongList } from ".";
 import { SongItemSkeleton } from "./skeleton";
 import SongSelectProvider from "@/store/SongSelectContext";
+import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
   initialLoading: boolean;
 };
 
 export default function DashboardSongList({ initialLoading }: Props) {
-  // store
-  const dispatch = useDispatch();
   const { userSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
 
   // hooks
   const { tempSongs } = useUpload();
+  const { handleSetSong } = useSetSong({ variant: "songs" });
 
   const songCount = useMemo(() => {
     return tempSongs.length + userSongs.length;
   }, [tempSongs, userSongs]);
 
-  const handleSetSong = (song: Song, index: number) => {
-    if (currentSong?.id !== song.id) {
-      dispatch(setSong({ ...song, currentIndex: index }));
-    }
+  const _handleSetSong = (song: Song) => {
+    handleSetSong(song.queue_id, [song]);
   };
 
   return (
@@ -54,9 +49,8 @@ export default function DashboardSongList({ initialLoading }: Props) {
                 <SongList
                   variant="dashboard-songs"
                   tempSongs={tempSongs}
-                  activeExtend={true}
                   songs={userSongs}
-                  handleSetSong={handleSetSong}
+                  handleSetSong={_handleSetSong}
                 />
                 <SongList variant="uploading" songs={tempSongs} />
               </>

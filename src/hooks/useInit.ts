@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSongsStore } from "@/store/SongsContext";
-import { useToast } from "../store/ToastContext";
-import { useAuthStore } from "@/store/AuthContext";
+import { useToast, useSongsStore, useAuthStore } from "../store";
 import { sleep } from "../utils/appHelpers";
 import appConfig from "../config/app";
 import * as appService from "../services/appService";
@@ -15,8 +13,6 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
 
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [loading, setLoading] = useState(true);
-
-  // const [_playHistory, setPlayHistory] = useLocalStorage<string[]>("play_history", []);
 
   const handleErrorMsg = (msg: string) => {
     setLoading(false);
@@ -36,13 +32,8 @@ export default function useInitSong({ admin }: { admin?: boolean }) {
       const adminSongs = await appService.getAdminSongs();
       const adminPlaylists = await appService.getAdminPLaylist();
 
-      // console.log("check admin songs", adminSongs);
-      // console.log("check admin playlists", adminPlaylists);
-
       if (admin) {
         initSongsContext({ userSongs: adminSongs, userPlaylists: adminPlaylists });
-
-        // console.log("admin", adminPlaylists, adminSongs);
 
         setLoading(false);
         return;

@@ -1,6 +1,6 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthStore } from "@/store";
-import { useEditLyricContext } from "@/store/EditSongLyricContext";
+import { useEditLyricContext } from "@/store/EditLyricContext";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,7 +24,6 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
     setBaseLyricArr,
     setBaseLyric,
     setLyrics,
-    setCurrentLyricIndex,
     isChanged,
     setIsChanged,
     isFetching: isSubmitting,
@@ -57,8 +56,18 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
-          const lyricData = lyricSnapshot.data() as SongLyric;
-          setLyricRes(lyricData);
+          const lyricData = lyricSnapshot.data();
+
+          const lyrics =
+            typeof lyricData.real_time === "string"
+              ? JSON.parse(lyricData.real_time)
+              : lyricData.real_time;
+
+          setLyricRes({
+            base: lyricData.base,
+            id: lyricData.id,
+            real_time: lyrics,
+          });
         }
       }
 
@@ -111,13 +120,14 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
       setBaseLyric(base);
       setLyrics(real_time);
 
+      if (!real_time.length) return;
+
       const latestIndex = real_time.length - 1;
-      setCurrentLyricIndex(latestIndex + 1);
 
       if (audioRef.current) {
         const latestEndTime = real_time[latestIndex].end;
 
-        audioRef.current.currentTime = latestEndTime;
+        //   audioRef.current.currentTime = latestEndTime;
         start.current = latestEndTime;
       }
     }

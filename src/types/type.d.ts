@@ -29,9 +29,6 @@ type Song = {
   blurhash_encode: string;
   size: number;
   song_in: SongIn;
-};
-
-type QueueSong = Song & {
   queue_id: string;
 };
 
@@ -56,13 +53,31 @@ type SongLyric = {
   real_time: RealTimeLyric[];
 };
 
+type RawSongLyric = Omit<SongLyric, "real_time"> & {
+  real_time: string;
+};
+
+type LyricTune = {
+  grow: string;
+  end: number;
+  start: number;
+};
+
 interface RealTimeLyric {
   start: number;
   end: number;
   text: string;
+  tune?: LyricTune;
 }
 
-type ThemeKeyType = "red" | "green_light" | "deep_blue" | "gray" | "white" | "black";
+type ThemeKeyType =
+  | "red"
+  | "green_light"
+  | "deep_blue"
+  | "gray"
+  | "white"
+  | "black"
+  | "tet";
 
 type ThemeType = {
   name: string;
@@ -80,10 +95,11 @@ type ThemeType = {
   container_code: string;
   content_hover_bg: string;
   text_color: string;
+  image?: string;
 };
 
 type Toast = {
-  title: "success" | "error" | "warning";
+  variant: "success" | "error";
   desc: string;
   id: string;
 };

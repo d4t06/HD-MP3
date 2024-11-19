@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
 import { resetCurrentPlaylist, setCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { nanoid } from "nanoid";
 
 export default function useGetPlaylist() {
   // store
@@ -46,6 +47,7 @@ export default function useGetPlaylist() {
           ({
             ...doc.data(),
             song_in: `playlist_${playlist.id}`,
+            queue_id: nanoid(4),
           } as Song)
       );
       return songs;
@@ -63,8 +65,6 @@ export default function useGetPlaylist() {
 
       const playlist = await getPlaylist();
       if (!playlist) throw new Error("");
-
-      console.log("check playlist", { ...playlist });
 
       const playlistSongs = await getSongs(playlist);
 

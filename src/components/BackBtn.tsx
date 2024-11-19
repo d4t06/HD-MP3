@@ -1,28 +1,36 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useTheme } from "../store";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 type Props = {
-  admin?: boolean;
+  variant: "admin-playlist" | "my-playlist" | "dashboard-playlist" | "my-songs";
 };
 
-function BackBtn({ admin }: Props) {
+function BackBtn({ variant }: Props) {
   const { theme } = useTheme();
-
   const navigate = useNavigate();
-  const location = useLocation();
 
   const handleNavigate = () => {
-    const currentPath = location.pathname;
+    let path = "/";
 
-    let index = currentPath.lastIndexOf("/");
-    let prevPath = currentPath.substring(0, index);
-    if (currentPath.includes("playlist")) {
-      if (admin) prevPath = "/dashboard";
-      else prevPath = "/mysongs";
+    switch (variant) {
+      case "admin-playlist":
+        path = "/";
+        break;
+      case "my-playlist":
+        path = "/mysongs";
+        break;
+
+      case "dashboard-playlist":
+        path = "/dashboard";
+        break;
+
+      case "my-songs":
+        path = "/";
+        break;
     }
 
-    navigate(prevPath || "/");
+    navigate(path);
   };
 
   const classes = {
@@ -32,7 +40,7 @@ function BackBtn({ admin }: Props) {
   return (
     <button
       onClick={handleNavigate}
-      className={`${classes.button} ${location.pathname === "/" ? "disable" : ""}`}
+      className={`${classes.button}`}
     >
       <ChevronLeftIcon />
     </button>

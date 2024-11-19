@@ -2,38 +2,40 @@ import { useEffect, useRef, useState } from "react";
 import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
+import { useLyricContext } from "@/store/LyricContext";
+import { usePlayerContext } from "@/store";
 
-export default function useSongLyric({
-  audioEle,
-  isOpenFullScreen,
-}: {
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
-}) {
-  const { currentSong } = useSelector(selectCurrentSong);
+export default function useSongLyric({ active }: { active: boolean }) {
+  const { audioRef } = usePlayerContext();
+  if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
+
   const { playStatus } = useSelector(selectAllPlayStatusStore);
+  const { currentSongData } = useSelector(selectSongQueue);
+  const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
+    useLyricContext();
 
-  const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
-
-  const [loading, setLoading] = useState(false);
   const [isSongLoaded, setIsSongLoaded] = useState(false);
+
   const timerId = useRef<NodeJS.Timeout>();
 
   const getLyric = async () => {
     try {
-      if (!currentSong) return setLoading(false);
+      if (!currentSongData) return setLoading(false);
       setLoading(true);
 
       const lyricSnap = await myGetDoc({
         collection: "lyrics",
-        id: currentSong.id,
+        id: currentSongData.song.id,
         msg: ">>> api: get lyric doc",
       });
 
       if (lyricSnap.exists()) {
-        const lyricData = lyricSnap.data() as SongLyric;
-        setSongLyrics(lyricData.real_time);
+        const lyricData = lyricSnap.data() as RawSongLyric;
+
+        if (typeof lyricData.real_time === "string")
+          setSongLyrics(JSON.parse(lyricData.real_time || "[]"));
+        else setSongLyrics(lyricData.real_time);
       }
     } catch (error) {
       console.log({ message: error });
@@ -47,6 +49,7 @@ export default function useSongLyric({
     setIsSongLoaded(false);
     setLoading(true);
     setSongLyrics([]);
+    ranGetLyric.current = false;
   };
 
   //  add audio event
@@ -55,22 +58,26 @@ export default function useSongLyric({
       setIsSongLoaded(true);
     };
 
-    if (audioEle) audioEle.addEventListener("loadeddata", handleSongLoaded);
+    audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
 
     return () => {
-      if (audioEle) audioEle.removeEventListener("loadeddata", handleSongLoaded);
+      // audio possible undefine when component unmounted
+      audioRef.current?.removeEventListener("loadeddata", handleSongLoaded);
     };
   }, []);
 
   //  api get lyric
   useEffect(() => {
     if (songLyrics.length) return;
-    if (isSongLoaded && isOpenFullScreen) {
-      timerId.current = setTimeout(() => {
-        getLyric();
-      }, 500);
+    if (isSongLoaded && active) {
+      if (!ranGetLyric.current) {
+        ranGetLyric.current = true;
+        timerId.current = setTimeout(() => {
+          getLyric();
+        }, 500);
+      }
     }
-  }, [isSongLoaded, isOpenFullScreen]);
+  }, [isSongLoaded, active]);
 
   //  reset
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function useSongLyric({
     return () => {
       resetForNewSong();
     };
-  }, [currentSong, playStatus === "error"]);
+  }, [currentSongData, playStatus === "error"]);
 
-  return { songLyrics, loading };
+  return { songLyrics, loading, playStatus };
 }

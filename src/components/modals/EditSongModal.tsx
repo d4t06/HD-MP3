@@ -1,6 +1,7 @@
 import {
   ChangeEvent,
   MouseEventHandler,
+  RefObject,
   useCallback,
   useMemo,
   useRef,
@@ -13,14 +14,15 @@ import { useTheme } from "@/store";
 import { useEditForm } from "@/hooks";
 import ModalHeader from "./ModalHeader";
 import { getDisable } from "@/utils/appHelpers";
+import { ModalRef } from "../Modal";
 
 type Props = {
   song: Song;
   admin?: boolean;
-  closeModal: () => void;
+  modalRef: RefObject<ModalRef>;
 };
 
-export default function SongItemEditForm({ song, closeModal }: Props) {
+export default function EditSongModal({ song, modalRef }: Props) {
   const { theme } = useTheme();
 
   const [inputFields, setInputFields] = useState({
@@ -50,7 +52,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
   } = useEditForm({
     song,
     inputFields,
-    closeModal,
+    modalRef,
   });
 
   // priority order
@@ -107,7 +109,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
 
   const handleCloseEditForm: MouseEventHandler = (e) => {
     e.stopPropagation();
-    closeModal();
+    modalRef.current?.close();
   };
 
   const getIcon = (v: boolean) => {
@@ -126,7 +128,9 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
 
   return (
     <div
-      className={`${getDisable(isFetching)} w-[500px] max-h-[80vh] max-w-[90vw] overflow-hidden flex flex-col md:block`}
+      className={`${getDisable(
+        isFetching
+      )} w-[500px] max-h-[80vh] max-w-[90vw] flex flex-col`}
     >
       <input
         ref={inputFileRef}
@@ -137,7 +141,7 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
         className="hidden"
       />
 
-      <ModalHeader title="Edit song" close={closeModal} />
+      <ModalHeader title="Edit song" close={() => modalRef.current?.close} />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="w-full md:w-[30%]">
@@ -223,6 +227,14 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
       </div>
       <div className="flex mt-5 space-x-2 justify-end">
         <Button
+          onClick={handleCloseEditForm}
+          className={`bg-${theme.alpha} rounded-full`}
+          variant={"primary"}
+        >
+          Close
+        </Button>
+
+        <Button
           isLoading={isFetching}
           onClick={handleSubmit}
           className={`${theme.content_bg} rounded-full ${
@@ -231,14 +243,6 @@ export default function SongItemEditForm({ song, closeModal }: Props) {
           variant={"primary"}
         >
           Save
-        </Button>
-
-        <Button
-          onClick={handleCloseEditForm}
-          className={`bg-${theme.alpha} rounded-full`}
-          variant={"primary"}
-        >
-          Close
         </Button>
       </div>
     </div>

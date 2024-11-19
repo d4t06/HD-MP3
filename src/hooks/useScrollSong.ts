@@ -1,6 +1,6 @@
 import { RefObject, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
 
 type Props = {
   containerRef?: RefObject<HTMLDivElement>;
@@ -74,7 +74,7 @@ export default function useScrollSong({
   isOpenFullScreen,
   idle,
 }: Props) {
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const handleScrollToActiveSong = () => {
     const songItemEle = songItemRef?.current as HTMLDivElement;
@@ -84,14 +84,13 @@ export default function useScrollSong({
   };
 
   useEffect(() => {
-    if (!currentSong || !isOpenFullScreen) return;
+    if (!currentSongData || !isOpenFullScreen) return;
     if (!scroll || !containerRef?.current || !songItemRef?.current) {
-      console.log("lack props");
       return;
     }
 
     handleScrollToActiveSong();
-  }, [currentSong, isOpenFullScreen]);
+  }, [currentSongData?.song, isOpenFullScreen]);
 
   useEffect(() => {
     const containerEle = containerRef?.current as HTMLDivElement;

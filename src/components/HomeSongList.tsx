@@ -1,39 +1,26 @@
 import CheckedBar from "./CheckedBar";
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { setQueue } from "@/store/songQueueSlice";
 import { useSongsStore } from "@/store";
 import SongSelectProvider from "@/store/SongSelectContext";
+import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
   loading: boolean;
 };
 
 export default function HomeSongList({ loading }: Props) {
-  const dispatch = useDispatch();
   const { adminSongs } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { handleSetSong } = useSetSong({ variant: "songs" });
 
-  const handleSetSong = (song: Song, index: number) => {
-    // song in playlist and song in user are two difference case
-    if (currentSong?.id !== song.id || currentSong.song_in !== "admin") {
-      dispatch(setSong({ ...song, currentIndex: index }));
-
-      // const isQueueHaveOtherSongs = from.length > 1 || from[0] != song.song_in;
-      const isQueueHaveOtherSongs = true;
-      if (isQueueHaveOtherSongs) {
-        dispatch(setQueue({ songs: adminSongs }));
-      }
-    }
+  const _handleSetSong = (queueId: string) => {
+    handleSetSong(queueId, adminSongs);
   };
 
   return (
     <SongSelectProvider>
       <CheckedBar variant="home" />
 
-      {/* admin song */}
       {loading && SongItemSkeleton}
 
       {!loading && (
@@ -42,10 +29,7 @@ export default function HomeSongList({ loading }: Props) {
             <>
               <SongList
                 variant="home"
-                handleSetSong={handleSetSong}
-                activeExtend={
-                  currentSong?.song_in === "admin" || currentSong?.song_in === "favorite"
-                }
+                handleSetSong={_handleSetSong}
                 songs={adminSongs}
               />
             </>

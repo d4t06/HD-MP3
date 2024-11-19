@@ -1,9 +1,9 @@
+import { ModalRef } from "@/components/Modal";
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useAuthStore, useSongsStore, useToast } from "@/store";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { sleep } from "@/utils/appHelpers";
+import { RefObject, useEffect, useState } from "react";
 
 type Props = {
   song: Song;
@@ -12,16 +12,14 @@ type Props = {
     singer: string;
     image_url: string;
   };
-  closeModal: () => void;
+  modalRef: RefObject<ModalRef>;
 };
 
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-export default function useEditForm({ song, inputFields, closeModal }: Props) {
-  const dispatch = useDispatch();
+export default function useEditForm({ song, inputFields, modalRef }: Props) {
   const { user } = useAuthStore();
   const { updateUserSong } = useSongsStore();
-  const { currentSong } = useSelector(selectCurrentSong);
 
   const [validName, setValidName] = useState(!!song.name);
   const [validSinger, setValidSinger] = useState(!!song.singer);
@@ -46,8 +44,16 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
     }
 
     try {
-      // const newTargetSongs: Song[] = [...targetSongs];
-      let newSong: Song = { ...song };
+      setIsFetching(true);
+      modalRef.current?.setModalPersist(true);
+
+      let newSongData: Partial<Song> = {
+        name: song.name,
+        singer: song.singer,
+        image_url: song.image_url,
+        image_file_path: song.image_file_path,
+        blurhash_encode: song.blurhash_encode,
+      };
 
       if (isChangeInEdit) {
         console.log("is change in edit");
@@ -60,18 +66,21 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
         }
 
         const songImageUrl =
-          !!inputFields.image_url && validURL ? inputFields.image_url : newSong.image_url;
+          !!inputFields.image_url && validURL ? inputFields.image_url : song.image_url;
 
-        setIsFetching(true);
-        newSong = {
-          ...newSong,
+        await sleep(1000);
+
+        Object.assign(newSongData, {
           name: inputFields.name,
           singer: inputFields.singer,
           image_url: songImageUrl,
-        };
+        } as Partial<Song>);
 
         // check valid
-        if (newSong.name !== inputFields.name || newSong.singer !== inputFields.singer) {
+        if (
+          newSongData.name !== inputFields.name ||
+          newSongData.singer !== inputFields.singer
+        ) {
           console.log("input invalid");
           setErrorToast();
           return;
@@ -84,17 +93,13 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
             folder: "/images/",
             email: user.email,
           });
-          newSong.image_file_path = filePath;
-          newSong.image_url = fileURL;
+          newSongData.image_file_path = filePath;
+          newSongData.image_url = fileURL;
 
           // if user remove image
         } else if (isImpactOnImage) {
-          newSong.image_file_path = "";
+          newSongData.image_file_path = "";
         }
-
-        // if (!isImpactOnImage) {
-        //    updateUserSong(newSong);
-        // }
       }
 
       // if user upload, change, unset image
@@ -106,8 +111,8 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
         // >>> handle delete song file
         // when user upload new image
         if (song.image_file_path) {
-          newSong.image_file_path = "";
-          newSong.image_url = "";
+          newSongData.image_file_path = "";
+          newSongData.image_url = "";
 
           await deleteFile({
             filePath: song.image_file_path,
@@ -119,8 +124,8 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
         if (!stockImageURL && !imageFileFromLocal) {
           console.log("remove current image url");
 
-          newSong.image_file_path = "";
-          newSong.image_url = "";
+          newSongData.image_file_path = "";
+          newSongData.image_url = "";
         }
 
         // >>> handle add new song file if exist
@@ -134,46 +139,34 @@ export default function useEditForm({ song, inputFields, closeModal }: Props) {
           const uploadProcess = uploadBlob({
             blob: imageBlob,
             folder: "/images/",
-            songId: newSong.id,
+            songId: song.id,
           });
 
           const { encode } = await getBlurHashEncode(imageBlob);
           if (encode) {
-            newSong.blurhash_encode = encode;
+            newSongData.blurhash_encode = encode;
             console.log("check encode", encode);
           }
 
           const { filePath, fileURL } = await uploadProcess;
-          newSong.image_file_path = filePath;
-          newSong.image_url = fileURL;
+          newSongData.image_file_path = filePath;
+          newSongData.image_url = fileURL;
         }
       }
 
       // >>> api
       await mySetDoc({
         collection: "songs",
-        data: newSong,
-        id: newSong.id,
+        data: newSongData,
+        id: song.id,
         msg: ">>> api: update song doc",
       });
 
-      updateUserSong(newSong);
-      // dispatch(updateSongInQueue({ song: newSong }));
-
-      if (currentSong?.id === newSong.id) {
-        dispatch(
-          setSong({
-            ...newSong,
-            currentIndex: currentSong.currentIndex,
-            song_in: currentSong.song_in,
-          })
-        );
-      }
-      // }
+      updateUserSong({ song: newSongData, id: song.id });
 
       // >>> finish
       setSuccessToast(`Song edited`);
-      closeModal();
+      modalRef.current?.close();
     } catch (error) {
       console.log({ message: error });
 

@@ -1,67 +1,43 @@
 import { formatTime } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
-import { useRef, useState, FormEvent, useEffect, ElementRef } from "react";
 
 type Props = {
   lyric: RealTimeLyric;
   seek: (time: number) => void;
   theme: ThemeType & { alpha: string };
-  updateLyric: (t: string) => void;
+  isLast: boolean;
+  openModal: () => void;
 };
 
-function AddLyricItem({ lyric, seek, theme, updateLyric }: Props) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(lyric.text);
-  const textRef = useRef<ElementRef<"textarea">>(null);
-
-  const handleEdit = (e: FormEvent) => {
-    e.preventDefault();
-
-    updateLyric(text);
-    setIsEditing(false);
-  };
-
-  const classes = {
-    input: `bg-${theme.alpha} rounded-[4px] outline-none w-full px-2 py-1`,
-  };
-
-  useEffect(() => {
-    if (isEditing) {
-      textRef.current?.focus();
-    }
-  }, [isEditing]);
-
+function AddLyricItem({ lyric, openModal, seek, theme, isLast }: Props) {
   return (
-    <div className="pt-[10px]">
-      <button
-        className={`text-[18px] ${theme.content_hover_text}`}
-        onClick={() => seek(lyric.start)}
-      >
-        {formatTime(lyric.start)}
-      </button>
+    <>
+      <div className="pt-[10px] last:mb-[30vh]">
+        <button
+          className={`text-[18px] ${theme.content_hover_text}`}
+          onClick={() => seek(lyric.start)}
+        >
+          {formatTime(+lyric.start)}
+        </button>
 
-      {!isEditing && (
-        <p className="font-[700] text-[18px] select-none flex items-center">
+        <p className="font-[700] select-none flex items-center">
           {lyric.text}
 
-          <button onClick={() => setIsEditing(true)} className="ml-1">
+          <button onClick={openModal} className="ml-1">
             <PencilSquareIcon className="w-5" />
           </button>
         </p>
-      )}
 
-      {isEditing && (
-        <form action="" onSubmit={handleEdit}>
-          <textarea
-            onBlur={() => setIsEditing(false)}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            ref={textRef}
-            className={classes.input}
-          />
-        </form>
-      )}
-    </div>
+        {isLast && (
+          <button
+            className={`${theme.content_hover_text}`}
+            onClick={() => seek(lyric.start)}
+          >
+            {formatTime(lyric.end)}
+          </button>
+        )}
+      </div>
+    </>
   );
 }
 

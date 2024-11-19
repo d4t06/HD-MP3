@@ -4,11 +4,12 @@ import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 type Repeat = "one" | "all" | "no";
 type LyricSize = "small" | "medium" | "large";
 
-export type PlayStatus = "playing" | "error" | "loading" | "paused" | "waiting"
+export type PlayStatus = "playing" | "error" | "loading" | "paused" | "waiting";
 
 type StateType = {
   /** update 23/10/2024 */
   playStatus: PlayStatus;
+  triggerPlayStatus: PlayStatus | "";
   lyricSize: LyricSize;
   isRepeat: Repeat;
   isShuffle: boolean;
@@ -35,6 +36,7 @@ const init = () => {
 
   const state: StateType = {
     playStatus: "paused",
+    triggerPlayStatus: "",
     lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
     isLoaded: true,
     isRepeat: (storage["isRepeat"] || "no") as Repeat,

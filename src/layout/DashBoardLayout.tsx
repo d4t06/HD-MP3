@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
-import { DashboardHeader, Player, UploadSongPortal } from "../components";
+import { DashboardHeader, UploadSongPortal } from "../components";
 import { useTheme } from "../store";
+import DashboardPlayer from "@/components/DashboardPlayer";
 
 export default function DashBoardLayout({ children }: { children: ReactNode }) {
   const { theme } = useTheme();
@@ -13,7 +14,7 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
           <div className="container max-w-[800px] h-full">{children}</div>
         </div>
 
-        <Player admin />
+        <DashboardPlayer />
 
         <UploadSongPortal admin />
       </div>

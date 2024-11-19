@@ -12,9 +12,6 @@ export default function usePlaylistDetail({ admin }: Props) {
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
   const clearPlaylistImage = useRef(false);
-  // const { updateUserPlaylist } = useSongsStore();
-
-  // use hook
 
   const handleGetPlaylistImage = async () => {
     if (!currentPlaylist) return;
@@ -22,10 +19,6 @@ export default function usePlaylistDetail({ admin }: Props) {
 
     if (currentPlaylist.image_url) {
       if (!playlistSongs[0].image_url) {
-        // updateUserPlaylist({
-        //   id: currentPlaylist.id,
-        //   playlist: { blurhash_encode: "", image_url: "" },
-        // });
         if (!clearPlaylistImage.current) {
           clearPlaylistImage.current = true;
 

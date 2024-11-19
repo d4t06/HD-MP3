@@ -1,4 +1,4 @@
-import { Dispatch, FC, RefObject, SetStateAction, useMemo } from "react";
+import { useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
@@ -10,25 +10,16 @@ import siteLogo from "@/assets/siteLogo.png";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
-import { ControlRef } from "../Control";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectCurrentSong } from "@/store/currentSongSlice";
+import { selectSongQueue } from "@/store/songQueueSlice";
+import { usePlayerContext } from "@/store";
 
-interface Props {
-  isOpenFullScreen: boolean;
-  setIsOpenFullScreen: Dispatch<SetStateAction<boolean>>;
-  controlRef: RefObject<ControlRef>;
-}
-
-const MobileBottomPlayer: FC<Props> = ({
-  setIsOpenFullScreen,
-  isOpenFullScreen,
-  controlRef,
-}) => {
+const MobileBottomPlayer = () => {
   const { theme } = useTheme();
+  const { controlRef, isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
@@ -64,25 +55,28 @@ const MobileBottomPlayer: FC<Props> = ({
 
       <div className={`flex items-center  h-full`}>
         <div
-          onClick={() => (currentSong?.name ? setIsOpenFullScreen(true) : {})}
+          onClick={() => (currentSongData?.song.name ? setIsOpenFullScreen(true) : {})}
           className={`mobile-current-song flex-grow`}
         >
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image src={currentSong?.image_url || siteLogo} className="rounded-full" />
+              <Image
+                src={currentSongData?.song.image_url || siteLogo}
+                className="rounded-full"
+              />
             </div>
 
             <div className="flex-grow  ml-[10px]">
-              {currentSong?.song_url && (
+              {currentSongData?.song.song_url && (
                 <>
                   <div className="h-[30px] relative overflow-hidden">
                     <div className="absolute left-0 whitespace-nowrap font-playwriteCU leading-[1.5]">
-                      {currentSong?.name || "name"}
+                      {currentSongData?.song.name || "name"}
                     </div>
                   </div>
                   <p className={`opacity-70 line-clamp-1`}>
-                    {currentSong?.singer || "singer"}
+                    {currentSongData?.song.singer || "singer"}
                   </p>
                 </>
               )}
@@ -91,7 +85,7 @@ const MobileBottomPlayer: FC<Props> = ({
         </div>
 
         {/* cta */}
-        <div className={`${classes.cta} ${!currentSong?.name && "disable"}`}>
+        <div className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}>
           <button
             className={`p-[4px]`}
             onClick={() => controlRef.current?.handlePlayPause()}

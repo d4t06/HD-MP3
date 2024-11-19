@@ -13,19 +13,22 @@ import { forwardRef, Ref, useImperativeHandle } from "react";
 
 interface Props {
   admin?: boolean;
-  audioEle: HTMLAudioElement;
-  isOpenFullScreen: boolean;
+  variant: "mobile" | "desktop";
 }
 
 export type ControlRef = {
   handlePlayPause: () => void;
   handleNext: () => void;
+  pause: () => void;
+  resetForNewSong: () => void;
 };
 
-function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlRef>) {
+function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
   const { theme } = useTheme();
 
   const {
+    isOpenFullScreen,
+    currentSongData,
     handleSeek,
     handlePlayPause,
     handleNext,
@@ -35,30 +38,30 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
     isRepeat,
     isShuffle,
     playStatus,
-    currentSong,
     queueSongs,
     currentTimeEleRef,
     timelineEleRef,
-  } = useControl({
-    audioEle,
-  });
+    resetForNewSong,
+    pause,
+  } = useControl();
 
-  useImperativeHandle(ref, () => ({ handlePlayPause, handleNext }));
+  useImperativeHandle(ref, () => ({
+    handlePlayPause,
+    handleNext,
+    pause,
+    resetForNewSong,
+  }));
 
   const classes = {
-    button: `p-[6px] rounded-full hover:bg-${theme.alpha}`,
+    button: `p-1 rounded-full md:bg-transparent `,
     buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
       admin ? "hidden" : ""
     }`,
     progressContainer: `flex w-full flex-row items-center   ${admin ? "h-full" : ""}`,
-    processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] `,
-    processLineCurrent: `absolute left-0 rounded-l-[99px] top-0 h-full ${theme.content_bg}`,
-    currentTime: `opacity-60 text-[14px] font-semibold`,
+    processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] shadow-[2px_2px_10px_rgba(0,0,0,.15)] `,
     icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
-
-  console.log("redner");
 
   return (
     <>
@@ -75,8 +78,7 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
             >
               <ArrowPathRoundedSquareIcon className={classes.icon} />
               <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                {currentSong &&
-                  (isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : "")}
+                {isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : ""}
               </span>
             </button>
             <button
@@ -110,10 +112,10 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
       {/* process */}
       <div
         className={`${classes.progressContainer} ${
-          isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
+          variant === "desktop" && isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
-        <div className="w-[44px] sm:w-[36px]">
+        <div className="w-10 sm:w-9">
           <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
             0:00
           </span>
@@ -126,9 +128,9 @@ function Control({ audioEle, admin, isOpenFullScreen }: Props, ref: Ref<ControlR
             classes.before
           }`}
         ></div>
-        <div className="w-[44px] sm:w-[36px] text-right">
+        <div className="w-10 sm:w-9 text-right">
           <span className={"text-lg sm:text-sm"}>
-            {currentSong ? formatTime(currentSong?.duration) : "0:00"}
+            {currentSongData?.song ? formatTime(currentSongData.song?.duration) : "0:00"}
           </span>
         </div>
 

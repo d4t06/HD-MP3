@@ -1,5 +1,5 @@
 import { useTheme } from "@/store";
-import { getLinearBg } from "@/utils/appHelpers";
+import { getLinearBg } from "@/utils/getLinearBg";
 import { RefObject, useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -15,6 +15,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   const [isClickPlay, setIsClickPlay] = useState(false);
 
   const themeCode = useRef("");
+  const statusRef = useRef<Status>(status);
 
   const play = () => {
     try {
@@ -25,6 +26,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
   const pause = () => {
     audioEle?.pause();
+    handlePaused();
   };
 
   const handlePlayPause = () => {
@@ -40,6 +42,8 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   const updateProgress = (progress?: number) => {
+    if (!audioEle) return;
+
     const _progress = +(
       progress || (audioEle.currentTime / audioEle.duration) * 100
     ).toFixed(1);
@@ -59,10 +63,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   const handleError = () => {
-
-
-    console.log('error');
-    
+    console.log("error");
 
     setStatus("error");
   };
@@ -83,18 +84,23 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
   // add events listener
   useEffect(() => {
+    if (!audioEle) return;
+
     audioEle.addEventListener("error", handleError);
     audioEle.addEventListener("pause", handlePaused);
     audioEle.addEventListener("playing", handlePlaying);
-    audioEle.addEventListener("timeupdate", handleTimeUpdate);
+
+    if (progressLineRef?.current)
+      audioEle.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
       audioEle.removeEventListener("error", handleError);
       audioEle.removeEventListener("pause", handlePaused);
       audioEle.removeEventListener("playing", handlePlaying);
-      audioEle.removeEventListener("timeupdate", handleTimeUpdate);
+      if (progressLineRef?.current)
+        audioEle.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, []);
+  }, [audioEle]);
 
   // update time line background color
   useEffect(() => {
@@ -102,6 +108,10 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
     if (status !== "playing") updateProgress();
   }, [theme]);
+
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   return {
     play,
@@ -112,5 +122,6 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     forward,
     backward,
     isClickPlay,
+    statusRef,
   };
 }

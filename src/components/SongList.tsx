@@ -1,12 +1,10 @@
 import { useTheme } from "../store";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
-import { selectCurrentSong } from "@/store/currentSongSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 
 type Base = {
-  handleSetSong: (song: Song, index: number) => void;
-  activeExtend?: boolean;
+  handleSetSong: (queueId: string) => void;
   songs: Song[];
 };
 
@@ -19,9 +17,10 @@ type MySong = Base & {
   tempSongs: Song[];
 };
 
-type DashboardSong = Base & {
+type DashboardSong = Omit<Base, "handleSetSong"> & {
   variant: "dashboard-songs";
   tempSongs: Song[];
+  handleSetSong: (song: Song) => void;
 };
 
 type DashboardPlaylist = Base & {
@@ -63,8 +62,8 @@ type Props =
 function SongList({ songs, ...props }: Props) {
   // store
   const { theme } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
-  const { queueSongs } = useSelector(selectSongQueue);
+  const { queueSongs, currentSongData } = useSelector(selectSongQueue);
+  // const { songData, queueSongs } = useCurrentSong();
 
   const renderTempSongsList = () => {
     if (props.variant !== "uploading") return <></>;
@@ -86,9 +85,9 @@ function SongList({ songs, ...props }: Props) {
   const empty = <p className="text-center my-[60px]">... ¯\_(ツ)_/¯</p>;
 
   const renderSongList = () => {
-    if (props.variant === "uploading") return <></>;
-
     switch (props.variant) {
+      case "uploading":
+        return <></>;
       case "my-songs":
         if (!songs.length && !props.tempSongs.length) return empty;
         break;
@@ -96,47 +95,59 @@ function SongList({ songs, ...props }: Props) {
         if (!songs.length) return empty;
     }
 
-    const { handleSetSong, activeExtend = true } = props;
-
     return songs.map((song, index) => {
-      let active = activeExtend && currentSong?.id === song.id;
-      // let active = false;
+      let active = song.id === currentSongData?.song.id;
+
+      const isLastIndexInQueue = index === queueSongs.length - 1;
 
       if (props.variant === "queue")
-        active = active && currentSong?.currentIndex === index;
+        active = active && currentSongData?.song.queue_id === song.queue_id;
 
-      const isLastIndexInQueue = currentSong?.currentIndex === queueSongs.length - 1;
-
-      if (props.variant === "queue" && active && !isLastIndexInQueue) {
-        return (
-          <div key={song.id + song.name.length + index}>
+      switch (props.variant) {
+        case "dashboard-songs":
+          return (
             <SongItem
               active={active}
-              onClick={() => handleSetSong(song, index)}
+              onClick={() => props.handleSetSong(song)}
               variant={props.variant}
               song={song}
               index={index}
+              key={song.queue_id}
             />
+          );
 
-            <div className="mt-[12px] mb-[4px]">
-              <p className={`${theme.content_text} text-[14px] font-[600]`}>
-                Playing next
-              </p>
-            </div>
-          </div>
-        );
+        default:
+          if (props.variant === "queue" && active && !isLastIndexInQueue) {
+            return (
+              <div key={song.queue_id}>
+                <SongItem
+                  active={active}
+                  onClick={() => props.handleSetSong(song.queue_id)}
+                  variant={props.variant}
+                  song={song}
+                  index={index}
+                />
+
+                <div className="mt-[12px] mb-[4px]">
+                  <p className={`${theme.content_text} text-[14px] font-[600]`}>
+                    Playing next
+                  </p>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <SongItem
+              active={active}
+              onClick={() => props.handleSetSong(song.queue_id)}
+              variant={props.variant}
+              song={song}
+              index={index}
+              key={song.queue_id}
+            />
+          );
       }
-
-      return (
-        <SongItem
-          active={active}
-          onClick={() => handleSetSong(song, index)}
-          variant={props.variant}
-          song={song}
-          index={index}
-          key={song.id + song.name.length + index}
-        />
-      );
     });
   };
 

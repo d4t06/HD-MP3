@@ -108,3 +108,25 @@ export const themes: ThemeType[] = [
     text_color: "",
   },
 ];
+
+export const specialThemes: ThemeType[] = [
+  {
+    name: "Tet",
+    id: "tet",
+    type: "light",
+    bottom_player_bg: "bg-[#fdf6e3]",
+    side_bar_bg: "bg-[#fdf6e3]",
+    content_text: "text-[#644646]",
+    content_hover_text: "hover:text-[#644646]",
+    content_border: "border-[#644646]",
+    content_hover_border: "hover:border-[#644646]",
+
+    content_bg: "!bg-[#644646]  text-[#fff]",
+    content_code: "#644646",
+    content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
+    container: "bg-[#fdf6e3]",
+    container_code: "#fdf6e3",
+    text_color: "",
+    image: "tet_theme_image.png",
+  },
+];

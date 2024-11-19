@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { nanoid } from "nanoid";
 
 type StateType = {
   currentPlaylist: Playlist | null;
@@ -30,7 +31,7 @@ const currentPlaylistSlice = createSlice({
       if (!state.currentPlaylist) return state;
 
       const newSongs = action.payload.map(
-        (s) => ({ ...s, song_in: `playlist_${state.currentPlaylist!.id}` } as Song)
+        (s) => ({ ...s, song_in: `playlist_${state.currentPlaylist!.id}`, queue_id: nanoid(4) } as Song)
       );
       state.playlistSongs.push(...newSongs);
     },

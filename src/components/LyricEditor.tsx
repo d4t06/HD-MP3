@@ -1,4 +1,4 @@
-import { ElementRef, useRef } from "react";
+import { ElementRef, ReactNode, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Button } from "../components";
 import { useTheme } from "../store";
@@ -6,18 +6,22 @@ import LyricEditorControl, { LyricEditorControlRef } from "./LyricEditorControl"
 import LyricEditorList from "./LyricEditorList";
 import { Center } from "./ui/Center";
 import useLyricEditor from "@/hooks/useLyricEditor";
+import EditLyricModal from "./modals/EditLyricModal";
+import Modal, { ModalRef } from "./Modal";
 
 type Props = {
   admin?: boolean;
+  children?: ReactNode;
 };
 
 export type LyricStatus = "active" | "done" | "coming";
 
-export default function LyricEditor({ admin }: Props) {
+export default function LyricEditor({ admin, children }: Props) {
   const { theme } = useTheme();
 
   const controlRef = useRef<LyricEditorControlRef>(null);
   const audioRef = useRef<ElementRef<"audio">>(null);
+  const modalRef = useRef<ModalRef>(null);
 
   const { isFetching, song, isChanged, isSubmitting } = useLyricEditor({
     audioRef,
@@ -39,20 +43,27 @@ export default function LyricEditor({ admin }: Props) {
       ) : (
         song && (
           <div className="flex flex-col h-full pb-5">
-            <h1 className="text-xl font-playwriteCU mt-5 leading-[2.2]">
+            {children}
+            <h1 className="text-xl font-playwriteCU mt-3 leading-[2.2]">
               Edit lyric - {song?.name}
             </h1>
 
             <div className="mt-3">
               {audioRef.current && (
-                <LyricEditorControl audioEle={audioRef.current} ref={controlRef} />
+                <>
+                  <LyricEditorControl audioEle={audioRef.current} ref={controlRef} />
+
+                  <Modal variant="animation" ref={modalRef}>
+                    <EditLyricModal closeModal={() => modalRef.current?.close()} />
+                  </Modal>
+                </>
               )}
             </div>
 
-            <LyricEditorList controlRef={controlRef} />
+            <LyricEditorList modalRef={modalRef} controlRef={controlRef} />
 
             <Button
-              className={`${theme.content_bg} self-start rounded-full mt-5 `}
+              className={`${theme.content_bg} font-playwriteCU self-start rounded-full mt-5 `}
               variant={"primary"}
               disabled={!isChanged}
               isLoading={isSubmitting}
@@ -63,17 +74,6 @@ export default function LyricEditor({ admin }: Props) {
           </div>
         )
       )}
-
-      {/* <Modal variant="animation" ref={modalRef} >
-      <ConfirmModal
-            loading={no}
-            label={"Your change not save"}
-            theme={theme}
-            buttonLabel="Close and don't save"
-            callback={navigateBack}
-            close={closeModal}
-          />
-      </Modal> */}
     </>
   );
 }

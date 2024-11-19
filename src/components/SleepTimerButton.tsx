@@ -1,26 +1,17 @@
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useTheme } from "@/store";
-import { RefObject, useRef } from "react";
+import { useRef } from "react";
 import { Modal, TimerModal } from ".";
 import useCountDown from "@/hooks/useCountDown";
 import { ModalRef } from "./Modal";
 import MyTooltip from "./MyTooltip";
-import { ControlRef } from "./Control";
 
-type Props = {
-  controlRef: RefObject<ControlRef>;
-  audioEle: HTMLAudioElement;
-};
-
-export default function SleepTimerButton({ controlRef, audioEle }: Props) {
+export default function SleepTimerButton() {
   const { theme } = useTheme();
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { countDown, isActive, clearTimer, setIsActive } = useCountDown({
-    controlRef,
-    audioEle,
-  });
+  const { countDown, isActive, clearTimer, setIsActive } = useCountDown();
 
   const activeTimer = (t: number) => setIsActive(t);
 

@@ -9,7 +9,6 @@ import SongsProvider from "./store/SongsContext.tsx";
 import ToastProvider from "./store/ToastContext.tsx";
 import AuthProvider from "./store/AuthContext.tsx";
 import UploadSongProvider from "./store/UploadContext.tsx";
-// import CurrentPlaylistProvider from "./store/CurrentPlaylistContext.tsx";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

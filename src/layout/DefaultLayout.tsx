@@ -18,6 +18,9 @@ const DefaultLayout: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     const meta = document.querySelector(".my-tag");
+    const body = document.querySelector("body");
+
+    body!.style.backgroundColor = theme.container_code;
     if (meta) meta.setAttribute("content", theme.container_code);
   }, [theme]);
 

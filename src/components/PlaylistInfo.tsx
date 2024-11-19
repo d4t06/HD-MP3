@@ -1,17 +1,23 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { Button, ConfirmModal, Modal, PlaylistItem, Skeleton } from ".";
-import { PencilSquareIcon, PlayIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useMemo, useRef, useState } from "react";
+import {
+  PauseIcon,
+  PencilSquareIcon,
+  PlayIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import { ReactNode, useMemo, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import EditPlaylist from "./modals/EditPlaylist";
 import usePlaylistActions from "../hooks/usePlaylistActions";
 import { formatTime } from "../utils/appHelpers";
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { setQueue } from "@/store/songQueueSlice";
 import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
+import useSetSong from "@/hooks/useSetSong";
+import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
 
 type Modal = "edit" | "delete";
 
@@ -32,12 +38,40 @@ type DashboardPlaylist = {
 
 type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
+const PlayPlaylistBtn = ({
+  onClick,
+  children,
+  disable,
+  text,
+}: {
+  children: ReactNode;
+  text: string;
+  onClick: () => void;
+  disable?: boolean;
+}) => {
+  const { theme } = useTheme();
+
+  return (
+    <Button
+      onClick={onClick}
+      size={"clear"}
+      disabled={disable}
+      className={`rounded-full px-5 py-1 ${theme.content_bg}`}
+    >
+      {children}
+      <span className="font-playwriteCU leading-[2.2]">{text}</span>
+    </Button>
+  );
+};
+
 export default function PLaylistInfo({ loading, ...props }: Props) {
-  // store
   const dispatch = useDispatch();
+
+  // store
   const { theme, isOnMobile } = useTheme();
-  const { currentSong } = useSelector(selectCurrentSong);
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+  const { currentSongData } = useSelector(selectSongQueue);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -47,6 +81,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
 
   // hooks
   const params = useParams();
+  const { handleSetSong } = useSetSong({ variant: "playlist" });
   const { deletePlaylist, isFetching } = usePlaylistActions();
   const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
@@ -55,37 +90,29 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
     [playlistSongs]
   );
 
+  const isActivePlaylist =
+    (playStatus === "playing" || playStatus === "waiting") &&
+    currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`;
+
   const openModal = (modal: Modal) => {
     setModal(modal);
     modalRef.current?.toggle();
   };
   const closeModal = () => modalRef.current?.toggle();
 
-  const handleSetSong = (song: Song, index: number) => {
-    if (!currentPlaylist) return;
-
-    // case user play user songs then play playlist song
-    const newSongIn: SongIn = `playlist_${currentPlaylist.id}`;
-    if (currentSong?.id !== song.id || currentSong?.song_in !== newSongIn) {
-      dispatch(
-        setSong({
-          ...song,
-          currentIndex: index,
-          song_in: newSongIn,
-        })
-      );
-
-      if (currentSong?.song_in !== newSongIn) {
-        dispatch(setQueue({ songs: playlistSongs }));
-        console.log("setActuallySongs when playlist list");
-      }
-    }
+  const handlePlayPlaylist = () => {
+    if (currentSongData?.song.song_in.includes(params.name as string)) return;
+    const firstSong = playlistSongs[0];
+    handleSetSong(firstSong.queue_id, playlistSongs);
   };
 
-  const handlePlayPlaylist = () => {
-    if (currentSong?.song_in.includes(params.name as string)) return;
-    const firstSong = playlistSongs[0];
-    handleSetSong(firstSong, 0);
+  const handlePlayPause = () => {
+    switch (playStatus) {
+      case "playing":
+        return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+      case "paused":
+        return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
+    }
   };
 
   const playlistInfoSkeleton = (
@@ -116,6 +143,35 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
     );
   };
 
+  const renderPlayPlaylistBtn = () => {
+    if (!currentPlaylist) return <></>;
+
+    if (currentSongData?.song.song_in.includes(currentPlaylist.id)) {
+      switch (playStatus) {
+        case "playing":
+        case "waiting":
+          return (
+            <PlayPlaylistBtn text="Pause" onClick={handlePlayPause}>
+              <PauseIcon className="w-7 mr-1" />
+            </PlayPlaylistBtn>
+          );
+        case "loading":
+        case "paused":
+          return (
+            <PlayPlaylistBtn text="Continue Play" onClick={handlePlayPause}>
+              <PlayIcon className="w-7 mr-1" />
+            </PlayPlaylistBtn>
+          );
+      }
+    }
+
+    return (
+      <PlayPlaylistBtn text="Play" onClick={handlePlayPlaylist}>
+        <PlayIcon className="w-7 mr-1" />
+      </PlayPlaylistBtn>
+    );
+  };
+
   const renderCta = () => {
     if (loading) return <></>;
 
@@ -123,16 +179,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
       case "my-playlist":
         return (
           <>
-            <Button
-              onClick={handlePlayPlaylist}
-              size={"clear"}
-              className={`rounded-full px-[20px] py-1 ${theme.content_bg} ${
-                !playlistSongs.length && "disable"
-              }`}
-            >
-              <PlayIcon className="w-[22px]" />
-              <span className="font-playwriteCU leading-[2.2]">Play</span>
-            </Button>
+            {renderPlayPlaylistBtn()}
             <Button
               onClick={() => openModal("delete")}
               className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
@@ -167,18 +214,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
           </>
         );
       case "admin-playlist":
-        return (
-          <Button
-            onClick={handlePlayPlaylist}
-            size={"clear"}
-            className={`rounded-full px-[20px] space-x-1 py-1 ${theme.content_bg} ${
-              !playlistSongs.length && "disable"
-            }`}
-          >
-            <PlayIcon className="w-7" />
-            <span className="font-playwriteCU leading-[2.2]">Play</span>
-          </Button>
-        );
+        return renderPlayPlaylistBtn();
     }
   };
 
@@ -228,16 +264,12 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
     <>
       <div className={classes.container}>
         {/* image */}
-        <div className="w-full px-[20px] md:w-1/4 md:px-0">
+        <div className="w-full px-10 md:w-1/4 md:px-0">
           {loading ? (
             <Skeleton className="pt-[100%] rounded-[8px]" />
           ) : (
             currentPlaylist && (
-              <PlaylistItem
-                data={currentPlaylist}
-                active={currentSong?.song_in === `playlist_${currentPlaylist?.id}`}
-                inDetail
-              />
+              <PlaylistItem data={currentPlaylist} active={isActivePlaylist} inDetail />
             )
           )}
         </div>

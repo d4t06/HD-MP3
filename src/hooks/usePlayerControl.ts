@@ -1,24 +1,18 @@
-import { selectCurrentSong, setSong } from "@/store/currentSongSlice";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
-import { MutableRefObject, useCallback } from "react";
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-type Props = {
-  currentIndexRef: MutableRefObject<number>;
-};
-
-export default function usePlayerControl({ currentIndexRef }: Props) {
+export default function usePlayerControl() {
   const dispatch = useDispatch();
-  const { queueSongs } = useSelector(selectSongQueue);
-  const { currentSong } = useSelector(selectCurrentSong);
+  const { queueSongs, currentQueueId, currentSongData } = useSelector(selectSongQueue);
   const { isRepeat, isShuffle, playStatus } = useSelector(selectAllPlayStatusStore);
 
   const handleNext = useCallback(() => {
-    if (currentIndexRef.current === null) return;
+    if (!currentSongData) return;
 
-    let newIndex = currentIndexRef.current + 1;
+    let newIndex = currentSongData.index + 1;
     let newSong: Song;
 
     if (newIndex < queueSongs.length) {
@@ -28,19 +22,14 @@ export default function usePlayerControl({ currentIndexRef }: Props) {
       newSong = queueSongs[0];
     }
 
-    dispatch(
-      setSong({
-        ...newSong,
-        currentIndex: newIndex,
-        song_in: newSong.song_in,
-      })
-    );
-  }, [currentSong, queueSongs]);
+    dispatch(setCurrentQueueId(newSong.queue_id));
+  }, [currentSongData, queueSongs]);
 
   const handlePrevious = useCallback(() => {
-    if (currentIndexRef.current === null) return;
+    if (!currentSongData) return;
+    // if (currentIndexRef.current === null) return;
 
-    let newIndex = currentIndexRef.current! - 1;
+    let newIndex = currentSongData.index - 1;
     let newSong: Song;
     if (newIndex >= 0) {
       newSong = queueSongs[newIndex];
@@ -49,14 +38,8 @@ export default function usePlayerControl({ currentIndexRef }: Props) {
       newIndex = queueSongs.length - 1;
     }
 
-    dispatch(
-      setSong({
-        ...newSong,
-        currentIndex: newIndex,
-        song_in: newSong.song_in,
-      })
-    );
-  }, [currentSong, queueSongs]);
+    dispatch(setCurrentQueueId(newSong.queue_id));
+  }, [currentSongData, queueSongs]);
 
   const handleShuffle = () => {
     const newValue = !isShuffle;
@@ -91,7 +74,7 @@ export default function usePlayerControl({ currentIndexRef }: Props) {
     handleRepeatSong,
     handleShuffle,
     playStatus,
-    currentSong,
     queueSongs,
+    currentQueueId,
   };
 }

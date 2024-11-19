@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect } from "react";
 
 import {
   BottomPlayer,
@@ -10,65 +10,31 @@ import SongQueue from "./SongQueue";
 import useIdle from "../hooks/useIdle";
 import appConfig from "../config/app";
 import { useTheme } from "@/store";
-import { ControlRef } from "./Control";
+import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
 
-const Player = ({ admin }: { admin?: boolean }) => {
+type Props = {
+  admin?: boolean;
+};
+
+const PlayerContent = ({ admin }: Props) => {
   // store
   const { isOnMobile } = useTheme();
+  const { audioRef, setIsHasAudioEle, isOpenFullScreen } = usePlayerContext();
 
-  // state
-  const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
-  const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
-  const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
-
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const controlRef = useRef<ControlRef>(null);
-
-  const idle = useIdle(appConfig.focusDelay, isOnMobile, isOpenFullScreen);
-  // const idle=false;
+  const idle = useIdle(appConfig.focusDelay, isOnMobile);
 
   const desktopContent = audioRef.current && (
     <>
-      {!admin && (
-        <FullScreenPlayer
-          audioEle={audioRef.current}
-          idle={idle}
-          isOpenFullScreen={isOpenFullScreen}
-          setIsOpenFullScreen={setIsOpenFullScreen}
-        />
-      )}
-
-      <SongQueue
-        isOpenSongQueue={isOpenSongQueue}
-        setIsOpenSongQueue={setIsOpenSongQueue}
-      />
-
-      <BottomPlayer
-        admin={admin}
-        audioEle={audioRef.current}
-        idle={idle && isOpenFullScreen}
-        isOpenFullScreen={isOpenFullScreen}
-        isOpenSongQueue={isOpenSongQueue}
-        setIsOpenSongQueue={setIsOpenSongQueue}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
+      {!admin && <FullScreenPlayer idle={idle && isOpenFullScreen} />}
+      <SongQueue />
+      <BottomPlayer admin={admin} idle={idle && isOpenFullScreen} />
     </>
   );
 
   const mobileContent = audioRef.current && (
     <>
-      <MobileFullScreenPlayer
-        controlRef={controlRef}
-        audioEle={audioRef.current}
-        isOpenFullScreen={isOpenFullScreen}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
-
-      <MobileBottomPlayer
-        controlRef={controlRef}
-        isOpenFullScreen={isOpenFullScreen}
-        setIsOpenFullScreen={setIsOpenFullScreen}
-      />
+      <MobileFullScreenPlayer />
+      <MobileBottomPlayer />
     </>
   );
 
@@ -84,4 +50,10 @@ const Player = ({ admin }: { admin?: boolean }) => {
   );
 };
 
-export default Player;
+export default function Player({ admin }: Props) {
+  return (
+    <PlayerContextProvider>
+      <PlayerContent admin={admin} />
+    </PlayerContextProvider>
+  );
+}

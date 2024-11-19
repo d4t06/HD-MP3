@@ -30,6 +30,7 @@ export type ModalRef = {
   toggle: () => void;
   close: () => void;
   open: () => void;
+  setModalPersist: (v: boolean) => void;
 };
 
 function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
@@ -39,6 +40,7 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
 
   const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
   const [isMounted, setIsMounted] = useState(variant === "default" ? true : false);
+  const [persist, setPersist] = useState(false);
 
   const toggle = () => {
     if (isMounted) setIsMounted(false);
@@ -51,11 +53,18 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
 
   const close = () => {
     setIsMounted(false);
+    setPersist(false);
+  };
+
+  const setModalPersist = (v: boolean) => {
+    setPersist(v);
   };
 
   const handleOverlayClick: MouseEventHandler = (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if (persist) return;
 
     if (variant === "default") {
       // @ts-ignore
@@ -69,6 +78,7 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
     toggle,
     close,
     open,
+    setModalPersist,
   }));
 
   useEffect(() => {

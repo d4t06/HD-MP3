@@ -5,12 +5,12 @@ import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { formatTime } from "../utils/appHelpers";
 
-import { useSongsStore, useTheme } from "../store";
+import { useTheme } from "../store";
 import {
   PopupWrapper,
   Image,
   Modal,
-  SongItemEditForm,
+  EditSongModal,
   ConfirmModal,
   PlaylistListModal,
 } from "../components";
@@ -50,7 +50,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const dispatch = useDispatch();
   const { theme, isOnMobile } = useTheme();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
-  const { userPlaylists } = useSongsStore();
 
   // state
   //   const [loading, setLoading] = useState<boolean>(false);
@@ -101,7 +100,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const classes = {
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
     songListButton: `p-1 mr-1 text-[inherit]`,
-    itemContainer: `w-full sm:group/container flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
+    itemContainer: `w-full sm:group/container cursor-pointer flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
     imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
       props.variant === "queue" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
     }`,
@@ -224,7 +223,9 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   const left = () => {
     switch (props.variant) {
       case "uploading":
-        return <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftElement}</div>;
+        return (
+          <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftElement}</div>
+        );
       case "queue":
         return leftElement;
       default:
@@ -290,7 +291,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
       case "":
         return <></>;
       case "edit":
-        return <SongItemEditForm closeModal={closeModal} song={song} />;
+        return <EditSongModal modalRef={modalRef} song={song} />;
       case "delete":
         return (
           <ConfirmModal
@@ -308,8 +309,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             loading={actionLoading}
             handleAddSongToPlaylist={handleAddSongToPlaylistMobile}
             closeModal={closeModal}
-            song={song}
-            userPlaylists={userPlaylists}
           />
         );
     }
@@ -331,7 +330,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         const getClickedMenuClass = () => {
           if (props.variant === "queue") return "";
           if (isOpenPopup) return `${theme.content_bg}`;
-          else return "hidden";
+          else return "block md:hidden";
         };
 
         return (
@@ -406,7 +405,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return (
           <div
             className={`${classes.itemContainer} ${className || ""} group/main ${
-              active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
+              active || isSelected ? `bg-${theme.alpha}` : ``
             }`}
           >
             {left()}

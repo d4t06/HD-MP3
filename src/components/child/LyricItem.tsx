@@ -1,5 +1,4 @@
-import { scrollIntoView } from "@/utils/appHelpers";
-import { MutableRefObject, useEffect, useRef } from "react";
+import { Ref, forwardRef, useEffect } from "react";
 import { LyricStatus } from "../LyricEditor";
 
 type Props = {
@@ -7,32 +6,18 @@ type Props = {
   status: LyricStatus;
   className?: string;
   activeColor?: string;
-  scrollBehavior?: MutableRefObject<ScrollBehavior>;
 };
 
-export default function LyricItem({
-  text,
-  className = "",
-  status,
-  scrollBehavior,
-  activeColor,
-}: Props) {
-  const lyricRef = useRef<HTMLParagraphElement>(null);
-
-  const scroll = () => {
-    const ele = lyricRef.current as HTMLElement;
-    if (ele) {
-      scrollIntoView(ele, scrollBehavior?.current || "smooth");
-      if (scrollBehavior?.current === "instant") scrollBehavior.current = "smooth";
-    }
-  };
-
+function LyricItem(
+  { text, className = "", status, activeColor }: Props,
+  ref: Ref<HTMLParagraphElement>
+) {
   const getClass = () => {
     switch (status) {
       case "coming":
         return "";
       case "active":
-        return `${activeColor || 'text-[#ffed00]'} active-lyric`;
+        return `${activeColor || "text-[#ffed00]"} active-lyric`;
       case "done":
         return "disable";
     }
@@ -45,8 +30,10 @@ export default function LyricItem({
   }, [status]);
 
   return (
-    <p ref={lyricRef} className={`${className} select-none  font-[700] ${getClass()}`}>
+    <p ref={ref} className={`${className} select-none  font-[700] ${getClass()}`}>
       {text}
     </p>
   );
 }
+
+export default forwardRef(LyricItem);

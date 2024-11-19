@@ -1,10 +1,8 @@
 import { useSongsStore } from "@/store/SongsContext";
 import { RefObject, useState } from "react";
 import { useToast } from "../store";
-import { useDispatch, useSelector } from "react-redux";
 
 import usePlaylistActions from "./usePlaylistActions";
-import { resetCurrentSong, selectCurrentSong } from "@/store/currentSongSlice";
 import { deleteSong } from "@/services/firebaseService";
 import { TriggerRef } from "@/components/MyPopup";
 
@@ -17,19 +15,15 @@ type Props = {
 
 const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   // store
-  const dispatch = useDispatch();
   const { setErrorToast, setSuccessToast } = useToast();
-  const { currentSong } = useSelector(selectCurrentSong);
   const { userSongs, setUserSongs } = useSongsStore();
 
   // state
-
   const [loading, setLoading] = useState(false);
 
   // hook
   const { removeSong, addSongsSongItem } = usePlaylistActions();
 
-  // must use middle variable 'song' to add to playlist in mobile device
   const handleAddSongToPlaylistMobile = async (playlist: Playlist) => {
     try {
       setLoading(true);
@@ -53,7 +47,7 @@ const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
       await deleteSong(song);
       setUserSongs(newSongs);
 
-      if (currentSong?.id === song.id) dispatch(resetCurrentSong());
+      // if (currentSongData?.song?.id === song.id) dispatch(resetCurrentSong());
       setSuccessToast(`'${song.name}' deleted`);
     } catch (error) {
       console.log({ message: error });
