@@ -2,6 +2,7 @@
 import { Image, ScrollText } from ".";
 import { ElementRef, useRef } from "react";
 import useVinyl from "../hooks/useVinyl";
+import { getHidden } from "@/utils/appHelpers";
 
 type Props = {
   admin?: boolean;
@@ -21,8 +22,8 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   };
 
   return (
-    <div className={`${classes.songInfoWrapper}  ${isOpenFullScreen ? "hidden" : ""}`}>
-      <div className={`${classes.songInfoChild} ${isOpenFullScreen ? "hidden" : ""}`}>
+    <div className={`${classes.songInfoWrapper}  ${getHidden(isOpenFullScreen)}`}>
+      <div className={`${classes.songInfoChild} ${getHidden(isOpenFullScreen)}`}>
         <div ref={vinylRef} className={`${admin ? `w-[46px]` : "w-[56px]"}  animate-[spin_8s_linear_infinite]`}>
           <Image
             src={song?.image_url}

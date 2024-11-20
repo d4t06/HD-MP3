@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSongsStore, useToast } from "../store";
+import { useSongContext, useToast } from "../store";
 import {
   // countSongsListTimeIds,
   generateId,
@@ -18,7 +18,7 @@ import {
 export default function useAdminPlaylistActions() {
   // store
   const dispatch = useDispatch();
-  const { userPlaylists, setUserPlaylists } = useSongsStore();
+  const { playlists, setPlaylists } = useSongContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   // state
@@ -41,7 +41,7 @@ export default function useAdminPlaylistActions() {
       });
 
       setIsFetching(true);
-      const newPlaylists = [...userPlaylists, addedPlaylist];
+      const newPlaylists = [...playlists, addedPlaylist];
 
       await mySetDoc({
         collection: "playlist",
@@ -50,7 +50,7 @@ export default function useAdminPlaylistActions() {
         msg: ">>> api: set playlist doc",
       });
 
-      setUserPlaylists(newPlaylists);
+      setPlaylists(newPlaylists);
     } catch (error) {
       console.log({ message: error });
       setErrorToast("");
@@ -70,8 +70,8 @@ export default function useAdminPlaylistActions() {
       msg: ">>> api: delete playlist doc",
     });
 
-    const newPlaylists = userPlaylists.filter((p) => p.id !== currentPlaylist.id);
-    setUserPlaylists(newPlaylists);
+    const newPlaylists = playlists.filter((p) => p.id !== currentPlaylist.id);
+    setPlaylists(newPlaylists);
 
     dispatch(resetCurrentPlaylist());
 

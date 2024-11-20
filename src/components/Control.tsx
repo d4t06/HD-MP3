@@ -115,7 +115,7 @@ function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
           variant === "desktop" && isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
-        <div className="w-10 sm:w-9">
+        <div className="w-[44px] sm:w-9">
           <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
             0:00
           </span>
@@ -128,7 +128,7 @@ function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
             classes.before
           }`}
         ></div>
-        <div className="w-10 sm:w-9 text-right">
+        <div className="w-[44px] sm:w-9 text-right">
           <span className={"text-lg sm:text-sm"}>
             {currentSongData?.song ? formatTime(currentSongData.song?.duration) : "0:00"}
           </span>

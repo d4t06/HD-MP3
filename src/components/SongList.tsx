@@ -36,7 +36,7 @@ type Queue = Base & {
 };
 
 type AdminPlaylist = Base & {
-  variant: "admin-playlist";
+  variant: "sys-playlist";
 };
 
 type MyPlaylist = Base & {

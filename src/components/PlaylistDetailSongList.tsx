@@ -11,7 +11,7 @@ import Skeleton, { SongItemSkeleton } from "./skeleton";
 import useSetSong from "@/hooks/useSetSong";
 
 type Props = {
-  variant: "admin-playlist" | "my-playlist" | "dashboard-playlist";
+  variant: "sys-playlist" | "my-playlist" | "dashboard-playlist";
   loading: boolean;
 };
 
@@ -43,9 +43,9 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
     if (!playlistSongs.length) return <></>;
 
     switch (variant) {
-      case "admin-playlist":
+      case "sys-playlist":
         return (
-          <CheckedBar variant={"admin-playlist"}>
+          <CheckedBar variant={"sys-playlist"}>
             <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
           </CheckedBar>
         );
@@ -61,10 +61,10 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
 
   const renderSongList = () => {
     switch (variant) {
-      case "admin-playlist":
+      case "sys-playlist":
         return (
           <SongList
-            variant="admin-playlist"
+            variant="sys-playlist"
             songs={playlistSongs}
             handleSetSong={_handleSetSong}
           />
@@ -103,7 +103,11 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
       </SongSelectProvider>
 
       <Modal ref={modalRef} variant="animation">
-        <SongListModal closeModal={closeModal} playlistSongs={playlistSongs} />
+        <SongListModal
+          variant="dashboard"
+          closeModal={closeModal}
+          playlistSongs={playlistSongs}
+        />
       </Modal>
     </>
   );

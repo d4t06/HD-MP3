@@ -1,11 +1,11 @@
-import { memo, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { SongThumbnail, Tabs, LyricsList, Button } from ".";
 import { useScrollSong } from "../hooks";
 import useDebounce from "../hooks/useDebounced";
-import FullScreenPlayerSetting from "./child/FullSreenPlayerSetting";
+import FullScreenPlayerSetting from "./child/FullScreenPlayerSetting";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import {
   ChevronDownIcon,
@@ -23,14 +23,11 @@ import Karaoke from "./Karaoke";
 import LyricContextProvider from "@/store/LyricContext";
 import { usePlayerContext } from "@/store";
 
-interface Props {
-  idle: boolean;
-}
-function FullScreenPlayer({ idle }: Props) {
+export default function FullScreenPlayer() {
   // use store
   const dispatch = useDispatch();
   const { theme } = useTheme();
-  const { isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
+  const { isOpenFullScreen, setIsOpenFullScreen, idle } = usePlayerContext();
   const { queueSongs, currentQueueId, currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
   // state
@@ -287,5 +284,3 @@ function FullScreenPlayer({ idle }: Props) {
     </div>
   );
 }
-
-export default memo(FullScreenPlayer);

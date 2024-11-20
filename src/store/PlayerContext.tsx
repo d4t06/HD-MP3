@@ -5,6 +5,7 @@ function usePlayer() {
   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
   const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
   const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
+  const [idle, setIdle] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const controlRef = useRef<ControlRef>(null);
@@ -14,6 +15,8 @@ function usePlayer() {
     controlRef,
     isOpenFullScreen,
     isOpenSongQueue,
+    idle,
+    setIdle,
     setIsOpenFullScreen,
     setIsOpenSongQueue,
     setIsHasAudioEle,

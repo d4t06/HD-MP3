@@ -12,22 +12,18 @@ import appConfig from "../config/app";
 import { useTheme } from "@/store";
 import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
 
-type Props = {
-  admin?: boolean;
-};
-
-const PlayerContent = ({ admin }: Props) => {
+const PlayerContent = () => {
   // store
   const { isOnMobile } = useTheme();
-  const { audioRef, setIsHasAudioEle, isOpenFullScreen } = usePlayerContext();
+  const { audioRef, setIsHasAudioEle } = usePlayerContext();
 
-  const idle = useIdle(appConfig.focusDelay, isOnMobile);
+  useIdle(appConfig.focusDelay, isOnMobile);
 
   const desktopContent = audioRef.current && (
     <>
-      {!admin && <FullScreenPlayer idle={idle && isOpenFullScreen} />}
+      <FullScreenPlayer />
       <SongQueue />
-      <BottomPlayer admin={admin} idle={idle && isOpenFullScreen} />
+      <BottomPlayer />
     </>
   );
 
@@ -50,10 +46,10 @@ const PlayerContent = ({ admin }: Props) => {
   );
 };
 
-export default function Player({ admin }: Props) {
+export default function Player() {
   return (
     <PlayerContextProvider>
-      <PlayerContent admin={admin} />
+      <PlayerContent />
     </PlayerContextProvider>
   );
 }

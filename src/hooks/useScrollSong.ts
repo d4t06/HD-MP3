@@ -1,11 +1,11 @@
 import { RefObject, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
+import { usePlayerContext } from "@/store";
 
 type Props = {
   containerRef?: RefObject<HTMLDivElement>;
   songItemRef?: RefObject<HTMLDivElement>;
-  isOpenFullScreen?: boolean;
   idle: boolean;
 };
 
@@ -20,18 +20,12 @@ const scrollToActiveSong = (
 ) => {
   const windowWidth = window.innerWidth;
 
-  if (!songItemEle || !containerEle) {
-    console.log("ele not found");
-    return;
-  }
-
   const rect = songItemEle.getBoundingClientRect();
   const lefDiff = rect.left;
   const rightDiff = windowWidth - (lefDiff + songItemEle.offsetWidth);
 
   const needToScroll = Math.abs(Math.ceil(lefDiff - rightDiff)) / 2;
 
-  // case element position don't change
   if (needToScroll < 5) return false;
 
   if (idle) {
@@ -68,29 +62,22 @@ const scrollToActiveSong = (
   return true;
 };
 
-export default function useScrollSong({
-  containerRef,
-  songItemRef,
-  isOpenFullScreen,
-  idle,
-}: Props) {
-  const { currentSongData } = useSelector(selectSongQueue);
+export default function useScrollSong({ containerRef, songItemRef, idle }: Props) {
+  const { isOpenFullScreen } = usePlayerContext();
+
+  const { currentQueueId } = useSelector(selectSongQueue);
 
   const handleScrollToActiveSong = () => {
-    const songItemEle = songItemRef?.current as HTMLDivElement;
-    const containerEle = containerRef?.current as HTMLDivElement;
+    if (!songItemRef?.current || !containerRef?.current) return;
 
-    scrollToActiveSong(songItemEle, containerEle, idle);
+    scrollToActiveSong(songItemRef.current, containerRef.current, idle);
   };
 
   useEffect(() => {
-    if (!currentSongData || !isOpenFullScreen) return;
-    if (!scroll || !containerRef?.current || !songItemRef?.current) {
-      return;
-    }
+    if (!isOpenFullScreen) return;
 
     handleScrollToActiveSong();
-  }, [currentSongData?.song, isOpenFullScreen]);
+  }, [currentQueueId, isOpenFullScreen]);
 
   useEffect(() => {
     const containerEle = containerRef?.current as HTMLDivElement;

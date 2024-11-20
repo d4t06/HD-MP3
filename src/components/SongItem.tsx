@@ -35,7 +35,7 @@ type Props = {
     | "home"
     | "my-songs"
     | "my-playlist"
-    | "admin-playlist"
+    | "sys-playlist"
     | "queue"
     | "favorite"
     | "dashboard-songs"
@@ -260,13 +260,21 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         );
 
       case "my-playlist":
-      case "admin-playlist":
       case "dashboard-playlist":
         return (
           <SongMenu
             closeMenu={closeMenu}
             variant="playlist"
             handleRemoveSongFromPlaylist={handleRemoveSongFromPlaylist}
+            handleOpenModal={handleOpenModal}
+            song={song}
+          />
+        );
+      case "sys-playlist":
+        return (
+          <SongMenu
+            closeMenu={closeMenu}
+            variant="sys-playlist"
             handleOpenModal={handleOpenModal}
             song={song}
           />

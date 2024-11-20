@@ -6,7 +6,6 @@ import {
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import siteLogo from "@/assets/siteLogo.png";
 import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
@@ -61,10 +60,7 @@ const MobileBottomPlayer = () => {
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image
-                src={currentSongData?.song.image_url || siteLogo}
-                className="rounded-full"
-              />
+              <Image src={currentSongData?.song.image_url} className="rounded-full" />
             </div>
 
             <div className="flex-grow  ml-[10px]">

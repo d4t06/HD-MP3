@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthStore, useSongsStore, useToast } from "../store";
+import { useAuthStore, useSongContext, useToast } from "../store";
 import { generateId, initPlaylistObject } from "../utils/appHelpers";
 import {
   myDeleteDoc,
@@ -20,7 +20,7 @@ export default function usePlaylistActions() {
   const dispatch = useDispatch();
   const { user } = useAuthStore();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { userPlaylists, updateUserPlaylist, setUserPlaylists } = useSongsStore();
+  const { playlists } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -42,7 +42,7 @@ export default function usePlaylistActions() {
     });
 
     setIsFetching(true);
-    const newPlaylists = [...userPlaylists, addedPlaylist];
+    const newPlaylists = [...playlists, addedPlaylist];
 
     await mySetDoc({
       collection: "playlist",
@@ -52,7 +52,7 @@ export default function usePlaylistActions() {
     });
     await setUserPlaylistIdsDoc(newPlaylists, user);
 
-    setUserPlaylists(newPlaylists);
+    newPlaylists;
     setIsFetching(false);
   };
 
@@ -60,7 +60,7 @@ export default function usePlaylistActions() {
     if (!user || !currentPlaylist) return;
 
     setIsFetching(true);
-    const newUserPlaylist = userPlaylists.filter((pl) => pl.id !== currentPlaylist.id);
+    const newUserPlaylist = playlists.filter((pl) => pl.id !== currentPlaylist.id);
 
     await myDeleteDoc({
       collection: "playlist",
@@ -114,7 +114,7 @@ export default function usePlaylistActions() {
         msg: ">>> api: set playlist doc",
       });
 
-      updateUserPlaylist({ id: playlist.id, playlist: { name: playlistName } });
+      // updateUserPlaylist({ id: playlist.id, playlist: { name: playlistName } });
 
       setSuccessToast("Playlist edited");
     } catch (error) {

@@ -5,16 +5,12 @@ import appConfig from "../config/app";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { usePlayerContext } from "@/store/PlayerContext";
 
-export default function useIdle(
-  delay: number,
-  isOnMobile: boolean,
-) {
+export default function useIdle(delay: number, isOnMobile: boolean) {
   // store
   const { currentSongData } = useSelector(selectSongQueue);
-  const {isOpenFullScreen} = usePlayerContext()
+  const { isOpenFullScreen, setIdle } = usePlayerContext();
 
   // state
-  const [idle, setIdle] = useState(false);
   const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
   const timerIdFocus = useRef<NodeJS.Timeout>();
   const timerIdScrollSong = useRef<NodeJS.Timeout>();
@@ -48,8 +44,12 @@ export default function useIdle(
   };
 
   useEffect(() => {
-    if (!isOpenFullScreen) return;
     if (isOnMobile || !currentSongData) return;
+
+    if (!isOpenFullScreen) {
+      setIdle(false);
+      return;
+    }
 
     setTimeout(() => {
       window.addEventListener("mousemove", handleMouseMove);
@@ -74,6 +74,4 @@ export default function useIdle(
   }, [someThingToTrigger]);
 
   if (!isOpenFullScreen) return false;
-
-  return idle;
 }

@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { Tabs, Control, MobileSongThumbnail, LyricsList, ScrollText } from "@/components";
-import FullScreenPlayerSetting from "@/components/child/FullSreenPlayerSetting";
+import FullScreenPlayerSetting from "@/components/child/FullScreenPlayerSetting";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";

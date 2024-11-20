@@ -110,3 +110,4 @@ export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]
 };
 
 export const getDisable = (v: boolean) => (v ? "disable" : "");
+export const getHidden = (v: boolean) => (v ? "hidden" : "");

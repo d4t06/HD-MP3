@@ -1,4 +1,4 @@
-type Location = "admin-songs" | "my-song" | "my-playlist" | "admin-playlist";
+type Location = "admin-songs" | "my-song" | "my-playlist" | "sys-playlist";
 
 type User = {
   display_name: string;

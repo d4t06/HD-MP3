@@ -1,4 +1,12 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { nanoid } from "nanoid";
 
@@ -6,7 +14,11 @@ const songsCollectionRef = collection(db, "songs");
 const playlistCollectionRef = collection(db, "playlist");
 
 export const getAdminSongs = async () => {
-  const queryGetAdminSongs = query(songsCollectionRef, where("by", "==", "admin"));
+  const queryGetAdminSongs = query(
+    songsCollectionRef,
+    where("by", "==", "admin"),
+    limit(10)
+  );
   const songsSnap = await getDocs(queryGetAdminSongs);
 
   if (songsSnap.docs) {
@@ -18,7 +30,7 @@ export const getAdminSongs = async () => {
   }
 };
 
-export const getAdminPLaylist = async () => {
+export const getAdminPlaylist = async () => {
   const queryGetAdminPlaylist = query(playlistCollectionRef, where("by", "==", "admin"));
 
   const playlistsSnap = await getDocs(queryGetAdminPlaylist);

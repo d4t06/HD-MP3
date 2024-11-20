@@ -3,7 +3,7 @@ import { useTheme } from "../store";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 type Props = {
-  variant: "admin-playlist" | "my-playlist" | "dashboard-playlist" | "my-songs";
+  variant: "sys-playlist" | "my-playlist" | "dashboard-playlist" | "my-songs";
 };
 
 function BackBtn({ variant }: Props) {
@@ -14,7 +14,7 @@ function BackBtn({ variant }: Props) {
     let path = "/";
 
     switch (variant) {
-      case "admin-playlist":
+      case "sys-playlist":
         path = "/";
         break;
       case "my-playlist":

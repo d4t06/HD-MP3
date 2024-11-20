@@ -1,7 +1,7 @@
 import { ModalRef } from "@/components/Modal";
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
-import { useAuthStore, useSongsStore, useToast } from "@/store";
+import { useAuthStore, useToast } from "@/store";
 import { sleep } from "@/utils/appHelpers";
 import { RefObject, useEffect, useState } from "react";
 
@@ -19,7 +19,7 @@ const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\
 
 export default function useEditForm({ song, inputFields, modalRef }: Props) {
   const { user } = useAuthStore();
-  const { updateUserSong } = useSongsStore();
+//   const { updateUserSong } = useSongContext();
 
   const [validName, setValidName] = useState(!!song.name);
   const [validSinger, setValidSinger] = useState(!!song.singer);
@@ -162,7 +162,7 @@ export default function useEditForm({ song, inputFields, modalRef }: Props) {
         msg: ">>> api: update song doc",
       });
 
-      updateUserSong({ song: newSongData, id: song.id });
+      // updateUserSong({ song: newSongData, id: song.id });
 
       // >>> finish
       setSuccessToast(`Song edited`);

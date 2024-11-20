@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useSongsStore } from "@/store/SongsContext";
+import { useSongContext } from "@/store/SongsContext";
 import Button from "../ui/Button";
 import MobileSongItem from "../mobile/MobileSongItem";
 import usePlaylistActions from "@/hooks/usePlaylistActions";
@@ -10,15 +10,22 @@ import SongSelectProvider, { useSongSelectContext } from "@/store/SongSelectCont
 type Props = {
   closeModal: () => void;
   playlistSongs: Song[];
+  variant: "my-song" | "dashboard";
 };
 
-function SongList({ closeModal, playlistSongs }: Props) {
+function SongList({ closeModal, playlistSongs, variant }: Props) {
   const { theme } = useTheme();
   const { selectedSongs } = useSongSelectContext();
 
   // hook
-  const { userSongs } = useSongsStore();
+  const { songs, sysSongPlaylist } = useSongContext();
   const { addSongs, isFetching } = usePlaylistActions();
+
+  // prettier-ignore
+  const targetSongs = useMemo(() => 
+    variant === 'dashboard' ? sysSongPlaylist.songs :
+       variant === 'my-song' ? songs : []
+   ,[sysSongPlaylist, songs])
 
   const classes = {
     addSongContainer: "pb-[40px] relative",
@@ -50,8 +57,8 @@ function SongList({ closeModal, playlistSongs }: Props) {
           Add
           {`${selectedSongs.length ? ` (${selectedSongs.length})` : ""}`}
         </Button>
-        {userSongs.length ? (
-          userSongs.map((song, index) => {
+        {targetSongs.length ? (
+          targetSongs.map((song, index) => {
             const isDifferenceSong =
               playlistSongs.findIndex((s) => s.id === song.id) === -1;
 
@@ -69,10 +76,10 @@ function SongList({ closeModal, playlistSongs }: Props) {
   );
 }
 
-export default function SongListModal({ closeModal, playlistSongs }: Props) {
+export default function SongListModal(props: Props) {
   return (
     <SongSelectProvider>
-      <SongList closeModal={closeModal} playlistSongs={playlistSongs} />
+      <SongList {...props} />
     </SongSelectProvider>
   );
 }

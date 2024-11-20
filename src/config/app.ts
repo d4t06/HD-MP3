@@ -1,5 +1,5 @@
 const appConfig = {
-  isDev: true,
+  isDev: false,
   focusDelay: 3000,
   scrollSongDelay: 4000,
   loadingDuration: 200,
