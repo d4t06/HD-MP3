@@ -17,14 +17,18 @@ export default function HomePage() {
   return (
     <div className="pb-[80px]">
       {isOnMobile && <MobileNav />}
-      <div className="pb-[30px]">
+      <div className="mb-[30px]">
         <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
 
         <PlaylistList loading={isFetching} variant="sys" />
       </div>
-      <HomeSongList loading={isFetching} />
 
-      {isOnMobile && <MobileSetting />}
+      <HomeSongList loading={isFetching} />
+      {isOnMobile && (
+        <div className="mt-[30px]">
+          <MobileSetting />
+        </div>
+      )}
 
       <Footer />
     </div>

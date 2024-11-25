@@ -30,6 +30,7 @@ const MobileBottomPlayer = () => {
       case "error":
         return <ExclamationCircleIcon className="w-10" />;
       case "loading":
+      case "waiting":
         return <ArrowPathIcon className="w-10 animate-spin" />;
       case "paused":
         return <PlayCircleIcon className="w-10" />;
