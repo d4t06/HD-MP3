@@ -9,7 +9,7 @@ export default function HomePage() {
   // store
   const { isOnMobile } = useTheme();
 
-  const { isFetching } = useGetSongPlaylist({ variant: "sys" });
+  const { isFetching } = useGetSongPlaylist({ variant: "home" });
 
   // hooks
   //   const { loading: useSongLoading } = useInitSong({});

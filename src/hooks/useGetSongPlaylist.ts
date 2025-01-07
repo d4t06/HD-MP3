@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import * as appService from "../services/appService";
 
 type Props = {
-  variant: "sys" | "mysong" | "dashboard";
+  variant: "home" | "user" | "dashboard";
 };
 
 export default function useGetSongPlaylist({ variant }: Props) {
@@ -27,14 +27,16 @@ export default function useGetSongPlaylist({ variant }: Props) {
       }
 
       switch (variant) {
-        case "sys":
-          const sysSongs = await appService.getAdminSongs();
-          const sysPlaylists = await appService.getAdminPlaylist();
+        case "home":
+          const sysSongs = await appService.getSongs({
+            variant: "home",
+          });
+          const sysPlaylists = await appService.getPlaylists({ variant: "admin" });
 
           setSysSongPlaylist({ playlists: sysPlaylists || [], songs: sysSongs || [] });
 
           break;
-        case "mysong":
+        case "user":
           if (!user) return;
 
           if (ranGetSong.current) {
@@ -45,12 +47,27 @@ export default function useGetSongPlaylist({ variant }: Props) {
           ranGetSong.current = true;
           console.log("get");
 
-          const { userPlaylists, userSongs } = await appService.getUserSongsAndPlaylists(
-            user
-          );
+          const { userPlaylists, userSongs } =
+            await appService.getUserSongsAndPlaylists(user);
 
           setSongs(userSongs);
           setPlaylists(userPlaylists);
+
+          break;
+
+        case "dashboard": {
+          const sysSongs = await appService.getSongs({
+            variant: "dashboard",
+          });
+          const sysPlaylists = await appService.getPlaylists({ variant: "admin" });
+
+          setSongs(sysSongs || []);
+          setPlaylists(sysPlaylists || []);
+
+          // setSysSongPlaylist({ playlists: sysPlaylists || [], songs: sysSongs || [] });
+
+          break;
+        }
       }
     } catch (error) {
       console.log({ message: error });

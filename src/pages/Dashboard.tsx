@@ -12,9 +12,8 @@ export default function DashBoard() {
   const { theme } = useTheme();
 
   // use hooks
-  //   const { loading: initialLoading, errorMsg } = useInitSong({ admin: true });
 
-  const { isFetching } = useGetSongPlaylist({ variant: "sys" });
+  const { isFetching } = useGetSongPlaylist({ variant: "dashboard" });
 
   return (
     <>

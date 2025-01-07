@@ -32,9 +32,9 @@ export default function PlaylistList({ loading, className, ...props }: Props) {
 
   // prettier-ignore
   const targetPlaylist = useMemo(() => 
-   props.variant === 'sys' || 
-   props.variant === 'dashboard' ? sysSongPlaylist.playlists :
-      props.variant === 'my-song' ? playlists : []
+   props.variant === 'my-song' || 
+   props.variant === 'dashboard' ? playlists :
+      props.variant === 'sys' ? sysSongPlaylist.playlists : []
   ,[sysSongPlaylist, playlists])
 
   const classes = {

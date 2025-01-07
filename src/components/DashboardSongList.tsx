@@ -11,15 +11,15 @@ type Props = {
 };
 
 export default function DashboardSongList({ initialLoading }: Props) {
-  const { sysSongPlaylist } = useSongContext();
+  const { songs } = useSongContext();
 
   // hooks
   const { tempSongs } = useUpload();
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
   const songCount = useMemo(() => {
-    return tempSongs.length + sysSongPlaylist.songs.length;
-  }, [tempSongs, sysSongPlaylist]);
+    return tempSongs.length + songs.length;
+  }, [tempSongs, songs]);
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
@@ -49,7 +49,7 @@ export default function DashboardSongList({ initialLoading }: Props) {
                 <SongList
                   variant="dashboard-songs"
                   tempSongs={tempSongs}
-                  songs={sysSongPlaylist.songs}
+                  songs={songs}
                   handleSetSong={_handleSetSong}
                 />
                 <SongList variant="uploading" songs={tempSongs} />

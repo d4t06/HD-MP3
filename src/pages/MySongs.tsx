@@ -20,7 +20,7 @@ export default function MySongsPage() {
   const navigate = useNavigate();
   //   const { loading: initialLoading, errorMsg, initial } = useInitSong({});
 
-  const { isFetching } = useGetSongPlaylist({ variant: "mysong" });
+  const { isFetching } = useGetSongPlaylist({ variant: "user" });
 
   // route guard
   useEffect(() => {

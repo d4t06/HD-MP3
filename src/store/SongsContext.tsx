@@ -273,6 +273,16 @@ function useSong() {
 
   const ranGetSong = useRef(false);
 
+  const updateSong = (props: { song: Partial<Song>; id: string }) => {
+    const newSongs = [...songs];
+    const index = newSongs.findIndex((s) => s.id === props.id);
+
+    if (index !== -1) {
+      Object.assign(newSongs[index], props.song);
+      setSongs(newSongs);
+    }
+  };
+
   return {
     songs,
     ranGetSong,
@@ -281,6 +291,7 @@ function useSong() {
     setPlaylists,
     sysSongPlaylist,
     setSysSongPlaylist,
+    updateSong,
   };
 }
 

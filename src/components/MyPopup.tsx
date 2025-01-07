@@ -99,7 +99,7 @@ export type TriggerRef = {
 
 export const MyPopupTrigger = forwardRef(function (
   { children, needButton, setIsOpenParent }: TriggerProps,
-  ref: Ref<TriggerRef>
+  ref: Ref<TriggerRef>,
 ) {
   const {
     refs,
@@ -261,7 +261,7 @@ export function MyPopupContent({
     contentEle.style.top = `${contentPos.top}px`;
   };
 
-  const handleWheel: EventListener = close;
+  const handleWheel = close;
 
   const classes = {
     unMountedContent: "opacity-0 scale-[.95]",
@@ -287,16 +287,13 @@ export function MyPopupContent({
   useEffect(() => {
     if (!appendOnPortal) return;
 
-    if (isOpen) setContentPos();
-    else return;
-
-    const mainContainer = document.querySelector(".main-container");
-    if (!mainContainer) return;
-
-    mainContainer.addEventListener("wheel", handleWheel);
+    if (isOpen) {
+      setContentPos();
+      document.addEventListener("wheel", handleWheel);
+    }
 
     return () => {
-      if (mainContainer) mainContainer.removeEventListener("wheel", handleWheel);
+      document.removeEventListener("wheel", handleWheel);
     };
   }, [isOpen]);
 

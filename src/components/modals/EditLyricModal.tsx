@@ -3,6 +3,7 @@ import ModalHeader from "./ModalHeader";
 import { useTheme } from "@/store";
 import Button from "../ui/Button";
 import {
+    BackwardIcon,
   CheckIcon,
   ForwardIcon,
   PauseIcon,
@@ -152,7 +153,7 @@ export default function EditLyricModal({ closeModal }: Props) {
         </div>
 
         <div className="flex items-center mt-5 space-x-2">
-          <label htmlFor="start" className="flex-shrink-0 w-[140px]">
+          <label htmlFor="start" className="flex-shrink-0 w-[150px]">
             Start:&nbsp;
             <span ref={refs.startRefText}></span>
           </label>
@@ -170,7 +171,7 @@ export default function EditLyricModal({ closeModal }: Props) {
         </div>
 
         <div className="flex items-center mt-3 space-x-2">
-          <label htmlFor="end" className="flex-shrink-0 w-[140px]">
+          <label htmlFor="end" className="flex-shrink-0 w-[150px]">
             End:&nbsp;
             <span ref={refs.endRefText}></span>
           </label>
@@ -187,7 +188,7 @@ export default function EditLyricModal({ closeModal }: Props) {
         </div>
 
         <div className="flex items-center mt-3">
-          <label htmlFor="grow" className="flex-shrink-0 w-[140px] mr-2 leading-[1]">
+          <label htmlFor="grow" className="flex-shrink-0 w-[150px] mr-2 leading-[1]">
             Grow: {growList[currentIndex]}
           </label>
           <input
@@ -236,7 +237,7 @@ export default function EditLyricModal({ closeModal }: Props) {
             onClick={() => handleNavigate("prev")}
             className={`${theme.content_bg} font-playwriteCU space-x-1 rounded-full mt-5`}
           >
-            <ForwardIcon className="w-6" />
+            <BackwardIcon className="w-6" />
             <span>Previous</span>
           </Button>
           <Button
