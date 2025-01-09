@@ -107,6 +107,7 @@
 ### update Thursday 9/1/2025
 
 - Refactoring login logic, getSongAndPlaylist logic
+- Adding search feature
 
 ### Song
 

@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 type Props = {
-  variant: "songs" | "playlist";
+  variant: "songs" | "playlist" | "search-bar";
 };
 
 export default function useSetSong({ variant }: Props) {
@@ -15,6 +15,7 @@ export default function useSetSong({ variant }: Props) {
   const KEY: keyof Song = useMemo(() => {
     switch (variant) {
       case "songs":
+      case "search-bar":
         return "queue_id";
       case "playlist":
         return "queue_id";

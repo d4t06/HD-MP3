@@ -3,6 +3,9 @@ import useDebounce from "./useDebounce";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { nanoid } from "nanoid";
+import { devSongs } from "@/constants/songs";
+import { sleep } from "@/utils/appHelpers";
+import { useSearchParams } from "react-router-dom";
 
 export default function useSearch() {
   const [value, setValue] = useState("");
@@ -11,12 +14,28 @@ export default function useSearch() {
 
   const [searchResult, SetSearchResult] = useState<Song[]>([]);
 
-  const inputRef = useRef<ElementRef<"input">>(null);
+  const formRef = useRef<ElementRef<"form">>(null);
+  const searchResultRef = useRef<ElementRef<"div">>(null);
+  const shouldFetchSong = useRef(true);
 
+  const params = useSearchParams();
   const q = useDebounce(value, 700);
 
+  const controller = new AbortController();
+
   const handleClickOutside = (e: Event) => {
-    if (inputRef.current && (e.target as Node).contains(inputRef.current)) return;
+    const popupContent = document.querySelector(".popup-content");
+
+    const node = e.target as Node;
+
+    if (
+      formRef.current &&
+      searchResultRef.current &&
+      (formRef.current.contains(node) ||
+        searchResultRef.current.contains(node) ||
+        popupContent?.contains(node))
+    )
+      return;
 
     setIsFocus(false);
   };
@@ -27,25 +46,28 @@ export default function useSearch() {
       SetSearchResult([]);
       return;
     }
-    const controller = new AbortController();
 
     const fetchApi = async () => {
       try {
         setIsFetching(true);
 
-        const playlistCollectionRef = collection(db, "playlist");
+        await sleep(1000);
 
-        const querySearchSong = query(playlistCollectionRef, where("by", "==", "admin"));
+        // const playlistCollectionRef = collection(db, "playlist");
 
-        const songsSnap = await getDocs(querySearchSong);
+        // const querySearchSong = query(playlistCollectionRef, where("by", "==", "admin"));
 
-        if (songsSnap.docs) {
-          const songs = songsSnap.docs.map(
-            (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
-          );
+        // const songsSnap = await getDocs(querySearchSong);
 
-          SetSearchResult(songs);
-        }
+        // if (songsSnap.docs) {
+        //   const songs = songsSnap.docs.map(
+        //     (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
+        //   );
+
+        //   SetSearchResult(songs);
+        // }
+
+        SetSearchResult(devSongs);
       } catch (error) {
         console.log(error);
       } finally {
@@ -53,13 +75,14 @@ export default function useSearch() {
       }
     };
 
-    fetchApi();
+    if (shouldFetchSong.current) fetchApi();
+    else shouldFetchSong.current = true;
 
     return () => {
       console.log("abort");
       controller.abort();
     };
-  }, [query]);
+  }, [q]);
 
   useEffect(() => {
     if (isFocus) {
@@ -71,5 +94,22 @@ export default function useSearch() {
     };
   }, [isFocus]);
 
-  return { isFetching, searchResult, value, setValue, isFocus, setIsFocus, inputRef };
+  useEffect(() => {
+    setValue(params[0].get("q") || "");
+
+    return () => {
+      shouldFetchSong.current = false;
+    };
+  }, [params[0].get("q")]);
+
+  return {
+    isFetching,
+    searchResult,
+    value,
+    setValue,
+    isFocus,
+    setIsFocus,
+    formRef,
+    searchResultRef,
+  };
 }

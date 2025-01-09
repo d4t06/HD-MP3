@@ -271,7 +271,7 @@ export function MyPopupContent({
   const content = (
     <div
       ref={setContentRef}
-      className={`${appendOnPortal ? "fixed z-[99]" : "absolute"} ${className || ""}`}
+      className={`popup-content ${appendOnPortal ? "fixed z-[99]" : "absolute"} ${className || ""}`}
     >
       <div
         ref={animationRef}

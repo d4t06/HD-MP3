@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from "react";
 import { ArrowPathIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
-import { formatTime } from "../utils/appHelpers";
+import { formatTime, getHidden } from "../utils/appHelpers";
 
 import { useTheme } from "../store";
 import {
@@ -40,7 +40,8 @@ type Props = {
     | "favorite"
     | "dashboard-songs"
     | "dashboard-playlist"
-    | "uploading";
+    | "uploading"
+    | "search-bar";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
@@ -111,6 +112,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const renderCheckBox = () => {
     switch (props.variant) {
+      case "search-bar":
       case "queue":
         return <></>;
       case "uploading":
@@ -169,16 +171,19 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             className={` ${classes.overlay} 
                ${!active ? "hidden sm:group-hover/main:flex" : ""}`}
           >
-            {active ? (
-              <img src={playingIcon} alt="" className="h-[18px] w-[18px]" />
-            ) : (
-              <div
-                onClick={onClick}
-                className="cursor-pointer w-full h-full flex items-center justify-center"
-              >
-                <PlayIcon className="w-[24px] text-white" />
-              </div>
-            )}
+            <img
+              src={playingIcon}
+              alt=""
+              className={`"h-[18px] w-[18px] ${getHidden(!active)}`}
+            />
+            <button
+              onClick={onClick}
+              className={`${getHidden(
+                active
+              )} `}
+            >
+              <PlayIcon className="w-[24px] text-white" />
+            </button>
           </div>
         );
     }
@@ -235,6 +240,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const renderMenu = () => {
     switch (props.variant) {
+      case "search-bar":
       case "home":
       case "dashboard-songs":
         return (

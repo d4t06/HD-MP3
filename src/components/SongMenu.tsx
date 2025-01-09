@@ -45,6 +45,11 @@ type HomeMenu = Base & {
   handleAddSongToPlaylist: (playlist: Playlist) => void;
 };
 
+type SearchBarMenu = Base & {
+  variant: "search-bar";
+  handleAddSongToPlaylist: (playlist: Playlist) => void;
+};
+
 type MySongMenu = Base & {
   variant: "my-songs";
   handleAddSongToPlaylist: (playlist: Playlist) => void;
@@ -62,7 +67,8 @@ type Props =
   | MySongMenu
   | QueueMenu
   | DashboardSongMenu
-  | DashboardPlaylistMenu;
+  | DashboardPlaylistMenu
+  | SearchBarMenu;
 
 function SongMenu({ song, closeMenu, ...props }: Props) {
   // store
@@ -94,6 +100,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     if (!user) return <></>;
 
     switch (props.variant) {
+      case "search-bar":
       case "home":
       case "my-songs":
       case "dashboard-songs":
@@ -154,6 +161,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
 
   const renderMenuItem = () => {
     switch (props.variant) {
+      case "search-bar":
       case "home":
         return (
           <>

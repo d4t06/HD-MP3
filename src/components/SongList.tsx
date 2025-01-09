@@ -43,6 +43,11 @@ type MyPlaylist = Base & {
   variant: "my-playlist";
 };
 
+type Searchbar = Omit<Base, "handleSetSong"> & {
+  variant: "search-bar";
+  handleSetSong: (song: Song) => void;
+};
+
 type Uploading = {
   songs: Song[];
   variant: "uploading";
@@ -57,7 +62,8 @@ type Props =
   | AdminPlaylist
   | Queue
   | Favorite
-  | Uploading;
+  | Uploading
+  | Searchbar;
 
 function SongList({ songs, ...props }: Props) {
   // store
@@ -104,6 +110,7 @@ function SongList({ songs, ...props }: Props) {
         active = active && currentSongData?.song.queue_id === song.queue_id;
 
       switch (props.variant) {
+        case "search-bar":
         case "dashboard-songs":
           return (
             <SongItem
