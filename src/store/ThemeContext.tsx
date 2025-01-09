@@ -50,7 +50,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
         ...state,
         theme: {
           ...theme,
-          alpha: theme.type === "dark" ? "[#fff]/[.1]" : "[#000]/[.1]",
+          alpha: theme.type === "dark" ? "[#fff]/[.05]" : "[#000]/[.05]",
           text_color: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
         },
       };

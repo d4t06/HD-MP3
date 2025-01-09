@@ -21,6 +21,7 @@ import { useAuthActions } from "@/store/AuthContext";
 import { ModalRef } from "./Modal";
 import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 import MyTooltip from "./MyTooltip";
+import Search from "./Search";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -125,9 +126,11 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           } bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
         ></div>
 
-        <div className="px-[40px] flex h-full">
+        <div className="px-[40px] items-center flex h-full">
+          <Search />
+
           {/* right */}
-          <div className="flex items-center space-x-3 ml-auto">
+          <div className="flex space-x-3 ml-auto">
             <MyPopup>
               <MyPopupTrigger ref={settingTriggerRef}>
                 <MyTooltip isWrapped position="top-[calc(100%+8px)]" content="Settings">

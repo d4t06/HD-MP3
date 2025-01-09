@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTheme } from "../store";
 import { SongThumbnail, Tabs, LyricsList, Button } from ".";
 import { useScrollSong } from "../hooks";
-import useDebounce from "../hooks/useDebounced";
+import useFunctionDebounce from "../hooks/useFunctionDebounce";
 import FullScreenPlayerSetting from "./child/FullScreenPlayerSetting";
 import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import {
@@ -46,8 +46,8 @@ export default function FullScreenPlayer() {
   });
 
   // methods
-  const handleClickNext = useDebounce(() => handleScroll("next"), 200);
-  const handleClickPrevious = useDebounce(() => handleScroll("previous"), 200);
+  const handleClickNext = useFunctionDebounce(() => handleScroll("next"), 200);
+  const handleClickPrevious = useFunctionDebounce(() => handleScroll("previous"), 200);
 
   const handleSetSongWhenClick = (queueId: string) => {
     if (currentQueueId === queueId) return;
