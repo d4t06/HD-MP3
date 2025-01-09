@@ -1,4 +1,4 @@
-import { useSongsStore } from "@/store/SongsContext";
+import { useSongContext } from "@/store/SongsContext";
 import { RefObject, useState } from "react";
 import { useToast } from "../store";
 
@@ -16,7 +16,7 @@ type Props = {
 const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   // store
   const { setErrorToast, setSuccessToast } = useToast();
-  const { userSongs, setUserSongs } = useSongsStore();
+  const { songs, setSongs } = useSongContext();
 
   // state
   const [loading, setLoading] = useState(false);
@@ -27,7 +27,7 @@ const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   const handleAddSongToPlaylistMobile = async (playlist: Playlist) => {
     try {
       setLoading(true);
-      // await addSongsSongItem(song, playlist);
+      await addSongsSongItem(song, playlist);
       setSuccessToast(`'${song.name}' added to '${playlist.name}'`);
     } catch (error) {
       console.log(error);
@@ -42,10 +42,10 @@ const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
     try {
       setLoading(true);
 
-      const newSongs = userSongs.filter((s) => s.id !== song.id);
+      const newSongs = songs.filter((s) => s.id !== song.id);
 
       await deleteSong(song);
-      setUserSongs(newSongs);
+      setSongs(newSongs);
 
       // if (currentSongData?.song?.id === song.id) dispatch(resetCurrentSong());
       setSuccessToast(`'${song.name}' deleted`);

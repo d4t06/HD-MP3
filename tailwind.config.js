@@ -2,6 +2,8 @@
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  corePlugins: { backgroundOpacity: false },
+
   theme: {
     container: {
       center: true,

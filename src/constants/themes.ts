@@ -124,7 +124,7 @@ export const specialThemes: ThemeType[] = [
     content_bg: "!bg-[#644646]  text-[#fff]",
     content_code: "#644646",
     content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
-    container: "bg-[#fdf6e3]",
+    container: "bg-[#f7f0de]",
     container_code: "#fdf6e3",
     text_color: "",
     image: "tet_theme_image.png",

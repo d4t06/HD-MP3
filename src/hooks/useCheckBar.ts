@@ -1,4 +1,4 @@
-import { useAuthStore, useSongsStore, useToast } from "@/store";
+import { useAuthStore, useSongContext, useToast } from "@/store";
 import { RefObject, useState } from "react";
 import usePlaylistActions from "./usePlaylistActions";
 import { useSongSelectContext } from "@/store/SongSelectContext";
@@ -16,7 +16,7 @@ export default function useCheckBar({ modalRef }: Props) {
 
   const { user } = useAuthStore();
   const { selectedSongs, resetSelect } = useSongSelectContext();
-  const { userSongs, setUserSongs } = useSongsStore();
+  const { songs, setSongs } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -34,9 +34,9 @@ export default function useCheckBar({ modalRef }: Props) {
       // >>> api
       for (let song of selectedSongs) await deleteSong(song);
 
-      const newSongs = userSongs.filter((s) => !selectedSongIds.includes(s.id));
+      const newSongs = songs.filter((s) => !selectedSongIds.includes(s.id));
 
-      setUserSongs(newSongs);
+      setSongs(newSongs);
       setSuccessToast(`${selectedSongs.length} songs deleted`);
     } catch (error) {
       console.log({ message: error });

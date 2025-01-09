@@ -1,20 +1,20 @@
 import CheckedBar from "./CheckedBar";
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
-import { useSongsStore } from "@/store";
 import SongSelectProvider from "@/store/SongSelectContext";
 import useSetSong from "@/hooks/useSetSong";
+import { useSongContext } from "@/store";
 
 type Props = {
   loading: boolean;
 };
 
 export default function HomeSongList({ loading }: Props) {
-  const { adminSongs } = useSongsStore();
+  const { sysSongPlaylist } = useSongContext();
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
   const _handleSetSong = (queueId: string) => {
-    handleSetSong(queueId, adminSongs);
+    handleSetSong(queueId, sysSongPlaylist.songs);
   };
 
   return (
@@ -25,12 +25,12 @@ export default function HomeSongList({ loading }: Props) {
 
       {!loading && (
         <>
-          {!!adminSongs.length ? (
+          {!!sysSongPlaylist.songs.length ? (
             <>
               <SongList
                 variant="home"
                 handleSetSong={_handleSetSong}
-                songs={adminSongs}
+                songs={sysSongPlaylist.songs}
               />
             </>
           ) : (

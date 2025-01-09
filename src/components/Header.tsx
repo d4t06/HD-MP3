@@ -32,7 +32,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const [loggedInUser, loading] = useAuthState(auth);
   const [modal, setModal] = useState<HeaderModal | "">("");
   // const [isOpenMenu, setIsOpenMenu] = useState(false);
-  const triggerRef = useRef<TriggerRef>(null);
+  const settingTriggerRef = useRef<TriggerRef>(null);
+  const avatarTriggerRef = useRef<TriggerRef>(null);
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -44,14 +45,14 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     modalRef.current?.toggle();
 
     // setIsOpenMenu(false);
-    triggerRef.current?.close();
+    settingTriggerRef.current?.close();
   };
 
   const handleSignOut = async () => {
     try {
       await logOut();
     } catch (error) {
-      console.log("signOut error", { messsage: error });
+      console.log("signOut error", { message: error });
     } finally {
       modalRef.current?.toggle();
     }
@@ -60,12 +61,10 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   //   methods
   const handleLogIn = async () => {
     try {
-      const btnEle = document.querySelector(".login-trigger") as HTMLElement;
-
-      await logIn();
-      if (btnEle) btnEle.click();
+      avatarTriggerRef.current?.close();
+      logIn();
     } catch (error) {
-      console.log(error);
+      console.log({ message: error });
     }
   };
 
@@ -130,7 +129,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           {/* right */}
           <div className="flex items-center space-x-3 ml-auto">
             <MyPopup>
-              <MyPopupTrigger ref={triggerRef}>
+              <MyPopupTrigger ref={settingTriggerRef}>
                 <MyTooltip isWrapped position="top-[calc(100%+8px)]" content="Settings">
                   <button
                     className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
@@ -149,7 +148,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
             </MyPopup>
 
             <MyPopup>
-              <MyPopupTrigger className="flex items-center">
+              <MyPopupTrigger ref={avatarTriggerRef} className="flex items-center">
                 <button className="flex hover:brightness-90">
                   {loading ? AvatarSkeleton : <Avatar className="w-[40px] h-[40px]" />}
                 </button>

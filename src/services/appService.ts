@@ -1,27 +1,79 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  query,
+  where,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { nanoid } from "nanoid";
 
 const songsCollectionRef = collection(db, "songs");
 const playlistCollectionRef = collection(db, "playlist");
 
-export const getAdminSongs = async () => {
-  const queryGetAdminSongs = query(songsCollectionRef, where("by", "==", "admin"));
-  const songsSnap = await getDocs(queryGetAdminSongs);
+type GetUserSong = {
+  variant: "user";
+  email: string;
+};
+
+type GetHomeSong = {
+  variant: "home";
+};
+
+type GetDashboardSong = {
+  variant: "dashboard";
+};
+
+export const getSongs = async (props: GetUserSong | GetHomeSong | GetDashboardSong) => {
+  let getSongQuery;
+
+  switch (props.variant) {
+    case "user":
+      getSongQuery = query(songsCollectionRef, where("by", "==", props.email), limit(10));
+      break;
+    case "home":
+      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"), limit(10));
+      break;
+    case "dashboard":
+      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"));
+      break;
+  }
+
+  const songsSnap = await getDocs(getSongQuery);
 
   if (songsSnap.docs) {
     const songs = songsSnap.docs.map(
-      (doc) => ({ ...doc.data(), song_in: "admin", queue_id: nanoid(4) } as Song)
+      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
     );
 
     return songs;
   }
 };
 
-export const getAdminPLaylist = async () => {
-  const queryGetAdminPlaylist = query(playlistCollectionRef, where("by", "==", "admin"));
+type GetPlaylist = {
+  variant: "admin";
+};
 
-  const playlistsSnap = await getDocs(queryGetAdminPlaylist);
+type GetUserPlaylist = {
+  variant: "user";
+  email: string;
+};
+
+export const getPlaylists = async (props: GetPlaylist | GetUserPlaylist) => {
+  let getPlaylistQuery;
+
+  switch (props.variant) {
+    case "admin":
+      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", "admin"));
+      break;
+    case "user":
+      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", props.email));
+      break;
+  }
+
+  const playlistsSnap = await getDocs(getPlaylistQuery);
 
   if (playlistsSnap.docs) {
     const playlists = playlistsSnap.docs.map((doc) => doc.data() as Playlist);
@@ -29,49 +81,25 @@ export const getAdminPLaylist = async () => {
   }
 };
 
-const getUserPlaylists = async (fullUserInfo: User) => {
-  const queryGetUserPlaylist = query(
-    playlistCollectionRef,
-    where("by", "==", fullUserInfo.email)
-  );
-
-  const playlistSnap = await getDocs(queryGetUserPlaylist);
-  if (playlistSnap.docs.length) {
-    const userPlaylists = playlistSnap.docs.map((doc) => doc.data() as Playlist);
-
-    return userPlaylists;
-  }
-};
-
-const getUserSongs = async (fullUserInfo: User) => {
-  const queryGetUserSongs = query(
-    songsCollectionRef,
-    where("by", "==", fullUserInfo.email)
-  );
-
-  const songsSnapshot = await getDocs(queryGetUserSongs);
-  if (songsSnapshot.docs.length) {
-    const songs = songsSnapshot.docs.map(
-      (doc) => ({ ...doc.data(), song_in: "user", queue_id: nanoid(4) } as Song)
-    );
-
-    return songs;
-  }
-};
-
 // get user songs
-export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
+export const getUserSongsAndPlaylists = async (email: string) => {
   const userData: { userSongs: Song[]; userPlaylists: Playlist[] } = {
     userSongs: [],
     userPlaylists: [],
   };
 
   //  get user song
-  const userSongs = await getUserSongs(fullUserInfo);
+  const userSongs = await getSongs({
+    variant: "user",
+    email,
+  });
   if (userSongs?.length) userData.userSongs = userSongs;
 
   // get user playlist
-  const playlists = await getUserPlaylists(fullUserInfo);
+  const playlists = await getPlaylists({
+    variant: "user",
+    email,
+  });
   if (playlists?.length) userData.userPlaylists = playlists;
 
   return userData;

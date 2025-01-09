@@ -1,6 +1,6 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
 import { Button, ConfirmModal, Modal } from ".";
-import { useSongsStore, useTheme } from "../store";
+import { useSongContext, useTheme } from "../store";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
 import { useSelector } from "react-redux";
@@ -22,7 +22,7 @@ type MySongs = {
 };
 
 type AdminPlaylist = {
-  variant: "admin-playlist";
+  variant: "sys-playlist";
 };
 
 type DashBoardSong = {
@@ -53,7 +53,7 @@ export default function CheckedBar({
   const { theme } = useTheme();
   const { isChecked, selectedSongs, selectAllSong, resetSelect } = useSongSelectContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { userSongs } = useSongsStore();
+  const { songs } = useSongContext();
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -79,7 +79,7 @@ export default function CheckedBar({
   };
 
   const handleSelectUserSongs = () => {
-    if (selectedSongs.length < userSongs.length) selectAllSong(userSongs);
+    if (selectedSongs.length < songs.length) selectAllSong(songs);
     else resetSelect();
   };
 
@@ -237,7 +237,7 @@ export default function CheckedBar({
             )}
           </>
         );
-      case "admin-playlist":
+      case "sys-playlist":
         return (
           <>
             {!isChecked && <div className={`${classes.title} !mr-[14px]`}>Songs</div>}

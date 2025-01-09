@@ -23,21 +23,21 @@ export default function PlaylistDetail() {
 
   const renderPlaylistInfo = () => {
     if (isAdminPlaylist)
-      return <PLaylistInfo loading={isFetching} variant="admin-playlist" />;
+      return <PLaylistInfo loading={isFetching} variant="sys-playlist" />;
 
     return <PLaylistInfo loading={isFetching} variant="my-playlist" />;
   };
 
   const renderSongList = () => {
     if (isAdminPlaylist)
-      return <PlaylistDetailSongList loading={isFetching} variant="admin-playlist" />;
+      return <PlaylistDetailSongList loading={isFetching} variant="sys-playlist" />;
     else return <PlaylistDetailSongList loading={isFetching} variant="my-playlist" />;
   };
 
   return (
     <div className={`pb-[80px]`}>
       <div className="mb-[30px]">
-        <BackBtn variant={isAdminPlaylist ? "admin-playlist" : "my-playlist"} />
+        <BackBtn variant={isAdminPlaylist ? "sys-playlist" : "my-playlist"} />
       </div>
 
       {renderPlaylistInfo()}

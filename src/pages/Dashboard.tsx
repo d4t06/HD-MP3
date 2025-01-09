@@ -1,17 +1,29 @@
 import { useTheme } from "@/store/ThemeContext";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { useSongsStore } from "../store";
-import { useInitSong } from "../hooks";
+// import { useSongContext } from "../store";
+// import { useInitSong } from "../hooks";
 import PlaylistList from "../components/PlaylistList";
 import DashboardSongList from "@/components/DashboardSongList";
+// import { useGetSongLyric } from "@/hooks";
+import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
+import { useEffect, useRef } from "react";
 
 export default function DashBoard() {
   //  store
   const { theme } = useTheme();
-  const { userPlaylists } = useSongsStore();
+
+  const ranEffect = useRef(false);
 
   // use hooks
-  const { loading: initialLoading, errorMsg } = useInitSong({ admin: true });
+
+  const { isFetching, getSongAndPlaylist } = useGetSongPlaylist();
+
+  useEffect(() => {
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getSongAndPlaylist({ variant: "dashboard" });
+    }
+  }, []);
 
   return (
     <>
@@ -22,11 +34,7 @@ export default function DashBoard() {
             {/* playlist */}
             <div className="text-xl font-playwriteCU leading-[2.4] mb-3">Playlist</div>
 
-            <PlaylistList
-              loading={initialLoading}
-              playlist={userPlaylists}
-              location="dashboard"
-            />
+            <PlaylistList loading={isFetching} variant="dashboard" />
 
             {/* userSongs */}
             <div className="mt-[30px] flex justify-between mb-[10px]">
@@ -35,7 +43,7 @@ export default function DashBoard() {
               <div className="flex items-center">
                 <label
                   className={`${theme.content_bg} ${
-                    initialLoading ? "disable" : ""
+                    isFetching ? "disable" : ""
                   } rounded-full flex px-[20px] py-[4px] cursor-pointer`}
                   htmlFor="song_upload"
                 >
@@ -45,8 +53,7 @@ export default function DashBoard() {
               </div>
             </div>
 
-            {errorMsg && <p>Some thing went wrong</p>}
-            {!errorMsg && <DashboardSongList initialLoading={initialLoading} />}
+            <DashboardSongList initialLoading={isFetching} />
           </>
         </div>
       </div>

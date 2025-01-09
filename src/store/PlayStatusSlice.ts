@@ -43,7 +43,7 @@ const init = () => {
     isShuffle: storage["isShuffle"] || false,
     // isTimer: 0,
     isCrossFade: storage["isCrossFade"] || false,
-    songBackground: storage["songBackground"] || false,
+    songBackground: storage["songBackground"] || true,
   };
 
   return state;

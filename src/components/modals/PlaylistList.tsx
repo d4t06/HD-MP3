@@ -1,4 +1,4 @@
-import { useSongsStore, useTheme } from "@/store";
+import { useSongContext, useTheme } from "@/store";
 import ModalHeader from "./ModalHeader";
 import { MusicalNoteIcon } from "@heroicons/react/24/outline";
 
@@ -9,7 +9,7 @@ type Props = {
 };
 
 function PlaylistList({ closeModal, handleAddSongToPlaylist, loading }: Props) {
-  const { userPlaylists } = useSongsStore();
+  const { playlists } = useSongContext();
   const { theme } = useTheme();
 
   return (
@@ -20,9 +20,9 @@ function PlaylistList({ closeModal, handleAddSongToPlaylist, loading }: Props) {
     >
       <ModalHeader close={closeModal} title={"Playlists"} />
       <div className="flex-grow flex flex-col overflow-auto space-y-2">
-        {!!userPlaylists?.length ? (
+        {!!playlists?.length ? (
           <>
-            {userPlaylists.map((playlist, index) => {
+            {playlists.map((playlist, index) => {
               return (
                 <button
                   key={index}

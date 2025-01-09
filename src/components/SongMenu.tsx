@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Button, PopupWrapper } from ".";
-import { useAuthStore, useSongsStore, useTheme, useToast } from "../store";
+import { useAuthStore, useSongContext, useTheme, useToast } from "../store";
 import { useMemo } from "react";
 import { SongItemModal } from "./SongItem";
 import { useDispatch } from "react-redux";
@@ -24,6 +24,10 @@ type Base = {
 type QueueMenu = Base & {
   variant: "queue";
   handleRemoveSongFromQueue: () => void;
+};
+
+type SysPlaylistMenu = Base & {
+  variant: "sys-playlist";
 };
 
 type PlaylistMenu = Base & {
@@ -53,6 +57,7 @@ type DashboardSongMenu = Base & {
 
 type Props =
   | HomeMenu
+  | SysPlaylistMenu
   | PlaylistMenu
   | MySongMenu
   | QueueMenu
@@ -65,7 +70,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
   const { user } = useAuthStore();
   const { theme, isOnMobile } = useTheme();
   const { setSuccessToast } = useToast();
-  const { userPlaylists } = useSongsStore();
+  const { playlists } = useSongContext();
 
   const handleAddToQueue = () => {
     dispatch(addSongToQueue({ songs: [song] }));
@@ -120,9 +125,9 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
             >
               {/* playlist */}
               <ul className="w-full">
-                {!!userPlaylists?.length ? (
+                {!!playlists?.length ? (
                   <>
-                    {userPlaylists.map((playlist, index) => {
+                    {playlists.map((playlist, index) => {
                       return (
                         <li
                           key={index}
@@ -145,7 +150,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
           </Button>
         );
     }
-  }, [userPlaylists]);
+  }, [playlists]);
 
   const renderMenuItem = () => {
     switch (props.variant) {

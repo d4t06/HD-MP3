@@ -27,7 +27,7 @@ type MyPlaylist = {
 };
 
 type AdminPlaylist = {
-  variant: "admin-playlist";
+  variant: "sys-playlist";
   loading: boolean;
 };
 
@@ -213,7 +213,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
             </Button>
           </>
         );
-      case "admin-playlist":
+      case "sys-playlist":
         return renderPlayPlaylistBtn();
     }
   };

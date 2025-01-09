@@ -1,12 +1,12 @@
 import { ChangeEvent, RefObject, useRef, useCallback, useEffect } from "react";
 import { generateId } from "../utils/appHelpers";
-import { useSongsStore } from "@/store/SongsContext";
-import { nanoid } from "nanoid";
+import { useSongContext } from "@/store";
 import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "../utils/appHelpers";
 import { useAuthStore } from "@/store/AuthContext";
 import { useTheme, useUpload, useToast } from "../store";
 import { parserSong } from "@/utils/parseSong";
+import { nanoid } from "nanoid";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
@@ -24,7 +24,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
   const { user } = useAuthStore();
   const { isDev } = useTheme();
 
-  const { userSongs, addUserSongs } = useSongsStore();
+  const { songs, setSongs } = useSongContext();
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
 
   // state
@@ -79,7 +79,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
       const start = Date.now();
       const checkDuplicate = (songObject: Song) => {
         return (
-          userSongs.some(
+          songs.some(
             (s) =>
               s.singer === songObject.singer &&
               s.name === songObject.name &&
@@ -131,7 +131,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         }
 
         // check limit
-        if (userSongs.length + fileIndexesNeeded.current.length > 5) {
+        if (songs.length + fileIndexesNeeded.current.length > 5) {
           if (user.role !== "ADMIN") {
             finishAndClear("finish-error");
             setErrorToast("You have reach the upload limit");
@@ -182,7 +182,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
             msg: ">>> api: set song doc",
           });
 
-          addUserSongs([{ ...targetSong, queue_id: nanoid(4) }]);
+          setSongs((prev) => [...prev, { ...targetSong, queue_id: nanoid(4) }]);
 
           shiftSong();
 
@@ -211,7 +211,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         setErrorToast();
       }
     },
-    [user, userSongs]
+    [user, songs]
   );
 
   useEffect(() => {

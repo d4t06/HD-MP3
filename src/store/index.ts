@@ -1,5 +1,5 @@
 export { useAuthStore } from "./AuthContext";
-export { useSongsStore } from "./SongsContext";
+export { useSongContext } from "./SongsContext";
 export { useTheme } from "./ThemeContext";
 export { useToastContext as useToast } from "./ToastContext";
 export { useSongSelectContext } from "./SongSelectContext";

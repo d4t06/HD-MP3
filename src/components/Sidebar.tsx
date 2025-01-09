@@ -6,28 +6,23 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { Skeleton } from "../components";
-import { useTheme, useAuthStore, useSongsStore } from "../store";
+import { useTheme, useAuthStore } from "../store";
 import ScrollTop from "./ScrollTop";
-import { useDispatch } from "react-redux";
-import { resetCurrentPlaylist } from "@/store/currentPlaylistSlice";
 export default function Sidebar() {
   // store
-  const dispatch = useDispatch();
   const { theme } = useTheme();
   const { user, loading: userLoading } = useAuthStore();
-  const { resetSongPlaylistStore } = useSongsStore();
 
   // hooks
   const location = useLocation();
   const navigate = useNavigate();
 
-  const reset = () => {
-    dispatch(resetCurrentPlaylist());
-    resetSongPlaylistStore();
-  };
+  //   const reset = () => {
+  //     dispatch(resetCurrentPlaylist());
+  //     resetSongPlaylistStore();
+  //   };
 
   const handleNavigateToDashboard = () => {
-    reset();
     navigate("/dashboard");
   };
 
@@ -53,7 +48,7 @@ export default function Sidebar() {
   return (
     <div className={`hidden md:block ${classes.container} ${theme.text_color}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
-        <Link to={"/"} className="text-[24px] font-bold">
+        <Link to={"/"} className="text-[24px] font-[500]">
           HD
           <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
         </Link>

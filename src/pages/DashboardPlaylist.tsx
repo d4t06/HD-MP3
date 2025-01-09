@@ -20,7 +20,7 @@ export default function DashboardPlaylist() {
 
       <PLaylistInfo loading={isFetching} variant="dashboard-playlist" />
       <div className="mt-[30px]">
-        {<PlaylistDetailSongList loading={isFetching} variant="dashboard-playlist" />}
+        <PlaylistDetailSongList loading={isFetching} variant="dashboard-playlist" />
       </div>
       <Footer />
     </div>

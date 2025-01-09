@@ -7,4 +7,5 @@ export default defineConfig({
    resolve: {
       alias: [{ find: "@", replacement: "/src" }],
    },
+   base: '/HD-MP3'
 });

@@ -1,4 +1,4 @@
-import { useSongsStore, useUpload } from "@/store";
+import { useSongContext, useUpload } from "@/store";
 import { useMemo } from "react";
 import CheckedBar from "./CheckedBar";
 import { Skeleton, SongList } from ".";
@@ -11,15 +11,15 @@ type Props = {
 };
 
 export default function DashboardSongList({ initialLoading }: Props) {
-  const { userSongs } = useSongsStore();
+  const { songs } = useSongContext();
 
   // hooks
   const { tempSongs } = useUpload();
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
   const songCount = useMemo(() => {
-    return tempSongs.length + userSongs.length;
-  }, [tempSongs, userSongs]);
+    return tempSongs.length + songs.length;
+  }, [tempSongs, songs]);
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
@@ -49,7 +49,7 @@ export default function DashboardSongList({ initialLoading }: Props) {
                 <SongList
                   variant="dashboard-songs"
                   tempSongs={tempSongs}
-                  songs={userSongs}
+                  songs={songs}
                   handleSetSong={_handleSetSong}
                 />
                 <SongList variant="uploading" songs={tempSongs} />
