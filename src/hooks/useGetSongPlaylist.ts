@@ -1,23 +1,28 @@
 import appConfig from "@/config/app";
 import { devPlaylists } from "@/constants/playlist";
 import { devSongs } from "@/constants/songs";
-import { useAuthStore } from "@/store";
 import { useSongContext } from "@/store/SongsContext";
 import { sleep } from "@/utils/appHelpers";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import * as appService from "../services/appService";
 
-type Props = {
-  variant: "home" | "user" | "dashboard";
-};
-
-export default function useGetSongPlaylist({ variant }: Props) {
-  const { setSysSongPlaylist, setSongs, setPlaylists, ranGetSong } = useSongContext();
-  const { user, loading: userLoading } = useAuthStore();
+export default function useGetSongPlaylist() {
+  const { setSysSongPlaylist, setSongs, setPlaylists } = useSongContext();
 
   const [isFetching, setIsFetching] = useState(true);
 
-  const start = async () => {
+  type GetUserSongAndPlaylistProps = {
+    variant: "user";
+    email: string;
+  };
+
+  type GetSongAndPlaylistProps = {
+    variant: "home" | "dashboard";
+  };
+
+  const getSongAndPlaylist = async (
+    props: GetSongAndPlaylistProps | GetUserSongAndPlaylistProps
+  ) => {
     try {
       if (appConfig.isDev) {
         await sleep(appConfig.loadingDuration);
@@ -26,7 +31,7 @@ export default function useGetSongPlaylist({ variant }: Props) {
         return;
       }
 
-      switch (variant) {
+      switch (props.variant) {
         case "home":
           const sysSongs = await appService.getSongs({
             variant: "home",
@@ -37,18 +42,17 @@ export default function useGetSongPlaylist({ variant }: Props) {
 
           break;
         case "user":
-          if (!user) return;
+          // if (ranGetSong.current) {
+          //   await sleep(500);
+          //   break;
+          // }
 
-          if (ranGetSong.current) {
-            await sleep(500);
-            break;
-          }
+          // ranGetSong.current = true;
+          // console.log("get");
 
-          ranGetSong.current = true;
-          console.log("get");
-
-          const { userPlaylists, userSongs } =
-            await appService.getUserSongsAndPlaylists(user);
+          const { userPlaylists, userSongs } = await appService.getUserSongsAndPlaylists(
+            props.email
+          );
 
           setSongs(userSongs);
           setPlaylists(userPlaylists);
@@ -64,8 +68,6 @@ export default function useGetSongPlaylist({ variant }: Props) {
           setSongs(sysSongs || []);
           setPlaylists(sysPlaylists || []);
 
-          // setSysSongPlaylist({ playlists: sysPlaylists || [], songs: sysSongs || [] });
-
           break;
         }
       }
@@ -76,12 +78,5 @@ export default function useGetSongPlaylist({ variant }: Props) {
     }
   };
 
-  // run initSongsAndPlaylists
-  useEffect(() => {
-    if (userLoading) return setIsFetching(true);
-
-    start();
-  }, [userLoading]);
-
-  return { isFetching };
+  return { isFetching, getSongAndPlaylist };
 }

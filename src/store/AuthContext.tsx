@@ -134,11 +134,8 @@ const useAuthActions = () => {
     location.reload();
   };
 
-  const logIn = async () => {
-    const userCredential = await signInWithGoogle();
-    if (userCredential) {
-      location.reload();
-    }
+  const logIn = () => {
+    signInWithGoogle();
   };
 
   return { logOut, logIn };

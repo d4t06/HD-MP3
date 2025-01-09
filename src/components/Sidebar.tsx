@@ -48,7 +48,7 @@ export default function Sidebar() {
   return (
     <div className={`hidden md:block ${classes.container} ${theme.text_color}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
-        <Link to={"/"} className="text-[24px] font-bold">
+        <Link to={"/"} className="text-[24px] font-[500]">
           HD
           <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
         </Link>

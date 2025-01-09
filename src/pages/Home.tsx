@@ -4,15 +4,23 @@ import { PlaylistList, HomeSongList } from "../components";
 import { MobileNav, MobileSetting } from "@/components";
 import Footer from "@/components/Footer";
 import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
+// import { useEditForm } from "@/hooks";
+import { useEffect, useRef } from "react";
 
 export default function HomePage() {
   // store
   const { isOnMobile } = useTheme();
 
-  const { isFetching } = useGetSongPlaylist({ variant: "home" });
+  const ranEffect = useRef(false);
 
-  // hooks
-  //   const { loading: useSongLoading } = useInitSong({});
+  const { isFetching, getSongAndPlaylist } = useGetSongPlaylist();
+
+  useEffect(() => {
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getSongAndPlaylist({ variant: "home" });
+    }
+  }, []);
 
   return (
     <div className="pb-[80px]">

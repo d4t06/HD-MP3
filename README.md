@@ -81,9 +81,14 @@
 
 - Sửa giao diện, fix lỗi
 
-### update thứ 6 1/2/2023
+### update thứ 6 1/2/2024
 
 - margin sẽ không hoạt động nếu dùng flex gap
+
+### update thứ 2 6/5/2024
+
+- refactoring code
+- use empty value context
 
 ### update Wednesday 23/10/2024
 
@@ -98,6 +103,10 @@
 ### update Tuesday 29/10/2024
 
 - Fix bug
+
+### update Thursday 9/1/2025
+
+- Refactoring login logic, getSongAndPlaylist logic
 
 ### Song
 
@@ -166,13 +175,3 @@
 - [x] không load dươc lyric trên mobile
 - [x] dừng load lyric song khi song lỗi
 - [x] edit song in playlist page
-- [] handle actually song when use playlist actions
-
-### update thứ 6 19/1/2024
-
-- Sửa giao diện
-
-### update thứ 2 6/5/2024
-
-- refactoring code
-- use empty value context

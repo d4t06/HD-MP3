@@ -278,7 +278,10 @@ function useSong() {
     const index = newSongs.findIndex((s) => s.id === props.id);
 
     if (index !== -1) {
-      Object.assign(newSongs[index], props.song);
+      const newSong = { ...newSongs[index] };
+      Object.assign(newSong, props.song);
+      newSongs[index] = newSong;
+
       setSongs(newSongs);
     }
   };

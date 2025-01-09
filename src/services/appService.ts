@@ -45,7 +45,7 @@ export const getSongs = async (props: GetUserSong | GetHomeSong | GetDashboardSo
 
   if (songsSnap.docs) {
     const songs = songsSnap.docs.map(
-      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
+      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
     );
 
     return songs;
@@ -82,7 +82,7 @@ export const getPlaylists = async (props: GetPlaylist | GetUserPlaylist) => {
 };
 
 // get user songs
-export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
+export const getUserSongsAndPlaylists = async (email: string) => {
   const userData: { userSongs: Song[]; userPlaylists: Playlist[] } = {
     userSongs: [],
     userPlaylists: [],
@@ -91,14 +91,14 @@ export const getUserSongsAndPlaylists = async (fullUserInfo: User) => {
   //  get user song
   const userSongs = await getSongs({
     variant: "user",
-    email: fullUserInfo.email,
+    email,
   });
   if (userSongs?.length) userData.userSongs = userSongs;
 
   // get user playlist
   const playlists = await getPlaylists({
     variant: "user",
-    email: fullUserInfo.email,
+    email,
   });
   if (playlists?.length) userData.userPlaylists = playlists;
 

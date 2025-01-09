@@ -6,14 +6,24 @@ import PlaylistList from "../components/PlaylistList";
 import DashboardSongList from "@/components/DashboardSongList";
 // import { useGetSongLyric } from "@/hooks";
 import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
+import { useEffect, useRef } from "react";
 
 export default function DashBoard() {
   //  store
   const { theme } = useTheme();
 
+  const ranEffect = useRef(false);
+
   // use hooks
 
-  const { isFetching } = useGetSongPlaylist({ variant: "dashboard" });
+  const { isFetching, getSongAndPlaylist } = useGetSongPlaylist();
+
+  useEffect(() => {
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getSongAndPlaylist({ variant: "dashboard" });
+    }
+  }, []);
 
   return (
     <>
