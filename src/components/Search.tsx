@@ -28,11 +28,13 @@ export default function Search() {
   } = useSearch();
 
   const classes = {
-    container: `relative h-[40px] flex px-3 ${theme.text_color}`,
+    container: `relative h-[40px] flex px-3 ${
+      !isFocus ? theme.text_color : "text-white"
+    }`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
-    focusedContainer: `${theme.content_bg} rounded-[20px_20px_0_0]`,
+    focusedContainer: `${theme.modal_bg} rounded-[20px_20px_0_0]`,
     input: `bg-transparent outline-none ${isFocus ? "placeholder-white" : ""}`,
-    searchResultContainer: `${theme.content_bg} rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
+    searchResultContainer: `${theme.modal_bg} rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
     listWrapper:
       "[&>*]:px-3 *:text-sm [&>*]:py-2 [&>*]:flex [&>*]:items-center  [&>*]:space-x-1 [&>*]:rounded-md hover:[&>*:not(div.absolute)]:bg-white/10",
   };

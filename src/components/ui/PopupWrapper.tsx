@@ -39,17 +39,17 @@ export default function PopupWrapper({
   p,
   rounded,
 }: Props) {
-  const bgColorMap: Record<typeof color, string> = {
+  const _bgColorMap: Record<typeof color, string> = {
     black: "bg-[#292929]",
-    container: theme.container,
+    container: ``,
     sidebar: theme.side_bar_bg,
   };
 
   return (
     <div
-      className={`  ${theme.text_color} ${bgColorMap[color]} border-[1px] border-${
-        theme.alpha
-      } ${popupVariant({
+      className={` ${
+        theme.modal_bg
+      } text-white border-[#fff]/5 border-[1px]  ${popupVariant({
         p,
         rounded,
         className,

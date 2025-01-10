@@ -9,8 +9,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#ca4954]",
     content_border: "border-[#ca4954]",
     content_hover_border: "hover:border-[#ca4954]",
-
     content_bg: "!bg-[#ca4954] text-[#fff]",
+    modal_bg: "bg-[#4f171c]",
     content_code: "#ca4954",
     content_hover_bg: "hover:!bg-[#ca4954] hover:text-[#fff] ",
     container: "bg-[#2e0f10]",
@@ -27,8 +27,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#198585]",
     content_border: "border-[#198585]",
     content_hover_border: "hover:border-[#198585]",
-
     content_bg: "!bg-[#198585]  text-[#fff]",
+    modal_bg: "bg-[#105656]",
     content_code: "#198585",
     content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff] ",
     container: "bg-[#1e1e1e]",
@@ -45,8 +45,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#0c9e85]",
     content_border: "border-[#0c9e85]",
     content_hover_border: "hover:border-[#0c9e85]",
-
     content_bg: "!bg-[#0c9e85]  text-[#fff]",
+    modal_bg: "bg-[#075f50]",
     content_code: "#0c9e85",
     content_hover_bg: "hover:!bg-[#0c9e85] hover:text-[#fff] ",
     container: "bg-[#0f1a2e]",
@@ -63,8 +63,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#198585]",
     content_border: "border-[#198585]",
     content_hover_border: "hover:border-[#198585]",
-
     content_bg: "!bg-[#198585] text-[#fff]",
+    modal_bg: "bg-[#105656]",
     content_code: "#198585",
     content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff]",
     container: "bg-[#fff]",
@@ -81,8 +81,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#198585]",
     content_border: "border-[#198585]",
     content_hover_border: "hover:border-[#198585]",
-
     content_bg: "!bg-[#198585] text-[#fff]",
+    modal_bg: "bg-[#105656]",
     content_code: "#198585",
     content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff]",
     container: "bg-[#ced9d9]",
@@ -99,8 +99,8 @@ export const themes: ThemeType[] = [
     content_hover_text: "hover:text-[#644646]",
     content_border: "border-[#644646]",
     content_hover_border: "hover:border-[#644646]",
-
     content_bg: "!bg-[#644646]  text-[#fff]",
+    modal_bg: "bg-[#3c2a2a]",
     content_code: "#644646",
     content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
     container: "bg-[#e5e3df]",
@@ -120,8 +120,8 @@ export const specialThemes: ThemeType[] = [
     content_hover_text: "hover:text-[#644646]",
     content_border: "border-[#644646]",
     content_hover_border: "hover:border-[#644646]",
-
     content_bg: "!bg-[#644646]  text-[#fff]",
+    modal_bg: "bg-[#3c2a2a]",
     content_code: "#644646",
     content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
     container: "bg-[#f7f0de]",

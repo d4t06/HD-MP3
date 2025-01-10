@@ -105,7 +105,7 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
     unMountedContent: "opacity-0 scale-[.95]",
     mountedContent: "opacity-100 scale-[1]",
     unMountedLayer: "opacity-0",
-    mountedLayer: "opacity-60",
+    mountedLayer: "opacity-40",
   };
 
   return (

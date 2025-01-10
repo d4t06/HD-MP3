@@ -24,7 +24,7 @@ if (localStorageThemeId) {
 const initialState: StateType = {
   theme: {
     ...initTheme,
-    alpha: initTheme.type === "light" ? "[#000]/[.1]" : "[#fff]/[.1]",
+    alpha: initTheme.type === "light" ? "[#000]/5" : "[#fff]/5",
     text_color: initTheme.type === "light" ? "text-[#333]" : "text-[#fff]",
   },
   isOnMobile: window.innerWidth < 800,
@@ -50,7 +50,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
         ...state,
         theme: {
           ...theme,
-          alpha: theme.type === "dark" ? "[#fff]/[.05]" : "[#000]/[.05]",
+          alpha: theme.type === "dark" ? "[#fff]/5" : "[#000]/5",
           text_color: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
         },
       };

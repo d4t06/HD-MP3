@@ -24,8 +24,6 @@ export default function useGetSearchResult() {
     try {
       if (!searchParams[0].get("q")) return;
 
-      setIsFetching(true);
-
       await sleep(1000);
 
       //   const songsCollectionRef = collection(db, "songs");
@@ -82,6 +80,10 @@ export default function useGetSearchResult() {
 
   useEffect(() => {
     getResult();
+
+    return () => {
+      setIsFetching(true);
+    };
   }, [searchParams[0].get("q"), tab]);
 
   return {

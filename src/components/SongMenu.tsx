@@ -90,7 +90,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
     level2Menu:
       "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover/add-playlist:block hover:block",
-    menuItem: `hover:bg-${theme.alpha} font-[500] ${theme.content_hover_text} max-[549px]:!bg-transparent py-1 pl-2 rounded-md`,
+    menuItem: `hover:bg-[#fff]/5 hover:brightness-100 font-[500] text-sm  max-[549px]:!bg-transparent py-2 pl-2 rounded-md`,
     menuIcon: "w-5 mr-3",
     overlay:
       "absolute flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
@@ -259,7 +259,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
         return <></>;
       default:
         return (
-          <div className={`pl-[10px] py-[6px] bg-${theme.alpha} rounded-md mb-3`}>
+          <div className={`pl-[10px] py-[6px] bg-[#fff]/5 rounded-md mb-3`}>
             <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
             <p className="text-sm opacity-70 line-clamp-1">{song.singer}</p>
           </div>

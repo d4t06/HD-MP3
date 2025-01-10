@@ -35,7 +35,7 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
          <form action="" onSubmit={handleAddPlaylist}>
             <input
                ref={inputRef}
-               className={`bg-${theme.alpha} px-[20px] text-lg rounded-full outline-none  h-[35px] w-full`}
+               className={`bg-[#fff]/5 px-[20px] text-lg rounded-full outline-none  h-[35px] w-full`}
                type="text"
                placeholder="name..."
                value={playlistName}

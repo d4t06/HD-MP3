@@ -32,14 +32,14 @@ export default function SettingMenu({ openModal, admin }: Props) {
   };
 
   const classes = {
-    menuItem: `${theme.content_hover_text} hover:bg-${theme.alpha} rounded-md font-[500] px-2 py-2 inline-flex items-center cursor-pointer`,
+    menuItem: `hover:bg-[#fff]/5 rounded-md font-[500] px-2 py-2 inline-flex items-center cursor-pointer`,
     icon: "w-[25px] mr-[8px]",
-    divide: `h-[1px]  w-[calc(100%-20px)] my-[4px] mx-auto bg-${theme.alpha}`,
+    divide: `h-[1px]  w-[calc(100%-20px)] my-[4px] mx-auto bg-[#fff]/5`,
   };
 
   return (
     <>
-      <PopupWrapper color="sidebar" theme={theme}>
+      <PopupWrapper theme={theme}>
         <ul className="flex flex-col w-[200px]">
           {!admin && (
             <li className={`${classes.menuItem} justify-between cursor-default`}>
