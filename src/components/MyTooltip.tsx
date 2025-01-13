@@ -28,13 +28,13 @@ type Props = {
 function MyToolTip(
   {
     children,
-    className = "px-2 py-1 text-sm font-[600]",
+    className = "px-2 py-1 text-sm font-[500]",
     position = "bottom-[calc(100%+8px)]",
     content,
     isWrapped,
     ...rest
   }: Props,
-  _ref: Ref<ElementRef<"button">>
+  _ref: Ref<ElementRef<"button">>,
 ) {
   const [open, setOpen] = useState(false);
 
@@ -46,6 +46,8 @@ function MyToolTip(
   const cloneEleRef = useRef<ElementRef<"button">>(null);
 
   const handleMouseEnter: EventListener = () => {
+    if ("ontouchstart" in document.documentElement) return;
+
     setOpen(true);
   };
 
@@ -78,9 +80,7 @@ function MyToolTip(
   }, []);
 
   const classes = {
-    container: `${
-      theme.type === "dark" ? "bg-white text-[#333]" : "bg-slate-700 text-white"
-    }`,
+    container: `${theme.modal_bg} text-white`,
   };
 
   const jsxContent = (

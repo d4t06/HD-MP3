@@ -3,9 +3,9 @@ import { useSearchParams } from "react-router-dom";
 
 import { devSongs } from "@/constants/songs";
 import { devPlaylists } from "@/constants/playlist";
-import { collection, DocumentSnapshot, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
-import { nanoid } from "nanoid";
+// import { collection, DocumentSnapshot, getDocs, query, where } from "firebase/firestore";
+// import { db } from "@/firebase";
+// import { nanoid } from "nanoid";
 import { sleep } from "@/utils/appHelpers";
 
 export type SearchResultTab = "Song" | "Playlist";

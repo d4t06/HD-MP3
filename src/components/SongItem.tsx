@@ -366,7 +366,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                   <PopupWrapper
                     className={`${actionLoading ? "overflow-hidden relative" : ""}`}
                     p={2}
-                    color="sidebar"
                     theme={theme}
                   >
                     {renderMenu()}

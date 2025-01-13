@@ -33,7 +33,6 @@ export default function FullScreenPlayerSetting() {
       <div className="w-[240px] sm:w-[220px]">
         <PopupWrapper
           p={"clear"}
-          color="black"
           className="space-y-[6px] text-white py-3"
           theme={theme}
         >

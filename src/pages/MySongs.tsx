@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme, useAuthStore, useUpload } from "../store";
-import { BackBtn } from "../components";
 import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
 import MySongSongsList from "../components/MySongSongsList";
@@ -35,9 +34,9 @@ export default function MySongsPage() {
 
   return (
     <div className="pb-[80px]">
-      <div className="mb-[30px]  md:hidden">
+      {/*      <div className="mb-[30px]  md:hidden">
         <BackBtn variant="my-songs" />
-      </div>
+      </div>*/}
       <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Playlist</h3>
 
       <PlaylistList loading={isFetching} variant="my-song" />

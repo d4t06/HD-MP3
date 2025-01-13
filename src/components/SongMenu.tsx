@@ -7,7 +7,7 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { Button, PopupWrapper } from ".";
+import { PopupWrapper } from ".";
 import { useAuthStore, useSongContext, useTheme, useToast } from "../store";
 import { useMemo } from "react";
 import { SongItemModal } from "./SongItem";
@@ -90,10 +90,10 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
     level2Menu:
       "w-[100%] absolute right-[calc(100%+5px)] hidden group-hover/add-playlist:block hover:block",
-    menuItem: `hover:bg-[#fff]/5 hover:brightness-100 font-[500] text-sm  max-[549px]:!bg-transparent py-2 pl-2 rounded-md`,
-    menuIcon: "w-5 mr-3",
-    overlay:
-      "absolute flex items-center justify-center inset-0 bg-[#000] bg-opacity-[.5]",
+    ctaContainer:
+      "[&>*]:p-2 [&>*]:w-full [&>*]:text-sm [&>*]:flex [&>*]:items-center [&>*]:rounded-md hover:[&>*:not(div.absolute)]:bg-white/5",
+    menuItem: ``,
+    menuIcon: "w-5 mr-2",
   };
 
   const renderAddToPlaylistBtn = useMemo(() => {
@@ -106,32 +106,28 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       case "dashboard-songs":
         if (isOnMobile)
           return (
-            <Button
-              className={`group relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
-              variant={"list"}
+            <button
+              className={`group relative ${classes.menuItem} ${classes.before}`}
               onClick={() => props.handleOpenModal("add-to-playlist")}
             >
               <PlusIcon className={classes.menuIcon} />
               Add to playlist
-            </Button>
+            </button>
           );
 
         return (
-          <Button
-            className={`group/add-playlist hover:!brightness-100 relative ${classes.menuItem}  ${theme.content_hover_text} ${classes.before}`}
-            variant={"list"}
-            size={"clear"}
+          <button
+            className={`group/add-playlist relative ${classes.menuItem}  ${classes.before}`}
           >
             <PlusIcon className={classes.menuIcon} />
             Add to playlist
             {/* level 2 */}
             <PopupWrapper
               className={`${classes.level2Menu} z-[99]                  `}
-              color="sidebar"
               theme={theme}
             >
               {/* playlist */}
-              <ul className="w-full">
+              <ul className={classes.ctaContainer}>
                 {!!playlists?.length ? (
                   <>
                     {playlists.map((playlist, index) => {
@@ -139,11 +135,8 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                         <li
                           key={index}
                           onClick={() => props.handleAddSongToPlaylist(playlist)}
-                          className={`list-none w-full flex rounded-[4px] p-[5px] ${classes.menuItem}`}
                         >
-                          <span>
-                            <MusicalNoteIcon className={classes.menuIcon} />
-                          </span>
+                          <MusicalNoteIcon className={classes.menuIcon} />
                           <p className="line-clamp-1 text-left">{playlist.name}</p>
                         </li>
                       );
@@ -154,7 +147,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
                 )}
               </ul>
             </PopupWrapper>
-          </Button>
+          </button>
         );
     }
   }, [playlists]);
@@ -165,15 +158,10 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       case "home":
         return (
           <>
-            <Button
-              onClick={handleAddToQueue}
-              className={` ${classes.menuItem}`}
-              variant={"list"}
-              size={"clear"}
-            >
+            <button onClick={handleAddToQueue} className={`${classes.menuItem}`}>
               <PlusIcon className={classes.menuIcon} />
               Add to queue
-            </Button>
+            </button>
             {renderAddToPlaylistBtn}
           </>
         );
@@ -182,15 +170,13 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       case "dashboard-playlist":
         return (
           <>
-            <Button
+            <button
               className={classes.menuItem}
-              variant={"list"}
-              size={"clear"}
               onClick={props.handleRemoveSongFromPlaylist}
             >
               <MinusCircleIcon className={classes.menuIcon} />
               Remove
-            </Button>
+            </button>
           </>
         );
       case "my-songs":
@@ -198,55 +184,42 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
         return (
           <>
             {props.variant !== "dashboard-songs" && (
-              <Button
-                onClick={handleAddToQueue}
-                className={` ${classes.menuItem}`}
-                variant={"list"}
-                size={"clear"}
-              >
+              <button onClick={handleAddToQueue} className={` ${classes.menuItem}`}>
                 <PlusIcon className={classes.menuIcon} />
                 Add to queue
-              </Button>
+              </button>
             )}
             {renderAddToPlaylistBtn}
-            <Button
+            <button
               onClick={() => props.handleOpenModal("edit")}
               className={` ${classes.menuItem} `}
-              variant={"list"}
-              size={"clear"}
             >
               <AdjustmentsHorizontalIcon className={classes.menuIcon} />
               Edit
-            </Button>
+            </button>
             <Link to={`edit/${song.id}`}>
-              <Button className={` ${classes.menuItem} `} variant={"list"}>
-                <DocumentTextIcon className={classes.menuIcon} />
-                {song.lyric_id ? "Edit lyric" : "Add lyric"}
-              </Button>
+              <DocumentTextIcon className={classes.menuIcon} />
+              {song.lyric_id ? "Edit lyric" : "Add lyric"}
             </Link>
-            <Button
+            <button
               onClick={() => props.handleOpenModal("delete")}
               className={` ${classes.menuItem} `}
-              variant={"list"}
-              size={"clear"}
             >
               <TrashIcon className={classes.menuIcon} />
               Delete
-            </Button>
+            </button>
           </>
         );
       case "queue":
         return (
           <>
-            <Button
+            <button
               onClick={props.handleRemoveSongFromQueue}
               className={` ${classes.menuItem}`}
-              variant={"list"}
-              size={"clear"}
             >
               <MinusCircleIcon className={classes.menuIcon} />
               Remove
-            </Button>
+            </button>
             {renderAddToPlaylistBtn}
           </>
         );
@@ -271,18 +244,19 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     <>
       <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
         {renderSongInfo}
-        {renderMenuItem()}
 
-        <a
-          target="_blank"
-          download
-          href={song.song_url}
-          className={` ${classes.menuItem} w-full inline-flex items-center cursor-pointer`}
-        >
-          <ArrowDownTrayIcon className={classes.menuIcon} />
-          Download
-        </a>
-        {/* </div> */}
+        <div className={classes.ctaContainer}>
+          {renderMenuItem()}
+          <a
+            target="_blank"
+            download
+            href={song.song_url}
+            className={` ${classes.menuItem} w-full inline-flex items-center cursor-pointer`}
+          >
+            <ArrowDownTrayIcon className={classes.menuIcon} />
+            Download
+          </a>
+        </div>
 
         {props.variant !== "queue" && !isOnMobile && (
           <p className="opacity-50 font-[500] text-center text-[13px] mt-[10px]">

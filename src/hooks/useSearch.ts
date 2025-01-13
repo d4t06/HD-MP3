@@ -1,8 +1,8 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import useDebounce from "./useDebounce";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
-import { nanoid } from "nanoid";
+// import { collection, getDocs, query, where } from "firebase/firestore";
+// import { db } from "@/firebase";
+// import { nanoid } from "nanoid";
 import { devSongs } from "@/constants/songs";
 import { sleep } from "@/utils/appHelpers";
 import { useSearchParams } from "react-router-dom";
@@ -40,6 +40,7 @@ export default function useSearch() {
     setIsFocus(false);
   };
 
+  // do search
   useEffect(() => {
     if (!q.trim()) {
       setIsFetching(false);
@@ -84,6 +85,7 @@ export default function useSearch() {
     };
   }, [q]);
 
+  // handle click outside
   useEffect(() => {
     if (isFocus) {
       document.addEventListener("click", handleClickOutside);
@@ -94,6 +96,7 @@ export default function useSearch() {
     };
   }, [isFocus]);
 
+  // update current state with url params
   useEffect(() => {
     setValue(params[0].get("q") || "");
 
@@ -101,6 +104,11 @@ export default function useSearch() {
       shouldFetchSong.current = false;
     };
   }, [params[0].get("q")]);
+
+  // Allow to call seach api when value change
+  useEffect(() => {
+    shouldFetchSong.current = true;
+  }, [value]);
 
   return {
     isFetching,

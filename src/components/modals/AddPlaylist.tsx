@@ -30,7 +30,7 @@ export default function AddPlaylist({ close, addPlaylist, isFetching }: Props) {
    }, []);
 
    return (
-      <div className="w-[400px] max-w-[calc(100vw-40px)]:">
+      <div className="w-[400px] max-w-[calc(100vw-40px)]">
          <ModalHeader close={close} title="Add playlist" />
          <form action="" onSubmit={handleAddPlaylist}>
             <input

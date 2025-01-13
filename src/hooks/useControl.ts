@@ -25,7 +25,7 @@ export default function useAudioEvent() {
   const { user } = useAuthStore();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
   const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
-    selectAllPlayStatusStore
+    selectAllPlayStatusStore,
   );
 
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
@@ -370,6 +370,8 @@ export default function useAudioEvent() {
 
   useEffect(() => {
     if (!triggerPlayStatus || triggerPlayStatus === playStatus) return;
+
+    console.log("triggerPlayStatus", triggerPlayStatus);
 
     switch (triggerPlayStatus) {
       case "playing":

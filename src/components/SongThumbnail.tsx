@@ -15,8 +15,8 @@ interface Props {
 }
 
 const SongThumbnail = (
-  { data, active, onClick, hasTitle, classNames, idleClass }: Props,
-  ref: ForwardedRef<any>
+  { data, active, onClick, hasTitle, classNames = "", idleClass = "" }: Props,
+  ref: ForwardedRef<any>,
 ) => {
   const { theme } = useTheme();
 
@@ -35,21 +35,20 @@ const SongThumbnail = (
   if (!data) return;
 
   return (
-    <div ref={ref} className={`${classes.container} ${idleClass ? idleClass : ""}`}>
+    <div ref={ref} queue-id={data.queue_id} className={`song-thumb ${classes.container} ${idleClass}`}>
       <div
-        className={`song-thumb ${
-          classNames ?? ""
+        className={`${
+          classNames
         } flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] min-[1536px]:w-[450px] min-[1536px]:h-[450px] `}
       >
         <div
-          className={`${classes.imageFrame} ${
+          className={`border-[2px] rounded-[6px] overflow-hidden border-transparent ${classes.imageFrame} ${
             active
               ? "w-[350px] min-[1536px]:w-[450px]"
               : "w-[280px] min-[1536px]:w-[330px]"
           }`}
         >
           <Image
-            className="rounded-[6px]"
             src={data.image_url}
             blurHashEncode={data.blurhash_encode}
           />

@@ -61,7 +61,7 @@ export default function MobileFullScreenPlayer() {
             <MyPopup appendOnPortal>
               <MyPopupTrigger>
                 <button
-                  className={`${classes.button} p-[6px] left-0 bg-gray-500 bg-opacity-20`}
+                  className={`${classes.button} p-[6px] left-0 bg-white/10`}
                 >
                   <Cog6ToothIcon className="w-full" />
                 </button>
@@ -82,10 +82,10 @@ export default function MobileFullScreenPlayer() {
             />
 
             <button
-              className={`${classes.button} p-[6px] bg-gray-500 bg-opacity-20`}
+              className={`${classes.button} p-[6px] bg-white/10`}
               onClick={() => setIsOpenFullScreen(false)}
             >
-              <ChevronDownIcon className="w-full" />
+              <ChevronDownIcon className="w-6" />
             </button>
           </div>
 
