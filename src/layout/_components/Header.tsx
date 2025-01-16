@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
-import { useTheme } from "../store";
+import { useTheme } from "@/store";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase";
+import { auth } from "@/firebase";
 import {
   AppInfo,
   Appearance,
@@ -10,19 +10,19 @@ import {
   Skeleton,
   Modal,
   SettingMenu,
-  PopupWrapper,
-} from ".";
+  PopupWrapper
+} from "@/components";
 import {
   AdjustmentsHorizontalIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthActions } from "@/store/AuthContext";
-import { ModalRef } from "./Modal";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
-import MyTooltip from "./MyTooltip";
-import Search from "./Search";
-import NavigationButton from "./NavigationButton";
+import { ModalRef } from "@/components/Modal";
+import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
+import MyTooltip from "@/components/MyTooltip";
+import Search from "@/components/Search";
+import NavigationButton from "@/components/NavigationButton";
 import NavigationProvider from "@/store/NavigationContext";
 
 export type HeaderModal = "theme" | "info" | "confirm";

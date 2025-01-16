@@ -5,8 +5,8 @@ import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
 import MySongSongsList from "../components/MySongSongsList";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import Footer from "@/components/Footer";
 import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
+import Footer from "@/layout/_components/Footer";
 
 export default function MySongsPage() {
   // store

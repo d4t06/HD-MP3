@@ -1,8 +1,8 @@
 import { usePlaylistDetail } from "@/hooks";
 import PLaylistInfo from "@/components/PlaylistInfo";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
-import Footer from "@/components/Footer";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
+import Footer from "@/layout/_components/Footer";
 
 export default function DashboardPlaylist() {
   //   hooks

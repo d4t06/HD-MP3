@@ -1,6 +1,6 @@
 import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
 import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo } from "react";
-import Image from "./ui/Image";
+import Image from "@/components/ui/Image";
 import {
   ExclamationCircleIcon,
   PauseCircleIcon,
@@ -10,7 +10,7 @@ import { useTheme } from "@/store";
 import useAudioControl from "@/hooks/useAudioControl";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
-import { ControlRef } from "./Control";
+import { ControlRef } from "@/components/Control";
 
 type Props = { audioEle: HTMLAudioElement };
 

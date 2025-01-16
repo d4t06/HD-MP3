@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { useRef } from "react";
-import { useUploadSongs } from "../hooks";
+import { useUploadSongs } from "@/hooks";
 
 function UploadSongPortal({ admin }: { admin?: boolean }) {
    const audioRef = useRef<HTMLAudioElement>(null);
