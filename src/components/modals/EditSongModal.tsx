@@ -122,7 +122,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
 
   // define style
   const classes = {
-    input: `px-[10px] py-1 outline-none rounded-[4px] text-lg ${theme.side_bar_bg} border border-${theme.alpha} font-[500]`,
+    input: `px-2 py-1 outline-none rounded-[4px] bg-[#fff]/5 font-[500]`,
     label: "text-lg inline-flex",
   };
 

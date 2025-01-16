@@ -95,6 +95,7 @@ type ThemeType = {
   container_code: string;
   content_hover_bg: string;
   text_color: string;
+  modal_bg: string;
   image?: string;
 };
 

@@ -24,8 +24,8 @@ export default function FullScreenPlayerSetting() {
   const classes = {
     disableBtn: "bg-white/10 bg-opacity-20",
     lyricSizeBtn: `group/text justify-center !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
-    itemContainer: `flex justify-between  px-3 py-2 items-center min-h-[30px] hover:bg-${theme.alpha}`,
-    text: "text-base text-[#ccc]",
+    itemContainer: `flex justify-between  px-3 py-2 items-center min-h-[30px] hover:bg-[#fff]/5`,
+    text: "text-sm",
   };
 
   return (
@@ -33,7 +33,6 @@ export default function FullScreenPlayerSetting() {
       <div className="w-[240px] sm:w-[220px]">
         <PopupWrapper
           p={"clear"}
-          color="black"
           className="space-y-[6px] text-white py-3"
           theme={theme}
         >

@@ -21,6 +21,9 @@ import { useAuthActions } from "@/store/AuthContext";
 import { ModalRef } from "./Modal";
 import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
 import MyTooltip from "./MyTooltip";
+import Search from "./Search";
+import NavigationButton from "./NavigationButton";
+import NavigationProvider from "@/store/NavigationContext";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -107,8 +110,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
     button: `h-[40px] w-[40px] rounded-full`,
-    menuItem: `hover:bg-${theme.alpha} ${theme.content_hover_text} rounded-[4px] w-full px-[10px] h-[44px] inline-flex items-center font-[500]`,
-    icon: "w-[25px] mr-[5px]",
+    menuItem: `hover:bg-white/5 rounded-[4px] w-full text-sm px-[10px] h-[44px] inline-flex items-center font-[500]`,
+    icon: "w-5 mr-1",
     divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-${theme.alpha}`,
   };
 
@@ -125,9 +128,15 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           } bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
         ></div>
 
-        <div className="px-[40px] flex h-full">
+        <div className="px-[40px] items-center flex h-full">
+          <NavigationProvider>
+            <NavigationButton className="mr-5" />
+          </NavigationProvider>
+
+          <Search />
+
           {/* right */}
-          <div className="flex items-center space-x-3 ml-auto">
+          <div className="flex space-x-3 ml-auto">
             <MyPopup>
               <MyPopupTrigger ref={settingTriggerRef}>
                 <MyTooltip isWrapped position="top-[calc(100%+8px)]" content="Settings">
@@ -143,7 +152,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
-                <SettingMenu openModal={openModal} loggedIn={false} />
+                <SettingMenu openModal={openModal} variant="client" />
               </MyPopupContent>
             </MyPopup>
 
@@ -159,7 +168,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
-                <PopupWrapper color="sidebar" theme={theme}>
+                <PopupWrapper theme={theme}>
                   <div className="w-[250px] max-h-[50vh]">
                     {loggedInUser && (
                       <>

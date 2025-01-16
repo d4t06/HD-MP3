@@ -15,7 +15,13 @@ type Props = {
   variant: "sys" | "my-song" | "dashboard";
 };
 
-export default function PlaylistList({ loading, className, ...props }: Props) {
+type ExtendProps = {
+  className?: string;
+  playlists: Playlist[];
+  variant: "search-page";
+};
+
+export default function PlaylistList({ className = "", ...props }: Props | ExtendProps) {
   // store
   const { theme } = useTheme();
   const { currentSongData } = useSelector(selectSongQueue);
@@ -28,14 +34,19 @@ export default function PlaylistList({ loading, className, ...props }: Props) {
   const { addPlaylist, isFetching } = usePlaylistActions();
   const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
+  const loading = props.variant != "search-page" ? props.loading : false;
   const closeModal = () => modalRef.current?.toggle();
 
   // prettier-ignore
-  const targetPlaylist = useMemo(() => 
-   props.variant === 'my-song' || 
-   props.variant === 'dashboard' ? playlists :
-      props.variant === 'sys' ? sysSongPlaylist.playlists : []
-  ,[sysSongPlaylist, playlists])
+  const targetPlaylist = useMemo(() => {
+    if (props.variant === "search-page") return props.playlists;
+
+    return props.variant === "my-song" || props.variant === "dashboard"
+      ? playlists
+      : props.variant === "sys"
+        ? sysSongPlaylist.playlists
+        : [];
+  }, [sysSongPlaylist, playlists]);
 
   const classes = {
     playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
@@ -49,6 +60,7 @@ export default function PlaylistList({ loading, className, ...props }: Props) {
 
       switch (props.variant) {
         case "sys":
+        case "search-page":
         case "my-song":
           return (
             <div key={index} className={classes.playlistItem}>
@@ -68,6 +80,21 @@ export default function PlaylistList({ loading, className, ...props }: Props) {
           );
       }
     });
+  };
+
+  const renderAddPlayingItem = () => {
+    switch (props.variant) {
+      case "my-song":
+      case "dashboard":
+        return (
+          <div className={`${classes.playlistItem} mb-[25px]`}>
+            <Empty theme={theme} onClick={() => modalRef.current?.toggle()} />
+          </div>
+        );
+
+      default:
+        return <></>;
+    }
   };
 
   const renderModal = () => {
@@ -99,12 +126,7 @@ export default function PlaylistList({ loading, className, ...props }: Props) {
         {!loading && (
           <>
             {render()}
-
-            {props.variant !== "sys" && (
-              <div className={`${classes.playlistItem} mb-[25px]`}>
-                <Empty theme={theme} onClick={() => modalRef.current?.toggle()} />
-              </div>
-            )}
+            {renderAddPlayingItem()}
           </>
         )}
       </div>

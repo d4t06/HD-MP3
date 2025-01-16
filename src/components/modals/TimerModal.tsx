@@ -12,7 +12,7 @@ function TimerModal({ closeModal, active }: Props) {
   const { theme } = useTheme();
 
   const classes = {
-    button: `bg-${theme.alpha} ${theme.content_hover_bg} ml-2 mt-2 px-3  py-1 rounded-[99px]`,
+    button: `bg-[#fff]/5 ${theme.content_hover_bg} ml-2 mt-2 px-3  py-1 rounded-[99px]`,
   };
 
   const handleSetTimer = (songCount: number) => {

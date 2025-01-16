@@ -1,5 +1,4 @@
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { BackBtn } from "../components";
 import { useSelector } from "react-redux";
 import { usePlaylistDetail } from "@/hooks";
 import PLaylistInfo from "@/components/PlaylistInfo";
@@ -14,7 +13,7 @@ export default function PlaylistDetail() {
 
   const isAdminPlaylist = useMemo(
     () => currentPlaylist?.by === "admin",
-    [currentPlaylist]
+    [currentPlaylist],
   );
 
   //   hooks
@@ -37,7 +36,7 @@ export default function PlaylistDetail() {
   return (
     <div className={`pb-[80px]`}>
       <div className="mb-[30px]">
-        <BackBtn variant={isAdminPlaylist ? "sys-playlist" : "my-playlist"} />
+        {/* <BackBtn variant={isAdminPlaylist ? "sys-playlist" : "my-playlist"} /> */}
       </div>
 
       {renderPlaylistInfo()}

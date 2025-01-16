@@ -61,7 +61,7 @@ export default function EditPlaylist({ playlist, close }: Props) {
           value={playlistName}
           onChange={(e) => setPlaylistName(e.target.value)}
           type="text"
-          className={`${classes.input} bg-${theme.alpha} ${theme.text_color}`}
+          className={`${classes.input} bg-white/5 text-white`}
         />
 
         <Button

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Playwrite+CU&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&family=Playwrite+CU&display=swap");
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -49,6 +49,13 @@
   display: none;
 }
 
+.inset-full {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
@@ -87,4 +94,8 @@ button[disabled] {
 
 .translate-3d-0 {
   transform: translate3d(0, 0, 0);
+}
+
+.song-thumb.centered .group {
+  border-color: white;
 }

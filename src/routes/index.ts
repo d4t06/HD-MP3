@@ -9,9 +9,11 @@ import {
   DashboardSongLyric,
   SongLyric,
 } from "../pages";
+import SearchResultPage from "@/pages/SearchResult";
 
 const routes = {
   Home: "/",
+  Search: "/search",
   Dashboard: "/dashboard",
   DashboardPlaylist: "/dashboard/playlist/:id",
   DashboardEdit: "/dashboard/edit/:id",
@@ -28,6 +30,7 @@ export type PlaylistParamsType = {
 
 const publicRoutes = [
   { path: routes.Home, component: Home, layout: "" },
+  { path: routes.Search, component: SearchResultPage, layout: "" },
 
   { path: routes.MySongs, component: MySongs, layout: "" },
   { path: routes.Playlist, component: PlaylistDetail, layout: "" },
@@ -36,11 +39,12 @@ const publicRoutes = [
 ];
 
 const privateRoutes = [
-  { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout },
+  { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout, title: "Dashboard" },
   {
     path: routes.DashboardPlaylist,
     component: DashboardPlaylist,
     layout: DashBoardLayout,
+    title: "Playlist"
   },
   { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },
 ];

@@ -107,6 +107,11 @@
 ### update Thursday 9/1/2025
 
 - Refactoring login logic, getSongAndPlaylist logic
+- Adding search feature
+
+## update Monday 14/1/2025
+
+- Add keyboard events to fullscreen song list
 
 ### Song
 

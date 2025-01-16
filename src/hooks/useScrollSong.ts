@@ -1,22 +1,21 @@
-import { RefObject, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
 import { usePlayerContext } from "@/store";
-
-type Props = {
-  containerRef?: RefObject<HTMLDivElement>;
-  songItemRef?: RefObject<HTMLDivElement>;
-  idle: boolean;
-};
+import {
+  PlayStatus,
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "@/store/PlayStatusSlice";
 
 const handleTouchPadScroll = () => {
   window.dispatchEvent(new Event("mousemove"));
 };
 
 const scrollToActiveSong = (
-  songItemEle: HTMLDivElement,
-  containerEle: HTMLDivElement,
-  idle: boolean = false
+  songItemEle: HTMLElement,
+  containerEle: HTMLElement,
+  idle: boolean = false,
 ) => {
   const windowWidth = window.innerWidth;
 
@@ -62,21 +61,98 @@ const scrollToActiveSong = (
   return true;
 };
 
-export default function useScrollSong({ containerRef, songItemRef, idle }: Props) {
-  const { isOpenFullScreen } = usePlayerContext();
+export default function useScrollSong() {
+  const dispatch = useDispatch();
+  const { isOpenFullScreen, idle } = usePlayerContext();
 
   const { currentQueueId } = useSelector(selectSongQueue);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
+
+  //  ref;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const activeSongRef = useRef<HTMLDivElement>(null);
+  const playStatusRef = useRef<PlayStatus>("paused");
 
   const handleScrollToActiveSong = () => {
-    if (!songItemRef?.current || !containerRef?.current) return;
+    if (!activeSongRef?.current || !containerRef?.current) return;
 
-    scrollToActiveSong(songItemRef.current, containerRef.current, idle);
+    scrollToActiveSong(activeSongRef.current, containerRef.current, idle);
+  };
+
+  const handleArrowKeys = (key: KeyboardEvent["key"]) => {
+    let centeredEle = document.querySelector(".song-thumb.centered");
+    if (!centeredEle) {
+      if (!activeSongRef.current) return;
+      else centeredEle = activeSongRef.current;
+    }
+
+    let newCenteredEle;
+
+    switch (key) {
+      case "ArrowRight":
+        newCenteredEle = centeredEle.nextElementSibling;
+
+        break;
+      case "ArrowLeft":
+        newCenteredEle = centeredEle.previousElementSibling;
+
+        break;
+    }
+
+    if (newCenteredEle && containerRef.current) {
+      centeredEle.classList.remove("centered");
+      newCenteredEle.classList.add("centered");
+
+      scrollToActiveSong(newCenteredEle as HTMLElement, containerRef.current);
+    }
+  };
+
+  const handleActiveSong = () => {
+    if (!activeSongRef.current) return;
+    const centeredEle = document.querySelector(".song-thumb.centered");
+
+    if (!centeredEle || centeredEle.getAttribute("queue-id") === currentQueueId) {
+      console.log("go here");
+
+      switch (playStatusRef.current) {
+        case "playing":
+          return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+        case "paused":
+          return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
+      }
+    }
+
+    const newQueueId = centeredEle?.getAttribute("queue-id");
+    if (newQueueId) dispatch(setCurrentQueueId(newQueueId));
+  };
+
+  const handleKeyboardEvent = (e: KeyboardEvent) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      e.preventDefault();
+      return handleArrowKeys(e.key);
+    }
+
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleActiveSong();
+    }
   };
 
   useEffect(() => {
     if (!isOpenFullScreen) return;
 
     handleScrollToActiveSong();
+  }, [currentQueueId, isOpenFullScreen]);
+
+  useEffect(() => {
+    if (!isOpenFullScreen) return;
+
+    document.addEventListener("keydown", handleKeyboardEvent);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyboardEvent);
+      document.querySelector(".song-thumb.centered")?.classList.remove("centered");
+    };
   }, [currentQueueId, isOpenFullScreen]);
 
   useEffect(() => {
@@ -89,6 +165,13 @@ export default function useScrollSong({ containerRef, songItemRef, idle }: Props
       containerEle.onscroll = () => {};
     };
   }, []);
+
+// update playStatusRef
+  useEffect(() => {
+    playStatusRef.current = playStatus;
+  }, [playStatus]);
+
+  return { activeSongRef, containerRef };
 }
 
 export { scrollToActiveSong };

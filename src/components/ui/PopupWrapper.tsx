@@ -28,28 +28,21 @@ interface Props extends VariantProps<typeof popupVariant> {
     alpha: string;
   };
   className?: string;
-  color?: "sidebar" | "container" | "black";
+  // color?: "sidebar" | "container" | "black";
 }
 
-export default function PopupWrapper({
-  children,
-  theme,
-  className,
-  color = "container",
-  p,
-  rounded,
-}: Props) {
-  const bgColorMap: Record<typeof color, string> = {
-    black: "bg-[#292929]",
-    container: theme.container,
-    sidebar: theme.side_bar_bg,
-  };
+export default function PopupWrapper({ children, theme, className, p, rounded }: Props) {
+  // const _bgColorMap: Record<typeof color, string> = {
+  //   black: "bg-[#292929]",
+  //   container: ``,
+  //   sidebar: theme.side_bar_bg,
+  // };
 
   return (
     <div
-      className={`  ${theme.text_color} ${bgColorMap[color]} border-[1px] border-${
-        theme.alpha
-      } ${popupVariant({
+      className={` ${
+        theme.modal_bg
+      } text-white border-[#fff]/5 border-[1px]  ${popupVariant({
         p,
         rounded,
         className,

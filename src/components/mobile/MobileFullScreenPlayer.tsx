@@ -8,7 +8,7 @@ import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
 import { Blurhash } from "react-blurhash";
-import { defaultBlurHash } from "@/constants/blurhash";
+import { defaultBlurhash } from "@/constants/app";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import LyricContextProvider from "@/store/LyricContext";
@@ -51,7 +51,7 @@ export default function MobileFullScreenPlayer() {
             <Blurhash
               width={"100%"}
               height={"100%"}
-              hash={currentSongData?.song.blurhash_encode || defaultBlurHash}
+              hash={currentSongData?.song.blurhash_encode || defaultBlurhash}
             />
           </div>
         )}
@@ -61,7 +61,7 @@ export default function MobileFullScreenPlayer() {
             <MyPopup appendOnPortal>
               <MyPopupTrigger>
                 <button
-                  className={`${classes.button} p-[6px] left-0 bg-gray-500 bg-opacity-20`}
+                  className={`${classes.button} p-[6px] left-0 bg-white/10`}
                 >
                   <Cog6ToothIcon className="w-full" />
                 </button>
@@ -82,10 +82,10 @@ export default function MobileFullScreenPlayer() {
             />
 
             <button
-              className={`${classes.button} p-[6px] bg-gray-500 bg-opacity-20`}
+              className={`${classes.button} p-[6px] bg-white/10`}
               onClick={() => setIsOpenFullScreen(false)}
             >
-              <ChevronDownIcon className="w-full" />
+              <ChevronDownIcon className="w-6" />
             </button>
           </div>
 
