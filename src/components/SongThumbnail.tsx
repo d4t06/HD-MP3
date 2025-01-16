@@ -26,7 +26,7 @@ const SongThumbnail = (
       "group relative transition-[width] duration-[.3s] origin-center rounded-[6px] overflow-hidden",
     image: "select-none object-cover object-center rounded w-full",
     overlay: `absolute  ${
-      active ? "" : "inset-0 hidden bg-opacity-60 bg-[#333] items-center justify-center"
+      active ? "" : "inset-0 hidden bg-black/40 items-center justify-center"
     }   group-hover:flex`,
     playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
     title: "text-2xl text-white mt-3 font-bold text-ellipsis line-clamp-1",
@@ -35,23 +35,24 @@ const SongThumbnail = (
   if (!data) return;
 
   return (
-    <div ref={ref} queue-id={data.queue_id} className={`song-thumb ${classes.container} ${idleClass}`}>
+    <div
+      ref={ref}
+      queue-id={data.queue_id}
+      className={`song-thumb ${active ? "active" : ""} ${classes.container} ${idleClass}`}
+    >
       <div
         className={`${
           classNames
         } flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] min-[1536px]:w-[450px] min-[1536px]:h-[450px] `}
       >
         <div
-          className={`border-[2px] rounded-[6px] overflow-hidden border-transparent ${classes.imageFrame} ${
+          className={`border-[4px] rounded-[6px] overflow-hidden border-transparent ${classes.imageFrame} ${
             active
               ? "w-[350px] min-[1536px]:w-[450px]"
               : "w-[280px] min-[1536px]:w-[330px]"
           }`}
         >
-          <Image
-            src={data.image_url}
-            blurHashEncode={data.blurhash_encode}
-          />
+          <Image src={data.image_url} blurHashEncode={data.blurhash_encode} />
           {
             <div className={`${classes.overlay}`}>
               {!active && (
@@ -60,9 +61,9 @@ const SongThumbnail = (
                   variant={"circle"}
                   hover={"scale"}
                   size={"clear"}
-                  className={`h-[50px] w-[50px] ${theme.content_hover_text}`}
+                  className={`p-2 hover:bg-[#fff]/10`}
                 >
-                  <PauseCircleIcon className="w-full" />
+                  <PauseCircleIcon className="w-10" />
                 </Button>
               )}
             </div>

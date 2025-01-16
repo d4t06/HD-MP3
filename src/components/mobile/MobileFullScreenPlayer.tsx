@@ -8,7 +8,7 @@ import SleepTimerButton from "../SleepTimerButton";
 import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
 import { Blurhash } from "react-blurhash";
-import { defaultBlurHash } from "@/constants/blurhash";
+import { defaultBlurhash } from "@/constants/app";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import LyricContextProvider from "@/store/LyricContext";
@@ -51,7 +51,7 @@ export default function MobileFullScreenPlayer() {
             <Blurhash
               width={"100%"}
               height={"100%"}
-              hash={currentSongData?.song.blurhash_encode || defaultBlurHash}
+              hash={currentSongData?.song.blurhash_encode || defaultBlurhash}
             />
           </div>
         )}

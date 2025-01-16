@@ -34,18 +34,20 @@ export default function ConfirmModal({
       <div className="flex space-x-3 mt-5">
         <Button
           onClick={close}
-          className={`${theme.content_bg} rounded-full text-lg`}
+          className={`bg-[#333] border border-white/10 rounded-full px-3 py-0.5`}
           variant={"primary"}
+          size={'clear'}
         >
           Close
         </Button>
         <Button
           isLoading={loading}
-          className={` text-[#fff] bg-red-500 rounded-full text-lg`}
+          className={`${theme.content_bg} rounded-full px-3`}
           variant={"primary"}
+          size={'clear'}
           onClick={callback}
         >
-          {buttonLabel || "Yes please"}
+          {buttonLabel || "Yes, Please"}
         </Button>
       </div>
     </div>

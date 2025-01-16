@@ -28,11 +28,15 @@ export default function useIdle(delay: number, isOnMobile: boolean) {
   const handleIdle = async () => {
     if (!isOpenFullScreen) return;
 
-    const activeSongEle = document.querySelector(".song-thumb.active") as HTMLDivElement;
-    const containerEle = document.querySelector(".song-list-container") as HTMLDivElement;
+    const activeSongEle = document.querySelector(".song-thumb.active");
+    const containerEle = document.querySelector(".song-list-container");
 
     if (activeSongEle && containerEle) {
-      const isScroll = scrollToActiveSong(activeSongEle, containerEle, true);
+      const isScroll = scrollToActiveSong(
+        activeSongEle as HTMLElement,
+        containerEle as HTMLElement,
+        true,
+      );
 
       let timeToEnableFocus = appConfig.focusDelay;
       if (!isScroll) timeToEnableFocus = 0;

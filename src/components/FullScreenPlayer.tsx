@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { Blurhash } from "react-blurhash";
-import { defaultBlurHash } from "@/constants/blurhash";
+import { defaultBlurhash } from "@/constants/app";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import { usePlayerContext } from "@/store";
 import FullScreenPlayerHeader from "./FullScreenPlayerHeader";
@@ -35,7 +35,7 @@ export default function FullScreenPlayer() {
             radioGroup=""
             height={"100%"}
             width={"100%"}
-            hash={currentSongData?.song?.blurhash_encode || defaultBlurHash}
+            hash={currentSongData?.song?.blurhash_encode || defaultBlurhash}
           />
         )}
       </div>

@@ -28,7 +28,7 @@ export const themes: ThemeType[] = [
     content_border: "border-[#198585]",
     content_hover_border: "hover:border-[#198585]",
     content_bg: "!bg-[#198585]  text-[#fff]",
-    modal_bg: "bg-[#105656]",
+    modal_bg: "bg-[#333]",
     content_code: "#198585",
     content_hover_bg: "hover:!bg-[#198585] hover:text-[#fff] ",
     container: "bg-[#1e1e1e]",

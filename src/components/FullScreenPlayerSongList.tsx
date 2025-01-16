@@ -62,10 +62,9 @@ export default function FullScreenPlayerSongList() {
 					<SongThumbnail
 						key={index}
 						ref={activeSongRef}
-						classNames="active"
 						hasTitle
 						onClick={() => handleSetSongWhenClick(song.queue_id)}
-						active={isActive}
+						active={true}
 						data={song}
 					/>
 				);
@@ -74,9 +73,9 @@ export default function FullScreenPlayerSongList() {
 			return (
 				<SongThumbnail
 					key={index}
-					idleClass={`${!isActive && idle ? classes.fadeTransition : ""}`}
+					idleClass={`${idle ? classes.fadeTransition : ""}`}
 					hasTitle
-					active={isActive}
+					active={false}
 					data={song}
 					onClick={() => handleSetSongWhenClick(song.queue_id)}
 				/>
