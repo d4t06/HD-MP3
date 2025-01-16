@@ -63,8 +63,8 @@ export default function PlaylistInfoCta({ variant }: Props) {
 
 	const [modal, setModal] = useState<Modal | "">("");
 
-	const modalRef = useRef<ModalRef>();
-	const triggerRef = useRef<TriggerRef>()
+	const modalRef = useRef<ModalRef>(null);
+	const triggerRef = useRef<TriggerRef>(null)
 
 	const params = useParams();
 	const { handleSetSong } = useSetSong({ variant: "playlist" });

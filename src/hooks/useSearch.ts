@@ -14,12 +14,14 @@ export default function useSearch() {
 
   const [searchResult, SetSearchResult] = useState<Song[]>([]);
 
-  const formRef = useRef<ElementRef<"form">>(null);
-  const searchResultRef = useRef<ElementRef<"div">>(null);
+  const formRef = useRef<ElementRef<"form">>(null); // for handle click outside
+  const searchResultRef = useRef<ElementRef<"div">>(null); // for handle click outside
+  const inputRef = useRef<ElementRef<"input">>(null); // for focus input
+
   const shouldFetchSong = useRef(true);
 
   const params = useSearchParams();
-  const q = useDebounce(value, 700);
+  const searchKey = useDebounce(value, 700);
 
   const controller = new AbortController();
 
@@ -42,7 +44,7 @@ export default function useSearch() {
 
   // do search
   useEffect(() => {
-    if (!q.trim()) {
+    if (!searchKey.trim()) {
       setIsFetching(false);
       SetSearchResult([]);
       return;
@@ -53,22 +55,21 @@ export default function useSearch() {
         setIsFetching(true);
 
         await sleep(1000);
+        SetSearchResult(devSongs);
 
-        // const playlistCollectionRef = collection(db, "playlist");
+        // const songLstCollectionRef = collection(db, "playlist");
 
-        // const querySearchSong = query(playlistCollectionRef, where("by", "==", "admin"));
+        // const querySearchSong = query(songLstCollectionRef, where("by", "==", "admin"));
 
         // const songsSnap = await getDocs(querySearchSong);
 
         // if (songsSnap.docs) {
         //   const songs = songsSnap.docs.map(
-        //     (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
+        //     (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
         //   );
 
         //   SetSearchResult(songs);
         // }
-
-        SetSearchResult(devSongs);
       } catch (error) {
         console.log(error);
       } finally {
@@ -83,7 +84,7 @@ export default function useSearch() {
       console.log("abort");
       controller.abort();
     };
-  }, [q]);
+  }, [searchKey]);
 
   // handle click outside
   useEffect(() => {
@@ -102,13 +103,16 @@ export default function useSearch() {
 
     return () => {
       shouldFetchSong.current = false;
+
+      inputRef.current?.blur();
+      setIsFocus(false);
     };
   }, [params[0].get("q")]);
 
   // Allow to call seach api when value change
   useEffect(() => {
-    shouldFetchSong.current = true;
-  }, [value]);
+    if (params[0].get("q") !== value) if (isFocus) shouldFetchSong.current = true;
+  }, [value, isFocus]);
 
   return {
     isFetching,
@@ -119,5 +123,6 @@ export default function useSearch() {
     setIsFocus,
     formRef,
     searchResultRef,
+    inputRef,
   };
 }

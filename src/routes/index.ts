@@ -39,11 +39,12 @@ const publicRoutes = [
 ];
 
 const privateRoutes = [
-  { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout },
+  { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout, title: "Dashboard" },
   {
     path: routes.DashboardPlaylist,
     component: DashboardPlaylist,
     layout: DashBoardLayout,
+    title: "Playlist"
   },
   { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },
 ];

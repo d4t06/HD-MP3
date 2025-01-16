@@ -31,7 +31,7 @@ export default function FullScreenPlayerHeader() {
 	};
 
 	const classes = {
-		button: `w-[44px] h-[44px] bg-white/10 rounded-[99px] transition-transform ${theme.content_hover_bg}`,
+		button: `w-[38px] h-[38px] bg-white/10 rounded-[99px] transition-transform ${theme.content_hover_bg}`,
 		headerWrapper: `relative flex py-[25px] px-[40px] w-full items-center`,
 		fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
 	};

@@ -14,6 +14,7 @@ import { SongItemModal } from "./SongItem";
 import { useDispatch } from "react-redux";
 import { addSongToQueue } from "@/store/songQueueSlice";
 import { Link } from "react-router-dom";
+import { MenuList } from "./ui/MenuWrapper";
 
 type Base = {
   song: Song;
@@ -128,7 +129,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
             >
               {/* playlist */}
               <ul className={classes.ctaContainer}>
-                {!!playlists?.length ? (
+                {playlists?.length ? (
                   <>
                     {playlists.map((playlist, index) => {
                       return (
@@ -232,9 +233,11 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
         return <></>;
       default:
         return (
-          <div className={`pl-[10px] py-[6px] bg-[#fff]/5 rounded-md mb-3`}>
-            <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-            <p className="text-sm opacity-70 line-clamp-1">{song.singer}</p>
+          <div className="px-2">
+            <div className={`pl-[10px] py-[6px] bg-[#fff]/5 rounded-md mb-3`}>
+              <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
+              <p className="text-sm opacity-70 line-clamp-1">{song.singer}</p>
+            </div>
           </div>
         );
     }
@@ -245,7 +248,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
         {renderSongInfo}
 
-        <div className={classes.ctaContainer}>
+        <MenuList>
           {renderMenuItem()}
           <a
             target="_blank"
@@ -256,10 +259,10 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
             <ArrowDownTrayIcon className={classes.menuIcon} />
             Download
           </a>
-        </div>
+        </MenuList>
 
         {props.variant !== "queue" && !isOnMobile && (
-          <p className="opacity-50 font-[500] text-center text-[13px] mt-[10px]">
+          <p className="opacity-50 font-[500] text-center text-xs mt-[10px]">
             Uploaded by {song.by}
           </p>
         )}

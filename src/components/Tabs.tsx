@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { ReactNode, Dispatch, SetStateAction } from "react";
 import { useTheme } from "../store";
 
 type Props<T> = {
@@ -44,9 +44,7 @@ function Tabs<T>({
               : "opacity-60"
           }`}
         >
-          <span className="leading-[30px] font-normal sm:font-bold">
-            {render(item)}
-          </span>
+          <span className="leading-[30px] font-normal sm:font-bold">{render(item)}</span>
         </li>
       ))}
     </ul>

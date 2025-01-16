@@ -3,7 +3,6 @@ import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
 import playingIcon from "../assets/icon-playing.gif";
 import { Image } from ".";
-import { useTheme } from "@/store";
 
 interface Props {
   data: Song | undefined;
@@ -16,10 +15,8 @@ interface Props {
 
 const SongThumbnail = (
   { data, active, onClick, hasTitle, classNames = "", idleClass = "" }: Props,
-  ref: ForwardedRef<any>,
+  ref: ForwardedRef<HTMLDivElement>,
 ) => {
-  const { theme } = useTheme();
-
   const classes = {
     container: "flex flex-col",
     imageFrame:

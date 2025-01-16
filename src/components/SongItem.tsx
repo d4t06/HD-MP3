@@ -364,8 +364,8 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                 </MyPopupTrigger>
                 <MyPopupContent appendTo="portal">
                   <PopupWrapper
-                    className={`${actionLoading ? "overflow-hidden relative" : ""}`}
-                    p={2}
+                    className={`${actionLoading ? "overflow-hidden relative" : ""} py-2`}
+                    p={'clear'}
                     theme={theme}
                   >
                     {renderMenu()}

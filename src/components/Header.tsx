@@ -110,8 +110,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
     button: `h-[40px] w-[40px] rounded-full`,
-    menuItem: `hover:bg-${theme.alpha} rounded-[4px] w-full px-[10px] h-[44px] inline-flex items-center font-[500]`,
-    icon: "w-[25px] mr-[5px]",
+    menuItem: `hover:bg-white/5 rounded-[4px] w-full text-sm px-[10px] h-[44px] inline-flex items-center font-[500]`,
+    icon: "w-5 mr-1",
     divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-${theme.alpha}`,
   };
 
@@ -130,7 +130,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
         <div className="px-[40px] items-center flex h-full">
           <NavigationProvider>
-            <NavigationButton />
+            <NavigationButton className="mr-5" />
           </NavigationProvider>
 
           <Search />
@@ -152,7 +152,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
-                <SettingMenu openModal={openModal} loggedIn={false} />
+                <SettingMenu openModal={openModal} variant="client" />
               </MyPopupContent>
             </MyPopup>
 

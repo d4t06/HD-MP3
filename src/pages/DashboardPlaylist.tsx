@@ -1,4 +1,3 @@
-import { BackBtn } from "../components";
 import { usePlaylistDetail } from "@/hooks";
 import PLaylistInfo from "@/components/PlaylistInfo";
 import PlaylistDetailSongList from "@/components/PlaylistDetailSongList";
@@ -6,8 +5,6 @@ import Footer from "@/components/Footer";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
 
 export default function DashboardPlaylist() {
-  // us store
-
   //   hooks
   usePlaylistDetail({ admin: true });
   const { isFetching } = useGetPlaylist();

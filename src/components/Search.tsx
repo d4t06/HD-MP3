@@ -18,6 +18,7 @@ export default function Search() {
 
   const {
     isFetching,
+    inputRef,
     formRef,
     searchResultRef,
     value,
@@ -59,6 +60,7 @@ export default function Search() {
           <MagnifyingGlassIcon className="w-6" />
         </button>
         <input
+          ref={inputRef}
           value={value}
           onFocus={() => setIsFocus(true)}
           onChange={(e) => setValue(e.target.value.trim())}
@@ -68,8 +70,9 @@ export default function Search() {
         />
 
         <button
+          type="button"
           onClick={() => setValue("")}
-          className={`${!!value ? "opacity-100" : "!opacity-0"} ${getDisable(!value)}`}
+          className={`${value ? "opacity-100" : "!opacity-0"} ${getDisable(!value)}`}
         >
           {isFetching ? (
             <ArrowPathIcon className="w-5 animate-spin" />

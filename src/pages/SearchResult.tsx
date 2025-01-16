@@ -13,6 +13,11 @@ export default function SearchResultPage() {
     handleSetSong(song.queue_id, [song]);
   };
 
+  // const handleSetTab = (t: typeof tab) => {
+  //   setIsFetching(true)
+  //   setTab(t)
+  // }
+
   const renderSkeleton = () => {
     switch (tab) {
       case "Song":
@@ -48,8 +53,8 @@ export default function SearchResultPage() {
         <div className="text-2xl font-bold">Result</div>
 
         <Tabs
-          className="ml-3"
-          tabs={["Song", "Playlist"]}
+          className={`ml-5 ${isFetching ? "disable" : ""}`}
+          tabs={["Song", "Playlist"] as Array<typeof tab>}
           render={(t) => <p>{t}</p>}
           activeTab={tab}
           setActiveTab={setTab}

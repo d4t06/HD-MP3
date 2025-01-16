@@ -2,11 +2,15 @@ import useNavigationButton from "@/hooks/useNavigationButton";
 import { getDisable } from "@/utils/appHelpers";
 import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
 
-export default function NavigationButton() {
+type Props = {
+  className?: string;
+};
+
+export default function NavigationButton({ className = "" }: Props) {
   const { behind, ahead, backward, forward } = useNavigationButton();
 
   return (
-    <div className="flex space-x-3 mr-5 [&>button]:p-1">
+    <div className={`"flex space-x-3 [&>button]:p-1 ${className}`}>
       <button onClick={backward} className={`relative ${getDisable(!behind.length)}`}>
         <ArrowLeftIcon className="w-5" />
       </button>

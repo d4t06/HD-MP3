@@ -4,7 +4,7 @@ import { privateRoutes, publicRoutes } from "./routes";
 import DefaultLayout from "./layout/DefaultLayout";
 import { ToastPortal } from "./components";
 import { Login, NotFound, Unauthorized } from "./pages";
-import RequireAuth from "./routes/RequireAuth";
+// import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./routes/PersistLogin";
 function App() {
    return (
@@ -38,7 +38,7 @@ function App() {
                      );
                   })}
 
-                  <Route element={<RequireAuth allowedRole={["ADMIN"]} />}>
+                  {/*<Route element={<RequireAuth allowedRole={["ADMIN"]} />}>*/}
                      {privateRoutes.map((route, index) => {
                         let DynamicLayout;
                         const Page = route.component;
@@ -60,7 +60,7 @@ function App() {
                            />
                         );
                      })}
-                  </Route>
+                  {/*</Route>*/}
                </Route>
             </Routes>
          </Router>

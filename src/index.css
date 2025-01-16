@@ -49,6 +49,13 @@
   display: none;
 }
 
+.inset-full {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
 /* Hide scrollbar for IE, Edge and Firefox */
 .no-scrollbar {
   -ms-overflow-style: none; /* IE and Edge */
