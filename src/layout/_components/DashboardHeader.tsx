@@ -1,13 +1,13 @@
-import { useTheme } from "../store";
+import { useTheme } from "@/store";
 
 import { Link } from "react-router-dom";
-import NavigationButton from "./NavigationButton";
+import NavigationButton from "@/components/NavigationButton";
 import NavigationProvider from "@/store/NavigationContext";
 import { useEffect, useState, useRef } from "react";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
+import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import Modal, { ModalRef } from "./Modal";
-import { AppInfo, Appearance, SettingMenu } from ".";
+import Modal, { ModalRef } from "@/components/Modal";
+import { AppInfo, Appearance, SettingMenu } from "@/components";
 
 type Modal = "theme" | "info";
 

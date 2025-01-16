@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useTheme } from "../store";
+import { useTheme } from "@/store";
 
 export default function NotFound() {
   const { theme } = useTheme();

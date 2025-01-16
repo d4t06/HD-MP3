@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
-import { DashboardHeader, UploadSongPortal } from "../components";
 import { useTheme } from "../store";
-// import DashboardPlayer from "@/components/DashboardPlayer";
-import DashBoardSidebar from "@/components/DashboardSidebar";
+import DashBoardSidebar from "./_components/DashboardSidebar";
+import DashboardHeader from "./_components/DashboardHeader";
+import UploadSongPortal from "@/components/portals/UploadSongPortal";
 
 export default function DashBoardLayout({ children }: { children: ReactNode }) {
   const { theme } = useTheme();

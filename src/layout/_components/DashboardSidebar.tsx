@@ -18,7 +18,7 @@ const routeList = [
     icon: <ComputerDesktopIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/songs",
+    path: "/dashboard",
     title: "Songs",
     icon: <MusicalNoteIcon className="w-5 flex-shrink-0" />,
   },
@@ -28,12 +28,12 @@ const routeList = [
     icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/singers",
+    path: "/dashboard",
     title: "Singers",
     icon: <UserIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/genres",
+    path: "/dashboard",
     title: "Genres",
     icon: <RectangleGroupIcon className="w-5 flex-shrink-0" />,
   },

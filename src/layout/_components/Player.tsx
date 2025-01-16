@@ -6,9 +6,9 @@ import {
   MobileFullScreenPlayer,
   MobileBottomPlayer,
 } from "@/components";
-import SongQueue from "./SongQueue";
-import useIdle from "../hooks/useIdle";
-import appConfig from "../config/app";
+import SongQueue from "@/components/SongQueue";
+import useIdle from "@/hooks/useIdle";
+import appConfig from "@/config/app";
 import { useTheme } from "@/store";
 import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
 

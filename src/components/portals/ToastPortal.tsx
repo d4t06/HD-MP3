@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import ToastItem from "./child/ToastItem";
-import { useToast } from "../store";
+import { useToast } from "@/store";
 import { useTheme } from "@/store/ThemeContext";
+import ToastItem from "./_components/ToastItem";
 
 interface Props {
    time?: number;

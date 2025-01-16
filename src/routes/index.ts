@@ -1,4 +1,4 @@
-import DashboardPlaylist from "@/pages/DashboardPlaylist";
+import { DashboardPlaylistDetail, DashboardPlaylist } from "@/pages";
 import DashBoardLayout from "../layout/DashBoardLayout";
 
 import {
@@ -15,7 +15,11 @@ const routes = {
   Home: "/",
   Search: "/search",
   Dashboard: "/dashboard",
-  DashboardPlaylist: "/dashboard/playlist/:id",
+  DashboardPlaylists: "/dashboard/playlists",
+  DashboardSongs: "/dashboard/songs",
+  DashboardSingers: "/dashboard/singers",
+  DashboardGenres: "/dashboard/genres",
+  DashboardPlaylistDetail: "/dashboard/playlist/:id",
   DashboardEdit: "/dashboard/edit/:id",
 
   MySongs: "/mysongs",
@@ -39,12 +43,23 @@ const publicRoutes = [
 ];
 
 const privateRoutes = [
-  { path: routes.Dashboard, component: Dashboard, layout: DashBoardLayout, title: "Dashboard" },
   {
-    path: routes.DashboardPlaylist,
+    path: routes.Dashboard,
+    component: Dashboard,
+    layout: DashBoardLayout,
+    title: "Dashboard",
+  },
+  {
+    path: routes.DashboardPlaylists,
     component: DashboardPlaylist,
     layout: DashBoardLayout,
-    title: "Playlist"
+    title: "Playlist",
+  },
+  {
+    path: routes.DashboardPlaylistDetail,
+    component: DashboardPlaylistDetail,
+    layout: DashBoardLayout,
+    title: "Playlist Detail",
   },
   { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },
 ];

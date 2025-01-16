@@ -2,10 +2,10 @@ import { useTheme } from "../store";
 // import { useInitSong } from "../hooks";
 import { PlaylistList, HomeSongList } from "../components";
 import { MobileNav, MobileSetting } from "@/components";
-import Footer from "@/components/Footer";
 import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
 // import { useEditForm } from "@/hooks";
 import { useEffect, useRef } from "react";
+import Footer from "@/layout/_components/Footer";
 
 export default function HomePage() {
   // store

@@ -1,6 +1,9 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
 import { useTheme } from "@/store/ThemeContext";
-import { Header, Player, Sidebar, UploadSongPortal } from "../components";
+import Sidebar from "./_components/Sidebar";
+import Header from "./_components/Header";
+import Player from "./_components/Player";
+import UploadSongPortal from "@/components/portals/UploadSongPortal";
 
 interface Props {
   children: ReactNode;

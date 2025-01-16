@@ -4,10 +4,10 @@ import {
   ComputerDesktopIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { routes } from "../routes";
-import { Skeleton } from "../components";
-import { useTheme, useAuthStore } from "../store";
-import ScrollTop from "./ScrollTop";
+import { routes } from "@/routes";
+import { Skeleton } from "@/components";
+import { useTheme, useAuthStore } from "@/store";
+import ScrollTop from "@/components/ScrollTop";
 export default function Sidebar() {
   // store
   const { theme } = useTheme();
