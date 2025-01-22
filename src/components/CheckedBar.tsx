@@ -90,8 +90,8 @@ export default function CheckedBar({
 
   const classes = {
     title: "text-xl leading-[2.2] font-playwriteCU",
-    outlineButton: `border-${theme.alpha} ${theme.side_bar_bg} space-x-1`,
-    icon: "w-[20px]",
+    outlineButton: `border-${theme.alpha} ${theme.side_bar_bg} space-x-1 text-sm`,
+    icon: "w-5 mr-1",
   };
 
   const renderModal = useMemo(() => {

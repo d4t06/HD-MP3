@@ -33,7 +33,7 @@ export default function MySongsPage() {
   }, [userLoading]);
 
   return (
-    <div className="pb-[80px]">
+    <>
       {/*      <div className="mb-[30px]  md:hidden">
         <BackBtn variant="my-songs" />
       </div>*/}
@@ -58,6 +58,6 @@ export default function MySongsPage() {
       <MySongSongsList initialLoading={isFetching} />
 
       <Footer />
-    </div>
+    </>
   );
 }

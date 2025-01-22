@@ -11,20 +11,21 @@ import { createPortal } from "react-dom";
 import { PopupWrapper } from ".";
 import { useTheme } from "../store";
 
+type BaseProps = {
+  className?: string;
+  children: ReactNode;
+};
+
 type NoAnimation = {
   variant?: "default";
-  children: ReactNode;
   closeModal: () => void;
-  className?: string;
 };
 
 type WithAnimation = {
   variant?: "animation";
-  children: ReactNode;
-  className?: string;
 };
 
-type Props = NoAnimation | WithAnimation;
+type Props = BaseProps & (NoAnimation | WithAnimation);
 
 export type ModalRef = {
   toggle: () => void;
@@ -71,7 +72,7 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
       props.closeModal ? props.closeModal() : "";
     }
 
-    if (variant === "animation") toggle();
+    if (variant === "animation") close();
   };
 
   useImperativeHandle(ref, () => ({
@@ -133,7 +134,7 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
               </PopupWrapper>
             </div>
           </div>,
-          document.getElementById("portals")!
+          document.getElementById("portals")!,
         )}
     </>
   );

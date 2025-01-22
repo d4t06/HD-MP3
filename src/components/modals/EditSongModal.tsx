@@ -15,6 +15,7 @@ import { useEditForm } from "@/hooks";
 import ModalHeader from "./ModalHeader";
 import { getDisable } from "@/utils/appHelpers";
 import { ModalRef } from "../Modal";
+import AddSingerButton from "./_components/AddSingerButton";
 
 type Props = {
   song: Song;
@@ -22,7 +23,7 @@ type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
-export default function EditSongModal({ song, modalRef }: Props) {
+export default function EditSongModal({ song, admin, modalRef }: Props) {
   const { theme } = useTheme();
 
   const [inputFields, setInputFields] = useState({
@@ -66,7 +67,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
 
   const isShowRemoveImageButton = useMemo(
     () => !!imageURLFromLocal || !!stockImageURL,
-    [imageURLFromLocal, stockImageURL]
+    [imageURLFromLocal, stockImageURL],
   );
 
   const handleInput = (field: keyof typeof inputFields, value: string) => {
@@ -126,11 +127,89 @@ export default function EditSongModal({ song, modalRef }: Props) {
     label: "text-lg inline-flex",
   };
 
+  const renderUsersongInupt = () => {
+    return (
+      <>
+        <div className="flex flex-col gap-[5px]">
+          <label htmlFor="name" className={classes.label}>
+            Name
+            {getIcon(validName)}
+          </label>
+          <input
+            className={`${classes.input} `}
+            value={inputFields.name}
+            type="text"
+            id="name"
+            onChange={(e) => handleInput("name", e.target.value)}
+            placeholder={song.name}
+          />
+        </div>
+        {!admin && (
+          <div className="flex flex-col gap-[5px]">
+            <label htmlFor="singer" className={classes.label}>
+              Singer
+              {getIcon(validSinger)}
+            </label>
+            <input
+              className={classes.input}
+              value={inputFields.singer}
+              onChange={(e) => handleInput("singer", e.target.value)}
+              type="text"
+              id="singer"
+              placeholder={song.singer}
+            />
+          </div>
+        )}
+        <div className="flex flex-col gap-[5px]">
+          <label htmlFor="image-url" className={classes.label}>
+            Image URL
+            {inputFields.image_url && <>{getIcon(validURL)}</>}
+          </label>
+          <input
+            id="image-url"
+            className={classes.input}
+            value={inputFields.image_url}
+            onChange={(e) => handleInput("image_url", e.target.value)}
+            type="text"
+          />
+        </div>
+      </>
+    );
+  };
+
+  const renderDashboardSongInput = () => {
+    return (
+      <>
+        {renderUsersongInupt()}
+        <div className="flex flex-col gap-[5px]">
+          <div className={`${classes.label} items-center`}>
+            <span>Singer</span>
+
+            <AddSingerButton setSinger={s => handleInput('singer', s)} />
+          </div>
+          <div className={`bg-white/5 rounded-md p-2`}>
+            {inputFields.singer}
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-[5px]">
+          <label htmlFor="image-url" className={classes.label}>
+            Genre
+          </label>
+
+          <select className={classes.input}>
+            <option value="">Other</option>
+          </select>
+        </div>
+      </>
+    );
+  };
+
   return (
     <div
       className={`${getDisable(
-        isFetching
-      )} w-[500px] max-h-[80vh] max-w-[90vw] flex flex-col`}
+        isFetching,
+      )} w-[600px] max-h-[80vh] max-w-[90vw] text-white flex flex-col`}
     >
       <input
         ref={inputFileRef}
@@ -141,7 +220,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
         className="hidden"
       />
 
-      <ModalHeader title="Edit song" close={() => modalRef.current?.close} />
+      <ModalHeader title="Edit song" close={() => modalRef.current?.close()} />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="w-full md:w-[30%]">
@@ -175,54 +254,14 @@ export default function EditSongModal({ song, modalRef }: Props) {
                 </Button>
               )}
             </div>
-            <p className={`text-sm ${theme.text_color} mt-[10px]`}>
+            <p className={`text-sm  mt-[10px]`}>
               * Image from URL will not be apply until you remove current image
             </p>
           </div>
         </div>
 
         <div className="pt-5 md:pt-0 md:pl-5 flex flex-col md:flex-grow space-y-3">
-          <div className="flex flex-col gap-[5px]">
-            <label htmlFor="name" className={classes.label}>
-              Name
-              {getIcon(validName)}
-            </label>
-            <input
-              className={`${classes.input} ${theme.text_color}`}
-              value={inputFields.name}
-              type="text"
-              id="name"
-              onChange={(e) => handleInput("name", e.target.value)}
-              placeholder={song.name}
-            />
-          </div>
-          <div className="flex flex-col gap-[5px]">
-            <label htmlFor="singer" className={classes.label}>
-              Singer
-              {getIcon(validSinger)}
-            </label>
-            <input
-              className={classes.input}
-              value={inputFields.singer}
-              onChange={(e) => handleInput("singer", e.target.value)}
-              type="text"
-              id="singer"
-              placeholder={song.singer}
-            />
-          </div>
-          <div className="flex flex-col gap-[5px]">
-            <label htmlFor="image-url" className={classes.label}>
-              Image URL
-              {inputFields.image_url && <>{getIcon(validURL)}</>}
-            </label>
-            <input
-              id="image-url"
-              className={classes.input}
-              value={inputFields.image_url}
-              onChange={(e) => handleInput("image_url", e.target.value)}
-              type="text"
-            />
-          </div>
+          {admin ? renderDashboardSongInput() : renderUsersongInupt()}
         </div>
       </div>
       <div className="flex mt-5 space-x-2 justify-end">

@@ -52,7 +52,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
       case "my-playlist":
       case "dashboard-playlist":
         return (
-          <CheckedBar variant={"my-playlist"}>
+          <CheckedBar variant={variant}>
             <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
           </CheckedBar>
         );
@@ -61,16 +61,7 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
 
   const renderSongList = () => {
     switch (variant) {
-      case "sys-playlist":
-        return (
-          <SongList
-            variant="sys-playlist"
-            songs={playlistSongs}
-            handleSetSong={_handleSetSong}
-          />
-        );
       case "my-playlist":
-      case "dashboard-playlist":
         return (
           <>
             <SongList
@@ -88,6 +79,18 @@ export default function PlaylistDetailSongList({ variant, loading }: Props) {
                 <span className="font-playwriteCU leading-[2.2]">Add song</span>
               </Button>
             </div>
+          </>
+        );
+
+      case "sys-playlist":
+      case "dashboard-playlist":
+        return (
+          <>
+            <SongList
+              variant={variant}
+              songs={playlistSongs}
+              handleSetSong={_handleSetSong}
+            />
           </>
         );
     }

@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject, useRef, useCallback, useEffect } from "react";
+import { ChangeEvent, useRef, useCallback, useEffect } from "react";
 import { generateId } from "../utils/appHelpers";
 import { useSongContext } from "@/store";
 import { mySetDoc, uploadFile } from "@/services/firebaseService";
@@ -8,18 +8,11 @@ import { useTheme, useUpload, useToast } from "../store";
 import { parserSong } from "@/utils/parseSong";
 import { nanoid } from "nanoid";
 
-type Props = {
-  audioRef: RefObject<HTMLAudioElement>;
-  admin?: boolean;
-  firstTempSong?: RefObject<HTMLDivElement>;
-  testImageRef: RefObject<HTMLImageElement>;
-  inputRef: RefObject<HTMLInputElement>;
-};
 
 // event listener
 // await promise
 // object assign
-export default function useUploadSongs({ admin, inputRef }: Props) {
+export default function useUploadSongs() {
   // stores
   const { user } = useAuthStore();
   const { isDev } = useTheme();
@@ -31,6 +24,9 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
   const duplicatedFile = useRef<Song[]>([]);
   const fileIndexesNeeded = useRef<number[]>([]);
   const isDuplicate = useRef(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
 
   // hooks
   const { setErrorToast, setSuccessToast } = useToast();
@@ -70,8 +66,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
 
       // init song object
       let data = initSongObject({
-        by: admin ? "admin" : (user.email as string),
-        song_in: admin ? "admin" : "user",
+        by: user.email as string,
       });
 
       let processSongsList: Song[] = [];
@@ -83,13 +78,13 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
             (s) =>
               s.singer === songObject.singer &&
               s.name === songObject.name &&
-              s.size === songObject.size
+              s.size === songObject.size,
           ) ||
           processSongsList.some(
             (s) =>
               s.singer === songObject.singer &&
               s.name === songObject.name &&
-              s.size === songObject.size
+              s.size === songObject.size,
           )
         );
       };
@@ -156,8 +151,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         for (let index = 0; index < fileIndexesNeeded.current.length; index++) {
           const fileIndex = fileIndexesNeeded.current[index];
 
-          let songId = generateId(processSongsList[index].name);
-          if (admin) songId += "_admin";
+          const songId = generateId(processSongsList[index].name);
 
           const targetSong = { ...processSongsList[index] };
 
@@ -211,7 +205,7 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
         setErrorToast();
       }
     },
-    [user, songs]
+    [user, songs],
   );
 
   useEffect(() => {
@@ -221,5 +215,5 @@ export default function useUploadSongs({ admin, inputRef }: Props) {
     firstTempSong.scrollIntoView({ behavior: "smooth", block: "center" });
   }, [tempSongs]);
 
-  return { handleInputChange };
+  return { handleInputChange, inputRef };
 }

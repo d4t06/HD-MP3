@@ -4,7 +4,7 @@ import { useTheme } from "../store";
 import { PlaylistSkeleton } from "./skeleton";
 import { useMemo, useRef } from "react";
 import usePlaylistActions from "@/hooks/usePlaylistActions";
-import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
+// import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { useSongContext } from "@/store/SongsContext";
@@ -12,7 +12,7 @@ import { useSongContext } from "@/store/SongsContext";
 type Props = {
   className?: string;
   loading: boolean;
-  variant: "sys" | "my-song" | "dashboard";
+  variant: "sys" | "my-song";
 };
 
 type ExtendProps = {
@@ -32,7 +32,7 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
 
   // hook
   const { addPlaylist, isFetching } = usePlaylistActions();
-  const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
+  // const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
 
   const loading = props.variant != "search-page" ? props.loading : false;
   const closeModal = () => modalRef.current?.toggle();
@@ -41,7 +41,7 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
   const targetPlaylist = useMemo(() => {
     if (props.variant === "search-page") return props.playlists;
 
-    return props.variant === "my-song" || props.variant === "dashboard"
+    return props.variant === "my-song"
       ? playlists
       : props.variant === "sys"
         ? sysSongPlaylist.playlists
@@ -67,17 +67,6 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
               <PlaylistItem active={active} data={playlist} />
             </div>
           );
-
-        case "dashboard":
-          return (
-            <div key={index} className={classes.playlistItem}>
-              <PlaylistItem
-                active={active}
-                data={playlist}
-                link={`/dashboard/playlist/${playlist.id}`}
-              />
-            </div>
-          );
       }
     });
   };
@@ -85,7 +74,6 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
   const renderAddPlayingItem = () => {
     switch (props.variant) {
       case "my-song":
-      case "dashboard":
         return (
           <div className={`${classes.playlistItem} mb-[25px]`}>
             <Empty theme={theme} onClick={() => modalRef.current?.toggle()} />
@@ -104,15 +92,6 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
           <AddPlaylist
             addPlaylist={addPlaylist}
             isFetching={isFetching}
-            close={closeModal}
-          />
-        );
-
-      case "dashboard":
-        return (
-          <AddPlaylist
-            addPlaylist={addAdminPlaylist}
-            isFetching={adminIsFetching}
             close={closeModal}
           />
         );

@@ -1,15 +1,23 @@
-import { AddPlaylist, Button, Modal } from "@/components";
+import { Button, Modal } from "@/components";
 import { ModalRef } from "@/components/Modal";
-import usePlaylistActions from "@/hooks/usePlaylistActions";
 import { useTheme } from "@/store";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
+import AddItem from "@/components/modals/AddItem";
+import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 
 export default function AddNewPlaylistBtn() {
   const { theme } = useTheme();
 
-  const { addPlaylist } = usePlaylistActions();
+  const { addPlaylist, isFetching } = useDashboardPlaylistActions();
   const modalRef = useRef<ModalRef>(null);
+
+  const closeModal = () => modalRef.current?.close();
+
+  const handleAddPlaylist = async (v: string) => {
+    await addPlaylist(v);
+    closeModal();
+  };
 
   return (
     <>
@@ -23,10 +31,11 @@ export default function AddNewPlaylistBtn() {
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <AddPlaylist
-          addPlaylist={addPlaylist}
-          isFetching={false}
-          close={() => modalRef.current?.close()}
+        <AddItem
+          loading={isFetching}
+          closeModal={closeModal}
+          cbWhenSubmit={(v) => handleAddPlaylist(v)}
+          title="Add playlist"
         />
       </Modal>
     </>

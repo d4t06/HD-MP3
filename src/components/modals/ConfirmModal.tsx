@@ -34,7 +34,7 @@ export default function ConfirmModal({
       <div className="flex space-x-3 mt-5">
         <Button
           onClick={close}
-          className={`bg-[#333] border border-white/10 rounded-full px-3 py-0.5`}
+          className={`bg-white/10 border border-white/10 rounded-full px-3 py-0.5`}
           variant={"primary"}
           size={'clear'}
         >

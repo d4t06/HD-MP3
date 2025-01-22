@@ -8,6 +8,7 @@ import { Center } from "./ui/Center";
 import useLyricEditor from "@/hooks/useLyricEditor";
 import EditLyricModal from "./modals/EditLyricModal";
 import Modal, { ModalRef } from "./Modal";
+import Title from "./ui/Title";
 
 type Props = {
   admin?: boolean;
@@ -44,9 +45,8 @@ export default function LyricEditor({ admin, children }: Props) {
         song && (
           <div className="flex flex-col h-full pb-5">
             {children}
-            <h1 className="text-xl font-playwriteCU mt-3 leading-[2.2]">
-              Edit lyric - {song?.name}
-            </h1>
+
+            <Title title={` Edit lyric - ${song?.name}`} />
 
             <div className="mt-3">
               {audioRef.current && (

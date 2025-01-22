@@ -3,11 +3,7 @@ import { mySetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 
-type Props = {
-  admin?: boolean; // do admin action
-};
-
-export default function usePlaylistDetail({ admin }: Props) {
+export default function usePlaylistDetail() {
   // use store
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
@@ -15,7 +11,7 @@ export default function usePlaylistDetail({ admin }: Props) {
 
   const handleGetPlaylistImage = async () => {
     if (!currentPlaylist) return;
-    if (currentPlaylist.by === "admin" && !admin) return;
+    if (currentPlaylist.by === "admin") return;
 
     if (currentPlaylist.image_url) {
       if (!playlistSongs[0].image_url) {

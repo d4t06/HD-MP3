@@ -34,14 +34,14 @@ export default function PlaylistDetail() {
   };
 
   return (
-    <div className={`pb-[80px]`}>
-      <div className="mb-[30px]">
-        {/* <BackBtn variant={isAdminPlaylist ? "sys-playlist" : "my-playlist"} /> */}
+    <>
+      <div className="lg:flex lg:-mx-3">
+        <div className="w-full lg:w-1/4 lg:px-3">{renderPlaylistInfo()}</div>
+        <div className="w-full lg:w-3/4 lg:px-3">
+          <div className="mt-[30px] lg:mt-0">{renderSongList()}</div>
+        </div>
       </div>
-
-      {renderPlaylistInfo()}
-      <div className="mt-[30px]">{renderSongList()}</div>
       <Footer />
-    </div>
+    </>
   );
 }

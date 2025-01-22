@@ -36,11 +36,6 @@ type PlaylistMenu = Base & {
   handleRemoveSongFromPlaylist: () => void;
 };
 
-type DashboardPlaylistMenu = Base & {
-  variant: "dashboard-playlist";
-  handleRemoveSongFromPlaylist: () => void;
-};
-
 type HomeMenu = Base & {
   variant: "home";
   handleAddSongToPlaylist: (playlist: Playlist) => void;
@@ -56,19 +51,12 @@ type MySongMenu = Base & {
   handleAddSongToPlaylist: (playlist: Playlist) => void;
 };
 
-type DashboardSongMenu = Base & {
-  variant: "dashboard-songs";
-  handleAddSongToPlaylist: (playlist: Playlist) => void;
-};
-
 type Props =
   | HomeMenu
   | SysPlaylistMenu
   | PlaylistMenu
   | MySongMenu
   | QueueMenu
-  | DashboardSongMenu
-  | DashboardPlaylistMenu
   | SearchBarMenu;
 
 function SongMenu({ song, closeMenu, ...props }: Props) {
@@ -104,7 +92,6 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
       case "search-bar":
       case "home":
       case "my-songs":
-      case "dashboard-songs":
         if (isOnMobile)
           return (
             <button
@@ -168,7 +155,6 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
         );
 
       case "playlist":
-      case "dashboard-playlist":
         return (
           <>
             <button
@@ -181,15 +167,12 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
           </>
         );
       case "my-songs":
-      case "dashboard-songs":
         return (
           <>
-            {props.variant !== "dashboard-songs" && (
-              <button onClick={handleAddToQueue} className={` ${classes.menuItem}`}>
-                <PlusIcon className={classes.menuIcon} />
-                Add to queue
-              </button>
-            )}
+            <button onClick={handleAddToQueue} className={` ${classes.menuItem}`}>
+              <PlusIcon className={classes.menuIcon} />
+              Add to queue
+            </button>
             {renderAddToPlaylistBtn}
             <button
               onClick={() => props.handleOpenModal("edit")}
@@ -243,6 +226,19 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
     }
   }, [song]);
 
+  const renderOwner = () => {
+    switch (props.variant) {
+      case "queue":
+        return <></>;
+
+      default:
+        return;
+        <p className="opacity-50 font-[500] text-center text-xs mt-[10px]">
+          Uploaded by {song.by}
+        </p>;
+    }
+  };
+
   return (
     <>
       <div className={` ${props.variant === "queue" ? "w-[140px]" : "w-[200px]"} `}>
@@ -261,11 +257,7 @@ function SongMenu({ song, closeMenu, ...props }: Props) {
           </a>
         </MenuList>
 
-        {props.variant !== "queue" && !isOnMobile && (
-          <p className="opacity-50 font-[500] text-center text-xs mt-[10px]">
-            Uploaded by {song.by}
-          </p>
-        )}
+        {renderOwner()}
       </div>
     </>
   );

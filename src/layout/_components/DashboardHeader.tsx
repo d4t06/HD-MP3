@@ -77,7 +77,7 @@ export default function DashboardHeader() {
               <button
                 className={`flex p-2 items-center rounded-full bg-${theme.alpha} ${theme.content_hover_bg}`}
               >
-                <AdjustmentsHorizontalIcon className="w-5" />
+                <AdjustmentsHorizontalIcon className="w-6" />
               </button>
             </MyPopupTrigger>
             <MyPopupContent

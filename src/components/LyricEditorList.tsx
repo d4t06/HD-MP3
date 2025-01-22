@@ -44,15 +44,10 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
     modalRef.current?.open();
   };
 
-  const getBg = () => {
-    if (theme.type === "dark") return "bg-white/10";
-    else return "bg-black/10";
-  };
-
   return (
     <>
       <div
-        className={`flex flex-grow overflow-auto no-scrollbar text-[18px] rounded-xl pt-3 mt-3 ${getBg()}`}
+        className={`flex flex-grow overflow-auto no-scrollbar text-[18px] rounded-xl pt-3 mt-3 ${theme.side_bar_bg}`}
       >
         <div className={"w-1/2 px-2"}>
           {!!baseLyricArr.length ? (
@@ -62,8 +57,8 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
                   index === lyrics.length
                     ? "active"
                     : index < lyrics.length - 1
-                    ? "done"
-                    : "coming";
+                      ? "done"
+                      : "coming";
 
                 if (index === baseLyricArr.length - 1) status = "active";
 

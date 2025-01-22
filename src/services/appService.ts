@@ -37,7 +37,7 @@ export const getSongs = async (props: GetUserSong | GetHomeSong | GetDashboardSo
       getSongQuery = query(songsCollectionRef, where("by", "==", "admin"), limit(10));
       break;
     case "dashboard":
-      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"));
+      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"), limit(20));
       break;
   }
 
@@ -45,7 +45,7 @@ export const getSongs = async (props: GetUserSong | GetHomeSong | GetDashboardSo
 
   if (songsSnap.docs) {
     const songs = songsSnap.docs.map(
-      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) } as Song)
+      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
     );
 
     return songs;
@@ -66,7 +66,7 @@ export const getPlaylists = async (props: GetPlaylist | GetUserPlaylist) => {
 
   switch (props.variant) {
     case "admin":
-      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", "admin"));
+      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", "admin"), limit(20));
       break;
     case "user":
       getPlaylistQuery = query(playlistCollectionRef, where("by", "==", props.email));
@@ -115,5 +115,24 @@ export const getUserInfo = async (email: string) => {
     const fullUserInfo = userSnapShot.data() as User;
 
     return fullUserInfo;
+  }
+};
+
+export const searchSong = async (value: string) => {
+  const songsCollectionRef = collection(db, "songs");
+
+  const searchQuery = query(
+    songsCollectionRef,
+    where("name", ">=", value),
+    where("name", "<=", value + "\uf8ff"),
+    where("by", "==", "admin"),
+  );
+
+  const songsSnap = await getDocs(searchQuery);
+
+  if (songsSnap.docs) {
+    const result = songsSnap.docs.map((doc) => doc.data() as Song);
+
+    return result;
   }
 };

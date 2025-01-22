@@ -38,8 +38,6 @@ type Props = {
     | "sys-playlist"
     | "queue"
     | "favorite"
-    | "dashboard-songs"
-    | "dashboard-playlist"
     | "uploading"
     | "search-bar";
 };
@@ -100,7 +98,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
   // define style
   const classes = {
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
-    songListButton: `p-1 mr-1 text-[inherit]`,
+    checkboxButton: `mr-3 text-[inherit]`,
     itemContainer: `w-full sm:group/container cursor-pointer flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
     imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
       props.variant === "queue" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
@@ -117,7 +115,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return <></>;
       case "uploading":
         return (
-          <button className={`${classes.songListButton}`}>
+          <button className={`${classes.checkboxButton}`}>
             <MusicalNoteIcon className="w-[18px]" />
           </button>
         );
@@ -126,7 +124,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
           return (
             <button
               onClick={() => handleSelect(song)}
-              className={`${classes.songListButton} text-[inherit]`}
+              className={`${classes.checkboxButton} text-[inherit]`}
             >
               {!isSelected ? (
                 <StopIcon className="w-[18px]" />
@@ -139,7 +137,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
           <>
             <button
               onClick={() => handleSelect(song)}
-              className={`${classes.songListButton} ${
+              className={`${classes.checkboxButton} ${
                 !isSelected && "hidden"
               } group-hover/main:block`}
             >
@@ -150,7 +148,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
               )}
             </button>
             <button
-              className={`${classes.songListButton} ${
+              className={`${classes.checkboxButton} ${
                 isSelected && "hidden"
               } group-hover/main:hidden group-hover/main:mr-[0px]`}
             >
@@ -176,12 +174,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
               alt=""
               className={`"h-[18px] w-[18px] ${getHidden(!active)}`}
             />
-            <button
-              onClick={onClick}
-              className={`${getHidden(
-                active
-              )} `}
-            >
+            <button onClick={onClick} className={`${getHidden(active)} `}>
               <PlayIcon className="w-[24px] text-white" />
             </button>
           </div>
@@ -242,7 +235,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     switch (props.variant) {
       case "search-bar":
       case "home":
-      case "dashboard-songs":
         return (
           <SongMenu
             closeMenu={closeMenu}
@@ -266,7 +258,6 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         );
 
       case "my-playlist":
-      case "dashboard-playlist":
         return (
           <SongMenu
             closeMenu={closeMenu}
@@ -365,7 +356,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
                 <MyPopupContent appendTo="portal">
                   <PopupWrapper
                     className={`${actionLoading ? "overflow-hidden relative" : ""} py-2`}
-                    p={'clear'}
+                    p={"clear"}
                     theme={theme}
                   >
                     {renderMenu()}

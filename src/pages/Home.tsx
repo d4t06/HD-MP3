@@ -23,7 +23,7 @@ export default function HomePage() {
   }, []);
 
   return (
-    <div className="pb-[80px]">
+    <>
       {isOnMobile && <MobileNav />}
       <div className="mb-[30px]">
         <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
@@ -39,6 +39,6 @@ export default function HomePage() {
       )}
 
       <Footer />
-    </div>
+    </>
   );
 }

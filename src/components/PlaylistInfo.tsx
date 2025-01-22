@@ -1,21 +1,13 @@
 import { useSelector } from "react-redux";
-import { useTheme } from "../store";
+// import { useTheme } from "../store";
 import { PlaylistItem, Skeleton } from ".";
-// import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { useMemo } from "react";
-// import { useParams } from "react-router-dom";
-// import EditPlaylist from "./modals/EditPlaylist";
-// import usePlaylistActions from "../hooks/usePlaylistActions";
-import { formatTime } from "../utils/appHelpers";
+// import { useMemo } from "react";
+// import { formatTime } from "../utils/appHelpers";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-// import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
-// import { ModalRef } from "./Modal";
-// import useSetSong from "@/hooks/useSetSong";
 import { selectSongQueue } from "@/store/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
 import PlaylistInfoCta from "./PlaylistInfoCta";
-
-// type Modal = "edit" | "delete";
+import DashboardPlaylistCta from "./dashboard/PlaylistCta";
 
 type MyPlaylist = {
   variant: "my-playlist";
@@ -34,88 +26,25 @@ type DashboardPlaylist = {
 
 type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
-// const PlayPlaylistBtn = ({
-//   onClick,
-//   children,
-//   disable,
-//   text,
-// }: {
-//   children: ReactNode;
-//   text: string;
-//   onClick: () => void;
-//   disable?: boolean;
-// }) => {
-//   const { theme } = useTheme();
-
-//   return (
-//     <Button
-//       onClick={onClick}
-//       size={"clear"}
-//       disabled={disable}
-//       className={`rounded-full px-5 py-1 ${theme.content_bg}`}
-//     >
-//       {children}
-//       <span className="font-playwriteCU leading-[2.2]">{text}</span>
-//     </Button>
-//   );
-// };
-
 export default function PLaylistInfo({ loading, ...props }: Props) {
-  // const dispatch = useDispatch();
-
   // store
-  const { isOnMobile } = useTheme();
-  const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
+  // const { isOnMobile } = useTheme();
+  const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  // state
-  // const [modal, setModal] = useState<Modal | "">("");
-
-  // ref
-  // const modalRef = useRef<ModalRef>(null);
-
-  // hooks
-  // const params = useParams();
-  // const { handleSetSong } = useSetSong({ variant: "playlist" });
-  // const { deletePlaylist, isFetching } = usePlaylistActions();
-  // const { deleteAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
-
-  const playlistTime = useMemo(
-    () => playlistSongs.reduce((prev, c) => prev + c.duration, 0),
-    [playlistSongs],
-  );
+  // const playlistTime = useMemo(
+  //   () => playlistSongs.reduce((prev, c) => prev + c.duration, 0),
+  //   [playlistSongs],
+  // );
 
   const isActivePlaylist =
     (playStatus === "playing" || playStatus === "waiting") &&
     currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`;
 
-  // const openModal = (modal: Modal) => {
-  //   setModal(modal);
-  //   modalRef.current?.toggle();
-  // };
-  // const closeModal = () => modalRef.current?.toggle();
-
-  // const handlePlayPlaylist = () => {
-  //   if (currentSongData?.song.song_in.includes(params.name as string)) return;
-  //   const firstSong = playlistSongs[0];
-  //   handleSetSong(firstSong.queue_id, playlistSongs);
-  // };
-
-  // const handlePlayPause = () => {
-  //   switch (playStatus) {
-  //     case "playing":
-  //       return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
-  //     case "paused":
-  //       return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
-  //   }
-  // };
-
   const playlistInfoSkeleton = (
     <>
       <Skeleton className="h-[38px] mb-[6px] w-[200px]" />
-      <Skeleton className="hidden md:block h-[16px] w-[60px]" />
-      <Skeleton className="hidden md:block h-[16px] w-[200px]" />
     </>
   );
 
@@ -127,140 +56,40 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
         <div className="text-xl leading-[2.2] font-playwriteCU">
           {currentPlaylist?.name}
         </div>
-        {!isOnMobile && (
+        {/*{!isOnMobile && props.variant !== "dashboard-playlist" && (
           <p className="text-lg leading-[1] font-[500]">{formatTime(playlistTime)}</p>
         )}
         {props.variant !== "dashboard-playlist" && (
           <p className="hidden md:block opacity-60 leading-[1]">
             created by {currentPlaylist?.by}
           </p>
-        )}
+        )}*/}
       </>
     );
   };
 
-  // const renderPlayPlaylistBtn = () => {
-  //   if (!currentPlaylist) return <></>;
-
-  //   if (currentSongData?.song.song_in.includes(currentPlaylist.id)) {
-  //     switch (playStatus) {
-  //       case "playing":
-  //       case "waiting":
-  //         return (
-  //           <PlayPlaylistBtn text="Pause" onClick={handlePlayPause}>
-  //             <PauseIcon className="w-7 mr-1" />
-  //           </PlayPlaylistBtn>
-  //         );
-  //       case "loading":
-  //       case "paused":
-  //         return (
-  //           <PlayPlaylistBtn text="Continue Play" onClick={handlePlayPause}>
-  //             <PlayIcon className="w-7 mr-1" />
-  //           </PlayPlaylistBtn>
-  //         );
-  //     }
-  //   }
-
-  //   return (
-  //     <PlayPlaylistBtn text="Play" onClick={handlePlayPlaylist}>
-  //       <PlayIcon className="w-7 mr-1" />
-  //     </PlayPlaylistBtn>
-  //   );
-  // };
-
-  // const renderCta = () => {
-  //   if (loading) return <></>;
-
-  //   switch (props.variant) {
-  //     case "my-playlist":
-  //       return (
-  //         <>
-  //           {renderPlayPlaylistBtn()}
-  //           <Button
-  //             onClick={() => openModal("delete")}
-  //             className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
-  //           >
-  //             <TrashIcon className="w-[22px]" />
-  //           </Button>
-
-  //           <Button
-  //             onClick={() => openModal("edit")}
-  //             className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
-  //           >
-  //             <PencilSquareIcon className="w-[22px]" />
-  //           </Button>
-  //         </>
-  //       );
-  //     case "dashboard-playlist":
-  //       return (
-  //         <>
-  //           <Button
-  //             onClick={() => openModal("delete")}
-  //             className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
-  //           >
-  //             <TrashIcon className="w-[22px]" />
-  //           </Button>
-
-  //           <Button
-  //             onClick={() => openModal("edit")}
-  //             className={`p-[8px] rounded-full ${theme.content_hover_bg} bg-${theme.alpha}`}
-  //           >
-  //             <PencilSquareIcon className="w-[22px]" />
-  //           </Button>
-  //         </>
-  //       );
-  //     case "sys-playlist":
-  //       return renderPlayPlaylistBtn();
-  //   }
-  // };
-
-  // const renderModal = useMemo(() => {
-  //   switch (modal) {
-  //     case "":
-  //       return <></>;
-  //     case "edit":
-  //       if (currentPlaylist)
-  //         return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
-  //       else return <></>;
-
-  //     case "delete":
-  //       if (props.variant === "my-playlist")
-  //         return (
-  //           <ConfirmModal
-  //             loading={isFetching}
-  //             label={"Delete playlist ?"}
-  //             theme={theme}
-  //             callback={deletePlaylist}
-  //             close={closeModal}
-  //           />
-  //         );
-  //       if (props.variant === "dashboard-playlist")
-  //         return (
-  //           <ConfirmModal
-  //             loading={adminIsFetching}
-  //             label={"Delete playlist ?"}
-  //             theme={theme}
-  //             callback={deleteAdminPlaylist}
-  //             close={closeModal}
-  //           />
-  //         );
-  //   }
-  // }, [modal, isFetching, adminIsFetching]);
+  const renderCta = () => {
+    switch (props.variant) {
+      case "my-playlist":
+      case "sys-playlist":
+        return <PlaylistInfoCta variant={props.variant} />;
+      case "dashboard-playlist":
+        return <DashboardPlaylistCta />;
+    }
+  };
 
   const classes = {
-    container:
-      "w-full space-y-[12px] md:space-y-0 md:space-x-[12px] flex flex-col md:flex-row",
-    playlistInfoContainer: `flex flex-col gap-[12px] md:justify-between`,
-    infoTop: "flex justify-center items-center gap-[8px] md:flex-col md:items-start",
-    countSongText: "text-[14px]] font-semibold opacity-[.6] leading-[1]",
-    ctaContainer: `flex justify-center space-x-[12px] md:justify-start`,
+    container: "flex flex-col md:flex-row lg:flex-col",
+    playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 lg:mt-3`,
+    infoTop:
+      "flex justify-center items-center space-y-1 md:flex-col md:items-start lg:items-center",
+    ctaContainer: `flex justify-center space-x-3 md:justify-start  lg:justify-center lg:mt-3`,
   };
 
   return (
     <>
       <div className={classes.container}>
-        {/* image */}
-        <div className="w-full px-10 md:w-1/4 md:px-0">
+        <div className="w-full flex-shrink-0 px-10 md:w-1/4 md:px-0 lg:w-full">
           {loading ? (
             <Skeleton className="pt-[100%] rounded-[8px]" />
           ) : (
@@ -270,21 +99,12 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
           )}
         </div>
 
-        {/* desktop playlist info */}
         <div className={classes.playlistInfoContainer}>
           <div className={classes.infoTop}>{renderInfo()}</div>
 
-          {/* cta */}
-          <div className={`${classes.ctaContainer} `}>
-            {/*{renderPlayPlaylistBtn()}*/}
-            {!loading && <PlaylistInfoCta variant={props.variant} />}
-          </div>
+          <div className={`${classes.ctaContainer} `}>{!loading && renderCta()}</div>
         </div>
       </div>
-
-      {/*      <Modal variant="animation" ref={modalRef}>
-        {renderModal}
-      </Modal>*/}
     </>
   );
 }

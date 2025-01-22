@@ -28,10 +28,17 @@ interface Props extends VariantProps<typeof popupVariant> {
     alpha: string;
   };
   className?: string;
-  // color?: "sidebar" | "container" | "black";
+  bg?: "primary" | "clear";
 }
 
-export default function PopupWrapper({ children, theme, className, p, rounded }: Props) {
+export default function PopupWrapper({
+  children,
+  bg = "primary",
+  theme,
+  className,
+  p,
+  rounded,
+}: Props) {
   // const _bgColorMap: Record<typeof color, string> = {
   //   black: "bg-[#292929]",
   //   container: ``,
@@ -41,7 +48,7 @@ export default function PopupWrapper({ children, theme, className, p, rounded }:
   return (
     <div
       className={` ${
-        theme.modal_bg
+        bg === "primary" ? theme.modal_bg : ""
       } text-white border-[#fff]/5 border-[1px]  ${popupVariant({
         p,
         rounded,

@@ -1,4 +1,3 @@
-import { DashboardPlaylistDetail, DashboardPlaylist } from "@/pages";
 import DashBoardLayout from "../layout/DashBoardLayout";
 
 import {
@@ -8,6 +7,9 @@ import {
   MySongs,
   DashboardSongLyric,
   SongLyric,
+  DashboardPlaylistDetail,
+  DashboardPlaylist,
+  DashboardSong,
 } from "../pages";
 import SearchResultPage from "@/pages/SearchResult";
 
@@ -15,17 +17,17 @@ const routes = {
   Home: "/",
   Search: "/search",
   Dashboard: "/dashboard",
-  DashboardPlaylists: "/dashboard/playlists",
-  DashboardSongs: "/dashboard/songs",
-  DashboardSingers: "/dashboard/singers",
-  DashboardGenres: "/dashboard/genres",
-  DashboardPlaylistDetail: "/dashboard/playlist/:id",
-  DashboardEdit: "/dashboard/edit/:id",
+  DashboardPlaylist: "/dashboard/playlists",
+  DashboardSong: "/dashboard/songs",
+  DashboardSinger: "/dashboard/singers",
+  DashboardGenre: "/dashboard/genres",
+  DashboardPlaylistDetail: "/dashboard/playlists/:id",
+  DashboardSongLyric: "/dashboard/lyric/:id",
 
   MySongs: "/mysongs",
   Favorite: "/favorite",
   Playlist: "/playlist/:id",
-  Edit: "/mysongs/edit/:id",
+  Edit: "/mysongs/lyric/:id",
 };
 
 export type PlaylistParamsType = {
@@ -50,7 +52,7 @@ const privateRoutes = [
     title: "Dashboard",
   },
   {
-    path: routes.DashboardPlaylists,
+    path: routes.DashboardPlaylist,
     component: DashboardPlaylist,
     layout: DashBoardLayout,
     title: "Playlist",
@@ -61,7 +63,13 @@ const privateRoutes = [
     layout: DashBoardLayout,
     title: "Playlist Detail",
   },
-  { path: routes.DashboardEdit, component: DashboardSongLyric, layout: DashBoardLayout },
+  {
+    path: routes.DashboardSong,
+    component: DashboardSong,
+    layout: DashBoardLayout,
+    title: "Song",
+  },
+  { path: routes.DashboardSongLyric, component: DashboardSongLyric, layout: DashBoardLayout },
 ];
 
 export { publicRoutes, privateRoutes, routes };

@@ -18,7 +18,7 @@ const routeList = [
     icon: <ComputerDesktopIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/songs",
     title: "Songs",
     icon: <MusicalNoteIcon className="w-5 flex-shrink-0" />,
   },

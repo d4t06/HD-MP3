@@ -6,7 +6,11 @@ import {
 	TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Button, ConfirmModal, Modal } from ".";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
+import MyPopup, {
+	MyPopupContent,
+	MyPopupTrigger,
+	TriggerRef,
+} from "@/components/MyPopup";
 
 import { useTheme } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +23,8 @@ import useSetSong from "@/hooks/useSetSong";
 import { MenuWrapper, MenuList } from "./ui/MenuWrapper";
 import EditPlaylist from "./modals/EditPlaylist";
 import { ModalRef } from "./Modal";
+import AddSongToPlaylistModal from "./dashboard/AddSongToPlaylistModal";
+import SongSelectProvider from "@/store/SongSelectContext";
 
 const PlayPlaylistBtn = ({
 	onClick,
@@ -47,10 +53,10 @@ const PlayPlaylistBtn = ({
 };
 
 type Props = {
-	variant: "my-playlist" | "sys-playlist" | "dashboard-playlist";
+	variant: "my-playlist" | "sys-playlist";
 };
 
-type Modal = "edit" | "delete";
+type Modal = "edit" | "delete" | "add-song-to-playlist";
 
 export default function PlaylistInfoCta({ variant }: Props) {
 	const dispatch = useDispatch();
@@ -62,17 +68,19 @@ export default function PlaylistInfoCta({ variant }: Props) {
 	const { playStatus } = useSelector(selectAllPlayStatusStore);
 
 	const [modal, setModal] = useState<Modal | "">("");
+	const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
 
 	const modalRef = useRef<ModalRef>(null);
-	const triggerRef = useRef<TriggerRef>(null)
+	const triggerRef = useRef<TriggerRef>(null);
 
 	const params = useParams();
 	const { handleSetSong } = useSetSong({ variant: "playlist" });
 
 	const openModal = (m: Modal) => {
 		setModal(m);
+		if (modal === "add-song-to-playlist") modalRef.current?.setModalPersist(true);
 
-		triggerRef.current?.close()
+		triggerRef.current?.close();
 		modalRef.current?.open();
 	};
 	const closeModal = () => modalRef.current?.close();
@@ -138,21 +146,6 @@ export default function PlaylistInfoCta({ variant }: Props) {
 					</>
 				);
 
-			case "dashboard-playlist":
-				return (
-					<>
-						<button onClick={() => openModal("delete")}>
-							<TrashIcon className="w-5" />
-							<span>Delete</span>
-						</button>
-
-						<button onClick={() => openModal("edit")}>
-							<PencilIcon className="w-5" />
-							<span>Edit</span>
-						</button>
-					</>
-				);
-
 			default:
 				return <></>;
 		}
@@ -178,37 +171,39 @@ export default function PlaylistInfoCta({ variant }: Props) {
 							close={closeModal}
 						/>
 					);
-				if (variant === "dashboard-playlist")
-					return (
-						<ConfirmModal
-							loading={false}
-							label={"Delete playlist ?"}
-							theme={theme}
-							callback={() => {}}
-							close={closeModal}
-						/>
-					);
+	
+				break;
+
+			case "add-song-to-playlist":
+				return (
+					<SongSelectProvider>
+						<AddSongToPlaylistModal closeModal={closeModal} />
+					</SongSelectProvider>
+				);
 		}
 	};
 
 	const renderContent = () => {
 		switch (variant) {
 			case "my-playlist":
-			case "dashboard-playlist":
 				return (
 					<>
 						{renderPlayPlaylistBtn()}
 						<MyPopup>
-							<MyPopupTrigger ref={triggerRef}>
+							<MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
 								<Button
 									size={"clear"}
-									className={`rounded-full p-2.5 ${theme.content_hover_bg} bg-${theme.alpha}`}
+									className={`rounded-full p-2.5 ${isOpenPopup ? theme.content_bg : ""} ${theme.content_hover_bg} bg-${theme.alpha}`}
 								>
 									<AdjustmentsHorizontalIcon className="w-6" />
 								</Button>
 							</MyPopupTrigger>
 
-							<MyPopupContent className="min-w-[140px]" appendTo="parent">
+							<MyPopupContent
+								className="left-[calc(100%)]"
+								animationClassName="origin-top-left"
+								appendTo="parent"
+							>
 								{/*<PopupWrapper theme={theme}>*/}
 								<MenuWrapper>
 									<MenuList>{renderMenu()}</MenuList>
@@ -227,7 +222,9 @@ export default function PlaylistInfoCta({ variant }: Props) {
 	return (
 		<>
 			{renderContent()}
-			<Modal variant="animation" ref={modalRef}>{renderModal()}</Modal>
+			<Modal variant="animation" ref={modalRef}>
+				{renderModal()}
+			</Modal>
 		</>
 	);
 }

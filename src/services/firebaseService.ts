@@ -57,12 +57,12 @@ export const mySetDoc = async ({
 export const uploadFile = async ({
    file,
    folder,
-   email,
+   namePrefix,
    msg,
 }: {
    file: File;
    folder: "/images/" | "/songs/";
-   email: string;
+   namePrefix: string;
    msg?: string;
 }) => {
    if (isDev) console.log(msg ?? ">>> api: upload file");
@@ -70,7 +70,7 @@ export const uploadFile = async ({
 
    // define ref
    const fileName =
-      email.replace("@gmail.com", "") +
+      namePrefix.replace("@gmail.com", "") +
       "_" +
       file.name.replaceAll(" ", "").toLowerCase();
    const fileRef = ref(store, `${folder + fileName}`);

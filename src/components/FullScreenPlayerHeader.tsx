@@ -67,8 +67,8 @@ export default function FullScreenPlayerHeader() {
 				className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 			>
 				{currentSongData?.song?.by !== "admin" && activeTab === "Lyric" && (
-					<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyrics">
-						<button onClick={() => handleEdit()} className={`p-3 ${classes.button}`}>
+					<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">
+						<button onClick={() => handleEdit()} className={`p-2 ${classes.button}`}>
 							<DocumentTextIcon />
 						</button>
 					</MyTooltip>
@@ -76,7 +76,7 @@ export default function FullScreenPlayerHeader() {
 
 				<MyPopup>
 					<MyPopupTrigger>
-						<MyTooltip position="top-[calc(100%+8px)]" content="Settings">
+						<MyTooltip position="top-[calc(100%+8px)]" content="Setting">
 							<button className={`${classes.button} p-2`}>
 								<Cog6ToothIcon />
 							</button>
