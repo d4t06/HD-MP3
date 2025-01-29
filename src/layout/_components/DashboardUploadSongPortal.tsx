@@ -1,10 +1,8 @@
 import { createPortal } from "react-dom";
 import useUploadSongDashboard from "@/hooks/dashboard/useUploadSongDashboard";
 import ToastItem from "./_components/ToastItem";
-import { useTheme } from "@/store";
 
 export default function DashboardUploadSongPortal() {
-  const { theme } = useTheme();
   const { handleInputChange, inputRef, isFetching } = useUploadSongDashboard();
 
   return (
@@ -25,7 +23,6 @@ export default function DashboardUploadSongPortal() {
             <ToastItem
               className="fixed bottom-4 right-1/2 translate-x-1/2"
               variant="message"
-              theme={theme}
               message="...Uploading"
             />
           )}

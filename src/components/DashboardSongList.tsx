@@ -21,8 +21,8 @@ export default function DashboardSongList({ initialLoading }: Props) {
     return tempSongs.length + songs.length;
   }, [tempSongs, songs]);
 
-  const _handleSetSong = (song: Song) => {
-    handleSetSong(song.queue_id, [song]);
+  const _handleSetSong = (queue_id: string) => {
+    handleSetSong(queue_id, []);
   };
 
   return (
@@ -47,8 +47,7 @@ export default function DashboardSongList({ initialLoading }: Props) {
             {!!songCount ? (
               <>
                 <SongList
-                  variant="dashboard-songs"
-                  tempSongs={tempSongs}
+                  variant="home"
                   songs={songs}
                   handleSetSong={_handleSetSong}
                 />

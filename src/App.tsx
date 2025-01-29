@@ -2,7 +2,6 @@ import { HashRouter as Router, Routes, Route } from "react-router-dom";
 
 import { privateRoutes, publicRoutes } from "./routes";
 import DefaultLayout from "./layout/DefaultLayout";
-import ToastPortal from "@/layout/_components/ToastPortal";
 import { Login, NotFound, Unauthorized } from "./pages";
 // import RequireAuth from "./routes/RequireAuth";
 import PersistLogin from "./routes/PersistLogin";
@@ -64,7 +63,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
-      <ToastPortal autoClose />
+      {/*<ToastPortal autoClose />*/}
     </>
   );
 }

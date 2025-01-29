@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
-import usePlaylistActions from "@/hooks/usePlaylistActions";
+import usePlaylistAction from "@/hooks/usePlaylistAction";
 import { useTheme } from "@/store";
 import { Button } from "..";
 import ModalHeader from "./ModalHeader";
@@ -15,19 +15,14 @@ export default function EditPlaylist({ playlist, close }: Props) {
   const [playlistName, setPlaylistName] = useState<string>("");
   const [isAbleToSubmit, setIsAbleToSubmit] = useState(false);
 
-  const { editPlaylist, isFetching } = usePlaylistActions();
+  const { action, isFetching } = usePlaylistAction();
 
   const handleEditPlaylist = async (e: FormEvent) => {
     e.preventDefault();
     if (!isAbleToSubmit) return;
 
-    try {
-      await editPlaylist(playlistName, playlist);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      close();
-    }
+    await action({ variant: "edit", playlist: { name: playlistName } });
+    close();
   };
 
   const classes = {

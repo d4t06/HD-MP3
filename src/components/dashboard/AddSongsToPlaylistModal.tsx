@@ -13,7 +13,7 @@ type Props = {
 	closeModal: () => void;
 };
 
-export default function AddSongToPlaylistModal({ closeModal }: Props) {
+export default function AddSongsToPlaylistModal({ closeModal }: Props) {
 	const { theme } = useTheme();
 
 	const {

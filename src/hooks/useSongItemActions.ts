@@ -1,19 +1,11 @@
 import { useSongContext } from "@/store/SongsContext";
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import { useToast } from "../store";
 
-import usePlaylistActions from "./usePlaylistActions";
+// import usePlaylistActions from "./usePlaylistActions";
 import { deleteSong } from "@/services/firebaseService";
-import { TriggerRef } from "@/components/MyPopup";
 
-type Props = {
-  song: Song;
-  admin?: boolean;
-  closeModal: () => void;
-  triggerRef: RefObject<TriggerRef>;
-};
-
-const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
+export default function useSongItemActions() {
   // store
   const { setErrorToast, setSuccessToast } = useToast();
   const { songs, setSongs } = useSongContext();
@@ -21,75 +13,36 @@ const useSongItemActions = ({ song, closeModal, triggerRef }: Props) => {
   // state
   const [loading, setLoading] = useState(false);
 
-  // hook
-  const { removeSong, addSongsSongItem } = usePlaylistActions();
-
-  const handleAddSongToPlaylistMobile = async (playlist: Playlist) => {
-    try {
-      setLoading(true);
-      await addSongsSongItem(song, playlist);
-      setSuccessToast(`'${song.name}' added to '${playlist.name}'`);
-    } catch (error) {
-      console.log(error);
-      throw new Error("Error when add song to playlist");
-    } finally {
-      setLoading(false);
-      closeModal();
-    }
+  type DeleteSong = {
+    song: Song;
+    variant: "delete";
   };
 
-  const handleDeleteSong = async () => {
+  const action = async (props: DeleteSong) => {
     try {
       setLoading(true);
 
-      const newSongs = songs.filter((s) => s.id !== song.id);
+      switch (props.variant) {
+        case "delete":
+          const newSongs = songs.filter((s) => s.id !== props.song.id);
 
-      await deleteSong(song);
-      setSongs(newSongs);
+          await deleteSong(props.song);
+          setSongs(newSongs);
 
-      // if (currentSongData?.song?.id === song.id) dispatch(resetCurrentSong());
-      setSuccessToast(`'${song.name}' deleted`);
+          setSuccessToast(`'${props.song.name}' deleted`);
+
+          break;
+      }
     } catch (error) {
       console.log({ message: error });
-      throw new Error("Error when delete song");
+      setErrorToast();
     } finally {
       setLoading(false);
-      closeModal();
     }
-  };
-
-  const handleAddSongToPlaylist = async (playlist: Playlist) => {
-    if (!song || !playlist) {
-      setErrorToast("Lack of props");
-      return;
-    }
-    try {
-      setLoading(true);
-      await addSongsSongItem(song, playlist);
-      setSuccessToast(`'${song.name}' added to '${playlist.name}'`);
-    } catch (error) {
-      console.log(error);
-      throw new Error("Error when add song to playlist");
-    } finally {
-      setLoading(false);
-      triggerRef.current?.close();
-    }
-  };
-
-  const handleRemoveSongFromPlaylist = async () => {
-    await removeSong(song, setLoading);
   };
 
   return {
-    //  updateAndSetUserSongs,
-    handleDeleteSong,
-    handleAddSongToPlaylistMobile,
-    handleRemoveSongFromPlaylist,
-    handleAddSongToPlaylist,
     loading,
+    action,
   };
-};
-
-export default useSongItemActions;
-
-export type UseSongItemActionsType = ReturnType<typeof useSongItemActions>;
+}

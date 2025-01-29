@@ -23,67 +23,37 @@ import useSetSong from "@/hooks/useSetSong";
 import { MenuWrapper, MenuList } from "./ui/MenuWrapper";
 import EditPlaylist from "./modals/EditPlaylist";
 import { ModalRef } from "./Modal";
-import AddSongToPlaylistModal from "./dashboard/AddSongToPlaylistModal";
-import SongSelectProvider from "@/store/SongSelectContext";
+import usePlaylistAction from "@/hooks/usePlaylistAction";
 
-const PlayPlaylistBtn = ({
-	onClick,
-	children,
-	disable,
-	text,
-}: {
+type PlayBtnProps = {
 	children: ReactNode;
 	text: string;
 	onClick: () => void;
-	disable?: boolean;
-}) => {
+};
+
+function PlayBtn({ onClick, children, text }: PlayBtnProps) {
 	const { theme } = useTheme();
 
 	return (
 		<Button
 			onClick={onClick}
 			size={"clear"}
-			disabled={disable}
 			className={`rounded-full px-5 py-1 ${theme.content_bg}`}
 		>
 			{children}
 			<span className="font-playwriteCU leading-[2.2]">{text}</span>
 		</Button>
 	);
-};
+}
 
-type Props = {
-	variant: "my-playlist" | "sys-playlist";
-};
-
-type Modal = "edit" | "delete" | "add-song-to-playlist";
-
-export default function PlaylistInfoCta({ variant }: Props) {
+function PlayPlaylistBtn() {
 	const dispatch = useDispatch();
-
-	const { theme } = useTheme();
-
 	const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 	const { currentSongData } = useSelector(selectSongQueue);
 	const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-	const [modal, setModal] = useState<Modal | "">("");
-	const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
-
-	const modalRef = useRef<ModalRef>(null);
-	const triggerRef = useRef<TriggerRef>(null);
-
 	const params = useParams();
 	const { handleSetSong } = useSetSong({ variant: "playlist" });
-
-	const openModal = (m: Modal) => {
-		setModal(m);
-		if (modal === "add-song-to-playlist") modalRef.current?.setModalPersist(true);
-
-		triggerRef.current?.close();
-		modalRef.current?.open();
-	};
-	const closeModal = () => modalRef.current?.close();
 
 	const handlePlayPlaylist = () => {
 		if (currentSongData?.song.song_in.includes(params.name as string)) return;
@@ -100,131 +70,135 @@ export default function PlaylistInfoCta({ variant }: Props) {
 		}
 	};
 
-	const renderPlayPlaylistBtn = () => {
-		if (!currentPlaylist) return <></>;
+	if (!currentPlaylist) return <></>;
 
-		if (currentSongData?.song.song_in.includes(currentPlaylist.id)) {
-			switch (playStatus) {
-				case "playing":
-				case "waiting":
-					return (
-						<PlayPlaylistBtn text="Pause" onClick={handlePlayPause}>
-							<PauseIcon className="w-7 mr-1" />
-						</PlayPlaylistBtn>
-					);
-				case "loading":
-				case "paused":
-					return (
-						<PlayPlaylistBtn text="Continue Play" onClick={handlePlayPause}>
-							<PlayIcon className="w-7 mr-1" />
-						</PlayPlaylistBtn>
-					);
-			}
-		}
-
-		return (
-			<PlayPlaylistBtn text="Play" onClick={handlePlayPlaylist}>
-				<PlayIcon className="w-7 mr-1" />
-			</PlayPlaylistBtn>
-		);
-	};
-
-	const renderMenu = () => {
-		switch (variant) {
-			case "my-playlist":
+	if (currentSongData?.song.song_in.includes(currentPlaylist.id)) {
+		switch (playStatus) {
+			case "playing":
+			case "waiting":
 				return (
-					<>
-						<button onClick={() => openModal("delete")}>
-							<TrashIcon className="w-5" />
-							<span>Delete</span>
-						</button>
-
-						<button onClick={() => openModal("edit")}>
-							<PencilIcon className="w-5" />
-							<span>Edit</span>
-						</button>
-					</>
+					<PlayBtn text="Pause" onClick={handlePlayPause}>
+						<PauseIcon className="w-7 mr-1" />
+					</PlayBtn>
 				);
-
-			default:
-				return <></>;
+			case "loading":
+			case "paused":
+				return (
+					<PlayBtn text="Continue Play" onClick={handlePlayPause}>
+						<PlayIcon className="w-7 mr-1" />
+					</PlayBtn>
+				);
 		}
+	}
+
+	return (
+		<PlayBtn text="Play" onClick={handlePlayPlaylist}>
+			<PlayIcon className="w-7 mr-1" />
+		</PlayBtn>
+	);
+}
+
+type Modal = "edit" | "delete";
+
+function UserCta() {
+	const { theme } = useTheme();
+
+	const { currentPlaylist } = useSelector(selectCurrentPlaylist);
+
+	const [modal, setModal] = useState<Modal | "">("");
+	const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
+
+	const modalRef = useRef<ModalRef>(null);
+	const triggerRef = useRef<TriggerRef>(null);
+
+	const { action, isFetching } = usePlaylistAction();
+
+	const openModal = (m: Modal) => {
+		setModal(m);
+
+		triggerRef.current?.close();
+		modalRef.current?.open();
 	};
+	const closeModal = () => modalRef.current?.close();
 
 	const renderModal = () => {
+		if (!currentPlaylist) return <></>;
+
 		switch (modal) {
 			case "":
 				return <></>;
 			case "edit":
-				if (currentPlaylist)
-					return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
-				else return <></>;
+				return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
 
 			case "delete":
-				if (variant === "my-playlist")
-					return (
-						<ConfirmModal
-							loading={false}
-							label={"Delete playlist ?"}
-							theme={theme}
-							callback={() => {}}
-							close={closeModal}
-						/>
-					);
-	
-				break;
-
-			case "add-song-to-playlist":
 				return (
-					<SongSelectProvider>
-						<AddSongToPlaylistModal closeModal={closeModal} />
-					</SongSelectProvider>
+					<ConfirmModal
+						loading={isFetching}
+						label={`Delete playist ' ${currentPlaylist.name} ' ?`}
+						theme={theme}
+						callback={() =>
+							action({
+								variant: "delete",
+							})
+						}
+						close={closeModal}
+					/>
 				);
-		}
-	};
-
-	const renderContent = () => {
-		switch (variant) {
-			case "my-playlist":
-				return (
-					<>
-						{renderPlayPlaylistBtn()}
-						<MyPopup>
-							<MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
-								<Button
-									size={"clear"}
-									className={`rounded-full p-2.5 ${isOpenPopup ? theme.content_bg : ""} ${theme.content_hover_bg} bg-${theme.alpha}`}
-								>
-									<AdjustmentsHorizontalIcon className="w-6" />
-								</Button>
-							</MyPopupTrigger>
-
-							<MyPopupContent
-								className="left-[calc(100%)]"
-								animationClassName="origin-top-left"
-								appendTo="parent"
-							>
-								{/*<PopupWrapper theme={theme}>*/}
-								<MenuWrapper>
-									<MenuList>{renderMenu()}</MenuList>
-								</MenuWrapper>
-								{/*</PopupWrapper>*/}
-							</MyPopupContent>
-						</MyPopup>
-					</>
-				);
-
-			default:
-				return renderPlayPlaylistBtn();
 		}
 	};
 
 	return (
 		<>
-			{renderContent()}
+			<MyPopup>
+				<MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
+					<Button
+						size={"clear"}
+						className={`rounded-full p-2.5 ${isOpenPopup ? theme.content_bg : ""} ${theme.content_hover_bg} bg-${theme.alpha}`}
+					>
+						<AdjustmentsHorizontalIcon className="w-6" />
+					</Button>
+				</MyPopupTrigger>
+
+				<MyPopupContent
+					className="left-[calc(100%)]"
+					animationClassName="origin-top-left"
+					appendTo="parent"
+				>
+					<MenuWrapper>
+						<MenuList>
+							<button onClick={() => openModal("edit")}>
+								<PencilIcon className="w-5" />
+								<span>Edit</span>
+							</button>
+
+							<button onClick={() => openModal("delete")}>
+								<TrashIcon className="w-5" />
+								<span>Delete</span>
+							</button>
+						</MenuList>
+					</MenuWrapper>
+				</MyPopupContent>
+			</MyPopup>
 			<Modal variant="animation" ref={modalRef}>
 				{renderModal()}
 			</Modal>
 		</>
 	);
+}
+
+type Props = {
+	variant: "my-playlist" | "sys-playlist";
+};
+export default function PlaylistInfoCta({ variant }: Props) {
+	switch (variant) {
+		case "sys-playlist":
+			return <PlayPlaylistBtn />;
+		case "my-playlist":
+			return (
+				<>
+					<PlayPlaylistBtn />
+					<UserCta />
+				</>
+			);
+	}
 }

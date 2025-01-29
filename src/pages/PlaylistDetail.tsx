@@ -17,7 +17,7 @@ export default function PlaylistDetail() {
   );
 
   //   hooks
-  usePlaylistDetail({});
+  usePlaylistDetail();
   const { isFetching } = useGetPlaylist();
 
   const renderPlaylistInfo = () => {

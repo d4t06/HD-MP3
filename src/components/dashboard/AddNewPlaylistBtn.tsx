@@ -9,13 +9,16 @@ import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistA
 export default function AddNewPlaylistBtn() {
   const { theme } = useTheme();
 
-  const { addPlaylist, isFetching } = useDashboardPlaylistActions();
+  const { actions, isFetching } = useDashboardPlaylistActions();
   const modalRef = useRef<ModalRef>(null);
 
   const closeModal = () => modalRef.current?.close();
 
   const handleAddPlaylist = async (v: string) => {
-    await addPlaylist(v);
+    await actions({
+      variant: "add-playlist",
+      name: v,
+    });
     closeModal();
   };
 

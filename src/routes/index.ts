@@ -27,7 +27,7 @@ const routes = {
   MySongs: "/mysongs",
   Favorite: "/favorite",
   Playlist: "/playlist/:id",
-  Edit: "/mysongs/lyric/:id",
+  Lyric: "/mysongs/lyric/:id",
 };
 
 export type PlaylistParamsType = {
@@ -41,7 +41,7 @@ const publicRoutes = [
   { path: routes.MySongs, component: MySongs, layout: "" },
   { path: routes.Playlist, component: PlaylistDetail, layout: "" },
 
-  { path: routes.Edit, component: SongLyric, layout: "" },
+  { path: routes.Lyric, component: SongLyric, layout: "" },
 ];
 
 const privateRoutes = [

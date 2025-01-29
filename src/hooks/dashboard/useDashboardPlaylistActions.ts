@@ -37,7 +37,7 @@ type RemoveSong = {
 
 type UpdateImage = {
   variant: "update-image";
-  imageUrl: string;
+  song: Song;
 };
 
 export type PlaylistActionProps =
@@ -61,7 +61,7 @@ export default function useDashboardPlaylistActions() {
   const navigate = useNavigate();
   const { setErrorToast, setSuccessToast } = useToast();
 
-  const actions = async (props: ActionProps) => {
+  const actions = async (props: PlaylistActionProps) => {
     try {
       switch (props.variant) {
         case "add-playlist": {
@@ -168,14 +168,19 @@ export default function useDashboardPlaylistActions() {
           if (!currentPlaylist) throw new Error("currentPlaylist not found");
           setIsFetching(true);
 
+          const payload = {
+            image_url: props.song.image_url,
+            blurhash_encode: props.song.blurhash_encode,
+          } as Partial<Playlist>;
+
           await mySetDoc({
             collection: "playlist",
-            data: { image_url: props.imageUrl } as Partial<Playlist>,
+            data: payload,
             id: currentPlaylist.id,
             msg: ">>> api: set playlist doc",
           });
 
-          dispatch(updateCurrentPlaylist({ image_url: props.imageUrl }));
+          dispatch(updateCurrentPlaylist(payload));
           setSuccessToast(`Playlist edited`);
 
           break;

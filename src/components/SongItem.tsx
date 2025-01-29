@@ -1,36 +1,23 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 
 import { ArrowPathIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
-import { formatTime, getHidden } from "../utils/appHelpers";
+import { getHidden } from "../utils/appHelpers";
 
 import { useTheme } from "../store";
-import {
-  PopupWrapper,
-  Image,
-  Modal,
-  EditSongModal,
-  ConfirmModal,
-  PlaylistListModal,
-} from "../components";
+import { Image } from "../components";
 
 import SongMenu from "./SongMenu";
-import { useSongItemActions } from "../hooks";
-import { useDispatch } from "react-redux";
-import { removeSongFromQueue } from "@/store/songQueueSlice";
-import { Bars3Icon, CheckIcon } from "@heroicons/react/20/solid";
+import { CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/store/SongSelectContext";
-import { ModalRef } from "./Modal";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "./MyPopup";
-import MyTooltip from "./MyTooltip";
 
 type Props = {
   className?: string;
   active?: boolean;
   onClick: () => void;
   song: Song;
-  index?: number;
+  index: number;
   variant:
     | "home"
     | "my-songs"
@@ -46,50 +33,14 @@ export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
 function SongItem({ song, onClick, active = true, index, className, ...props }: Props) {
   // store
-  const dispatch = useDispatch();
   const { theme, isOnMobile } = useTheme();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
-
-  // state
-  //   const [loading, setLoading] = useState<boolean>(false);
-  const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
-  const [modal, setModal] = useState<SongItemModal | "">("");
-
-  // ref
-  const triggerRef = useRef<TriggerRef>(null);
-  const modalRef = useRef<ModalRef>(null);
-
-  // hooks
-
-  const closeModal = () => modalRef.current?.toggle();
-  const closeMenu = () => triggerRef.current?.close();
-
-  const {
-    handleDeleteSong,
-    handleAddSongToPlaylistMobile,
-    handleAddSongToPlaylist,
-    handleRemoveSongFromPlaylist,
-    loading: actionLoading,
-  } = useSongItemActions({ song, closeModal, triggerRef });
-
-  const handleOpenModal = (modal: SongItemModal) => {
-    setModal(modal);
-    closeMenu();
-
-    modalRef.current?.toggle();
-  };
 
   const isSelected = useMemo(() => {
     if (!selectedSongs) return false;
     return selectedSongs.indexOf(song) != -1;
   }, [selectedSongs]);
 
-  const handleRemoveFromQueue = () => {
-    if (index === undefined) return;
-    dispatch(removeSongFromQueue({ index }));
-  };
-
-  //selectedSong
   const handleSelect = (song: Song) => {
     if (isChecked === undefined) return;
     selectSong(song);
@@ -182,7 +133,25 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     }
   }, [active, onClick]);
 
-  const leftElement = (
+  const getSongNameSize = () => {
+    switch (props.variant) {
+      case "queue":
+        return "text-sm";
+      default:
+        return "";
+    }
+  };
+
+  const getSongSingerSize = () => {
+    switch (props.variant) {
+      case "queue":
+        return "text-xs";
+      default:
+        return "text-sm";
+    }
+  };
+
+  const leftContent = (
     <>
       {renderCheckBox()}
 
@@ -190,27 +159,16 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         className="flex-grow flex"
         onClick={isOnMobile && props.variant !== "uploading" ? onClick : () => {}}
       >
-        {/* song image */}
         <div className={`${classes.imageFrame}`}>
           <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
-
           {imageOverlay}
         </div>
 
-        {/* song info */}
-        <div className={`ml-[10px]  ${props.variant === "queue" ? "" : ""}`}>
-          <h5
-            className={`line-clamp-1 font-medium overflow-hidden ${
-              props.variant === "queue" ? "text-sm" : ""
-            }`}
-          >
+        <div className={`ml-[10px]`}>
+          <h5 className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}>
             {song.name}
           </h5>
-          <p
-            className={`opacity-[.7] leading-[1.2] line-clamp-1 
-               ${props.variant === "queue" ? "text-xs" : ""}
-                       `}
-          >
+          <p className={`opacity-[.7] leading-[1.2] line-clamp-1 ${getSongSingerSize()}`}>
             {song.singer}
           </p>
         </div>
@@ -218,16 +176,16 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     </>
   );
 
-  const left = () => {
+  const renderLeftContent = () => {
     switch (props.variant) {
       case "uploading":
         return (
-          <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftElement}</div>
+          <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftContent}</div>
         );
       case "queue":
-        return leftElement;
+        return leftContent;
       default:
-        return <div className="flex flex-grow overflow-hidden">{leftElement}</div>;
+        return <div className="flex flex-grow overflow-hidden">{leftContent}</div>;
     }
   };
 
@@ -235,91 +193,21 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     switch (props.variant) {
       case "search-bar":
       case "home":
-        return (
-          <SongMenu
-            closeMenu={closeMenu}
-            variant={props.variant}
-            handleAddSongToPlaylist={handleAddSongToPlaylist}
-            handleOpenModal={handleOpenModal}
-            song={song}
-          />
-        );
-
+        return <SongMenu index={index} variant="sys-song" song={song} />;
       case "my-songs":
-      case "favorite":
-        return (
-          <SongMenu
-            closeMenu={closeMenu}
-            variant="my-songs"
-            handleAddSongToPlaylist={handleAddSongToPlaylist}
-            handleOpenModal={handleOpenModal}
-            song={song}
-          />
-        );
-
+        return <SongMenu variant="user-song" index={index} song={song} />;
       case "my-playlist":
-        return (
-          <SongMenu
-            closeMenu={closeMenu}
-            variant="playlist"
-            handleRemoveSongFromPlaylist={handleRemoveSongFromPlaylist}
-            handleOpenModal={handleOpenModal}
-            song={song}
-          />
-        );
+        return <SongMenu variant="sys-song" index={index} song={song} />;
       case "sys-playlist":
-        return (
-          <SongMenu
-            closeMenu={closeMenu}
-            variant="sys-playlist"
-            handleOpenModal={handleOpenModal}
-            song={song}
-          />
-        );
+        return <SongMenu variant="sys-song" song={song} index={index} />;
       case "queue":
-        return (
-          <SongMenu
-            closeMenu={closeMenu}
-            handleRemoveSongFromQueue={handleRemoveFromQueue}
-            variant="queue"
-            handleOpenModal={handleOpenModal}
-            song={song}
-          />
-        );
+        return <SongMenu variant="queue-song" song={song} index={index} />;
       default:
         return <></>;
     }
   };
 
-  const renderModal = useMemo(() => {
-    switch (modal) {
-      case "":
-        return <></>;
-      case "edit":
-        return <EditSongModal modalRef={modalRef} song={song} />;
-      case "delete":
-        return (
-          <ConfirmModal
-            loading={actionLoading}
-            label={`Delete '${song.name}' ?`}
-            desc={"This action cannot be undone"}
-            theme={theme}
-            callback={handleDeleteSong}
-            close={closeModal}
-          />
-        );
-      case "add-to-playlist":
-        return (
-          <PlaylistListModal
-            loading={actionLoading}
-            handleAddSongToPlaylist={handleAddSongToPlaylistMobile}
-            closeModal={closeModal}
-          />
-        );
-    }
-  }, [modal, actionLoading]);
-
-  const right = () => {
+  const renderRightContent = () => {
     switch (props.variant) {
       case "uploading":
         return (
@@ -332,66 +220,21 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         );
 
       default:
-        const getClickedMenuClass = () => {
-          if (props.variant === "queue") return "";
-          if (isOpenPopup) return `${theme.content_bg}`;
-          else return "block md:hidden";
-        };
-
         return (
           <div className={classes.ctaWrapper}>
-            <div className={classes.menuBtnWrapper}>
-              <MyPopup appendOnPortal>
-                <MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
-                  <MyTooltip isWrapped content="Menu">
-                    <button
-                      className={`block group-hover/main:block ${
-                        classes.button
-                      } ${getClickedMenuClass()}`}
-                    >
-                      <Bars3Icon className="w-[20px]" />
-                    </button>
-                  </MyTooltip>
-                </MyPopupTrigger>
-                <MyPopupContent appendTo="portal">
-                  <PopupWrapper
-                    className={`${actionLoading ? "overflow-hidden relative" : ""} py-2`}
-                    p={"clear"}
-                    theme={theme}
-                  >
-                    {renderMenu()}
-
-                    {actionLoading && (
-                      <div className={classes.overlay}>
-                        <div
-                          className={`h-[25px] w-[25px] border-[2px] border-r-black rounded-[50%] animate-spin`}
-                        ></div>
-                      </div>
-                    )}
-                  </PopupWrapper>
-                </MyPopupContent>
-              </MyPopup>
-
-              <span
-                className={`text-sm font-[500] hidden  group-hover/main:hidden ${
-                  isOpenPopup || props.variant === "queue" ? "hidden" : "md:block"
-                }`}
-              >
-                {formatTime(song.duration)}
-              </span>
-            </div>
+            <div className={classes.menuBtnWrapper}>{renderMenu()}</div>
           </div>
         );
     }
   };
 
-  const renderContainer = () => {
+  const renderContent = () => {
     switch (props.variant) {
       case "uploading":
         return (
           <div className={`${classes.itemContainer} ${className || ""} `}>
-            {left()}
-            {right()}
+            {renderLeftContent()}
+            {renderRightContent()}
           </div>
         );
       case "queue":
@@ -401,8 +244,8 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
               active ? `${theme.content_bg} text-white` : `hover:bg-${theme.alpha}`
             }`}
           >
-            {left()}
-            {right()}
+            {renderLeftContent()}
+            {renderRightContent()}
           </div>
         );
       default:
@@ -412,21 +255,14 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
               active || isSelected ? `bg-${theme.alpha}` : ``
             }`}
           >
-            {left()}
-            {right()}
+            {renderLeftContent()}
+            {renderRightContent()}
           </div>
         );
     }
   };
 
-  return (
-    <>
-      {renderContainer()}
-      <Modal ref={modalRef} variant="animation">
-        {renderModal}
-      </Modal>
-    </>
-  );
+  return <>{renderContent()}</>;
 }
 
 export default SongItem;

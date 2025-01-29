@@ -1,23 +1,13 @@
 import { formatTime } from "@/utils/appHelpers";
 import DashboardSongMenu from "./DashboardSongMenu";
 
-type BaseProps = {
+type Props = {
 	song: Song;
 	className?: string;
+	variant: "songs" | "playlist";
 };
 
-type Props = {
-	variant: "songs";
-};
-type PlaylistProps = {
-	variant: "playlist";
-};
-
-export default function DashboardSongItem({
-	song,
-	className = "",
-	...props
-}: BaseProps & (Props | PlaylistProps)) {
+export default function DashboardSongItem({ song, className = "", variant }: Props) {
 	return (
 		<tr className={className}>
 			<td>{song.name}</td>
@@ -26,7 +16,7 @@ export default function DashboardSongItem({
 			<td>-</td>
 			<td>{formatTime(song.duration)}</td>
 			<td>
-				<DashboardSongMenu variant={props.variant} song={song} />
+				<DashboardSongMenu variant={variant} song={song} />
 			</td>
 		</tr>
 	);

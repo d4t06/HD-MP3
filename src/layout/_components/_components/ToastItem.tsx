@@ -1,9 +1,9 @@
+import { useTheme } from "@/store";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 
 type Props = {
   toast: Toast;
-  theme: ThemeType;
   onClick?: (id: string) => void;
   className?: string;
   variant?: "notify";
@@ -11,16 +11,13 @@ type Props = {
 
 type MessageProps = {
   className?: string;
-  theme: ThemeType;
   message: string;
   variant?: "message";
 };
 
-export default function ToastItem({
-  theme,
-  className = "",
-  ...props
-}: Props | MessageProps) {
+export default function ToastItem({ className = "", ...props }: Props | MessageProps) {
+  const { theme } = useTheme();
+
   const variant = props.variant || "notify";
   const [isOpen, setIsOpen] = useState(false);
 

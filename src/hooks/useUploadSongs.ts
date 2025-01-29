@@ -158,7 +158,7 @@ export default function useUploadSongs() {
           const { filePath, fileURL } = await uploadFile({
             file: fileLists[fileIndex],
             folder: "/songs/",
-            email: user.email,
+            namePrefix: user.email,
             msg: ">>> api: upload song file",
           });
 

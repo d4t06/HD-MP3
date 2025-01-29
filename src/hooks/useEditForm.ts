@@ -91,7 +91,7 @@ export default function useEditForm({ song, inputFields, modalRef }: Props) {
           const { filePath, fileURL } = await uploadFile({
             file: imageFileFromLocal,
             folder: "/images/",
-            email: user.email,
+            namePrefix: user.email,
           });
           newSongData.image_file_path = filePath;
           newSongData.image_url = fileURL;

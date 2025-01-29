@@ -3,7 +3,6 @@ import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
 import { useTheme } from "../store";
 import { PlaylistSkeleton } from "./skeleton";
 import { useMemo, useRef } from "react";
-import usePlaylistActions from "@/hooks/usePlaylistActions";
 // import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
 import { selectSongQueue } from "@/store/songQueueSlice";
@@ -31,9 +30,6 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
   const modalRef = useRef<ModalRef>(null);
 
   // hook
-  const { addPlaylist, isFetching } = usePlaylistActions();
-  // const { addAdminPlaylist, isFetching: adminIsFetching } = useAdminPlaylistActions();
-
   const loading = props.variant != "search-page" ? props.loading : false;
   const closeModal = () => modalRef.current?.toggle();
 
@@ -88,13 +84,7 @@ export default function PlaylistList({ className = "", ...props }: Props | Exten
   const renderModal = () => {
     switch (props.variant) {
       case "my-song":
-        return (
-          <AddPlaylist
-            addPlaylist={addPlaylist}
-            isFetching={isFetching}
-            close={closeModal}
-          />
-        );
+        return <AddPlaylist  close={closeModal} />;
     }
   };
 

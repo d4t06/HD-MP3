@@ -80,10 +80,10 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
-    playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 lg:mt-3`,
+    playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 mt-3 md:mt-0 lg:mt-3`,
     infoTop:
       "flex justify-center items-center space-y-1 md:flex-col md:items-start lg:items-center",
-    ctaContainer: `flex justify-center space-x-3 md:justify-start  lg:justify-center lg:mt-3`,
+    ctaContainer: `flex justify-center space-x-3 md:justify-start  lg:justify-center mt-3 md:mt-0 lg:mt-3`,
   };
 
   return (

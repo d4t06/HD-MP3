@@ -4,6 +4,7 @@ import Sidebar from "./_components/Sidebar";
 import Header from "./_components/Header";
 import Player from "./_components/Player";
 import UploadSongPortal from "@/layout/_components/UploadSongPortal";
+import ToastPortal from "./_components/ToastPortal";
 
 interface Props {
   children: ReactNode;
@@ -39,6 +40,8 @@ const DefaultLayout: FC<Props> = ({ children }) => {
         </div>
         <Player />
       </div>
+
+      <ToastPortal variant="client"  />
 
       <UploadSongPortal />
     </>

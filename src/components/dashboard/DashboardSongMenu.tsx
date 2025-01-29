@@ -3,7 +3,7 @@ import { ModalRef } from "@/components/Modal";
 import MyPopup, {
 	MyPopupContent,
 	MyPopupTrigger,
-	TriggerRef,
+	usePopoverContext,
 } from "@/components/MyPopup";
 import { MenuList } from "@/components/ui/MenuWrapper";
 import useDashboardPlaylistActions, {
@@ -20,13 +20,8 @@ import {
 	PhotoIcon,
 	TrashIcon,
 } from "@heroicons/react/24/outline";
-import { RefObject, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-
-type Props = {
-	song: Song;
-	variant: "songs" | "playlist";
-};
 
 function SongInfo({ song }: { song: Song }) {
 	return (
@@ -54,14 +49,14 @@ type SongsMenuModal = "edit" | "delete";
 
 type SongsMenuProps = {
 	song: Song;
-	triggerRef: RefObject<TriggerRef>;
 };
 
-function SongsMenu({ triggerRef, song }: SongsMenuProps) {
+function SongsMenu({ song }: SongsMenuProps) {
 	const { theme } = useTheme();
 	const modalRef = useRef<ModalRef>(null);
 
 	const { actions, isFetching } = useDashboardSongItemAction();
+	const { close } = usePopoverContext();
 
 	const [modal, setModal] = useState<SongsMenuModal | "">("");
 	const closeModal = () => modalRef.current?.close();
@@ -69,7 +64,7 @@ function SongsMenu({ triggerRef, song }: SongsMenuProps) {
 	const openModal = (m: SongsMenuModal) => {
 		setModal(m);
 
-		triggerRef.current?.close();
+		close();
 		modalRef.current?.open();
 	};
 
@@ -144,13 +139,13 @@ function SongsMenu({ triggerRef, song }: SongsMenuProps) {
 
 type PlaylistMenuProps = {
 	song: Song;
-	triggerRef: RefObject<TriggerRef>;
 };
 
-function PlaylistMenu({ song, triggerRef }: PlaylistMenuProps) {
+function PlaylistMenu({ song }: PlaylistMenuProps) {
 	const { theme } = useTheme();
 
 	const { actions, isFetching, currentPlaylist } = useDashboardPlaylistActions();
+	const { close } = usePopoverContext();
 
 	const classes = {
 		overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
@@ -168,13 +163,13 @@ function PlaylistMenu({ song, triggerRef }: PlaylistMenuProps) {
 			case "update-image":
 				await actions({
 					variant: "update-image",
-					imageUrl: props.imageUrl,
+					song: props.song,
 				});
 
 				break;
 		}
 
-		triggerRef.current?.close();
+		close();
 	};
 
 	return (
@@ -200,18 +195,20 @@ function PlaylistMenu({ song, triggerRef }: PlaylistMenuProps) {
 							<span>Remove</span>
 						</button>
 
-						<button
-							className={`${currentPlaylist?.image_url === song.image_url ? "disable" : ""}`}
-							onClick={() =>
-								handlePlaylistAction({
-									variant: "update-image",
-									imageUrl: song.image_url,
-								})
-							}
-						>
-							<PhotoIcon className={`w-5`} />
-							<span>Set playlist image</span>
-						</button>
+						{song.image_url && (
+							<button
+								className={`${currentPlaylist?.image_url === song.image_url ? "disable" : ""}`}
+								onClick={() =>
+									handlePlaylistAction({
+										variant: "update-image",
+										song,
+									})
+								}
+							>
+								<PhotoIcon className={`w-5`} />
+								<span>Set playlist image</span>
+							</button>
+						)}
 					</MenuList>
 
 					{isFetching && (
@@ -227,26 +224,29 @@ function PlaylistMenu({ song, triggerRef }: PlaylistMenuProps) {
 	);
 }
 
+type Props = {
+	song: Song;
+	variant: "songs" | "playlist";
+};
+
 export default function DashboardSongMenu({ song, variant }: Props) {
 	const { theme } = useTheme();
 
 	const [isOpenPopup, setIsOpenPopup] = useState(false);
 
-	const triggerRef = useRef<TriggerRef>(null);
-
 	const renderMenu = () => {
 		switch (variant) {
 			case "songs":
-				return <SongsMenu triggerRef={triggerRef} song={song} />;
+				return <SongsMenu song={song} />;
 			case "playlist":
-				return <PlaylistMenu triggerRef={triggerRef} song={song} />;
+				return <PlaylistMenu song={song} />;
 		}
 	};
 
 	return (
 		<>
 			<MyPopup appendOnPortal>
-				<MyPopupTrigger setIsOpenParent={setIsOpenPopup} ref={triggerRef}>
+				<MyPopupTrigger setIsOpenParent={setIsOpenPopup}>
 					<button
 						className={`p-1 rounded-full ${theme.content_hover_bg} ${isOpenPopup ? theme.content_bg : "bg-" + theme.alpha}`}
 					>

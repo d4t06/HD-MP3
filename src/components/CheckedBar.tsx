@@ -9,39 +9,17 @@ import { useSongSelectContext } from "@/store/SongSelectContext";
 import useCheckBar from "@/hooks/useCheckBar";
 import { ModalRef } from "./Modal";
 
-type Home = {
-  variant: "home";
-};
-
-type MyPlaylist = {
-  variant: "my-playlist";
-};
-
-type MySongs = {
-  variant: "my-songs";
-};
-
-type AdminPlaylist = {
-  variant: "sys-playlist";
-};
-
-type DashBoardSong = {
-  variant: "dashboard-songs";
-};
-
-type DashBoardPlaylist = {
-  variant: "dashboard-playlist";
-};
-
 type Modal = "delete-selected-songs" | "remove-selects-songs";
 
-type Props =
-  | MyPlaylist
-  | AdminPlaylist
-  | MySongs
-  | Home
-  | DashBoardSong
-  | DashBoardPlaylist;
+type Props = {
+  variant:
+    | "home"
+    | "my-playlist"
+    | "my-songs"
+    | "sys-playlist"
+    | "dashboard-songs"
+    | "dashboard-playlist";
+};
 
 export default function CheckedBar({
   children,

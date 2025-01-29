@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { usePlaylistContext } from "../PlaylistContext";
-import { useToast } from "@/store";
+import { useSongContext, useToast } from "@/store";
 import { generateId, initPlaylistObject } from "@/utils/appHelpers";
 import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 
 export default function usePlaylistAction() {
 	// store
 
-	const { addPlaylist, deletePlaylist } = usePlaylistContext();
+	const { setPlaylists } = useSongContext();
 
 	// state
 	const [isFetching, setIsFetching] = useState(false);
@@ -36,7 +35,7 @@ export default function usePlaylistAction() {
 				msg: ">>> api: set playlist doc",
 			});
 
-			addPlaylist(addedPlaylist);
+			setPlaylists((prev) => [...prev, addedPlaylist]);
 		} catch (error) {
 			console.log({ message: error });
 			setErrorToast("");
@@ -55,7 +54,7 @@ export default function usePlaylistAction() {
 			msg: ">>> api: delete playlist doc",
 		});
 
-		deletePlaylist(id);
+
 
 		setIsFetching(false);
 	};

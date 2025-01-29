@@ -17,16 +17,6 @@ type MySong = Base & {
   tempSongs: Song[];
 };
 
-type DashboardSong = Omit<Base, "handleSetSong"> & {
-  variant: "dashboard-songs";
-  tempSongs: Song[];
-  handleSetSong: (song: Song) => void;
-};
-
-type DashboardPlaylist = Base & {
-  variant: "dashboard-playlist";
-};
-
 type Favorite = Base & {
   variant: "favorite";
 };
@@ -56,8 +46,6 @@ type Uploading = {
 type Props =
   | Home
   | MySong
-  | DashboardSong
-  | DashboardPlaylist
   | MyPlaylist
   | AdminPlaylist
   | Queue
@@ -82,9 +70,9 @@ function SongList({ songs, ...props }: Props) {
       };
 
       if (index == 0)
-        return <SongItem variant="uploading" className="temp-song" {...songItemProps} />;
+        return <SongItem index={index} variant="uploading" className="temp-song" {...songItemProps} />;
 
-      return <SongItem variant="uploading" {...songItemProps} />;
+      return <SongItem variant="uploading" index={index} {...songItemProps} />;
     });
   };
 
@@ -111,7 +99,6 @@ function SongList({ songs, ...props }: Props) {
 
       switch (props.variant) {
         case "search-bar":
-        case "dashboard-songs":
           return (
             <SongItem
               active={active}

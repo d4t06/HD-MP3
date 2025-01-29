@@ -1,6 +1,6 @@
 import { useAuthStore, useSongContext, useToast } from "@/store";
 import { RefObject, useState } from "react";
-import usePlaylistActions from "./usePlaylistActions";
+import usePlaylistActions from "./usePlaylistAction";
 import { useSongSelectContext } from "@/store/SongSelectContext";
 import { deleteSong } from "@/services/firebaseService";
 import { ModalRef } from "@/components/Modal";

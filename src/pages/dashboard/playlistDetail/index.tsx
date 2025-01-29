@@ -5,7 +5,7 @@ import Table from "@/components/ui/Table";
 import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
 import { useTheme } from "@/store";
-import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
+// import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
 
 export default function DashboardPlaylistDetail() {
@@ -14,11 +14,11 @@ export default function DashboardPlaylistDetail() {
   //   hooks
   const { isFetching } = useGetPlaylist();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { actions, isFetching: actionFetching } = useDashboardPlaylistActions();
+  // const { actions,  } = useDashboardPlaylistActions();
 
-  const handleRemoveSong = (s: Song) => {
-    actions({ variant: "remove-song", song: s });
-  };
+  // const handleRemoveSong = (s: Song) => {
+  //   actions({ variant: "remove-song", song: s });
+  // };
 
   return (
     <div className="lg:flex lg:-mx-3 overflow-hidden">
@@ -39,13 +39,7 @@ export default function DashboardPlaylistDetail() {
               colList={["Name", "Singer", "Genre", "Time", ""]}
             >
               {playlistSongs.map((s, i) => (
-                <DashboardSongItem
-                  removeSong={() => handleRemoveSong(s)}
-                  variant="playlist"
-                  isFetching={actionFetching}
-                  key={i}
-                  song={s}
-                />
+                <DashboardSongItem variant="playlist" key={i} song={s} />
               ))}
             </Table>
           </div>

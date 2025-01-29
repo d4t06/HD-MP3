@@ -3,6 +3,7 @@ import { useTheme } from "../store";
 import DashBoardSidebar from "./_components/DashboardSidebar";
 import DashboardHeader from "./_components/DashboardHeader";
 import DashboardUploadSongPortal from "@/layout/_components/DashboardUploadSongPortal";
+import ToastPortal from "./_components/ToastPortal";
 
 export default function DashBoardLayout({ children }: { children: ReactNode }) {
   const { theme } = useTheme();
@@ -20,6 +21,8 @@ export default function DashBoardLayout({ children }: { children: ReactNode }) {
         </div>
 
         {/*<DashboardPlayer />*/}
+
+        <ToastPortal variant="dashboard" />
 
         <DashboardUploadSongPortal />
       </div>

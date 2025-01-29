@@ -5,7 +5,7 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
 import { ModalRef } from "../Modal";
 import SongSelectProvider from "@/store/SongSelectContext";
-import AddSongToPlaylistModal from "./AddSongToPlaylistModal";
+import AddSongsToPlaylistModal from "./AddSongsToPlaylistModal";
 import AddItem from "../modals/AddItem";
 import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 
@@ -18,8 +18,7 @@ export default function DashboardPlaylistCta() {
 
 	const modalRef = useRef<ModalRef>(null);
 
-	const { deletePlaylist, editPlaylist, currentPlaylist, isFetching } =
-		useDashboardPlaylistActions();
+	const { actions, currentPlaylist, isFetching } = useDashboardPlaylistActions();
 
 	const openModal = (m: Modal) => {
 		setModal(m);
@@ -41,10 +40,10 @@ export default function DashboardPlaylistCta() {
 	const handlePlaylistAction = async (props: DeletePlaylist | EditPlaylist) => {
 		switch (props.variant) {
 			case "delete":
-				await deletePlaylist();
+				await actions({ variant: "delete-playlist" });
 				break;
 			case "edit":
-				await editPlaylist(props.value);
+				await actions({variant: 'edit-playlist', name: props.value});
 				break;
 		}
 
@@ -87,7 +86,7 @@ export default function DashboardPlaylistCta() {
 			case "add-song-to-playlist":
 				return (
 					<SongSelectProvider>
-						<AddSongToPlaylistModal closeModal={closeModal} />
+						<AddSongsToPlaylistModal closeModal={closeModal} />
 					</SongSelectProvider>
 				);
 		}
