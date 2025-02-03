@@ -63,6 +63,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     switch (props.variant) {
       case "search-bar":
       case "queue":
+      case "home":
         return <></>;
       case "uploading":
         return (
@@ -252,7 +253,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return (
           <div
             className={`${classes.itemContainer} ${className || ""} group/main ${
-              active || isSelected ? `bg-${theme.alpha}` : ``
+              active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
             }`}
           >
             {renderLeftContent()}

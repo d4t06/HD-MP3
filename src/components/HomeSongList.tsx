@@ -1,9 +1,9 @@
-import CheckedBar from "./CheckedBar";
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
 import SongSelectProvider from "@/store/SongSelectContext";
 import useSetSong from "@/hooks/useSetSong";
 import { useSongContext } from "@/store";
+import Title from "./ui/Title";
 
 type Props = {
   loading: boolean;
@@ -18,26 +18,28 @@ export default function HomeSongList({ loading }: Props) {
   };
 
   return (
-    <SongSelectProvider>
-      <CheckedBar variant="home" />
+    <>
+      <SongSelectProvider>
+        {loading && SongItemSkeleton}
 
-      {loading && SongItemSkeleton}
+        {!loading && (
+          <>
+            <Title title="Songs" />
 
-      {!loading && (
-        <>
-          {!!sysSongPlaylist.songs.length ? (
-            <>
-              <SongList
-                variant="home"
-                handleSetSong={_handleSetSong}
-                songs={sysSongPlaylist.songs}
-              />
-            </>
-          ) : (
-            <h1 className="text-[22px] text-center">...</h1>
-          )}
-        </>
-      )}
-    </SongSelectProvider>
+            {!!sysSongPlaylist.songs.length ? (
+              <>
+                <SongList
+                  variant="home"
+                  handleSetSong={_handleSetSong}
+                  songs={sysSongPlaylist.songs}
+                />
+              </>
+            ) : (
+              <h1 className="text-[22px] text-center">...</h1>
+            )}
+          </>
+        )}
+      </SongSelectProvider>
+    </>
   );
 }
