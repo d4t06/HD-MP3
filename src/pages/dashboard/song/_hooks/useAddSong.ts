@@ -1,4 +1,4 @@
-import { useAddSongContext } from "@/store/dashboard/AddSongContext";
+import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { parserSong } from "@/utils/parseSong";
 import { useEffect } from "react";
 

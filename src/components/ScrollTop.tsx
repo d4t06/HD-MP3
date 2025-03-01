@@ -1,6 +1,6 @@
 import { useEffect, useState, RefObject } from "react";
 import { Button } from ".";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { ArrowUpIcon } from "@heroicons/react/20/solid";
 
 function ScrollTop({
@@ -10,7 +10,7 @@ function ScrollTop({
    className?: string;
 }) {
    const [isShow, setIsShow] = useState(false);
-   const { theme } = useTheme();
+   const { theme } = useThemeContext();
 
    const handleScroll = () => {
       const containerEle = document.querySelector(".main-container");

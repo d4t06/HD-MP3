@@ -6,21 +6,18 @@ import {
   MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
 import { Button, LinkItem } from "..";
-import { useAuthStore, useTheme } from "@/store";
 import { MobileLinkSkeleton } from "../skeleton";
-import { routes } from "@/routes";
-import { useAuthActions } from "@/store/AuthContext";
+import { useAuthContext, useThemeContext } from "@/stores";
+import useAuthAction from "@/hooks/useAuthActiont";
 
 export default function MobileNav() {
-  const { theme } = useTheme();
-
-  const { loading: userLoading, user } = useAuthStore();
-
-  const { logIn } = useAuthActions();
+  const { theme } = useThemeContext();
+  const { loading: userLoading, user } = useAuthContext();
+  const { action } = useAuthAction();
 
   const handleLogIn = async () => {
     try {
-      await logIn();
+      await action("login");
     } catch (error) {
       console.log(error);
     } finally {
@@ -44,24 +41,24 @@ export default function MobileNav() {
           {user ? (
             <>
               <LinkItem
+                to="/"
                 className={classes.linkItem}
-                to={routes.MySongs}
                 icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
                 label="All songs"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
 
               <LinkItem
+                to="/"
                 className={classes.linkItem}
-                to={routes.MySongs}
                 icon={<HeartIcon className={classes.icon + theme.content_text} />}
                 label="Favorite"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
 
               <LinkItem
+                to="/"
                 className={classes.linkItem}
-                to={routes.MySongs}
                 icon={<ClockIcon className={classes.icon + theme.content_text} />}
                 label="Recent"
                 arrowIcon={<ChevronRightIcon className="w-6" />}

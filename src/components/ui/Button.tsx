@@ -8,7 +8,7 @@ import {
 } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 const buttonVariant = cva("inline-flex space-x-1 font-[500] items-center ", {
   variants: {
@@ -74,7 +74,7 @@ function Button(
   }: Props,
   ref: Ref<ElementRef<"button">>,
 ) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   return (
     <button

@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import ModalHeader from "../modals/ModalHeader";
 import { Button } from "..";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function DashbordEditPlaylistModal({ playlist, closeModal }: Props) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 	const inputRef = useRef<HTMLInputElement>(null);
 	const [playlistName, setPlaylistName] = useState<string>("");
 

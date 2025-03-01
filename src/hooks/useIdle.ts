@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { scrollToActiveSong } from "./useScrollSong";
 import appConfig from "../config/app";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { usePlayerContext } from "@/store/PlayerContext";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { usePlayerContext } from "@/stores/PlayerContext";
 
 export default function useIdle(delay: number, isOnMobile: boolean) {
-  // store
+  // stores
   const { currentSongData } = useSelector(selectSongQueue);
   const { isOpenFullScreen, setIdle } = usePlayerContext();
 

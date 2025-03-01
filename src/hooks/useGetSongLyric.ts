@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { useLyricContext } from "@/store/LyricContext";
-import { usePlayerContext } from "@/store";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { useLyricContext } from "@/stores/LyricContext";
+import { usePlayerContext } from "@/stores";
 
 export default function useSongLyric({ active }: { active: boolean }) {
   const { audioRef } = usePlayerContext();

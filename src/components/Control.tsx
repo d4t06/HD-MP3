@@ -4,7 +4,7 @@ import {
   BackwardIcon,
   ForwardIcon,
 } from "@heroicons/react/24/outline";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 
 import PlayPauseButton from "./child/PlayPauseButton";
 import { useControl } from "../hooks";
@@ -24,7 +24,7 @@ export type ControlRef = {
 };
 
 function Control({ admin, variant }: Props, ref: Ref<ControlRef>) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const {
     isOpenFullScreen,

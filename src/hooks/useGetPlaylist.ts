@@ -2,20 +2,20 @@ import { useParams } from "react-router-dom";
 import { myGetDoc } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch } from "react-redux";
-import { useToast } from "../store";
+import { useToastContext } from "../stores";
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import { resetCurrentPlaylist, setCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { resetCurrentPlaylist, setCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { nanoid } from "nanoid";
 
 export default function useGetPlaylist() {
-  // store
+  // stores
   const dispatch = useDispatch();
 
   // hooks
   const params = useParams<PlaylistParamsType>();
-  const { setErrorToast } = useToast();
+  const { setErrorToast } = useToastContext();
 
   // state
   const ranEffect = useRef(false);

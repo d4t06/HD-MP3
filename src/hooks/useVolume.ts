@@ -1,6 +1,6 @@
 import { MouseEvent, RefObject, WheelEvent, useEffect, useState } from "react";
 import useLocalStorage from "./useLocalStorage";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { getLinearBg } from "@/utils/getLinearBg";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function useVolume({ audioEle, volumeLineRef }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [isMute, setIsMute] = useState(false);
   const [volume, setVolume] = useLocalStorage("volume", 1);

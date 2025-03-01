@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState, useRef } from "react";
 import ModalHeader from "./ModalHeader";
 import { Button } from "..";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import usePlaylistAction from "@/hooks/usePlaylistAction";
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function AddPlaylist({ close }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [playlistName, setPlayListName] = useState<string>("");
 

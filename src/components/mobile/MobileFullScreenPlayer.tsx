@@ -9,13 +9,13 @@ import MobileFullScreenSongList from "./MobileFullScreenSongList";
 import useMobileFullScreenPlayer from "./useMobileFullScreenPlayer";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import LyricContextProvider from "@/store/LyricContext";
-import { usePlayerContext } from "@/store";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import LyricContextProvider from "@/stores/LyricContext";
+import { usePlayerContext } from "@/stores";
 
 export default function MobileFullScreenPlayer() {
-  // use store
+  // use stores
   const { controlRef, setIsOpenFullScreen, isOpenFullScreen } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);

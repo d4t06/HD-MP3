@@ -1,4 +1,4 @@
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
 import { ElementRef, FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import useAudioControl from "./useAudioControl";

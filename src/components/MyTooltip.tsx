@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import {
   cloneElement,
   ElementRef,
@@ -38,7 +38,7 @@ function MyToolTip(
 ) {
   const [open, setOpen] = useState(false);
 
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const { setTriggerRef, state } = usePopoverContext();
   const { onClick } = rest as PropsFromPopup;

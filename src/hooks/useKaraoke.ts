@@ -2,8 +2,8 @@ import createKeyFrame from "@/utils/createKeyFrame";
 import { getWidthList } from "@/utils/getWidthList";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { useGetSongLyric } from ".";
-import { PlayStatus } from "@/store/PlayStatusSlice";
-import { usePlayerContext } from "@/store";
+import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { usePlayerContext } from "@/stores";
 
 type Props = {
   active: boolean;

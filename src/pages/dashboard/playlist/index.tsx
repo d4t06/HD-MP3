@@ -1,6 +1,6 @@
 import { Button, Tabs } from "@/components";
 import Title from "@/components/ui/Title";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { MagnifyingGlassIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import useDashboardPlaylist from "./_hooks/useDashboardPlaylist";
@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import AddNewPlaylistBtn from "@/components/dashboard/AddNewPlaylistBtn";
 
 export default function DashboardPlaylist() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const { value, setValue, isFetching, handleSubmit, playlists, tab, setTab } =
     useDashboardPlaylist();

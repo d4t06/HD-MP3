@@ -12,11 +12,11 @@ import MyPopup, {
 	TriggerRef,
 } from "@/components/MyPopup";
 
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { ReactNode, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import useSetSong from "@/hooks/useSetSong";
@@ -32,7 +32,7 @@ type PlayBtnProps = {
 };
 
 function PlayBtn({ onClick, children, text }: PlayBtnProps) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	return (
 		<Button
@@ -101,7 +101,7 @@ function PlayPlaylistBtn() {
 type Modal = "edit" | "delete";
 
 function UserCta() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 

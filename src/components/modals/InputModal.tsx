@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState, useRef, ReactNode } from "react";
 import { Button } from "..";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 type Props = {
   submit: (value: string) => void;
@@ -19,7 +19,7 @@ export default function InputModal({
   variant = "input",
   children,
 }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const [value, setValue] = useState(initValue || "");
   const inputRef = useRef<HTMLInputElement>(null);
 

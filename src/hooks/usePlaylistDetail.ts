@@ -1,17 +1,16 @@
 import { useEffect, useRef } from "react";
 import { mySetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 
 export default function usePlaylistDetail() {
-  // use store
+  // use stores
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
   const clearPlaylistImage = useRef(false);
 
   const handleGetPlaylistImage = async () => {
     if (!currentPlaylist) return;
-    if (currentPlaylist.by === "admin") return;
 
     if (currentPlaylist.image_url) {
       if (!playlistSongs[0].image_url) {

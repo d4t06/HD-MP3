@@ -1,6 +1,6 @@
 import { ElementRef, useRef, useState } from "react";
 import ModalHeader from "./ModalHeader";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import Button from "../ui/Button";
 import {
     BackwardIcon,
@@ -13,14 +13,14 @@ import {
 } from "@heroicons/react/24/outline";
 import useEditLyricModal from "@/hooks/useEditLyricModal";
 import AudioSetting from "../AudioSetting";
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 
 type Props = {
   closeModal: () => void;
 };
 
 export default function EditLyricModal({ closeModal }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { setSelectLyricIndex, selectLyricIndex, lyrics, song } = useEditLyricContext();
 
   const [currentIndex, setCurrentIndex] = useState(0);

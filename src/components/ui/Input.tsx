@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { cva, VariantProps } from "class-variance-authority";
 import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
@@ -30,7 +30,7 @@ function Input(
   ref: Ref<HTMLInputElement>
 ) {
 
-  const {theme} = useTheme()
+  const {theme} = useThemeContext()
 
   return (
     <input

@@ -1,8 +1,7 @@
-import { useTheme } from "@/store";
+import { NavigationProvider, useThemeContext } from "@/stores";
 
 import { Link } from "react-router-dom";
 import NavigationButton from "@/components/NavigationButton";
-import NavigationProvider from "@/store/NavigationContext";
 import { useEffect, useState, useRef } from "react";
 import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
@@ -12,7 +11,7 @@ import { AppInfo, Appearance, SettingMenu } from "@/components";
 type Modal = "theme" | "info";
 
 export default function DashboardHeader() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [scroll, setScroll] = useState(0);
   const [modal, setModal] = useState<Modal | "">("");

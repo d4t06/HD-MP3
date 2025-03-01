@@ -1,4 +1,4 @@
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { ElementRef, RefObject, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 

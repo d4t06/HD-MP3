@@ -1,7 +1,6 @@
 import { ElementRef, ReactNode, useRef } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Button } from "../components";
-import { useTheme } from "../store";
 import LyricEditorControl, { LyricEditorControlRef } from "./LyricEditorControl";
 import LyricEditorList from "./LyricEditorList";
 import { Center } from "./ui/Center";
@@ -9,6 +8,7 @@ import useLyricEditor from "@/hooks/useLyricEditor";
 import EditLyricModal from "./modals/EditLyricModal";
 import Modal, { ModalRef } from "./Modal";
 import Title from "./ui/Title";
+import { useThemeContext } from "@/stores";
 
 type Props = {
   admin?: boolean;
@@ -18,7 +18,7 @@ type Props = {
 export type LyricStatus = "active" | "done" | "coming";
 
 export default function LyricEditor({ admin, children }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const controlRef = useRef<LyricEditorControlRef>(null);
   const audioRef = useRef<ElementRef<"audio">>(null);

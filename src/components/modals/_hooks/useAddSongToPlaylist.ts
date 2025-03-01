@@ -1,17 +1,17 @@
 import { useState } from "react";
-import { useAuthStore, useSongContext, useToast } from "@/store";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { generateId, initPlaylistObject } from "@/utils/appHelpers";
 import { mySetDoc } from "@/services/firebaseService";
 
 export default function useAddSongToPlaylist() {
-	// store
-	const { user } = useAuthStore();
+	// stores
+	const { user } = useAuthContext();
 	const { playlists, setPlaylists } = useSongContext();
 
 	// state
 	const [isFetching, setIsFetching] = useState(false);
 
-	const { setErrorToast, setSuccessToast } = useToast();
+	const { setErrorToast, setSuccessToast } = useToastContext();
 
 	type AddToPlaylist = {
 		variant: "exist";

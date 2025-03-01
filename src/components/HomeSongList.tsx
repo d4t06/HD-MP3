@@ -1,8 +1,8 @@
 import { SongItemSkeleton } from "./skeleton";
 import { SongList } from ".";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 import useSetSong from "@/hooks/useSetSong";
-import { useSongContext } from "@/store";
+import { useSongContext } from "@/stores";
 import Title from "./ui/Title";
 
 type Props = {

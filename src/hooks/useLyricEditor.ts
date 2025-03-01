@@ -1,6 +1,6 @@
 import { myGetDoc } from "@/services/firebaseService";
-import { useAuthStore } from "@/store";
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useAuthContext } from "@/stores";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -15,7 +15,7 @@ type TempLyric = Omit<SongLyric, "real_time"> & {
 };
 
 export default function useLyricEditor({ audioRef, admin }: Props) {
-  const { user } = useAuthStore();
+  const { user } = useAuthContext();
 
   const {
     baseLyric,

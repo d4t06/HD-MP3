@@ -9,7 +9,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { PopupWrapper } from ".";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 
 type BaseProps = {
   className?: string;
@@ -37,7 +37,7 @@ export type ModalRef = {
 function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
   const variant = props.variant || "default";
 
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
   const [isMounted, setIsMounted] = useState(variant === "default" ? true : false);

@@ -3,7 +3,7 @@ import playStatusReducer from "./PlayStatusSlice";
 import currentPlaylistReducer from "./currentPlaylistSlice";
 import songQueueReducer from "./songQueueSlice";
 
-const store = configureStore({
+const reduxStore = configureStore({
    reducer: {
       currentPlaylist: currentPlaylistReducer,
       playStatus: playStatusReducer,
@@ -11,4 +11,4 @@ const store = configureStore({
    },
 });
 
-export default store;
+export default reduxStore;

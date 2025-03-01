@@ -4,7 +4,7 @@ import {
   PlayCircleIcon,
   PauseCircleIcon,
 } from "@heroicons/react/24/outline";
-import { PlayStatus } from "@/store/PlayStatusSlice";
+import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
 
 type Props = {
   handlePlayPause: () => void;

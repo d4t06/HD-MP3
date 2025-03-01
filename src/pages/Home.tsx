@@ -1,4 +1,4 @@
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 // import { useInitSong } from "../hooks";
 import { PlaylistList, HomeSongList } from "../components";
 import { MobileNav, MobileSetting } from "@/components";
@@ -8,8 +8,8 @@ import { useEffect, useRef } from "react";
 import Footer from "@/layout/_components/Footer";
 
 export default function HomePage() {
-  // store
-  const { isOnMobile } = useTheme();
+  // stores
+  const { isOnMobile } = useThemeContext();
 
   const ranEffect = useRef(false);
 

@@ -1,7 +1,7 @@
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { SongItem } from ".";
 import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
 type Base = {
   handleSetSong: (queueId: string) => void;
@@ -54,8 +54,8 @@ type Props =
   | Searchbar;
 
 function SongList({ songs, ...props }: Props) {
-  // store
-  const { theme } = useTheme();
+  // stores
+  const { theme } = useThemeContext();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
   // const { songData, queueSongs } = useCurrentSong();
 

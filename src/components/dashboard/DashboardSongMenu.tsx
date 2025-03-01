@@ -12,7 +12,7 @@ import useDashboardPlaylistActions, {
 import useDashboardSongItemAction, {
 	SongItemActionProps,
 } from "@/hooks/dashboard/useDashboardSongItemAction";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import {
 	AdjustmentsHorizontalIcon,
 	Bars3Icon,
@@ -52,7 +52,7 @@ type SongsMenuProps = {
 };
 
 function SongsMenu({ song }: SongsMenuProps) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 	const modalRef = useRef<ModalRef>(null);
 
 	const { actions, isFetching } = useDashboardSongItemAction();
@@ -142,7 +142,7 @@ type PlaylistMenuProps = {
 };
 
 function PlaylistMenu({ song }: PlaylistMenuProps) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const { actions, isFetching, currentPlaylist } = useDashboardPlaylistActions();
 	const { close } = usePopoverContext();
@@ -230,7 +230,7 @@ type Props = {
 };
 
 export default function DashboardSongMenu({ song, variant }: Props) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const [isOpenPopup, setIsOpenPopup] = useState(false);
 

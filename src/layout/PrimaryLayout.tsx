@@ -1,17 +1,17 @@
 import { FC, ReactNode, useEffect, useRef } from "react";
-import { useTheme } from "@/store/ThemeContext";
 import Sidebar from "./_components/Sidebar";
 import Header from "./_components/Header";
 import Player from "./_components/Player";
 import UploadSongPortal from "@/layout/_components/UploadSongPortal";
 import ToastPortal from "./_components/ToastPortal";
+import { useThemeContext } from "@/stores";
 
 interface Props {
   children: ReactNode;
 }
 
-const DefaultLayout: FC<Props> = ({ children }) => {
-  const { theme } = useTheme();
+export default function PrimaryLayout({ children }: Props) {
+  const { theme } = useThemeContext();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -41,10 +41,9 @@ const DefaultLayout: FC<Props> = ({ children }) => {
         <Player />
       </div>
 
-      <ToastPortal variant="client"  />
+      <ToastPortal variant="client" />
 
       <UploadSongPortal />
     </>
   );
-};
-export default DefaultLayout;
+}

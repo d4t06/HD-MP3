@@ -2,7 +2,7 @@ import { FC } from "react";
 import LyricItem from "./child/LyricItem";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { LyricStatus } from "./LyricEditor";
 import useLyricList from "@/hooks/useLyricList";
 import { Center } from "./ui/Center";

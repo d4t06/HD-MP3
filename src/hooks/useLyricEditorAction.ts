@@ -1,6 +1,6 @@
 import { mySetDoc } from "@/services/firebaseService";
-import { useToast } from "@/store";
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useToastContext } from "@/stores";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { setLocalStorage } from "@/utils/appHelpers";
 
 type Props = {
@@ -20,7 +20,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     baseLyric,
   } = useEditLyricContext();
 
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const isFinish = lyrics.length >= baseLyricArr.length;
 

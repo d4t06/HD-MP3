@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSongContext, useToast } from "@/store";
+import { useSongContext, useToastContext } from "@/stores";
 import { generateId, initPlaylistObject } from "@/utils/appHelpers";
 import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,7 +9,7 @@ import {
   selectCurrentPlaylist,
   setPlaylistSong,
   updateCurrentPlaylist,
-} from "@/store/currentPlaylistSlice";
+} from "@/stores/redux/currentPlaylistSlice";
 
 type AddPlaylist = {
   variant: "add-playlist";
@@ -49,7 +49,7 @@ export type PlaylistActionProps =
   | UpdateImage;
 
 export default function useDashboardPlaylistActions() {
-  // store
+  // stores
   const dispatch = useDispatch();
   const { playlists, setPlaylists } = useSongContext();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
@@ -59,7 +59,7 @@ export default function useDashboardPlaylistActions() {
 
   // hooks
   const navigate = useNavigate();
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const actions = async (props: PlaylistActionProps) => {
     try {

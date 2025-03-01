@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { Button, PopupWrapper, Switch } from "..";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import {
   selectAllPlayStatusStore,
   setPlayStatus,
   togglePlayControl,
-} from "@/store/PlayStatusSlice";
+} from "@/stores/redux/PlayStatusSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
 
 export default function FullScreenPlayerSetting() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const dispatch = useDispatch();
 
   const {

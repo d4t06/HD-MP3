@@ -1,4 +1,4 @@
-import EditLyricContextProvider from "@/store/EditLyricContext";
+import EditLyricContextProvider from "@/stores/EditLyricContext";
 import LyricEditor from "../components/LyricEditor";
 
 export default function SongLyric() {

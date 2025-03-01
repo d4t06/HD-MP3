@@ -3,10 +3,8 @@ type Location = "admin-songs" | "my-song" | "my-playlist" | "sys-playlist";
 type User = {
   display_name: string;
   email: string;
-  photoURL: string;
-  playlists_id: string[];
-  song_ids: string[];
-  like_songs_id: string[];
+  photo_url: string;
+  liked_song_ids: string[];
   play_history: string[];
   role: string;
 };

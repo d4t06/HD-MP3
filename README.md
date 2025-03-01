@@ -66,7 +66,7 @@
 
 ### update thứ 6 10/11/2023
 
-- Thêm status repeat shuffle vào redux store thay vì
+- Thêm status repeat shuffle vào redux stores thay vì
 
 ### update thứ 7 17/11/2023
 

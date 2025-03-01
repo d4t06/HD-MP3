@@ -1,5 +1,5 @@
 import { ReactNode, Dispatch, SetStateAction } from "react";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 
 type Props<T> = {
   setActiveTab: Dispatch<SetStateAction<T>>;
@@ -19,7 +19,7 @@ function Tabs<T>({
   render,
   inFullScreen,
 }: Props<T>) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   return (
     <ul
       className={`inline-flex space-x-[4px] py-[4px] px-[4px] items-center ${

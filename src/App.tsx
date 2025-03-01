@@ -1,69 +1,76 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { privateRoutes, protectedRoutes, publicRoutes } from "./routes";
+import { NotFound } from "./pages";
+import { RequireAdministrator, RequireAuth } from "./routes/RequireAuth";
+import { ReactNode } from "react";
 
-import { privateRoutes, publicRoutes } from "./routes";
-import DefaultLayout from "./layout/DefaultLayout";
-import { Login, NotFound, Unauthorized } from "./pages";
-// import RequireAuth from "./routes/RequireAuth";
-import PersistLogin from "./routes/PersistLogin";
+function OutletLayout({ children }: { children: ReactNode }) {
+  return children;
+}
+
 function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path={"/login"} element={<Login />} />
-          <Route path={"/unauthorized"} element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
 
-          <Route element={<PersistLogin />}>
-            {publicRoutes.map((route, index) => {
-              let DynamicLayout;
+          {publicRoutes.map((route, index) => {
+            const Layout = route.layout || OutletLayout;
+            const Page = route.component;
+
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <Layout>
+                    <Page />
+                  </Layout>
+                }
+              />
+            );
+          })}
+
+          <Route element={<RequireAuth />}>
+            {protectedRoutes.map((route, index) => {
+              const Layout = route.layout || OutletLayout;
               const Page = route.component;
-              if (route.layout) {
-                DynamicLayout = route.layout;
-              } else {
-                DynamicLayout = DefaultLayout;
-              }
 
               return (
                 <Route
                   key={index}
                   path={route.path}
                   element={
-                    <DynamicLayout>
+                    <Layout>
                       <Page />
-                    </DynamicLayout>
+                    </Layout>
                   }
                 />
               );
             })}
 
-            {/*<Route element={<RequireAuth allowedRole={["ADMIN"]} />}>*/}
-            {privateRoutes.map((route, index) => {
-              let DynamicLayout;
-              const Page = route.component;
-              if (route.layout) {
-                DynamicLayout = route.layout;
-              } else {
-                DynamicLayout = DefaultLayout;
-              }
+            <Route element={<RequireAdministrator />}>
+              {privateRoutes.map((route, index) => {
+                const Layout = route.layout || OutletLayout;
+                const Page = route.component;
 
-              return (
-                <Route
-                  key={index}
-                  path={route.path}
-                  element={
-                    <DynamicLayout>
-                      <Page />
-                    </DynamicLayout>
-                  }
-                />
-              );
-            })}
-            {/*</Route>*/}
+                return (
+                  <Route
+                    key={index}
+                    path={route.path}
+                    element={
+                      <Layout>
+                        <Page />
+                      </Layout>
+                    }
+                  />
+                );
+              })}
+            </Route>
           </Route>
         </Routes>
       </Router>
-      {/*<ToastPortal autoClose />*/}
     </>
   );
 }

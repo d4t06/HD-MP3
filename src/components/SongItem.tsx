@@ -5,12 +5,12 @@ import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { getHidden } from "../utils/appHelpers";
 
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { Image } from "../components";
 
 import SongMenu from "./SongMenu";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { useSongSelectContext } from "@/store/SongSelectContext";
+import { useSongSelectContext } from "@/stores/SongSelectContext";
 
 type Props = {
   className?: string;
@@ -32,8 +32,8 @@ type Props = {
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
 function SongItem({ song, onClick, active = true, index, className, ...props }: Props) {
-  // store
-  const { theme, isOnMobile } = useTheme();
+  // stores
+  const { theme, isOnMobile } = useThemeContext();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
 
   const isSelected = useMemo(() => {

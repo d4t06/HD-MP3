@@ -4,7 +4,7 @@ import { Button, Modal } from "..";
 import { RefObject } from "react";
 import { ModalRef } from "../Modal";
 import useAddSongToPlaylist from "./_hooks/useAddSongToPlaylist";
-import { useSongContext, useTheme } from "@/store";
+import { useSongContext, useThemeContext } from "@/stores";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
@@ -18,7 +18,7 @@ export default function AddSongToPlaylistModal({
   song,
 }: Props) {
   const { playlists } = useSongContext();
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const { addToPlaylist, isFetching } = useAddSongToPlaylist();
 

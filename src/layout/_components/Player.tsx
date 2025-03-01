@@ -9,12 +9,12 @@ import {
 import SongQueue from "@/components/SongQueue";
 import useIdle from "@/hooks/useIdle";
 import appConfig from "@/config/app";
-import { useTheme } from "@/store";
-import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
+import { useThemeContext } from "@/stores";
+import PlayerContextProvider, { usePlayerContext } from "@/stores/PlayerContext";
 
 const PlayerContent = () => {
-  // store
-  const { isOnMobile } = useTheme();
+  // stores
+  const { isOnMobile } = useThemeContext();
   const { audioRef, setIsHasAudioEle } = usePlayerContext();
 
   useIdle(appConfig.focusDelay, isOnMobile);

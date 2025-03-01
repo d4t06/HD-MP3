@@ -1,4 +1,4 @@
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSelector } from "react-redux";
 import { usePlaylistDetail } from "@/hooks";
 import PLaylistInfo from "@/components/PlaylistInfo";
@@ -8,7 +8,7 @@ import { useMemo } from "react";
 import Footer from "@/layout/_components/Footer";
 
 export default function PlaylistDetail() {
-  // us store
+  // us stores
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   const isAdminPlaylist = useMemo(

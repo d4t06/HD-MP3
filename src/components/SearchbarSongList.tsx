@@ -1,5 +1,5 @@
 import useSetSong from "@/hooks/useSetSong";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 import SongList from "./SongList";
 
 type Props = {

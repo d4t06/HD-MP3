@@ -1,11 +1,11 @@
 import { NotFound } from "@/components";
 import AddSongForm from "@/components/dashboard/AddSongForm";
 import Title from "@/components/ui/Title";
-import { useAuthStore } from "@/store";
-import AddSongProvider from "@/store/dashboard/AddSongContext";
+import { useAuthContext } from "@/stores";
+import AddSongProvider from "@/stores/dashboard/AddSongContext";
 
 export default function AddSongPage() {
-	const { user } = useAuthStore();
+	const { user } = useAuthContext();
 
 	if (!user) return <NotFound />;
 

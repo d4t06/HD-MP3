@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { getSongs } from "@/services/appService";
-import { useSongContext, useToast } from "@/store";
+import { useSongContext, useToastContext } from "@/stores";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 
@@ -13,7 +13,7 @@ export default function useDashboardSong() {
   const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<DashboardSongTab>("All");
 
-  const { setErrorToast } = useToast();
+  const { setErrorToast } = useToastContext();
 
   const handleSubmit = async (e: FormEvent) => {
     try {

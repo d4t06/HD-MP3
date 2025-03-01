@@ -1,12 +1,6 @@
+import { specialThemes, themes } from "@/constants/themes";
+import { getLocalStorage } from "@/utils/appHelpers";
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
-import { themes, specialThemes } from "../constants/themes";
-import { getLocalStorage } from "../utils/appHelpers";
-
-type StateType = {
-  theme: ThemeType & { alpha: string };
-  isOnMobile: boolean;
-  isDev: boolean;
-};
 
 let initTheme = themes[3];
 
@@ -21,7 +15,7 @@ if (localStorageThemeId) {
   });
 }
 
-const initialState: StateType = {
+const initialState = {
   theme: {
     ...initTheme,
     alpha: initTheme.type === "light" ? "[#000]/5" : "[#fff]/5",
@@ -30,6 +24,8 @@ const initialState: StateType = {
   isOnMobile: window.innerWidth < 800,
   isDev: import.meta.env.DEV,
 };
+
+type StateType = typeof initialState;
 
 const enum REDUCER_ACTION_TYPE {
   SETTHEME,
@@ -58,7 +54,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
   }
 };
 
-const useThemeReducer = () => {
+const useTheme = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const setTheme = useCallback((theme: ThemeType) => {
@@ -73,30 +69,24 @@ const useThemeReducer = () => {
   return { state, setTheme };
 };
 
-type UseThemeContextType = ReturnType<typeof useThemeReducer>;
+type ContextType = ReturnType<typeof useTheme>;
 
-const initialContextState: UseThemeContextType = {
-  state: initialState,
-  setTheme: () => {},
-};
-
-const ThemeContext = createContext<UseThemeContextType>(initialContextState);
+const Context = createContext<ContextType | null>(null);
 
 const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  return (
-    <ThemeContext.Provider value={useThemeReducer()}>{children}</ThemeContext.Provider>
-  );
+  return <Context.Provider value={useTheme()}>{children}</Context.Provider>;
 };
 
-const useTheme = () => {
-  const {
-    state: { ...restState },
-    ...rest
-  } = useContext(ThemeContext);
+const useThemeContext = () => {
+  const ct = useContext(Context);
 
-  return { ...restState, ...rest };
+  if (!ct) throw new Error("ThemeProvider not provided");
+
+  const { state, ...rest } = ct;
+
+  return { ...state, rest };
 };
 
 export default ThemeProvider;
 
-export { ThemeContext, initialState, useTheme };
+export { initialState, useThemeContext };

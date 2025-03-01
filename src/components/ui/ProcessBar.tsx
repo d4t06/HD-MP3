@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { getLinearBg } from "@/utils/getLinearBg";
 
 type Props = {
@@ -6,7 +6,7 @@ type Props = {
 };
 
 function ProcessBar({ process }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const classes = {
     processLineBase: `h-[6px] w-full rounded-[99px] `,

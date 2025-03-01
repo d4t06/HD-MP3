@@ -6,16 +6,15 @@ import {
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 import { Image } from "..";
 import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { usePlayerContext } from "@/store";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { usePlayerContext, useThemeContext } from "@/stores";
 
 const MobileBottomPlayer = () => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { controlRef, isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);

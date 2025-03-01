@@ -1,11 +1,11 @@
-import { useAuthStore, useSongContext, useToast } from "@/store";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
 import usePlaylistActions from "./usePlaylistAction";
-import { useSongSelectContext } from "@/store/SongSelectContext";
+import { useSongSelectContext } from "@/stores/SongSelectContext";
 import { deleteSong } from "@/services/firebaseService";
 import { ModalRef } from "@/components/Modal";
 import { useDispatch } from "react-redux";
-import { addSongToQueue } from "@/store/songQueueSlice";
+import { addSongToQueue } from "@/stores/redux/songQueueSlice";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
@@ -14,14 +14,14 @@ type Props = {
 export default function useCheckBar({ modalRef }: Props) {
   const dispatch = useDispatch();
 
-  const { user } = useAuthStore();
+  const { user } = useAuthContext();
   const { selectedSongs, resetSelect } = useSongSelectContext();
   const { songs, setSongs } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
   // hooks
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
   const { removeSelectSongs } = usePlaylistActions();
 
   const deleteSelectedSong = async () => {

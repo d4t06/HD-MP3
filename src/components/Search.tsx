@@ -1,5 +1,5 @@
 import useSearch from "@/hooks/useSearch";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { getDisable, getHidden } from "@/utils/appHelpers";
 import {
   ArrowPathIcon,
@@ -12,7 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchbarSongList from "./SearchbarSongList";
 
 export default function Search() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const navigator = useNavigate();
 

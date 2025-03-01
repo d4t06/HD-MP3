@@ -1,13 +1,12 @@
-import { useSongContext } from "@/store/SongsContext";
+import { useSongContext, useToastContext } from "@/stores";
 import { useState } from "react";
-import { useToast } from "../store";
 
 // import usePlaylistActions from "./usePlaylistActions";
 import { deleteSong } from "@/services/firebaseService";
 
 export default function useSongItemActions() {
-  // store
-  const { setErrorToast, setSuccessToast } = useToast();
+  // stores
+  const { setErrorToast, setSuccessToast } = useToastContext();
   const { songs, setSongs } = useSongContext();
 
   // state

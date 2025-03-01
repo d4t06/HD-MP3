@@ -1,5 +1,5 @@
-import { usePlayerContext } from "@/store";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { usePlayerContext } from "@/stores";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -10,7 +10,7 @@ export default function useCountDown() {
 
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  // store user timer, decide add song event or not
+  // stores user timer, decide add song event or not
   const [isActive, setIsActive] = useState(0);
   const [countDown, setCountDown] = useState(0); // count down
 

@@ -1,16 +1,15 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "../components";
-import { useAuthActions } from "@/store/AuthContext";
-import { useTheme } from "../store";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
+import { useThemeContext } from "@/stores";
+import useAuthAction from "@/hooks/useAuthActiont";
 
 function Login() {
   const [loggedInUser] = useAuthState(auth);
-  const { logIn } = useAuthActions();
-
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
+  const { action } = useAuthAction();
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -18,7 +17,7 @@ function Login() {
 
   const handleLogIn = async () => {
     try {
-      await logIn();
+      await action("login");
     } catch (error) {
       console.log(error);
     }

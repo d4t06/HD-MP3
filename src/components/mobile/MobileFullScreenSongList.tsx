@@ -1,9 +1,9 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { MobileSongItem } from "..";
 import { MouseEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
-import SongSelectProvider from "@/store/SongSelectContext";
+import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
+import SongSelectProvider from "@/stores/SongSelectContext";
 
 type Props = {
   currentIndex: number;
@@ -36,7 +36,7 @@ const hideSibling = (ele: HTMLDivElement) => {
 
 export default function MobileFullScreenSongList({ currentIndex }: Props) {
   const dispatch = useDispatch();
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { queueSongs } = useSelector(selectSongQueue);
 
   const activeSong = (e: MouseEvent, queueId: string) => {

@@ -1,42 +1,25 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useTheme, useAuthStore, useUpload } from "../store";
-import { routes } from "../routes";
 import PlaylistList from "../components/PlaylistList";
 import MySongSongsList from "../components/MySongSongsList";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
 import Footer from "@/layout/_components/Footer";
+import { useAuthContext, useThemeContext } from "@/stores";
 
 export default function MySongsPage() {
-  // store
-  const { theme } = useTheme();
-  const { loading: userLoading, user } = useAuthStore();
-  //   const { currentSong } = useSelector();
-
-  // use hooks
-  const { status } = useUpload();
-  const navigate = useNavigate();
-  //   const { loading: initialLoading, errorMsg, initial } = useInitSong({});
+  // stores
+  const { theme } = useThemeContext();
+  const { user } = useAuthContext();
 
   const { isFetching, getSongAndPlaylist } = useGetSongPlaylist();
 
   // route guard
   useEffect(() => {
-    if (userLoading) return;
-
-    if (user) {
-      getSongAndPlaylist({ variant: "user", email: user.email });
-    } else {
-      navigate(routes.Home);
-    }
-  }, [userLoading]);
+    if (user) getSongAndPlaylist({ variant: "user", email: user.email });
+  }, []);
 
   return (
     <>
-      {/*      <div className="mb-[30px]  md:hidden">
-        <BackBtn variant="my-songs" />
-      </div>*/}
       <h3 className="font-playwriteCU leading-[2.2] mb-3 text-xl">Playlist</h3>
 
       <PlaylistList loading={isFetching} variant="my-song" />

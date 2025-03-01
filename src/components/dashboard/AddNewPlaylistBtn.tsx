@@ -1,13 +1,13 @@
 import { Button, Modal } from "@/components";
 import { ModalRef } from "@/components/Modal";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import AddItem from "@/components/modals/AddItem";
 import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 
 export default function AddNewPlaylistBtn() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const { actions, isFetching } = useDashboardPlaylistActions();
   const modalRef = useRef<ModalRef>(null);

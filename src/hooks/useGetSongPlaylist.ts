@@ -1,7 +1,7 @@
 import appConfig from "@/config/app";
 import { devPlaylists } from "@/constants/playlist";
 import { devSongs } from "@/constants/songs";
-import { useSongContext } from "@/store/SongsContext";
+import { useSongContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
 import { useState } from "react";
 import * as appService from "../services/appService";

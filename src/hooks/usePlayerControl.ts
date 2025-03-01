@@ -1,5 +1,5 @@
-import { selectAllPlayStatusStore, setPlayStatus } from "@/store/PlayStatusSlice";
-import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
+import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";

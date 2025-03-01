@@ -2,7 +2,7 @@ import { PlaylistList, SongList, Tabs } from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useGetSearchResult from "@/hooks/useGetSearchResult";
 import useSetSong from "@/hooks/useSetSong";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 
 export default function SearchResultPage() {
   const { isFetching, result, tab, setTab } = useGetSearchResult();

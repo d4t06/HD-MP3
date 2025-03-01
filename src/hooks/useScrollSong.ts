@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
-import { usePlayerContext } from "@/store";
+import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
+import { usePlayerContext } from "@/stores";
 import {
   PlayStatus,
   selectAllPlayStatusStore,
   setPlayStatus,
-} from "@/store/PlayStatusSlice";
+} from "@/stores/redux/PlayStatusSlice";
 
 const handleTouchPadScroll = () => {
   window.dispatchEvent(new Event("mousemove"));

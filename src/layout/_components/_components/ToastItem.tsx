@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ type MessageProps = {
 };
 
 export default function ToastItem({ className = "", ...props }: Props | MessageProps) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const variant = props.variant || "notify";
   const [isOpen, setIsOpen] = useState(false);

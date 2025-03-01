@@ -4,23 +4,17 @@ import {
   ComputerDesktopIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { routes } from "@/routes";
 import { Skeleton } from "@/components";
-import { useTheme, useAuthStore } from "@/store";
 import ScrollTop from "@/components/ScrollTop";
+import { useAuthContext, useThemeContext } from "@/stores";
 export default function Sidebar() {
-  // store
-  const { theme } = useTheme();
-  const { user, loading: userLoading } = useAuthStore();
+  // stores
+  const { theme } = useThemeContext();
+  const { user, loading: userLoading } = useAuthContext();
 
   // hooks
   const location = useLocation();
   const navigate = useNavigate();
-
-  //   const reset = () => {
-  //     dispatch(resetCurrentPlaylist());
-  //     resetSongPlaylistStore();
-  //   };
 
   const handleNavigateToDashboard = () => {
     navigate("/dashboard");
@@ -62,7 +56,7 @@ export default function Sidebar() {
               className={`${classes.link} ${
                 location.pathname === "/" ? classes.activeLink : "border-transparent"
               }`}
-              to={routes.Home}
+              to={"/"}
             >
               <div className={classes.navItem}>
                 <HomeIcon className={classes.icon} />
@@ -78,7 +72,7 @@ export default function Sidebar() {
                       ? classes.activeLink
                       : "border-transparent"
                   }`}
-                  to={routes.MySongs}
+                  to={"/mysongs"}
                 >
                   <div className={classes.navItem}>
                     <MusicalNoteIcon className={classes.icon} />

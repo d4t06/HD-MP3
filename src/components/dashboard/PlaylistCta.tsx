@@ -1,10 +1,10 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Button, ConfirmModal, Modal } from "..";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
 import { ModalRef } from "../Modal";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 import AddSongsToPlaylistModal from "./AddSongsToPlaylistModal";
 import AddItem from "../modals/AddItem";
 import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
@@ -12,7 +12,7 @@ import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistA
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
 export default function DashboardPlaylistCta() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const [modal, setModal] = useState<Modal | "">("");
 

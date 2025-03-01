@@ -1,7 +1,7 @@
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Button, PopupWrapper } from ".";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import usePersistState from "@/hooks/usePersistState";
 import { useEffect } from "react";
 
@@ -34,7 +34,7 @@ export default function AudioSetting({
   className,
   ...props
 }: Props & { className?: string }) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const { speed, volume, setVolume, setSpeed } = useAudioSetting(props);
 

@@ -1,12 +1,12 @@
 import { useDispatch } from "react-redux";
 
-import { useToast } from "@/store";
-import { addSongToQueue, removeSongFromQueue } from "@/store/songQueueSlice";
+import { useToastContext } from "@/stores";
+import { addSongToQueue, removeSongFromQueue } from "@/stores/redux/songQueueSlice";
 
 export default function useSongQueueAction() {
 	const dispatch = useDispatch();
 
-	const { setSuccessToast } = useToast();
+	const { setSuccessToast } = useToastContext();
 
 	type RemoveFromQueue = {
 		variant: "remove";

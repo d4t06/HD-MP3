@@ -1,11 +1,11 @@
 import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { AddLyricItem, LyricItem } from ".";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { LyricStatus } from "./LyricEditor";
 import { ModalRef } from "./Modal";
-// import { useLyricContext } from "@/store/LyricContext";
+// import { useLyricContext } from "@/stores/LyricContext";
 import { scrollIntoView } from "@/utils/appHelpers";
 
 type Props = {
@@ -28,7 +28,7 @@ function useLyricEditorList() {
 }
 
 export default function LyricEditorList({ controlRef, modalRef }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { baseLyricArr, lyrics, setSelectLyricIndex, song } = useEditLyricContext();
 
   const { activeLyricRef } = useLyricEditorList();

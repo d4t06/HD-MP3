@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import { useToast } from "@/store";
+import { useToastContext } from "@/stores";
 import ToastItem from "./_components/ToastItem";
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ToastPortal = ({ time = 6000, variant }: Props) => {
-  const { setToasts, toasts } = useToast();
+  const { setToasts, toasts } = useToastContext();
   const [removing, setRemoving] = useState("");
 
   const removeToast = (id: string) => {

@@ -1,21 +1,18 @@
 import { ChangeEvent, useRef, useCallback, useEffect } from "react";
 import { generateId } from "../utils/appHelpers";
-import { useSongContext } from "@/store";
+import { useAuthContext, useSongContext, useThemeContext, useToastContext, useUpload } from "@/stores";
 import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "../utils/appHelpers";
-import { useAuthStore } from "@/store/AuthContext";
-import { useTheme, useUpload, useToast } from "../store";
 import { parserSong } from "@/utils/parseSong";
 import { nanoid } from "nanoid";
-
 
 // event listener
 // await promise
 // object assign
 export default function useUploadSongs() {
   // stores
-  const { user } = useAuthStore();
-  const { isDev } = useTheme();
+  const { user } = useAuthContext();
+  const { isDev } = useThemeContext();
 
   const { songs, setSongs } = useSongContext();
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
@@ -27,9 +24,8 @@ export default function useUploadSongs() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-
   // hooks
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const finishAndClear = (sts: typeof status) => {
     if (!inputRef.current) return;
@@ -65,9 +61,7 @@ export default function useUploadSongs() {
       }
 
       // init song object
-      let data = initSongObject({
-        by: user.email as string,
-      });
+      let data = initSongObject({});
 
       let processSongsList: Song[] = [];
 
@@ -78,13 +72,13 @@ export default function useUploadSongs() {
             (s) =>
               s.singer === songObject.singer &&
               s.name === songObject.name &&
-              s.size === songObject.size,
+              s.size === songObject.size
           ) ||
           processSongsList.some(
             (s) =>
               s.singer === songObject.singer &&
               s.name === songObject.name &&
-              s.size === songObject.size,
+              s.size === songObject.size
           )
         );
       };
@@ -205,7 +199,7 @@ export default function useUploadSongs() {
         setErrorToast();
       }
     },
-    [user, songs],
+    [user, songs]
   );
 
   useEffect(() => {

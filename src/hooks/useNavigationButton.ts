@@ -1,4 +1,4 @@
-import { useNavigationContext } from "@/store/NavigationContext";
+import { useNavigationContext } from "@/stores";
 import { useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 

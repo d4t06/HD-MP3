@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthStore, useSongContext, useToast } from "../store";
+import { useAuthContext, useSongContext, useToastContext } from "../stores";
 import { generateId, initPlaylistObject } from "../utils/appHelpers";
 import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,12 +8,12 @@ import {
   selectCurrentPlaylist,
   setPlaylistSong,
   updateCurrentPlaylist,
-} from "@/store/currentPlaylistSlice";
+} from "@/stores/redux/currentPlaylistSlice";
 
 export default function usePlaylistAction() {
-  // store
+  // stores
   const dispatch = useDispatch();
-  const { user } = useAuthStore();
+  const { user } = useAuthContext();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
   const { playlists } = useSongContext();
 
@@ -21,7 +21,7 @@ export default function usePlaylistAction() {
   const [isFetching, setIsFetching] = useState(false);
 
   // hooks
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
   const navigate = useNavigate();
 
   type AddPlaylist = {

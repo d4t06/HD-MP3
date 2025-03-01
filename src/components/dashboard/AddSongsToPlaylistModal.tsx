@@ -1,5 +1,5 @@
 import useAddSongToPlaylistModal from "@/hooks/dashboard/useAddSongToPlaylistModal";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import {
 	ArrowPathIcon,
 	MagnifyingGlassIcon,
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export default function AddSongsToPlaylistModal({ closeModal }: Props) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const {
 		value,

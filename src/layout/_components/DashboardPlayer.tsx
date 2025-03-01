@@ -1,4 +1,4 @@
-import PlayerContextProvider, { usePlayerContext } from "@/store/PlayerContext";
+import PlayerContextProvider, { usePlayerContext } from "@/stores/PlayerContext";
 import { forwardRef, Ref, useEffect, useImperativeHandle, useMemo } from "react";
 import Image from "@/components/ui/Image";
 import {
@@ -6,16 +6,16 @@ import {
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import useAudioControl from "@/hooks/useAudioControl";
 import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { ControlRef } from "@/components/Control";
 
 type Props = { audioEle: HTMLAudioElement };
 
 const PlayerControl = forwardRef(function ({ audioEle }: Props, ref: Ref<ControlRef>) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
   const { status, handlePlayPause, pause } = useAudioControl({ audioEle });
@@ -86,7 +86,7 @@ const PlayerControl = forwardRef(function ({ audioEle }: Props, ref: Ref<Control
 });
 
 const PlayerContent = () => {
-  // store
+  // stores
   const { currentSongData, currentQueueId } = useSelector(selectSongQueue);
   const { audioRef, setIsHasAudioEle, controlRef } = usePlayerContext();
 

@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
-import { useTheme } from "@/store";
+import { NavigationProvider, useThemeContext } from "@/stores";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase";
 import {
@@ -10,25 +10,28 @@ import {
   Skeleton,
   Modal,
   SettingMenu,
-  PopupWrapper
+  PopupWrapper,
 } from "@/components";
 import {
   AdjustmentsHorizontalIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { useAuthActions } from "@/store/AuthContext";
 import { ModalRef } from "@/components/Modal";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
+import MyPopup, {
+  MyPopupContent,
+  MyPopupTrigger,
+  TriggerRef,
+} from "@/components/MyPopup";
 import MyTooltip from "@/components/MyTooltip";
 import Search from "@/components/Search";
 import NavigationButton from "@/components/NavigationButton";
-import NavigationProvider from "@/store/NavigationContext";
+import useAuthAction from "@/hooks/useAuthActiont";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
 function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   //  state
   const [scroll, setScroll] = useState(0);
@@ -41,7 +44,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const modalRef = useRef<ModalRef>(null);
 
   //  use hooks
-  const { logOut, logIn } = useAuthActions();
+  const { action } = useAuthAction();
 
   const openModal = (modal: HeaderModal) => {
     setModal(modal);
@@ -53,7 +56,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      await action("logout");
     } catch (error) {
       console.log("signOut error", { message: error });
     } finally {
@@ -65,7 +68,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   const handleLogIn = async () => {
     try {
       avatarTriggerRef.current?.close();
-      logIn();
+      await action("login");
     } catch (error) {
       console.log({ message: error });
     }

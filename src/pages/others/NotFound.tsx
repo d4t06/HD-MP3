@@ -1,8 +1,8 @@
+import { useThemeContext } from "@/stores";
 import { Link } from "react-router-dom";
-import { useTheme } from "@/store";
 
 export default function NotFound() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   return (
     <div
       className={`min-h-screen flex flex-col items-center justify-center ${theme.container} ${theme.text_color}`}

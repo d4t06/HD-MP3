@@ -1,5 +1,5 @@
 import { deleteSong } from "@/services/firebaseService";
-import { useSongContext, useToast } from "@/store";
+import { useSongContext, useToastContext } from "@/stores";
 import { useState } from "react";
 
 type DeleteSong = {
@@ -14,7 +14,7 @@ export default function useDashboardSongItemAction() {
 
 	const [isFetching, setIsFetching] = useState(false);
 
-	const { setSuccessToast, setErrorToast } = useToast();
+	const { setSuccessToast, setErrorToast } = useToastContext();
 
 	const actions = async (props: SongItemActionProps) => {
 		try {

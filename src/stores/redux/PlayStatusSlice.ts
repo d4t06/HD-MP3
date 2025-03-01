@@ -1,5 +1,5 @@
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 
 type Repeat = "one" | "all" | "no";
 type LyricSize = "small" | "medium" | "large";
@@ -74,7 +74,7 @@ const PlayStatusSlice = createSlice({
   },
 });
 
-// state ở đây là tất cả cá slice được thêm vào reducer (xem file store)
+// state ở đây là tất cả cá slice được thêm vào reducer (xem file stores)
 export const selectAllPlayStatusStore = (state: { playStatus: StateType }) =>
   state.playStatus;
 

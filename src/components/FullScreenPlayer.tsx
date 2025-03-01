@@ -1,14 +1,14 @@
 import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
-import { usePlayerContext } from "@/store";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { usePlayerContext } from "@/stores";
 import FullScreenPlayerHeader from "./FullScreenPlayerHeader";
 import FullScreenPlayerSongList from "./FullScreenPlayerSongList";
 
 export default function FullScreenPlayer() {
-  // use store
+  // use stores
   const { isOpenFullScreen, idle, activeTab } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);

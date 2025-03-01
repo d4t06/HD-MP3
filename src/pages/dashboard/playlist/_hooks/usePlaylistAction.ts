@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useSongContext, useToast } from "@/store";
+import { useSongContext, useToastContext } from "@/stores";
 import { generateId, initPlaylistObject } from "@/utils/appHelpers";
 import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 
 export default function usePlaylistAction() {
-	// store
+	// stores
 
 	const { setPlaylists } = useSongContext();
 
@@ -12,7 +12,7 @@ export default function usePlaylistAction() {
 	const [isFetching, setIsFetching] = useState(false);
 
 	// hooks
-	const { setErrorToast } = useToast();
+	const { setErrorToast } = useToastContext();
 
 	const handleAddPlaylist = async (playlistName: string) => {
 		try {

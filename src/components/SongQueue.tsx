@@ -1,5 +1,5 @@
 import { memo, useCallback } from "react";
-import { usePlayerContext, useTheme } from "../store";
+import { usePlayerContext, useThemeContext } from "../stores";
 import { Button, SongList } from ".";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,13 +7,13 @@ import {
   resetSongQueue,
   selectSongQueue,
   setCurrentQueueId,
-} from "@/store/songQueueSlice";
-import SongSelectProvider from "@/store/SongSelectContext";
+} from "@/stores/redux/songQueueSlice";
+import SongSelectProvider from "@/stores/SongSelectContext";
 
 function SongQueue() {
-  // store
+  // stores
   const dispatch = useDispatch();
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { isOpenSongQueue, setIsOpenSongQueue, controlRef } = usePlayerContext();
   const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
 

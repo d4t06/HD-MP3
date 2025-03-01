@@ -28,7 +28,7 @@ export default function ToastProvider({ children }: { children: ReactNode }) {
   return <ToastContext.Provider value={useToast()}>{children}</ToastContext.Provider>;
 }
 
-// define useToast Hook
+// define useToastContext Hook
 export const useToastContext = () => {
   const ct = useContext(ToastContext);
   if (!ct) throw new Error("Toast Context not provided")

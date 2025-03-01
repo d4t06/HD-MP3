@@ -10,7 +10,7 @@ import {
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 import { Image, Button } from "..";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { useEditForm } from "@/hooks";
 import ModalHeader from "./ModalHeader";
 import { getDisable } from "@/utils/appHelpers";
@@ -24,7 +24,7 @@ type Props = {
 };
 
 export default function EditSongModal({ song, admin, modalRef }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [inputFields, setInputFields] = useState({
     name: song.name,

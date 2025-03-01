@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import { SongList } from "../components";
 import CheckedBar from "./CheckedBar";
-import SongSelectProvider from "@/store/SongSelectContext";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
+import SongSelectProvider from "@/stores/SongSelectContext";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
 import useSetSong from "@/hooks/useSetSong";
 

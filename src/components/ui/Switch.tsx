@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 type Props = {
    cb: () => void;
@@ -8,7 +8,7 @@ type Props = {
 };
 
 export default function Switch({ cb, active, className, size = "default" }: Props) {
-   const { theme } = useTheme();
+   const { theme } = useThemeContext();
 
    const classes = {
       circle: `${

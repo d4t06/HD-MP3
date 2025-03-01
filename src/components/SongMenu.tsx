@@ -8,7 +8,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { ConfirmModal, EditSongModal, Modal, PopupWrapper } from ".";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { MenuList } from "./ui/MenuWrapper";
@@ -50,7 +50,7 @@ type QueueSongMenuProps = {
 };
 
 function QueueSongMenu({ index, song }: QueueSongMenuProps) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { close } = usePopoverContext();
 
   const { action } = useSongQueueAction();
@@ -99,7 +99,7 @@ type SysSongMenuProps = {
 };
 
 function SysSongMenu({ song }: SysSongMenuProps) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { close } = usePopoverContext();
 
   const addSongToNewPlaylistModalRef = useRef<ModalRef>(null);
@@ -156,7 +156,7 @@ type UserSongMenuProps = {
 type Modal = "edit" | "delete";
 
 function UserSongMenu({ song }: UserSongMenuProps) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { close } = usePopoverContext();
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -271,8 +271,8 @@ type Props = {
 };
 
 function SongMenu({ song, index, variant }: Props) {
-  // store
-  const { theme } = useTheme();
+  // stores
+  const { theme } = useThemeContext();
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);
 

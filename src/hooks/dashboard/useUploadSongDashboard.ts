@@ -2,7 +2,7 @@ import { ChangeEvent, ElementRef, useRef, useState } from "react";
 import { generateId } from "@/utils/appHelpers";
 import { mySetDoc, uploadFile } from "@/services/firebaseService";
 import { initSongObject } from "@/utils/appHelpers";
-import { useToast } from "@/store";
+import { useToastContext } from "@/stores";
 import { parserSong } from "@/utils/parseSong";
 
 export default function useUploadSongDashboard() {
@@ -13,7 +13,7 @@ export default function useUploadSongDashboard() {
 	const inputRef = useRef<ElementRef<"input">>(null);
 
 	// hooks
-	const { setErrorToast, setSuccessToast } = useToast();
+	const { setErrorToast, setSuccessToast } = useToastContext();
 
 	const clearInput = () => {
 		if (inputRef.current) inputRef.current.value = "";

@@ -1,11 +1,11 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { Button } from "@/components";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebase";
 import { useNavigate } from "react-router-dom";
 
 function Unauthorized() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const navigate = useNavigate();
 
   const handleExit = async () => {

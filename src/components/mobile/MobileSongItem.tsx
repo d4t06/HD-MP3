@@ -1,7 +1,7 @@
 import { MouseEventHandler, useMemo } from "react";
 import { CheckIcon, StopIcon } from "@heroicons/react/24/outline";
 import Image from "@/components/ui/Image";
-import { useSongSelectContext } from "@/store/SongSelectContext";
+import { useSongSelectContext } from "@/stores/SongSelectContext";
 
 type BaseProps = {
   song: Song;

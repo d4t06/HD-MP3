@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { getLinearBg } from "@/utils/getLinearBg";
 import { RefObject, useEffect, useRef, useState } from "react";
 
@@ -10,7 +10,7 @@ type Props = {
 type Status = "playing" | "paused" | "waiting" | "error";
 
 export default function useAudioControl({ audioEle, progressLineRef }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const [status, setStatus] = useState<Status>("paused");
   const [isClickPlay, setIsClickPlay] = useState(false);
 

@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { FC, ReactNode } from "react";
 import Button from "./Button";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 interface Props {
   className?: string;
   theme?: ThemeType;
@@ -11,7 +11,7 @@ interface Props {
 
 const Empty: FC<Props> = ({ className, onClick, children }) => {
 
-  const {theme} = useTheme()
+  const {theme} = useThemeContext()
 
   return (
     <div

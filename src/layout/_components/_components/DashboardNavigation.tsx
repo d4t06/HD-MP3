@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { routeList } from "../DashboardSidebar";
 import { Link } from "react-router-dom";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 export default function DashboardNavigation() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const [isOpen, setIsOpen] = useState(false);
 

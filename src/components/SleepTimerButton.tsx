@@ -1,5 +1,5 @@
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { useRef } from "react";
 import { Modal, TimerModal } from ".";
 import useCountDown from "@/hooks/useCountDown";
@@ -7,7 +7,7 @@ import { ModalRef } from "./Modal";
 import MyTooltip from "./MyTooltip";
 
 export default function SleepTimerButton() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const modalRef = useRef<ModalRef>(null);
 

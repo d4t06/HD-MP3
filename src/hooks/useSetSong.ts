@@ -1,5 +1,5 @@
-import { setPlayStatus } from "@/store/PlayStatusSlice";
-import { selectSongQueue, setCurrentQueueId, setQueue } from "@/store/songQueueSlice";
+import { setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue, setCurrentQueueId, setQueue } from "@/stores/redux/songQueueSlice";
 // import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";

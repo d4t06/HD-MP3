@@ -1,7 +1,7 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useGetSongLyric } from ".";
 import { scrollIntoView } from "@/utils/appHelpers";
-import { usePlayerContext } from "@/store";
+import { usePlayerContext } from "@/stores";
 
 interface Props {
   active: boolean;

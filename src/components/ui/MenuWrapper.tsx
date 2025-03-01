@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { ReactNode } from "react";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 export function MenuWrapper({ children, className = "py-2" }: Props) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	return (
 		<div className={`rounded-md ${theme.modal_bg} text-white ${className}`}>

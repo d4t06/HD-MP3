@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
-// import { useTheme } from "../store";
+// import { useThemeContext } from "../stores";
 import { PlaylistItem, Skeleton } from ".";
 // import { useMemo } from "react";
 // import { formatTime } from "../utils/appHelpers";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import PlaylistInfoCta from "./PlaylistInfoCta";
 import DashboardPlaylistCta from "./dashboard/PlaylistCta";
 
@@ -27,8 +27,8 @@ type DashboardPlaylist = {
 type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
 export default function PLaylistInfo({ loading, ...props }: Props) {
-  // store
-  // const { isOnMobile } = useTheme();
+  // stores
+  // const { isOnMobile } = useThemeContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);

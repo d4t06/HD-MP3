@@ -1,4 +1,4 @@
-import { selectAllPlayStatusStore } from "@/store/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { RefObject, useEffect } from "react";
 import { useSelector } from "react-redux";
 export default function useBgImage({

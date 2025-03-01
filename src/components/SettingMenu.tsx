@@ -3,13 +3,13 @@ import {
   PaintBrushIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store/ThemeContext";
 
 import PopupWrapper from "./ui/PopupWrapper";
 import { useLocalStorage } from "../hooks";
 import { Switch } from ".";
 import { useDispatch } from "react-redux";
-import { setPlayStatus } from "@/store/PlayStatusSlice";
+import { setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { useThemeContext } from "@/stores";
 
 type Modal = "theme" | "info";
 
@@ -19,7 +19,7 @@ type Props = {
 };
 
 export default function SettingMenu({ openModal, variant }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const dispatch = useDispatch();
 
   const handleOpenModal = (modal: Modal) => {

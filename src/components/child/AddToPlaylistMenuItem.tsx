@@ -1,4 +1,4 @@
-import { useSongContext, useTheme } from "@/store";
+import { useSongContext, useThemeContext } from "@/stores";
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { PopupWrapper } from "..";
 import { MenuList } from "../ui/MenuWrapper";
@@ -19,7 +19,7 @@ export default function AddToPlaylistMenuItem({
 	addSongToPlaylistModalRef,
 	song,
 }: Props) {
-	const { isOnMobile, theme } = useTheme();
+	const { isOnMobile, theme } = useThemeContext();
 	const { playlists } = useSongContext();
 	const { close } = usePopoverContext();
 

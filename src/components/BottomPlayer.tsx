@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
-import { useTheme } from "@/store/ThemeContext";
 import { useLocation } from "react-router-dom";
 
 import { Control } from ".";
@@ -9,17 +8,17 @@ import SleepTimerButton from "./SleepTimerButton";
 import MyTooltip from "./MyTooltip";
 import SongInfo from "./SongInfo";
 import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { VolumeButton } from "./VolumeButton";
 import useThemeBgImage from "@/hooks/useThemeBgImage";
-import { usePlayerContext } from "@/store";
+import { usePlayerContext, useThemeContext } from "@/stores";
 import { getDisable } from "@/utils/appHelpers";
 
 export default function BottomPlayer() {
   const { audioRef, idle } = usePlayerContext();
   if (!audioRef.current) throw new Error("BottomPlayer !audioRef.current");
 
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const {
     isOpenFullScreen,
     controlRef,

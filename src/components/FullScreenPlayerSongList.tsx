@@ -1,11 +1,11 @@
 import { useScrollSong } from "@/hooks";
 import useFunctionDebounce from "@/hooks/useFunctionDebounce";
-import { usePlayerContext, useTheme } from "@/store";
+import { usePlayerContext, useThemeContext } from "@/stores";
 import { Button, LyricsList, SongThumbnail } from ".";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import LyricContextProvider from "@/store/LyricContext";
+import LyricContextProvider from "@/stores/LyricContext";
 import Karaoke from "./Karaoke";
-import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useMemo } from "react";
 
@@ -14,7 +14,7 @@ export default function FullScreenPlayerSongList() {
 
 	const { activeTab, isOpenFullScreen, idle } = usePlayerContext();
 
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 	const { currentSongData } = useSelector(selectSongQueue);
 
 	const { queueSongs, currentQueueId } = useSelector(selectSongQueue);

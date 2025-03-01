@@ -3,10 +3,10 @@ import { Button, Empty, NotFound } from "..";
 import { useEffect } from "react";
 import useAddSong from "@/pages/dashboard/song/_hooks/useAddSong";
 import Input from "../ui/Input";
-import { useAddSongContext } from "@/store/dashboard/AddSongContext";
+import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import AddSongFile from "./AddSongFile";
 import SingerSelect from "./SingerSelect";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { CheckIcon } from "@heroicons/react/20/solid";
 
 type Add = {
@@ -37,7 +37,7 @@ export default function AddSongForm(props: Add | Edit) {
 	const { setSongData, songData, songFile } = useAddSongContext();
 	const { updateSongData } = useAddSong();
 
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	useEffect(() => {
 		setSongData(initSongData(props));

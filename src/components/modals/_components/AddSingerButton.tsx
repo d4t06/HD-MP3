@@ -4,7 +4,7 @@ import MyPopup, {
 	MyPopupTrigger,
 	TriggerRef,
 } from "@/components/MyPopup";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import useAddSingerButton from "../_hooks/useAddSingerButton";
@@ -16,7 +16,7 @@ type Props = {
 };
 
 export default function AddSingerButton({ setSinger }: Props) {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const { isFetching, isEmpty, searchResult, value, setValue } = useAddSingerButton();
 

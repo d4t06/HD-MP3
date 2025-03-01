@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useToast } from "../store";
+import { useToastContext } from "../stores";
 import { mySetDoc } from "@/services/firebaseService";
 
 export default function useAddPlaylistMenuItem() {
-	// store
-	const { setErrorToast, setSuccessToast } = useToast();
+	// stores
+	const { setErrorToast, setSuccessToast } = useToastContext();
 
 	// state
 	const [isFetching, setIsFetching] = useState(false);

@@ -1,12 +1,12 @@
 import { useSelector } from "react-redux";
 import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { PlaylistSkeleton } from "./skeleton";
 import { useMemo, useRef } from "react";
 // import useAdminPlaylistActions from "@/hooks/useAdminPlaylistActions";
 import { ModalRef } from "./Modal";
-import { selectSongQueue } from "@/store/songQueueSlice";
-import { useSongContext } from "@/store/SongsContext";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { useSongContext } from "@/stores";
 
 type Props = {
   className?: string;
@@ -21,8 +21,8 @@ type ExtendProps = {
 };
 
 export default function PlaylistList({ className = "", ...props }: Props | ExtendProps) {
-  // store
-  const { theme } = useTheme();
+  // stores
+  const { theme } = useThemeContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { playlists, sysSongPlaylist } = useSongContext();
 

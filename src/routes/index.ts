@@ -7,77 +7,85 @@ import {
   PlaylistDetail,
   MySongs,
   DashboardSongLyric,
-  SongLyric,
   DashboardPlaylistDetail,
   DashboardPlaylist,
   DashboardSong,
+  Login,
+  Unauthorized,
 } from "../pages";
 import SearchResultPage from "@/pages/SearchResult";
+import PrimaryLayout from "@/layout/PrimaryLayout";
 
-const routes = {
-  Home: "/",
-  Search: "/search",
-  Dashboard: "/dashboard",
-  DashboardPlaylist: "/dashboard/playlists",
-  DashboardSong: "/dashboard/songs",
-  DashboardSinger: "/dashboard/singers",
-  DashboardGenre: "/dashboard/genres",
-  DashboardPlaylistDetail: "/dashboard/playlists/:id",
-  DashboardSongLyric: "/dashboard/lyric/:id",
+const pubicRouteMap = {
+  home: "/",
+  search: "/search",
+  playlist: "/playlist/:id",
+  login: "/login",
+  unauthorized: "/unauthorized",
+};
 
-  MySongs: "/mysongs",
-  Favorite: "/favorite",
-  Playlist: "/playlist/:id",
-  Lyric: "/mysongs/lyric/:id",
+const protectedRouteMap = {
+  mySongs: "/mysongs",
+  favorite: "/favorite",
+};
+
+const privateRouteMap = {
+  dashboard: "/dashboard",
+  playlist: "/dashboard/playlists",
+  song: "/dashboard/songs",
+  addSong: "/dashboard/addSong",
+  singer: "/dashboard/singers",
+  genre: "/dashboard/genres",
+  playlistDetail: "/dashboard/playlists/:id",
+  songLyric: "/dashboard/lyric/:id",
 };
 
 export type PlaylistParamsType = {
   id: string;
 };
-
 const publicRoutes = [
-  { path: routes.Home, component: Home, layout: "" },
-  { path: routes.Search, component: SearchResultPage, layout: "" },
+  { path: pubicRouteMap.home, component: Home, layout: PrimaryLayout },
+  { path: pubicRouteMap.search, component: SearchResultPage, layout: PrimaryLayout },
+  { path: pubicRouteMap.login, component: Login, layout: "" },
+  { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
+];
 
-  { path: routes.MySongs, component: MySongs, layout: "" },
-  { path: routes.Playlist, component: PlaylistDetail, layout: "" },
-
-  { path: routes.Lyric, component: SongLyric, layout: "" },
+const protectedRoutes = [
+  { path: protectedRouteMap.mySongs, component: MySongs, layout: PrimaryLayout },
 ];
 
 const privateRoutes = [
   {
-    path: routes.Dashboard,
+    path: privateRouteMap.dashboard,
     component: Dashboard,
     layout: DashBoardLayout,
-    title: "Dashboard",
   },
   {
-    path: routes.DashboardPlaylist,
+    path: privateRouteMap.playlist,
     component: DashboardPlaylist,
     layout: DashBoardLayout,
-    title: "Playlist",
   },
   {
-    path: routes.DashboardPlaylistDetail,
+    path: privateRouteMap.playlistDetail,
     component: DashboardPlaylistDetail,
     layout: DashBoardLayout,
-    title: "Playlist Detail",
   },
   {
-    path: routes.DashboardSong,
+    path: privateRouteMap.song,
     component: DashboardSong,
     layout: DashBoardLayout,
-    title: "Song",
   },
 
-    {
-    path: '/dashboard/songs/add',
+  {
+    path: privateRouteMap.addSong,
     component: AddSongPage,
     layout: DashBoardLayout,
-    title: "Add song",
   },
-  { path: routes.DashboardSongLyric, component: DashboardSongLyric, layout: DashBoardLayout },
+  {
+    path: privateRouteMap.songLyric,
+    component: DashboardSongLyric,
+    layout: DashBoardLayout,
+  },
 ];
 
-export { publicRoutes, privateRoutes, routes };
+export { publicRoutes, privateRoutes, protectedRoutes };

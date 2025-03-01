@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import Image from "./ui/Image";
 import playingIcon from "../assets/icon-playing.gif";
 import { Empty } from ".";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 interface Props {
   data: Playlist;
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const classes = {
     button: `rounded-full text-[#201f1f] p-[4px] hover:bg-${theme?.alpha}`,

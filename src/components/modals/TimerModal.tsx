@@ -1,5 +1,5 @@
 import ModalHeader from "./ModalHeader";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 type Props = {
   closeModal: () => void;
@@ -9,7 +9,7 @@ type Props = {
 const COUNT_LIST = [3, 5, 7, 10];
 
 function TimerModal({ closeModal, active }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const classes = {
     button: `bg-[#fff]/5 ${theme.content_hover_bg} ml-2 mt-2 px-3  py-1 rounded-[99px]`,

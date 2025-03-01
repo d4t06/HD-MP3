@@ -1,9 +1,9 @@
-import { useSongContext, useUpload } from "@/store";
+import { useSongContext, useUpload } from "@/stores";
 import { useMemo } from "react";
 import CheckedBar from "./CheckedBar";
 import { Skeleton, SongList } from ".";
 import { SongItemSkeleton } from "./skeleton";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 import useSetSong from "@/hooks/useSetSong";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import {
   ElementRef,
   Ref,
@@ -22,7 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
 import { ModalRef } from "./Modal";
-import { useEditLyricContext } from "@/store/EditLyricContext";
+import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { useLyricEditorAction } from "@/hooks/useLyricEditorAction";
 import InputModal from "./modals/InputModal";
 import ModalHeader from "./modals/ModalHeader";
@@ -42,7 +42,7 @@ export type LyricEditorControlRef = {
 type Modal = "base-lyric" | "tutorial";
 
 function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const { baseLyric, setBaseLyric, setIsChanged, song, lyrics } = useEditLyricContext();
 
   const [modal, setModal] = useState<Modal | "">("");

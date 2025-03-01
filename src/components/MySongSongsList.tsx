@@ -1,17 +1,17 @@
 import { useMemo } from "react";
-import { useSongContext, useUpload } from "../store";
+import { useSongContext, useUpload } from "../stores";
 import { SongList } from ".";
 import Skeleton, { SongItemSkeleton } from "./skeleton";
 import CheckedBar from "./CheckedBar";
 import useSetSong from "@/hooks/useSetSong";
-import SongSelectProvider from "@/store/SongSelectContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
 
 type Props = {
   initialLoading: boolean;
 };
 
 export default function MySongSongsList({ initialLoading }: Props) {
-  //   store
+  //   stores
   const { songs } = useSongContext();
 
   // hooks

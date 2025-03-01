@@ -1,8 +1,8 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { ReactNode } from "react";
 
 export default function SongLyricLayout({ children }: { children: ReactNode }) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   return (
     <div

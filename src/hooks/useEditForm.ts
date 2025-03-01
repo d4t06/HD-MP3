@@ -1,7 +1,7 @@
 import { ModalRef } from "@/components/Modal";
 import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
-import { useAuthStore, useSongContext, useToast } from "@/store";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
 import { RefObject, useEffect, useState } from "react";
 
@@ -18,7 +18,7 @@ type Props = {
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
 export default function useEditForm({ song, inputFields, modalRef }: Props) {
-  const { user } = useAuthStore();
+  const { user } = useAuthContext();
   const { updateSong } = useSongContext();
 
   const [validName, setValidName] = useState(!!song.name);
@@ -33,7 +33,7 @@ export default function useEditForm({ song, inputFields, modalRef }: Props) {
   const [imageURLFromLocal, setImageURLFromLocal] = useState("");
   const [imageFileFromLocal, setImageFileFromLocal] = useState<File>();
 
-  const { setErrorToast, setSuccessToast } = useToast();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const handleSubmit = async () => {
     if (!user) return;

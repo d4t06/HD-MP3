@@ -8,13 +8,13 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Button, NotFound, Tabs } from "@/components";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 
 export default function DashboardSong() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 
 	const { handleSubmit, isFetching, setValue, songs, value, setTab, tab } =
 		useDashboardSong();

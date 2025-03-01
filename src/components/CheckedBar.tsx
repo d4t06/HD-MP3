@@ -1,11 +1,11 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
 import { Button, ConfirmModal, Modal } from ".";
-import { useSongContext, useTheme } from "../store";
+import { useSongContext, useThemeContext } from "../stores";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import CheckedCta from "./CheckedCta";
 import { useSelector } from "react-redux";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { useSongSelectContext } from "@/store/SongSelectContext";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { useSongSelectContext } from "@/stores/SongSelectContext";
 import useCheckBar from "@/hooks/useCheckBar";
 import { ModalRef } from "./Modal";
 
@@ -27,8 +27,8 @@ export default function CheckedBar({
 }: Props & {
   children?: ReactNode;
 }) {
-  // store
-  const { theme } = useTheme();
+  // stores
+  const { theme } = useThemeContext();
   const { isChecked, selectedSongs, selectAllSong, resetSelect } = useSongSelectContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
   const { songs } = useSongContext();

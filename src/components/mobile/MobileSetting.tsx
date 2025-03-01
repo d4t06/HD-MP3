@@ -4,21 +4,21 @@ import {
   PaintBrushIcon,
 } from "@heroicons/react/24/outline";
 import { AppInfo, Appearance, Avatar, ConfirmModal, Modal } from "..";
-import { useAuthStore, useTheme } from "@/store";
+import { useAuthContext, useThemeContext } from "@/stores";
 import { MobileLinkSkeleton } from "../skeleton";
 import { useMemo, useRef, useState } from "react";
-import { useAuthActions } from "@/store/AuthContext";
 import { ModalRef } from "../Modal";
+import useAuthAction from "@/hooks/useAuthActiont";
 
 type Modal = "theme" | "info" | "logout";
 
 export default function MobileSetting() {
-  const { theme } = useTheme();
-  const { loading: userLoading, user } = useAuthStore();
+  const { theme } = useThemeContext();
+  const { loading: userLoading, user } = useAuthContext();
   const modalRef = useRef<ModalRef>(null);
 
   //    hooks
-  const { logOut } = useAuthActions();
+  const { action } = useAuthAction();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -31,9 +31,9 @@ export default function MobileSetting() {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      await action("logout");
     } catch (error) {
-      console.log("signOut error", { messsage: error });
+      console.log("signOut error", { message: error });
     } finally {
       closeModal();
     }

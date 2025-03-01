@@ -1,13 +1,13 @@
 import { FC, ReactNode } from "react";
-import { useTheme } from "@/store/ThemeContext";
 import Sidebar from "./_components/Sidebar";
+import { useThemeContext } from "@/stores";
 
 interface Props {
   children: ReactNode;
 }
 
 const NoPlayer: FC<Props> = ({ children }) => {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   return (
     <>

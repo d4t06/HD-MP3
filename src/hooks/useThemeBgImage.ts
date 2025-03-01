@@ -1,8 +1,8 @@
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { ElementRef, useEffect, useRef } from "react";
 
 export default function useThemeBgImage() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const containerRef = useRef<ElementRef<"div">>(null);
 

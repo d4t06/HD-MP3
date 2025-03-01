@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../store";
+import { useThemeContext } from "../stores";
 import { ChevronLeftIcon } from "@heroicons/react/20/solid";
 
 type Props = {
@@ -7,7 +7,7 @@ type Props = {
 };
 
 function BackBtn({ variant }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const navigate = useNavigate();
 
   const handleNavigate = () => {

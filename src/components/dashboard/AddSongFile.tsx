@@ -1,11 +1,11 @@
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { Button } from "..";
-import { useAddSongContext } from "@/store/dashboard/AddSongContext";
+import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { ChangeEvent, useRef } from "react";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 
 export default function AddSongFile() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 	const { setSongFile } = useAddSongContext();
 
 	const inputRef = useRef<HTMLInputElement>(null);

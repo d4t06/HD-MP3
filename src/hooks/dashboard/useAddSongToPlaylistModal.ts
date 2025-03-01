@@ -1,5 +1,5 @@
 import { searchSong } from "@/services/appService";
-import { useSongSelectContext, useToast } from "@/store";
+import { useSongSelectContext, useToastContext } from "@/stores";
 import { FormEvent, useState } from "react";
 import useDashboardPlaylistActions from "./useDashboardPlaylistActions";
 
@@ -11,7 +11,7 @@ export default function useAddSongToPlaylistModal() {
 	const { selectedSongs, selectSong } = useSongSelectContext();
 
 	const { actions, isFetching: actionFetching } = useDashboardPlaylistActions();
-	const { setErrorToast } = useToast();
+	const { setErrorToast } = useToastContext();
 
 	const handleSubmit = async (e: FormEvent) => {
 		try {

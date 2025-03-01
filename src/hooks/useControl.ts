@@ -1,6 +1,6 @@
 import { MouseEvent, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useAuthStore, usePlayerContext, useTheme, useToast } from "../store";
+import { useAuthContext, usePlayerContext, useThemeContext, useToastContext } from "../stores";
 
 import { formatTime, getLocalStorage, setLocalStorage } from "../utils/appHelpers";
 
@@ -9,9 +9,9 @@ import {
   PlayStatus,
   selectAllPlayStatusStore,
   setPlayStatus,
-} from "@/store/PlayStatusSlice";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { selectSongQueue, setCurrentQueueId } from "@/store/songQueueSlice";
+} from "@/stores/redux/PlayStatusSlice";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
 import usePlayerControl from "./usePlayerControl";
 import { getLinearBg } from "@/utils/getLinearBg";
 
@@ -19,10 +19,10 @@ export default function useAudioEvent() {
   const { isOpenFullScreen, audioRef } = usePlayerContext();
   if (!audioRef.current) throw new Error("Use Control audioRef.current is undefined");
 
-  // use store
+  // use stores
   const dispatch = useDispatch();
-  const { theme } = useTheme();
-  const { user } = useAuthStore();
+  const { theme } = useThemeContext();
+  const { user } = useAuthContext();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
   const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
     selectAllPlayStatusStore,
@@ -51,7 +51,7 @@ export default function useAudioEvent() {
 
   // use hook
   const location = useLocation();
-  const { setErrorToast } = useToast();
+  const { setErrorToast } = useToastContext();
   const { currentQueueId, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
     usePlayerControl();
 

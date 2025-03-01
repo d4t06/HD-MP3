@@ -4,10 +4,10 @@ import {
    ref,
    uploadBytes,
 } from "firebase/storage";
-import { db, store } from "../firebase";
+import { db, stores } from "../firebase";
 import { deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
-type collectionVariant = "songs" | "playlist" | "lyrics" | "users";
+type collectionVariant = "songs" | "playlist" | "lyrics" | "users" | "granted_accounts";
 
 const isDev: boolean = import.meta.env.DEV;
 
@@ -73,7 +73,7 @@ export const uploadFile = async ({
       namePrefix.replace("@gmail.com", "") +
       "_" +
       file.name.replaceAll(" ", "").toLowerCase();
-   const fileRef = ref(store, `${folder + fileName}`);
+   const fileRef = ref(stores, `${folder + fileName}`);
 
    const fileRes = await uploadBytes(fileRef, file);
    const fileURL = await getDownloadURL(fileRes.ref);
@@ -100,7 +100,7 @@ export const uploadBlob = async ({
    // define ref
    // try {
    const fileName = songId + "_stock";
-   const fileRef = ref(store, `${folder + fileName}`);
+   const fileRef = ref(stores, `${folder + fileName}`);
    const fileRes = await uploadBytes(fileRef, blob);
    const fileURL = await getDownloadURL(fileRes.ref);
 
@@ -119,7 +119,7 @@ export const deleteFile = async ({
 }) => {
    if (isDev) console.log(msg ?? ">>> api: delete file");
 
-   const fileRef = ref(store, filePath);
+   const fileRef = ref(stores, filePath);
    await deleteObject(fileRef);
 };
 

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
 import usePlaylistAction from "@/hooks/usePlaylistAction";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { Button } from "..";
 import ModalHeader from "./ModalHeader";
 
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function EditPlaylist({ playlist, close }: Props) {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
   const inputRef = useRef<HTMLInputElement>(null);
   const [playlistName, setPlaylistName] = useState<string>("");
   const [isAbleToSubmit, setIsAbleToSubmit] = useState(false);

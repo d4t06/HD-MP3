@@ -3,13 +3,13 @@ import useGetPlaylist from "@/hooks/useGetPlaylist";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import Table from "@/components/ui/Table";
 import { useSelector } from "react-redux";
-import { selectCurrentPlaylist } from "@/store/currentPlaylistSlice";
-import { useTheme } from "@/store";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { useThemeContext } from "@/stores";
 // import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
 
 export default function DashboardPlaylistDetail() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   //   hooks
   const { isFetching } = useGetPlaylist();

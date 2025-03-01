@@ -1,5 +1,5 @@
-import { usePlayerContext, useTheme } from "@/store";
-import { selectSongQueue } from "@/store/songQueueSlice";
+import { usePlayerContext, useThemeContext } from "@/stores";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
 import { Tabs } from ".";
 import MyTooltip from "./MyTooltip";
@@ -13,7 +13,7 @@ import FullScreenPlayerSetting from "./child/FullScreenPlayerSetting";
 import { useNavigate } from "react-router-dom";
 
 export default function FullScreenPlayerHeader() {
-	const { theme } = useTheme();
+	const { theme } = useThemeContext();
 	const { activeTab, setActiveTab, idle, setIsOpenFullScreen } = usePlayerContext();
 
 	const { currentSongData } = useSelector(selectSongQueue);

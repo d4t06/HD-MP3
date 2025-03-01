@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useTheme } from "@/store";
+import { useThemeContext } from "@/stores";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 
 export const routeList = [
@@ -41,7 +41,7 @@ export const routeList = [
 ];
 
 export default function DashBoardSidebar() {
-  const { theme } = useTheme();
+  const { theme } = useThemeContext();
 
   const [isOpen, setIsOpen] = useState(false);
 
