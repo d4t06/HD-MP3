@@ -4,16 +4,12 @@ type User = {
   display_name: string;
   email: string;
   photoURL: string;
-  playlist_ids: string[];
+  playlists_id: string[];
   song_ids: string[];
-  like_song_ids: string[];
+  like_songs_id: string[];
   play_history: string[];
   role: string;
-  song_count: number;
-  latest_seen: Timestamp;
 };
-
-type SongIn = "" | "favorite" | "admin" | "user" | `playlist_${string}`;
 
 type Song = {
   id: string;
@@ -23,14 +19,18 @@ type Song = {
   image_file_path: string;
   song_url: string;
   song_file_path: string;
-  by: string;
+  owner_email: string;
   duration: number;
   lyric_id: string;
   blurhash_encode: string;
   size: number;
   song_in: SongIn;
   queue_id: string;
+  updated_at: Timestamp;
+  created_at: Timestamp;
 };
+
+type SongSchema = Omit<Song, "id">;
 
 type ParserSong = {
   name: string;
@@ -43,8 +43,10 @@ type Playlist = {
   name: string;
   image_url: string;
   blurhash_encode: string;
-  song_ids: Array<string>;
-  by: "admin" | string;
+  song_ids: string[];
+  owner_email: string;
+  updated_at: Timestamp;
+  created_at: Timestamp;
 };
 
 type SongLyric = {

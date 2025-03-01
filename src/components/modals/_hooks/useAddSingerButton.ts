@@ -5,7 +5,7 @@ import useDebounce from "@/hooks/useDebounce";
 // import { nanoid } from "nanoid";
 import { sleep } from "@/utils/appHelpers";
 
-export default function useAddSingerButton() {
+export default function useSingerSearch() {
 	const [value, setValue] = useState("");
 	const [isFetching, setIsFetching] = useState(false);
 	const [searchResult, SetSearchResult] = useState<String[]>([]);

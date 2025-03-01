@@ -1,3 +1,4 @@
+import AddSongPage from "@/pages/dashboard/song/AddSong";
 import DashBoardLayout from "../layout/DashBoardLayout";
 
 import {
@@ -68,6 +69,13 @@ const privateRoutes = [
     component: DashboardSong,
     layout: DashBoardLayout,
     title: "Song",
+  },
+
+    {
+    path: '/dashboard/songs/add',
+    component: AddSongPage,
+    layout: DashBoardLayout,
+    title: "Add song",
   },
   { path: routes.DashboardSongLyric, component: DashboardSongLyric, layout: DashBoardLayout },
 ];

@@ -3,6 +3,7 @@ export { default as Image } from "./ui/Image";
 export { default as Empty } from "./ui/Empty";
 export { default as PopupWrapper } from "./ui/PopupWrapper";
 export { default as LinkItem } from "./ui/LinkItem";
+export { default as NotFound } from "./ui/NotFound";
 export { default as Skeleton } from "./skeleton/index";
 export { default as LyricItem } from "./child/LyricItem";
 export { default as PlayPauseButton } from "./child/PlayPauseButton";

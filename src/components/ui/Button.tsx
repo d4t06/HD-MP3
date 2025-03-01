@@ -8,8 +8,9 @@ import {
 } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useTheme } from "@/store";
 
-const buttonVariant = cva("inline-flex font-[500] items-center ", {
+const buttonVariant = cva("inline-flex space-x-1 font-[500] items-center ", {
   variants: {
     variant: {
       default: "",
@@ -18,11 +19,20 @@ const buttonVariant = cva("inline-flex font-[500] items-center ", {
       outline: `border rounded-full`,
       primary: "",
     },
+    color: {
+      primary: "primary",
+      clear: "",
+    },
     size: {
-      primary: "px-4 py-[6px]",
+      primary: "px-4 py-1.5",
       small: "px-2 py-1",
       half: "w-1/2",
       full: "w-full",
+      clear: "",
+    },
+    rounded: {
+      full: "rounded-full",
+      md: "rounded-md",
       clear: "",
     },
     hover: {
@@ -35,16 +45,18 @@ const buttonVariant = cva("inline-flex font-[500] items-center ", {
     variant: "default",
     size: "primary",
     hover: "default",
+    rounded: "full",
+    color: "clear",
   },
 });
 
-interface Props
-  extends ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariant> {
-  children: ReactNode;
-  isLoading?: boolean;
-  onClick?: MouseEventHandler;
-}
+type Props = ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariant> & {
+    children: ReactNode;
+    isLoading?: boolean;
+    onClick?: MouseEventHandler;
+    href?: string;
+  };
 
 function Button(
   {
@@ -54,19 +66,23 @@ function Button(
     size,
     disabled,
     isLoading,
+    rounded,
+    color,
     hover,
     onClick,
     ...props
   }: Props,
-  ref: Ref<ElementRef<"button">>
+  ref: Ref<ElementRef<"button">>,
 ) {
+  const { theme } = useTheme();
+
   return (
     <button
       ref={ref}
       type="button"
       onClick={(e) => (onClick ? onClick(e) : "")}
       {...props}
-      className={buttonVariant({ variant, size, hover, className })}
+      className={`${color === "primary" ? theme.content_bg : ""}  ${buttonVariant({ variant, size, hover, rounded, className })}`}
       disabled={isLoading || disabled}
     >
       {isLoading ? <ArrowPathIcon className="w-6 animate-spin" /> : null}

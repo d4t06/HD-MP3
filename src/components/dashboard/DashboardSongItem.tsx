@@ -1,4 +1,3 @@
-import { formatTime } from "@/utils/appHelpers";
 import DashboardSongMenu from "./DashboardSongMenu";
 
 type Props = {
@@ -13,8 +12,6 @@ export default function DashboardSongItem({ song, className = "", variant }: Pro
 			<td>{song.name}</td>
 			<td>{song.singer}</td>
 
-			<td>-</td>
-			<td>{formatTime(song.duration)}</td>
 			<td>
 				<DashboardSongMenu variant={variant} song={song} />
 			</td>

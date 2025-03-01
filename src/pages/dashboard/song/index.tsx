@@ -7,9 +7,11 @@ import {
 	MagnifyingGlassIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { Button, Tabs } from "@/components";
+import { Button, NotFound, Tabs } from "@/components";
 import { useTheme } from "@/store";
 import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
+import { PlusIcon } from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 
 export default function DashboardSong() {
 	const { theme } = useTheme();
@@ -27,7 +29,7 @@ export default function DashboardSong() {
 			<Title title="Songs" />
 
 			<div className="flex justify-between mt-3">
-				<form action="#" onSubmit={handleSubmit} className={`flex`}>
+				<form action="#" onSubmit={handleSubmit} className={`flex w-full`}>
 					<div className={`${classes.formGroup}`}>
 						<input
 							value={value}
@@ -55,14 +57,6 @@ export default function DashboardSong() {
 						<MagnifyingGlassIcon className="w-5" />
 					</Button>
 				</form>
-
-				<label
-					htmlFor="song-upload"
-					className={`px-3 items-center cursor-pointer space-x-1 inline-flex ${theme.content_bg} rounded-full`}
-				>
-					<ArrowUpTrayIcon className="w-6" />
-					<div className="hidden md:block">Upload</div>
-				</label>
 			</div>
 
 			<Tabs
@@ -81,19 +75,24 @@ export default function DashboardSong() {
 				)}
 
 				{!isFetching && (
-					<div className={`rounded-md overflow-hidden ${theme.side_bar_bg}`}>
+					<div className={`rounded-md overflow-hidden border border-black/10`}>
 						<Table
 							className="[&_td]:text-sm [&_tr]:border-b [&_tr]:border-black/10 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2"
-							colList={["Name", "Singer", "Genre", "Time", ""]}
+							colList={["Name", "Singer", ""]}
 						>
 							{songs.length ? (
 								songs.map((s, i) => (
-									<DashboardSongItem className={`hover:bg-${theme.alpha}`} variant="songs" key={i} song={s} />
+									<DashboardSongItem
+										className={`hover:bg-${theme.alpha}`}
+										variant="songs"
+										key={i}
+										song={s}
+									/>
 								))
 							) : (
 								<tr>
-									<td colSpan={5} className="text-center">
-										...
+									<td colSpan={3} className="text-center">
+										<NotFound />
 									</td>
 								</tr>
 							)}
@@ -101,6 +100,14 @@ export default function DashboardSong() {
 					</div>
 				)}
 			</div>
+
+			<Link
+				to="/dashboard/songs/add"
+				className={`${theme.content_bg} inline-flex p-2 sm:px-4 sm:py-1.5 absolute right-[10px] bottom-5 rounded-full`}
+			>
+				<PlusIcon className="w-6" />
+				<div className="hidden md:block">Add song</div>
+			</Link>
 		</>
 	);
 }
