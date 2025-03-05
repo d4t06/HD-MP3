@@ -25,7 +25,7 @@ export default function useGetPlaylist() {
     if (!params.id) throw new Error("invalid playlist id");
 
     const playlistSnap = await myGetDoc({
-      collection: "playlist",
+      collectionName: "Playlists",
       id: params.id,
       msg: ">>> api get playlist",
     });

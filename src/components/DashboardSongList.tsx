@@ -51,7 +51,7 @@ export default function DashboardSongList({ initialLoading }: Props) {
                   songs={songs}
                   handleSetSong={_handleSetSong}
                 />
-                <SongList variant="uploading" songs={tempSongs} />
+                <SongList variant="uploading" />
               </>
             ) : (
               <p className="text-center">¯\_(ツ)_/¯</p>

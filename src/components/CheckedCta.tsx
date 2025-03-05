@@ -9,7 +9,7 @@ type Base = {
 };
 
 type SelectAll = Base & {
-  variant: "my-playlist" | "my-songs" | "sys-playlist" | "dashboard-playlist";
+  variant: "my-playlist" | "my-songs" | "others-playlist" | "dashboard-playlist";
   selectAll: () => void;
 };
 
@@ -38,7 +38,7 @@ export default function CheckedCta({ children, ...props }: Props) {
     case "my-playlist":
     case "my-songs":
     case "dashboard-playlist":
-    case "sys-playlist":
+    case "others-playlist":
       return (
         <>
           <button onClick={props.selectAll} className="ml-[10px]">

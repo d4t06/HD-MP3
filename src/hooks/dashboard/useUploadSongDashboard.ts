@@ -65,7 +65,7 @@ export default function useUploadSongDashboard() {
 				});
 
 				await mySetDoc({
-					collection: "songs",
+					collectionName: "songs",
 					data: songSchema,
 					id: songSchema.id,
 					msg: ">>> api: set song doc",

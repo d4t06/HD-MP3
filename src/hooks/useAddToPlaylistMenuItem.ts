@@ -24,7 +24,7 @@ export default function useAddPlaylistMenuItem() {
 				const newSongIds = [...playlist.song_ids, song.id];
 
 				await mySetDoc({
-					collection: "playlist",
+					collectionName: "Playlists",
 					id: playlist.id,
 					data: { song_ids: newSongIds } as Partial<Playlist>,
 					msg: ">>> api: update playlist doc",

@@ -10,7 +10,7 @@ export default function usePersistAuth() {
     const handleGetAuth = async () => {
       auth.onAuthStateChanged(async (u) => {
         if (u && u.email) {
-          const docRef = await myGetDoc({ collection: "users", id: u.email });
+          const docRef = await myGetDoc({ collectionName: "users", id: u.email });
           const userDoc = docRef.data() as User;
 
           const user: User = {

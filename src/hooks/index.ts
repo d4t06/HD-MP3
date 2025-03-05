@@ -1,12 +1,10 @@
 export { default as useBgImage } from "./useBgImage";
 export { default as useGetSongLyric } from "./useGetSongLyric";
 export { default as useLocalStorage } from "./useLocalStorage";
-export { default as usePlaylistDetail } from "./usePlaylistDetail";
 export { default as useScrollSong } from "./useScrollSong";
 export { default as useScrollText } from "./useScrollText";
 export { default as useSongItemActions } from "./useSongItemActions";
 export { default as useUploadSongs } from "./useUploadSongs";
 export { default as useVolume } from "./useVolume";
 export { default as useEditForm } from "./useEditForm";
-export { default as useControl } from "./useControl";
-export { default as usePlayerControl } from "./usePlayerControl";
+export { default as useDebounce } from "./useDebounce";

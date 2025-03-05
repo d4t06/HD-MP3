@@ -1,32 +1,37 @@
 import { useSelector } from "react-redux";
 // import { useThemeContext } from "../stores";
-import { PlaylistItem, Skeleton } from ".";
 // import { useMemo } from "react";
 // import { formatTime } from "../utils/appHelpers";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import PlaylistInfoCta from "./PlaylistInfoCta";
-import DashboardPlaylistCta from "./dashboard/PlaylistCta";
+// import PlaylistInfoCta from "./PlaylistInfoCta";
+import { PlaylistItem, Skeleton } from "@/components";
+import { ReactNode } from "react";
 
-type MyPlaylist = {
-  variant: "my-playlist";
+// type MyPlaylist = {
+//   variant: "my-playlist";
+//   loading: boolean;
+// };
+
+// type AdminPlaylist = {
+//   variant: "sys-playlist";
+//   loading: boolean;
+// };
+
+// type DashboardPlaylist = {
+//   variant: "dashboard-playlist";
+//   loading: boolean;
+// };
+
+// type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
+
+type Props = {
   loading: boolean;
+  children: ReactNode;
 };
 
-type AdminPlaylist = {
-  variant: "sys-playlist";
-  loading: boolean;
-};
-
-type DashboardPlaylist = {
-  variant: "dashboard-playlist";
-  loading: boolean;
-};
-
-type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
-
-export default function PLaylistInfo({ loading, ...props }: Props) {
+export default function PLaylistInfo({ loading, children }: Props) {
   // stores
   // const { isOnMobile } = useThemeContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
@@ -68,22 +73,22 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
     );
   };
 
-  const renderCta = () => {
-    switch (props.variant) {
-      case "my-playlist":
-      case "sys-playlist":
-        return <PlaylistInfoCta variant={props.variant} />;
-      case "dashboard-playlist":
-        return <DashboardPlaylistCta />;
-    }
-  };
+  //   const renderCta = () => {
+  //     switch (props.variant) {
+  //       case "my-playlist":
+  //       case "sys-playlist":
+  //         return <PlaylistInfoCta variant={props.variant} />;
+  //       case "dashboard-playlist":
+  //         return <DashboardPlaylistCta />;
+  //     }
+  //   };
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
     playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 mt-3 md:mt-0 lg:mt-3`,
     infoTop:
       "flex justify-center items-center space-y-1 md:flex-col md:items-start lg:items-center",
-    ctaContainer: `flex justify-center space-x-3 md:justify-start  lg:justify-center mt-3 md:mt-0 lg:mt-3`,
+    ctaContainer: `flex justify-center space-x-3 md:justify-start lg:justify-center mt-3 md:mt-0 lg:mt-3`,
   };
 
   return (
@@ -91,7 +96,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
       <div className={classes.container}>
         <div className="w-full flex-shrink-0 px-10 md:w-1/4 md:px-0 lg:w-full">
           {loading ? (
-            <Skeleton className="pt-[100%] rounded-[8px]" />
+            <Skeleton className="pt-[100%] rounded-lg" />
           ) : (
             currentPlaylist && (
               <PlaylistItem data={currentPlaylist} active={isActivePlaylist} inDetail />
@@ -102,7 +107,7 @@ export default function PLaylistInfo({ loading, ...props }: Props) {
         <div className={classes.playlistInfoContainer}>
           <div className={classes.infoTop}>{renderInfo()}</div>
 
-          <div className={`${classes.ctaContainer} `}>{!loading && renderCta()}</div>
+          <div className={`${classes.ctaContainer} `}>{!loading && children}</div>
         </div>
       </div>
     </>

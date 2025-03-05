@@ -29,7 +29,7 @@ export default function usePlaylistAction() {
 			setIsFetching(true);
 
 			await mySetDoc({
-				collection: "playlist",
+				collectionName: "Playlists",
 				data: addedPlaylist,
 				id: playlistId,
 				msg: ">>> api: set playlist doc",
@@ -49,7 +49,7 @@ export default function usePlaylistAction() {
 
 		// >>> api
 		await myDeleteDoc({
-			collection: "playlist",
+			collectionName: "Playlists",
 			id: id,
 			msg: ">>> api: delete playlist doc",
 		});

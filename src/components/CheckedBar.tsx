@@ -16,7 +16,7 @@ type Props = {
     | "home"
     | "my-playlist"
     | "my-songs"
-    | "sys-playlist"
+    | "others-playlist"
     | "dashboard-songs"
     | "dashboard-playlist";
 };
@@ -215,7 +215,7 @@ export default function CheckedBar({
             )}
           </>
         );
-      case "sys-playlist":
+      case "others-playlist":
         return (
           <>
             {!isChecked && <div className={`${classes.title} !mr-[14px]`}>Songs</div>}

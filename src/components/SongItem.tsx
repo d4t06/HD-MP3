@@ -8,9 +8,9 @@ import { getHidden } from "../utils/appHelpers";
 import { useThemeContext } from "../stores";
 import { Image } from "../components";
 
-import SongMenu from "./SongMenu";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
+import SongMenu from "@/modules/song-menu";
 
 type Props = {
   className?: string;
@@ -22,7 +22,7 @@ type Props = {
     | "home"
     | "my-songs"
     | "my-playlist"
-    | "sys-playlist"
+    | "others-playlist"
     | "queue"
     | "favorite"
     | "uploading"
@@ -199,7 +199,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
         return <SongMenu variant="user-song" index={index} song={song} />;
       case "my-playlist":
         return <SongMenu variant="sys-song" index={index} song={song} />;
-      case "sys-playlist":
+      case "others-playlist":
         return <SongMenu variant="sys-song" song={song} index={index} />;
       case "queue":
         return <SongMenu variant="queue-song" song={song} index={index} />;

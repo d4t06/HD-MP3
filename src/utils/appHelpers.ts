@@ -64,42 +64,6 @@ export const updatePlaylistsValue = (playlist: Playlist, playlists: Playlist[]) 
   playlists[index] = playlist;
 };
 
-export const initSongObject = ({ ...value }: Partial<Song>) => {
-  const song: Song = {
-    name: "",
-    singer: "",
-    image_url: "",
-    song_url: "",
-    by: "",
-    duration: 0,
-    lyric_id: "",
-    image_file_path: "",
-    song_file_path: "",
-    id: "",
-    song_in: "",
-    blurhash_encode: "",
-    size: 0,
-    queue_id: "",
-  };
-  return {
-    ...song,
-    ...value,
-  } as Song;
-};
-
-export const initPlaylistObject = ({ ...value }: Partial<Playlist>) => {
-  const playlist: Playlist = {
-    id: "",
-    name: "",
-    song_ids: [],
-    by: "",
-    image_url: "",
-    blurhash_encode: "",
-  };
-
-  return { ...playlist, ...value } as Playlist;
-};
-
 export const sleep = async (delay: number) => new Promise((rs) => setTimeout(rs, delay));
 
 export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]) => {

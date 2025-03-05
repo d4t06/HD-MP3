@@ -4,8 +4,10 @@ type User = {
   display_name: string;
   email: string;
   photo_url: string;
+  playlist_ids: string[];
   liked_song_ids: string[];
-  play_history: string[];
+  recent_song_ids: string[];
+  recent_playlist_ids: string[];
   role: string;
 };
 
@@ -43,9 +45,12 @@ type Playlist = {
   blurhash_encode: string;
   song_ids: string[];
   owner_email: string;
+  is_public: boolean;
   updated_at: Timestamp;
   created_at: Timestamp;
 };
+
+type PlaylistSchema = Omit<Playlist, "id">;
 
 type SongLyric = {
   id: string;

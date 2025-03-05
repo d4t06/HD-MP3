@@ -21,3 +21,20 @@ export const initSongObject = (data: Partial<SongSchema> & { owner_email: string
 
   return song;
 };
+
+export const initPlaylistObject = (
+  data: Partial<PlaylistSchema> & { owner_email: string }
+) => {
+  const playlist: PlaylistSchema = {
+    name: "",
+    song_ids: [],
+    image_url: "",
+    blurhash_encode: "",
+    created_at: serverTimestamp(),
+    is_public: false,
+    updated_at: serverTimestamp(),
+    ...data,
+  };
+
+  return playlist;
+};

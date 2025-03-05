@@ -1,10 +1,16 @@
 import { ChangeEvent, useRef, useCallback, useEffect } from "react";
 import { generateId } from "../utils/appHelpers";
-import { useAuthContext, useSongContext, useThemeContext, useToastContext, useUpload } from "@/stores";
-import { mySetDoc, uploadFile } from "@/services/firebaseService";
-import { initSongObject } from "../utils/appHelpers";
+import {
+  useAuthContext,
+  useSongContext,
+  useThemeContext,
+  useToastContext,
+  useUpload,
+} from "@/stores";
+import { myAddDoc, mySetDoc, uploadFile } from "@/services/firebaseService";
 import { parserSong } from "@/utils/parseSong";
 import { nanoid } from "nanoid";
+import { initSongObject } from "@/utils/factory";
 
 // event listener
 // await promise
@@ -18,7 +24,7 @@ export default function useUploadSongs() {
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
 
   // state
-  const duplicatedFile = useRef<Song[]>([]);
+  const duplicatedFile = useRef<SongSchema[]>([]);
   const fileIndexesNeeded = useRef<number[]>([]);
   const isDuplicate = useRef(false);
 
@@ -61,12 +67,12 @@ export default function useUploadSongs() {
       }
 
       // init song object
-      let data = initSongObject({});
+      let data = initSongObject({ owner_email: user.email });
 
-      let processSongsList: Song[] = [];
+      let processSongsList: SongSchema[] = [];
 
       const start = Date.now();
-      const checkDuplicate = (songObject: Song) => {
+      const checkDuplicate = (songObject: SongSchema) => {
         return (
           songs.some(
             (s) =>
@@ -97,7 +103,7 @@ export default function useUploadSongs() {
           }
 
           // init song data
-          let songFileObject: Song = {
+          let songFileObject: SongSchema = {
             ...data,
             name: songData.name,
             singer: songData.singer,
@@ -163,14 +169,13 @@ export default function useUploadSongs() {
             song_url: fileURL,
           });
 
-          await mySetDoc({
-            collection: "songs",
+          await myAddDoc({
+            collectionName: "Songs",
             data: targetSong,
-            id: targetSong.id,
             msg: ">>> api: set song doc",
           });
 
-          setSongs((prev) => [...prev, { ...targetSong, queue_id: nanoid(4) }]);
+          //  setSongs((prev) => [...prev, { ...targetSong, queue_id: nanoid(4) }]);
 
           shiftSong();
 

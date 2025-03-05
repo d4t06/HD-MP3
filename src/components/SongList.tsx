@@ -26,7 +26,7 @@ type Queue = Base & {
 };
 
 type AdminPlaylist = Base & {
-  variant: "sys-playlist";
+  variant: "others-playlist";
 };
 
 type MyPlaylist = Base & {
@@ -39,7 +39,7 @@ type Searchbar = Omit<Base, "handleSetSong"> & {
 };
 
 type Uploading = {
-  songs: Song[];
+  //   songs: Song[];
   variant: "uploading";
 };
 
@@ -53,7 +53,7 @@ type Props =
   | Uploading
   | Searchbar;
 
-function SongList({ songs, ...props }: Props) {
+function SongList(props: Props) {
   // stores
   const { theme } = useThemeContext();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
@@ -62,7 +62,7 @@ function SongList({ songs, ...props }: Props) {
   const renderTempSongsList = () => {
     if (props.variant !== "uploading") return <></>;
 
-    return songs.map((song, index) => {
+    return props.songs.map((song, index) => {
       const songItemProps = {
         key: index,
         onClick: () => {},
@@ -70,7 +70,14 @@ function SongList({ songs, ...props }: Props) {
       };
 
       if (index == 0)
-        return <SongItem index={index} variant="uploading" className="temp-song" {...songItemProps} />;
+        return (
+          <SongItem
+            index={index}
+            variant="uploading"
+            className="temp-song"
+            {...songItemProps}
+          />
+        );
 
       return <SongItem variant="uploading" index={index} {...songItemProps} />;
     });

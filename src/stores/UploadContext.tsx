@@ -1,6 +1,6 @@
 import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
 type StateType = {
-   tempSongs: Song[];
+   tempSongs: SongSchema[];
    status: "" | "uploading" | "finish" | "finish-error";
 };
 
@@ -17,7 +17,7 @@ const enum REDUCER_ACTION_TYPE {
 
 type SetTempSong = {
    type: REDUCER_ACTION_TYPE.SETTEMPSONG;
-   payload: { songs: Song[] };
+   payload: { songs: SongSchema[] };
 };
 
 type SpliceTempSong = {
@@ -56,7 +56,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
 const useUploadActions = () => {
    const [state, dispatch] = useReducer(reducer, initialState);
 
-   const setTempSongs = useCallback((songs: Song[]) => {
+   const setTempSongs = useCallback((songs: SongSchema[]) => {
       dispatch({
          type: REDUCER_ACTION_TYPE.SETTEMPSONG,
          payload: { songs },

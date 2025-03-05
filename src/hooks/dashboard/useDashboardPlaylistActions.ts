@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSongContext, useToastContext } from "@/stores";
-import { generateId, initPlaylistObject } from "@/utils/appHelpers";
-import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
+// import { generateId } from "@/utils/appHelpers";
+import { myAddDoc, myDeleteDoc, mySetDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,6 +10,7 @@ import {
   setPlaylistSong,
   updateCurrentPlaylist,
 } from "@/stores/redux/currentPlaylistSlice";
+import { initPlaylistObject } from "@/utils/factory";
 
 type AddPlaylist = {
   variant: "add-playlist";
@@ -51,7 +52,7 @@ export type PlaylistActionProps =
 export default function useDashboardPlaylistActions() {
   // stores
   const dispatch = useDispatch();
-  const { playlists, setPlaylists } = useSongContext();
+//   const { playlists, setPlaylists } = useSongContext();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
 
   // state
@@ -69,24 +70,20 @@ export default function useDashboardPlaylistActions() {
 
           setIsFetching(true);
 
-          const playlistId = generateId(props.name) + "_admin";
-
           const addedPlaylist = initPlaylistObject({
-            id: playlistId,
-            by: "admin",
+            owner_email: "",
             name: props.name,
           });
 
-          const newPlaylists = [...playlists, addedPlaylist];
+          //  const newPlaylists = [...playlists, addedPlaylist];
 
-          await mySetDoc({
-            collection: "playlist",
+          await myAddDoc({
+            collectionName: "Playlists",
             data: addedPlaylist,
-            id: playlistId,
             msg: ">>> api: set playlist doc",
           });
 
-          setPlaylists(newPlaylists);
+          //  setPlaylists(newPlaylists);
           setSuccessToast(`Playlist created`);
 
           break;
@@ -97,7 +94,7 @@ export default function useDashboardPlaylistActions() {
 
           // >>> api
           await myDeleteDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             id: currentPlaylist.id,
             msg: ">>> api: delete playlist doc",
           });
@@ -118,7 +115,7 @@ export default function useDashboardPlaylistActions() {
           ];
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             id: currentPlaylist?.id,
             data: { song_ids: newSongIds } as Partial<Playlist>,
             msg: ">>> api: update playlist doc",
@@ -135,7 +132,7 @@ export default function useDashboardPlaylistActions() {
           setIsFetching(true);
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             data: { name: props.name },
             id: currentPlaylist.id,
             msg: ">>> api: set playlist doc",
@@ -153,7 +150,7 @@ export default function useDashboardPlaylistActions() {
           const newPlaylistSongs = playlistSongs.filter((s) => s.id !== props.song.id);
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             id: currentPlaylist.id,
             data: { song_ids: newPlaylistSongs.map((s) => s.id) } as Partial<Playlist>,
             msg: ">>> api: update playlist doc",
@@ -174,7 +171,7 @@ export default function useDashboardPlaylistActions() {
           } as Partial<Playlist>;
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             data: payload,
             id: currentPlaylist.id,
             msg: ">>> api: set playlist doc",

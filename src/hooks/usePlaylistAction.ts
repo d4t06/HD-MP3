@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "../stores";
-import { generateId, initPlaylistObject } from "../utils/appHelpers";
+import { generateId } from "../utils/appHelpers";
 import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
   setPlaylistSong,
   updateCurrentPlaylist,
 } from "@/stores/redux/currentPlaylistSlice";
+import { initPlaylistObject } from "@/utils/factory";
 
 export default function usePlaylistAction() {
   // stores
@@ -51,21 +52,20 @@ export default function usePlaylistAction() {
           const playlistId = generateId(props.name);
 
           const newPlaylist = initPlaylistObject({
-            id: playlistId,
-            by: user.email,
+            owner_email: user.email,
             name: props.name,
           });
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             data: newPlaylist,
             id: playlistId,
             msg: ">>> api: set playlist doc",
           });
 
-          const newPlaylists = [...playlists, newPlaylist];
+         //  const newPlaylists = [...playlists, newPlaylist];
 
-          await setUserPlaylistIdsDoc(newPlaylists, user);
+         //  await setUserPlaylistIdsDoc(newPlaylists, user);
 
           break;
 
@@ -73,7 +73,7 @@ export default function usePlaylistAction() {
           if (!currentPlaylist) throw new Error("Current playlist invalid");
 
           await mySetDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             data: { name: props.playlist.name },
             id: currentPlaylist.id,
             msg: ">>> api: set playlist doc",
@@ -90,7 +90,7 @@ export default function usePlaylistAction() {
           const newUserPlaylist = playlists.filter((pl) => pl.id !== currentPlaylist.id);
 
           await myDeleteDoc({
-            collection: "playlist",
+            collectionName: "Playlists",
             id: currentPlaylist.id,
             msg: ">>> api: delete playlist doc",
           });
@@ -123,7 +123,7 @@ export default function usePlaylistAction() {
   //   const newPlaylists = [...playlists, addedPlaylist];
 
   //   await mySetDoc({
-  //     collection: "playlist",
+  //     collectionName: "Playlists",
   //     data: addedPlaylist,
   //     id: playlistId,
   //     msg: ">>> api: set playlist doc",
@@ -141,7 +141,7 @@ export default function usePlaylistAction() {
   //   const newUserPlaylist = playlists.filter((pl) => pl.id !== currentPlaylist.id);
 
   //   await myDeleteDoc({
-  //     collection: "playlist",
+  //     collectionName: "Playlists",
   //     id: currentPlaylist.id,
   //     msg: ">>> api: delete playlist doc",
   //   });
@@ -163,7 +163,7 @@ export default function usePlaylistAction() {
   //     ];
 
   //     await mySetDoc({
-  //       collection: "playlist",
+  //       collectionName: "Playlists",
   //       id: currentPlaylist?.id,
   //       data: { song_ids: newSongIds } as Partial<Playlist>,
   //       msg: ">>> api: update playlist doc",
@@ -186,7 +186,7 @@ export default function usePlaylistAction() {
   //     const newPlaylist: Playlist = { ...playlist, name: playlistName };
 
   //     await mySetDoc({
-  //       collection: "playlist",
+  //       collectionName: "Playlists",
   //       data: { name: playlistName },
   //       id: newPlaylist.id,
   //       msg: ">>> api: set playlist doc",
@@ -207,7 +207,7 @@ export default function usePlaylistAction() {
   //   try {
   //     setIsFetching(true);
 
-  //     const _playlist = await myGetDoc({ collection: "playlist", id: playlist.id });
+  //     const _playlist = await myGetDoc({ collectionName: "Playlists", id: playlist.id });
   //     if (!_playlist.exists()) return;
 
   //     const _playlistData = _playlist.data() as Playlist;
@@ -219,7 +219,7 @@ export default function usePlaylistAction() {
 
   //     const newSongIds = [..._playlistData.song_ids, song.id];
   //     await mySetDoc({
-  //       collection: "playlist",
+  //       collectionName: "Playlists",
   //       id: _playlistData.id,
   //       data: { song_ids: newSongIds } as Partial<Playlist>,
   //       msg: ">>> api: update playlist doc",
@@ -241,7 +241,7 @@ export default function usePlaylistAction() {
   //     const newPlaylistSongs = playlistSongs.filter((s) => s.id !== song.id);
 
   //     await mySetDoc({
-  //       collection: "playlist",
+  //       collectionName: "Playlists",
   //       id: currentPlaylist.id,
   //       data: { song_ids: newPlaylistSongs.map((s) => s.id) } as Partial<Playlist>,
   //       msg: ">>> api: update playlist doc",
@@ -260,7 +260,7 @@ export default function usePlaylistAction() {
 
   const removeSelectSongs = async (
     selectedSongs: Song[],
-    _setIsFetching?: (v: boolean) => void,
+    _setIsFetching?: (v: boolean) => void
   ) => {
     try {
       if (!currentPlaylist || !playlistSongs.length) return;
@@ -269,12 +269,12 @@ export default function usePlaylistAction() {
 
       const selectedSongIds = selectedSongs.map((s) => s.id);
       const newPlaylistSongs = [...playlistSongs].filter(
-        (s) => !selectedSongIds.includes(s.id),
+        (s) => !selectedSongIds.includes(s.id)
       );
       const newSongIds = newPlaylistSongs.map((s) => s.id);
 
       await mySetDoc({
-        collection: "playlist",
+        collectionName: "Playlists",
         id: currentPlaylist.id,
         data: { song_ids: newSongIds } as Partial<Playlist>,
         msg: ">>> api: update playlist doc",

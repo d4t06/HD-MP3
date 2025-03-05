@@ -25,7 +25,7 @@ export default function useSongLyric({ active }: { active: boolean }) {
       setLoading(true);
 
       const lyricSnap = await myGetDoc({
-        collection: "lyrics",
+        collectionName: "lyrics",
         id: currentSongData.song.id,
         msg: ">>> api: get lyric doc",
       });
