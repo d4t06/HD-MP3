@@ -12,7 +12,7 @@ import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outli
 import { Image, Button } from "..";
 import { useThemeContext } from "@/stores";
 import { useEditForm } from "@/hooks";
-import ModalHeader from "./ModalHeader";
+import ModalHeader from "../ModalHeader";
 import { getDisable } from "@/utils/appHelpers";
 import { ModalRef } from "../Modal";
 import AddSingerButton from "./_components/AddSingerButton";

@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { Center, LyricItem } from "@/components";
 import useLyric from "./_hooks/useLyric";
+import { LyricStatus } from "../lyric-editor";
 
 interface Props {
   className: string;

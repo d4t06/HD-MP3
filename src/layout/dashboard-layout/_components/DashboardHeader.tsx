@@ -1,12 +1,12 @@
 import { NavigationProvider, useThemeContext } from "@/stores";
 
 import { Link } from "react-router-dom";
-import NavigationButton from "@/components/NavigationButton";
 import { useEffect, useState, useRef } from "react";
 import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import Modal, { ModalRef } from "@/components/Modal";
 import { AppInfo, Appearance, SettingMenu } from "@/components";
+import NavigationButton from "@/modules/navigation-button";
 
 type Modal = "theme" | "info";
 

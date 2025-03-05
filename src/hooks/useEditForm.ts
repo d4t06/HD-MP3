@@ -156,7 +156,7 @@ export default function useEditForm({ song, inputFields, modalRef }: Props) {
 
       // >>> api
       await mySetDoc({
-        collectionName: "songs",
+        collectionName: "Songs",
         data: newSongData,
         id: song.id,
         msg: ">>> api: update song doc",

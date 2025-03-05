@@ -1,7 +1,6 @@
 import { useThemeContext } from "@/stores";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import ModalHeader from "../modals/ModalHeader";
-import { Button } from "..";
+import { Button, ModalHeader } from "..";
 import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 
 type Props = {

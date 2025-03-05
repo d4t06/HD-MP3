@@ -72,7 +72,7 @@ export default function Sidebar() {
                       ? classes.activeLink
                       : "border-transparent"
                   }`}
-                  to={"/mysongs"}
+                  to={"/mymusic"}
                 >
                   <div className={classes.navItem}>
                     <MusicalNoteIcon className={classes.icon} />

@@ -1,7 +1,7 @@
 import { specialThemes, themes } from "@/constants/themes";
 import { useThemeContext } from "@/stores";
 import ThemeItem from "../child/ThemeItem";
-import ModalHeader from "./ModalHeader";
+import ModalHeader from "../ModalHeader";
 import { setLocalStorage } from "@/utils/appHelpers";
 export default function Appearance({ close }: { close: () => void }) {
   const { theme: themeInStore, setTheme } = useThemeContext();

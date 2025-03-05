@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
-import {
-  MobileFullScreenPlayer,
-  MobileBottomPlayer,
-} from "@/components";
-import SongQueue from "@/components/SongQueue";
 import useIdle from "@/hooks/useIdle";
 import appConfig from "@/config/app";
 import { useThemeContext } from "@/stores";
 import PlayerContextProvider, { usePlayerContext } from "@/stores/PlayerContext";
+import FullScreenPlayer from "@/modules/full-screen-player";
+import SongQueue from "@/modules/song-queue";
+import BottomPlayer from "@/modules/bottom-player";
+import MobileFullScreenPlayer from "@/modules/mobile-full-screen-player";
+import MobileBottomPlayer from "@/modules/mobile-bottom-player";
 
 const PlayerContent = () => {
   // stores

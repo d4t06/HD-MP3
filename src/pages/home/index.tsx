@@ -1,11 +1,10 @@
-import { useThemeContext } from "../stores";
-// import { useInitSong } from "../hooks";
-import { PlaylistList, HomeSongList } from "../components";
-import { MobileNav, MobileSetting } from "@/components";
-import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
-// import { useEditForm } from "@/hooks";
+import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";// import { useEditForm } from "@/hooks";
+import { useThemeContext } from "@/stores";
 import { useEffect, useRef } from "react";
-import Footer from "@/layout/_components/Footer";
+import MobileNav from "./_components/MobileNav";
+import { HomeSongList, PlaylistList } from "@/components";
+import MobileSetting from "./_components/MobileSetting";
+import Footer from "@/layout/primary-layout/_components/Footer";
 
 export default function HomePage() {
   // stores

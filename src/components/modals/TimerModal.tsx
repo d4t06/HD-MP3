@@ -1,4 +1,4 @@
-import ModalHeader from "./ModalHeader";
+import ModalHeader from "../ModalHeader";
 import { useThemeContext } from "@/stores";
 
 type Props = {

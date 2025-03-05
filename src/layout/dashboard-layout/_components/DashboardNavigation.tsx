@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { routeList } from "../DashboardSidebar";
 import { Link } from "react-router-dom";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { useThemeContext } from "@/stores";
+import { routeList } from "./DashboardSidebar";
 
 export default function DashboardNavigation() {
 	const { theme } = useThemeContext();

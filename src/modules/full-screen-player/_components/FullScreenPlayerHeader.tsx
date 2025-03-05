@@ -1,16 +1,13 @@
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
-import { Tabs } from ".";
-import MyTooltip from "./MyTooltip";
 import {
 	ChevronDownIcon,
 	Cog6ToothIcon,
 	DocumentTextIcon,
 } from "@heroicons/react/24/outline";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
-import FullScreenPlayerSetting from "./child/FullScreenPlayerSetting";
 import { useNavigate } from "react-router-dom";
+import { FullScreenPlayerSetting, MyPopup, MyPopupContent, MyPopupTrigger, MyTooltip, Tabs } from "@/components";
 
 export default function FullScreenPlayerHeader() {
 	const { theme } = useThemeContext();
@@ -66,7 +63,7 @@ export default function FullScreenPlayerHeader() {
 			<div
 				className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 			>
-				{currentSongData?.song?.by !== "admin" && activeTab === "Lyric" && (
+				{activeTab === "Lyric" && (
 					<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">
 						<button onClick={() => handleEdit()} className={`p-2 ${classes.button}`}>
 							<DocumentTextIcon />

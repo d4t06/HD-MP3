@@ -84,7 +84,7 @@ const useThemeContext = () => {
 
   const { state, ...rest } = ct;
 
-  return { ...state, rest };
+  return { ...state, ...rest };
 };
 
 export default ThemeProvider;

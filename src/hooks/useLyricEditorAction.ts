@@ -72,7 +72,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       };
 
       await mySetDoc({
-        collectionName: "lyrics",
+        collectionName: "Lyrics",
         data: newSongLyric,
         id: song.id,
       }).catch(() => {

@@ -10,16 +10,18 @@ export default function usePersistAuth() {
     const handleGetAuth = async () => {
       auth.onAuthStateChanged(async (u) => {
         if (u && u.email) {
-          const docRef = await myGetDoc({ collectionName: "users", id: u.email });
+          const docRef = await myGetDoc({ collectionName: "Users", id: u.email });
           const userDoc = docRef.data() as User;
 
           const user: User = {
             email: u.email as string,
             display_name: u.displayName as string,
             photo_url: u.photoURL as string,
-            liked_song_ids: userDoc.liked_song_ids || [],
-            play_history: userDoc.play_history || [],
-            role: userDoc.role,
+            liked_song_ids: userDoc?.liked_song_ids || [],
+            recent_playlist_ids: userDoc?.recent_playlist_ids || [],
+            recent_song_ids: userDoc?.recent_song_ids || [],
+            role: userDoc?.role,
+            playlist_ids: userDoc?.playlist_ids || [],
           };
 
           setUser(user);

@@ -1,11 +1,10 @@
-import AddSongPage from "@/pages/dashboard/song/AddSong";
-import DashBoardLayout from "../layout/DashBoardLayout";
-
+import PrimaryLayout from "@/layout/primary-layout";
 import {
   Home,
   Dashboard,
-  PlaylistDetail,
-  MySongs,
+  // Playlist,
+  Search,
+  MyMusic,
   DashboardSongLyric,
   DashboardPlaylistDetail,
   DashboardPlaylist,
@@ -13,8 +12,7 @@ import {
   Login,
   Unauthorized,
 } from "../pages";
-import SearchResultPage from "@/pages/SearchResult";
-import PrimaryLayout from "@/layout/PrimaryLayout";
+import DashBoardLayout from "@/layout/dashboard-layout";
 
 const pubicRouteMap = {
   home: "/",
@@ -25,7 +23,7 @@ const pubicRouteMap = {
 };
 
 const protectedRouteMap = {
-  mySongs: "/mysongs",
+  MyMusic: "/MyMusic",
   favorite: "/favorite",
 };
 
@@ -45,13 +43,13 @@ export type PlaylistParamsType = {
 };
 const publicRoutes = [
   { path: pubicRouteMap.home, component: Home, layout: PrimaryLayout },
-  { path: pubicRouteMap.search, component: SearchResultPage, layout: PrimaryLayout },
+  { path: pubicRouteMap.search, component: Search, layout: PrimaryLayout },
   { path: pubicRouteMap.login, component: Login, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
 ];
 
 const protectedRoutes = [
-  { path: protectedRouteMap.mySongs, component: MySongs, layout: PrimaryLayout },
+  { path: protectedRouteMap.MyMusic, component: MyMusic, layout: PrimaryLayout },
 ];
 
 const privateRoutes = [
@@ -76,11 +74,11 @@ const privateRoutes = [
     layout: DashBoardLayout,
   },
 
-  {
-    path: privateRouteMap.addSong,
-    component: AddSongPage,
-    layout: DashBoardLayout,
-  },
+  // {
+  //   path: privateRouteMap.addSong,
+  //   component: AddSongPage,
+  //   layout: DashBoardLayout,
+  // },
   {
     path: privateRouteMap.songLyric,
     component: DashboardSongLyric,

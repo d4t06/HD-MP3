@@ -53,9 +53,9 @@ export default function MySongSongsList({ initialLoading }: Props) {
                   variant="my-songs"
                   handleSetSong={_handleSetSong}
                   songs={songs}
-                  tempSongs={tempSongs}
+                  // tempSongs={tempSongs}
                 />
-                <SongList songs={tempSongs} variant="uploading" />
+                {/* <SongList songs={tempSongs} variant="uploading" /> */}
               </>
             )}
           </>

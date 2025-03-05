@@ -1,4 +1,3 @@
-import PLaylistInfo from "@/components/PlaylistInfo";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import Table from "@/components/ui/Table";
@@ -7,6 +6,7 @@ import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useThemeContext } from "@/stores";
 // import useDashboardPlaylistActions from "@/hooks/dashboard/useDashboardPlaylistActions";
 import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
+import { PlaylistInfo } from "@/components";
 
 export default function DashboardPlaylistDetail() {
   const { theme } = useThemeContext();
@@ -23,7 +23,9 @@ export default function DashboardPlaylistDetail() {
   return (
     <div className="lg:flex lg:-mx-3 overflow-hidden">
       <div className="w-full lg:w-1/4 lg:px-3">
-        <PLaylistInfo loading={isFetching} variant="dashboard-playlist" />
+        <PlaylistInfo loading={isFetching}>
+          <p>Dashboard playlist action</p>
+        </PlaylistInfo>
       </div>
       <div className="w-full lg:w-3/4 lg:px-3 lg:overflow-auto">
         {isFetching && (

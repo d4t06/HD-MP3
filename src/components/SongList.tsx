@@ -14,7 +14,6 @@ type Home = Base & {
 
 type MySong = Base & {
   variant: "my-songs";
-  tempSongs: Song[];
 };
 
 type Favorite = Base & {
@@ -38,63 +37,55 @@ type Searchbar = Omit<Base, "handleSetSong"> & {
   handleSetSong: (song: Song) => void;
 };
 
-type Uploading = {
-  //   songs: Song[];
-  variant: "uploading";
-};
+// type Uploading = {
+//   songs: Song[];
+// variant: "uploading";
+// };
 
-type Props =
-  | Home
-  | MySong
-  | MyPlaylist
-  | AdminPlaylist
-  | Queue
-  | Favorite
-  | Uploading
-  | Searchbar;
+type Props = Home | MySong | MyPlaylist | AdminPlaylist | Queue | Favorite | Searchbar;
 
-function SongList(props: Props) {
+function SongList({ songs, ...props }: Props) {
   // stores
   const { theme } = useThemeContext();
   const { queueSongs, currentSongData } = useSelector(selectSongQueue);
   // const { songData, queueSongs } = useCurrentSong();
 
-  const renderTempSongsList = () => {
-    if (props.variant !== "uploading") return <></>;
+  // const renderTempSongsList = () => {
+  //   if (props.variant !== "uploading") return <></>;
 
-    return props.songs.map((song, index) => {
-      const songItemProps = {
-        key: index,
-        onClick: () => {},
-        song: song as Song,
-      };
+  //   return props.songs.map((song, index) => {
+  //     const songItemProps = {
+  //       key: index,
+  //       onClick: () => {},
+  //       song: song as Song,
+  //     };
 
-      if (index == 0)
-        return (
-          <SongItem
-            index={index}
-            variant="uploading"
-            className="temp-song"
-            {...songItemProps}
-          />
-        );
+  //     if (index == 0)
+  //       return (
+  //         <SongItem
+  //           index={index}
+  //           variant="uploading"
+  //           className="temp-song"
+  //           {...songItemProps}
+  //         />
+  //       );
 
-      return <SongItem variant="uploading" index={index} {...songItemProps} />;
-    });
-  };
+  //     return <SongItem variant="uploading" index={index} {...songItemProps} />;
+  //   });
+  // };
 
   const empty = <p className="text-center my-[60px]">... ¯\_(ツ)_/¯</p>;
 
   const renderSongList = () => {
-    switch (props.variant) {
-      case "uploading":
-        return <></>;
-      case "my-songs":
-        if (!songs.length && !props.tempSongs.length) return empty;
-        break;
-      default:
-        if (!songs.length) return empty;
-    }
+    // switch (props.variant) {
+    //   case "uploading":
+    //     return <></>;
+    //   case "my-songs":
+    //     if (!songs.length && !props.tempSongs.length) return empty;
+    //     break;
+    //   default:
+    //     if (!songs.length) return empty;
+    // }
 
     return songs.map((song, index) => {
       let active = song.id === currentSongData?.song.id;
@@ -155,7 +146,7 @@ function SongList(props: Props) {
   return (
     <>
       {renderSongList()}
-      {renderTempSongsList()}
+      {/* {renderTempSongsList()} */}
     </>
   );
 }

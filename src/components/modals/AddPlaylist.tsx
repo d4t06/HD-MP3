@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useState, useRef } from "react";
-import ModalHeader from "./ModalHeader";
+import ModalHeader from "../ModalHeader";
 import { Button } from "..";
 import { useThemeContext } from "@/stores";
 import usePlaylistAction from "@/hooks/usePlaylistAction";

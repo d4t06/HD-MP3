@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState, useRef, ReactNode, useMemo } from "react";
-import ModalHeader from "./ModalHeader";
 import Button from "../ui/Button";
 import { useThemeContext } from "@/stores";
+import ModalHeader from "../ModalHeader";
 
 type Props = {
 	closeModal: () => void;

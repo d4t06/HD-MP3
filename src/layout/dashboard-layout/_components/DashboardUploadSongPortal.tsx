@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import useUploadSongDashboard from "@/hooks/dashboard/useUploadSongDashboard";
-import ToastItem from "./_components/ToastItem";
+import ToastItem from "@/modules/toast-portal/_components/ToastItem";
 
 export default function DashboardUploadSongPortal() {
   const { handleInputChange, inputRef, isFetching } = useUploadSongDashboard();
@@ -27,7 +27,7 @@ export default function DashboardUploadSongPortal() {
             />
           )}
         </div>,
-        document.getElementById("portals")!,
+        document.getElementById("portals")!
       )}
     </>
   );

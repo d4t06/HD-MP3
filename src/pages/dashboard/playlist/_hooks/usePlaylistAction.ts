@@ -1,67 +1,69 @@
 import { useState } from "react";
-import { useSongContext, useToastContext } from "@/stores";
-import { generateId, initPlaylistObject } from "@/utils/appHelpers";
-import { myDeleteDoc, mySetDoc } from "@/services/firebaseService";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
+import { myAddDoc, myDeleteDoc } from "@/services/firebaseService";
+import { initPlaylistObject } from "@/utils/factory";
+import { getDoc } from "firebase/firestore";
 
 export default function usePlaylistAction() {
-	// stores
+  // stores
 
-	const { setPlaylists } = useSongContext();
+  const { user } = useAuthContext();
+  const { setPlaylists } = useSongContext();
 
-	// state
-	const [isFetching, setIsFetching] = useState(false);
+  // state
+  const [isFetching, setIsFetching] = useState(false);
 
-	// hooks
-	const { setErrorToast } = useToastContext();
+  // hooks
+  const { setErrorToast } = useToastContext();
 
-	const handleAddPlaylist = async (playlistName: string) => {
-		try {
-			if (!playlistName) throw new Error("playlist name invalid");
+  const handleAddPlaylist = async (playlistName: string) => {
+    try {
+      if (!user) return;
+      if (!playlistName) throw new Error("playlist name invalid");
 
-			const playlistId = generateId(playlistName) + "_admin";
+      const addedPlaylist = initPlaylistObject({
+        name: playlistName,
+        owner_email: user.email,
+      });
 
-			const addedPlaylist = initPlaylistObject({
-				id: playlistId,
-				by: "admin",
-				name: playlistName,
-			});
+      setIsFetching(true);
 
-			setIsFetching(true);
+      const docRef = await myAddDoc({
+        collectionName: "Playlists",
+        data: addedPlaylist,
+        msg: ">>> api: set playlist doc",
+      });
 
-			await mySetDoc({
-				collectionName: "Playlists",
-				data: addedPlaylist,
-				id: playlistId,
-				msg: ">>> api: set playlist doc",
-			});
+      const newPlaylistRef = await getDoc(docRef);
 
-			setPlaylists((prev) => [...prev, addedPlaylist]);
-		} catch (error) {
-			console.log({ message: error });
-			setErrorToast("");
-		} finally {
-			setIsFetching(false);
-		}
-	};
+      setPlaylists((prev) => [
+        ...prev,
+        { ...newPlaylistRef.data(), id: docRef.id } as Playlist,
+      ]);
+    } catch (error) {
+      console.log({ message: error });
+      setErrorToast("");
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
-	const handleDeletePlaylist = async (id: string) => {
-		setIsFetching(true);
+  const handleDeletePlaylist = async (id: string) => {
+    setIsFetching(true);
 
-		// >>> api
-		await myDeleteDoc({
-			collectionName: "Playlists",
-			id: id,
-			msg: ">>> api: delete playlist doc",
-		});
+    // >>> api
+    await myDeleteDoc({
+      collectionName: "Playlists",
+      id: id,
+      msg: ">>> api: delete playlist doc",
+    });
 
+    setIsFetching(false);
+  };
 
-
-		setIsFetching(false);
-	};
-
-	return {
-		isFetching,
-		handleAddPlaylist,
-		handleDeletePlaylist,
-	};
+  return {
+    isFetching,
+    handleAddPlaylist,
+    handleDeletePlaylist,
+  };
 }

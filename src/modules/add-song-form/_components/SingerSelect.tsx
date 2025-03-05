@@ -1,12 +1,10 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useThemeContext } from "@/stores";
-import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { useRef } from "react";
 import { Button, Modal, ModalRef } from "@/components";
 
 export default function SingerSelect() {
   const { theme } = useThemeContext();
-  const { songData } = useAddSongContext();
 
   const modalRef = useRef<ModalRef>(null);
 

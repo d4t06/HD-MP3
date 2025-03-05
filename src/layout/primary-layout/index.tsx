@@ -1,10 +1,10 @@
-import { FC, ReactNode, useEffect, useRef } from "react";
-import Sidebar from "./_components/Sidebar";
-import Header from "./_components/Header";
+import { ReactNode, useEffect, useRef } from "react";
 import Player from "./_components/Player";
-import UploadSongPortal from "@/layout/_components/UploadSongPortal";
-import ToastPortal from "./_components/ToastPortal";
 import { useThemeContext } from "@/stores";
+import Sidebar from "@/modules/sidebar";
+import Header from "@/modules/header";
+import ToastPortal from "@/modules/toast-portal";
+import UploadSongPortal from "./_components/UploadSongPortal";
 
 interface Props {
   children: ReactNode;

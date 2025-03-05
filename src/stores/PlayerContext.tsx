@@ -1,4 +1,4 @@
-import { ControlRef } from "@/components/Control";
+import { ControlRef } from "@/modules/music-control";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
 function usePlayer() {

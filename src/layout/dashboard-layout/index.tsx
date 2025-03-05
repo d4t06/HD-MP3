@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
-import { useThemeContext } from "../stores";
 import DashBoardSidebar from "./_components/DashboardSidebar";
 import DashboardHeader from "./_components/DashboardHeader";
-import DashboardUploadSongPortal from "@/layout/_components/DashboardUploadSongPortal";
-import ToastPortal from "./_components/ToastPortal";
-import DashboardNavigation from "./_components/_components/DashboardNavigation";
+import { useThemeContext } from "@/stores";
+import DashboardNavigation from "./_components/DashboardNavigation";
+import ToastPortal from "@/modules/toast-portal";
+import DashboardUploadSongPortal from "./_components/DashboardUploadSongPortal";
 
 export default function DashBoardLayout({ children }: { children: ReactNode }) {
   const { theme, isOnMobile } = useThemeContext();

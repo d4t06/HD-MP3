@@ -7,9 +7,8 @@ import {
   useToastContext,
   useUpload,
 } from "@/stores";
-import { myAddDoc, mySetDoc, uploadFile } from "@/services/firebaseService";
+import { myAddDoc, uploadFile } from "@/services/firebaseService";
 import { parserSong } from "@/utils/parseSong";
-import { nanoid } from "nanoid";
 import { initSongObject } from "@/utils/factory";
 
 // event listener
@@ -20,7 +19,7 @@ export default function useUploadSongs() {
   const { user } = useAuthContext();
   const { isDev } = useThemeContext();
 
-  const { songs, setSongs } = useSongContext();
+  const { songs } = useSongContext();
   const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
 
   // state

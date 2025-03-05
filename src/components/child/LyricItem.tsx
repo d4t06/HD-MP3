@@ -1,5 +1,5 @@
+import { LyricStatus } from "@/modules/lyric-editor";
 import { Ref, forwardRef, useEffect } from "react";
-import { LyricStatus } from "../LyricEditor";
 
 type Props = {
   text: string;

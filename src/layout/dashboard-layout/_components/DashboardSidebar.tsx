@@ -1,5 +1,4 @@
 import {
-  Bars3Icon,
   ComputerDesktopIcon,
   HomeIcon,
   MusicalNoteIcon,

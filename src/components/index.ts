@@ -31,3 +31,5 @@ export { default as Avatar } from "./ui/Avatar";
 export { default as SleepTimerButton } from "./SleepTimerButton";
 export { default as CheckedBar } from "./CheckedBar";
 export { default as PlaylistInfo } from "./PlaylistInfo";
+export { default as MyTooltip } from "./MyTooltip";
+export { default as MyPopup, MyPopupContent, MyPopupTrigger } from "./MyPopup";
