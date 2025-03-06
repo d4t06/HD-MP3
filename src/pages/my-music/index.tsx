@@ -4,14 +4,14 @@ import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
 import { useAuthContext, useThemeContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import { PlaylistList, Title } from "@/components";
-import MySongSongsList from "@/components/MySongSongsList";
+import MyMusicSongList from "./_components/MyMusicSongList";
 
 export default function MyMusicPage() {
   // stores
   const { theme } = useThemeContext();
   const { user } = useAuthContext();
 
-  const { isFetching, getSongAndPlaylist } = useGetSongPlaylist();
+  const { isFetching, getSongAndPlaylist, playlists } = useGetSongPlaylist();
 
   useEffect(() => {
     if (user) getSongAndPlaylist({ variant: "user", email: user.email });
@@ -21,7 +21,7 @@ export default function MyMusicPage() {
     <>
       <Title title="Playlists" />
 
-      <PlaylistList loading={isFetching} variant="my-song" />
+      <PlaylistList loading={isFetching} playlists={playlists} variant="my-music" />
       <div className="pt-[30px]"></div>
 
       <div className="flex items-center justify-between">
@@ -33,9 +33,9 @@ export default function MyMusicPage() {
           <ArrowUpTrayIcon className="w-7 mr-1" />
           <span className="font-playwriteCU leading-[2.2]">Upload</span>
         </label>
-      </div>   
+      </div>
 
-      <MySongSongsList initialLoading={isFetching} />
+      <MyMusicSongList isLoading={isFetching} />
 
       <Footer />
     </>

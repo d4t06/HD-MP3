@@ -2,8 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 
 export default function usePersistState<T>(
-  init: T,
-  key: string
+  key: string,
+  init: T
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
   const [value, setValue] = useState(init);
 

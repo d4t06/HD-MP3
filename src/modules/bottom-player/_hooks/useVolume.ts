@@ -1,7 +1,7 @@
 import { MouseEvent, RefObject, WheelEvent, useEffect, useState } from "react";
-import useLocalStorage from "./useLocalStorage";
 import { useThemeContext } from "@/stores";
 import { getLinearBg } from "@/utils/getLinearBg";
+import usePersistState from "@/hooks/usePersistState";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -12,7 +12,7 @@ export default function useVolume({ audioEle, volumeLineRef }: Props) {
   const { theme } = useThemeContext();
 
   const [isMute, setIsMute] = useState(false);
-  const [volume, setVolume] = useLocalStorage("volume", 1);
+  const [volume, setVolume] = usePersistState("volume", 1);
 
   const handleSetVolume = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
     const node = e.target as HTMLElement;

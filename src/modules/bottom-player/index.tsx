@@ -4,14 +4,14 @@ import { useLocation } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import useThemeBgImage from "@/hooks/useThemeBgImage";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { getDisable } from "@/utils/appHelpers";
 import SongInfo from "./_components/SongInfo";
 import { VolumeButton } from "./_components/VolumeButton";
 import MyTooltip from "@/components/MyTooltip";
-import SleepTimerButton from "@/components/SleepTimerButton";
 import MusicControl from "../music-control";
+import useThemeBgImage from "./_hooks/useThemeBgImage";
+import SleepTimerButton from "../sleep-timer-button";
 
 export default function BottomPlayer() {
   const { audioRef, idle } = usePlayerContext();

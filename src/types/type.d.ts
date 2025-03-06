@@ -21,7 +21,7 @@ type Song = {
   song_file_path: string;
   owner_email: string;
   duration: number;
-  lyric_id: string;
+  is_has_lyric: boolean;
   blurhash_encode: string;
   size: number;
   song_in: SongIn;

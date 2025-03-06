@@ -7,20 +7,25 @@ import {
   PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { useRef, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/appHelpers";
 
 import useSongQueueAction from "@/hooks/useSongQueueAction";
 import { useSongItemActions } from "@/hooks";
 import { useThemeContext } from "@/stores";
-import MyPopup, { MyPopupContent, MyPopupTrigger, usePopoverContext } from "@/components/MyPopup";
+import MyPopup, {
+  MyPopupContent,
+  MyPopupTrigger,
+  usePopoverContext,
+} from "@/components/MyPopup";
 import { ConfirmModal, EditSongModal, Modal, ModalRef, PopupWrapper } from "@/components";
 import { MenuList } from "@/components/ui/MenuWrapper";
 import AddToPlaylistMenuItem from "./_components/AddToPlaylistMenuItem";
 import MyTooltip from "@/components/MyTooltip";
 import AddSongToPlaylistModal from "./_components/AddSongToPlaylistModal";
 import AddSongToNewPlaylistModal from "./_components/AddSongToNewPlaylist";
+import RemoveSongFromPlaylistMenuItem from "./_components/RemoveSongFromPlaylistMenuItem";
 
 function SongInfo({ song }: { song: Song }) {
   return (
@@ -151,6 +156,7 @@ function SysSongMenu({ song }: SysSongMenuProps) {
 
 type UserSongMenuProps = {
   song: Song;
+  children?: ReactNode;
 };
 
 type Modal = "edit" | "delete";
@@ -183,7 +189,7 @@ function UserSongMenu({ song }: UserSongMenuProps) {
     modalRef.current?.close();
   };
 
-  const hanldeDeleteSong = async () => {
+  const handleDeleteSong = async () => {
     await songAction({
       variant: "delete",
       song,
@@ -199,7 +205,7 @@ function UserSongMenu({ song }: UserSongMenuProps) {
       case "delete":
         return (
           <ConfirmModal
-            callback={hanldeDeleteSong}
+            callback={handleDeleteSong}
             loading={loading}
             theme={theme}
             close={closeModal}
@@ -233,7 +239,7 @@ function UserSongMenu({ song }: UserSongMenuProps) {
             </button>
             <Link to={`lyric/${song.id}`}>
               <DocumentTextIcon className="w-5" />
-              <span>{song.lyric_id ? "Edit lyric" : "Add lyric"}</span>
+              <span>{song.is_has_lyric ? "Edit lyric" : "Add lyric"}</span>
             </Link>
             <button onClick={() => handleOpenModal("delete")}>
               <TrashIcon className="w-5" />
@@ -267,7 +273,7 @@ function UserSongMenu({ song }: UserSongMenuProps) {
 type Props = {
   song: Song;
   index: number;
-  variant: "queue-song" | "user-song" | "sys-song";
+  variant: "queue-song" | "user-song" | "sys-song" | "user-playlist";
 };
 
 function SongMenu({ song, index, variant }: Props) {
@@ -282,6 +288,12 @@ function SongMenu({ song, index, variant }: Props) {
         return <QueueSongMenu song={song} index={index} />;
       case "user-song":
         return <UserSongMenu song={song} />;
+      case "user-playlist":
+        return (
+          <UserSongMenu song={song}>
+            <RemoveSongFromPlaylistMenuItem song={song} />
+          </UserSongMenu>
+        );
       case "sys-song":
         return <SysSongMenu song={song} />;
     }

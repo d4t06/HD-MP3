@@ -12,11 +12,11 @@ const handleTouchPadScroll = () => {
   window.dispatchEvent(new Event("mousemove"));
 };
 
-const scrollToActiveSong = (
+export function scrollToHorizontalCenter(
   songItemEle: HTMLElement,
   containerEle: HTMLElement,
-  idle: boolean = false,
-) => {
+  idle: boolean = false
+) {
   const windowWidth = window.innerWidth;
 
   const rect = songItemEle.getBoundingClientRect();
@@ -59,7 +59,7 @@ const scrollToActiveSong = (
   }
 
   return true;
-};
+}
 
 export default function useScrollSong() {
   const dispatch = useDispatch();
@@ -76,7 +76,7 @@ export default function useScrollSong() {
   const handleScrollToActiveSong = () => {
     if (!activeSongRef?.current || !containerRef?.current) return;
 
-    scrollToActiveSong(activeSongRef.current, containerRef.current, idle);
+    scrollToHorizontalCenter(activeSongRef.current, containerRef.current, idle);
   };
 
   const handleArrowKeys = (key: KeyboardEvent["key"]) => {
@@ -103,7 +103,7 @@ export default function useScrollSong() {
       centeredEle.classList.remove("centered");
       newCenteredEle.classList.add("centered");
 
-      scrollToActiveSong(newCenteredEle as HTMLElement, containerRef.current);
+      scrollToHorizontalCenter(newCenteredEle as HTMLElement, containerRef.current);
     }
   };
 
@@ -166,7 +166,7 @@ export default function useScrollSong() {
     };
   }, []);
 
-// update playStatusRef
+  // update playStatusRef
   useEffect(() => {
     playStatusRef.current = playStatus;
   }, [playStatus]);
@@ -174,4 +174,3 @@ export default function useScrollSong() {
   return { activeSongRef, containerRef };
 }
 
-export { scrollToActiveSong };

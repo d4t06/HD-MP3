@@ -1,6 +1,6 @@
 import { StopIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ReactNode } from "react";
-import { Button } from ".";
+import { Button } from "@/components";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
 

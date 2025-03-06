@@ -1,7 +1,7 @@
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
 import { ElementRef, FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import useAudioControl from "./useAudioControl";
+import { useAudioControl } from "@/hooks";
 import { getWidthList } from "@/utils/getWidthList";
 
 export default function useEditLyricModal() {
@@ -50,9 +50,7 @@ export default function useEditLyricModal() {
   };
 
   const updateLyricTune = () => {
-
-   console.log('update tune');
-   
+    console.log("update tune");
 
     const newTune: LyricTune = {
       start: actuallyStartRef.current,

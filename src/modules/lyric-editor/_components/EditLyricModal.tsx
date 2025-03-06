@@ -9,7 +9,7 @@ import {
   PlayIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import useEditLyricModal from "@/hooks/useEditLyricModal";
+import useEditLyricModal from "../_hooks/useEditLyricModal";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { AudioSetting, Button, ModalHeader } from "@/components";
 

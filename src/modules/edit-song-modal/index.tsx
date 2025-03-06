@@ -9,13 +9,10 @@ import {
 } from "react";
 import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import { Image, Button } from "..";
+import { Image, Button, ModalHeader, ModalRef } from "@/components";
 import { useThemeContext } from "@/stores";
-import { useEditForm } from "@/hooks";
-import ModalHeader from "../ModalHeader";
 import { getDisable } from "@/utils/appHelpers";
-import { ModalRef } from "../Modal";
-import AddSingerButton from "./_components/AddSingerButton";
+import useEditSongModal from "./_hooks/useEditSongModal";
 
 type Props = {
   song: Song;
@@ -50,7 +47,7 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
     setValidURL,
     isFetching,
     handleSubmit,
-  } = useEditForm({
+  } = useEditSongModal({
     song,
     inputFields,
     modalRef,
@@ -67,7 +64,7 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
 
   const isShowRemoveImageButton = useMemo(
     () => !!imageURLFromLocal || !!stockImageURL,
-    [imageURLFromLocal, stockImageURL],
+    [imageURLFromLocal, stockImageURL]
   );
 
   const handleInput = (field: keyof typeof inputFields, value: string) => {
@@ -185,11 +182,9 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
           <div className={`${classes.label} items-center`}>
             <span>Singer</span>
 
-            <AddSingerButton setSinger={s => handleInput('singer', s)} />
+            {/* <AddSingerButton setSinger={s => handleInput('singer', s)} /> */}
           </div>
-          <div className={`bg-white/5 rounded-md p-2`}>
-            {inputFields.singer}
-          </div>
+          <div className={`bg-white/5 rounded-md p-2`}>{inputFields.singer}</div>
         </div>
 
         <div className="flex flex-col gap-[5px]">
@@ -208,7 +203,7 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
   return (
     <div
       className={`${getDisable(
-        isFetching,
+        isFetching
       )} w-[600px] max-h-[80vh] max-w-[90vw] text-white flex flex-col`}
     >
       <input

@@ -1,15 +1,14 @@
 import { useMemo } from "react";
 
-import { ArrowPathIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
+import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { getHidden } from "../utils/appHelpers";
 
-import { useThemeContext } from "../stores";
+import { useSongSelectContext, useThemeContext } from "../stores";
 import { Image } from "../components";
 
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { useSongSelectContext } from "@/stores/SongSelectContext";
 import SongMenu from "@/modules/song-menu";
 
 type Props = {
@@ -18,20 +17,55 @@ type Props = {
   onClick: () => void;
   song: Song;
   index: number;
-  variant:
-    | "home"
-    | "my-songs"
-    | "my-playlist"
-    | "others-playlist"
-    | "queue"
-    | "favorite"
-    | "uploading"
-    | "search-bar";
+  isHasCheckBox: boolean;
+  variant: "sys-song" | "user-song" | "queue-song" | "user-playlist";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-function SongItem({ song, onClick, active = true, index, className, ...props }: Props) {
+type CheckBoxProps = { onClick: () => void; isChecked: boolean; isSelected: boolean };
+
+function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
+  const classes = {
+    checkboxButton: `mr-3 `,
+  };
+
+  return (
+    <>
+      <button
+        onClick={onClick}
+        className={`${classes.checkboxButton} ${
+          !isSelected && "block md:hidden"
+        }  group-hover/main:block`}
+      >
+        {!isSelected ? (
+          <StopIcon className="w-[18px]" />
+        ) : (
+          <CheckIcon className="w-[18px]" />
+        )}
+      </button>
+      <button
+        className={`${
+          classes.checkboxButton
+        } hidden group-hover/main:hidden group-hover/main:mr-[0px] ${
+          !isChecked && "md:block"
+        }`}
+      >
+        <MusicalNoteIcon className="w-[18px]" />
+      </button>
+    </>
+  );
+}
+
+function SongItem({
+  song,
+  onClick,
+  isHasCheckBox,
+  active = true,
+  index,
+  className,
+  ...props
+}: Props) {
   // stores
   const { theme, isOnMobile } = useThemeContext();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
@@ -41,7 +75,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     return selectedSongs.indexOf(song) != -1;
   }, [selectedSongs]);
 
-  const handleSelect = (song: Song) => {
+  const handleSelect = () => {
     if (isChecked === undefined) return;
     selectSong(song);
   };
@@ -52,69 +86,15 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
     checkboxButton: `mr-3 text-[inherit]`,
     itemContainer: `w-full sm:group/container cursor-pointer flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
     imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
-      props.variant === "queue" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
+      props.variant === "queue-song" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
     }`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",
     menuBtnWrapper: "w-[50px] flex justify-center relative",
   };
 
-  const renderCheckBox = () => {
-    switch (props.variant) {
-      case "search-bar":
-      case "queue":
-      case "home":
-        return <></>;
-      case "uploading":
-        return (
-          <button className={`${classes.checkboxButton}`}>
-            <MusicalNoteIcon className="w-[18px]" />
-          </button>
-        );
-      default:
-        if (isOnMobile)
-          return (
-            <button
-              onClick={() => handleSelect(song)}
-              className={`${classes.checkboxButton} text-[inherit]`}
-            >
-              {!isSelected ? (
-                <StopIcon className="w-[18px]" />
-              ) : (
-                <CheckIcon className="w-[18px]" />
-              )}
-            </button>
-          );
-        return (
-          <>
-            <button
-              onClick={() => handleSelect(song)}
-              className={`${classes.checkboxButton} ${
-                !isSelected && "hidden"
-              } group-hover/main:block`}
-            >
-              {!isSelected ? (
-                <StopIcon className="w-[18px]" />
-              ) : (
-                <CheckIcon className="w-[18px]" />
-              )}
-            </button>
-            <button
-              className={`${classes.checkboxButton} ${
-                isSelected && "hidden"
-              } group-hover/main:hidden group-hover/main:mr-[0px]`}
-            >
-              <MusicalNoteIcon className="w-[18px]" />
-            </button>
-          </>
-        );
-    }
-  };
-
   const imageOverlay = useMemo(() => {
     switch (props.variant) {
-      case "uploading":
-        return <></>;
       default:
         return (
           <div
@@ -136,7 +116,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const getSongNameSize = () => {
     switch (props.variant) {
-      case "queue":
+      case "queue-song":
         return "text-sm";
       default:
         return "";
@@ -145,7 +125,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const getSongSingerSize = () => {
     switch (props.variant) {
-      case "queue":
+      case "queue-song":
         return "text-xs";
       default:
         return "text-sm";
@@ -154,12 +134,11 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const leftContent = (
     <>
-      {renderCheckBox()}
+      {isHasCheckBox && (
+        <CheckBox isChecked={isChecked} isSelected={isSelected} onClick={handleSelect} />
+      )}
 
-      <div
-        className="flex-grow flex"
-        onClick={isOnMobile && props.variant !== "uploading" ? onClick : () => {}}
-      >
+      <div className="flex-grow flex" onClick={isOnMobile ? onClick : () => {}}>
         <div className={`${classes.imageFrame}`}>
           <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
           {imageOverlay}
@@ -179,66 +158,24 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
 
   const renderLeftContent = () => {
     switch (props.variant) {
-      case "uploading":
-        return (
-          <div className="opacity-[.7] flex flex-grow overflow-hidden">{leftContent}</div>
-        );
-      case "queue":
+      case "queue-song":
         return leftContent;
       default:
         return <div className="flex flex-grow overflow-hidden">{leftContent}</div>;
     }
   };
 
-  const renderMenu = () => {
-    switch (props.variant) {
-      case "search-bar":
-      case "home":
-        return <SongMenu index={index} variant="sys-song" song={song} />;
-      case "my-songs":
-        return <SongMenu variant="user-song" index={index} song={song} />;
-      case "my-playlist":
-        return <SongMenu variant="sys-song" index={index} song={song} />;
-      case "others-playlist":
-        return <SongMenu variant="sys-song" song={song} index={index} />;
-      case "queue":
-        return <SongMenu variant="queue-song" song={song} index={index} />;
-      default:
-        return <></>;
-    }
-  };
-
-  const renderRightContent = () => {
-    switch (props.variant) {
-      case "uploading":
-        return (
-          <div className="flex items-center">
-            <span>
-              <ArrowPathIcon className="w-[20px] mr-[10px] animate-spin" />
-            </span>
-            <p className="text-[14px]">In process...</p>
-          </div>
-        );
-
-      default:
-        return (
-          <div className={classes.ctaWrapper}>
-            <div className={classes.menuBtnWrapper}>{renderMenu()}</div>
-          </div>
-        );
-    }
-  };
+  const renderRightContent = (
+    <div className={classes.ctaWrapper}>
+      <div className={classes.menuBtnWrapper}>
+        <SongMenu variant={props.variant} song={song} index={index} />
+      </div>
+    </div>
+  );
 
   const renderContent = () => {
     switch (props.variant) {
-      case "uploading":
-        return (
-          <div className={`${classes.itemContainer} ${className || ""} `}>
-            {renderLeftContent()}
-            {renderRightContent()}
-          </div>
-        );
-      case "queue":
+      case "queue-song":
         return (
           <div
             className={`${classes.itemContainer} group/main py-[6px] ${
@@ -246,7 +183,7 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             }`}
           >
             {renderLeftContent()}
-            {renderRightContent()}
+            {renderRightContent}
           </div>
         );
       default:
@@ -257,13 +194,13 @@ function SongItem({ song, onClick, active = true, index, className, ...props }: 
             }`}
           >
             {renderLeftContent()}
-            {renderRightContent()}
+            {renderRightContent}
           </div>
         );
     }
   };
 
-  return <>{renderContent()}</>;
+  return renderContent();
 }
 
 export default SongItem;

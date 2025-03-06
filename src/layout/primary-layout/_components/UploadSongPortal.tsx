@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import { useUploadSongs } from "@/hooks";
+import useUploadSongs from "../_hooks/useUploadSongs";
 
 function UploadSongPortal() {
   const { handleInputChange, inputRef } = useUploadSongs();
@@ -22,7 +22,7 @@ function UploadSongPortal() {
             className="hidden"
           />
         </div>,
-        document.getElementById("portals")!,
+        document.getElementById("portals")!
       )}
     </>
   );

@@ -1,6 +1,6 @@
 import { FC, ReactNode } from "react";
-import Sidebar from "./_components/Sidebar";
 import { useThemeContext } from "@/stores";
+import Sidebar from "@/modules/sidebar";
 
 interface Props {
   children: ReactNode;

@@ -1,13 +1,12 @@
 import { ReactNode, useMemo, useRef, useState } from "react";
-import { Button, ConfirmModal, Modal } from ".";
-import { useSongContext, useThemeContext } from "../stores";
+import { useSongContext, useThemeContext } from "@/stores";
 import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import CheckedCta from "./CheckedCta";
 import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
-import useCheckBar from "@/hooks/useCheckBar";
-import { ModalRef } from "./Modal";
+import { ModalRef, Button, ConfirmModal, Modal } from "@/components";
+import useCheckBar from "./_hooks/useCheckBar";
+import CheckedCta from "./_components/CheckedCta";
 
 type Modal = "delete-selected-songs" | "remove-selects-songs";
 

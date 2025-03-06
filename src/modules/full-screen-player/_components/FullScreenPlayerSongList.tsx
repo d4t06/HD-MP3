@@ -1,4 +1,3 @@
-import { useScrollSong } from "@/hooks";
 import useFunctionDebounce from "@/hooks/useFunctionDebounce";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
@@ -9,6 +8,7 @@ import { useMemo } from "react";
 import { Button, SongThumbnail } from "@/components";
 import Lyric from "@/modules/lyric";
 import Karaoke from "@/modules/karaoke";
+import useScrollSong from "../_hooks/useScrollSong";
 
 export default function FullScreenPlayerSongList() {
   const dispatch = useDispatch();

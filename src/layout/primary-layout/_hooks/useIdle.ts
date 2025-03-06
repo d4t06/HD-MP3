@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { scrollToActiveSong } from "./useScrollSong";
-import appConfig from "../config/app";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext } from "@/stores/PlayerContext";
+import appConfig from "@/config/app";
+import { scrollToHorizontalCenter } from "@/modules/full-screen-player/_hooks/useScrollSong";
 
 export default function useIdle(delay: number, isOnMobile: boolean) {
   // stores
@@ -32,7 +32,7 @@ export default function useIdle(delay: number, isOnMobile: boolean) {
     const containerEle = document.querySelector(".song-list-container");
 
     if (activeSongEle && containerEle) {
-      const isScroll = scrollToActiveSong(
+      const isScroll = scrollToHorizontalCenter(
         activeSongEle as HTMLElement,
         containerEle as HTMLElement,
         true,

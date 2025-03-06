@@ -10,6 +10,7 @@ function useSong() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const ranGetSong = useRef(false);
+  const shouldFetchUserSongPlaylist = useRef(true);
 
   const updateSong = (props: { song: Partial<Song>; id: string }) => {
     const newSongs = [...songs];
@@ -32,6 +33,7 @@ function useSong() {
     setPlaylists,
     sysSongPlaylist,
     setSysSongPlaylist,
+    shouldFetchUserSongPlaylist,
     updateSong,
   };
 }

@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 
-import useIdle from "@/hooks/useIdle";
 import appConfig from "@/config/app";
 import { useThemeContext } from "@/stores";
 import PlayerContextProvider, { usePlayerContext } from "@/stores/PlayerContext";
@@ -9,6 +8,7 @@ import SongQueue from "@/modules/song-queue";
 import BottomPlayer from "@/modules/bottom-player";
 import MobileFullScreenPlayer from "@/modules/mobile-full-screen-player";
 import MobileBottomPlayer from "@/modules/mobile-bottom-player";
+import useIdle from "../_hooks/useIdle";
 
 const PlayerContent = () => {
   // stores

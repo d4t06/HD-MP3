@@ -1,12 +1,7 @@
 import { useRef, useState } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import {
-  Tabs,
-  ScrollText,
-  FullScreenPlayerSetting,
-  SleepTimerButton,
-} from "@/components";
+import { Tabs, FullScreenPlayerSetting } from "@/components";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
@@ -19,6 +14,8 @@ import MobileSongThumbnail from "./_components/SongThumbnail";
 import LyricsList from "../lyric";
 import MusicControl from "../music-control";
 import MobileSongQueue from "./_components/SongQueue";
+import ScrollText from "../scroll-text";
+import SleepTimerButton from "../sleep-timer-button";
 
 export default function MobileFullScreenPlayer() {
   // use stores
@@ -125,14 +122,12 @@ export default function MobileFullScreenPlayer() {
               <div className="flex-grow">
                 <div className={"h-[40px]"}>
                   <ScrollText
-                    autoScroll
                     className={`text-xl leading-[1.5] font-playwriteCU`}
                     content={currentSongData?.song.name || "..."}
                   />
                 </div>
                 <div className={"h-[28px]"}>
                   <ScrollText
-                    autoScroll
                     className={`opacity-60 ${
                       activeTab === "Playing" ? "text-lg" : "text-base"
                     }`}

@@ -1,4 +1,3 @@
-import { SongList } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 
@@ -15,7 +14,8 @@ export default function SearchbarSongList({ songs }: Props) {
   return (
     <SongSelectProvider>
       {!!songs.length ? (
-        <SongList variant="search-bar" handleSetSong={_handleSetSong} songs={songs} />
+        //   <SongList variant="search-bar" handleSetSong={_handleSetSong} songs={songs} />
+        <></>
       ) : (
         <h1 className="text-[22px] text-center">...</h1>
       )}

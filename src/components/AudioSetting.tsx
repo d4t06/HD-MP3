@@ -9,12 +9,12 @@ type Props = { audioEle: HTMLAudioElement; postLocalStorageKey: string };
 
 function useAudioSetting({ audioEle, postLocalStorageKey }: Props) {
   const [speed, setSpeed] = usePersistState<number>(
-    1,
-    `audio_speed_${postLocalStorageKey}`
+    `audio_speed_${postLocalStorageKey}`,
+    1
   );
   const [volume, setVolume] = usePersistState<number>(
-    100,
-    `audio_volume_${postLocalStorageKey}`
+    `audio_volume_${postLocalStorageKey}`,
+    100
   );
 
   useEffect(() => {

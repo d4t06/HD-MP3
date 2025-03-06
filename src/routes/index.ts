@@ -5,7 +5,7 @@ import {
   // Playlist,
   Search,
   MyMusic,
-  DashboardSongLyric,
+  DashboardEditSongLyric,
   DashboardPlaylistDetail,
   DashboardPlaylist,
   DashboardSong,
@@ -81,7 +81,7 @@ const privateRoutes = [
   // },
   {
     path: privateRouteMap.songLyric,
-    component: DashboardSongLyric,
+    component: DashboardEditSongLyric,
     layout: DashBoardLayout,
   },
 ];

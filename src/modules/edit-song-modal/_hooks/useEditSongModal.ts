@@ -17,7 +17,7 @@ type Props = {
 
 const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
 
-export default function useEditForm({ song, inputFields, modalRef }: Props) {
+export default function useEditSongModal({ song, inputFields, modalRef }: Props) {
   const { user } = useAuthContext();
   const { updateSong } = useSongContext();
 

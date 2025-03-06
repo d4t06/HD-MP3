@@ -2,8 +2,9 @@ import { useSelector } from "react-redux";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import useSetSong from "@/hooks/useSetSong";
-import { CheckedBar, Skeleton, SongList } from "@/components";
+import { CheckedBar, Skeleton, SongItem } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";
@@ -22,6 +23,7 @@ const playlistSongSkeleton = (
 
 export default function PlaylistSongList({ variant, loading }: Props) {
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
@@ -38,11 +40,17 @@ export default function PlaylistSongList({ variant, loading }: Props) {
           <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
         </CheckedBar>
 
-        <SongList
-          variant={variant}
-          songs={playlistSongs}
-          handleSetSong={_handleSetSong}
-        />
+        {playlistSongs.map((song, index) => (
+          <SongItem
+            active={song.id === currentSongData?.song.id}
+            onClick={() => _handleSetSong(song.queue_id)}
+            variant="sys-song"
+            isHasCheckBox
+            song={song}
+            index={index}
+            key={song.queue_id}
+          />
+        ))}
       </SongSelectProvider>
     </>
   );

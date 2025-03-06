@@ -1,4 +1,4 @@
-import useVolume from "@/hooks/useVolume";
+import useVolume from "../_hooks/useVolume";
 import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
 import { ElementRef, useRef } from "react";
 

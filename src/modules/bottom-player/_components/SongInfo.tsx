@@ -2,7 +2,8 @@
 import { ElementRef, useRef } from "react";
 import { getHidden } from "@/utils/appHelpers";
 import useVinyl from "../_hooks/useVinyl";
-import { Image, ScrollText } from "@/components";
+import { Image } from "@/components";
+import ScrollText from "@/modules/scroll-text";
 
 type Props = {
   admin?: boolean;
@@ -43,7 +44,6 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
 
           <div className="h-[20px]">
             <ScrollText
-              autoScroll
               className="opacity-70 leading-[1.2]"
               content={song?.singer || "..."}
             />

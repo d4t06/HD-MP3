@@ -5,11 +5,11 @@ import {
 } from "@heroicons/react/24/outline";
 
 import PopupWrapper from "./ui/PopupWrapper";
-import { useLocalStorage } from "../hooks";
 import { Switch } from ".";
 import { useDispatch } from "react-redux";
 import { setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { useThemeContext } from "@/stores";
+import usePersistState from "@/hooks/usePersistState";
 
 type Modal = "theme" | "info";
 
@@ -26,7 +26,7 @@ export default function SettingMenu({ openModal, variant }: Props) {
     openModal(modal);
   };
 
-  const [isCrossFade, setIsCrossFade] = useLocalStorage("isCrossFade", false);
+  const [isCrossFade, setIsCrossFade] = usePersistState("isCrossFade", false);
 
   const handleSetCrossFade = () => {
     setIsCrossFade(!isCrossFade);

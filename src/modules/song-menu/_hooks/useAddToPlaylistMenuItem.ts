@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useToastContext } from "../stores";
+import { useToastContext } from "@/stores";
 import { mySetDoc } from "@/services/firebaseService";
 
 export default function useAddPlaylistMenuItem() {

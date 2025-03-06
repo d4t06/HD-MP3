@@ -1,15 +1,16 @@
-import { ChangeEvent, useRef, useCallback, useEffect } from "react";
-import { generateId } from "../utils/appHelpers";
+import { ChangeEvent, useRef, useCallback, useEffect, useState } from "react";
 import {
   useAuthContext,
   useSongContext,
   useThemeContext,
   useToastContext,
-  useUpload,
+  useUploadContext,
 } from "@/stores";
 import { myAddDoc, uploadFile } from "@/services/firebaseService";
 import { parserSong } from "@/utils/parseSong";
 import { initSongObject } from "@/utils/factory";
+import { getDoc } from "firebase/firestore";
+import { nanoid } from "nanoid";
 
 // event listener
 // await promise
@@ -19,29 +20,27 @@ export default function useUploadSongs() {
   const { user } = useAuthContext();
   const { isDev } = useThemeContext();
 
-  const { songs } = useSongContext();
-  const { setTempSongs, tempSongs, clearTempSongs, shiftSong, status } = useUpload();
+  const { songs, setSongs } = useSongContext();
+  const { setIsUploading, isUploading, setUploadingSongs, resetUploadContext } =
+    useUploadContext();
 
   // state
-  const duplicatedFile = useRef<SongSchema[]>([]);
   const fileIndexesNeeded = useRef<number[]>([]);
-  const isDuplicate = useRef(false);
+  const [errorMessage, setErrorMessgae] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   // hooks
   const { setErrorToast, setSuccessToast } = useToastContext();
 
-  const finishAndClear = (sts: typeof status) => {
-    if (!inputRef.current) return;
+  const finishAndClear = () => {
     const inputEle = inputRef.current as HTMLInputElement;
     if (inputEle) {
       inputEle.value = "";
-      inputEle;
       fileIndexesNeeded.current = [];
     }
 
-    clearTempSongs(sts);
+    resetUploadContext();
   };
 
   // closure
@@ -53,20 +52,12 @@ export default function useUploadSongs() {
 
   const handleInputChange = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
-      if (!user) return setErrorToast("Missing user data");
-
-      clearTempSongs("uploading");
+      if (!user) return;
 
       const inputEle = e.target as HTMLInputElement & { files: FileList };
       const fileLists = inputEle.files;
 
-      if (!fileLists.length) {
-        clearTempSongs("finish");
-        return;
-      }
-
-      // init song object
-      let data = initSongObject({ owner_email: user.email });
+      if (!fileLists.length) return;
 
       let processSongsList: SongSchema[] = [];
 
@@ -88,35 +79,26 @@ export default function useUploadSongs() {
         );
       };
       try {
-        let i;
-        for (i = 0; i <= fileLists.length - 1; i++) {
+        // start lop create uploading songs
+        for (let i = 0; i <= fileLists.length - 1; i++) {
           const songFile = fileLists[i];
           const songData = await parserSong(songFile);
 
-          // console.log("check song data", songData);
-          if (!songData) {
-            setErrorToast("Error when parser song");
-            finishAndClear("finish-error");
-
-            return;
-          }
+          if (!songData) continue;
 
           // init song data
-          let songFileObject: SongSchema = {
-            ...data,
+          const songFileObject: SongSchema = initSongObject({
             name: songData.name,
             singer: songData.singer,
             duration: Math.floor(songData.duration),
             size: Math.floor(songFile.size / 1024),
-          };
+            owner_email: user.email,
+          });
 
           // case song is duplicate
           const duplicated = checkDuplicate(songFileObject);
           if (duplicated) {
             console.log(">>>duplicate");
-            isDuplicate.current = true;
-            duplicatedFile.current.push(songFileObject);
-
             continue;
           }
 
@@ -124,35 +106,29 @@ export default function useUploadSongs() {
           fileIndexesNeeded.current = [...fileIndexesNeeded.current, i];
         }
 
+        //end loop create uploading songs
+
         // check limit
-        if (songs.length + fileIndexesNeeded.current.length > 5) {
-          if (user.role !== "ADMIN") {
-            finishAndClear("finish-error");
-            setErrorToast("You have reach the upload limit");
-            return;
-          }
-        }
+        if (songs.length + fileIndexesNeeded.current.length > 5)
+          return setErrorMessgae("You have reach the upload limit");
 
         // case all song are duplicate
-        if (!processSongsList.length) {
-          isDuplicate.current = false;
-          finishAndClear("finish-error");
-          setErrorToast("Duplicate song");
-          return;
-        }
+        if (!processSongsList.length) return setErrorMessgae("Duplicated song");
 
-        setTempSongs(processSongsList);
+        setUploadingSongs(processSongsList);
 
         // inputs file1 file2 file3 ... file10
         // need   file2 file10
         // process [{}, {}]
 
+        //   start loop upload songs
+
+        setIsUploading(true);
+
         for (let index = 0; index < fileIndexesNeeded.current.length; index++) {
           const fileIndex = fileIndexesNeeded.current[index];
 
-          const songId = generateId(processSongsList[index].name);
-
-          const targetSong = { ...processSongsList[index] };
+          const targetSongData = { ...processSongsList[index] };
 
           const { filePath, fileURL } = await uploadFile({
             file: fileLists[fileIndex],
@@ -161,57 +137,60 @@ export default function useUploadSongs() {
             msg: ">>> api: upload song file",
           });
 
-          // update target song
-          Object.assign(targetSong, {
-            id: songId,
+          Object.assign(targetSongData, {
             song_file_path: filePath,
             song_url: fileURL,
           });
 
-          await myAddDoc({
+          const docRef = await myAddDoc({
             collectionName: "Songs",
-            data: targetSong,
+            data: targetSongData,
             msg: ">>> api: set song doc",
           });
 
-          //  setSongs((prev) => [...prev, { ...targetSong, queue_id: nanoid(4) }]);
+          const newSongRef = await getDoc(docRef);
 
-          shiftSong();
+          const newSong = {
+            ...newSongRef.data(),
+            id: docRef.id,
+            queue_id: nanoid(4),
+          } as Song;
 
-          // no handle song queue here
-          if (isDev) console.log(targetSong.name, "uploaded");
+          setSongs((prev) => [...prev, newSong]);
+
+          setUploadingSongs((prev) => {
+            const rest = [...prev];
+            rest.shift;
+
+            return rest;
+          });
         }
 
-        fileIndexesNeeded.current = [];
+        //  end loop upload song
 
-        if (isDuplicate.current) {
-          finishAndClear("finish-error");
-          setSuccessToast();
-        } else {
-          finishAndClear("finish");
-          setSuccessToast(`${processSongsList.length} songs uploaded`);
-        }
+        setSuccessToast(`${processSongsList.length} songs uploaded`);
 
         const finish = Date.now();
         if (isDev)
           console.log(">>> upload songs finished after", (finish - start) / 1000);
-
-        return;
       } catch (error) {
         console.log({ message: error });
-        finishAndClear("finish-error");
-        setErrorToast();
+        setErrorToast(errorMessage);
+      } finally {
+        finishAndClear();
       }
     },
     [user, songs]
   );
 
   useEffect(() => {
-    const firstTempSong = document.querySelector(".temp-song") as HTMLDivElement;
-    if (!firstTempSong) return;
+    if (!isUploading) return;
 
-    firstTempSong.scrollIntoView({ behavior: "smooth", block: "center" });
-  }, [tempSongs]);
+    const firstSong = document.querySelector(".temp-song") as HTMLDivElement;
+    if (!firstSong) return;
+
+    firstSong.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [isUploading]);
 
   return { handleInputChange, inputRef };
 }

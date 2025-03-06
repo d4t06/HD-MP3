@@ -7,7 +7,7 @@ export {
   useNavigationContext,
 } from "./global/NavigationContext";
 
-export { useUpload } from "./UploadContext";
+export { useUploadContext } from "./UploadContext";
 export { usePlayerContext } from "./PlayerContext";
 export { useLyricContext } from "./LyricContext";
 export { useSongSelectContext } from "./SongSelectContext";

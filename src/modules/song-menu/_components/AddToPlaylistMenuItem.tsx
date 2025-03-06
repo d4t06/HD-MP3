@@ -1,7 +1,7 @@
 import { useSongContext, useThemeContext } from "@/stores";
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { RefObject } from "react";
-import useAddPlaylistMenuItem from "@/hooks/useAddToPlaylistMenuItem";
+import useAddPlaylistMenuItem from "../_hooks/useAddToPlaylistMenuItem";
 import { ModalRef, PopupWrapper } from "@/components";
 import { usePopoverContext } from "@/components/MyPopup";
 

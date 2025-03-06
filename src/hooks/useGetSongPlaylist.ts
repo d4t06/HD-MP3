@@ -7,7 +7,14 @@ import { useState } from "react";
 import * as appService from "../services/appService";
 
 export default function useGetSongPlaylist() {
-  const { setSysSongPlaylist, setSongs, setPlaylists } = useSongContext();
+  const {
+    setSysSongPlaylist,
+    setSongs,
+    setPlaylists,
+    playlists,
+    sysSongPlaylist,
+    shouldFetchUserSongPlaylist,
+  } = useSongContext();
 
   const [isFetching, setIsFetching] = useState(true);
 
@@ -42,20 +49,14 @@ export default function useGetSongPlaylist() {
 
           break;
         case "user":
-          // if (ranGetSong.current) {
-          //   await sleep(500);
-          //   break;
-          // }
+          if (shouldFetchUserSongPlaylist.current) {
+            shouldFetchUserSongPlaylist.current = true;
+            const { userPlaylists, userSongs } =
+              await appService.getUserSongsAndPlaylists(props.email);
 
-          // ranGetSong.current = true;
-          // console.log("get");
-
-          const { userPlaylists, userSongs } = await appService.getUserSongsAndPlaylists(
-            props.email
-          );
-
-          setSongs(userSongs);
-          setPlaylists(userPlaylists);
+            setSongs(userSongs);
+            setPlaylists(userPlaylists);
+          } else await sleep(300);
 
           break;
 
@@ -78,5 +79,5 @@ export default function useGetSongPlaylist() {
     }
   };
 
-  return { isFetching, getSongAndPlaylist };
+  return { isFetching, getSongAndPlaylist, playlists, sysSongPlaylist };
 }
