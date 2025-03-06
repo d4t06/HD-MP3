@@ -7,7 +7,7 @@ import {
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { Button, SongList } from "@/components";
+import { Button, SongItem } from "@/components";
 import { usePlayerContext, useThemeContext } from "@/stores";
 
 function SongQueue() {
@@ -28,8 +28,8 @@ function SongQueue() {
 
   const clearSongQueue = useCallback(() => {
     dispatch(resetSongQueue());
-    controlRef.current?.resetForNewSong()
-    
+    controlRef.current?.resetForNewSong();
+
     setIsOpenSongQueue(false);
   }, []);
 
@@ -50,13 +50,18 @@ function SongQueue() {
 
         <div className={classes.songListContainer}>
           <>
-            <div className="">
-              <SongList
-                variant="queue"
-                songs={queueSongs}
-                handleSetSong={handleSetSong}
+            {queueSongs.map((song, index) => (
+              <SongItem
+                active={song.queue_id === currentQueueId}
+                onClick={() => handleSetSong(song.queue_id)}
+                variant="user-song"
+                isHasCheckBox
+                song={song}
+                index={index}
+                key={song.queue_id}
               />
-            </div>
+            ))}
+
             <div className="text-center">
               {!!queueSongs.length && (
                 <Button

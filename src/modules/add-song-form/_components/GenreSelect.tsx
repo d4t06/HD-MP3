@@ -1,27 +1,26 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { Modal, ModalRef } from "@/components";
-import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/components/dashboard";
+import GenreSearchModal from "./GenreSearchModal";
 
-export default function SingerSelect() {
-  const { singers, selectSinger } = useAddSongContext();
-
+export default function GenreSelect() {
+  const { genres, selectGenre } = useAddSongContext();
   const modalRef = useRef<ModalRef>(null);
 
-  const closeModal = () => modalRef.current?.close();
-
-  const handleChoose = (s: Singer) => {
-    selectSinger(s);
+  const handleChoose = (genre: Genre) => {
+    selectGenre(genre);
     closeModal();
   };
+
+  const closeModal = () => modalRef.current?.close();
 
   return (
     <>
       <div className="space-y-1.5">
         <div className="flex space-x-2 items-center">
-          <span>Singer</span>
+          <span>Genre</span>
 
           <Button
             onClick={() => modalRef.current?.open()}
@@ -33,14 +32,14 @@ export default function SingerSelect() {
         </div>
 
         <Frame className="flex flex-wrap space-x-2">
-          {singers.length
-            ? singers.map((s, i) => (
+          {genres.length
+            ? genres.map((g, i) => (
                 <button
-                  onClick={() => selectSinger(s)}
+                  onClick={() => selectGenre(g)}
                   className="px-2 py-1 hover:border-red-300 rounded-md border border-black/10"
                   key={i}
                 >
-                  {s.name}
+                  {g.name}
                 </button>
               ))
             : "..."}
@@ -48,7 +47,7 @@ export default function SingerSelect() {
       </div>
 
       <Modal wrapped={false} variant="animation" ref={modalRef}>
-        <SingerSearchModal closeModal={closeModal} choose={handleChoose} />
+        <GenreSearchModal closeModal={closeModal} choose={handleChoose} />
       </Modal>
     </>
   );

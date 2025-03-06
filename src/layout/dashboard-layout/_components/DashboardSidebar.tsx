@@ -18,12 +18,12 @@ export const routeList = [
     icon: <ComputerDesktopIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/songs",
+    path: "/dashboard/song",
     title: "Songs",
     icon: <MusicalNoteIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/playlists",
+    path: "/dashboard/playlist",
     title: "Playlists",
     icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
   },

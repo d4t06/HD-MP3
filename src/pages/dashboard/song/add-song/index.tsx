@@ -11,7 +11,7 @@ export default function AddSongPage() {
 
 	return (
 		<AddSongProvider>
-			<Title title="Add song" />
+			<Title title="Add Song" />
 			<AddSongForm ownerEmail={user.email} variant="add" />
 		</AddSongProvider>
 	);

@@ -14,7 +14,7 @@ type User = {
 type Song = {
   id: string;
   name: string;
-  singer: string;
+  singers: Singer[];
   image_url: string;
   image_file_path: string;
   song_url: string;
@@ -24,7 +24,7 @@ type Song = {
   is_has_lyric: boolean;
   blurhash_encode: string;
   size: number;
-  song_in: SongIn;
+  genre_ids: string[];
   queue_id: string;
   updated_at: Timestamp;
   created_at: Timestamp;
@@ -111,3 +111,27 @@ type Toast = {
 };
 
 type ModalName = "confirm" | "edit" | "setting";
+
+type Singer = {
+  id: string;
+  name: string;
+  image_url: string;
+  image_path: string;
+  birthday: Timestamp;
+  description: string;
+  created_at: Timestamp;
+};
+
+type SingerSchema = Omit<Singer, "id">;
+
+type Genre = {
+  id: string;
+  name: string;
+};
+
+type GenreSchema = Omit<Genre, "id">;
+
+type Language = {
+  id: string;
+  name: string;
+};

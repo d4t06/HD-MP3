@@ -20,10 +20,17 @@ import {
   QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
-import { AudioSetting, Button, InputModal, Modal, ModalHeader, ModalRef,  } from "@/components";
+import {
+  AudioSetting,
+  Button,
+  InputModal,
+  Modal,
+  ModalHeader,
+  ModalRef,
+} from "@/components";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
-import { useLyricEditorAction } from "@/hooks/useLyricEditorAction";
 import tutorial from "@/assets/tutorial/tutorial1.png";
+import { useLyricEditorAction } from "../_hooks/useLyricEditorAction";
 
 type Props = {
   audioEle: HTMLAudioElement;

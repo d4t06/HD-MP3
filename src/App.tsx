@@ -1,6 +1,6 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes, protectedRoutes, publicRoutes } from "./routes";
-import { NotFound } from "./pages";
+import { NotFoundPage } from "./pages";
 import { RequireAdministrator, RequireAuth } from "./routes/RequireAuth";
 import { ReactNode } from "react";
 
@@ -13,7 +13,7 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route path="*" element={<NotFound />} />
+          <Route path="*" element={<NotFoundPage />} />
 
           {publicRoutes.map((route, index) => {
             const Layout = route.layout || OutletLayout;

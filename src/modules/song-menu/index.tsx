@@ -12,20 +12,21 @@ import { Link } from "react-router-dom";
 import { formatTime } from "@/utils/appHelpers";
 
 import useSongQueueAction from "@/hooks/useSongQueueAction";
-import { useSongItemActions } from "@/hooks";
 import { useThemeContext } from "@/stores";
 import MyPopup, {
   MyPopupContent,
   MyPopupTrigger,
   usePopoverContext,
 } from "@/components/MyPopup";
-import { ConfirmModal, EditSongModal, Modal, ModalRef, PopupWrapper } from "@/components";
+import { ConfirmModal, Modal, ModalRef, PopupWrapper } from "@/components";
 import { MenuList } from "@/components/ui/MenuWrapper";
 import AddToPlaylistMenuItem from "./_components/AddToPlaylistMenuItem";
 import MyTooltip from "@/components/MyTooltip";
 import AddSongToPlaylistModal from "./_components/AddSongToPlaylistModal";
 import AddSongToNewPlaylistModal from "./_components/AddSongToNewPlaylist";
 import RemoveSongFromPlaylistMenuItem from "./_components/RemoveSongFromPlaylistMenuItem";
+import { useSongItemAction } from "@/hooks";
+import EditSongModal from "../edit-song-modal";
 
 function SongInfo({ song }: { song: Song }) {
   return (
@@ -172,7 +173,7 @@ function UserSongMenu({ song }: UserSongMenuProps) {
   const addSongToPlaylistModalRef = useRef<ModalRef>(null);
 
   const { action } = useSongQueueAction();
-  const { action: songAction, loading } = useSongItemActions();
+  const { action: songAction, loading } = useSongItemAction();
 
   const handleAddSongToQueue = () => {
     action({ variant: "add", songs: [song] });

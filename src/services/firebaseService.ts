@@ -2,7 +2,14 @@ import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage
 import { db, stores } from "../firebase";
 import { addDoc, collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
 
-type collectionVariant = "Songs" | "Playlists" | "Lyrics" | "Users" | "Granted_Accounts";
+type collectionVariant =
+  | "Songs"
+  | "Playlists"
+  | "Lyrics"
+  | "Users"
+  | "Singers"
+  | "Genres"
+  | "Granted_Accounts";
 
 const isDev: boolean = import.meta.env.DEV;
 
@@ -144,10 +151,10 @@ export const deleteSong = async (song: Song) => {
     msg: ">>> api: delete song file",
   });
 
-  if (song.lyric_id) {
+  if (song.is_has_lyric) {
     await myDeleteDoc({
       collectionName: "Lyrics",
-      id: song.lyric_id,
+      id: song.id,
       msg: ">>> api: delete song lyric doc",
     });
   }

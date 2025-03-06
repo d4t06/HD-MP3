@@ -1,13 +1,13 @@
 import { FormEvent, useEffect, useState } from "react";
-import { getSongs } from "@/services/appService";
-import { useSongContext, useToastContext } from "@/stores";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
+import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 
 type DashboardSongTab = "All" | "Result";
 
 export default function useDashboardSong() {
   const { songs, setSongs } = useSongContext();
+  const { user } = useAuthContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
@@ -18,16 +18,17 @@ export default function useDashboardSong() {
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
+      if (!user) return;
 
       setIsFetching(true);
 
-      const songsCollectionRef = collection(db, "songs");
+      const songsCollectionRef = collection(db, "Songs");
 
       const searchQuery = query(
         songsCollectionRef,
         where("name", ">=", value),
         where("name", "<=", value + "\uf8ff"),
-        where("by", "==", "admin"),
+        where("owner_email", "==", user.email)
       );
 
       const songsSnap = await getDocs(searchQuery);
@@ -48,12 +49,24 @@ export default function useDashboardSong() {
 
   const handleGetSong = async () => {
     try {
+      if (!user) return;
       setIsFetching(true);
 
-      const songs = await getSongs({
-        variant: "dashboard",
-      });
-      if (songs) setSongs(songs);
+      const songsCollectionRef = collection(db, "Songs");
+
+      const searchQuery = query(
+        songsCollectionRef,
+        where("owner_email", "==", user.email),
+        orderBy("created_at", "desc")
+      );
+
+      const songsSnap = await getDocs(searchQuery);
+
+      if (songsSnap.docs) {
+        const result = songsSnap.docs.map((doc) => doc.data() as Song);
+
+        setSongs(result);
+      }
     } catch (err) {
       console.log({ message: err });
       setErrorToast();

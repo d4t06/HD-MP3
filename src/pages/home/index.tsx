@@ -25,15 +25,13 @@ export default function HomePage() {
   return (
     <>
       {isOnMobile && <MobileNav />}
-      <div className="mb-[30px]">
-        <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
+      <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
 
-        <PlaylistList
-          loading={isFetching}
-          variant="others"
-          playlists={sysSongPlaylist.playlists}
-        />
-      </div>
+      <PlaylistList
+        loading={isFetching}
+        variant="others"
+        playlists={sysSongPlaylist.playlists}
+      />
 
       <HomeSongList loading={isFetching} />
       {isOnMobile && (

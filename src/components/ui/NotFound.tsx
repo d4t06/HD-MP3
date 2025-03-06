@@ -12,9 +12,9 @@ export default function NotFound({
 }) {
   return (
     <div className={`${className}`}>
-      <img className="m-auto" src={simon_empty} alt="" />
+      <img className="mx-auto" src={simon_empty} alt="" />
 
-      {!less && <p className="text-[16px] text-center">No result found, ¯\_(ツ)_/¯</p>}
+      {!less && <p className="text-center">No result found, ¯\_(ツ)_/¯</p>}
 
       {children}
     </div>

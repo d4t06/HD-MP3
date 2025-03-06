@@ -13,6 +13,7 @@ import {
   Unauthorized,
 } from "../pages";
 import DashBoardLayout from "@/layout/dashboard-layout";
+import AddSongPage from "@/pages/dashboard/song/add-song";
 
 const pubicRouteMap = {
   home: "/",
@@ -29,12 +30,12 @@ const protectedRouteMap = {
 
 const privateRouteMap = {
   dashboard: "/dashboard",
-  playlist: "/dashboard/playlists",
-  song: "/dashboard/songs",
-  addSong: "/dashboard/addSong",
-  singer: "/dashboard/singers",
-  genre: "/dashboard/genres",
-  playlistDetail: "/dashboard/playlists/:id",
+  playlist: "/dashboard/playlist",
+  song: "/dashboard/song",
+  addSong: "/dashboard/song/add-song",
+  singer: "/dashboard/singer",
+  genre: "/dashboard/genre",
+  playlistDetail: "/dashboard/playlist/:id",
   songLyric: "/dashboard/lyric/:id",
 };
 
@@ -74,11 +75,11 @@ const privateRoutes = [
     layout: DashBoardLayout,
   },
 
-  // {
-  //   path: privateRouteMap.addSong,
-  //   component: AddSongPage,
-  //   layout: DashBoardLayout,
-  // },
+  {
+    path: privateRouteMap.addSong,
+    component: AddSongPage,
+    layout: DashBoardLayout,
+  },
   {
     path: privateRouteMap.songLyric,
     component: DashboardEditSongLyric,

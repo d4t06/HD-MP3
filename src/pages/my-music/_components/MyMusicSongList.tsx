@@ -4,9 +4,10 @@ import SongSelectProvider from "@/stores/SongSelectContext";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSongContext, useUploadContext } from "@/stores";
-import { CheckedBar, Skeleton, SongItem } from "@/components";
+import { Skeleton, SongItem } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
 import UploadingSongItem from "./UploadingSongItem";
+import CheckedBar from "@/modules/check-bar";
 
 type Props = {
   isLoading: boolean;

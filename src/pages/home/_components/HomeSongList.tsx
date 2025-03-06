@@ -4,7 +4,7 @@ import { useSongContext } from "@/stores";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { SongItemSkeleton } from "@/components/skeleton";
-import { SongItem, Title } from "@/components";
+import { NotFound, SongItem, Title } from "@/components";
 
 type Props = {
   loading: boolean;
@@ -42,7 +42,7 @@ export default function HomeSongList({ loading }: Props) {
                 />
               ))
             ) : (
-              <h1 className="text-[22px] text-center">...</h1>
+              <NotFound />
             )}
           </>
         )}

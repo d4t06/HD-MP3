@@ -14,6 +14,8 @@ import { useThemeContext } from "../stores";
 type BaseProps = {
   className?: string;
   children: ReactNode;
+  wrapped?: boolean;
+  persisted?: boolean;
 };
 
 type NoAnimation = {
@@ -34,14 +36,17 @@ export type ModalRef = {
   setModalPersist: (v: boolean) => void;
 };
 
-function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
+function Modal(
+  { children, className, persisted = false, wrapped, ...props }: Props,
+  ref: Ref<ModalRef>
+) {
   const variant = props.variant || "default";
 
   const { theme } = useThemeContext();
 
   const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
   const [isMounted, setIsMounted] = useState(variant === "default" ? true : false);
-  const [persist, setPersist] = useState(false);
+  const [persist, setPersist] = useState(persisted);
 
   const toggle = () => {
     if (isMounted) setIsMounted(false);
@@ -129,12 +134,16 @@ function Modal({ children, className, ...props }: Props, ref: Ref<ModalRef>) {
                             }
                         `}
             >
-              <PopupWrapper className={className || ""} theme={theme}>
-                {children}
-              </PopupWrapper>
+              {wrapped ? (
+                <PopupWrapper className={className || ""} theme={theme}>
+                  {children}
+                </PopupWrapper>
+              ) : (
+                children
+              )}
             </div>
           </div>,
-          document.getElementById("portals")!,
+          document.getElementById("portals")!
         )}
     </>
   );

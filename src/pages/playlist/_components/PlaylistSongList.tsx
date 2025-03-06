@@ -2,9 +2,10 @@ import { useSelector } from "react-redux";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import useSetSong from "@/hooks/useSetSong";
-import { CheckedBar, Skeleton, SongItem } from "@/components";
+import { Skeleton, SongItem } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import CheckedBar from "@/modules/check-bar";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";

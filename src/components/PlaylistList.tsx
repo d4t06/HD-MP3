@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { AddPlaylist, Empty, Modal, PlaylistItem } from ".";
+import { AddPlaylist, Empty, Modal, NotFound, PlaylistItem } from ".";
 import { useThemeContext } from "../stores";
 import { PlaylistSkeleton } from "./skeleton";
 import { useRef } from "react";
@@ -53,7 +53,7 @@ export default function PlaylistList({
   };
 
   const render = () => {
-    if (!playlists.length) return <></>;
+    if (!playlists.length) return <NotFound className="mx-auto" />;
 
     return playlists.map((playlist, index) => {
       const active = currentSongData?.song.song_in.includes(playlist.id);

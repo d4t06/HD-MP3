@@ -1,5 +1,5 @@
 import { auth } from "@/firebase";
-import { myGetDoc } from "@/services/firebaseService";
+import { myGetDoc, mySetDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { useEffect } from "react";
 
@@ -11,6 +11,7 @@ export default function usePersistAuth() {
       auth.onAuthStateChanged(async (u) => {
         if (u && u.email) {
           const docRef = await myGetDoc({ collectionName: "Users", id: u.email });
+
           const userDoc = docRef.data() as User;
 
           const user: User = {
@@ -20,9 +21,12 @@ export default function usePersistAuth() {
             liked_song_ids: userDoc?.liked_song_ids || [],
             recent_playlist_ids: userDoc?.recent_playlist_ids || [],
             recent_song_ids: userDoc?.recent_song_ids || [],
-            role: userDoc?.role,
+            role: userDoc?.role || "USER",
             playlist_ids: userDoc?.playlist_ids || [],
           };
+
+          if (!docRef.exists())
+            await mySetDoc({ collectionName: "Users", data: user, id: user.email });
 
           setUser(user);
         } else setUser(null);

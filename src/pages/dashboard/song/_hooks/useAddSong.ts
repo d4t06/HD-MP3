@@ -12,7 +12,6 @@ export default function useAddSong() {
     if (payload) {
       updateSongData({
         name: payload.name,
-        singer: payload.singer,
         duration: Math.floor(payload.duration),
         size: Math.floor(songFile.size / 1024),
       });
