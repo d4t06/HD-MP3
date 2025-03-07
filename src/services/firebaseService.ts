@@ -1,6 +1,14 @@
 import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { db, stores } from "../firebase";
-import { addDoc, collection, deleteDoc, doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 type collectionVariant =
   | "Songs"
@@ -12,6 +20,9 @@ type collectionVariant =
   | "Granted_Accounts";
 
 const isDev: boolean = import.meta.env.DEV;
+
+export const songsCollectionRef = collection(db, "Songs");
+export const playlistCollectionRef = collection(db, "Playlists");
 
 export const myDeleteDoc = async ({
   collectionName,
@@ -49,12 +60,12 @@ export const myAddDoc = async ({
   data: {};
   msg?: string;
 }) => {
-  if (isDev) console.log(msg ?? ">>> api: set doc");
+  if (isDev) console.log(msg ?? ">>> api: add doc");
 
   return await addDoc(collection(db, collectionName), data);
 };
 
-export const mySetDoc = async ({
+export const myUpdateDoc = async ({
   collectionName,
   id,
   data,
@@ -65,9 +76,9 @@ export const mySetDoc = async ({
   data: {};
   msg?: string;
 }) => {
-  if (isDev) console.log(msg ?? ">>> api: set doc");
+  if (isDev) console.log(msg ?? ">>> api: update doc");
 
-  return await setDoc(doc(db, collectionName, id), { ...data }, { merge: true });
+  return await updateDoc(doc(db, collectionName, id), data);
 };
 
 export const uploadFile = async ({
@@ -102,26 +113,24 @@ export const uploadFile = async ({
 export const uploadBlob = async ({
   blob,
   folder,
-  songId,
   msg,
 }: {
   blob: Blob;
   folder: "/images/" | "/songs/";
-  songId: string;
   msg?: string;
 }) => {
-  if (isDev) console.log(msg ?? "upload blob");
+  if (isDev) console.log(msg ?? ">>> api: Upload blob");
   const start = Date.now();
 
   // define ref
   // try {
-  const fileName = songId + "_stock";
+  const fileName = Date.now();
   const fileRef = ref(stores, `${folder + fileName}`);
   const fileRes = await uploadBytes(fileRef, blob);
   const fileURL = await getDownloadURL(fileRes.ref);
 
   const consuming = (Date.now() - start) / 1000;
-  if (isDev) console.log(">>> api: upload blob finished after", consuming);
+  if (isDev) console.log(">>> api: Upload blob finished after", consuming);
 
   return { fileURL, filePath: fileRes.metadata.fullPath };
 };
@@ -168,7 +177,7 @@ export const deleteSong = async (song: Song) => {
 };
 
 export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
-  await mySetDoc({
+  await myUpdateDoc({
     collectionName: "Playlists",
     data: playlist,
     id: playlist.id,
@@ -178,7 +187,7 @@ export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
 
 export const setUserPlaylistIdsDoc = async (playlists: Playlist[], user: User) => {
   const newPlaylistIds = playlists.map((playlist) => playlist.id);
-  await mySetDoc({
+  await myUpdateDoc({
     collectionName: "Users",
     data: { playlist_ids: newPlaylistIds } as Partial<User>,
     id: user.email,
@@ -193,7 +202,7 @@ export const setUserSongIdsAndCountDoc = async ({
   songIds: string[];
   user: User;
 }) => {
-  await mySetDoc({
+  await myUpdateDoc({
     collectionName: "Users",
     data: { song_ids: songIds, song_count: songIds.length } as Partial<User>,
     id: user.email,

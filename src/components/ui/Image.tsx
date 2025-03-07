@@ -6,11 +6,18 @@ import { Blurhash } from "react-blurhash";
 type Props = {
   src?: string;
   className?: string;
+  width?: string;
   blurHashEncode?: string;
   onError?: () => void;
 };
 
-export default function Image({ src, className, blurHashEncode, onError }: Props) {
+export default function Image({
+  src,
+  className = "",
+  width = "w-full",
+  blurHashEncode,
+  onError,
+}: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
@@ -30,6 +37,7 @@ export default function Image({ src, className, blurHashEncode, onError }: Props
   };
 
   const handleError = () => {
+    console.log("image error");
     !!onError ? [onError(), defaultHandleError()] : defaultHandleError();
   };
 
@@ -47,7 +55,7 @@ export default function Image({ src, className, blurHashEncode, onError }: Props
       <img
         onLoad={handleLoadImage}
         onError={handleError}
-        className={`${className || ""} w-full ${!imageLoaded ? "hidden" : ""}`}
+        className={`${className} ${width} ${!imageLoaded ? "hidden" : ""}`}
         src={src || "https://placehold.co/400"}
         ref={imageRef}
       />

@@ -15,7 +15,7 @@ interface Props {
 
 const SongThumbnail = (
   { data, active, onClick, hasTitle, classNames = "", idleClass = "" }: Props,
-  ref: ForwardedRef<HTMLDivElement>,
+  ref: ForwardedRef<HTMLDivElement>
 ) => {
   const classes = {
     container: "flex flex-col",
@@ -38,12 +38,12 @@ const SongThumbnail = (
       className={`song-thumb ${active ? "active" : ""} ${classes.container} ${idleClass}`}
     >
       <div
-        className={`${
-          classNames
-        } flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] min-[1536px]:w-[450px] min-[1536px]:h-[450px] `}
+        className={`${classNames} flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] min-[1536px]:w-[450px] min-[1536px]:h-[450px] `}
       >
         <div
-          className={`border-[4px] rounded-[6px] overflow-hidden border-transparent ${classes.imageFrame} ${
+          className={`border-[4px] rounded-[6px] overflow-hidden border-transparent ${
+            classes.imageFrame
+          } ${
             active
               ? "w-[350px] min-[1536px]:w-[450px]"
               : "w-[280px] min-[1536px]:w-[330px]"
@@ -77,7 +77,11 @@ const SongThumbnail = (
       {hasTitle && (
         <div className="text-center">
           <h2 className={classes.title}>{data?.name || "Some song"}</h2>
-          <p className="text-md opacity-50 line-clamp-1">{data?.singer || "..."}</p>
+          <p className="text-md opacity-50 line-clamp-1">
+            {data.singers.map((s, i) => (
+              <span key={i}>{s.name}</span>
+            ))}
+          </p>
         </div>
       )}
     </div>

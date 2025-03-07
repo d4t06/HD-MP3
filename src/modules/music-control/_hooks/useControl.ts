@@ -418,11 +418,11 @@ export default function useControl() {
       return;
     }
 
-    let myTitle = `${currentSongData.song.name} - ${currentSongData.song.singer}`;
+    let myTitle = `${currentSongData.song.name}`;
     if (
       playStatus === "paused" &&
       currentPlaylist &&
-      currentSongData.song.song_in.includes(currentPlaylist.id)
+      currentSongData.song.queue_id.includes(currentPlaylist.id)
     ) {
       myTitle = `${currentPlaylist.name}`;
     }

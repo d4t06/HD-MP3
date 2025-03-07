@@ -80,7 +80,6 @@ export default function CheckedBar({
           <ConfirmModal
             loading={isFetching}
             label={`Delete ${selectedSongs.length} songs ?`}
-            theme={theme}
             callback={deleteSelectedSong}
             close={closeModal}
           />
@@ -90,7 +89,6 @@ export default function CheckedBar({
           <ConfirmModal
             loading={isFetching}
             label={`Remove ${selectedSongs.length} songs ?`}
-            theme={theme}
             callback={removeSelectedSongFromPlaylist}
             close={closeModal}
           />

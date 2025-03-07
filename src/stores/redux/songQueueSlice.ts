@@ -1,7 +1,6 @@
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { nanoid } from "nanoid";
-// import { nanoid } from "nanoid";
 
 type StateType = {
   queueSongs: Song[];

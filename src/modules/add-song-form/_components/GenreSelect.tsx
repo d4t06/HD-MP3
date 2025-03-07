@@ -2,7 +2,7 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { Modal, ModalRef } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { Button, Frame } from "@/components/dashboard";
+import { Button, Frame } from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
 
 export default function GenreSelect() {

@@ -1,11 +1,13 @@
 import { Modal, ModalHeader, ModalRef, NotFound } from "@/components";
-import { Button, Frame } from "@/components/dashboard";
-import DebounceSearchBar from "@/components/dashboard/DeboundSearchBar";
-import AddGenreModal from "@/components/dashboard/modals/AddGenreModal";
-import Loading from "@/components/dashboard/ui/Loading";
-import ModalWrapper from "@/components/dashboard/ui/ModalWrapper";
-import useGetGenre from "@/hooks/dashboard/useGetGenre";
-import useSearchGenre from "@/hooks/dashboard/useSearchGenre";
+import {
+  Button,
+  Frame,
+  DebounceSearchBar,
+  ModalWrapper,
+  Loading,
+} from "@/pages/dashboard/_components";
+import { useSearchGenre, useGetGenre } from "@/pages/dashboard/_hooks";
+import AddGenreModal from "@/pages/dashboard/genre/_components/AddGenreModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
 
@@ -41,7 +43,7 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
           ) : (
             <>
               {_genres.length ? (
-                _genres.map((genre ,i) => (
+                _genres.map((genre, i) => (
                   <Frame key={i} onClick={() => choose(genre)}>
                     <p className={`text-lg`}>{genre.name}</p>
                   </Frame>

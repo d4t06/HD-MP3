@@ -24,6 +24,7 @@ export default function usePlaylistAction() {
       const addedPlaylist = initPlaylistObject({
         name: playlistName,
         owner_email: user.email,
+        distributor: user.display_name,
       });
 
       setIsFetching(true);

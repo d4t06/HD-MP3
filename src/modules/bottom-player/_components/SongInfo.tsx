@@ -42,12 +42,12 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
             />
           </div>
 
-          <div className="h-[20px]">
+          {/* <div className="h-[20px]">
             <ScrollText
               className="opacity-70 leading-[1.2]"
               content={song?.singer || "..."}
             />
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

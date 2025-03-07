@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { Modal, ModalRef } from "@/components";
 import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { Button, Frame } from "@/components/dashboard";
+import { Button, Frame } from "@/pages/dashboard/_components";
 
 export default function SingerSelect() {
   const { singers, selectSinger } = useAddSongContext();

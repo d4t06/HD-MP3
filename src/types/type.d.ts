@@ -14,23 +14,27 @@ type User = {
 type Song = {
   id: string;
   name: string;
-  singers: Singer[];
   image_url: string;
   image_file_path: string;
   song_url: string;
   song_file_path: string;
   owner_email: string;
+  distributor: string;
+  is_official: boolean;
   duration: number;
   is_has_lyric: boolean;
   blurhash_encode: string;
+  singers: Singer[];
+  singer_map: Record<string, boolean>;
+  genres: Genre[];
+  genre_map: Record<string, boolean>;
   size: number;
-  genre_ids: string[];
   queue_id: string;
   updated_at: Timestamp;
   created_at: Timestamp;
 };
 
-type SongSchema = Omit<Song, "id">;
+type SongSchema = Omit<Song, "id" | "queue_id">;
 
 type ParserSong = {
   name: string;
@@ -42,9 +46,12 @@ type Playlist = {
   id: string;
   name: string;
   image_url: string;
+  image_file_path: string;
   blurhash_encode: string;
+  distributor: string;
   song_ids: string[];
   owner_email: string;
+  is_official: boolean;
   is_public: boolean;
   updated_at: Timestamp;
   created_at: Timestamp;

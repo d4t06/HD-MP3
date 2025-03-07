@@ -43,9 +43,9 @@ export default function FullScreenPlayerHeader() {
 							<p className={`font-playwriteCU text-sm`}>
 								{currentSongData?.song?.name || "..."}{" "}
 							</p>
-							<p className="opacity-70">
+							{/* <p className="opacity-70">
 								&nbsp;- {currentSongData?.song?.singer || "..."}
-							</p>
+							</p> */}
 						</>
 					)}
 				</div>

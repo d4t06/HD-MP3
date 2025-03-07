@@ -6,7 +6,7 @@ import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import useDashboardPlaylist from "./_hooks/useDashboardPlaylist";
 import Table from "@/components/ui/Table";
 import { Link } from "react-router-dom";
-import AddNewPlaylistBtn from "@/components/dashboard/AddNewPlaylistBtn";
+import AddNewPlaylistBtn from "../_components/AddNewPlaylistBtn";
 
 export default function DashboardPlaylist() {
   const { theme } = useThemeContext();

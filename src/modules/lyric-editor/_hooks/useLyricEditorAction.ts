@@ -1,4 +1,4 @@
-import { mySetDoc } from "@/services/firebaseService";
+import { myAddDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { setLocalStorage } from "@/utils/appHelpers";
@@ -71,10 +71,9 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
         base: baseLyric,
       };
 
-      await mySetDoc({
+      await myAddDoc({
         collectionName: "Lyrics",
         data: newSongLyric,
-        id: song.id,
       }).catch(() => {
         throw { ...newSongLyric, id: song.id };
       });

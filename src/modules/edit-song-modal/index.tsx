@@ -5,51 +5,38 @@ import {
   useCallback,
   useMemo,
   useRef,
-  useState,
 } from "react";
-import { ArrowUpTrayIcon, CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
-import { Image, Button, ModalHeader, ModalRef } from "@/components";
+import { Image, Button, ModalHeader, ModalRef, Empty } from "@/components";
 import { useThemeContext } from "@/stores";
 import { getDisable } from "@/utils/appHelpers";
 import useEditSongModal from "./_hooks/useEditSongModal";
 
 type Props = {
   song: Song;
-  admin?: boolean;
   modalRef: RefObject<ModalRef>;
 };
 
-export default function EditSongModal({ song, admin, modalRef }: Props) {
+export default function EditSongModal({ song, modalRef }: Props) {
   const { theme } = useThemeContext();
-
-  const [inputFields, setInputFields] = useState({
-    name: song.name,
-    singer: song.singer,
-    image_url: "",
-  });
-
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   // use hooks
   const {
-    isAbleToSubmit,
-    validName,
-    validSinger,
-    validURL,
+    isValidToSubmit,
     imageURLFromLocal,
-    isImpactOnImage,
+    songData,
     setImageFileFromLocal,
     setImageURLFromLocal,
     setStockImageURL,
     setIsImpactOnImage,
     stockImageURL,
-    setValidURL,
     isFetching,
     handleSubmit,
+    handleInput,
   } = useEditSongModal({
     song,
-    inputFields,
     modalRef,
   });
 
@@ -59,17 +46,12 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
   const imageToDisplay = useMemo(() => {
     if (imageURLFromLocal) return imageURLFromLocal;
     else if (stockImageURL) return stockImageURL;
-    else if (validURL) return inputFields.image_url;
-  }, [inputFields, imageURLFromLocal, stockImageURL, song, validURL]);
+  }, [imageURLFromLocal, stockImageURL, song]);
 
   const isShowRemoveImageButton = useMemo(
     () => !!imageURLFromLocal || !!stockImageURL,
     [imageURLFromLocal, stockImageURL]
   );
-
-  const handleInput = (field: keyof typeof inputFields, value: string) => {
-    setInputFields({ ...inputFields, [field]: value });
-  };
 
   //   trigger only have image from local
   const handleUnsetImage = useCallback(() => {
@@ -110,94 +92,10 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
     modalRef.current?.close();
   };
 
-  const getIcon = (v: boolean) => {
-    return v ? (
-      <CheckIcon className="w-6 text-emerald-500 ml-2" />
-    ) : (
-      <XMarkIcon className="w-6 text-red-500 ml-2" />
-    );
-  };
-
   // define style
   const classes = {
     input: `px-2 py-1 outline-none rounded-[4px] bg-[#fff]/5 font-[500]`,
     label: "text-lg inline-flex",
-  };
-
-  const renderUsersongInupt = () => {
-    return (
-      <>
-        <div className="flex flex-col gap-[5px]">
-          <label htmlFor="name" className={classes.label}>
-            Name
-            {getIcon(validName)}
-          </label>
-          <input
-            className={`${classes.input} `}
-            value={inputFields.name}
-            type="text"
-            id="name"
-            onChange={(e) => handleInput("name", e.target.value)}
-            placeholder={song.name}
-          />
-        </div>
-        {!admin && (
-          <div className="flex flex-col gap-[5px]">
-            <label htmlFor="singer" className={classes.label}>
-              Singer
-              {getIcon(validSinger)}
-            </label>
-            <input
-              className={classes.input}
-              value={inputFields.singer}
-              onChange={(e) => handleInput("singer", e.target.value)}
-              type="text"
-              id="singer"
-              placeholder={song.singer}
-            />
-          </div>
-        )}
-        <div className="flex flex-col gap-[5px]">
-          <label htmlFor="image-url" className={classes.label}>
-            Image URL
-            {inputFields.image_url && <>{getIcon(validURL)}</>}
-          </label>
-          <input
-            id="image-url"
-            className={classes.input}
-            value={inputFields.image_url}
-            onChange={(e) => handleInput("image_url", e.target.value)}
-            type="text"
-          />
-        </div>
-      </>
-    );
-  };
-
-  const renderDashboardSongInput = () => {
-    return (
-      <>
-        {renderUsersongInupt()}
-        <div className="flex flex-col gap-[5px]">
-          <div className={`${classes.label} items-center`}>
-            <span>Singer</span>
-
-            {/* <AddSingerButton setSinger={s => handleInput('singer', s)} /> */}
-          </div>
-          <div className={`bg-white/5 rounded-md p-2`}>{inputFields.singer}</div>
-        </div>
-
-        <div className="flex flex-col gap-[5px]">
-          <label htmlFor="image-url" className={classes.label}>
-            Genre
-          </label>
-
-          <select className={classes.input}>
-            <option value="">Other</option>
-          </select>
-        </div>
-      </>
-    );
   };
 
   return (
@@ -220,16 +118,13 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="w-full md:w-[30%]">
           <div className="w-[70%] mx-auto md:w-full">
-            <div className="pt-[100%] relative">
-              <div className="absolute inset-0">
-                <Image
-                  className="object-cover rounded-md object-center w-full h-full"
-                  onError={() => setValidURL(false)}
-                  src={imageToDisplay}
-                  blurHashEncode={song.blurhash_encode}
-                />
-              </div>
-            </div>
+            <Empty>
+              <Image
+                className="object-cover rounded-md object-center"
+                src={imageToDisplay}
+                blurHashEncode={song.blurhash_encode}
+              />
+            </Empty>
           </div>
 
           <div className="mt-3">
@@ -255,8 +150,34 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
           </div>
         </div>
 
-        <div className="pt-5 md:pt-0 md:pl-5 flex flex-col md:flex-grow space-y-3">
-          {admin ? renderDashboardSongInput() : renderUsersongInupt()}
+        <div className="pt-5 md:pt-0 md:pl-5 md:flex-grow space-y-3">
+          <div className="space-y-1.5">
+            <label htmlFor="name" className={classes.label}>
+              Name
+            </label>
+            <input
+              className={`${classes.input} `}
+              value={songData.name}
+              type="text"
+              id="name"
+              onChange={(e) => handleInput("name", e.target.value)}
+              placeholder={song.name}
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="singer" className={classes.label}>
+              Singer
+            </label>
+            <input
+              className={classes.input}
+              value={songData.singer}
+              onChange={(e) => handleInput("singer", e.target.value)}
+              type="text"
+              id="singer"
+              placeholder={song.singers[0].name}
+            />
+          </div>
         </div>
       </div>
       <div className="flex mt-5 space-x-2 justify-end">
@@ -271,9 +192,8 @@ export default function EditSongModal({ song, admin, modalRef }: Props) {
         <Button
           isLoading={isFetching}
           onClick={handleSubmit}
-          className={`${theme.content_bg} rounded-full ${
-            !isAbleToSubmit ? !isImpactOnImage && "disable" : ""
-          }`}
+          disabled={!isValidToSubmit}
+          className={`${theme.content_bg} rounded-full`}
           variant={"primary"}
         >
           Save

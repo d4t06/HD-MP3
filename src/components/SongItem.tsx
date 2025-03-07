@@ -148,9 +148,13 @@ function SongItem({
           <h5 className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}>
             {song.name}
           </h5>
-          <p className={`opacity-[.7] leading-[1.2] line-clamp-1 ${getSongSingerSize()}`}>
-            {song.singer}
-          </p>
+          <div
+            className={`opacity-[.7] leading-[1.2] line-clamp-1 ${getSongSingerSize()}`}
+          >
+            {song.singers.map((s, i) => (
+              <p key={i}>{s.name}</p>
+            ))}
+          </div>
         </div>
       </div>
     </>

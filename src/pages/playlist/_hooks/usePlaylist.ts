@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { mySetDoc } from "@/services/firebaseService";
+import { myUpdateDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 
@@ -17,7 +17,7 @@ export default function usePlaylist() {
         if (!clearPlaylistImage.current) {
           clearPlaylistImage.current = true;
 
-          return await mySetDoc({
+          return await myUpdateDoc({
             collectionName: "Playlists",
             id: currentPlaylist.id,
             data: { blurhash_encode: "", image_url: "" } as Playlist,
@@ -36,7 +36,7 @@ export default function usePlaylist() {
       blurhash_encode: playlistSongs[0].blurhash_encode || "",
     };
 
-    await mySetDoc({
+    await myUpdateDoc({
       collectionName: "Playlists",
       id: currentPlaylist.id,
       data: updatePlaylistData,

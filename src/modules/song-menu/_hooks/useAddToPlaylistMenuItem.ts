@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useToastContext } from "@/stores";
-import { mySetDoc } from "@/services/firebaseService";
+import { myUpdateDoc } from "@/services/firebaseService";
 
 export default function useAddPlaylistMenuItem() {
 	// stores
@@ -23,7 +23,7 @@ export default function useAddPlaylistMenuItem() {
 			if (!id) {
 				const newSongIds = [...playlist.song_ids, song.id];
 
-				await mySetDoc({
+				await myUpdateDoc({
 					collectionName: "Playlists",
 					id: playlist.id,
 					data: { song_ids: newSongIds } as Partial<Playlist>,

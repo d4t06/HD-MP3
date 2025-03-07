@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "../stores";
 import { generateId } from "../utils/appHelpers";
-import { myDeleteDoc, mySetDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
+import { myAddDoc, myDeleteDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
@@ -53,29 +53,28 @@ export default function usePlaylistAction() {
 
           const newPlaylist = initPlaylistObject({
             owner_email: user.email,
+            distributor: user.display_name,
             name: props.name,
           });
 
-          await mySetDoc({
+          await myAddDoc({
             collectionName: "Playlists",
             data: newPlaylist,
-            id: playlistId,
             msg: ">>> api: set playlist doc",
           });
 
-         //  const newPlaylists = [...playlists, newPlaylist];
+          //  const newPlaylists = [...playlists, newPlaylist];
 
-         //  await setUserPlaylistIdsDoc(newPlaylists, user);
+          //  await setUserPlaylistIdsDoc(newPlaylists, user);
 
           break;
 
         case "edit":
           if (!currentPlaylist) throw new Error("Current playlist invalid");
 
-          await mySetDoc({
+          await myAddDoc({
             collectionName: "Playlists",
             data: { name: props.playlist.name },
-            id: currentPlaylist.id,
             msg: ">>> api: set playlist doc",
           });
 
@@ -122,7 +121,7 @@ export default function usePlaylistAction() {
   //   setIsFetching(true);
   //   const newPlaylists = [...playlists, addedPlaylist];
 
-  //   await mySetDoc({
+  //   await myAddDoc({
   //     collectionName: "Playlists",
   //     data: addedPlaylist,
   //     id: playlistId,
@@ -162,7 +161,7 @@ export default function usePlaylistAction() {
   //       ...selectSongs.map((s) => s.id),
   //     ];
 
-  //     await mySetDoc({
+  //     await myAddDoc({
   //       collectionName: "Playlists",
   //       id: currentPlaylist?.id,
   //       data: { song_ids: newSongIds } as Partial<Playlist>,
@@ -185,7 +184,7 @@ export default function usePlaylistAction() {
   //     setIsFetching(true);
   //     const newPlaylist: Playlist = { ...playlist, name: playlistName };
 
-  //     await mySetDoc({
+  //     await myAddDoc({
   //       collectionName: "Playlists",
   //       data: { name: playlistName },
   //       id: newPlaylist.id,
@@ -218,7 +217,7 @@ export default function usePlaylistAction() {
   //     }
 
   //     const newSongIds = [..._playlistData.song_ids, song.id];
-  //     await mySetDoc({
+  //     await myAddDoc({
   //       collectionName: "Playlists",
   //       id: _playlistData.id,
   //       data: { song_ids: newSongIds } as Partial<Playlist>,
@@ -240,7 +239,7 @@ export default function usePlaylistAction() {
 
   //     const newPlaylistSongs = playlistSongs.filter((s) => s.id !== song.id);
 
-  //     await mySetDoc({
+  //     await myAddDoc({
   //       collectionName: "Playlists",
   //       id: currentPlaylist.id,
   //       data: { song_ids: newPlaylistSongs.map((s) => s.id) } as Partial<Playlist>,
@@ -273,9 +272,8 @@ export default function usePlaylistAction() {
       );
       const newSongIds = newPlaylistSongs.map((s) => s.id);
 
-      await mySetDoc({
+      await myAddDoc({
         collectionName: "Playlists",
-        id: currentPlaylist.id,
         data: { song_ids: newSongIds } as Partial<Playlist>,
         msg: ">>> api: update playlist doc",
       });

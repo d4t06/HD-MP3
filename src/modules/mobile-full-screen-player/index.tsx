@@ -105,9 +105,9 @@ export default function MobileFullScreenPlayer() {
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
                   {currentSongData?.song.name}
                 </p>
-                <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">
+                {/* <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">
                   {currentSongData?.song.singer}
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -126,14 +126,14 @@ export default function MobileFullScreenPlayer() {
                     content={currentSongData?.song.name || "..."}
                   />
                 </div>
-                <div className={"h-[28px]"}>
+                {/* <div className={"h-[28px]"}>
                   <ScrollText
                     className={`opacity-60 ${
                       activeTab === "Playing" ? "text-lg" : "text-base"
                     }`}
                     content={currentSongData?.song.singer || "..."}
                   />
-                </div>
+                </div> */}
               </div>
 
               <SleepTimerButton />

@@ -93,7 +93,7 @@ export default function SongQueueItem({ song, theme, ...props }: Props) {
               <h5 className={`text-lg line-clamp-1 ${isSelected && theme.content_text}`}>
                 {song.name}
               </h5>
-              <p className="opacity-60 bg-blend-lighten line-clamp-1">{song.singer}</p>
+              {/* <p className="opacity-60 bg-blend-lighten line-clamp-1">{song.singer}</p> */}
             </div>
           </div>
         </div>

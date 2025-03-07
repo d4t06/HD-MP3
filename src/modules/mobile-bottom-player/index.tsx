@@ -71,9 +71,9 @@ const MobileBottomPlayer = () => {
                       {currentSongData?.song.name || "name"}
                     </div>
                   </div>
-                  <p className={`opacity-70 line-clamp-1`}>
+                  {/* <p className={`opacity-70 line-clamp-1`}>
                     {currentSongData?.song.singer || "singer"}
-                  </p>
+                  </p> */}
                 </>
               )}
             </div>

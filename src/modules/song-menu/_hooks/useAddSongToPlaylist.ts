@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { myAddDoc, mySetDoc } from "@/services/firebaseService";
-import { initPlaylistObject } from "@/utils/factory";
-import { getDoc } from "firebase/firestore";
+import { useAuthContext, useToastContext } from "@/stores";
+import { myUpdateDoc } from "@/services/firebaseService";
+// import { initPlaylistObject } from "@/utils/factory";
+// import { getDoc } from "firebase/firestore";
 
 export default function useAddSongToPlaylist() {
   // stores
   const { user } = useAuthContext();
-  const { playlists, setPlaylists } = useSongContext();
+  // const { playlists, setPlaylists } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -40,7 +40,7 @@ export default function useAddSongToPlaylist() {
 
           const newSongIds = [...playlist.song_ids, song.id];
 
-          await mySetDoc({
+          await myUpdateDoc({
             collectionName: "Lyrics",
             id: playlist.id,
             data: { song_ids: newSongIds } as Partial<Playlist>,
@@ -51,33 +51,33 @@ export default function useAddSongToPlaylist() {
 
           break;
         }
-        case "create": {
-          const { name } = props;
+        // case "create": {
+        //   const { name } = props;
 
-          const newPlaylist = initPlaylistObject({
-            name: name,
-            song_ids: [song.id],
-            owner_email: user.email,
-          });
+        //   const newPlaylist = initPlaylistObject({
+        //     name: name,
+        //     song_ids: [song.id],
+        //     owner_email: user.email,
+        //   });
 
-          const docRef = await myAddDoc({
-            collectionName: "Playlists",
-            data: newPlaylist,
-            msg: ">>> api: set playlist doc",
-          });
+        //   const docRef = await myAddDoc({
+        //     collectionName: "Playlists",
+        //     data: newPlaylist,
+        //     msg: ">>> api: set playlist doc",
+        //   });
 
-          const newPlaylistRef = await getDoc(docRef);
+        //   const newPlaylistRef = await getDoc(docRef);
 
-          const newPlaylists = [
-            ...playlists,
-            { ...newPlaylistRef.data(), id: docRef.id } as Playlist,
-          ];
+        //   const newPlaylists = [
+        //     ...playlists,
+        //     { ...newPlaylistRef.data(), id: docRef.id } as Playlist,
+        //   ];
 
-          setPlaylists(newPlaylists);
-          setSuccessToast(`Playlist created`);
+        //   setPlaylists(newPlaylists);
+        //   setSuccessToast(`Playlist created`);
 
-          break;
-        }
+        //   break;
+        // }
       }
     } catch (err) {
       console.log({ message: err });

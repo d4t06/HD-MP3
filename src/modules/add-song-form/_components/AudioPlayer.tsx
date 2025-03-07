@@ -1,4 +1,3 @@
-import { Button, Frame } from "@/components/dashboard";
 import { useAudioControl } from "@/hooks";
 import {
   ArrowPathIcon,
@@ -8,15 +7,23 @@ import {
 } from "@heroicons/react/24/outline";
 import { ElementRef, useRef } from "react";
 import UploadSongBtn from "./UploadSongBtn";
+import { Button, Frame } from "@/pages/dashboard/_components";
+import { formatTime } from "@/utils/appHelpers";
 
 type Props = {
   audioEle: HTMLAudioElement;
+  duration: number;
 };
 
-export default function AudioPLayer({ audioEle }: Props) {
+export default function AudioPLayer({ audioEle, duration }: Props) {
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
-  const { status, handlePlayPause } = useAudioControl({ audioEle, progressLineRef });
+  const { status, handlePlayPause } = useAudioControl({
+    audioEle,
+    baseColor: "rgba(0,0,0,.10)",
+    color: "#5a9e87",
+    progressLineRef,
+  });
 
   const renderPlayPausedButton = () => {
     switch (status) {
@@ -44,11 +51,8 @@ export default function AudioPLayer({ audioEle }: Props) {
       </div>
 
       <Frame>
-        <div
-          ref={progressLineRef}
-          style={{ backgroundColor: "rgba(255,255,255,.3)" }}
-          className={`h-1 rounded-full mt-3 w-full`}
-        ></div>
+        <span>{formatTime(duration)}</span>
+        <div ref={progressLineRef} className={`h-1 rounded-full mt-3 w-full`}></div>
       </Frame>
     </>
   );

@@ -1,31 +1,28 @@
 import { ModalRef } from "@/components/Modal";
-import { deleteFile, mySetDoc, uploadBlob, uploadFile } from "@/services/firebaseService";
+import {
+  deleteFile,
+  myUpdateDoc,
+  uploadBlob,
+  uploadFile,
+} from "@/services/firebaseService";
 import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { sleep } from "@/utils/appHelpers";
-import { RefObject, useEffect, useState } from "react";
+import { RefObject, useMemo, useState } from "react";
 
 type Props = {
   song: Song;
-  inputFields: {
-    name: string;
-    singer: string;
-    image_url: string;
-  };
   modalRef: RefObject<ModalRef>;
 };
 
-const URL_REGEX = /(?:https?):\/\/(\w+:?\w*)?(\S+)(:\d+)?(\/|\/([\w#!:.?+=&%!\-\/]))?/;
-
-export default function useEditSongModal({ song, inputFields, modalRef }: Props) {
+export default function useEditSongModal({ song, modalRef }: Props) {
   const { user } = useAuthContext();
   const { updateSong } = useSongContext();
 
-  const [validName, setValidName] = useState(!!song.name);
-  const [validSinger, setValidSinger] = useState(!!song.singer);
-  const [validURL, setValidURL] = useState(false);
-  const [isAbleToSubmit, setIsAbleToSubmit] = useState(false);
-  const [isChangeInEdit, setIsChangeInEdit] = useState(false);
+  const [songData, setSongData] = useState({
+    name: song.name,
+    singer: song.singers[0].name,
+  });
+
   const [isFetching, setIsFetching] = useState(false);
 
   const [isImpactOnImage, setIsImpactOnImage] = useState(false);
@@ -34,6 +31,18 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
   const [imageFileFromLocal, setImageFileFromLocal] = useState<File>();
 
   const { setErrorToast, setSuccessToast } = useToastContext();
+
+  const isChanged = useMemo(
+    () => song.name !== songData.name || song.singers[0].name !== songData.singer,
+    [songData]
+  );
+
+  const isValidToSubmit =
+    (!!songData.name && !!songData.singer && isChanged) || isImpactOnImage;
+
+  const handleInput = (field: keyof typeof songData, value: string) => {
+    setSongData({ ...songData, [field]: value });
+  };
 
   const handleSubmit = async () => {
     if (!user) return;
@@ -47,72 +56,39 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
       setIsFetching(true);
       modalRef.current?.setModalPersist(true);
 
-      let newSongData: Partial<Song> = {
-        name: song.name,
-        singer: song.singer,
-        image_url: song.image_url,
-        image_file_path: song.image_file_path,
-        blurhash_encode: song.blurhash_encode,
-      };
+      const { id, ...newSong } = song;
 
-      if (isChangeInEdit) {
-        console.log("is change in edit");
+      if (isChanged) {
+        if (!songData.name || !songData.singer) return;
 
-        // check valid input
-        if (!inputFields.name || !inputFields.singer) {
-          console.log("input invalid");
-          setErrorToast("");
-          return;
-        }
+        newSong.name = songData.name;
+        newSong.singers = [{ ...newSong.singers[0], name: songData.singer }];
 
-        const songImageUrl =
-          !!inputFields.image_url && validURL ? inputFields.image_url : song.image_url;
-
-        await sleep(1000);
-
-        Object.assign(newSongData, {
-          name: inputFields.name,
-          singer: inputFields.singer,
-          image_url: songImageUrl,
-        } as Partial<Song>);
-
-        // check valid
-        if (
-          newSongData.name !== inputFields.name ||
-          newSongData.singer !== inputFields.singer
-        ) {
-          console.log("input invalid");
-          setErrorToast();
-          return;
-        }
-
-        // user upload song from local
         if (imageFileFromLocal && isImpactOnImage) {
           const { filePath, fileURL } = await uploadFile({
             file: imageFileFromLocal,
             folder: "/images/",
             namePrefix: user.email,
           });
-          newSongData.image_file_path = filePath;
-          newSongData.image_url = fileURL;
+          newSong.image_file_path = filePath;
+          newSong.image_url = fileURL;
 
           // if user remove image
         } else if (isImpactOnImage) {
-          newSongData.image_file_path = "";
+          newSong.image_file_path = "";
         }
       }
 
       // if user upload, change, unset image
       if (isImpactOnImage) {
+        console.log("change image");
         setIsFetching(true);
-
-        console.log("isImpactOnImage");
 
         // >>> handle delete song file
         // when user upload new image
         if (song.image_file_path) {
-          newSongData.image_file_path = "";
-          newSongData.image_url = "";
+          newSong.image_file_path = "";
+          newSong.image_url = "";
 
           await deleteFile({
             filePath: song.image_file_path,
@@ -124,8 +100,8 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
         if (!stockImageURL && !imageFileFromLocal) {
           console.log("remove current image url");
 
-          newSongData.image_file_path = "";
-          newSongData.image_url = "";
+          newSong.image_file_path = "";
+          newSong.image_url = "";
         }
 
         // >>> handle add new song file if exist
@@ -139,30 +115,28 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
           const uploadProcess = uploadBlob({
             blob: imageBlob,
             folder: "/images/",
-            songId: song.id,
           });
 
           const { encode } = await getBlurHashEncode(imageBlob);
           if (encode) {
-            newSongData.blurhash_encode = encode;
+            newSong.blurhash_encode = encode;
             console.log("check encode", encode);
           }
 
           const { filePath, fileURL } = await uploadProcess;
-          newSongData.image_file_path = filePath;
-          newSongData.image_url = fileURL;
+          newSong.image_file_path = filePath;
+          newSong.image_url = fileURL;
         }
       }
 
       // >>> api
-      await mySetDoc({
+      await myUpdateDoc({
         collectionName: "Songs",
-        data: newSongData,
+        data: newSong,
         id: song.id,
-        msg: ">>> api: update song doc",
       });
 
-      updateSong({ id: song.id, song: newSongData });
+      updateSong({ id: song.id, song: newSong });
       // >>> finish
       setSuccessToast(`Song edited`);
       modalRef.current?.close();
@@ -175,55 +149,11 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
     }
   };
 
-  // validate song name
-  useEffect(() => {
-    if (!inputFields.name) {
-      setValidName(false);
-    } else {
-      setValidName(true);
-    }
-  }, [inputFields.name]);
-
-  // validate song name
-  useEffect(() => {
-    if (!inputFields.singer) {
-      setValidSinger(false);
-    } else {
-      setValidSinger(true);
-    }
-  }, [inputFields.singer]);
-
-  useEffect(() => {
-    if (!inputFields.image_url) {
-      setValidURL(true);
-      return;
-    }
-    const test1 = URL_REGEX.test(inputFields.image_url);
-    setValidURL(test1);
-  }, [inputFields.image_url]);
-
-  useEffect(() => {
-    if (
-      inputFields.name !== song.name ||
-      inputFields.singer !== song.singer ||
-      inputFields.image_url
-    ) {
-      setIsChangeInEdit(true);
-    }
-  }, [inputFields, imageURLFromLocal]);
-
-  useEffect(() => {
-    setIsAbleToSubmit(validName && validSinger && validURL && isChangeInEdit);
-  }, [validName, validSinger, validURL, isChangeInEdit]);
-
   return {
     isFetching,
-    validName,
-    validSinger,
-    validURL,
-    isAbleToSubmit,
-    isChangeInEdit,
-    setValidURL,
+    isChanged,
+    songData,
+    isValidToSubmit,
     handleSubmit,
     setIsImpactOnImage,
     setStockImageURL,
@@ -233,5 +163,6 @@ export default function useEditSongModal({ song, inputFields, modalRef }: Props)
     stockImageURL,
     imageURLFromLocal,
     imageFileFromLocal,
+    handleInput,
   };
 }

@@ -6,7 +6,10 @@ import { useToastContext } from "../stores";
 import { useEffect, useRef, useState } from "react";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase";
-import { resetCurrentPlaylist, setCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import {
+  resetCurrentPlaylist,
+  setCurrentPlaylist,
+} from "@/stores/redux/currentPlaylistSlice";
 import { nanoid } from "nanoid";
 
 export default function useGetPlaylist() {
@@ -45,9 +48,9 @@ export default function useGetPlaylist() {
       const songs = songsSnap.docs.map(
         (doc) =>
           ({
+            id: doc.id,
             ...doc.data(),
-            song_in: `playlist_${playlist.id}`,
-            queue_id: nanoid(4),
+            queue_id: `${nanoid(4)}_${playlist.id}}`,
           } as Song)
       );
       return songs;

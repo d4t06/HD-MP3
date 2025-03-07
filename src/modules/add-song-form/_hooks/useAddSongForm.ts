@@ -1,18 +1,30 @@
 import { ModalRef } from "@/components";
-import { myAddDoc, uploadFile } from "@/services/firebaseService";
+import {
+  deleteFile,
+  myAddDoc,
+  myUpdateDoc,
+  uploadBlob,
+  uploadFile,
+} from "@/services/firebaseService";
+import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useToastContext } from "@/stores";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { parserSong } from "@/utils/parseSong";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export default function useAddSongForm() {
   const { setErrorToast, setSuccessToast } = useToastContext();
   const {
     songFile,
+    imageFile,
+    setSong,
+    setImageFile,
     updateSongData,
     resetAddSongContext,
     songData,
     singers,
+    variant,
+    song,
     genres,
     ...rest
   } = useAddSongContext();
@@ -21,9 +33,34 @@ export default function useAddSongForm() {
 
   const modalRef = useRef<ModalRef>(null);
 
+  const isChanged = useMemo(() => {
+    if (variant.current === "add") return true;
+    if (!song || !songData) return false;
+
+    return (
+      songData.name !== song.name ||
+      singers.length !== song.singers.length ||
+      genres.length !== song.genres.length
+    );
+  }, [songData]);
+
+  const isChangeImage = !!imageFile;
+
+  const isValidToSubmit = useMemo(
+    () =>
+      (songData?.name && singers.length && genres.length && isChanged) || isChangeImage,
+    [isChangeImage, isChanged]
+  );
+
   const handleCloseModalAfterFinished = () => {
-    setTimeout(() => resetAddSongContext(), 500);
-    () => modalRef.current?.close();
+    switch (variant.current) {
+      case "add":
+        setTimeout(() => resetAddSongContext(), 500);
+        () => modalRef.current?.close();
+        break;
+      case "edit":
+        modalRef.current?.close();
+    }
   };
 
   const handleParseSongFile = async () => {
@@ -39,35 +76,136 @@ export default function useAddSongForm() {
     }
   };
 
+  const getSongMap = () => {
+    const genre_map: Song["genre_map"] = {};
+    const singer_map: Song["singer_map"] = {};
+
+    genres.forEach((g) => (genre_map[g.id] = true));
+    singers.forEach((s) => (singer_map[s.id] = true));
+
+    return { genre_map, singer_map };
+  };
+
   const handleSubmit = async () => {
     try {
-      if (!songData || !songFile) return;
+      if (!isValidToSubmit) return;
+      if (!songData) return;
+
+      const newSongData = { ...songData };
 
       setIsFetching(true);
 
-      const { filePath, fileURL } = await uploadFile({
-        file: songFile,
-        folder: "/songs/",
-        msg: ">>> api: upload song file",
-        namePrefix: "admin",
-      });
+      switch (variant.current) {
+        case "add": {
+          if (!songFile) return;
 
-      Object.assign(songData, {
-        singers,
-        genre_ids: genres.map((g) => g.id),
-        song_url: fileURL,
-        song_file_path: filePath,
-      } as Partial<SongSchema>);
+          const { filePath, fileURL } = await uploadFile({
+            file: songFile,
+            folder: "/songs/",
+            msg: ">>> api: upload song file",
+            namePrefix: "song",
+          });
 
-      await myAddDoc({
-        collectionName: "Songs",
-        data: songData,
-        msg: ">>> api: set song doc",
-      });
+          const data: Partial<SongSchema> = {
+            singers,
+            genres: genres,
+            song_url: fileURL,
+            song_file_path: filePath,
+            ...getSongMap(),
+          };
 
-      setSuccessToast();
+          if (imageFile) {
+            const { filePath, fileURL } = await uploadFile({
+              file: imageFile,
+              folder: "/images/",
+              msg: ">>> api: upload image file",
+              namePrefix: "image",
+            });
 
-      modalRef.current?.open();
+            const imageData: Partial<SongSchema> = {
+              image_file_path: filePath,
+              image_url: fileURL,
+              blurhash_encode: "",
+            };
+
+            Object.assign(newSongData, imageData);
+          }
+
+          Object.assign(newSongData, data);
+
+          await myAddDoc({
+            collectionName: "Songs",
+            data: newSongData,
+            msg: ">>> api: set song doc",
+          });
+
+          setSuccessToast();
+          modalRef.current?.open();
+
+          break;
+        }
+        case "edit": {
+          if (!song) return;
+
+          if (isChanged) {
+            const data: Partial<SongSchema> = {
+              singers,
+              genres,
+              ...getSongMap(),
+            };
+
+            Object.assign(newSongData, data);
+          }
+
+          if (imageFile) {
+            // const { filePath, fileURL } = await uploadFile({
+            //   file: imageFile,
+            //   folder: "/images/",
+            //   msg: ">>> api: upload image file",
+            //   namePrefix: "image",
+            // });
+
+            const imageBlob = await optimizeImage(imageFile);
+            if (imageBlob == undefined) return;
+
+            const uploadProcess = uploadBlob({
+              blob: imageBlob,
+              folder: "/images/",
+            });
+
+            const { encode } = await getBlurHashEncode(imageBlob);
+            const { filePath, fileURL } = await uploadProcess;
+
+            // delete old image
+            if (song.image_file_path)
+              deleteFile({
+                filePath: song.image_file_path,
+                msg: ">>> api: Delete image file",
+              });
+
+            const imageData: Partial<SongSchema> = {
+              image_file_path: filePath,
+              image_url: fileURL,
+              blurhash_encode: encode,
+            };
+
+            Object.assign(newSongData, imageData);
+          }
+
+          // reset
+          if (song) setSong({ ...song, ...newSongData });
+          setImageFile(undefined);
+
+          await myUpdateDoc({
+            collectionName: "Songs",
+            id: song.id,
+            data: newSongData,
+          });
+
+          setSuccessToast();
+          modalRef.current?.open();
+        }
+      }
     } catch (error) {
       console.log(error);
       setErrorToast();
@@ -77,13 +215,19 @@ export default function useAddSongForm() {
   };
 
   useEffect(() => {
-    console.log(songFile);
     if (!songFile) return;
 
     handleParseSongFile();
   }, [songFile]);
 
+  useEffect(() => {
+    if (!imageFile) return;
+
+    updateSongData({ image_url: URL.createObjectURL(imageFile) });
+  }, [imageFile]);
+
   return {
+    isValidToSubmit,
     handleSubmit,
     isFetching,
     updateSongData,

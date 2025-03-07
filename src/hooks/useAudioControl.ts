@@ -5,11 +5,18 @@ import { RefObject, useEffect, useRef, useState } from "react";
 type Props = {
   audioEle: HTMLAudioElement;
   progressLineRef?: RefObject<HTMLDivElement>;
+  baseColor?: string;
+  color?: string;
 };
 
 type Status = "playing" | "paused" | "waiting" | "error";
 
-export default function useAudioControl({ audioEle, progressLineRef }: Props) {
+export default function useAudioControl({
+  audioEle,
+  baseColor,
+  color,
+  progressLineRef,
+}: Props) {
   const { theme } = useThemeContext();
   const [status, setStatus] = useState<Status>("paused");
   const [isClickPlay, setIsClickPlay] = useState(false);
@@ -50,8 +57,9 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
 
     if (progressLineRef?.current)
       progressLineRef.current.style.background = getLinearBg(
-        themeCode.current,
-        _progress
+        color || themeCode.current,
+        _progress,
+        baseColor
       );
   };
 

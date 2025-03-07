@@ -23,12 +23,12 @@ export default function useGetSongPlaylist() {
     email: string;
   };
 
-  type GetSongAndPlaylistProps = {
-    variant: "home" | "dashboard";
+  type GetSystemSongPlaylist = {
+    variant: "system";
   };
 
   const getSongAndPlaylist = async (
-    props: GetSongAndPlaylistProps | GetUserSongAndPlaylistProps
+    props: GetSystemSongPlaylist | GetUserSongAndPlaylistProps
   ) => {
     try {
       if (appConfig.isDev) {
@@ -39,11 +39,11 @@ export default function useGetSongPlaylist() {
       }
 
       switch (props.variant) {
-        case "home":
+        case "system":
           const sysSongs = await appService.getSongs({
-            variant: "home",
+            variant: "system",
           });
-          const sysPlaylists = await appService.getPlaylists({ variant: "admin" });
+          const sysPlaylists = await appService.getPlaylists({ variant: "system" });
 
           setSysSongPlaylist({ playlists: sysPlaylists || [], songs: sysSongs || [] });
 
@@ -59,18 +59,6 @@ export default function useGetSongPlaylist() {
           } else await sleep(300);
 
           break;
-
-        case "dashboard": {
-          const sysSongs = await appService.getSongs({
-            variant: "dashboard",
-          });
-          const sysPlaylists = await appService.getPlaylists({ variant: "admin" });
-
-          setSongs(sysSongs || []);
-          setPlaylists(sysPlaylists || []);
-
-          break;
-        }
       }
     } catch (error) {
       console.log({ message: error });

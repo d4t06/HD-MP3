@@ -50,7 +50,6 @@ export default function MobileSetting() {
             close={closeModal}
             callback={handleSignOut}
             loading={false}
-            theme={theme}
             label="Log out ?"
           />
         );

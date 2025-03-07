@@ -2,17 +2,19 @@ import { ElementRef, useEffect, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { initSongObject } from "@/utils/factory";
 import UploadSongBtn from "./_components/UploadSongBtn";
-import { Center, Empty, Input, Modal, NotFound } from "@/components";
+import { Center, Image, Input, Modal, NotFound } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
-import { Button } from "@/components/dashboard";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
 import useAddSongForm from "./_hooks/useAddSongForm";
 import FinishedModal from "./_components/FinishedModal";
+import { Button } from "@/pages/dashboard/_components";
+import UploadImageBtn from "./_components/UploadImageBtn";
 
 type Add = {
   variant: "add";
   ownerEmail: string;
+  distributor: string;
 };
 
 type Edit = {
@@ -22,18 +24,6 @@ type Edit = {
 
 type Props = Add | Edit;
 
-const initSongData = (props: Props) => {
-  switch (props.variant) {
-    case "add":
-      return initSongObject({
-        owner_email: props.ownerEmail,
-      });
-    case "edit":
-      const { id, ...rest } = props.song;
-      return initSongObject(rest);
-  }
-};
-
 export default function AddSongForm(props: Add | Edit) {
   const {
     isFetching,
@@ -41,26 +31,33 @@ export default function AddSongForm(props: Add | Edit) {
     setSongData,
     updateSongData,
     songData,
-    genres,
-    singers,
+    isValidToSubmit,
     songFile,
-    ableToSubmit,
-    setAbleToSubmit,
+    setGenres,
+    setSingers,
     modalRef,
     handleCloseModalAfterFinished,
   } = useAddSongForm();
 
   const audioRef = useRef<ElementRef<"audio">>(null);
 
-  useEffect(() => {
-    if (props.variant === "add")
-      setAbleToSubmit(
-        !!songFile && !!genres.length && !!singers.length && !!songData?.name
-      );
+  const initSongData = (props: Props) => {
+    switch (props.variant) {
+      case "add":
+        return initSongObject({
+          owner_email: props.ownerEmail,
+          distributor: props.distributor,
+          is_official: true,
+        });
+      case "edit":
+        const { id, singers, genres, ...rest } = props.song;
 
-    if (props.variant === "edit")
-      setAbleToSubmit(!!genres.length && !!singers.length && !!songData?.name);
-  }, [props.variant, songFile, genres, singers]);
+        setSingers(singers);
+        setGenres(genres);
+
+        return initSongObject(rest);
+    }
+  };
 
   useEffect(() => {
     setSongData(initSongData(props));
@@ -73,8 +70,6 @@ export default function AddSongForm(props: Add | Edit) {
       </Center>
     );
 
-  if (!songData?.name) return <NotFound className="h-full" />;
-
   return (
     <div className="w-full md:max-w-[800px] md:mx-auto">
       <audio
@@ -82,44 +77,67 @@ export default function AddSongForm(props: Add | Edit) {
         src={
           props.variant === "add"
             ? URL.createObjectURL(songFile as File)
-            : songData.song_url
+            : songData?.song_url || ""
         }
         className="hidden"
       />
 
-      <div className="md:flex md:space-x-5">
-        <div className="">
-          <div className="w-[200px] h-[200px]">
-            <Empty />
+      {songData && (
+        <>
+          <div className="md:flex md:space-x-5">
+            <div className="flex flex-col items-center md:block space-y-2.5">
+              <div className="w-[200px] h-[200px] bg-black/5 rounded-lg overflow-hidden">
+                <Image
+                  blurHashEncode={songData.blurhash_encode}
+                  src={songData.image_url}
+                />
+              </div>
+
+              <UploadImageBtn />
+            </div>
+
+            <div className="mt-5 md:mt-0 space-y-3 flex-grow">
+              {audioRef.current && (
+                <AudioPLayer duration={songData.duration} audioEle={audioRef.current} />
+              )}
+
+              <div className="space-y-1">
+                <label>Song name</label>
+                <Input
+                  value={songData.name}
+                  onChange={(e) => updateSongData({ name: e.target.value })}
+                />
+              </div>
+
+              <SingerSelect />
+              <GenreSelect />
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-3 flex-grow">
-          {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
+          <p className="text-center mt-5">
+            <Button
+              onClick={handleSubmit}
+              disabled={!isValidToSubmit}
+              loading={isFetching}
+            >
+              <CheckIcon className="w-6" />
+              <span>Ok</span>
+            </Button>
+          </p>
 
-          <div className="space-y-1">
-            <label>Song name</label>
-            <Input
-              value={songData.name}
-              onChange={(e) => updateSongData({ name: e.target.value })}
+          <Modal
+            persisted={props.variant === "add" ? true : false}
+            ref={modalRef}
+            wrapped={false}
+            variant="animation"
+          >
+            <FinishedModal
+              variant={props.variant}
+              handleCloseModal={handleCloseModalAfterFinished}
             />
-          </div>
-
-          <SingerSelect />
-          <GenreSelect />
-        </div>
-      </div>
-
-      <p className="text-center mt-5">
-        <Button onClick={handleSubmit} disabled={!ableToSubmit} loading={isFetching}>
-          <CheckIcon className="w-6" />
-          <span>Ok</span>
-        </Button>
-      </p>
-
-      <Modal persisted ref={modalRef} wrapped={false} variant="animation">
-        <FinishedModal handleCloseModal={handleCloseModalAfterFinished} />
-      </Modal>
+          </Modal>
+        </>
+      )}
     </div>
   );
 }

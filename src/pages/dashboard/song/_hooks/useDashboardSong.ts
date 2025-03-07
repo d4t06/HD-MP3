@@ -1,13 +1,25 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { useSongContext, useToastContext } from "@/stores";
+import { collection, getDocs, orderBy, Query, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 
 type DashboardSongTab = "All" | "Result";
 
+async function implementQuery(query: Query) {
+  const songsSnap = await getDocs(query);
+
+  if (songsSnap.docs) {
+    const result = songsSnap.docs.map((doc) => {
+      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: "" };
+      return song;
+    });
+
+    return result;
+  } else return [];
+}
+
 export default function useDashboardSong() {
   const { songs, setSongs } = useSongContext();
-  const { user } = useAuthContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
@@ -18,7 +30,6 @@ export default function useDashboardSong() {
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
-      if (!user) return;
 
       setIsFetching(true);
 
@@ -28,17 +39,13 @@ export default function useDashboardSong() {
         songsCollectionRef,
         where("name", ">=", value),
         where("name", "<=", value + "\uf8ff"),
-        where("owner_email", "==", user.email)
+        where("is_official", "==", true)
       );
 
-      const songsSnap = await getDocs(searchQuery);
+      const result = await implementQuery(searchQuery);
 
-      if (songsSnap.docs) {
-        const result = songsSnap.docs.map((doc) => doc.data() as Song);
-
-        setTab("Result");
-        setSongs(result);
-      }
+      setSongs(result);
+      setTab("Result");
     } catch (err) {
       console.log({ message: err });
       setErrorToast();
@@ -49,24 +56,18 @@ export default function useDashboardSong() {
 
   const handleGetSong = async () => {
     try {
-      if (!user) return;
       setIsFetching(true);
 
       const songsCollectionRef = collection(db, "Songs");
 
       const searchQuery = query(
         songsCollectionRef,
-        where("owner_email", "==", user.email),
-        orderBy("created_at", "desc")
+        where("is_official", "==", true),
+        orderBy("updated_at", "desc")
       );
 
-      const songsSnap = await getDocs(searchQuery);
-
-      if (songsSnap.docs) {
-        const result = songsSnap.docs.map((doc) => doc.data() as Song);
-
-        setSongs(result);
-      }
+      const result = await implementQuery(searchQuery);
+      setSongs(result);
     } catch (err) {
       console.log({ message: err });
       setErrorToast();

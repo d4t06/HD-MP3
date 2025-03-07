@@ -24,9 +24,7 @@ const popupVariant = cva("", {
 
 interface Props extends VariantProps<typeof popupVariant> {
   children: ReactNode;
-  theme: ThemeType & {
-    alpha: string;
-  };
+  theme: ThemeType;
   className?: string;
   bg?: "primary" | "clear";
 }

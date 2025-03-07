@@ -1,21 +1,20 @@
+import { Center } from "@/components";
 import { useThemeContext } from "@/stores";
 import { Link } from "react-router-dom";
 
 export default function NotFoundPage() {
   const { theme } = useThemeContext();
   return (
-    <div
-      className={`min-h-screen flex flex-col items-center justify-center ${theme.container} ${theme.text_color}`}
-    >
-      <h1 className={`text-[30px] font-bold border p-[10px] ${theme.text_color}`}>
-        Page Not found
-      </h1>
-      <Link
-        to={"/"}
-        className={`${theme.content_bg} font-bold  text-[#fff] mt-[20px] rounded-full flex px-[20px] py-[4px] cursor-pointer`}
-      >
-        Go home
-      </Link>{" "}
-    </div>
+    <Center>
+      <h1 className={`text-[30px] font-bold ${theme.text_color}`}>Page Not found</h1>
+      <p className="text-center">
+        <Link
+          to={"/"}
+          className={`${theme.content_bg} inline-block mt-5 text-center rounded-full px-5 py-1.5 cursor-pointer`}
+        >
+          Go home
+        </Link>
+      </p>
+    </Center>
   );
 }

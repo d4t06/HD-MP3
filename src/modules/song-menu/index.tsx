@@ -43,7 +43,7 @@ function SongInfo({ song }: { song: Song }) {
         )}
         <div className="ml-1 text-sm">
           <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-          <p className="opacity-70 line-clamp-1">{song.singer}</p>
+          {/* <p className="opacity-70 line-clamp-1">{song.singer}</p> */}
         </div>
       </div>
     </div>
@@ -208,7 +208,6 @@ function UserSongMenu({ song }: UserSongMenuProps) {
           <ConfirmModal
             callback={handleDeleteSong}
             loading={loading}
-            theme={theme}
             close={closeModal}
             label={`Delete ' ${song.name} ' ?`}
           />

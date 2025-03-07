@@ -27,7 +27,7 @@ export default function useDashboardPlaylist() {
         playlistsCollectionRef,
         where("by", "==", "admin"),
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
+        where("name", "<=", value + "\uf8ff")
       );
 
       const playlistsSnap = await getDocs(searchQuery);
@@ -52,7 +52,7 @@ export default function useDashboardPlaylist() {
       setIsFetching(true);
 
       const playlists = await getPlaylists({
-        variant: "admin",
+        variant: "system",
       });
       if (playlists) setPlaylists(playlists);
     } catch (err) {

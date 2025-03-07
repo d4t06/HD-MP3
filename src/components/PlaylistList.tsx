@@ -13,40 +13,18 @@ type Props = {
   playlists: Playlist[];
 };
 
-// type ExtendProps = {
-//   className?: string;
-//   playlists: Playlist[];
-//   variant: "search-page";
-// };
-
 export default function PlaylistList({
   className = "",
   playlists,
   loading,
   variant,
 }: Props) {
-  // stores
   const { theme } = useThemeContext();
   const { currentSongData } = useSelector(selectSongQueue);
-  //   const { playlists, sysSongPlaylist } = useSongContext();
 
-  // ref
   const modalRef = useRef<ModalRef>(null);
 
-  // hook
-  //   const loading = props.variant != "search-page" ? props.loading : false;
   const closeModal = () => modalRef.current?.toggle();
-
-  // prettier-ignore
-  //   const targetPlaylist = useMemo(() => {
-  //     if (props.variant === "search-page") return props.playlists;
-
-  //     return props.variant === "my-song"
-  //       ? playlists
-  //       : props.variant === "sys"
-  //         ? sysSongPlaylist.playlists
-  //         : [];
-  //   }, [sysSongPlaylist, playlists]);
 
   const classes = {
     playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
@@ -56,18 +34,13 @@ export default function PlaylistList({
     if (!playlists.length) return <NotFound className="mx-auto" />;
 
     return playlists.map((playlist, index) => {
-      const active = currentSongData?.song.song_in.includes(playlist.id);
+      const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
         <div key={index} className={classes.playlistItem}>
           <PlaylistItem active={active} data={playlist} />
         </div>
       );
-      // switch (props.variant) {
-      //   case "sys":
-      //   case "search-page":
-      //   case "my-song":
-      // }
     });
   };
 

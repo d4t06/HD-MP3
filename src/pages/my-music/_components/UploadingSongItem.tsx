@@ -15,9 +15,9 @@ export default function UploadingSongItem({ song }: Props) {
 
         <div className={`ml-[10px]`}>
           <h5 className={`line-clamp-1 font-medium overflow-hidden`}>{song.name}</h5>
-          <p className={`opacity-[.7] leading-[1.2] line-clamp-1 text-sm`}>
+          {/* <p className={`opacity-[.7] leading-[1.2] line-clamp-1 text-sm`}>
             {song.singer}
-          </p>
+          </p> */}
         </div>
       </div>
 

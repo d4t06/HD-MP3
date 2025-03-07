@@ -1,10 +1,9 @@
 import { Modal, ModalHeader, ModalRef, NotFound } from "@/components";
-import { Button, Frame } from "@/components/dashboard";
-import AddSingerModal from "@/components/dashboard/modals/AddSingerModal";
-import Searchbar from "@/components/dashboard/SearchBar";
-import Loading from "@/components/dashboard/ui/Loading";
-import ModalWrapper from "@/components/dashboard/ui/ModalWrapper";
-import useSearchSinger from "@/hooks/dashboard/useSearchSinger";
+import { Button, Frame, Loading, ModalWrapper } from "@/pages/dashboard/_components";
+import Searchbar from "@/pages/dashboard/_components/SearchBar";
+import { useSearchSinger } from "@/pages/dashboard/_hooks";
+import AddSingerModal from "@/pages/dashboard/singer/_components/AddSingerModal";
+
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 

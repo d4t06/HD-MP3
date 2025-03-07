@@ -9,51 +9,55 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { nanoid } from "nanoid";
-
-const songsCollectionRef = collection(db, "songs");
-const playlistCollectionRef = collection(db, "playlist");
+import { playlistCollectionRef, songsCollectionRef } from "./firebaseService";
 
 type GetUserSong = {
   variant: "user";
   email: string;
 };
 
-type GetHomeSong = {
-  variant: "home";
+type GetSystemSong = {
+  variant: "system";
 };
 
-type GetDashboardSong = {
-  variant: "dashboard";
-};
-
-export const getSongs = async (props: GetUserSong | GetHomeSong | GetDashboardSong) => {
+export const getSongs = async (props: GetUserSong | GetSystemSong) => {
   let getSongQuery;
 
   switch (props.variant) {
     case "user":
-      getSongQuery = query(songsCollectionRef, where("by", "==", props.email), limit(10));
+      getSongQuery = query(
+        songsCollectionRef,
+        where("owner_email", "==", props.email),
+        limit(10)
+      );
       break;
-    case "home":
-      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"), limit(10));
-      break;
-    case "dashboard":
-      getSongQuery = query(songsCollectionRef, where("by", "==", "admin"), limit(20));
+    case "system":
+      getSongQuery = query(
+        songsCollectionRef,
+        where("is_official", "==", "true"),
+        limit(10)
+      );
       break;
   }
 
   const songsSnap = await getDocs(getSongQuery);
 
   if (songsSnap.docs) {
-    const songs = songsSnap.docs.map(
-      (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
-    );
+    const songs = songsSnap.docs.map((doc) => {
+      const song: Song = {
+        ...(doc.data() as SongSchema),
+        queue_id: nanoid(4),
+        id: doc.id,
+      };
+      return song;
+    });
 
     return songs;
   }
 };
 
-type GetPlaylist = {
-  variant: "admin";
+type GetSystemPlaylist = {
+  variant: "system";
 };
 
 type GetUserPlaylist = {
@@ -61,15 +65,22 @@ type GetUserPlaylist = {
   email: string;
 };
 
-export const getPlaylists = async (props: GetPlaylist | GetUserPlaylist) => {
+export const getPlaylists = async (props: GetSystemPlaylist | GetUserPlaylist) => {
   let getPlaylistQuery;
 
   switch (props.variant) {
-    case "admin":
-      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", "admin"), limit(20));
+    case "system":
+      getPlaylistQuery = query(
+        playlistCollectionRef,
+        where("is_public", "==", "true"),
+        limit(20)
+      );
       break;
     case "user":
-      getPlaylistQuery = query(playlistCollectionRef, where("by", "==", props.email));
+      getPlaylistQuery = query(
+        playlistCollectionRef,
+        where("owner_email", "==", props.email)
+      );
       break;
   }
 
@@ -119,13 +130,11 @@ export const getUserInfo = async (email: string) => {
 };
 
 export const searchSong = async (value: string) => {
-  const songsCollectionRef = collection(db, "songs");
-
   const searchQuery = query(
     songsCollectionRef,
     where("name", ">=", value),
     where("name", "<=", value + "\uf8ff"),
-    where("by", "==", "admin"),
+    where("is_official", "==", "true")
   );
 
   const songsSnap = await getDocs(searchQuery);

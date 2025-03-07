@@ -1,3 +1,7 @@
-export const getLinearBg = (color: string, progress: number) => {
-  return `linear-gradient(to right, ${color} ${progress}%, rgba(255,255,255,.15) ${progress}%, rgba(255,255,255,.15) 100%)`;
+export const getLinearBg = (
+  color: string,
+  progress: number,
+  baseColor = "rgba(255,255,255,.15)"
+) => {
+  return `linear-gradient(to right, ${color} ${progress}%, ${baseColor} ${progress}%, ${baseColor}`;
 };

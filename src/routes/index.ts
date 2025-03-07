@@ -1,19 +1,18 @@
 import PrimaryLayout from "@/layout/primary-layout";
+import { Home, Search, MyMusic, Login, Unauthorized } from "../pages";
 import {
-  Home,
-  Dashboard,
-  // Playlist,
-  Search,
-  MyMusic,
-  DashboardEditSongLyric,
-  DashboardPlaylistDetail,
-  DashboardPlaylist,
-  DashboardSong,
-  Login,
-  Unauthorized,
-} from "../pages";
-import DashBoardLayout from "@/layout/dashboard-layout";
-import AddSongPage from "@/pages/dashboard/song/add-song";
+  DashboardAddSongPage,
+  DashboardEditSongPage,
+  DashboardGenrePage,
+  DashboardPlaylistDetailPage,
+  DashboardPlaylistPage,
+  DashboardSingerPage,
+  DashboardPage,
+  DashboardSongLyricPage,
+  DashboardSongPage,
+} from "../pages/dashboard";
+import DashBoardLayout from "@/layout/dashboard/dashboard-layout";
+import AddSongLayout from "@/layout/dashboard/add-song-layout";
 
 const pubicRouteMap = {
   home: "/",
@@ -30,11 +29,12 @@ const protectedRouteMap = {
 
 const privateRouteMap = {
   dashboard: "/dashboard",
+  singer: "/dashboard/singer",
+  genre: "/dashboard/genre",
   playlist: "/dashboard/playlist",
   song: "/dashboard/song",
   addSong: "/dashboard/song/add-song",
-  singer: "/dashboard/singer",
-  genre: "/dashboard/genre",
+  editSong: "/dashboard/song/:songId/edit",
   playlistDetail: "/dashboard/playlist/:id",
   songLyric: "/dashboard/lyric/:id",
 };
@@ -56,33 +56,48 @@ const protectedRoutes = [
 const privateRoutes = [
   {
     path: privateRouteMap.dashboard,
-    component: Dashboard,
+    component: DashboardPage,
     layout: DashBoardLayout,
   },
   {
     path: privateRouteMap.playlist,
-    component: DashboardPlaylist,
+    component: DashboardPlaylistPage,
+    layout: DashBoardLayout,
+  },
+  {
+    path: privateRouteMap.genre,
+    component: DashboardGenrePage,
+    layout: DashBoardLayout,
+  },
+  {
+    path: privateRouteMap.singer,
+    component: DashboardSingerPage,
     layout: DashBoardLayout,
   },
   {
     path: privateRouteMap.playlistDetail,
-    component: DashboardPlaylistDetail,
+    component: DashboardPlaylistDetailPage,
     layout: DashBoardLayout,
   },
   {
     path: privateRouteMap.song,
-    component: DashboardSong,
+    component: DashboardSongPage,
     layout: DashBoardLayout,
   },
 
   {
     path: privateRouteMap.addSong,
-    component: AddSongPage,
-    layout: DashBoardLayout,
+    component: DashboardAddSongPage,
+    layout: AddSongLayout,
+  },
+  {
+    path: privateRouteMap.editSong,
+    component: DashboardEditSongPage,
+    layout: AddSongLayout,
   },
   {
     path: privateRouteMap.songLyric,
-    component: DashboardEditSongLyric,
+    component: DashboardSongLyricPage,
     layout: DashBoardLayout,
   },
 ];

@@ -96,8 +96,6 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
             callback={handleSignOut}
             loading={false}
             label="Sign out ?"
-            desc=""
-            theme={theme}
           />
         );
     }

@@ -52,7 +52,7 @@ export default function FullScreenPlayer() {
           <p className={`text-center ${idle && classes.fadeTransition}`}>
             {currentSongData?.song?.name || "..."}
             <span className="opacity-70">
-              &nbsp;- {currentSongData?.song?.singer || "..."}
+              {/* &nbsp;- {currentSongData?.song?.singer || "..."} */}
             </span>
           </p>
         )}

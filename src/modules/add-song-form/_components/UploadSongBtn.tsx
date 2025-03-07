@@ -1,7 +1,7 @@
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { ChangeEvent, useRef } from "react";
-import { Button } from "@/components/dashboard";
+import { Button } from "@/pages/dashboard/_components";
 
 export default function UploadSongBtn() {
   const { setSongFile } = useAddSongContext();

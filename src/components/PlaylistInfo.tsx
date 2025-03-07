@@ -1,30 +1,9 @@
 import { useSelector } from "react-redux";
-// import { useThemeContext } from "../stores";
-// import { useMemo } from "react";
-// import { formatTime } from "../utils/appHelpers";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-// import PlaylistInfoCta from "./PlaylistInfoCta";
 import { PlaylistItem, Skeleton } from "@/components";
 import { ReactNode } from "react";
-
-// type MyPlaylist = {
-//   variant: "my-playlist";
-//   loading: boolean;
-// };
-
-// type AdminPlaylist = {
-//   variant: "sys-playlist";
-//   loading: boolean;
-// };
-
-// type DashboardPlaylist = {
-//   variant: "dashboard-playlist";
-//   loading: boolean;
-// };
-
-// type Props = MyPlaylist | AdminPlaylist | DashboardPlaylist;
 
 type Props = {
   loading: boolean;
@@ -33,19 +12,13 @@ type Props = {
 
 export default function PLaylistInfo({ loading, children }: Props) {
   // stores
-  // const { isOnMobile } = useThemeContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  // const playlistTime = useMemo(
-  //   () => playlistSongs.reduce((prev, c) => prev + c.duration, 0),
-  //   [playlistSongs],
-  // );
-
   const isActivePlaylist =
     (playStatus === "playing" || playStatus === "waiting") &&
-    currentSongData?.song.song_in === `playlist_${currentPlaylist?.id}`;
+    currentSongData?.song.queue_id.includes(`${currentPlaylist?.id}`);
 
   const playlistInfoSkeleton = (
     <>
@@ -61,27 +34,9 @@ export default function PLaylistInfo({ loading, children }: Props) {
         <div className="text-xl leading-[2.2] font-playwriteCU">
           {currentPlaylist?.name}
         </div>
-        {/*{!isOnMobile && props.variant !== "dashboard-playlist" && (
-          <p className="text-lg leading-[1] font-[500]">{formatTime(playlistTime)}</p>
-        )}
-        {props.variant !== "dashboard-playlist" && (
-          <p className="hidden md:block opacity-60 leading-[1]">
-            created by {currentPlaylist?.by}
-          </p>
-        )}*/}
       </>
     );
   };
-
-  //   const renderCta = () => {
-  //     switch (props.variant) {
-  //       case "my-playlist":
-  //       case "sys-playlist":
-  //         return <PlaylistInfoCta variant={props.variant} />;
-  //       case "dashboard-playlist":
-  //         return <DashboardPlaylistCta />;
-  //     }
-  //   };
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",

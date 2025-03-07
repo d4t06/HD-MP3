@@ -1,13 +1,14 @@
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
 function useAddSong() {
   const [songFile, setSongFile] = useState<File>();
   const [songData, setSongData] = useState<SongSchema>();
   const [singers, setSingers] = useState<Singer[]>([]);
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [ableToSubmit, setAbleToSubmit] = useState(false);
+  const [imageFile, setImageFile] = useState<File>();
+  const [song, setSong] = useState<Song>();
 
-  // const ableToSubmit = !!songFile && singers.length && genres.length;
+  const variant = useRef<"add" | "edit">("add");
 
   const selectSinger = (singer: Singer) => {
     const newSingers = [...singers];
@@ -42,17 +43,22 @@ function useAddSong() {
   };
 
   return {
+    imageFile,
+    setImageFile,
     songFile,
     setSongFile,
     songData,
+    song,
+    setSong,
+    variant,
     setSongData,
     updateSongData,
     singers,
+    setSingers,
+    setGenres,
     genres,
     selectGenre,
     selectSinger,
-    ableToSubmit,
-    setAbleToSubmit,
     resetAddSongContext,
   };
 }

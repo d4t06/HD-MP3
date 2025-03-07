@@ -18,7 +18,7 @@ export default function HomePage() {
   useEffect(() => {
     if (!ranEffect.current) {
       ranEffect.current = true;
-      getSongAndPlaylist({ variant: "home" });
+      getSongAndPlaylist({ variant: "system" });
     }
   }, []);
 

@@ -8,7 +8,7 @@ import {
 } from "@/stores";
 import { myAddDoc, uploadFile } from "@/services/firebaseService";
 import { parserSong } from "@/utils/parseSong";
-import { initSongObject } from "@/utils/factory";
+import { initSingerObject, initSongObject } from "@/utils/factory";
 import { getDoc } from "firebase/firestore";
 import { nanoid } from "nanoid";
 
@@ -66,13 +66,13 @@ export default function useUploadSongs() {
         return (
           songs.some(
             (s) =>
-              s.singer === songObject.singer &&
+              s.singers[0].name === songObject.singers[0].name &&
               s.name === songObject.name &&
               s.size === songObject.size
           ) ||
           processSongsList.some(
             (s) =>
-              s.singer === songObject.singer &&
+              s.singers[0].name === songObject.singers[0].name &&
               s.name === songObject.name &&
               s.size === songObject.size
           )
@@ -86,13 +86,20 @@ export default function useUploadSongs() {
 
           if (!songData) continue;
 
+          const songSinger: Singer = {
+            ...initSingerObject({
+              name: songData.singer,
+            }),
+            id: "",
+          };
           // init song data
           const songFileObject: SongSchema = initSongObject({
             name: songData.name,
-            singer: songData.singer,
+            singers: [songSinger],
             duration: Math.floor(songData.duration),
             size: Math.floor(songFile.size / 1024),
             owner_email: user.email,
+            distributor: user.display_name,
           });
 
           // case song is duplicate

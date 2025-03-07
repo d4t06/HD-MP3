@@ -4,10 +4,9 @@ import Table from "@/components/ui/Table";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { NotFound, Tabs } from "@/components";
 import { useThemeContext } from "@/stores";
-import DashboardSongItem from "@/components/dashboard/DashboardSongItem";
 import { PlusIcon } from "@heroicons/react/20/solid";
-import { Button, Frame } from "@/components/dashboard";
-import Searchbar from "@/components/dashboard/SearchBar";
+import Searchbar from "../_components/SearchBar";
+import { Button, DashboardSongItem, Frame } from "../_components";
 
 export default function DashboardSong() {
   const { theme } = useThemeContext();
