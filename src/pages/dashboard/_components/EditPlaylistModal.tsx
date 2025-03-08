@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "../_components/ui";
 import { ModalHeader } from "@/components";
-import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
+// import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
 
 type Props = {
   playlist: Playlist;
@@ -12,7 +12,7 @@ export default function EditPlaylistModal({ playlist, closeModal }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [playlistName, setPlaylistName] = useState<string>("");
 
-  const { actions, isFetching } = useDashboardPlaylistActions();
+//   const { actions, isFetching } = useDashboardPlaylistActions();
 
   const isAbleToSubmit = useMemo(
     () => playlistName.trim() && playlistName !== playlist.name,
@@ -23,7 +23,7 @@ export default function EditPlaylistModal({ playlist, closeModal }: Props) {
     e.preventDefault();
     if (!isAbleToSubmit) return;
 
-    await actions({ variant: "edit-playlist", name: playlistName });
+   //  await actions({ variant: "edit-playlist", name: playlistName });
     closeModal();
   };
 
@@ -45,7 +45,7 @@ export default function EditPlaylistModal({ playlist, closeModal }: Props) {
       <form
         action=""
         onSubmit={handleEditPlaylist}
-        className={`${classes.container} ${isFetching ? "disable" : ""}`}
+        className={`${classes.container} ${false ? "disable" : ""}`}
       >
         <input
           ref={inputRef}
@@ -58,7 +58,7 @@ export default function EditPlaylistModal({ playlist, closeModal }: Props) {
         <Button
           type="submit"
           disabled={!isAbleToSubmit}
-          loading={isFetching}
+          loading={false}
           className="mt-5"
         >
           Save

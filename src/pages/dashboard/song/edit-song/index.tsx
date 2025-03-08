@@ -44,7 +44,7 @@ export default function EditSongPage() {
 
   return (
     <>
-      <Title title="Edit Song" />
+      <Title className="mb-5" title="Edit Song" />
       <AddSongForm song={song} variant="edit" />
     </>
   );

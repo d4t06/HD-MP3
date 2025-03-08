@@ -1,10 +1,22 @@
 import { FormEvent, useEffect, useState } from "react";
-import { getPlaylists } from "@/services/appService";
 import { useSongContext, useToastContext } from "@/stores";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { db } from "@/firebase";
+import { Query, getDocs, orderBy, query, where } from "firebase/firestore";
+import { playlistCollectionRef } from "@/services/firebaseService";
 
 type DashboardSongTab = "All" | "Result";
+
+async function implementQuery(query: Query) {
+  const playlistsSnap = await getDocs(query);
+
+  if (playlistsSnap.docs.length) {
+    const result = playlistsSnap.docs.map((doc) => {
+      const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
+      return playlist;
+    });
+
+    return result;
+  } else return [];
+}
 
 export default function useDashboardPlaylist() {
   const { setPlaylists, playlists } = useSongContext();
@@ -21,22 +33,15 @@ export default function useDashboardPlaylist() {
 
       setIsFetching(true);
 
-      const playlistsCollectionRef = collection(db, "playlist");
-
       const searchQuery = query(
-        playlistsCollectionRef,
-        where("by", "==", "admin"),
+        playlistCollectionRef,
+        where("is_official", "==", true),
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff")
+        where("name", "<=", value + "\uf8ff"),
       );
 
-      const playlistsSnap = await getDocs(searchQuery);
-
-      if (playlistsSnap.docs) {
-        const result = playlistsSnap.docs.map((doc) => doc.data() as Playlist);
-
-        setPlaylists(result);
-      } else setPlaylists([]);
+      const result = await implementQuery(searchQuery);
+      setPlaylists(result);
 
       setTab("Result");
     } catch (err) {
@@ -51,10 +56,14 @@ export default function useDashboardPlaylist() {
     try {
       setIsFetching(true);
 
-      const playlists = await getPlaylists({
-        variant: "system",
-      });
-      if (playlists) setPlaylists(playlists);
+      const searchQuery = query(
+        playlistCollectionRef,
+        where("is_official", "==", true),
+        orderBy("updated_at", "desc"),
+      );
+
+      const result = await implementQuery(searchQuery);
+      setPlaylists(result);
     } catch (err) {
       console.log({ message: err });
 

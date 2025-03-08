@@ -3,7 +3,7 @@ import { useAuthContext } from "@/stores";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
@@ -14,7 +14,7 @@ type TempLyric = Omit<SongLyric, "real_time"> & {
   real_time: string;
 };
 
-export default function useLyricEditor({ audioRef, admin }: Props) {
+export default function useLyricEditor({ audioRef }: Props) {
   const { user } = useAuthContext();
 
   const {
@@ -35,24 +35,28 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
 
   const ranUseEffect = useRef(false);
 
-  const params = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const params = useParams<{ songId: string }>();
+  // const navigate = useNavigate();
 
   const getSong = async () => {
     try {
       const songSnapshot = await myGetDoc({
         collectionName: "Songs",
-        id: params?.id as string,
+        id: params?.songId as string,
       });
 
-      if (!songSnapshot.exists()) return navigate(admin ? "/dashboard" : "/");
+      if (!songSnapshot.exists()) return;
 
-      const songData = songSnapshot.data() as Song;
+      const song: Song = {
+        ...(songSnapshot.data() as SongSchema),
+        id: songSnapshot.id,
+        queue_id: "",
+      };
 
-      if (songData) {
+      if (song.is_has_lyric) {
         const lyricSnapshot = await myGetDoc({
           collectionName: "Lyrics",
-          id: songData.id,
+          id: song.id,
         });
 
         if (lyricSnapshot.exists()) {
@@ -64,14 +68,14 @@ export default function useLyricEditor({ audioRef, admin }: Props) {
               : lyricData.real_time;
 
           setLyricRes({
+            id: lyricSnapshot.id,
             base: lyricData.base,
-            id: lyricData.id,
             real_time: lyrics,
           });
         }
       }
 
-      setSong(songData);
+      setSong(song);
     } catch (error) {
       console.log({ message: error });
     } finally {

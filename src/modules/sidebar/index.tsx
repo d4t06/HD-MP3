@@ -68,11 +68,11 @@ export default function Sidebar() {
               <>
                 <Link
                   className={`${classes.link}  ${
-                    location.pathname.includes("mysongs")
+                    location.pathname.includes("my-music")
                       ? classes.activeLink
                       : "border-transparent"
                   }`}
-                  to={"/mymusic"}
+                  to={"/my-music"}
                 >
                   <div className={classes.navItem}>
                     <MusicalNoteIcon className={classes.icon} />

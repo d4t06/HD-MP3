@@ -1,4 +1,5 @@
 import {
+  Query,
   collection,
   doc,
   getDoc,
@@ -9,7 +10,8 @@ import {
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { nanoid } from "nanoid";
-import { playlistCollectionRef, songsCollectionRef } from "./firebaseService";
+import { playlistCollectionRef, songsCollectionRef, uploadBlob } from "./firebaseService";
+import { getBlurHashEncode, optimizeImage } from "./imageService";
 
 type GetUserSong = {
   variant: "user";
@@ -28,14 +30,14 @@ export const getSongs = async (props: GetUserSong | GetSystemSong) => {
       getSongQuery = query(
         songsCollectionRef,
         where("owner_email", "==", props.email),
-        limit(10)
+        limit(10),
       );
       break;
     case "system":
       getSongQuery = query(
         songsCollectionRef,
         where("is_official", "==", "true"),
-        limit(10)
+        limit(10),
       );
       break;
   }
@@ -73,13 +75,13 @@ export const getPlaylists = async (props: GetSystemPlaylist | GetUserPlaylist) =
       getPlaylistQuery = query(
         playlistCollectionRef,
         where("is_public", "==", "true"),
-        limit(20)
+        limit(20),
       );
       break;
     case "user":
       getPlaylistQuery = query(
         playlistCollectionRef,
-        where("owner_email", "==", props.email)
+        where("owner_email", "==", props.email),
       );
       break;
   }
@@ -129,19 +131,34 @@ export const getUserInfo = async (email: string) => {
   }
 };
 
-export const searchSong = async (value: string) => {
-  const searchQuery = query(
-    songsCollectionRef,
-    where("name", ">=", value),
-    where("name", "<=", value + "\uf8ff"),
-    where("is_official", "==", "true")
-  );
-
-  const songsSnap = await getDocs(searchQuery);
+export async function implementSongQuery(query: Query) {
+  const songsSnap = await getDocs(query);
 
   if (songsSnap.docs) {
-    const result = songsSnap.docs.map((doc) => doc.data() as Song);
+    const result = songsSnap.docs.map((doc) => {
+      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: "" };
+      return song;
+    });
 
     return result;
-  }
+  } else return [];
+}
+
+export const optimizeAndGetHashImage = async (imageFile: File) => {
+  const imageBlob = await optimizeImage(imageFile);
+  if (imageBlob == undefined) throw new Error("File not found");
+
+  const uploadProcess = uploadBlob({
+    blob: imageBlob,
+    folder: "/images/",
+  });
+
+  const { encode } = await getBlurHashEncode(imageBlob);
+  const { filePath, fileURL } = await uploadProcess;
+
+  return {
+    image_file_path: filePath,
+    image_url: fileURL,
+    blurhash_encode: encode,
+  };
 };

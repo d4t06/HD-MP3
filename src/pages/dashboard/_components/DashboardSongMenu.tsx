@@ -1,4 +1,4 @@
-import { ConfirmModal, Modal } from "@/components";
+import { ConfirmModal, Image, Modal, PopupWrapper } from "@/components";
 import { ModalRef } from "@/components/Modal";
 import MyPopup, {
   MyPopupContent,
@@ -17,20 +17,24 @@ import {
 import { ReactNode, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import Button from "./ui/Button";
-import useDashboardPlaylistActions, {
-  PlaylistActionProps,
-} from "../_hooks/usePlaylistAction";
 import useDashboardSongItemAction, {
   SongItemActionProps,
 } from "../_hooks/useSongItemAction";
+import useDashboardPlaylistActions, {
+  PlaylistActionProps,
+} from "../playlist/edit-playlist/_hooks/usePlaylistAction";
+import { useThemeContext } from "@/stores";
 
 function SongInfo({ song }: { song: Song }) {
   return (
     <div className="px-2 mb-3">
-      <div className={`p-1.5 bg-black/5 rounded-md flex`}>
-        <div className="ml-1 text-sm">
+      <div className={`p-3 bg-white/10 rounded-md flex`}>
+        <div className="w-[60px] h-[60px] flex-shrink-0 rounded overflow-hidden">
+          <Image className="object-cover h-full" src={song.image_url} />
+        </div>
+
+        <div className="ml-2 text-sm">
           <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-          {/* <p className="opacity-70 line-clamp-1">{song.singer}</p> */}
         </div>
       </div>
     </div>
@@ -45,15 +49,21 @@ type SongsMenuProps = {
 };
 
 function Menu({ song, children }: SongsMenuProps) {
+  const { theme } = useThemeContext();
+
   return (
     <>
-      <MyPopupContent className="w-[200px]" appendTo="portal">
-        <div className="py-1.5 bg-white shadow rounded-lg">
+      <MyPopupContent className="w-[260px]" appendTo="portal">
+        {/*<div className="py-1.5 bg-white shadow rounded-lg">*/}
+        <PopupWrapper p={"clear"} className="py-2" theme={theme}>
           <SongInfo song={song} />
           <MenuList className="hover:[&>*:not(div.absolute)]:bg-black/5">
             {children}
           </MenuList>
-        </div>
+
+          <p className="text-sm text-center opacity-70 mt-3">Provided by {song.distributor}</p>
+        </PopupWrapper>
+        {/*</div>*/}
       </MyPopupContent>
     </>
   );
@@ -136,7 +146,7 @@ function SongMenu({ song }: { song: Song }) {
 }
 
 function PlaylistMenu({ song }: PlaylistMenuProps) {
-  const { actions, isFetching, currentPlaylist } = useDashboardPlaylistActions();
+  const { action, isFetching, playlist } = useDashboardPlaylistActions();
   const { close } = usePopoverContext();
 
   const classes = {
@@ -146,14 +156,14 @@ function PlaylistMenu({ song }: PlaylistMenuProps) {
   const handlePlaylistAction = async (props: PlaylistActionProps) => {
     switch (props.variant) {
       case "remove-song":
-        await actions({
+        await action({
           variant: "remove-song",
           song: props.song,
         });
 
         break;
       case "update-image":
-        await actions({
+        await action({
           variant: "update-image",
           song: props.song,
         });
@@ -180,7 +190,7 @@ function PlaylistMenu({ song }: PlaylistMenuProps) {
 
       {song.image_url && (
         <button
-          className={`${currentPlaylist?.image_url === song.image_url ? "disable" : ""}`}
+          className={`${playlist?.image_url === song.image_url ? "disable" : ""}`}
           onClick={() =>
             handlePlaylistAction({
               variant: "update-image",

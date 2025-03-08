@@ -1,23 +1,23 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
 import SongSelectProvider from "@/stores/SongSelectContext";
+import { ConfirmModal, Modal, ModalRef } from "@/components";
 import AddSongsToPlaylistModal from "./AddSongsToPlaylistModal";
-import { AddItem, ConfirmModal, Modal, ModalRef } from "@/components";
-import { Button } from "./ui";
-import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
+import { Button } from "@/pages/dashboard/_components";
+import useDashboardPlaylistActions, {
+  PlaylistActionProps,
+} from "../_hooks/usePlaylistAction";
+import AddPlaylistModal from "@/modules/add-playlist-form";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
 export default function DashboardPlaylistCta() {
-  const { theme } = useThemeContext();
-
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { actions, currentPlaylist, isFetching } = useDashboardPlaylistActions();
+  const { action, playlist, isFetching } = useDashboardPlaylistActions();
 
   const openModal = (m: Modal) => {
     setModal(m);
@@ -27,25 +27,8 @@ export default function DashboardPlaylistCta() {
   };
   const closeModal = () => modalRef.current?.close();
 
-  type DeletePlaylist = {
-    variant: "delete";
-  };
-
-  type EditPlaylist = {
-    variant: "edit";
-    value: string;
-  };
-
-  const handlePlaylistAction = async (props: DeletePlaylist | EditPlaylist) => {
-    switch (props.variant) {
-      case "delete":
-        await actions({ variant: "delete-playlist" });
-        break;
-      case "edit":
-        await actions({ variant: "edit-playlist", name: props.value });
-        break;
-    }
-
+  const handlePlaylistAction = async (props: PlaylistActionProps) => {
+    await action(props);
     closeModal();
   };
 
@@ -54,18 +37,23 @@ export default function DashboardPlaylistCta() {
       case "":
         return <></>;
       case "edit":
+        if (!playlist) return "Playlist is undefined";
+
         return (
           <>
-            {currentPlaylist && (
-              <AddItem
-                cbWhenSubmit={(v) => handlePlaylistAction({ variant: "edit", value: v })}
-                initValue={currentPlaylist.name}
-                title="Edit playlist"
-                variant="input"
-                loading={isFetching}
-                closeModal={closeModal}
-              />
-            )}
+            <AddPlaylistModal
+              submit={(playlist, imageFile) =>
+                handlePlaylistAction({
+                  variant: "edit-playlist",
+                  playlist,
+                  imageFile,
+                })
+              }
+              variant="edit"
+              isLoading={isFetching}
+              playlist={playlist}
+              close={closeModal}
+            />
           </>
         );
 
@@ -74,12 +62,10 @@ export default function DashboardPlaylistCta() {
           <ConfirmModal
             loading={isFetching}
             label={"Delete playlist ?"}
-            callback={() => handlePlaylistAction({ variant: "delete" })}
+            callback={() => handlePlaylistAction({ variant: "delete-playlist" })}
             close={closeModal}
           />
         );
-
-        break;
 
       case "add-song-to-playlist":
         return (
@@ -91,15 +77,15 @@ export default function DashboardPlaylistCta() {
   };
 
   const classes = {
-    button: "rounded-full p-2.5",
+    button: "p-1.5",
   };
 
   return (
-    <>
+    <div className="space-x-2">
       <Button
         onClick={() => openModal("edit")}
         size={"clear"}
-        className={`${classes.button} bg-${theme.alpha}`}
+        className={`${classes.button} `}
       >
         <PencilIcon className="w-5" />
       </Button>
@@ -107,7 +93,7 @@ export default function DashboardPlaylistCta() {
       <Button
         onClick={() => openModal("delete")}
         size={"clear"}
-        className={`${classes.button} bg-${theme.alpha}`}
+        className={`${classes.button} `}
       >
         <TrashIcon className="w-5" />
       </Button>
@@ -115,7 +101,7 @@ export default function DashboardPlaylistCta() {
       <Button
         onClick={() => openModal("add-song-to-playlist")}
         size={"clear"}
-        className={`${classes.button} space-x-1 ${theme.content_bg}`}
+        className={`${classes.button} `}
       >
         <PlusIcon className="w-5" />
         <span>Add song</span>
@@ -124,6 +110,6 @@ export default function DashboardPlaylistCta() {
       <Modal variant="animation" ref={modalRef}>
         {renderModal()}
       </Modal>
-    </>
+    </div>
   );
 }

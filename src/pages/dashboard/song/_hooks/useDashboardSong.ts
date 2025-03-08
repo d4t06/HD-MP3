@@ -1,22 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useSongContext, useToastContext } from "@/stores";
-import { collection, getDocs, orderBy, Query, query, where } from "firebase/firestore";
+import { collection, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
+import { implementSongQuery } from "@/services/appService";
 
 type DashboardSongTab = "All" | "Result";
-
-async function implementQuery(query: Query) {
-  const songsSnap = await getDocs(query);
-
-  if (songsSnap.docs) {
-    const result = songsSnap.docs.map((doc) => {
-      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: "" };
-      return song;
-    });
-
-    return result;
-  } else return [];
-}
 
 export default function useDashboardSong() {
   const { songs, setSongs } = useSongContext();
@@ -39,10 +27,10 @@ export default function useDashboardSong() {
         songsCollectionRef,
         where("name", ">=", value),
         where("name", "<=", value + "\uf8ff"),
-        where("is_official", "==", true)
+        where("is_official", "==", true),
       );
 
-      const result = await implementQuery(searchQuery);
+      const result = await implementSongQuery(searchQuery);
 
       setSongs(result);
       setTab("Result");
@@ -63,10 +51,10 @@ export default function useDashboardSong() {
       const searchQuery = query(
         songsCollectionRef,
         where("is_official", "==", true),
-        orderBy("updated_at", "desc")
+        orderBy("updated_at", "desc"),
       );
 
-      const result = await implementQuery(searchQuery);
+      const result = await implementSongQuery(searchQuery);
       setSongs(result);
     } catch (err) {
       console.log({ message: err });

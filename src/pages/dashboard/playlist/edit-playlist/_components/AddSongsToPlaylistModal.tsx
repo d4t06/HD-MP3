@@ -1,13 +1,9 @@
 import { useThemeContext } from "@/stores";
-import {
-  ArrowPathIcon,
-  MagnifyingGlassIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { Button } from "../_components/ui";
 import { useMemo } from "react";
-import useAddSongToPlaylistModal from "../_hooks/useAddSongToPlaylistModal";
 import { ModalHeader } from "@/components";
+import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
+import useAddSongToPlaylistModal from "../_hooks/useAddSongToPlaylistModal";
+import { CheckIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   closeModal: () => void;
@@ -17,15 +13,13 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
   const { theme } = useThemeContext();
 
   const {
-    value,
-    setValue,
     isFetching,
     songs,
-    handleSubmit,
     selectedSongs,
     handleAddSongsToPlaylist,
     selectSong,
     actionFetching,
+    ...rest
   } = useAddSongToPlaylistModal();
 
   const _handleAddSongsToPlaylist = async () => {
@@ -41,8 +35,6 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
 
   const classes = {
     col: "w-1/2 flex flex-col px-2",
-    formGroup: ` flex bg-white/10 rounded-full overflow-hidden`,
-    input: "outline-none bg-transparent px-3 py-1 h-full",
     box: `rounded-lg bg-white/10 overflow-hidden p-2`,
     songItem: `rounded-md w-full p-1 text-left`,
   };
@@ -53,34 +45,7 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
 
       <div className="flex-grow flex flex-col md:flex-row md:-mx-3 overflow-hidden">
         <div className={`${classes.col}`}>
-          <form action="#" onSubmit={handleSubmit} className={`flex w-full`}>
-            <div className={`${classes.formGroup}`}>
-              <input
-                value={value}
-                placeholder="..."
-                onChange={(e) => setValue(e.target.value.trim())}
-                className={`${classes.input}`}
-                type="text"
-              />
-              <button
-                type="button"
-                onClick={() => setValue("")}
-                className={`pr-2 ${
-                  !value ? "opacity-0 cursor-none" : "opacity-[1] cursor-pointer"
-                }`}
-              >
-                <XMarkIcon className="w-5" />
-              </button>
-            </div>
-
-            <Button
-              type="submit"
-              className={`${theme.content_bg} ml-3 w-[32px] justify-center h-full rounded-full `}
-              size={"clear"}
-            >
-              <MagnifyingGlassIcon className="w-5" />
-            </Button>
-          </form>
+          <SearchBar {...rest} />
 
           <div className={`${classes.box} flex-grow mt-3`}>
             <div className={`h-full overflow-auto space-y-2`}>
@@ -95,13 +60,13 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
                   </button>
                 ))
               ) : (
-                <ArrowPathIcon className="w-5 animate-spin" />
+                <Loading className="h-full" />
               )}
             </div>
           </div>
         </div>
         <div className={classes.col}>
-          <div className="leading-[32px] font-[500]">Selected:</div>
+          <div className="h-[70px] font-[500]">Selected:</div>
 
           <div className={`${classes.box} flex-grow mt-3 space-y-2`}>
             {selectedSongs.map((s, i) => (
@@ -119,7 +84,8 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
 
       <p className="text-right mt-3">
         <Button loading={actionFetching} onClick={_handleAddSongsToPlaylist}>
-          Add
+          <CheckIcon className="w-6" />
+          <span>Add</span>
         </Button>
       </p>
     </div>

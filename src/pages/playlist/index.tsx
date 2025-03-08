@@ -1,12 +1,12 @@
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSelector } from "react-redux";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
-import { PlaylistInfo } from "@/components";
+import { Center, NotFound, PlaylistInfo } from "@/components";
 import { useAuthContext } from "@/stores";
 // import PlaylistInfoCta from "./_components/PlaylistInfoCta";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import PlaylistSongList from "./_components/PlaylistSongList";
-import usePlaylist from "./_hooks/usePlaylist";
+// import usePlaylist from "./_hooks/usePlaylist";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import EditPlaylistBtn from "./_components/EditPlaylistBtn";
 
@@ -18,8 +18,15 @@ export default function PlaylistDetail() {
   const isOwnerOfPlaylist = currentPlaylist?.owner_email === user?.email;
 
   //   hooks
-  usePlaylist();
+  // usePlaylist();
   const { isFetching } = useGetPlaylist();
+
+  if (!isFetching && !currentPlaylist)
+    return (
+      <Center>
+        <NotFound />
+      </Center>
+    );
 
   return (
     <>

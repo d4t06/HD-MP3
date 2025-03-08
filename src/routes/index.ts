@@ -1,18 +1,18 @@
 import PrimaryLayout from "@/layout/primary-layout";
-import { Home, Search, MyMusic, Login, Unauthorized } from "../pages";
+import { Home, Search, MyMusic, Login, Unauthorized, Playlist } from "../pages";
 import {
   DashboardAddSongPage,
   DashboardEditSongPage,
   DashboardGenrePage,
-  DashboardPlaylistDetailPage,
+  DashboardEditPlaylistPage,
   DashboardPlaylistPage,
   DashboardSingerPage,
   DashboardPage,
   DashboardSongLyricPage,
   DashboardSongPage,
 } from "../pages/dashboard";
-import DashBoardLayout from "@/layout/dashboard/dashboard-layout";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
+import PlaylistLayout from "@/layout/dashboard/playlist-layout";
 
 const pubicRouteMap = {
   home: "/",
@@ -23,7 +23,7 @@ const pubicRouteMap = {
 };
 
 const protectedRouteMap = {
-  MyMusic: "/MyMusic",
+  myMusic: "/my-music",
   favorite: "/favorite",
 };
 
@@ -36,7 +36,7 @@ const privateRouteMap = {
   addSong: "/dashboard/song/add-song",
   editSong: "/dashboard/song/:songId/edit",
   playlistDetail: "/dashboard/playlist/:id",
-  songLyric: "/dashboard/lyric/:id",
+  songLyric: "/dashboard/lyric/:songId",
 };
 
 export type PlaylistParamsType = {
@@ -44,45 +44,46 @@ export type PlaylistParamsType = {
 };
 const publicRoutes = [
   { path: pubicRouteMap.home, component: Home, layout: PrimaryLayout },
+  { path: pubicRouteMap.playlist, component: Playlist, layout: PrimaryLayout },
   { path: pubicRouteMap.search, component: Search, layout: PrimaryLayout },
   { path: pubicRouteMap.login, component: Login, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
 ];
 
 const protectedRoutes = [
-  { path: protectedRouteMap.MyMusic, component: MyMusic, layout: PrimaryLayout },
+  { path: protectedRouteMap.myMusic, component: MyMusic, layout: PrimaryLayout },
 ];
 
 const privateRoutes = [
   {
     path: privateRouteMap.dashboard,
     component: DashboardPage,
-    layout: DashBoardLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.playlist,
     component: DashboardPlaylistPage,
-    layout: DashBoardLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.genre,
     component: DashboardGenrePage,
-    layout: DashBoardLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.singer,
     component: DashboardSingerPage,
-    layout: DashBoardLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.playlistDetail,
-    component: DashboardPlaylistDetailPage,
-    layout: DashBoardLayout,
+    component: DashboardEditPlaylistPage,
+    layout: PlaylistLayout,
   },
   {
     path: privateRouteMap.song,
     component: DashboardSongPage,
-    layout: DashBoardLayout,
+    layout: "",
   },
 
   {
@@ -98,7 +99,7 @@ const privateRoutes = [
   {
     path: privateRouteMap.songLyric,
     component: DashboardSongLyricPage,
-    layout: DashBoardLayout,
+    layout: "",
   },
 ];
 

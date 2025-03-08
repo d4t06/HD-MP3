@@ -9,3 +9,4 @@ export { default as useGetSongPlaylist } from "./useGetSongPlaylist";
 export { default as usePlaylistAction } from "./usePlaylistAction";
 export { default as useSongItemAction } from "./useSongItemAction";
 export { default as useSongQueueAction } from "./useSongQueueAction";
+export { default as useAddPlaylist } from "./useAddPlaylist";

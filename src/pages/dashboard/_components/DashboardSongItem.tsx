@@ -12,7 +12,10 @@ export default function DashboardSongItem({ song, className = "", variant }: Pro
       <td>{song.name}</td>
       <td>
         {song.singers.map((s, i) => (
-          <p key={i}>{s.name}</p>
+          <span key={i}>
+            {!!i && ", "}
+            {s.name}
+          </span>
         ))}
       </td>
 

@@ -1,30 +1,19 @@
 import { useSelector } from "react-redux";
-import { AddPlaylist, Empty, Modal, NotFound, PlaylistItem } from ".";
-import { useThemeContext } from "../stores";
+import { NotFound, PlaylistItem } from ".";
 import { PlaylistSkeleton } from "./skeleton";
-import { useRef } from "react";
-import { ModalRef } from "./Modal";
+import { ReactNode } from "react";
+
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
 type Props = {
   className?: string;
   loading: boolean;
-  variant: "others" | "my-music";
   playlists: Playlist[];
+  children?: ReactNode;
 };
 
-export default function PlaylistList({
-  className = "",
-  playlists,
-  loading,
-  variant,
-}: Props) {
-  const { theme } = useThemeContext();
+export default function PlaylistList({ className = "", playlists, loading }: Props) {
   const { currentSongData } = useSelector(selectSongQueue);
-
-  const modalRef = useRef<ModalRef>(null);
-
-  const closeModal = () => modalRef.current?.toggle();
 
   const classes = {
     playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
@@ -44,34 +33,11 @@ export default function PlaylistList({
     });
   };
 
-  const renderModal = () => {
-    switch (variant) {
-      case "my-music":
-        return <AddPlaylist close={closeModal} />;
-    }
-  };
-
   return (
     <>
       <div className={`flex flex-row flex-wrap -mx-[8px] ${className}`}>
         {loading && PlaylistSkeleton}
-        {!loading && (
-          <>
-            {render()}
-
-            {variant === "my-music" && (
-              <>
-                <div className={`${classes.playlistItem} mb-[25px]`}>
-                  <Empty theme={theme} onClick={() => modalRef.current?.toggle()} />
-                </div>
-
-                <Modal variant="animation" ref={modalRef}>
-                  {renderModal()}
-                </Modal>
-              </>
-            )}
-          </>
-        )}
+        {!loading && render()}
       </div>
     </>
   );

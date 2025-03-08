@@ -9,7 +9,8 @@ export default function AddSongPage() {
 
   return (
     <>
-      <Title title="Add Song" />
+      <Title className="mb-5" title="Add Song" />
+
       <AddSongForm
         distributor={user.display_name}
         ownerEmail={user.email}

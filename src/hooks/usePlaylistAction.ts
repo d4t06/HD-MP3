@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "../stores";
-import { generateId } from "../utils/appHelpers";
 import { myAddDoc, myDeleteDoc, setUserPlaylistIdsDoc } from "@/services/firebaseService";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -49,8 +48,6 @@ export default function usePlaylistAction() {
         case "add":
           if (!props.name.trim()) throw new Error("playlist name invalid");
 
-          const playlistId = generateId(props.name);
-
           const newPlaylist = initPlaylistObject({
             owner_email: user.email,
             distributor: user.display_name,
@@ -63,7 +60,7 @@ export default function usePlaylistAction() {
             msg: ">>> api: set playlist doc",
           });
 
-          //  const newPlaylists = [...playlists, newPlaylist];
+          //  const newPlaylisbts = [...playlists, newPlaylist];
 
           //  await setUserPlaylistIdsDoc(newPlaylists, user);
 

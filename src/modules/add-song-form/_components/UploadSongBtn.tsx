@@ -1,4 +1,4 @@
-import { ArrowUpTrayIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { ChangeEvent, useRef } from "react";
 import { Button } from "@/pages/dashboard/_components";
@@ -27,7 +27,7 @@ export default function UploadSongBtn() {
       <Button className="" size={"clear"}>
         <label
           htmlFor="song_upload"
-          className={`inline-flex py-1.5 space-x-1 cursor-pointer px-5 `}
+          className={`inline-flex p-1 cursor-pointer`}
         >
           <ArrowUpTrayIcon className="w-6" />
         </label>

@@ -21,7 +21,7 @@ export default function MyMusicPage() {
     <>
       <Title title="Playlists" />
 
-      <PlaylistList loading={isFetching} playlists={playlists} variant="my-music" />
+      <PlaylistList loading={isFetching} playlists={playlists} />
       <div className="pt-[30px]"></div>
 
       <div className="flex items-center justify-between">

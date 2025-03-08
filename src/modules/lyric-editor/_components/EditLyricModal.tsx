@@ -1,7 +1,7 @@
 import { ElementRef, useRef, useState } from "react";
 import { useThemeContext } from "@/stores";
 import {
-    BackwardIcon,
+  BackwardIcon,
   CheckIcon,
   ForwardIcon,
   PauseIcon,
@@ -84,8 +84,8 @@ export default function EditLyricModal({ closeModal }: Props) {
         key={index}
         onClick={() => handleSelectWord(index)}
         size={"clear"}
-        className={`justify-center ${theme.side_bar_bg} border border-${theme.alpha} ${
-          currentIndex === index ? theme.content_bg : ""
+        className={`justify-center ${
+          currentIndex === index ? theme.content_bg : "bg-" + theme.alpha
         }`}
       >
         {w}

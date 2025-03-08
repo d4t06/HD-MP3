@@ -2,7 +2,7 @@ import { ElementRef, useEffect, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { initSongObject } from "@/utils/factory";
 import UploadSongBtn from "./_components/UploadSongBtn";
-import { Center, Image, Input, Modal, NotFound } from "@/components";
+import { Center, Image, Input, Modal, } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
@@ -50,10 +50,10 @@ export default function AddSongForm(props: Add | Edit) {
           is_official: true,
         });
       case "edit":
-        const { id, singers, genres, ...rest } = props.song;
+        const { id, ...rest } = props.song;
 
-        setSingers(singers);
-        setGenres(genres);
+        setSingers(rest.singers);
+        setGenres(rest.genres);
 
         return initSongObject(rest);
     }
@@ -88,6 +88,7 @@ export default function AddSongForm(props: Add | Edit) {
             <div className="flex flex-col items-center md:block space-y-2.5">
               <div className="w-[200px] h-[200px] bg-black/5 rounded-lg overflow-hidden">
                 <Image
+                  className="object-cover h-full"
                   blurHashEncode={songData.blurhash_encode}
                   src={songData.image_url}
                 />
@@ -98,7 +99,11 @@ export default function AddSongForm(props: Add | Edit) {
 
             <div className="mt-5 md:mt-0 space-y-3 flex-grow">
               {audioRef.current && (
-                <AudioPLayer duration={songData.duration} audioEle={audioRef.current} />
+                <AudioPLayer
+                  size={songData.size}
+                  duration={songData.duration}
+                  audioEle={audioRef.current}
+                />
               )}
 
               <div className="space-y-1">

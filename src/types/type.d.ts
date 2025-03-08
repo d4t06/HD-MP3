@@ -89,7 +89,8 @@ type ThemeKeyType =
   | "gray"
   | "white"
   | "black"
-  | "tet";
+  | "tet"
+  | "dashboard";
 
 type ThemeType = {
   name: string;

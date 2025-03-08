@@ -21,7 +21,7 @@ export default function UploadImageBtn() {
         onChange={handleInputChange}
         type="file"
         multiple
-        accept="audio"
+        accept="image/png, image/jpeg"
         id="image_upload"
         className="hidden"
       />
@@ -37,14 +37,18 @@ export default function UploadImageBtn() {
         </Button>
 
         {songData?.image_url && (
-          <Button onClick={() => modalRef.current?.open()} className="h-[36px] justify-center w-[36px]" size={"clear"}>
+          <Button
+            onClick={() => modalRef.current?.open()}
+            className="h-[36px] justify-center w-[36px]"
+            size={"clear"}
+          >
             <QuestionMarkCircleIcon className="w-6" />
           </Button>
         )}
       </div>
 
       {songData?.image_url && (
-        <Modal  variant="animation" ref={modalRef}>
+        <Modal variant="animation" ref={modalRef}>
           <ModalWrapper className="w-[500px] space-y-2.5">
             <p>{songData?.image_url}</p>
             <p>{songData?.blurhash_encode}</p>

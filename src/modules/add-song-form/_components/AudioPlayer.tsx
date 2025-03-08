@@ -13,9 +13,10 @@ import { formatTime } from "@/utils/appHelpers";
 type Props = {
   audioEle: HTMLAudioElement;
   duration: number;
+  size: number;
 };
 
-export default function AudioPLayer({ audioEle, duration }: Props) {
+export default function AudioPLayer({ audioEle, duration, size }: Props) {
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
   const { status, handlePlayPause } = useAudioControl({
@@ -42,7 +43,7 @@ export default function AudioPLayer({ audioEle, duration }: Props) {
 
   return (
     <>
-      <div className="flex justify-between">
+      <div className="flex items-end justify-between">
         <Button className={`p-1`} size={"clear"} onClick={handlePlayPause}>
           {renderPlayPausedButton()}
         </Button>
@@ -51,8 +52,14 @@ export default function AudioPLayer({ audioEle, duration }: Props) {
       </div>
 
       <Frame>
-        <span>{formatTime(duration)}</span>
-        <div ref={progressLineRef} className={`h-1 rounded-full mt-3 w-full`}></div>
+        <span>
+          Duration: {formatTime(duration)} , Size: {size}kb
+        </span>
+        <div
+          style={{ backgroundColor: "rgab(0,0,0,.05)" }}
+          ref={progressLineRef}
+          className={`h-1 rounded-full mt-3 w-full`}
+        ></div>
       </Frame>
     </>
   );

@@ -37,8 +37,8 @@ export type ModalRef = {
 };
 
 function Modal(
-  { children, className, persisted = false, wrapped, ...props }: Props,
-  ref: Ref<ModalRef>
+  { children, className, persisted = false, wrapped = true, ...props }: Props,
+  ref: Ref<ModalRef>,
 ) {
   const variant = props.variant || "default";
 
@@ -143,7 +143,7 @@ function Modal(
               )}
             </div>
           </div>,
-          document.getElementById("portals")!
+          document.getElementById("portals")!,
         )}
     </>
   );

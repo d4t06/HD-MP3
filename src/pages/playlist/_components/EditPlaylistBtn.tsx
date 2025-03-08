@@ -15,7 +15,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { MenuWrapper } from "@/components/ui/MenuWrapper";
+import { MenuList, MenuWrapper } from "@/components/ui/MenuWrapper";
 
 type Modal = "edit" | "delete";
 
@@ -85,17 +85,17 @@ export default function EditPlaylistBtn() {
           appendTo="parent"
         >
           <MenuWrapper>
-            {/* <MenuList> */}
-            <button onClick={() => openModal("edit")}>
-              <PencilIcon className="w-5" />
-              <span>Edit</span>
-            </button>
+            <MenuList>
+              <button onClick={() => openModal("edit")}>
+                <PencilIcon className="w-5" />
+                <span>Edit</span>
+              </button>
 
-            <button onClick={() => openModal("delete")}>
-              <TrashIcon className="w-5" />
-              <span>Delete</span>
-            </button>
-            {/* </MenuList> */}
+              <button onClick={() => openModal("delete")}>
+                <TrashIcon className="w-5" />
+                <span>Delete</span>
+              </button>
+            </MenuList>
           </MenuWrapper>
         </MyPopupContent>
       </MyPopup>

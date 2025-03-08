@@ -42,15 +42,16 @@ export default function useAddSongForm() {
       singers.length !== song.singers.length ||
       genres.length !== song.genres.length
     );
-  }, [songData]);
+  }, [songData, song, singers, genres]);
 
   const isChangeImage = !!imageFile;
 
-  const isValidToSubmit = useMemo(
-    () =>
-      (songData?.name && singers.length && genres.length && isChanged) || isChangeImage,
-    [isChangeImage, isChanged]
-  );
+  const isValidToSubmit = useMemo(() => {
+    const isValidSongData =
+      !!songData?.name && !!singers.length && !!genres.length && isChanged;
+
+    return variant.current === "add" ? isValidSongData : isValidSongData || isChangeImage;
+  }, [isChangeImage, isChanged, singers, genres, songData]);
 
   const handleCloseModalAfterFinished = () => {
     switch (variant.current) {
@@ -108,30 +109,41 @@ export default function useAddSongForm() {
 
           const data: Partial<SongSchema> = {
             singers,
-            genres: genres,
+            genres,
             song_url: fileURL,
             song_file_path: filePath,
             ...getSongMap(),
           };
 
+          Object.assign(newSongData, data);
+
           if (imageFile) {
-            const { filePath, fileURL } = await uploadFile({
-              file: imageFile,
+            // const { filePath, fileURL } = await uploadFile({
+            //   file: imageFile,
+            //   folder: "/images/",
+            //   msg: ">>> api: upload image file",
+            //   namePrefix: "image",
+            // });
+
+            const imageBlob = await optimizeImage(imageFile);
+            if (imageBlob == undefined) return;
+
+            const uploadProcess = uploadBlob({
+              blob: imageBlob,
               folder: "/images/",
-              msg: ">>> api: upload image file",
-              namePrefix: "image",
             });
+
+            const { encode } = await getBlurHashEncode(imageBlob);
+            const { filePath, fileURL } = await uploadProcess;
 
             const imageData: Partial<SongSchema> = {
               image_file_path: filePath,
               image_url: fileURL,
-              blurhash_encode: "",
+              blurhash_encode: encode,
             };
 
             Object.assign(newSongData, imageData);
           }
-
-          Object.assign(newSongData, data);
 
           await myAddDoc({
             collectionName: "Songs",

@@ -103,11 +103,30 @@ export const themes: ThemeType[] = [
     modal_bg: "bg-[#3c2a2a]",
     content_code: "#644646",
     content_hover_bg: "hover:!bg-[#644646] hover:text-[#fff]",
-    container: "bg-[#e5e3df]",
-    container_code: "#e5e3df",
+    container: "bg-white",
+    container_code: "#fff",
     text_color: "",
   },
 ];
+
+export const dashboardTheme: ThemeType = {
+  name: "dashboard",
+  id: "dashboard",
+  type: "light",
+  bottom_player_bg: "bg-[#fff]",
+  side_bar_bg: "bg-[#f2f2f2]",
+  content_text: "text-[#5a9e87]",
+  content_hover_text: "hover:text-[#5a9e87]",
+  content_border: "border-[#5a9e87]",
+  content_hover_border: "hover:border-[#5a9e87]",
+  content_bg: "bg-[#5a9e87] text-[#fff]",
+  modal_bg: "bg-[#417161]",
+  content_code: "#5a9e87",
+  content_hover_bg: "hover:!bg-[#5a9e87] hover:text-[#fff]",
+  container: "bg-[#fff]",
+  container_code: "#fff",
+  text_color: "",
+};
 
 export const specialThemes: ThemeType[] = [
   {

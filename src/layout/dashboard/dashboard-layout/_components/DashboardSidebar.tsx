@@ -10,6 +10,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
+import { Button } from "@/pages/dashboard/_components";
 
 export const routeList = [
   {
@@ -52,7 +53,7 @@ export default function DashBoardSidebar() {
     head: "h-[60px] flex items-center justify-center",
     logoText: "text-[22px] font-[500] whitespace-nowrap tracking-[-1px]",
     logoImage: "max-w-[50px] p-[4px]",
-    item: `flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 hover:bg-white/10`,
+    item: `flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 hover:bg-black/5`,
     itemActive: "text-[#cd1818] bg-[#f1f1f1]",
     icon: "w-[24px] flex-shrink-0",
   };
@@ -83,16 +84,17 @@ export default function DashBoardSidebar() {
           {isOpen && <span>Home</span>}
         </Link>
       </div>
-      <button
+      <Button
         onClick={() => setIsOpen((prev) => !prev)}
-        className={`${theme.content_bg} rounded-md p-2 absolute bottom-[20px] right-0 translate-x-[50%] z-[10]`}
+        size={'clear'}
+        className={`${theme.content_bg} !absolute p-1.5 bottom-5 right-0 translate-x-[50%]`}
       >
         {isOpen ? (
           <ChevronLeftIcon className="w-5 " />
         ) : (
           <ChevronRightIcon className="w-5" />
         )}
-      </button>
+      </Button>
     </div>
   );
 }

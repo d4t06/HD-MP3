@@ -84,7 +84,7 @@ function SongItem({
   const classes = {
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
     checkboxButton: `mr-3 text-[inherit]`,
-    itemContainer: `w-full sm:group/container cursor-pointer flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
+    itemContainer: `w-full sm:group/container flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
     imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
       props.variant === "queue-song" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
     }`,

@@ -48,6 +48,6 @@ export default function usePlaylist() {
   useEffect(() => {
     if (!playlistSongs.length || !currentPlaylist) return;
 
-    handleGetPlaylistImage();
+    // handleGetPlaylistImage();
   }, [playlistSongs]);
 }
