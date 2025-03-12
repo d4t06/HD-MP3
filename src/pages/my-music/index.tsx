@@ -1,16 +1,14 @@
 import { useThemeContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
-import { Button, PlaylistList, Title } from "@/components";
-import useMyMusic from "./_hooks/useMyMusic";
+import { Button, Title } from "@/components";
 import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
+import MyMusicPlaylistList from "./_components/PlaylistList";
 
 export default function MyMusicPage() {
   // stores
   const { theme } = useThemeContext();
-
-  const { isFetching, playlists } = useMyMusic();
 
   const [tab, setTab] = useState<"favorite" | "uploaded">("favorite");
 
@@ -21,9 +19,7 @@ export default function MyMusicPage() {
 
   return (
     <>
-      <Title title="Playlists" />
-
-      <PlaylistList loading={isFetching} playlists={playlists} />
+      <MyMusicPlaylistList />
       <div className="pt-[30px]"></div>
 
       <Title title="Songs" />
@@ -44,16 +40,6 @@ export default function MyMusicPage() {
       </div>
 
       {tab === "favorite" ? <FavoriteSongList /> : <UploadedSongList />}
-
-      {/* <div className="flex items-center justify-between">
-        <label
-          className={`${theme.content_bg}  items-center hover:opacity-60 py-1 rounded-full flex px-4 cursor-pointer`}
-          htmlFor="song_upload"
-        >
-          <ArrowUpTrayIcon className="w-7 mr-1" />
-          <span className="font-playwriteCU leading-[2.2]">Upload</span>
-        </label>
-      </div> */}
 
       <Footer />
     </>

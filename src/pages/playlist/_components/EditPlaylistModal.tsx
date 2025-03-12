@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
-import usePlaylistAction from "@/hooks/usePlaylistAction";
 import { useThemeContext } from "@/stores";
 import { Button, ModalHeader } from "@/components";
+import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
 
 type Props = {
   playlist: Playlist;

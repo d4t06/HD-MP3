@@ -7,8 +7,9 @@ import {
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { Button, SongItem } from "@/components";
+import { Button } from "@/components";
 import { usePlayerContext, useThemeContext } from "@/stores";
+import SongList from "../song-item/_components/SongList";
 
 function SongQueue() {
   // stores
@@ -50,17 +51,12 @@ function SongQueue() {
 
         <div className={classes.songListContainer}>
           <>
-            {queueSongs.map((song, index) => (
-              <SongItem
-                active={song.queue_id === currentQueueId}
-                onClick={() => handleSetSong(song.queue_id)}
-                variant="user-song"
-                isHasCheckBox
-                song={song}
-                index={index}
-                key={song.queue_id}
-              />
-            ))}
+            <SongList
+              songs={queueSongs}
+              setSong={(s) => handleSetSong(s.queue_id)}
+              songVariant="queue-song"
+              getActive={(s, cur) => s.queue_id === cur.queue_id}
+            />
 
             <div className="text-center">
               {!!queueSongs.length && (

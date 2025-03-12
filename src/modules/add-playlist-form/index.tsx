@@ -125,8 +125,8 @@ export default function AddPlaylistModal({
 
           <div className="space-x-2 flex">
             <Button className={`${theme.content_bg}`} size={"clear"}>
-              <label htmlFor="image_upload" className={`px-5 py-1.5 cursor-pointer `}>
-                <PhotoIcon className="w-6" />
+              <label htmlFor="image_upload" className={`px-5 py-1 cursor-pointer `}>
+                <PhotoIcon className="w-5" />
               </label>
             </Button>
           </div>
@@ -135,7 +135,6 @@ export default function AddPlaylistModal({
         <div className="flex-grow flex flex-col space-y-2.5">
           <Input
             ref={inputRef}
-            className={`bg-[#fff]/10`}
             type="text"
             placeholder="name..."
             value={playlistData.name}
@@ -146,6 +145,7 @@ export default function AddPlaylistModal({
             <span>Public</span>
 
             <Switch
+              className=""
               active={playlistData.is_public}
               cb={() => updatePlaylistData({ is_public: !playlistData.is_public })}
             />

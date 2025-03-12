@@ -1,12 +1,10 @@
-import { useThemeContext } from "@/stores";
 import { cva, VariantProps } from "class-variance-authority";
 import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
 const inputVariants = cva("w-full", {
   variants: {
     variant: {
-      primary:
-        "border border-black/10 placeholder:[#888] outline-none py-1.5 px-2",
+      primary: "border border-black/10 placeholder:[#888] outline-none py-1.5 px-2",
       clear: "",
     },
     rounded: {
@@ -22,22 +20,14 @@ const inputVariants = cva("w-full", {
   },
 });
 
-type Props = VariantProps<typeof inputVariants> &
-  InputHTMLAttributes<HTMLInputElement>;
+type Props = VariantProps<typeof inputVariants> & InputHTMLAttributes<HTMLInputElement>;
 
 function Input(
-  { variant, className = "", ...rest }: Props,
+  { variant, className = "bg-white/10", ...rest }: Props,
   ref: Ref<HTMLInputElement>
 ) {
-
-  const {theme} = useThemeContext()
-
   return (
-    <input
-      ref={ref}
-      className={`bg-${theme.alpha} ${inputVariants({ variant, className })}`}
-      {...rest}
-    />
+    <input ref={ref} className={` ${inputVariants({ variant, className })}`} {...rest} />
   );
 }
 

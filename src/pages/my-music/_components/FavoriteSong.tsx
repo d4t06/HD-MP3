@@ -1,27 +1,23 @@
-import { useMemo } from "react";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useUploadContext } from "@/stores";
-import { NotFound, Skeleton, SongItem } from "@/components";
+import { NotFound, Skeleton } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
 import UploadingSongItem from "./UploadingSongItem";
 import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import SongList from "@/modules/song-item/_components/SongList";
 
 export default function FavoriteSongList() {
   //   stores
-  const { currentSongData } = useSelector(selectSongQueue);
 
   // hooks
   const { uploadingSongs } = useUploadContext();
   const { handleSetSong } = useSetSong({ variant: "songs" });
   const { favoriteSongs, user, isFetching } = useGetMyMusicSong({ tab: "favorite" });
 
-  const _handleSetSong = (queueId: string) => {
-    handleSetSong(queueId, favoriteSongs);
+  const _handleSetSong = (s: Song) => {
+    handleSetSong(s.queue_id, favoriteSongs);
   };
 
   if (!user) return;
@@ -48,22 +44,7 @@ export default function FavoriteSongList() {
           <>
             {favoriteSongs.length ? (
               <>
-                {favoriteSongs.map((song, index) => {
-                  const isOwnSong =
-                    song.owner_email === user.email && song.is_official === false;
-
-                  return (
-                    <SongItem
-                      active={song.id === currentSongData?.song.id}
-                      onClick={() => _handleSetSong(song.queue_id)}
-                      variant={isOwnSong ? "own-song" : "system-song"}
-                      isHasCheckBox
-                      song={song}
-                      index={index}
-                      key={song.queue_id}
-                    />
-                  );
-                })}
+                <SongList setSong={_handleSetSong} songs={favoriteSongs} />
 
                 {uploadingSongs.map((song, index) => (
                   <UploadingSongItem key={index} song={song} />

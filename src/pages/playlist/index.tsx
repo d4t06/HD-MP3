@@ -1,14 +1,15 @@
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSelector } from "react-redux";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
-import { Center, NotFound, PlaylistInfo } from "@/components";
+import { Center, NotFound } from "@/components";
 import { useAuthContext } from "@/stores";
 // import PlaylistInfoCta from "./_components/PlaylistInfoCta";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import PlaylistSongList from "./_components/PlaylistSongList";
 // import usePlaylist from "./_hooks/usePlaylist";
-import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
-import EditPlaylistBtn from "./_components/EditPlaylistBtn";
+// import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
+// import EditPlaylistBtn from "./_components/EditPlaylistBtn";
+import PLaylistInfo from "@/modules/playlist-info";
 
 export default function PlaylistDetail() {
   // us stores
@@ -32,16 +33,18 @@ export default function PlaylistDetail() {
     <>
       <div className="lg:flex lg:-mx-3">
         <div className="w-full lg:w-1/4 lg:px-3">
-          <PlaylistInfo loading={isFetching}>
-            {isOwnerOfPlaylist ? (
+          <PLaylistInfo loading={isFetching}>
+            {/* {isOwnerOfPlaylist ? (
               <>
                 <PlayPlaylistBtn />
                 <EditPlaylistBtn />
               </>
             ) : (
-              <PlayPlaylistBtn />
-            )}
-          </PlaylistInfo>
+              <PlayPlaylistBtn 
+              />
+            )} */}
+            <p>cta</p>
+          </PLaylistInfo>
         </div>
         <div className="w-full lg:w-3/4 lg:px-3">
           <div className="mt-[30px] lg:mt-0">

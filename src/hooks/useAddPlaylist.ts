@@ -33,6 +33,8 @@ export default function useAddPlaylist() {
 
       setPlaylists((prev) => [newPlaylist, ...prev]);
       setSuccessToast(`Playlist created`);
+
+      return newPlaylist;
     } catch (error) {
       console.log(error);
       setErrorToast();

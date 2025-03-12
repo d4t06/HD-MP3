@@ -1,6 +1,5 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { usePopoverContext } from "@/components/MyPopup";
-import { useSongItemAction } from "@/hooks";
 import EditSongModal from "@/modules/edit-song-modal";
 import {
   AdjustmentsHorizontalIcon,
@@ -11,7 +10,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import SongMenu, { SongMenuContent } from "..";
+import { SongMenuContent } from "..";
+import useSongItemAction from "@/modules/song-item/_hooks/useSongItemAction";
 
 type Props = {
   song: Song;
@@ -31,7 +31,7 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
   const handleOpenModal = (m: Modal) => {
     setModal(m);
     modalRef.current?.open();
-     close();
+    close();
   };
 
   const closeModal = () => {

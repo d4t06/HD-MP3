@@ -1,4 +1,4 @@
-import usePlaylistAction from "@/hooks/usePlaylistAction";
+import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
 import { ArrowPathIcon, MinusIcon } from "@heroicons/react/24/outline";
 
 type Props = {

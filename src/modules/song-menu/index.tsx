@@ -1,4 +1,4 @@
-import { Bars3Icon, HeartIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 

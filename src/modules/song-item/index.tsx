@@ -1,16 +1,15 @@
 import { useMemo } from "react";
 
-import { HeartIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
+import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
-import playingIcon from "../assets/icon-playing.gif";
-import { getHidden } from "../utils/appHelpers";
-
-import { useSongSelectContext, useThemeContext } from "../stores";
-import { Image } from "../components";
+import playingIcon from "@/assets/icon-playing.gif";
 
 import { CheckIcon } from "@heroicons/react/20/solid";
 import SongMenu from "@/modules/song-menu";
-import HearBtn from "./HearBtn";
+import { useSongSelectContext, useThemeContext } from "@/stores";
+import { getHidden } from "@/utils/appHelpers";
+import { Image } from "@/components";
+import HearBtn from "./_components/HearBtn";
 
 type Props = {
   className?: string;
@@ -18,6 +17,8 @@ type Props = {
   onClick: () => void;
   song: Song;
   index: number;
+  // null if user is null
+  isLiked: boolean | null;
   isHasCheckBox: boolean;
   variant: "system-song" | "own-song" | "queue-song" | "own-playlist";
 };
@@ -63,6 +64,7 @@ function SongItem({
   onClick,
   isHasCheckBox,
   active = true,
+  isLiked,
   index,
   className,
   ...props
@@ -91,7 +93,6 @@ function SongItem({
     }`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",
-    menuBtnWrapper: "flex items-center space-x-1",
   };
 
   const imageOverlay = useMemo(() => {
@@ -171,13 +172,12 @@ function SongItem({
   };
 
   const renderRightContent = (
-    <div className={classes.menuBtnWrapper}>
-      {/* <button className={`${classes.button} block group-hover/main:block md:hidden`}>
-        <HeartIcon className="w-5" />
-      </button> */}
+    <div className="flex items-center">
+      {isLiked != null && <HearBtn isLiked={isLiked} song={song} />}
 
-      <HearBtn active className="p-2" onClick={() => {}} />
-      <SongMenu variant={props.variant} song={song} index={index} />
+      <div className="flex justify-center w-[60px]">
+        <SongMenu variant={props.variant} song={song} index={index} />
+      </div>
     </div>
   );
 

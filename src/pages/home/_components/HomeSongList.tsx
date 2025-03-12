@@ -4,7 +4,7 @@
 // import { useSelector } from "react-redux";
 // import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 // import { SongItemSkeleton } from "@/components/skeleton";
-import { NotFound, SongItem, Title } from "@/components";
+import { NotFound } from "@/components";
 
 type Props = {
   loading: boolean;

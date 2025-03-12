@@ -1,4 +1,3 @@
-import PrimaryLayout from "@/layout/primary-layout";
 import { Home, Search, MyMusic, Login, Unauthorized, Playlist } from "../pages";
 import {
   DashboardAddSongPage,

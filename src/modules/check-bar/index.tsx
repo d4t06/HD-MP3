@@ -4,7 +4,7 @@ import { MinusIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
-import { ModalRef, Button, ConfirmModal, Modal } from "@/components";
+import { ModalRef, Button, Modal } from "@/components";
 import useCheckBar from "./_hooks/useCheckBar";
 import CheckedCta from "./_components/CheckedCta";
 
@@ -42,13 +42,13 @@ export default function CheckedBar({
   const {
     isFetching,
     addSongsToQueue,
-    deleteSelectedSong,
-    removeSelectedSongFromPlaylist,
+    // deleteSelectedSong,
+    // removeSelectedSongFromPlaylist,
   } = useCheckBar({ modalRef });
 
-  const closeModal = () => {
-    modalRef.current?.close();
-  };
+  // const _closeModal = () => {
+  //   modalRef.current?.close();
+  // };
 
   const openModal = (modal: Modal) => {
     setModal(modal);
@@ -75,24 +75,25 @@ export default function CheckedBar({
     if (!modal) return;
 
     switch (modal) {
-      case "delete-selected-songs":
-        return (
-          <ConfirmModal
-            loading={isFetching}
-            label={`Delete ${selectedSongs.length} songs ?`}
-            callback={deleteSelectedSong}
-            close={closeModal}
-          />
-        );
-      case "remove-selects-songs":
-        return (
-          <ConfirmModal
-            loading={isFetching}
-            label={`Remove ${selectedSongs.length} songs ?`}
-            callback={removeSelectedSongFromPlaylist}
-            close={closeModal}
-          />
-        );
+      default : return <p>Nothing to show</p>
+      // case "delete-selected-songs":
+      //   return (
+      //     <ConfirmModal
+      //       loading={isFetching}
+      //       label={`Delete ${selectedSongs.length} songs ?`}
+      //       callback={deleteSelectedSong}
+      //       close={closeModal}
+      //     />
+      //   );
+      // case "remove-selects-songs":
+      //   return (
+      //     <ConfirmModal
+      //       loading={isFetching}
+      //       label={`Remove ${selectedSongs.length} songs ?`}
+      //       callback={removeSelectedSongFromPlaylist}
+      //       close={closeModal}
+      //     />
+      //   );
     }
   }, [modal, isFetching]);
 

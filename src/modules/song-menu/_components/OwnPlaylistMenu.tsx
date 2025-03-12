@@ -1,4 +1,3 @@
-import { usePlaylistAction } from "@/hooks";
 import {
   ArrowDownTrayIcon,
   ArrowPathIcon,
@@ -6,6 +5,7 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import { SongMenuContent } from "..";
+import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
 
 type Props = {
   addSongToQueue: () => void;

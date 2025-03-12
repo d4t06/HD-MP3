@@ -1,25 +1,18 @@
-import { PlaylistList, SongItem, Tabs } from "@/components";
+import { PlaylistList, Tabs } from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
-import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import SongList from "@/modules/song-item/_components/SongList";
 
 export default function SearchResultPage() {
   const { isFetching, result, tab, setTab } = useGetSearchResult();
-  const { currentSongData } = useSelector(selectSongQueue);
 
   const { handleSetSong } = useSetSong({ variant: "search-bar" });
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
   };
-
-  // const handleSetTab = (t: typeof tab) => {
-  //   setIsFetching(true)
-  //   setTab(t)
-  // }
 
   const renderSkeleton = () => {
     switch (tab) {
@@ -34,17 +27,7 @@ export default function SearchResultPage() {
     switch (tab) {
       case "Song":
         if (result.songs.length)
-          return result.songs.map((song, index) => (
-            <SongItem
-              active={song.id === currentSongData?.song.id}
-              onClick={() => _handleSetSong(song)}
-              variant="system-song"
-              isHasCheckBox
-              song={song}
-              index={index}
-              key={song.queue_id}
-            />
-          ));
+          return <SongList setSong={_handleSetSong} songs={result.songs} />;
         else return <p>...</p>;
 
       case "Playlist":

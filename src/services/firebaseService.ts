@@ -174,37 +174,3 @@ export const deleteSong = async (song: Song) => {
     });
   }
 };
-
-export const setPlaylistDoc = async ({ playlist }: { playlist: Playlist }) => {
-  await myUpdateDoc({
-    collectionName: "Playlists",
-    data: playlist,
-    id: playlist.id,
-    msg: ">>> api: set playlist",
-  });
-};
-
-export const setUserPlaylistIdsDoc = async (playlists: Playlist[], user: User) => {
-  const newPlaylistIds = playlists.map((playlist) => playlist.id);
-  await myUpdateDoc({
-    collectionName: "Users",
-    data: { playlist_ids: newPlaylistIds } as Partial<User>,
-    id: user.email,
-    msg: ">>> api: set user playlist_ids",
-  });
-};
-
-export const setUserSongIdsAndCountDoc = async ({
-  songIds,
-  user,
-}: {
-  songIds: string[];
-  user: User;
-}) => {
-  await myUpdateDoc({
-    collectionName: "Users",
-    data: { song_ids: songIds, song_count: songIds.length } as Partial<User>,
-    id: user.email,
-    msg: ">>> api: set user song_ids, song_count",
-  });
-};

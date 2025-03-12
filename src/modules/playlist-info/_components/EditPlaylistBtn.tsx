@@ -4,18 +4,18 @@ import MyPopup, {
   MyPopupTrigger,
   TriggerRef,
 } from "@/components/MyPopup";
-import usePlaylistAction from "@/hooks/usePlaylistAction";
 import { useThemeContext } from "@/stores";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import EditPlaylist from "./EditPlaylistModal";
 import {
   AdjustmentsHorizontalIcon,
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { MenuList, MenuWrapper } from "@/components/ui/MenuWrapper";
+import usePlaylistAction from "../_hooks/usePlaylistAction";
+import AddPlaylistModal from "@/modules/add-playlist-form";
 
 type Modal = "edit" | "delete";
 
@@ -40,6 +40,10 @@ export default function EditPlaylistBtn() {
   };
   const closeModal = () => modalRef.current?.close();
 
+  const handleEditPlaylist =(playlist: PlaylistSchema, imageFile?:File) => {
+    action({variant: 'edit', playlist})
+  }
+
   const renderModal = () => {
     if (!currentPlaylist) return <></>;
 
@@ -47,7 +51,7 @@ export default function EditPlaylistBtn() {
       case "":
         return <></>;
       case "edit":
-        return <EditPlaylist close={closeModal} playlist={currentPlaylist} />;
+        return <AddPlaylistModal isLoading={isFetching} playlist={currentPlaylist} submit={handleEditPlaylist} variant="edit" close={closeModal} />;
 
       case "delete":
         return (

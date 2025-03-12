@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { NotFound, PlaylistItem } from ".";
 import { PlaylistSkeleton } from "./skeleton";
-import { ReactNode } from "react";
 
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
@@ -9,7 +8,6 @@ type Props = {
   className?: string;
   loading: boolean;
   playlists: Playlist[];
-  children?: ReactNode;
 };
 
 export default function PlaylistList({ className = "", playlists, loading }: Props) {

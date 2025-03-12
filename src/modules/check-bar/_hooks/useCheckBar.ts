@@ -1,27 +1,25 @@
-import { useAuthContext, useSongContext, useToastContext } from "@/stores";
+import { useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
-import { deleteSong } from "@/services/firebaseService";
 import { ModalRef } from "@/components/Modal";
 import { useDispatch } from "react-redux";
 import { addSongToQueue } from "@/stores/redux/songQueueSlice";
-import usePlaylistAction from "@/hooks/usePlaylistAction";
+// import usePlaylistAction from "@/hooks/usePlaylistAction";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
-export default function useCheckBar({ modalRef }: Props) {
+export default function useCheckBar(_props: Props) {
   const dispatch = useDispatch();
 
-  const { user } = useAuthContext();
   const { selectedSongs, resetSelect } = useSongSelectContext();
 
   // state
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching] = useState(false);
   // hooks
-  const { setErrorToast, setSuccessToast } = useToastContext();
-  const { removeSelectSongs } = usePlaylistAction();
+  const { setSuccessToast } = useToastContext();
+  // const { removeSelectSongs } = usePlaylistAction();
 
   //   const deleteSelectedSong = async () => {
   //     try {
@@ -47,11 +45,11 @@ export default function useCheckBar({ modalRef }: Props) {
   //     }
   //   };
 
-  const removeSelectedSongFromPlaylist = async () => {
-    await removeSelectSongs(selectedSongs, setIsFetching);
-    modalRef.current?.close();
-    resetSelect();
-  };
+  // const removeSelectedSongFromPlaylist = async () => {
+  //   await removeSelectSongs(selectedSongs, setIsFetching);
+  //   modalRef.current?.close();
+  //   resetSelect();
+  // };
 
   const addSongsToQueue = () => {
     dispatch(addSongToQueue({ songs: selectedSongs }));
@@ -60,8 +58,6 @@ export default function useCheckBar({ modalRef }: Props) {
   };
 
   return {
-    //  deleteSelectedSong,
-    removeSelectedSongFromPlaylist,
     addSongsToQueue,
     isFetching,
   };

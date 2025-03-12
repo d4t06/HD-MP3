@@ -6,7 +6,11 @@ const useAuth = () => {
 
   const justRegistered = useRef(false);
 
-  return { user, setUser, loading, setLoading, justRegistered };
+  const updateUserData = (data: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...data } : null));
+  };
+
+  return { user, setUser, loading, setLoading, updateUserData, justRegistered };
 };
 
 type ContextType = ReturnType<typeof useAuth>;
