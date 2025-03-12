@@ -6,7 +6,7 @@ import { deleteSong } from "@/services/firebaseService";
 export default function useSongItemAction() {
   // stores
   const { setErrorToast, setSuccessToast } = useToastContext();
-  const { songs, setSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs } = useSongContext();
 
   // state
   const [loading, setLoading] = useState(false);
@@ -22,10 +22,10 @@ export default function useSongItemAction() {
 
       switch (props.variant) {
         case "delete":
-          const newSongs = songs.filter((s) => s.id !== props.song.id);
+          const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
           await deleteSong(props.song);
-          setSongs(newSongs);
+          setUploadedSongs(newSongs);
 
           setSuccessToast(`'${props.song.name}' deleted`);
 

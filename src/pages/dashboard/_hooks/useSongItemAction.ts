@@ -10,7 +10,7 @@ type DeleteSong = {
 export type SongItemActionProps = DeleteSong;
 
 export default function useDashboardSongItemAction() {
-	const { setSongs, songs } = useSongContext();
+	const { setUploadedSongs, uploadedSongs } = useSongContext();
 
 	const [isFetching, setIsFetching] = useState(false);
 
@@ -22,10 +22,10 @@ export default function useDashboardSongItemAction() {
 
 			switch (props.variant) {
 				case "delete": {
-					const newSongs = songs.filter((s) => s.id !== props.song.id);
+					const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
 					await deleteSong(props.song);
-					setSongs(newSongs);
+					setUploadedSongs(newSongs);
 
 					setSuccessToast(`'${props.song.name}' deleted`);
 

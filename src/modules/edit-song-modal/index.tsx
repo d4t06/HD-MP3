@@ -1,14 +1,7 @@
-import {
-  ChangeEvent,
-  MouseEventHandler,
-  RefObject,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
-import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ChangeEvent, MouseEventHandler, RefObject, useRef } from "react";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 
-import { Image, Button, ModalHeader, ModalRef, Empty } from "@/components";
+import { Image, Button, ModalHeader, ModalRef, Input } from "@/components";
 import { useThemeContext } from "@/stores";
 import { getDisable } from "@/utils/appHelpers";
 import useEditSongModal from "./_hooks/useEditSongModal";
@@ -25,13 +18,8 @@ export default function EditSongModal({ song, modalRef }: Props) {
   // use hooks
   const {
     isValidToSubmit,
-    imageURLFromLocal,
     songData,
-    setImageFileFromLocal,
-    setImageURLFromLocal,
-    setStockImageURL,
-    setIsImpactOnImage,
-    stockImageURL,
+    setImageFile,
     isFetching,
     handleSubmit,
     handleInput,
@@ -40,123 +28,56 @@ export default function EditSongModal({ song, modalRef }: Props) {
     modalRef,
   });
 
-  // priority order
-  // - upload image (now => before) (local image url or image file path)
-  // - image from url
-  const imageToDisplay = useMemo(() => {
-    if (imageURLFromLocal) return imageURLFromLocal;
-    else if (stockImageURL) return stockImageURL;
-  }, [imageURLFromLocal, stockImageURL, song]);
+  const handleImageFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files?.length) return;
 
-  const isShowRemoveImageButton = useMemo(
-    () => !!imageURLFromLocal || !!stockImageURL,
-    [imageURLFromLocal, stockImageURL]
-  );
-
-  //   trigger only have image from local
-  const handleUnsetImage = useCallback(() => {
-    // main case 1: song has image before
-    // case 1: user remove current image
-    if (song.image_file_path && !imageURLFromLocal) {
-      setStockImageURL("");
-
-      // case 2: after upload, user remove image
-    } else if (imageURLFromLocal) {
-      setImageURLFromLocal("");
-      setImageFileFromLocal(undefined);
-    } else {
-      // main case 2: user never upload image before
-      setStockImageURL("");
-    }
-
-    setIsImpactOnImage(true);
-
-    const inputEle = inputFileRef.current as HTMLInputElement;
-    if (inputEle) {
-      inputEle.value = "";
-    }
-  }, [imageURLFromLocal, song.image_file_path]);
-
-  const uploadImageFromLocal = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    const target = e.target as HTMLInputElement & { files: FileList };
-
-    const imageFileFromLocal = target.files[0];
-    setImageURLFromLocal(URL.createObjectURL(imageFileFromLocal));
-
-    setIsImpactOnImage(true);
-    setImageFileFromLocal(imageFileFromLocal);
-  }, []);
+    setImageFile(files[0]);
+    handleInput("image_url", URL.createObjectURL(files[0]));
+  };
 
   const handleCloseEditForm: MouseEventHandler = (e) => {
     e.stopPropagation();
     modalRef.current?.close();
   };
 
-  // define style
-  const classes = {
-    input: `px-2 py-1 outline-none rounded-[4px] bg-[#fff]/5 font-[500]`,
-    label: "text-lg inline-flex",
-  };
-
   return (
     <div
       className={`${getDisable(
         isFetching
-      )} w-[600px] max-h-[80vh] max-w-[90vw] text-white flex flex-col`}
+      )} w-[500px] max-h-[80vh] max-w-[90vw] text-white flex flex-col`}
     >
       <input
         ref={inputFileRef}
-        id="editImageInput"
+        id="image-input"
         type="file"
         accept="image/*"
-        onChange={uploadImageFromLocal}
+        onChange={handleImageFile}
         className="hidden"
       />
 
       <ModalHeader title="Edit song" close={() => modalRef.current?.close()} />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
-        <div className="w-full md:w-[30%]">
-          <div className="w-[70%] mx-auto md:w-full">
-            <Empty>
-              <Image
-                className="object-cover rounded-md object-center"
-                src={imageToDisplay}
-                blurHashEncode={song.blurhash_encode}
-              />
-            </Empty>
+        <div className="space-y-2.5">
+          <div className="w-[200px] rounded-md overflow-hidden h-[200px] md:w-[160px] md:h-[160px] object-cover">
+            <Image className="object-cover h-full" src={songData.image_url} />
           </div>
 
-          <div className="mt-3">
-            <div className="flex space-x-2">
-              <label
-                htmlFor="editImageInput"
-                className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] bg-${theme.alpha} rounded-full text-[14px]`}
-              >
-                <ArrowUpTrayIcon className="w-5" />
-              </label>
-              {isShowRemoveImageButton && (
-                <Button
-                  onClick={() => handleUnsetImage()}
-                  className={`inline-block hover:brightness-90 px-[20px] py-[5px] ${theme.content_bg} rounded-full text-[14px]`}
-                >
-                  <XMarkIcon className="w-5" />
-                </Button>
-              )}
-            </div>
-            <p className={`text-sm  mt-[10px]`}>
-              * Image from URL will not be apply until you remove current image
-            </p>
-          </div>
+          <label
+            htmlFor="image-input"
+            className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] bg-${theme.alpha} rounded-full text-[14px]`}
+          >
+            <PhotoIcon className="w-5" />
+          </label>
         </div>
 
         <div className="pt-5 md:pt-0 md:pl-5 md:flex-grow space-y-3">
           <div className="space-y-1.5">
-            <label htmlFor="name" className={classes.label}>
+            <label htmlFor="name" className="">
               Name
             </label>
-            <input
-              className={`${classes.input} `}
+            <Input
               value={songData.name}
               type="text"
               id="name"
@@ -166,11 +87,10 @@ export default function EditSongModal({ song, modalRef }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="singer" className={classes.label}>
+            <label htmlFor="singer" className="">
               Singer
             </label>
-            <input
-              className={classes.input}
+            <Input
               value={songData.singer}
               onChange={(e) => handleInput("singer", e.target.value)}
               type="text"

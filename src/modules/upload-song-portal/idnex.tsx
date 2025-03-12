@@ -1,5 +1,5 @@
 import { createPortal } from "react-dom";
-import useUploadSongs from "../_hooks/useUploadSongs";
+import useUploadSongs from "./_hooks/useUploadSong";
 
 function UploadSongPortal() {
   const { handleInputChange, inputRef } = useUploadSongs();

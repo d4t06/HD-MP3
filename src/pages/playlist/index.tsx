@@ -15,7 +15,7 @@ export default function PlaylistDetail() {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { user } = useAuthContext();
 
-  const isOwnerOfPlaylist = currentPlaylist?.owner_email === user?.email;
+  const isOwnerOfPlaylist = currentPlaylist?.owner_email === user?.email && !currentPlaylist?.is_official;
 
   //   hooks
   // usePlaylist();

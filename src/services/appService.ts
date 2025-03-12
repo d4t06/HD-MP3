@@ -136,13 +136,26 @@ export async function implementSongQuery(query: Query) {
 
   if (songsSnap.docs) {
     const result = songsSnap.docs.map((doc) => {
-      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: "" };
+      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: nanoid(4) };
       return song;
     });
 
     return result;
   } else return [];
 }
+
+export async function implementPlaylistQuery(query: Query) {
+   const playlistsSnap = await getDocs(query);
+ 
+   if (playlistsSnap.docs.length) {
+     const result = playlistsSnap.docs.map((doc) => {
+       const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
+       return playlist;
+     });
+ 
+     return result;
+   } else return [];
+ }
 
 export const optimizeAndGetHashImage = async (imageFile: File) => {
   const imageBlob = await optimizeImage(imageFile);

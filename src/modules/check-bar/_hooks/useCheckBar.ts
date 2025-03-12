@@ -16,7 +16,6 @@ export default function useCheckBar({ modalRef }: Props) {
 
   const { user } = useAuthContext();
   const { selectedSongs, resetSelect } = useSongSelectContext();
-  const { songs, setSongs } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -24,29 +23,29 @@ export default function useCheckBar({ modalRef }: Props) {
   const { setErrorToast, setSuccessToast } = useToastContext();
   const { removeSelectSongs } = usePlaylistAction();
 
-  const deleteSelectedSong = async () => {
-    try {
-      if (!user) return;
+  //   const deleteSelectedSong = async () => {
+  //     try {
+  //       if (!user) return;
 
-      setIsFetching(true);
+  //       setIsFetching(true);
 
-      const selectedSongIds = selectedSongs.map((s) => s.id);
-      // >>> api
-      for (let song of selectedSongs) await deleteSong(song);
+  //       const selectedSongIds = selectedSongs.map((s) => s.id);
+  //       // >>> api
+  //       for (let song of selectedSongs) await deleteSong(song);
 
-      const newSongs = songs.filter((s) => !selectedSongIds.includes(s.id));
+  //       const newSongs = songs.filter((s) => !selectedSongIds.includes(s.id));
 
-      setSongs(newSongs);
-      setSuccessToast(`${selectedSongs.length} songs deleted`);
-    } catch (error) {
-      console.log({ message: error });
-      setErrorToast();
-    } finally {
-      resetSelect();
-      setIsFetching(false);
-      modalRef.current?.close();
-    }
-  };
+  //       setSongs(newSongs);
+  //       setSuccessToast(`${selectedSongs.length} songs deleted`);
+  //     } catch (error) {
+  //       console.log({ message: error });
+  //       setErrorToast();
+  //     } finally {
+  //       resetSelect();
+  //       setIsFetching(false);
+  //       modalRef.current?.close();
+  //     }
+  //   };
 
   const removeSelectedSongFromPlaylist = async () => {
     await removeSelectSongs(selectedSongs, setIsFetching);
@@ -61,7 +60,7 @@ export default function useCheckBar({ modalRef }: Props) {
   };
 
   return {
-    deleteSelectedSong,
+    //  deleteSelectedSong,
     removeSelectedSongFromPlaylist,
     addSongsToQueue,
     isFetching,

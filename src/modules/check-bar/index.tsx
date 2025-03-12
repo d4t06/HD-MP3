@@ -30,7 +30,7 @@ export default function CheckedBar({
   const { theme } = useThemeContext();
   const { isChecked, selectedSongs, selectAllSong, resetSelect } = useSongSelectContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { songs } = useSongContext();
+  const { uploadedSongs } = useSongContext();
 
   // state
   const [modal, setModal] = useState<Modal | "">("");
@@ -56,7 +56,7 @@ export default function CheckedBar({
   };
 
   const handleSelectUserSongs = () => {
-    if (selectedSongs.length < songs.length) selectAllSong(songs);
+    if (selectedSongs.length < uploadedSongs.length) selectAllSong(uploadedSongs);
     else resetSelect();
   };
 

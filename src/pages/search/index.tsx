@@ -38,7 +38,7 @@ export default function SearchResultPage() {
             <SongItem
               active={song.id === currentSongData?.song.id}
               onClick={() => _handleSetSong(song)}
-              variant="user-song"
+              variant="system-song"
               isHasCheckBox
               song={song}
               index={index}
@@ -49,9 +49,7 @@ export default function SearchResultPage() {
 
       case "Playlist":
         if (result.playlists.length)
-          return (
-            <PlaylistList variant="others" loading={false} playlists={result.playlists} />
-          );
+          return <PlaylistList loading={false} playlists={result.playlists} />;
         else return <p>...</p>;
     }
   };

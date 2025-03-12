@@ -1,21 +1,23 @@
-import { useEffect } from "react";
-import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import useGetSongPlaylist from "@/hooks/useGetSongPlaylist";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useThemeContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
-import { PlaylistList, Title } from "@/components";
-import MyMusicSongList from "./_components/MyMusicSongList";
+import { Button, PlaylistList, Title } from "@/components";
+import useMyMusic from "./_hooks/useMyMusic";
+import { useState } from "react";
+import FavoriteSongList from "./_components/FavoriteSong";
+import UploadedSongList from "./_components/UploadedSong";
 
 export default function MyMusicPage() {
   // stores
   const { theme } = useThemeContext();
-  const { user } = useAuthContext();
 
-  const { isFetching, getSongAndPlaylist, playlists } = useGetSongPlaylist();
+  const { isFetching, playlists } = useMyMusic();
 
-  useEffect(() => {
-    if (user) getSongAndPlaylist({ variant: "user", email: user.email });
-  }, []);
+  const [tab, setTab] = useState<"favorite" | "uploaded">("favorite");
+
+  const classes = {
+    inActiveTab: `border border-${theme.alpha} bg-transparent`,
+    activeTab: `${theme.content_bg}`,
+  };
 
   return (
     <>
@@ -24,8 +26,26 @@ export default function MyMusicPage() {
       <PlaylistList loading={isFetching} playlists={playlists} />
       <div className="pt-[30px]"></div>
 
-      <div className="flex items-center justify-between">
-        <Title title="Songs" />
+      <Title title="Songs" />
+
+      <div className="flex space-x-2 my-3">
+        <Button
+          onClick={() => setTab("favorite")}
+          className={`${tab === "favorite" ? classes.activeTab : classes.inActiveTab}`}
+        >
+          Favorite
+        </Button>
+        <Button
+          onClick={() => setTab("uploaded")}
+          className={`${tab === "uploaded" ? classes.activeTab : classes.inActiveTab}`}
+        >
+          Uploaded
+        </Button>
+      </div>
+
+      {tab === "favorite" ? <FavoriteSongList /> : <UploadedSongList />}
+
+      {/* <div className="flex items-center justify-between">
         <label
           className={`${theme.content_bg}  items-center hover:opacity-60 py-1 rounded-full flex px-4 cursor-pointer`}
           htmlFor="song_upload"
@@ -33,9 +53,7 @@ export default function MyMusicPage() {
           <ArrowUpTrayIcon className="w-7 mr-1" />
           <span className="font-playwriteCU leading-[2.2]">Upload</span>
         </label>
-      </div>
-
-      <MyMusicSongList isLoading={isFetching} />
+      </div> */}
 
       <Footer />
     </>

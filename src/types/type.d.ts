@@ -4,7 +4,7 @@ type User = {
   display_name: string;
   email: string;
   photo_url: string;
-  playlist_ids: string[];
+  liked_playlist_ids: string[];
   liked_song_ids: string[];
   recent_song_ids: string[];
   recent_playlist_ids: string[];

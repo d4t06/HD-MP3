@@ -7,7 +7,7 @@ import { implementSongQuery } from "@/services/appService";
 type DashboardSongTab = "All" | "Result";
 
 export default function useDashboardSong() {
-  const { songs, setSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs } = useSongContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
@@ -32,7 +32,7 @@ export default function useDashboardSong() {
 
       const result = await implementSongQuery(searchQuery);
 
-      setSongs(result);
+      setUploadedSongs(result);
       setTab("Result");
     } catch (err) {
       console.log({ message: err });
@@ -55,7 +55,7 @@ export default function useDashboardSong() {
       );
 
       const result = await implementSongQuery(searchQuery);
-      setSongs(result);
+      setUploadedSongs(result);
     } catch (err) {
       console.log({ message: err });
       setErrorToast();
@@ -75,7 +75,7 @@ export default function useDashboardSong() {
     value,
     setValue,
     handleSubmit,
-    songs,
+    uploadedSongs,
     tab,
     setTab,
   };

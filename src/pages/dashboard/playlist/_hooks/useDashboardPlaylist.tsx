@@ -1,22 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useSongContext, useToastContext } from "@/stores";
-import { Query, getDocs, orderBy, query, where } from "firebase/firestore";
+import { orderBy, query, where } from "firebase/firestore";
 import { playlistCollectionRef } from "@/services/firebaseService";
+import { implementPlaylistQuery } from "@/services/appService";
 
 type DashboardSongTab = "All" | "Result";
-
-async function implementQuery(query: Query) {
-  const playlistsSnap = await getDocs(query);
-
-  if (playlistsSnap.docs.length) {
-    const result = playlistsSnap.docs.map((doc) => {
-      const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
-      return playlist;
-    });
-
-    return result;
-  } else return [];
-}
 
 export default function useDashboardPlaylist() {
   const { setPlaylists, playlists } = useSongContext();
@@ -37,10 +25,10 @@ export default function useDashboardPlaylist() {
         playlistCollectionRef,
         where("is_official", "==", true),
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
+        where("name", "<=", value + "\uf8ff")
       );
 
-      const result = await implementQuery(searchQuery);
+      const result = await implementPlaylistQuery(searchQuery);
       setPlaylists(result);
 
       setTab("Result");
@@ -59,10 +47,10 @@ export default function useDashboardPlaylist() {
       const searchQuery = query(
         playlistCollectionRef,
         where("is_official", "==", true),
-        orderBy("updated_at", "desc"),
+        orderBy("updated_at", "desc")
       );
 
-      const result = await implementQuery(searchQuery);
+      const result = await implementPlaylistQuery(searchQuery);
       setPlaylists(result);
     } catch (err) {
       console.log({ message: err });

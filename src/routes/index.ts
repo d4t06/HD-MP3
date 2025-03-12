@@ -43,15 +43,15 @@ export type PlaylistParamsType = {
   id: string;
 };
 const publicRoutes = [
-  { path: pubicRouteMap.home, component: Home, layout: PrimaryLayout },
-  { path: pubicRouteMap.playlist, component: Playlist, layout: PrimaryLayout },
-  { path: pubicRouteMap.search, component: Search, layout: PrimaryLayout },
+  { path: pubicRouteMap.home, component: Home, layout: "" },
+  { path: pubicRouteMap.playlist, component: Playlist, layout: "" },
+  { path: pubicRouteMap.search, component: Search, layout: "" },
   { path: pubicRouteMap.login, component: Login, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
 ];
 
 const protectedRoutes = [
-  { path: protectedRouteMap.myMusic, component: MyMusic, layout: PrimaryLayout },
+  { path: protectedRouteMap.myMusic, component: MyMusic, layout: "" },
 ];
 
 const privateRoutes = [

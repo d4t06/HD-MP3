@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 
-import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
+import { HeartIcon, MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "../assets/icon-playing.gif";
 import { getHidden } from "../utils/appHelpers";
@@ -10,6 +10,7 @@ import { Image } from "../components";
 
 import { CheckIcon } from "@heroicons/react/20/solid";
 import SongMenu from "@/modules/song-menu";
+import HearBtn from "./HearBtn";
 
 type Props = {
   className?: string;
@@ -18,7 +19,7 @@ type Props = {
   song: Song;
   index: number;
   isHasCheckBox: boolean;
-  variant: "sys-song" | "user-song" | "queue-song" | "user-playlist";
+  variant: "system-song" | "own-song" | "queue-song" | "own-playlist";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
@@ -90,7 +91,7 @@ function SongItem({
     }`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",
-    menuBtnWrapper: "w-[50px] flex justify-center relative",
+    menuBtnWrapper: "flex items-center space-x-1",
   };
 
   const imageOverlay = useMemo(() => {
@@ -170,10 +171,13 @@ function SongItem({
   };
 
   const renderRightContent = (
-    <div className={classes.ctaWrapper}>
-      <div className={classes.menuBtnWrapper}>
-        <SongMenu variant={props.variant} song={song} index={index} />
-      </div>
+    <div className={classes.menuBtnWrapper}>
+      {/* <button className={`${classes.button} block group-hover/main:block md:hidden`}>
+        <HeartIcon className="w-5" />
+      </button> */}
+
+      <HearBtn active className="p-2" onClick={() => {}} />
+      <SongMenu variant={props.variant} song={song} index={index} />
     </div>
   );
 

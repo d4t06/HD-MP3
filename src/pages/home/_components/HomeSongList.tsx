@@ -1,9 +1,9 @@
-import SongSelectProvider from "@/stores/SongSelectContext";
-import useSetSong from "@/hooks/useSetSong";
-import { useSongContext } from "@/stores";
-import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { SongItemSkeleton } from "@/components/skeleton";
+// import SongSelectProvider from "@/stores/SongSelectContext";
+// import useSetSong from "@/hooks/useSetSong";
+// import { useSongContext } from "@/stores";
+// import { useSelector } from "react-redux";
+// import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+// import { SongItemSkeleton } from "@/components/skeleton";
 import { NotFound, SongItem, Title } from "@/components";
 
 type Props = {
@@ -11,18 +11,19 @@ type Props = {
 };
 
 export default function HomeSongList({ loading }: Props) {
-  const { sysSongPlaylist } = useSongContext();
-  const { currentSongData } = useSelector(selectSongQueue);
+  //   const { sysSongPlaylist } = useSongContext();
+  //   const { currentSongData } = useSelector(selectSongQueue);
 
-  const { handleSetSong } = useSetSong({ variant: "songs" });
+  //   const { handleSetSong } = useSetSong({ variant: "songs" });
 
-  const _handleSetSong = (queueId: string) => {
-    handleSetSong(queueId, sysSongPlaylist.songs);
-  };
+  //   const _handleSetSong = (queueId: string) => {
+  //     handleSetSong(queueId, sysSongPlaylist.songs);
+  //   };
 
   return (
     <>
-      <SongSelectProvider>
+      <NotFound />
+      {/* <SongSelectProvider>
         {loading && SongItemSkeleton}
 
         {!loading && (
@@ -46,7 +47,7 @@ export default function HomeSongList({ loading }: Props) {
             )}
           </>
         )}
-      </SongSelectProvider>
+      </SongSelectProvider> */}
     </>
   );
 }

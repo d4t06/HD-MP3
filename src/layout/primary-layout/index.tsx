@@ -1,16 +1,13 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import Player from "./_components/Player";
 import { useThemeContext } from "@/stores";
 import Sidebar from "@/modules/sidebar";
 import Header from "@/modules/header";
 import ToastPortal from "@/modules/toast-portal";
-import UploadSongPortal from "./_components/UploadSongPortal";
+import UploadSongPortal from "@/modules/upload-song-portal/idnex";
+import { Outlet } from "react-router-dom";
 
-interface Props {
-  children: ReactNode;
-}
-
-export default function PrimaryLayout({ children }: Props) {
+export default function PrimaryLayout() {
   const { theme } = useThemeContext();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +33,7 @@ export default function PrimaryLayout({ children }: Props) {
         <div ref={containerRef} className={classes.container}>
           {/* hide in mobile */}
           <Header contentRef={containerRef} />
-          {children}
+          <Outlet />
         </div>
         <Player />
       </div>

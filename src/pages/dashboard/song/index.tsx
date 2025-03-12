@@ -11,7 +11,7 @@ import { Button, DashboardSongItem, Frame } from "../_components";
 export default function DashboardSong() {
   const { theme } = useThemeContext();
 
-  const { isFetching, songs, setTab, tab, ...rest } = useDashboardSong();
+  const { isFetching, uploadedSongs, setTab, tab, ...rest } = useDashboardSong();
 
   return (
     <>
@@ -41,8 +41,8 @@ export default function DashboardSong() {
                 className="[&_td]:text-sm [&_tbody>tr]:border-t [&_tr]:border-black/10 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2"
                 colList={["Name", "Singer", ""]}
               >
-                {songs.length ? (
-                  songs.map((s, i) => (
+                {uploadedSongs.length ? (
+                  uploadedSongs.map((s, i) => (
                     <DashboardSongItem
                       className={`hover:bg-${theme.alpha}`}
                       variant="songs"
