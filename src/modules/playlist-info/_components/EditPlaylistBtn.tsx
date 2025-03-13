@@ -4,12 +4,13 @@ import MyPopup, {
   MyPopupTrigger,
   TriggerRef,
 } from "@/components/MyPopup";
-import { useThemeContext } from "@/stores";
+import { useThemeContext, useToastContext } from "@/stores";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   AdjustmentsHorizontalIcon,
+  LinkIcon,
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -21,7 +22,7 @@ type Modal = "edit" | "delete";
 
 export default function EditPlaylistBtn() {
   const { theme } = useThemeContext();
-
+  const { setSuccessToast } = useToastContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -40,9 +41,24 @@ export default function EditPlaylistBtn() {
   };
   const closeModal = () => modalRef.current?.close();
 
-  const handleEditPlaylist =(playlist: PlaylistSchema, imageFile?:File) => {
-    action({variant: 'edit', playlist})
-  }
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(location.href);
+    setSuccessToast("Link copied");
+
+    triggerRef.current?.close();
+  };
+
+  const handleEditPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
+    if (!currentPlaylist) return;
+
+    await action({
+      variant: "edit",
+      playlist: currentPlaylist,
+      data: playlist,
+      imageFile,
+    });
+    closeModal();
+  };
 
   const renderModal = () => {
     if (!currentPlaylist) return <></>;
@@ -51,7 +67,15 @@ export default function EditPlaylistBtn() {
       case "":
         return <></>;
       case "edit":
-        return <AddPlaylistModal isLoading={isFetching} playlist={currentPlaylist} submit={handleEditPlaylist} variant="edit" close={closeModal} />;
+        return (
+          <AddPlaylistModal
+            isLoading={isFetching}
+            playlist={currentPlaylist}
+            submit={handleEditPlaylist}
+            variant="edit"
+            close={closeModal}
+          />
+        );
 
       case "delete":
         return (
@@ -61,6 +85,7 @@ export default function EditPlaylistBtn() {
             callback={() =>
               action({
                 variant: "delete",
+                playlist: currentPlaylist,
               })
             }
             close={closeModal}
@@ -84,12 +109,16 @@ export default function EditPlaylistBtn() {
         </MyPopupTrigger>
 
         <MyPopupContent
-          className="left-[calc(100%)]"
+          className="left-[calc(100%)] bottom-full w-[120px]"
           animationClassName="origin-top-left"
           appendTo="parent"
         >
           <MenuWrapper>
             <MenuList>
+              <button onClick={handleCopyLink}>
+                <LinkIcon className="w-5" />
+                <span>Copy link</span>
+              </button>
               <button onClick={() => openModal("edit")}>
                 <PencilIcon className="w-5" />
                 <span>Edit</span>

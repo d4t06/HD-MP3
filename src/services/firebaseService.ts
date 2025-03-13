@@ -123,7 +123,7 @@ export const uploadBlob = async ({
 
   // define ref
   // try {
-  const fileName = Date.now();
+  const fileName = Date.now() + ".jpg";
   const fileRef = ref(stores, `${folder + fileName}`);
   const fileRes = await uploadBytes(fileRef, blob);
   const fileURL = await getDownloadURL(fileRes.ref);

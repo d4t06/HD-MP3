@@ -55,6 +55,7 @@ type Playlist = {
   is_public: boolean;
   updated_at: Timestamp;
   created_at: Timestamp;
+  like_count: number;
 };
 
 type PlaylistSchema = Omit<Playlist, "id">;

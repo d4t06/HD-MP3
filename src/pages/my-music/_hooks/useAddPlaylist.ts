@@ -10,7 +10,7 @@ export default function useMyMusicAddPlaylist() {
   const { handleAddPlaylist, isFetching } = useAddPlaylist();
   const { action, isFetching: actionFetching } = usePlaylistAction();
 
-  const IS_FETCHING = isFetching && actionFetching;
+  const IS_FETCHING = isFetching || actionFetching;
 
   const myMusicAddPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
     try {

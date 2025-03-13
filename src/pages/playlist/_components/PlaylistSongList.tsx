@@ -35,9 +35,11 @@ export default function PlaylistSongList({ variant, loading }: Props) {
   return (
     <>
       <SongSelectProvider>
-        <CheckedBar variant={variant}>
-          <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
-        </CheckedBar>
+        {!!playlistSongs.length && (
+          <CheckedBar variant={variant}>
+            <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
+          </CheckedBar>
+        )}
 
         <SongList
           songs={playlistSongs}

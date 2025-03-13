@@ -3,8 +3,6 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import Image from "./ui/Image";
 import playingIcon from "../assets/icon-playing.gif";
-import { Empty } from ".";
-import { useThemeContext } from "@/stores";
 
 interface Props {
   data: Playlist;
@@ -15,15 +13,14 @@ interface Props {
 }
 
 const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
-  const { theme } = useThemeContext();
-
   const classes = {
-    button: `rounded-full text-[#201f1f] p-[4px] hover:bg-${theme?.alpha}`,
-    imageContainer: `absolute inset-0 overflow-hidden flex items-center justify-center `,
+    imageContainer: `absolute inset-0 rounded-md overflow-hidden ${
+      active && "flex items-center justify-center"
+    } `,
   };
 
   const content = (
-    <Empty theme={theme}>
+    <div className="pt-[100%] relative">
       {
         <div className={classes.imageContainer}>
           <Image
@@ -37,7 +34,7 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
           {active && <img src={playingIcon} alt="" className=" absolute w-[30px]" />}
         </div>
       }
-    </Empty>
+    </div>
   );
 
   if (inDetail) return content;

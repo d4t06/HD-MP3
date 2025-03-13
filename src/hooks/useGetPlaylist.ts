@@ -32,7 +32,14 @@ export default function useGetPlaylist() {
       msg: ">>> api get playlist",
     });
 
-    if (playlistSnap.exists()) return playlistSnap.data() as Playlist;
+    if (playlistSnap.exists()) {
+      const playlist: Playlist = {
+        ...(playlistSnap.data() as PlaylistSchema),
+        id: playlistSnap.id,
+      };
+
+      return playlist;
+    }
   };
 
   const getSongs = async (playlist: Playlist) => {
@@ -40,7 +47,7 @@ export default function useGetPlaylist() {
 
     const queryGetSongs = query(
       songsCollectionRef,
-      where(documentId(), "in", playlist.song_ids),
+      where(documentId(), "in", playlist.song_ids)
     );
     const songsSnap = await getDocs(queryGetSongs);
 
@@ -76,7 +83,7 @@ export default function useGetPlaylist() {
         setCurrentPlaylist({
           playlist: playlist,
           songs: playlistSongs,
-        }),
+        })
       );
     } catch (error) {
       console.log({ message: error });

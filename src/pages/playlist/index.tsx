@@ -1,7 +1,7 @@
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSelector } from "react-redux";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
-import { Center, NotFound } from "@/components";
+import { Center, NotFound, Skeleton } from "@/components";
 import { useAuthContext } from "@/stores";
 // import PlaylistInfoCta from "./_components/PlaylistInfoCta";
 import Footer from "@/layout/primary-layout/_components/Footer";
@@ -16,10 +16,16 @@ export default function PlaylistDetail() {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { user } = useAuthContext();
 
-  const isOwnerOfPlaylist = currentPlaylist?.owner_email === user?.email && !currentPlaylist?.is_official;
+  const isOwnerOfPlaylist =
+    currentPlaylist?.owner_email === user?.email && !currentPlaylist?.is_official;
+
+  const isLiked = user
+    ? currentPlaylist
+      ? user?.liked_playlist_ids.includes(currentPlaylist.id)
+      : false
+    : false;
 
   //   hooks
-  // usePlaylist();
   const { isFetching } = useGetPlaylist();
 
   if (!isFetching && !currentPlaylist)
@@ -33,18 +39,22 @@ export default function PlaylistDetail() {
     <>
       <div className="lg:flex lg:-mx-3">
         <div className="w-full lg:w-1/4 lg:px-3">
-          <PLaylistInfo loading={isFetching}>
-            {/* {isOwnerOfPlaylist ? (
-              <>
-                <PlayPlaylistBtn />
-                <EditPlaylistBtn />
-              </>
-            ) : (
-              <PlayPlaylistBtn 
+          {isFetching ? (
+            <>
+              <div className="pt-[100%] relative">
+                <Skeleton className="w-full h-full" />
+              </div>
+              <Skeleton className="h-[38px] mb-[6px] w-[200px]" />
+            </>
+          ) : (
+            currentPlaylist && (
+              <PLaylistInfo
+                variant={isOwnerOfPlaylist ? "my-playlist" : "others-playlist"}
+                playlist={currentPlaylist}
+                isLiked={isLiked}
               />
-            )} */}
-            <p>cta</p>
-          </PLaylistInfo>
+            )
+          )}
         </div>
         <div className="w-full lg:w-3/4 lg:px-3">
           <div className="mt-[30px] lg:mt-0">

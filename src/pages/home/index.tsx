@@ -4,12 +4,15 @@
 // import MobileNav from "./_components/MobileNav";
 // import HomeSongList from "./_components/HomeSongList";
 // import MobileSetting from "./_components/MobileSetting";
+import { Title } from "@/components";
 import Footer from "@/layout/primary-layout/_components/Footer";
+import HomePlaylist from "./_components/HomePlaylist";
+import HomeSongList from "./_components/HomeSongList";
 // import { PlaylistList } from "@/components";
 
 export default function HomePage() {
   // stores
-//   const { isOnMobile } = useThemeContext();
+  //   const { isOnMobile } = useThemeContext();
 
   //   const ranEffect = useRef(false);
 
@@ -25,7 +28,10 @@ export default function HomePage() {
   return (
     <>
       {/* {isOnMobile && <MobileNav />} */}
-      <h3 className="text-xl leading-[2.2] font-playwriteCU mb-3">Popular</h3>
+
+      <HomePlaylist />
+
+      {/* <HomeSongList  /> */}
 
       {/* <PlaylistList loading={isFetching} playlists={sysSongPlaylist.playlists} />
 

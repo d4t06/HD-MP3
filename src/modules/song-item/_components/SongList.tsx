@@ -3,6 +3,7 @@ import SongItem from "..";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { ComponentProps } from "react";
+import { NotFound } from "@/components";
 
 type Props = {
   songs: Song[];
@@ -14,6 +15,8 @@ type Props = {
 export default function SongList({ songs, setSong, getActive, songVariant }: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
+
+  if (!songs.length) return <NotFound />;
 
   return songs.map((song, index) => {
     const isOwnSong = user

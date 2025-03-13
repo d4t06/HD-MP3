@@ -22,7 +22,7 @@ export function MenuList({
 }: Props) {
   const classes = {
     container:
-      "[&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-1 [&>*]:text-sm [&>*]:flex [&>*]:items-center",
+      "[&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center",
   };
 
   return <div className={`${classes.container} ${className}`}>{children}</div>;

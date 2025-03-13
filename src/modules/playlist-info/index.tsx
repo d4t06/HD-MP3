@@ -1,41 +1,25 @@
 import { useSelector } from "react-redux";
-import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { PlaylistItem, Skeleton } from "@/components";
-import { ReactNode } from "react";
+import { PlaylistItem } from "@/components";
+import EditPlaylistBtn from "./_components/EditPlaylistBtn";
+import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
+import HearBtn from "./_components/HearBtn";
 
 type Props = {
-  loading: boolean;
-  children: ReactNode;
+  playlist: Playlist;
+  variant: "my-playlist" | "others-playlist";
+  isLiked: boolean;
 };
 
-export default function PLaylistInfo({ loading, children }: Props) {
+export default function PLaylistInfo({ playlist, isLiked, variant }: Props) {
   // stores
-  const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const isActivePlaylist =
     (playStatus === "playing" || playStatus === "waiting") &&
-    currentSongData?.song.queue_id.includes(`${currentPlaylist?.id}`);
-
-  const playlistInfoSkeleton = (
-    <>
-      <Skeleton className="h-[38px] mb-[6px] w-[200px]" />
-    </>
-  );
-
-  const renderInfo = () => {
-    if (loading) return playlistInfoSkeleton;
-
-    return (
-      <>
-        <p className="text-xl">{currentPlaylist?.name}</p>
-        <p className="text-sm opacity-[.7]">{currentPlaylist?.distributor}</p>
-      </>
-    );
-  };
+    currentSongData?.song.queue_id.includes(`${playlist.id}`);
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
@@ -49,19 +33,23 @@ export default function PLaylistInfo({ loading, children }: Props) {
     <>
       <div className={classes.container}>
         <div className="w-full flex-shrink-0 px-10 md:w-1/4 md:px-0 lg:w-full">
-          {loading ? (
-            <Skeleton className="pt-[100%] rounded-lg" />
-          ) : (
-            currentPlaylist && (
-              <PlaylistItem data={currentPlaylist} active={isActivePlaylist} inDetail />
-            )
-          )}
+          <PlaylistItem data={playlist} active={isActivePlaylist} inDetail />
         </div>
 
         <div className={classes.playlistInfoContainer}>
-          <div className={classes.infoTop}>{renderInfo()}</div>
+          <div className={classes.infoTop}>
+            <p className="text-xl">{playlist.name}</p>
+            <p className="text-sm opacity-[.7]">{playlist.distributor}</p>
+          </div>
 
-          <div className={`${classes.ctaContainer} `}>{!loading && children}</div>
+          <div className={`${classes.ctaContainer}`}>
+            <PlayPlaylistBtn />
+            {variant === "my-playlist" ? (
+              <EditPlaylistBtn />
+            ) : (
+              <HearBtn className="w-[43px] flex justify-center" isLiked={isLiked} playlist={playlist} />
+            )}
+          </div>
         </div>
       </div>
     </>

@@ -66,7 +66,8 @@ export default function AddPlaylistModal({
           owner_email: props.user.email,
         });
       case "edit":
-        const { id, created_at, ...rest } = props.playlist;
+        // keep created_at, update updated_at field
+        const { id, updated_at, ...rest } = props.playlist;
         return initPlaylistObject(rest);
     }
   };
@@ -153,12 +154,11 @@ export default function AddPlaylistModal({
 
           <p className="text-right !mt-auto">
             <Button
-              type="submit"
               isLoading={isLoading}
-              variant={"primary"}
+              color="primary"
               onClick={handleAddPlaylist}
               disabled={!isValidToSubmit}
-              className={`${theme.content_bg} font-playwriteCU rounded-full`}
+              className={`font-playwriteCU rounded-full`}
             >
               Save
             </Button>

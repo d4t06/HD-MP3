@@ -5,17 +5,10 @@ import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
 import MyMusicPlaylistList from "./_components/PlaylistList";
+import Tab from "@/components/Tab";
 
 export default function MyMusicPage() {
-  // stores
-  const { theme } = useThemeContext();
-
-  const [tab, setTab] = useState<"favorite" | "uploaded">("favorite");
-
-  const classes = {
-    inActiveTab: `border border-${theme.alpha} bg-transparent`,
-    activeTab: `${theme.content_bg}`,
-  };
+  const [tab, setTab] = useState<"Favorite" | "Uploaded">("Favorite");
 
   return (
     <>
@@ -25,21 +18,15 @@ export default function MyMusicPage() {
       <Title title="Songs" />
 
       <div className="flex space-x-2 my-3">
-        <Button
-          onClick={() => setTab("favorite")}
-          className={`${tab === "favorite" ? classes.activeTab : classes.inActiveTab}`}
-        >
-          Favorite
-        </Button>
-        <Button
-          onClick={() => setTab("uploaded")}
-          className={`${tab === "uploaded" ? classes.activeTab : classes.inActiveTab}`}
-        >
-          Uploaded
-        </Button>
+        <Tab
+          render={(t) => t}
+          setTab={setTab}
+          tab={tab}
+          tabs={["Favorite", "Uploaded"]}
+        />
       </div>
 
-      {tab === "favorite" ? <FavoriteSongList /> : <UploadedSongList />}
+      {tab === "Favorite" ? <FavoriteSongList /> : <UploadedSongList />}
 
       <Footer />
     </>

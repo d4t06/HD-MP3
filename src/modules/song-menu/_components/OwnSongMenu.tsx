@@ -12,12 +12,13 @@ import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { SongMenuContent } from "..";
 import useSongItemAction from "@/modules/song-item/_hooks/useSongItemAction";
+import AddSongToPlaylistModal from "./AddSongToPlaylistModal";
 
 type Props = {
   song: Song;
   addSongToQueue: () => void;
 };
-type Modal = "edit" | "delete";
+type Modal = "edit" | "delete" | "add-to-playlist";
 
 export default function OwnSongMenu({ song, addSongToQueue }: Props) {
   const { close } = usePopoverContext();
@@ -62,6 +63,8 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
         );
       case "edit":
         return <EditSongModal modalRef={modalRef} song={song} />;
+      case "add-to-playlist":
+        return <AddSongToPlaylistModal closeModal={closeModal} song={song} />;
     }
   };
 
@@ -72,11 +75,12 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
           <PlusIcon className="w-5" />
           <span>Add to queue</span>
         </button>
-        {/* <AddToPlaylistMenuItem
-        song={song}
-        addSongToPlaylistModalRef={addSongToPlaylistModalRef}
-        addSongToNewPlaylistModalRef={addSongToNewPlaylistModalRef}
-      /> */}
+
+        <button onClick={() => handleOpenModal("add-to-playlist")}>
+          <PlusIcon className="w-5" />
+          <span>Add to playlist</span>
+        </button>
+
 
         <button onClick={() => handleOpenModal("edit")}>
           <AdjustmentsHorizontalIcon className="w-5" />
