@@ -6,3 +6,4 @@ export { default as Search } from "./search";
 export { default as NotFoundPage } from "./others/NotFound";
 export { default as Unauthorized } from "./others/Unauthorized";
 export { default as Login } from "./Login";
+export { default as SingerPage } from "./singer";

@@ -56,7 +56,7 @@ export default function useGetHomeSong() {
             getSongQuery = query(
               songsCollectionRef,
               where("is_official", "==", true),
-              orderBy("like_count", "desc")
+              orderBy("play_count", "desc")
             );
             break;
         }

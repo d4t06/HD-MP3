@@ -62,12 +62,12 @@ type Playlist = {
 type PlaylistSchema = Omit<Playlist, "id">;
 
 type SongLyric = {
-  id: string;
+  song_id: string;
   base: string;
   real_time: RealTimeLyric[];
 };
 
-type RawSongLyric = Omit<SongLyric, "real_time"> & {
+type SongLyricSchema = Omit<SongLyric, "real_time"> & {
   real_time: string;
 };
 

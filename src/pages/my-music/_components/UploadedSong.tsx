@@ -30,8 +30,6 @@ export default function UploadedSongList() {
 
   if (!user) return <></>;
 
-  console.log(uploadingSongs);
-
   return (
     <SongSelectProvider>
       <CheckedBar variant="my-songs">

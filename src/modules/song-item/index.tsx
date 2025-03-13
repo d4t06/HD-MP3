@@ -10,6 +10,7 @@ import { useSongSelectContext, useThemeContext } from "@/stores";
 import { getHidden } from "@/utils/appHelpers";
 import { Image } from "@/components";
 import HearBtn from "./_components/HearBtn";
+import { Link } from "react-router-dom";
 
 type Props = {
   className?: string;
@@ -152,11 +153,11 @@ function SongItem({
 
             {import.meta.env.DEV && <span className="text-sm"> ({props.variant})</span>}
           </h5>
-          <div
-            className={`opacity-[.7] leading-[1.2] line-clamp-1 ${getSongSingerSize()}`}
-          >
+          <div className={`opacity-[.7] line-clamp-1 ${getSongSingerSize()}`}>
             {song.singers.map((s, i) => (
-              <p key={i}>{s.name}</p>
+              <Link to={`/singer/${s.id}`} className={`${theme.content_hover_text}  hover:underline`} key={i}>
+                {s.name + (i ? ", " : "")}
+              </Link>
             ))}
           </div>
         </div>

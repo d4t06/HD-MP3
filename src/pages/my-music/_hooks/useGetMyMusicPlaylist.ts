@@ -23,16 +23,22 @@ export default function useGetMyMusicPlaylist() {
       if (shouldFetchUserPlaylists.current) {
         shouldFetchUserPlaylists.current = false;
 
-        if (user.liked_playlist_ids.length) {
-          const queryGetUserPlaylist = query(
-            playlistCollectionRef,
-            where(documentId(), "in", user.liked_playlist_ids),
-            where("is_public", "==", true)
-          );
+        const queryGetUserPlaylist = query(
+          playlistCollectionRef,
+          where(documentId(), "in", user.liked_playlist_ids)
+        );
 
-          const result = await implementPlaylistQuery(queryGetUserPlaylist);
-          setPlaylists(result);
-        }
+        const result = await implementPlaylistQuery(queryGetUserPlaylist);
+
+        const showAblePlaylist = result.filter((p) => {
+          const isOwnerOfPlaylist = !p.is_official && p.owner_email === user.email;
+
+          if (isOwnerOfPlaylist) return true;
+          else if (p.is_public) return true;
+          else return false;
+        });
+
+        setPlaylists(showAblePlaylist);
       } else await sleep(100);
     } catch (error) {
       console.log({ message: error });
@@ -41,11 +47,6 @@ export default function useGetMyMusicPlaylist() {
       setIsFetching(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (!user) return;
-  //   getPlaylist();
-  // }, [user]);
 
   return { isFetching, playlists, user, setIsFetching, getPlaylist };
 }

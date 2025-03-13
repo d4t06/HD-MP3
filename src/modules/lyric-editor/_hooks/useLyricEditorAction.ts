@@ -1,7 +1,8 @@
-import { myAddDoc } from "@/services/firebaseService";
+import { db } from "@/firebase";
 import { useToastContext } from "@/stores";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { setLocalStorage } from "@/utils/appHelpers";
+import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -66,17 +67,21 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       setIsFetching(true);
       if (!song) return;
 
-      const newSongLyric = {
+      const batch = writeBatch(db);
+
+      const newSongLyric: SongLyricSchema = {
+        song_id: song.id,
         real_time: JSON.stringify(lyrics),
         base: baseLyric,
       };
 
-      await myAddDoc({
-        collectionName: "Lyrics",
-        data: newSongLyric,
-      }).catch(() => {
-        throw { ...newSongLyric, id: song.id };
-      });
+      const songRef = doc(db, "Songs", song.id);
+      const lyricRef = doc(db, "Playlists");
+
+      batch.set(lyricRef, newSongLyric);
+      batch.update(songRef, { updated_at: serverTimestamp() });
+
+      batch.commit();
 
       setSuccessToast("Add lyric successful");
       setIsChanged(false);

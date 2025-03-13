@@ -1,4 +1,4 @@
-import { Home, Search, MyMusic, Login, Unauthorized, Playlist } from "../pages";
+import { Home, Search, MyMusic, Unauthorized, Playlist, EditSongLyric, SingerPage } from "../pages";
 import {
   DashboardAddSongPage,
   DashboardEditSongPage,
@@ -19,11 +19,12 @@ const pubicRouteMap = {
   playlist: "/playlist/:id",
   login: "/login",
   unauthorized: "/unauthorized",
+  singer: "/singer/:id",
 };
 
 const protectedRouteMap = {
   myMusic: "/my-music",
-  favorite: "/favorite",
+  songLyric: "/my-music/lyric/:id",
 };
 
 const privateRouteMap = {
@@ -46,10 +47,12 @@ const publicRoutes = [
   { path: pubicRouteMap.playlist, component: Playlist, layout: "" },
   { path: pubicRouteMap.search, component: Search, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
+  { path: pubicRouteMap.singer, component: SingerPage, layout: "" },
 ];
 
 const protectedRoutes = [
   { path: protectedRouteMap.myMusic, component: MyMusic, layout: "" },
+  { path: protectedRouteMap.songLyric, component: EditSongLyric, layout: "" },
 ];
 
 const privateRoutes = [

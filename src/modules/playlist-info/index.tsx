@@ -34,6 +34,7 @@ export default function PLaylistInfo({
     playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 mt-3 md:mt-0 lg:mt-3`,
     infoTop: "flex flex-col items-center md:items-start lg:items-center space-y-1",
     ctaContainer: `flex justify-center space-x-3 md:justify-start lg:justify-center mt-3 md:mt-0 lg:mt-3`,
+    smallText: "text-sm leading-[1.2] opacity-[.7]",
   };
 
   return (
@@ -56,24 +57,35 @@ export default function PLaylistInfo({
                 <Skeleton className="h-[24px] w-[170px]" />
                 <Skeleton className="h-[17px] w-[170px]" />
                 <Skeleton className="h-[17px] w-[60px]" />
-                <Skeleton className="h-[14px] w-[100px]" />
+                <Skeleton className="h-[17px] w-[100px]" />
               </>
             ) : (
               playlist && (
                 <>
-                  <p className="text-xl leading-[1.2]">{playlist.name}
-                    {import.meta.env.DEV && <span> ({variant}) {playlist.is_public+''}</span>}
+                  <p className="text-xl leading-[1.2]">
+                    {playlist.name}
+                    {import.meta.env.DEV && (
+                      <span>
+                        {" "}
+                        ({variant}) public: {playlist.is_public + ""}
+                      </span>
+                    )}
                   </p>
-                  <p className="text-sm leading-[1.2] opacity-[.7]">
-                    {playlist.distributor}
-                  </p>
-                  <p className="text-sm leading-[1.2] opacity-[.7]">
-                    {playlist.play_count} plays
-                  </p>
-                  <p className="text-xs leading-[1.2] opacity-[.7]">
-                    Last update:{" "}
-                    {convertTimestampToString(playlist.updated_at, { type: "date" })}
-                  </p>
+                  <p className={classes.smallText}>{playlist.distributor}</p>
+                  {variant === "my-playlist" && (
+                    <p className={classes.smallText}>
+                      {playlist.is_public ? "Public" : "Private"}
+                    </p>
+                  )}
+                  {variant === "others-playlist" && (
+                    <>
+                      <p className={classes.smallText}>{playlist.play_count} plays</p>
+                      <p className="text-xs leading-[1.2] opacity-[.7]">
+                        Last update:{" "}
+                        {convertTimestampToString(playlist.updated_at, { type: "date" })}
+                      </p>
+                    </>
+                  )}
                 </>
               )
             )}

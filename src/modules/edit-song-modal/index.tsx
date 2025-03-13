@@ -66,7 +66,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
 
           <label
             htmlFor="image-input"
-            className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] bg-${theme.alpha} rounded-full text-[14px]`}
+            className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] ${theme.content_bg} rounded-full text-[14px]`}
           >
             <PhotoIcon className="w-5" />
           </label>
@@ -103,8 +103,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
       <div className="flex mt-5 space-x-2 justify-end">
         <Button
           onClick={handleCloseEditForm}
-          className={`bg-${theme.alpha} rounded-full`}
-          variant={"primary"}
+          className={`rounded-full`}
         >
           Close
         </Button>

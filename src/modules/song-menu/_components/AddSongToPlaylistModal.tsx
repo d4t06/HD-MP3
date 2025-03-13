@@ -22,6 +22,10 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
 
   const modalRef = useRef<ModalRef>(null);
 
+  const ownPlaylist = !user
+    ? []
+    : playlists.filter((p) => p.owner_email === user.email && !p.is_official);
+
   const handleAddSongToPlaylist = async (playlist: Playlist) => {
     await addToPlaylist({ playlist, song });
 
@@ -51,8 +55,8 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
             isFetching ? "disable" : ""
           }`}
         >
-          {playlists.length ? (
-            playlists.map((playlist, index) => {
+          {ownPlaylist.length ? (
+            ownPlaylist.map((playlist, index) => {
               const isAdded = playlist.song_ids.includes(song.id);
 
               return (

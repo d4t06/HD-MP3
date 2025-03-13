@@ -30,14 +30,14 @@ export const getSongs = async (props: GetUserSong | GetSystemSong) => {
       getSongQuery = query(
         songsCollectionRef,
         where("owner_email", "==", props.email),
-        limit(10),
+        limit(10)
       );
       break;
     case "system":
       getSongQuery = query(
         songsCollectionRef,
         where("is_official", "==", "true"),
-        limit(10),
+        limit(10)
       );
       break;
   }
@@ -75,13 +75,13 @@ export const getPlaylists = async (props: GetSystemPlaylist | GetUserPlaylist) =
       getPlaylistQuery = query(
         playlistCollectionRef,
         where("is_public", "==", "true"),
-        limit(20),
+        limit(20)
       );
       break;
     case "user":
       getPlaylistQuery = query(
         playlistCollectionRef,
-        where("owner_email", "==", props.email),
+        where("owner_email", "==", props.email)
       );
       break;
   }
@@ -131,12 +131,23 @@ export const getUserInfo = async (email: string) => {
   }
 };
 
-export async function implementSongQuery(query: Query) {
+export async function implementSongQuery(
+  query: Query,
+  opts?: { getQueueId: (s: Song) => string }
+) {
   const songsSnap = await getDocs(query);
 
   if (songsSnap.docs) {
     const result = songsSnap.docs.map((doc) => {
-      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: nanoid(4) };
+      const song: Song = {
+        ...(doc.data() as SongSchema),
+        id: doc.id,
+        queue_id: nanoid(4),
+      };
+
+      if (opts?.getQueueId) {
+        song.queue_id = opts.getQueueId(song);
+      }
       return song;
     });
 
@@ -145,17 +156,17 @@ export async function implementSongQuery(query: Query) {
 }
 
 export async function implementPlaylistQuery(query: Query) {
-   const playlistsSnap = await getDocs(query);
- 
-   if (playlistsSnap.docs.length) {
-     const result = playlistsSnap.docs.map((doc) => {
-       const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
-       return playlist;
-     });
- 
-     return result;
-   } else return [];
- }
+  const playlistsSnap = await getDocs(query);
+
+  if (playlistsSnap.docs.length) {
+    const result = playlistsSnap.docs.map((doc) => {
+      const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
+      return playlist;
+    });
+
+    return result;
+  } else return [];
+}
 
 export const optimizeAndGetHashImage = async (imageFile: File) => {
   const imageBlob = await optimizeImage(imageFile);

@@ -4,6 +4,8 @@ import { getHidden } from "@/utils/appHelpers";
 import useVinyl from "../_hooks/useVinyl";
 import { Image } from "@/components";
 import ScrollText from "@/modules/scroll-text";
+import { Link } from "react-router-dom";
+import { useThemeContext } from "@/stores";
 
 type Props = {
   admin?: boolean;
@@ -13,6 +15,7 @@ type Props = {
 
 export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   const vinylRef = useRef<ElementRef<"div">>(null);
+  const { theme } = useThemeContext();
 
   // hook
   useVinyl({ vinylRef });
@@ -41,13 +44,19 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
               content={song?.name || "Name"}
             />
           </div>
-
-          {/* <div className="h-[20px]">
-            <ScrollText
-              className="opacity-70 leading-[1.2]"
-              content={song?.singer || "..."}
-            />
-          </div> */}
+          {song && (
+            <div className="leading-[1.2] text-sm opacity-[.7]">
+              {song.singers.map((s, i) => (
+                <Link
+                  to={`/singer/${s.id}`}
+                  className={`${theme.content_hover_text}  hover:underline`}
+                  key={i}
+                >
+                  {s.name + (i ? ", " : "")}
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

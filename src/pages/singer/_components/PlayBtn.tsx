@@ -1,37 +1,35 @@
 import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
-import { useThemeContext } from "@/stores";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useSingerContext } from "./SingerContext";
 
 type PlayBtnProps = {
   children: ReactNode;
-  text: string;
   onClick: () => void;
 };
 
-function PlayBtn({ onClick, children, text }: PlayBtnProps) {
-  const { theme } = useThemeContext();
-  const { playlistSongs } = useSelector(selectCurrentPlaylist);
+function PlayBtn({ onClick, children }: PlayBtnProps) {
+  const { songs } = useSingerContext();
 
   return (
     <Button
       onClick={onClick}
-      disabled={!playlistSongs.length}
+      disabled={!songs.length}
       size={"clear"}
-      className={`rounded-full px-5 py-1 ${theme.content_bg}`}
+      color="primary"
+      className={`p-3`}
     >
       {children}
-      <span className="font-playwriteCU leading-[2.2]">{text}</span>
     </Button>
   );
 }
 
-export default function PlayPlaylistBtn() {
+export default function PlaySingerSongBtn() {
   const dispatch = useDispatch();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
@@ -39,7 +37,7 @@ export default function PlayPlaylistBtn() {
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
-  const handlePlayPlaylist = () => {
+  const handlePlay = () => {
     const firstSong = playlistSongs[0];
     handleSetSong(firstSong.queue_id, playlistSongs);
   };
@@ -53,30 +51,19 @@ export default function PlayPlaylistBtn() {
     }
   };
 
-  if (!currentPlaylist) return <></>;
-
-  if (currentSongData?.song.queue_id.includes(currentPlaylist.id)) {
-    switch (playStatus) {
-      case "playing":
-      case "waiting":
-        return (
-          <PlayBtn text="Pause" onClick={handlePlayPause}>
-            <PauseIcon className="w-7 mr-1" />
-          </PlayBtn>
-        );
-      case "loading":
-      case "paused":
-        return (
-          <PlayBtn text="Continue" onClick={handlePlayPause}>
-            <PlayIcon className="w-7 mr-1" />
-          </PlayBtn>
-        );
-    }
+  switch (playStatus) {
+    case "loading":
+    case "paused":
+      return (
+        <PlayBtn onClick={handlePlayPause}>
+          <PlayIcon className="w-7" />
+        </PlayBtn>
+      );
+    default:
+      return (
+        <PlayBtn onClick={handlePlayPause}>
+          <PauseIcon className="w-7" />
+        </PlayBtn>
+      );
   }
-
-  return (
-    <PlayBtn text="Play" onClick={handlePlayPlaylist}>
-      <PlayIcon className="w-7 mr-1" />
-    </PlayBtn>
-  );
 }

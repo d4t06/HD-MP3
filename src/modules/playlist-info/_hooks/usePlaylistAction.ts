@@ -105,7 +105,12 @@ export default function usePlaylistAction() {
             setPlaylists(newPlaylists);
           }
 
-          dispatch(updateCurrentPlaylist(newPlaylist));
+          // eliminate updated_at field otherwise cause error
+          // or get new doc of playlist
+          // but no worry here because update time don't show on own user playlist screen
+          const { updated_at, ...rest } = newPlaylist;
+
+          dispatch(updateCurrentPlaylist(rest));
           setSuccessToast("Playlist edited");
 
           break;

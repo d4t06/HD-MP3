@@ -48,6 +48,7 @@ export default function useGetHomePlaylist() {
             getPlaylistQuey = query(
               playlistCollectionRef,
               where("is_official", "==", true),
+              where("is_public", "==", true),
               orderBy("updated_at", "desc")
             );
             break;
@@ -56,7 +57,8 @@ export default function useGetHomePlaylist() {
             getPlaylistQuey = query(
               playlistCollectionRef,
               where("is_official", "==", true),
-              orderBy("like_count", "desc")
+              where("is_public", "==", true),
+              orderBy("play_count", "desc")
             );
             break;
         }

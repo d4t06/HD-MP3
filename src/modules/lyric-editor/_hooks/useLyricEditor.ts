@@ -1,7 +1,9 @@
+import { db } from "@/firebase";
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { getLocalStorage } from "@/utils/appHelpers";
+import { doc, writeBatch } from "firebase/firestore";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -35,17 +37,19 @@ export default function useLyricEditor({ audioRef }: Props) {
 
   const ranUseEffect = useRef(false);
 
-  const params = useParams<{ songId: string }>();
+  const params = useParams<{ id: string }>();
   // const navigate = useNavigate();
 
   const getSong = async () => {
     try {
+      if (!params.id) throw new Error("");
+
       const songSnapshot = await myGetDoc({
         collectionName: "Songs",
-        id: params?.songId as string,
+        id: params.id as string,
       });
 
-      if (!songSnapshot.exists()) return;
+      if (!songSnapshot.exists()) throw new Error("");
 
       const song: Song = {
         ...(songSnapshot.data() as SongSchema),
@@ -68,7 +72,7 @@ export default function useLyricEditor({ audioRef }: Props) {
               : lyricData.real_time;
 
           setLyricRes({
-            id: lyricSnapshot.id,
+            song_id: song.id,
             base: lyricData.base,
             real_time: lyrics,
           });
@@ -97,14 +101,14 @@ export default function useLyricEditor({ audioRef }: Props) {
   useEffect(() => {
     const songLyricInStorage = (getLocalStorage()["temp-lyric"] as TempLyric) || null;
 
-    if (songLyricInStorage && songLyricInStorage.id === song?.id) {
+    if (songLyricInStorage && songLyricInStorage.song_id === song?.id) {
       try {
         const songLyric = {
           ...songLyricInStorage,
           real_time: JSON.parse(songLyricInStorage.real_time),
         } as SongLyric;
 
-        if (song?.id === songLyric.id) {
+        if (song?.id === songLyric.song_id) {
           setLyricRes(songLyric);
           setIsChanged(true);
         }

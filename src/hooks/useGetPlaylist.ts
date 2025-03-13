@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch } from "react-redux";
-import { useToastContext } from "../stores";
+import { useAuthContext, useToastContext } from "../stores";
 import { useEffect, useRef, useState } from "react";
 import { documentId, getDocs, query, where } from "firebase/firestore";
 import {
@@ -14,10 +14,12 @@ import { nanoid } from "nanoid";
 export default function useGetPlaylist() {
   // stores
   const dispatch = useDispatch();
+  const { setErrorToast } = useToastContext();
+  const { user } = useAuthContext();
 
   // hooks
   const params = useParams<PlaylistParamsType>();
-  const { setErrorToast } = useToastContext();
+  const navigator = useNavigate();
 
   // state
   const ranEffect = useRef(false);
@@ -76,6 +78,12 @@ export default function useGetPlaylist() {
 
       const playlist = await getPlaylist();
       if (!playlist) return;
+
+      const isOwnerOfPlaylist = user
+        ? playlist.owner_email === user.email && !playlist.is_official
+        : false;
+
+      if (!isOwnerOfPlaylist && !playlist.is_public) return navigator("/");
 
       const playlistSongs = await getSongs(playlist);
 
