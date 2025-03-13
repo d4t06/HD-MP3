@@ -4,7 +4,6 @@
 // import MobileNav from "./_components/MobileNav";
 // import HomeSongList from "./_components/HomeSongList";
 // import MobileSetting from "./_components/MobileSetting";
-import { Title } from "@/components";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import HomePlaylist from "./_components/HomePlaylist";
 import HomeSongList from "./_components/HomeSongList";
@@ -31,7 +30,7 @@ export default function HomePage() {
 
       <HomePlaylist />
 
-      {/* <HomeSongList  /> */}
+      <HomeSongList />
 
       {/* <PlaylistList loading={isFetching} playlists={sysSongPlaylist.playlists} />
 

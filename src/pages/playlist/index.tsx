@@ -1,14 +1,10 @@
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useSelector } from "react-redux";
 import useGetPlaylist from "@/hooks/useGetPlaylist";
-import { Center, NotFound, Skeleton } from "@/components";
+import { Center, NotFound } from "@/components";
 import { useAuthContext } from "@/stores";
-// import PlaylistInfoCta from "./_components/PlaylistInfoCta";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import PlaylistSongList from "./_components/PlaylistSongList";
-// import usePlaylist from "./_hooks/usePlaylist";
-// import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
-// import EditPlaylistBtn from "./_components/EditPlaylistBtn";
 import PLaylistInfo from "@/modules/playlist-info";
 
 export default function PlaylistDetail() {
@@ -16,14 +12,17 @@ export default function PlaylistDetail() {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { user } = useAuthContext();
 
-  const isOwnerOfPlaylist =
-    currentPlaylist?.owner_email === user?.email && !currentPlaylist?.is_official;
+  const isOwnerOfPlaylist = user
+    ? currentPlaylist
+      ? currentPlaylist.owner_email === user.email && !currentPlaylist.is_official
+      : false
+    : false;
 
   const isLiked = user
     ? currentPlaylist
-      ? user?.liked_playlist_ids.includes(currentPlaylist.id)
+      ? user.liked_playlist_ids.includes(currentPlaylist.id)
       : false
-    : false;
+    : null;
 
   //   hooks
   const { isFetching } = useGetPlaylist();
@@ -39,22 +38,12 @@ export default function PlaylistDetail() {
     <>
       <div className="lg:flex lg:-mx-3">
         <div className="w-full lg:w-1/4 lg:px-3">
-          {isFetching ? (
-            <>
-              <div className="pt-[100%] relative">
-                <Skeleton className="w-full h-full" />
-              </div>
-              <Skeleton className="h-[38px] mb-[6px] w-[200px]" />
-            </>
-          ) : (
-            currentPlaylist && (
-              <PLaylistInfo
-                variant={isOwnerOfPlaylist ? "my-playlist" : "others-playlist"}
-                playlist={currentPlaylist}
-                isLiked={isLiked}
-              />
-            )
-          )}
+          <PLaylistInfo
+            showSkeleton={isFetching}
+            variant={isOwnerOfPlaylist ? "my-playlist" : "others-playlist"}
+            playlist={currentPlaylist}
+            isLiked={isLiked}
+          />
         </div>
         <div className="w-full lg:w-3/4 lg:px-3">
           <div className="mt-[30px] lg:mt-0">

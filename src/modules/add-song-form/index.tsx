@@ -2,7 +2,7 @@ import { ElementRef, useEffect, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { initSongObject } from "@/utils/factory";
 import UploadSongBtn from "./_components/UploadSongBtn";
-import { Center, Image, Input, Modal, } from "@/components";
+import { Center, Image, Input, Modal } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
@@ -50,7 +50,8 @@ export default function AddSongForm(props: Add | Edit) {
           is_official: true,
         });
       case "edit":
-        const { id, ...rest } = props.song;
+        // keep created_at, update updated_at field
+        const { id, updated_at, ...rest } = props.song;
 
         setSingers(rest.singers);
         setGenres(rest.genres);

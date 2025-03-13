@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { deleteFile, myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
+import { deleteFile, myUpdateDoc } from "@/services/firebaseService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { doc, increment, updateDoc, writeBatch } from "firebase/firestore";
+import { doc, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default function usePlaylistAction() {
@@ -46,7 +46,7 @@ export default function usePlaylistAction() {
       const batch = writeBatch(db);
 
       const userRef = doc(db, "Users", user.email);
-      const playlistRef = doc(db, "Playlist", props.playlist.id);
+      const playlistRef = doc(db, "Playlists", props.playlist.id);
 
       switch (props.variant) {
         case "like": {
@@ -55,18 +55,22 @@ export default function usePlaylistAction() {
           const newLikedPlaylistIds = [...user.liked_playlist_ids];
           const index = newLikedPlaylistIds.findIndex((id) => id === props.playlist.id);
 
-          if (index === -1) newLikedPlaylistIds.unshift(props.playlist.id);
+          const isLike = index === -1;
+
+          if (isLike) newLikedPlaylistIds.unshift(props.playlist.id);
           else newLikedPlaylistIds.splice(index, 1);
 
           const newUserData: Partial<User> = {
             liked_playlist_ids: newLikedPlaylistIds,
           };
 
-          batch.update(playlistRef, { like_count: increment(index === -1 ? 1 : -1) });
-
           batch.update(userRef, newUserData);
 
           batch.commit();
+
+          // should fetch new data or update data local ?
+          if (isLike) setPlaylists((prev) => [props.playlist, ...prev]);
+          else setPlaylists((prev) => prev.filter((p) => p.id !== props.playlist.id));
 
           updateUserData(newUserData);
 
@@ -181,5 +185,6 @@ export default function usePlaylistAction() {
   return {
     isFetching,
     action,
+    user,
   };
 }

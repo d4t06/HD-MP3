@@ -31,7 +31,7 @@ export default function ConfirmModal({
       <div className="text-xl font-playwriteCU leading-[2.2] mb-3">
         {label || "Wait a minute"}
       </div>
-      {desc && <p className="font-semibold text-lg text-red-500">{desc}</p>}
+      {desc && <p className="font-semibold text-lg text-red-400">{desc}</p>}
 
       <div className="flex space-x-3 mt-5">
         {children || (

@@ -1,9 +1,16 @@
 import { PlaylistList, Title } from "@/components";
 import useMyMusicPlaylist from "../_hooks/useGetMyMusicPlaylist";
 import AddNewPlaylistBtn from "./AddNewPlaylistBtn";
+import { useEffect } from "react";
 
 export default function MyMusicPlaylistList() {
-  const { isFetching, playlists } = useMyMusicPlaylist();
+  const { isFetching, playlists, getPlaylist, user } = useMyMusicPlaylist();
+
+  useEffect(() => {
+    if (!user) return;
+
+    getPlaylist();
+  }, [user]);
 
   return (
     <>

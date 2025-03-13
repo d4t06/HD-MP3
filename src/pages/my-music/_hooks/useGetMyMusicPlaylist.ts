@@ -3,9 +3,10 @@ import { playlistCollectionRef } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-export default function useMyMusicPlaylist() {
+// this hook not in useEffect
+export default function useGetMyMusicPlaylist() {
   const { user } = useAuthContext();
   const { setPlaylists, shouldFetchUserPlaylists, playlists } = useSongContext();
 
@@ -17,13 +18,16 @@ export default function useMyMusicPlaylist() {
     try {
       if (!user) return;
 
+      setIsFetching(true);
+
       if (shouldFetchUserPlaylists.current) {
         shouldFetchUserPlaylists.current = false;
 
         if (user.liked_playlist_ids.length) {
           const queryGetUserPlaylist = query(
             playlistCollectionRef,
-            where(documentId(), "in", user.liked_playlist_ids)
+            where(documentId(), "in", user.liked_playlist_ids),
+            where("is_public", "==", true)
           );
 
           const result = await implementPlaylistQuery(queryGetUserPlaylist);
@@ -38,10 +42,10 @@ export default function useMyMusicPlaylist() {
     }
   };
 
-  useEffect(() => {
-    if (!user) return;
-    getPlaylist();
-  }, [user]);
+  // useEffect(() => {
+  //   if (!user) return;
+  //   getPlaylist();
+  // }, [user]);
 
-  return { isFetching, playlists, getPlaylist };
+  return { isFetching, playlists, user, setIsFetching, getPlaylist };
 }

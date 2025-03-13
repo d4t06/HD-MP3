@@ -22,6 +22,7 @@ type Song = {
   distributor: string;
   is_official: boolean;
   duration: number;
+  play_count: number;
   is_has_lyric: boolean;
   blurhash_encode: string;
   singers: Singer[];
@@ -55,7 +56,7 @@ type Playlist = {
   is_public: boolean;
   updated_at: Timestamp;
   created_at: Timestamp;
-  like_count: number;
+  play_count: number;
 };
 
 type PlaylistSchema = Omit<Playlist, "id">;

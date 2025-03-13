@@ -4,7 +4,6 @@ import { useAuthContext, useSongContext, useThemeContext } from "@/stores";
 import { Button, Modal, ModalHeader, ModalRef, NotFound } from "@/components";
 import useAddSongToPlaylist from "../_hooks/useAddSongToPlaylist";
 import AddPlaylistModal from "@/modules/add-playlist-form";
-import { useAddPlaylist } from "@/hooks";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
 
 type Props = {

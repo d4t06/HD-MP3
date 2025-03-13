@@ -45,7 +45,6 @@ const publicRoutes = [
   { path: pubicRouteMap.home, component: Home, layout: "" },
   { path: pubicRouteMap.playlist, component: Playlist, layout: "" },
   { path: pubicRouteMap.search, component: Search, layout: "" },
-  { path: pubicRouteMap.login, component: Login, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
 ];
 

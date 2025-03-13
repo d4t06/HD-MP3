@@ -13,21 +13,23 @@ type Props = {
 };
 
 export default function OwnPlaylistMenu({ addSongToQueue, song }: Props) {
-  const { isFetching, removeSelectSongs } = usePlaylistAction();
+  const { isFetching } = usePlaylistAction();
 
   return (
     <>
       <SongMenuContent song={song}>
+        {import.meta.env.DEV && <p>own playlist menu</p>}
+
         <button onClick={addSongToQueue}>
           <PlusIcon className="w-5" />
           <span>Add to queue</span>
         </button>
 
-        <button onClick={() => removeSelectSongs([song])}>
+        <button>
           {!isFetching ? (
             <>
               <MinusIcon className="w-5" />
-              <span>Edit</span>
+              <span>Remove</span>
             </>
           ) : (
             <ArrowPathIcon className="w-5 animate-spin" />

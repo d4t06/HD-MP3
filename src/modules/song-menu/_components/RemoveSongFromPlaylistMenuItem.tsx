@@ -5,10 +5,10 @@ type Props = {
   song: Song;
 };
 export default function RemoveSongFromPlaylistMenuItem({ song }: Props) {
-  const { isFetching, removeSelectSongs } = usePlaylistAction();
+  const { isFetching } = usePlaylistAction();
 
   const handleRemoveSong = async () => {
-    await removeSelectSongs([song]);
+    console.log(song);
   };
 
   return (

@@ -149,6 +149,8 @@ function SongItem({
         <div className={`ml-[10px]`}>
           <h5 className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}>
             {song.name}
+
+            {import.meta.env.DEV && <span className="text-sm"> ({props.variant})</span>}
           </h5>
           <div
             className={`opacity-[.7] leading-[1.2] line-clamp-1 ${getSongSingerSize()}`}

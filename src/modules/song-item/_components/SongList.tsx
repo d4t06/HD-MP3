@@ -16,7 +16,7 @@ export default function SongList({ songs, setSong, getActive, songVariant }: Pro
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
-  if (!songs.length) return <NotFound />;
+  if (!songs.length) return <NotFound less />;
 
   return songs.map((song, index) => {
     const isOwnSong = user
@@ -33,7 +33,7 @@ export default function SongList({ songs, setSong, getActive, songVariant }: Pro
             : false
         }
         onClick={() => setSong(song)}
-        variant={songVariant || isOwnSong ? "own-song" : "system-song"}
+        variant={songVariant || (isOwnSong ? "own-song" : "system-song")}
         isHasCheckBox
         isLiked={user ? user.liked_song_ids.includes(song.id) : null}
         song={song}

@@ -54,16 +54,16 @@ function Menu({ song, children }: SongsMenuProps) {
   return (
     <>
       <MyPopupContent className="w-[260px]" appendTo="portal">
-        {/*<div className="py-1.5 bg-white shadow rounded-lg">*/}
         <PopupWrapper p={"clear"} className="py-2" theme={theme}>
           <SongInfo song={song} />
           <MenuList className="hover:[&>*:not(div.absolute)]:bg-black/5">
             {children}
           </MenuList>
 
-          <p className="text-sm text-center opacity-70 mt-3">Provided by {song.distributor}</p>
+          <p className="text-sm text-center opacity-70 mt-3">
+            Provided by {song.distributor}
+          </p>
         </PopupWrapper>
-        {/*</div>*/}
       </MyPopupContent>
     </>
   );
@@ -123,20 +123,22 @@ function SongMenu({ song }: { song: Song }) {
 
   return (
     <>
-      <Link to={`/dashboard/song/${song.id}/edit`}>
-        <AdjustmentsHorizontalIcon className={`w-5`} />
-        <span>Edit</span>
-      </Link>
-      <Link to={`/dashboard/lyric/${song.id}`}>
-        <DocumentTextIcon className={`w-5`} />
+      <Menu song={song}>
+        <Link to={`/dashboard/song/${song.id}/edit`}>
+          <AdjustmentsHorizontalIcon className={`w-5`} />
+          <span>Edit</span>
+        </Link>
+        <Link to={`/dashboard/lyric/${song.id}`}>
+          <DocumentTextIcon className={`w-5`} />
 
-        <span>Lyric</span>
-      </Link>
-      <button onClick={() => openModal("delete")}>
-        <TrashIcon className={`w-5`} />
+          <span>Lyric</span>
+        </Link>
+        <button onClick={() => openModal("delete")}>
+          <TrashIcon className={`w-5`} />
 
-        <span>Delete</span>
-      </button>
+          <span>Delete</span>
+        </button>
+      </Menu>
 
       <Modal ref={modalRef} variant="animation">
         {renderModal()}
@@ -176,40 +178,42 @@ function PlaylistMenu({ song }: PlaylistMenuProps) {
 
   return (
     <>
-      <button
-        onClick={() =>
-          handlePlaylistAction({
-            variant: "remove-song",
-            song,
-          })
-        }
-      >
-        <TrashIcon className="w-5" />
-        <span>Remove</span>
-      </button>
-
-      {song.image_url && (
+      <Menu song={song}>
         <button
-          className={`${playlist?.image_url === song.image_url ? "disable" : ""}`}
           onClick={() =>
             handlePlaylistAction({
-              variant: "update-image",
+              variant: "remove-song",
               song,
             })
           }
         >
-          <PhotoIcon className={`w-5`} />
-          <span>Set playlist image</span>
+          <TrashIcon className="w-5" />
+          <span>Remove</span>
         </button>
-      )}
 
-      {isFetching && (
-        <div className={classes.overlay}>
-          <div
-            className={`h-[25px] w-[25px] border-[2px] border-r-black rounded-[50%] animate-spin`}
-          ></div>
-        </div>
-      )}
+        {song.image_url && (
+          <button
+            className={`${playlist?.image_url === song.image_url ? "disable" : ""}`}
+            onClick={() =>
+              handlePlaylistAction({
+                variant: "update-image",
+                song,
+              })
+            }
+          >
+            <PhotoIcon className={`w-5`} />
+            <span>Set playlist image</span>
+          </button>
+        )}
+
+        {isFetching && (
+          <div className={classes.overlay}>
+            <div
+              className={`h-[25px] w-[25px] border-[2px] border-r-black rounded-[50%] animate-spin`}
+            ></div>
+          </div>
+        )}
+      </Menu>
     </>
   );
 }
@@ -237,7 +241,7 @@ export default function DashboardSongMenu({ song, variant }: Props) {
             <Bars3Icon className="w-5" />
           </Button>
         </MyPopupTrigger>
-        <Menu song={song}>{renderMenu()}</Menu>
+        {renderMenu()}
       </MyPopup>
     </>
   );

@@ -4,11 +4,13 @@ import currentPlaylistReducer from "./currentPlaylistSlice";
 import songQueueReducer from "./songQueueSlice";
 
 const reduxStore = configureStore({
-   reducer: {
-      currentPlaylist: currentPlaylistReducer,
-      playStatus: playStatusReducer,
-      songQueue: songQueueReducer,
-   },
+  reducer: {
+    currentPlaylist: currentPlaylistReducer,
+    playStatus: playStatusReducer,
+    songQueue: songQueueReducer,
+  },
+  //   fix fireStore timestamp error
+  middleware: (cb) => cb({ serializableCheck: false }),
 });
 
 export default reduxStore;

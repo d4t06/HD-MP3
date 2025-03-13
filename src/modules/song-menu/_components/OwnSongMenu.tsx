@@ -71,6 +71,8 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
   return (
     <>
       <SongMenuContent song={song}>
+        {import.meta.env.DEV && <p>own song menu</p>}
+
         <button onClick={addSongToQueue}>
           <PlusIcon className="w-5" />
           <span>Add to queue</span>
@@ -80,7 +82,6 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
           <PlusIcon className="w-5" />
           <span>Add to playlist</span>
         </button>
-
 
         <button onClick={() => handleOpenModal("edit")}>
           <AdjustmentsHorizontalIcon className="w-5" />

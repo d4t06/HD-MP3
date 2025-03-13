@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
@@ -12,8 +12,10 @@ function Login() {
   const { action } = useAuthAction();
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location?.state?.from?.pathname || "/dashboard";
+  // const location = useLocation();
+  // const from = location?.state?.from || "/dashboard";
+
+  // const ranRedirect = useRef(false);
 
   const handleLogIn = async () => {
     try {
@@ -24,12 +26,11 @@ function Login() {
   };
 
   useEffect(() => {
-    if (loggedInUser?.email) {
-      navigate(from, { replace: true });
+    if (loggedInUser) {
+      navigate("/");
       return;
     }
-    console.log("run effect");
-  }, [loggedInUser]);
+  }, []);
 
   return (
     <div

@@ -23,10 +23,7 @@ export default function QueueSongMenu({ song, index }: Props) {
   return (
     <>
       <SongMenuContent song={song}>
-        {/* <AddToPlaylistMenuItem
-        song={song}
-        addSongToNewPlaylistModalRef={addSongToNewPlaylistModalRef}
-      /> */}
+        {import.meta.env.DEV && <p>queue song menu</p>}
 
         <button onClick={handleRemoveSongFromQueue}>
           <MinusIcon className="w-5" />

@@ -17,7 +17,11 @@ export function RequireAuth() {
       </div>
     );
 
-  return user ? <Outlet /> : <Navigate replace to={"/login"} />;
+  return user ? (
+    <Outlet />
+  ) : (
+    <Navigate state={{ from: '/my-music' }} replace to={"/login"} />
+  );
 }
 
 export function RequireAdministrator() {

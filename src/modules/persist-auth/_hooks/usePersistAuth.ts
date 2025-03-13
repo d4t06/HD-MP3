@@ -1,13 +1,13 @@
 import { auth } from "@/firebase";
-import { implementPlaylistQuery } from "@/services/appService";
-import { myGetDoc, myAddDoc, playlistCollectionRef } from "@/services/firebaseService";
-import { useAuthContext, useSongContext } from "@/stores";
-import { documentId, query, where } from "firebase/firestore";
+import useGetMyMusicPlaylist from "@/pages/my-music/_hooks/useGetMyMusicPlaylist";
+import { myGetDoc, myAddDoc } from "@/services/firebaseService";
+import { useAuthContext } from "@/stores";
 import { useEffect } from "react";
 
 export default function usePersistAuth() {
   const { setUser, setLoading, loading, user } = useAuthContext();
-  const { setPlaylists, shouldFetchUserPlaylists } = useSongContext();
+
+  const { getPlaylist } = useGetMyMusicPlaylist();
 
   useEffect(() => {
     const handleGetAuth = async () => {
@@ -31,17 +31,7 @@ export default function usePersistAuth() {
           //  new user
           if (!docRef.exists()) await myAddDoc({ collectionName: "Users", data: user });
           //  get user liked playlists
-          else if (userDoc.liked_playlist_ids.length) {
-            shouldFetchUserPlaylists.current = false;
-
-            const getUserPlaylistQuery = query(
-              playlistCollectionRef,
-              where(documentId(), "in", userDoc.liked_playlist_ids)
-            );
-            const playlists = await implementPlaylistQuery(getUserPlaylistQuery);
-
-            setPlaylists(playlists);
-          }
+          else await getPlaylist();
 
           setUser(user);
         } else setUser(null);

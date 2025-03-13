@@ -7,22 +7,14 @@ type Props = {
 };
 
 export default function SystemSongMenu({ song, addSongToQueue }: Props) {
-  // const addSongToNewPlaylistModalRef = useRef<ModalRef>(null);
-  // const addSongToPlaylistModalRef = useRef<ModalRef>(null);
-
   return (
     <>
       <SongMenuContent song={song}>
+        {import.meta.env.DEV && <p>system song menu</p>}
         <button onClick={addSongToQueue}>
           <PlusIcon className="w-5" />
           <span>Add to queue</span>
         </button>
-        {/* 
-      <AddToPlaylistMenuItem
-        song={song}
-        addSongToPlaylistModalRef={addSongToPlaylistModalRef}
-        addSongToNewPlaylistModalRef={addSongToNewPlaylistModalRef}
-      /> */}
 
         <a target="_blank" href={song.song_url}>
           <ArrowDownTrayIcon className="w-5" />

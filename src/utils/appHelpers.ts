@@ -7,8 +7,15 @@ export const request = axios.create({
   baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
 });
 
-export const convertTimestampToString = (timeStamp: Timestamp) => {
-  return new Date(timeStamp.toDate().getTime()).toLocaleString();
+export const convertTimestampToString = (
+  timeStamp: Timestamp,
+  opts?: { type: "date" | "time" }
+) => {
+  if (opts?.type === 'date')
+  return new Date(timeStamp.toDate()).toLocaleDateString();
+
+  return new Date(timeStamp.toDate()).toLocaleString();
+
 };
 
 export const getLocalStorage = () =>

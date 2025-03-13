@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useEffect, useState, useMemo } from "react";
+import { ChangeEvent, useRef, useEffect, useState } from "react";
 import {
   useAuthContext,
   useSongContext,
@@ -33,11 +33,6 @@ export default function useUploadSongs() {
   // hooks
   const { setErrorToast, setSuccessToast } = useToastContext();
 
-  const songsByUser = useMemo(
-    () => (user ? uploadedSongs.filter((s) => s.owner_email === user?.email) : []),
-    []
-  );
-
   const finishAndClear = () => {
     const inputEle = inputRef.current as HTMLInputElement;
     if (inputEle) {
@@ -68,12 +63,12 @@ export default function useUploadSongs() {
       const start = Date.now();
       const checkDuplicate = (songObject: SongSchema) => {
         return (
-          songsByUser.some((s) => s.size === songObject.size) ||
+          uploadedSongs.some((s) => s.size === songObject.size) ||
           processSongsList.some((s) => s.size === songObject.size)
         );
       };
 
-      // start lop create uploading songs
+      // start loop create uploading songs
       for (let i = 0; i <= fileLists.length - 1; i++) {
         const songFile = fileLists[i];
         const songData = await parserSong(songFile);
@@ -111,7 +106,7 @@ export default function useUploadSongs() {
       //end loop create uploading songs
 
       // check limit
-      if (songsByUser.length + fileIndexesNeeded.current.length > 5)
+      if (uploadedSongs.length + fileIndexesNeeded.current.length > 5)
         return setErrorMessage("You have reach the upload limit");
 
       // case all song are duplicate
@@ -121,13 +116,10 @@ export default function useUploadSongs() {
 
       // inputs file1 file2 file3 ... file10
       // need   file2 file10
-
       // process [{}, {}]
 
-      //   start loop upload songs
-
       setIsUploading(true);
-
+      //   start loop upload songs
       for (let index = 0; index < fileIndexesNeeded.current.length; index++) {
         const fileIndex = fileIndexesNeeded.current[index];
 

@@ -15,7 +15,7 @@ export default function UploadedSongList() {
   const { theme } = useThemeContext();
 
   // hooks
-  const { uploadingSongs } = useUploadContext();
+  const { uploadingSongs, isUploading } = useUploadContext();
   const { handleSetSong } = useSetSong({ variant: "songs" });
   const { uploadedSongs, isFetching, user } = useGetMyMusicSong({ tab: "uploaded" });
 
@@ -30,6 +30,8 @@ export default function UploadedSongList() {
 
   if (!user) return <></>;
 
+  console.log(uploadingSongs);
+
   return (
     <SongSelectProvider>
       <CheckedBar variant="my-songs">
@@ -43,13 +45,15 @@ export default function UploadedSongList() {
           <div className="flex justify-between w-full">
             <p className="font-[500] opacity-[.5]">{songCount} Songs</p>
 
-            <label
-              className={`${theme.content_bg} items-center space-x-1 hover:opacity-80 py-1 rounded-full flex px-4 cursor-pointer`}
-              htmlFor="song_upload"
-            >
-              <ArrowUpTrayIcon className="w-5" />
-              <span className="">Upload</span>
-            </label>
+            <button disabled={isUploading}>
+              <label
+                className={`${theme.content_bg} items-center space-x-1 hover:opacity-80 py-1 rounded-full flex px-4 cursor-pointer`}
+                htmlFor="song_upload"
+              >
+                <ArrowUpTrayIcon className="w-5" />
+                <span className="">Upload</span>
+              </label>
+            </button>
           </div>
         )}
       </CheckedBar>
@@ -62,12 +66,13 @@ export default function UploadedSongList() {
           <>
             {songCount ? (
               <>
-                <SongList
-                  setSong={(s) => _handleSetSong(s.queue_id)}
-                  songs={uploadedSongs}
-                  songVariant="own-song"
-                />
-
+                {uploadedSongs.length && (
+                  <SongList
+                    setSong={(s) => _handleSetSong(s.queue_id)}
+                    songs={uploadedSongs}
+                    songVariant="own-song"
+                  />
+                )}
                 {uploadingSongs.map((song, index) => (
                   <UploadingSongItem key={index} song={song} />
                 ))}

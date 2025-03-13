@@ -14,7 +14,7 @@ interface Props {
 
 const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
   const classes = {
-    imageContainer: `absolute inset-0 rounded-md overflow-hidden ${
+    imageContainer: `absolute inset-0 rounded-lg overflow-hidden ${
       active && "flex items-center justify-center"
     } `,
   };
@@ -45,8 +45,8 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
         {content}
       </Link>
 
-      <p className="text-lg font-[500] line-clamp-1 mt-1.5">{data.name}</p>
-      <p className="text-sm opacity-[.7] line-clamp-1">{data.distributor}</p>
+      <p className="text-lg font-[500] leading-[1.2] line-clamp-1 mt-1.5">{data.name}</p>
+      <p className="text-sm opacity-[.7] leading-[1.2] line-clamp-1">{data.distributor}</p>
     </>
   );
 };

@@ -8,10 +8,11 @@ type StateType = {
   currentSongData: { song: Song; index: number } | null;
 };
 
-const queue = getLocalStorage()["queue"] || [];
 
+// get current from store, fix clear queue button
+// const queue = getLocalStorage()["queue"] || [];
 const initialState: StateType = {
-  queueSongs: queue,
+  queueSongs: getLocalStorage()["queue"] || [],
   /** update queue id in use control */
   currentQueueId: null,
   currentSongData: null,
@@ -60,13 +61,13 @@ const songQueueSlice = createSlice({
     },
 
     addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
-
-      const _songs = action.payload.songs.map((s) => ({...s, queue_id: nanoid(4)}))
+      const _songs = action.payload.songs.map((s) => ({ ...s, queue_id: nanoid(4) }));
 
       state.queueSongs.push(..._songs);
       setLocalStorage("queue", state.queueSongs);
     },
     resetSongQueue: (state: StateType) => {
+      setLocalStorage("queue", []);
       Object.assign(state, initialState);
     },
   },
