@@ -53,11 +53,11 @@ export const initPlaylistObject = (
 export const initSingerObject = (data: Partial<SingerSchema>) => {
   const singer: SingerSchema = {
     name: "",
-    birthday: Timestamp.fromDate(new Date(Date.now())),
     description: "",
-    image_path: "",
+    image_file_path: "",
     image_url: "",
-    created_at: "",
+    created_at: serverTimestamp(),
+    blurhash_encode: "",
     ...data,
   };
 

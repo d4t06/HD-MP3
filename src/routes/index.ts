@@ -82,11 +82,7 @@ const privateRoutes = [
     component: DashboardGenrePage,
     layout: "",
   },
-  {
-    path: privateRouteMap.singer,
-    component: DashboardSingerPage,
-    layout: SingerLayout,
-  },
+
   {
     path: privateRouteMap.singer,
     component: DashboardSingerPage,

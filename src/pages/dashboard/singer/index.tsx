@@ -1,12 +1,9 @@
-import { NotFound, Tabs } from "@/components";
+import { NotFound, Skeleton, Tabs } from "@/components";
 import Title from "@/components/ui/Title";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import Table from "@/components/ui/Table";
-import { Link } from "react-router-dom";
-import { Frame, SearchBar } from "../_components";
+  import { Link } from "react-router-dom";
+import { SearchBar } from "../_components";
 import AddSingerBtn from "./_components/AddSingerBtn";
 import useDashboardSinger from "./_hooks/useDashboardSinger";
-import DashBoard from "../Dashboard";
 import DashboardTable from "../_components/ui/Table";
 
 export default function DashboardSingerPage() {
@@ -14,7 +11,7 @@ export default function DashboardSingerPage() {
 
   return (
     <>
-      <Title title="Playlists" />
+      <Title title="Singer" />
 
       <div className="flex justify-between">
         <SearchBar className="self-start mt-3" {...rest} />
@@ -30,11 +27,7 @@ export default function DashboardSingerPage() {
       />
 
       <div className="mt-3">
-        {isFetching && (
-          <p className="text-center w-full">
-            <ArrowPathIcon className="w-6 animate-spin inline-block" />
-          </p>
-        )}
+        {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
           <DashboardTable colList={["Name", ""]}>

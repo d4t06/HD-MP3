@@ -14,7 +14,7 @@ export const parserSong = async (songFile: File) => {
   if (!result) return;
 
   const {
-    common: { title, artist },
+    common: { title, artist, picture },
     format: { duration },
   } = result;
 
@@ -22,6 +22,7 @@ export const parserSong = async (songFile: File) => {
     name: title || songFile.name,
     singer: artist || "...",
     duration: duration || 0,
+    image: picture ? picture[0]?.data : [],
   } as ParserSong);
 
   return data;

@@ -1,10 +1,9 @@
-import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { TriggerRef, usePopoverContext } from "@/components/MyPopup";
-import { useToastContext } from "@/stores";
+import { ConfirmModal, CopyLinkMenuItem, Modal, ModalRef } from "@/components";
+import { usePopoverContext } from "@/components/MyPopup";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
-import { LinkIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import usePlaylistAction from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import { PlaylistMenuPopupContent } from "./PlaylistMenuBtn";
@@ -12,7 +11,6 @@ import { PlaylistMenuPopupContent } from "./PlaylistMenuBtn";
 type Modal = "edit" | "delete";
 
 export default function OwnPlaylistMenu() {
-  const { setSuccessToast } = useToastContext();
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { close } = usePopoverContext();
 
@@ -29,13 +27,6 @@ export default function OwnPlaylistMenu() {
     modalRef.current?.open();
   };
   const closeModal = () => modalRef.current?.close();
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(location.href);
-    setSuccessToast("Link copied");
-
-    close();
-  };
 
   const handleEditPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
     if (!currentPlaylist) return;
@@ -86,10 +77,7 @@ export default function OwnPlaylistMenu() {
   return (
     <>
       <PlaylistMenuPopupContent>
-        <button onClick={handleCopyLink}>
-          <LinkIcon className="w-5" />
-          <span>Copy link</span>
-        </button>
+        <CopyLinkMenuItem />
         <button onClick={() => openModal("edit")}>
           <PencilIcon className="w-5" />
           <span>Edit</span>

@@ -1,19 +1,17 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
 function useSinger() {
+  const [singers, setSingers] = useState<Singer[]>([]);
+  
   const [singer, setSinger] = useState<Singer>();
-
-  const [isFetching, setIsFetching] = useState(true);
-
   const [songs, setSongs] = useState<Song[]>([]);
-
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   return {
     singer,
     setSinger,
-    isFetching,
-    setIsFetching,
+    singers,
+    setSingers,
     songs,
     setSongs,
     playlists,

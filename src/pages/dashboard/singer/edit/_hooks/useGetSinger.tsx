@@ -6,10 +6,12 @@ import { useNavigate, useParams } from "react-router-dom";
 import { implementSongQuery } from "@/services/appService";
 import { nanoid } from "nanoid/non-secure";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
+import { useGetSingerContext } from "../_components/GetSingerContext";
 
 export default function useGetSinger() {
-  const { setIsFetching, setSinger, setSongs } = useSingerContext();
+  const { setSinger, setSongs } = useSingerContext();
   const { setErrorToast } = useToastContext();
+  const { setIsFetching } = useGetSingerContext();
 
   const params = useParams();
   const navigator = useNavigate();

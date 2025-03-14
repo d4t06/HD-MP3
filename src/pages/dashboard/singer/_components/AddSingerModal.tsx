@@ -6,11 +6,7 @@ import useAddSingerModal, { UseAddSingerModalProps } from "../_hooks/useAddSinge
 import { inputClasses } from "@/components/ui/Input";
 import { Button } from "../../_components";
 
-type Props = UseAddSingerModalProps & {
-  close: () => void;
-};
-
-export default function AddSingerModal({ close, ...props }: Props) {
+export default function AddSingerModal(props: UseAddSingerModalProps) {
   const { theme } = useThemeContext();
 
   const {
@@ -32,8 +28,8 @@ export default function AddSingerModal({ close, ...props }: Props) {
   return (
     <div className="w-[700px] max-w-[calc(100vw-40px)]">
       <ModalHeader
-        close={close}
-        title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
+        close={props.closeModal}
+        title={props.variant === "add" ? "Add singer" : "Edit singer"}
       />
 
       <div className="flex space-x-3">
@@ -49,7 +45,7 @@ export default function AddSingerModal({ close, ...props }: Props) {
             onChange={handleInputChange}
             type="file"
             multiple
-            accept="image/png, image/jpeg"
+            accept="image/png, image/jpeg, image/webp"
             id="image_upload"
             className="hidden"
           />
@@ -64,20 +60,33 @@ export default function AddSingerModal({ close, ...props }: Props) {
         </div>
 
         <div className="flex-grow flex flex-col space-y-2.5">
-          <Input
-            ref={inputRef}
-            type="text"
-            placeholder="name..."
-            value={singerData.name}
-            onChange={(e) => updateSingerData({ name: e.target.value })}
-          />
+          <div className="space-y-1">
+            <label htmlFor="name" className="opacity-[.8]">
+              Name:
+            </label>
+            <Input
+              ref={inputRef}
+              type="text"
+              id="name"
+              placeholder=""
+              value={singerData.name}
+              onChange={(e) => updateSingerData({ name: e.target.value })}
+            />
+          </div>
 
-          <textarea
-            placeholder="..."
-            className={`${inputClasses} bg-white/10 rounded-md`}
-            value={singerData.description}
-            onChange={(e) => updateSingerData({ description: e.target.value })}
-          />
+          <div className="space-y-1">
+            <label htmlFor="description" className="opacity-[.8]">
+              Description:
+            </label>
+
+            <textarea
+              placeholder="..."
+              id="description"
+              className={`${inputClasses} w-full bg-white/10 rounded-md min-h-[100px]`}
+              value={singerData.description}
+              onChange={(e) => updateSingerData({ description: e.target.value })}
+            />
+          </div>
         </div>
       </div>
 

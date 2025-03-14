@@ -18,11 +18,11 @@ export function MenuWrapper({ children, className = "py-2" }: Props) {
 
 export function MenuList({
   children,
-  className = "hover:[&>*:not(div.absolute)]:bg-white/5",
+  className = "",
 }: Props) {
   const classes = {
     container:
-      "[&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center",
+      "hover:[&>*:not(div.absolute)]:bg-white/5 [&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center",
   };
 
   return <div className={`${classes.container} ${className}`}>{children}</div>;

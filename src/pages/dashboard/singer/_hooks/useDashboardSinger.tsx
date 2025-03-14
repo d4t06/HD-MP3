@@ -3,11 +3,12 @@ import { useToastContext } from "@/stores";
 import { orderBy, query, where } from "firebase/firestore";
 import { singerCollectionRef } from "@/services/firebaseService";
 import { implementSingerQuery } from "@/services/appService";
+import { useSingerContext } from "@/stores/dashboard/SingerContext";
 
 type Tab = "All" | "Result";
 
 export default function useDashboardSinger() {
-  const [singers, setSingers] = useState<Singer[]>([]);
+  const { setSingers, singers } = useSingerContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);

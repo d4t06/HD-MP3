@@ -3,7 +3,7 @@ import { cva, VariantProps } from "class-variance-authority";
 import { forwardRef, ReactNode, Ref } from "react";
 import { Link } from "react-router-dom";
 
-const ButtonVariant = cva("inline-flex relative space-x-1 items-center z-0", {
+const ButtonVariant = cva("inline-flex relative hover:brightness-95 space-x-1 items-center z-0", {
   variants: {
     variant: {
       primary:

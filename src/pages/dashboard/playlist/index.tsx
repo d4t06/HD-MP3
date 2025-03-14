@@ -1,6 +1,5 @@
-import { NotFound, Tabs } from "@/components";
+import { NotFound, Skeleton, Tabs } from "@/components";
 import Title from "@/components/ui/Title";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import useDashboardPlaylist from "./_hooks/useDashboardPlaylist";
 import Table from "@/components/ui/Table";
 import { Link } from "react-router-dom";
@@ -28,11 +27,7 @@ export default function DashboardPlaylist() {
       />
 
       <div className="mt-3">
-        {isFetching && (
-          <p className="text-center w-full">
-            <ArrowPathIcon className="w-6 animate-spin inline-block" />
-          </p>
-        )}
+        {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
           <Frame>

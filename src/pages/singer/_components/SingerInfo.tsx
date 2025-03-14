@@ -1,6 +1,6 @@
 import { Image, NotFound, Skeleton } from "@/components";
 import { useSingerContext } from "./SingerContext";
-import PlaySingerSongBtn from "./PlayBtn";
+import SingerCta from "./SingerCta";
 
 export default function SingerInfo() {
   const { isFetching, singer } = useSingerContext();
@@ -28,16 +28,9 @@ export default function SingerInfo() {
               <>
                 <p className="text-3xl leading-[2] font-playwriteCU">{singer.name}</p>
 
-                <p className="line-clamp-2">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem,
-                  autem eligendi. Eveniet laudantium placeat provident nemo, quasi quam
-                  animi tempore atque, nobis quaerat molestias expedita dignissimos illum
-                  exercitationem voluptatem ipsam.
-                </p>
+                <p className="line-clamp-2">{singer.description}</p>
 
-                <div className="!md:mt-auto">
-                  <PlaySingerSongBtn />
-                </div>
+                <SingerCta />
               </>
             )
           )}

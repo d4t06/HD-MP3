@@ -1,8 +1,7 @@
 import Title from "@/components/ui/Title";
 import useDashboardSong from "./_hooks/useDashboardSong";
 import Table from "@/components/ui/Table";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { NotFound, Tabs } from "@/components";
+import { NotFound, Skeleton, Tabs } from "@/components";
 import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Searchbar from "../_components/SearchBar";
@@ -28,11 +27,7 @@ export default function DashboardSong() {
       />
 
       <div className="mt-3">
-        {isFetching && (
-          <p className="text-center w-full">
-            <ArrowPathIcon className="w-6 animate-spin inline-block" />
-          </p>
-        )}
+        {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
           <Frame>

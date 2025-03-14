@@ -1,9 +1,12 @@
-import { Image, NotFound, Skeleton } from "@/components";
+import { Image, NotFound, Skeleton, Square } from "@/components";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import SingerCta from "./SingerCta";
+import { useGetSingerContext } from "./GetSingerContext";
+import { ElementRef, useEffect, useRef } from "react";
 
 export default function SingerInfo() {
-  const { isFetching, singer } = useSingerContext();
+  const { singer } = useSingerContext();
+  const { isFetching } = useGetSingerContext();
 
   if (!isFetching && !singer) return <NotFound less />;
 
@@ -14,7 +17,12 @@ export default function SingerInfo() {
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (
-            <Image src={singer?.image_url} className="rounded-lg" />
+            <Square>
+              <Image
+                src={singer?.image_url}
+                blurHashEncode={singer?.blurhash_encode || ""}
+              />
+            </Square>
           )}
         </div>
         <div className="flex-grow flex flex-col mt-5 space-y-2.5  md:mt-0 md:ml-5">
@@ -28,16 +36,9 @@ export default function SingerInfo() {
               <>
                 <p className="text-3xl leading-[2] font-playwriteCU">{singer.name}</p>
 
-                <p className="line-clamp-2">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem,
-                  autem eligendi. Eveniet laudantium placeat provident nemo, quasi quam
-                  animi tempore atque, nobis quaerat molestias expedita dignissimos illum
-                  exercitationem voluptatem ipsam.
-                </p>
+                <p className="line-clamp-2">{singer.description}</p>
 
-                <div className="!mt-auto">
-                  <SingerCta />
-                </div>
+                <SingerCta />
               </>
             )
           )}

@@ -14,9 +14,10 @@ type Props = {
   audioEle: HTMLAudioElement;
   duration: number;
   size: number;
+  variant: "add" | "edit";
 };
 
-export default function AudioPLayer({ audioEle, duration, size }: Props) {
+export default function AudioPLayer({ audioEle, duration, variant, size }: Props) {
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
   const { status, handlePlayPause } = useAudioControl({
@@ -48,7 +49,7 @@ export default function AudioPLayer({ audioEle, duration, size }: Props) {
           {renderPlayPausedButton()}
         </Button>
 
-        <UploadSongBtn />
+        {variant === "add" && <UploadSongBtn />}
       </div>
 
       <Frame>

@@ -5,10 +5,13 @@ import ToastItem from "./_components/ToastItem";
 
 interface Props {
   time?: number;
-  variant: "dashboard" | "client";
+  className?: string;
 }
 
-const ToastPortal = ({ time = 6000, variant }: Props) => {
+const ToastPortal = ({
+  time = 6000,
+  className = "md:bottom-[100px]",
+}: Props) => {
   const { setToasts, toasts } = useToastContext();
   const [removing, setRemoving] = useState("");
 
@@ -38,26 +41,18 @@ const ToastPortal = ({ time = 6000, variant }: Props) => {
     }, time);
   }, [toasts]);
 
-  const classes = {
-    container: `toast-portal fixed z-[199] bottom-[120px] ${variant === "client" ? "left-[20px]" : "right-[20px]"} max-[549px]:bottom-[unset] max-[540px]:top-[10px] max-[540px]:right-[10px]`,
-  };
-
   return (
     <>
       {createPortal(
-        <div className={classes.container}>
+        <div className={`fixed z-[199] top-[10px] right-[20px] md:top-[unset] ${className}`}>
           <div className="flex flex-col gap-[10px]">
             {!!toasts.length &&
               toasts.map((toast, index) => (
-                <ToastItem
-                  onClick={removeToast}
-                  key={index}
-                  toast={toast}
-                />
+                <ToastItem onClick={removeToast} key={index} toast={toast} />
               ))}
           </div>
         </div>,
-        document.getElementById("portals")!,
+        document.getElementById("portals")!
       )}
     </>
   );

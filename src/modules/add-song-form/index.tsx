@@ -101,6 +101,7 @@ export default function AddSongForm(props: Add | Edit) {
             <div className="mt-5 md:mt-0 space-y-3 flex-grow">
               {audioRef.current && (
                 <AudioPLayer
+                  variant={props.variant}
                   size={songData.size}
                   duration={songData.duration}
                   audioEle={audioRef.current}

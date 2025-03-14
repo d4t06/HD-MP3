@@ -7,6 +7,7 @@ function useAddSong() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [imageFile, setImageFile] = useState<File>();
   const [song, setSong] = useState<Song>();
+  const [imageBLob, serImageBlob] = useState<Blob>();
 
   const variant = useRef<"add" | "edit">("add");
 
@@ -59,6 +60,8 @@ function useAddSong() {
     genres,
     selectGenre,
     selectSinger,
+    imageBLob,
+    serImageBlob,
     resetAddSongContext,
   };
 }

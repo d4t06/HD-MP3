@@ -18,11 +18,11 @@ export default function AddSingerBtn() {
         size={"clear"}
       >
         <PlusIcon className="w-6" />
-        <div className="hidden md:block">Add new playlist</div>
+        <div className="hidden md:block">Add new singer</div>
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <AddSingerModal  close={closeModal} variant="add" />
+        <AddSingerModal closeModal={closeModal} variant="add" />
       </Modal>
     </>
   );

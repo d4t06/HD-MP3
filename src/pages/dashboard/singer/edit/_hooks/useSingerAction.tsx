@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthContext, useToastContext } from "@/stores";
+import { useToastContext } from "@/stores";
 import { deleteFile, myDeleteDoc } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
@@ -12,21 +12,17 @@ export type SingerActionProps = Delete;
 
 export default function useDashboardSingerAction() {
   // stores
-  const { user } = useAuthContext();
+  const { setErrorToast } = useToastContext();
+  const { singer, setSinger } = useSingerContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
 
   // hooks
   const navigate = useNavigate();
-  const { setErrorToast } = useToastContext();
-
-  const { singer } = useSingerContext();
 
   const action = async (props: SingerActionProps) => {
     try {
-      if (!user) return;
-
       switch (props.variant) {
         case "delete": {
           if (!singer) throw new Error("");
@@ -58,5 +54,7 @@ export default function useDashboardSingerAction() {
   return {
     isFetching,
     action,
+    singer,
+    setSinger,
   };
 }

@@ -38,7 +38,7 @@ export default function PrimaryLayout() {
         <Player />
       </div>
 
-      <ToastPortal variant="client" />
+      <ToastPortal />
 
       <UploadSongPortal />
     </>

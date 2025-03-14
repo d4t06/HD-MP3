@@ -26,7 +26,7 @@ export default function ToastItem({ className = "", ...props }: Props | MessageP
     container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center ${theme.content_bg} border border-${theme.alpha}`,
     text: `font-[500] text-sm`,
     open: "opacity-[1] translate-x-0",
-    init: "opacity-0 -translate-x-10",
+    init: "opacity-0 translate-x-10",
   };
 
   const renderIcon = () => {

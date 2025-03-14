@@ -13,11 +13,11 @@ type Edit = {
   variant: "edit";
 };
 
-export type UseAddSingerModalProps = Add | Edit;
+export type UseAddSingerModalProps = (Add | Edit) & { closeModal: () => void };
 
 export default function useAddSingerModal(props: UseAddSingerModalProps) {
   const { setErrorToast, setSuccessToast } = useToastContext();
-  const { setSinger, singer } = useSingerContext();
+  const { singer, setSinger, setSingers } = useSingerContext();
 
   const [singerData, setSingerData] = useState<SingerSchema>();
   const [imageFile, setImageFile] = useState<File>();
@@ -52,12 +52,11 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
 
   const handleSubmit = async () => {
     try {
-      if (!isValidToSubmit) return;
-      if (!singerData) return;
-
-      const newSingerData = { ...singerData };
+      if (!isValidToSubmit || !singerData) return;
 
       setIsFetching(true);
+
+      const newSingerData = { ...singerData };
 
       if (imageFile) {
         const imageBlob = await optimizeImage(imageFile);
@@ -82,30 +81,31 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
 
       switch (props.variant) {
         case "add": {
-          await myAddDoc({
+          const docRef = await myAddDoc({
             collectionName: "Singers",
             data: newSingerData,
           });
 
-          setSuccessToast();
+          const newSinger = { ...singerData, id: docRef.id };
+
+          setSingers((prev) => [newSinger, ...prev]);
+
+          setSuccessToast("Add singer successful");
 
           break;
         }
         case "edit": {
           if (!singer) return;
 
-          //  update current singer
-          if (singer) setSinger({ ...singer, ...newSingerData });
-
-          setImageFile(undefined);
-
           await myUpdateDoc({
-            collectionName: "Songs",
+            collectionName: "Singers",
             id: singer.id,
             data: newSingerData,
           });
 
-          setSuccessToast();
+          setSinger({ ...singer, ...newSingerData });
+
+          setSuccessToast("Edit singer successful");
         }
       }
     } catch (error) {
@@ -113,6 +113,7 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
       setErrorToast();
     } finally {
       setIsFetching(false);
+      props.closeModal();
     }
   };
 

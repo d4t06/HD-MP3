@@ -26,6 +26,8 @@ export default function useAddSongForm() {
     variant,
     song,
     genres,
+    imageBLob,
+    serImageBlob,
     ...rest
   } = useAddSongContext();
 
@@ -69,11 +71,21 @@ export default function useAddSongForm() {
 
     const payload = await parserSong(songFile);
     if (payload) {
-      updateSongData({
+      const data: Partial<SongSchema> = {
         name: payload.name,
         duration: Math.floor(payload.duration),
         size: Math.floor(songFile.size / 1024),
-      });
+        image_url: "",
+      };
+
+      if (payload.image) {
+        const blob = new Blob([payload.image]);
+
+        serImageBlob(blob);
+        data.image_url = URL.createObjectURL(blob);
+      }
+
+      updateSongData(data);
     }
   };
 
@@ -89,12 +101,37 @@ export default function useAddSongForm() {
 
   const handleSubmit = async () => {
     try {
-      if (!isValidToSubmit) return;
-      if (!songData) return;
+      if (!isValidToSubmit || !songData) return;
 
       const newSongData = { ...songData };
 
       setIsFetching(true);
+
+      if (imageFile) {
+        const imageBlob = await optimizeImage(imageFile);
+        if (imageBlob == undefined) return;
+
+        const uploadProcess = uploadBlob({
+          blob: imageBlob,
+          folder: "/images/",
+        });
+
+        const { encode } = await getBlurHashEncode(imageBlob);
+        const { filePath, fileURL } = await uploadProcess;
+
+        if (variant.current === "edit" && song?.image_file_path)
+          deleteFile({
+            filePath: song.image_file_path,
+            msg: ">>> api: Delete image file",
+          });
+
+        const imageData: Partial<SongSchema> = {
+          image_file_path: filePath,
+          image_url: fileURL,
+          blurhash_encode: encode,
+        };
+        Object.assign(newSongData, imageData);
+      }
 
       switch (variant.current) {
         case "add": {
@@ -116,34 +153,6 @@ export default function useAddSongForm() {
           };
 
           Object.assign(newSongData, data);
-
-          if (imageFile) {
-            // const { filePath, fileURL } = await uploadFile({
-            //   file: imageFile,
-            //   folder: "/images/",
-            //   msg: ">>> api: upload image file",
-            //   namePrefix: "image",
-            // });
-
-            const imageBlob = await optimizeImage(imageFile);
-            if (imageBlob == undefined) return;
-
-            const uploadProcess = uploadBlob({
-              blob: imageBlob,
-              folder: "/images/",
-            });
-
-            const { encode } = await getBlurHashEncode(imageBlob);
-            const { filePath, fileURL } = await uploadProcess;
-
-            const imageData: Partial<SongSchema> = {
-              image_file_path: filePath,
-              image_url: fileURL,
-              blurhash_encode: encode,
-            };
-
-            Object.assign(newSongData, imageData);
-          }
 
           await myAddDoc({
             collectionName: "Songs",
@@ -167,41 +176,6 @@ export default function useAddSongForm() {
             };
 
             Object.assign(newSongData, data);
-          }
-
-          if (imageFile) {
-            // const { filePath, fileURL } = await uploadFile({
-            //   file: imageFile,
-            //   folder: "/images/",
-            //   msg: ">>> api: upload image file",
-            //   namePrefix: "image",
-            // });
-
-            const imageBlob = await optimizeImage(imageFile);
-            if (imageBlob == undefined) return;
-
-            const uploadProcess = uploadBlob({
-              blob: imageBlob,
-              folder: "/images/",
-            });
-
-            const { encode } = await getBlurHashEncode(imageBlob);
-            const { filePath, fileURL } = await uploadProcess;
-
-            // delete old image
-            if (song.image_file_path)
-              deleteFile({
-                filePath: song.image_file_path,
-                msg: ">>> api: Delete image file",
-              });
-
-            const imageData: Partial<SongSchema> = {
-              image_file_path: filePath,
-              image_url: fileURL,
-              blurhash_encode: encode,
-            };
-
-            Object.assign(newSongData, imageData);
           }
 
           // reset

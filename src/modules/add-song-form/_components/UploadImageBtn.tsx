@@ -49,10 +49,8 @@ export default function UploadImageBtn() {
 
       {songData?.image_url && (
         <Modal variant="animation" ref={modalRef}>
-          <ModalWrapper className="w-[500px] space-y-2.5">
-            <p>{songData?.image_url}</p>
-            <p>{songData?.blurhash_encode}</p>
-          </ModalWrapper>
+          <p>Url: {songData?.image_url}</p>
+          <p>Hash: {songData?.blurhash_encode}</p>
         </Modal>
       )}
     </>

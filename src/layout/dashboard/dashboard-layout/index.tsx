@@ -30,7 +30,7 @@ export default function DashBoardLayout() {
               <Outlet />
             </div>
           </div>
-          <ToastPortal variant="dashboard" />
+          <ToastPortal className="md:bottom-[40px]" />
         </div>
       </GenreProvider>
     </>

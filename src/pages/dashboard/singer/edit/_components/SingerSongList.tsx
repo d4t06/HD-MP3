@@ -1,19 +1,21 @@
 import { NotFound, Title } from "@/components";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { SongItemSkeleton } from "@/components/skeleton";
+import Skeleton, { SongItemSkeleton } from "@/components/skeleton";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
 import { Link } from "react-router-dom";
+import { useGetSingerContext } from "./GetSingerContext";
 
 export default function SingerSongList() {
-  const { isFetching, songs } = useSingerContext();
+  const { songs } = useSingerContext();
+  const { isFetching } = useGetSingerContext();
 
   return (
     <>
-      <Title title="Popular Songs" />
+      <Title title="Songs" />
       <SongSelectProvider>
         {isFetching ? (
-          SongItemSkeleton
+          <Skeleton className="h-[100px]" />
         ) : (
           <DashboardTable colList={["Name", "Singer"]}>
             {songs.length ? (
