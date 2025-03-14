@@ -76,7 +76,7 @@ export default function AddGenreModal({
     <ModalWrapper className="w-[450px]">
       <ModalHeader close={closeModal} title={title} />
 
-      <div className="space-y-3 pb-[40%] overflow-auto">
+      <div className="space-y-3 overflow-auto">
         <div className={classes.inputGroup}>
           <label className={classes.label}>Customer name:</label>
           <Input

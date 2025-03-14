@@ -15,13 +15,13 @@ export default function HearBtn({ isLiked, playlist, className = "p-1.5" }: Prop
 
   // define style
   const classes = {
-    button: `hover:bg-${theme.alpha} rounded-full`,
+    button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[43px] flex justify-center`,
   };
 
   return (
     <button
       onClick={() => action({ variant: "like", playlist })}
-      className={`${classes.button} ${className}`}
+      className={` ${classes.button} ${className}`}
     >
       {isFetching ? (
         <ArrowPathIcon className="w-5 animate-spin" />

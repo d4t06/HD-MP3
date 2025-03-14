@@ -22,6 +22,7 @@ const isDev: boolean = import.meta.env.DEV;
 
 export const songsCollectionRef = collection(db, "Songs");
 export const playlistCollectionRef = collection(db, "Playlists");
+export const singerCollectionRef = collection(db, "Singers");
 
 export const myDeleteDoc = async ({
   collectionName,

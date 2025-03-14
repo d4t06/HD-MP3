@@ -52,6 +52,8 @@ type Playlist = {
   distributor: string;
   song_ids: string[];
   owner_email: string;
+  singer_map: Record<string, boolean>;
+  singers: Singer[];
   is_official: boolean;
   is_public: boolean;
   updated_at: Timestamp;
@@ -126,8 +128,8 @@ type Singer = {
   id: string;
   name: string;
   image_url: string;
-  image_path: string;
-  birthday: Timestamp;
+  image_file_path: string;
+  blurhash_encode: string;
   description: string;
   created_at: Timestamp;
 };

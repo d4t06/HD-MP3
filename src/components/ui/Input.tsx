@@ -1,10 +1,13 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
+export const inputClasses =
+  "border border-black/10 placeholder:[#888] outline-none py-1.5 px-2";
+
 const inputVariants = cva("w-full", {
   variants: {
     variant: {
-      primary: "border border-black/10 placeholder:[#888] outline-none py-1.5 px-2",
+      primary: inputClasses,
       clear: "",
     },
     rounded: {

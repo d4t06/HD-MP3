@@ -3,9 +3,16 @@ import { Center, Image, NotFound, Title } from "@/components";
 import { DashboardSongItem, Frame, Loading } from "../../_components";
 import DashboardPlaylistCta from "./_components/PlaylistCta";
 import useGetPlaylist from "./_hooks/useGetPlaylist";
+import { useMemo } from "react";
+import { formatTime } from "@/utils/appHelpers";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
+
+  const playlistDuration = useMemo(
+    () => songs.reduce((prev, c) => prev + c.duration, 0),
+    [songs]
+  );
 
   if (isFetching)
     return (
@@ -41,7 +48,17 @@ export default function DashboardPlaylistDetail() {
           <Frame>
             <Title title={playlist.name} />
             <p>{playlist.is_public ? "Public" : "Private"}</p>
-            <p>{songs.length} songs</p>
+            <p>
+              {songs.length} songs - {formatTime(playlistDuration)}
+            </p>
+
+            <p>{playlist.play_count} plays</p>
+
+            <p>
+              {playlist.singers.map((s, i) => (
+                <span key={i}>{(i ? ", " : "") + s.name}</span>
+              ))}
+            </p>
           </Frame>
 
           <Frame className="mt-3">

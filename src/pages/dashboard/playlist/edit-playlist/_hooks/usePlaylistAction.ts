@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 // import { getDoc } from "firebase/firestore";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { optimizeAndGetHashImage } from "@/services/appService";
+import { setCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 
 // type AddPlaylist = {
 //   variant: "add-playlist";
@@ -88,18 +89,52 @@ export default function useDashboardPlaylistActions() {
           setIsFetching(true);
 
           const newPlaylistSongs = [...songs, ...props.songs];
-
           const newSongIds = newPlaylistSongs.map((s) => s.id);
-          const songsData: Partial<Playlist> = {
+
+          const playlistData: Partial<Playlist> = {
             song_ids: newSongIds,
+            singer_map: newPlaylistSongs.reduce(
+              (prev, s) => ({
+                ...prev,
+                ...s.singers.reduce(
+                  (prev, singer) => ({ ...prev, [singer.id]: true }),
+                  {} as Playlist["singer_map"]
+                ),
+              }),
+              {} as Playlist["singer_map"]
+            ),
           };
+
+          if (playlist.singers.length < 5) {
+            const newSingers: Singer[] = [...playlist.singers];
+
+            for (const currentSong of props.songs) {
+              if (newSingers.length == 5) break;
+
+              currentSong.singers.forEach((s) => {
+                const foundedSinger = !!newSingers.find(
+                  (_s) => _s.id === s.id
+                );
+
+                if (!foundedSinger) newSingers.push(s);
+              });
+            }
+
+            const data: Partial<Playlist> = {
+              singers: [...playlist.singers, ...newSingers],
+            };
+
+            Object.assign(playlistData, data);
+          }
 
           await myUpdateDoc({
             collectionName: "Playlists",
             id: playlist.id,
-            data: songsData,
+            data: playlistData,
             msg: ">>> api: update playlist doc",
           });
+
+          updatePlaylistData(playlistData);
 
           setSongs(newPlaylistSongs);
           setSuccessToast(`Songs added`);

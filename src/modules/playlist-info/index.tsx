@@ -2,10 +2,10 @@ import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { PlaylistItem, Skeleton } from "@/components";
-import EditPlaylistBtn from "./_components/EditPlaylistBtn";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
 import { convertTimestampToString } from "@/utils/appHelpers";
+import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
 
 type Props = {
   playlist: Playlist | null;
@@ -31,9 +31,6 @@ export default function PLaylistInfo({
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
-    playlistInfoContainer: `flex flex-col md:justify-between md:ml-3 lg:ml-0 mt-3 md:mt-0 lg:mt-3`,
-    infoTop: "flex flex-col items-center md:items-start lg:items-center space-y-1",
-    ctaContainer: `flex justify-center space-x-3 md:justify-start lg:justify-center mt-3 md:mt-0 lg:mt-3`,
     smallText: "text-sm leading-[1.2] opacity-[.7]",
   };
 
@@ -50,65 +47,55 @@ export default function PLaylistInfo({
           )}
         </div>
 
-        <div className={classes.playlistInfoContainer}>
-          <div className={classes.infoTop}>
-            {showSkeleton ? (
-              <>
-                <Skeleton className="h-[24px] w-[170px]" />
-                <Skeleton className="h-[17px] w-[170px]" />
-                <Skeleton className="h-[17px] w-[60px]" />
-                <Skeleton className="h-[17px] w-[100px]" />
-              </>
-            ) : (
-              playlist && (
-                <>
-                  <p className="text-xl leading-[1.2]">
-                    {playlist.name}
-                    {import.meta.env.DEV && (
-                      <span>
-                        {" "}
-                        ({variant}) public: {playlist.is_public + ""}
-                      </span>
-                    )}
+        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3">
+          {showSkeleton ? (
+            <div className="space-y-1 mb-3">
+              <Skeleton className="h-[24px] w-[170px]" />
+              <Skeleton className="h-[17px] w-[170px]" />
+              <Skeleton className="h-[17px] w-[60px]" />
+              <Skeleton className="h-[17px] w-[100px]" />
+            </div>
+          ) : (
+            playlist && (
+              <div className="space-y-1 mb-3">
+                <p className="text-xl leading-[1.2]">
+                  {playlist.name}
+                  {import.meta.env.DEV && (
+                    <span>
+                      {" "}
+                      ({variant}) public: {playlist.is_public + ""}
+                    </span>
+                  )}
+                </p>
+                <p className={classes.smallText}>{playlist.distributor}</p>
+                {variant === "my-playlist" && (
+                  <p className={classes.smallText}>
+                    {playlist.is_public ? "Public" : "Private"}
                   </p>
-                  <p className={classes.smallText}>{playlist.distributor}</p>
-                  {variant === "my-playlist" && (
-                    <p className={classes.smallText}>
-                      {playlist.is_public ? "Public" : "Private"}
-                    </p>
-                  )}
-                  {variant === "others-playlist" && (
-                    <>
-                      <p className={classes.smallText}>{playlist.play_count} plays</p>
-                      <p className="text-xs leading-[1.2] opacity-[.7]">
-                        Last update:{" "}
-                        {convertTimestampToString(playlist.updated_at, { type: "date" })}
-                      </p>
-                    </>
-                  )}
-                </>
-              )
-            )}
-          </div>
-
-          <div className={`${classes.ctaContainer}`}>
-            {playlist && (
-              <>
-                <PlayPlaylistBtn />
-                {variant === "my-playlist" ? (
-                  <EditPlaylistBtn />
-                ) : (
-                  isLiked !== null && (
-                    <HearBtn
-                      className="w-[43px] flex justify-center"
-                      isLiked={isLiked}
-                      playlist={playlist}
-                    />
-                  )
                 )}
-              </>
-            )}
-          </div>
+                {variant === "others-playlist" && (
+                  <>
+                    <p className={classes.smallText}>{playlist.play_count} plays</p>
+                    <p className={classes.smallText}>
+                      Last update:{" "}
+                      {convertTimestampToString(playlist.updated_at, { type: "date" })}
+                    </p>
+                  </>
+                )}
+              </div>
+            )
+          )}
+
+          {playlist && (
+            <div className="flex flex-col items-center md:flex-row md:mt-auto lg:flex-col">
+              <PlayPlaylistBtn />
+              <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0">
+                <PlaylistMenuBtn variant={variant} />
+
+                {isLiked !== null && <HearBtn isLiked={isLiked} playlist={playlist} />}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

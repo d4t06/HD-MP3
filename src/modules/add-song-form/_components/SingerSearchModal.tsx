@@ -2,7 +2,7 @@ import { Modal, ModalHeader, ModalRef, NotFound } from "@/components";
 import { Button, Frame, Loading, ModalWrapper } from "@/pages/dashboard/_components";
 import Searchbar from "@/pages/dashboard/_components/SearchBar";
 import { useSearchSinger } from "@/pages/dashboard/_hooks";
-import AddSingerModal from "@/pages/dashboard/singer/_components/AddSingerModal";
+import QuickAddSingerModal from "@/pages/dashboard/singer/_components/QuickAddSingerModal";
 
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
@@ -53,9 +53,8 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
       </ModalWrapper>
 
       <Modal ref={modalRef} wrapped={false} variant="animation">
-        <AddSingerModal
+        <QuickAddSingerModal
           afterSubmit={choose}
-          type="add"
           singerName={rest.value}
           closeModal={closeAddSingerModal}
         />

@@ -168,6 +168,19 @@ export async function implementPlaylistQuery(query: Query) {
   } else return [];
 }
 
+export async function implementSingerQuery(query: Query) {
+   const singerSnaps = await getDocs(query);
+ 
+   if (singerSnaps.docs.length) {
+     const result = singerSnaps.docs.map((doc) => {
+       const singer: Singer = { ...(doc.data() as SingerSchema), id: doc.id };
+       return singer;
+     });
+ 
+     return result;
+   } else return [];
+ }
+
 export const optimizeAndGetHashImage = async (imageFile: File) => {
   const imageBlob = await optimizeImage(imageFile);
   if (imageBlob == undefined) throw new Error("File not found");

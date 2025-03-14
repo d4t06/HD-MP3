@@ -1,115 +1,97 @@
-import ModalHeader from "@/components/ModalHeader";
-import Input from "@/components/ui/Input";
-import { useToastContext } from "@/stores";
-import { initSingerObject } from "@/utils/factory";
-import { useState } from "react";
-import { CheckIcon } from "@heroicons/react/24/outline";
-import { useSingerAction } from "../../_hooks";
-import { Button, ModalWrapper } from "../../_components";
+import { ChangeEvent } from "react";
+import { useThemeContext } from "@/stores";
+import { PhotoIcon } from "@heroicons/react/24/outline";
+import { Image, Input, ModalHeader } from "@/components";
+import useAddSingerModal, { UseAddSingerModalProps } from "../_hooks/useAddSingerModal";
+import { inputClasses } from "@/components/ui/Input";
+import { Button } from "../../_components";
 
-type Props = {
-  closeModal: () => void;
-  afterSubmit?: (s: Singer) => void;
+type Props = UseAddSingerModalProps & {
+  close: () => void;
 };
 
-type Edit = {
-  type: "edit";
-  singer: Singer;
-};
+export default function AddSingerModal({ close, ...props }: Props) {
+  const { theme } = useThemeContext();
 
-type Add = {
-  type: "add";
-  singerName?: string;
-};
+  const {
+    setImageFile,
+    singerData,
+    handleSubmit,
+    isFetching,
+    isValidToSubmit,
+    updateSingerData,
+    inputRef,
+  } = useAddSingerModal(props);
 
-const initCustomer = (props: Add | Edit) => {
-  if (props.type === "edit") {
-    const { id, ...rest } = props.singer;
-    return initSingerObject(rest);
-  }
-
-  return initSingerObject({
-    name: props.singerName,
-  });
-};
-
-export default function AddSingerModal({
-  closeModal,
-  afterSubmit,
-  ...props
-}: (Add | Edit) & Props) {
-  const [singer, setSinger] = useState(initCustomer(props));
-
-  const { action, isFetching } = useSingerAction();
-  const { setErrorToast } = useToastContext();
-
-  const ableToSubmit = singer.name;
-
-  const handleInput = (field: keyof typeof singer, value: string) => {
-    setSinger({ ...singer, [field]: value.trim() });
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) setImageFile(e.target.files[0]);
   };
 
-  const handleSubmit = async () => {
-    try {
-      switch (props.type) {
-        case "add":
-          const newSinger = await action({
-            type: "add",
-            data: singer,
-          });
-
-          if (newSinger && afterSubmit) afterSubmit(newSinger);
-          break;
-        case "edit":
-          await action({
-            type: "edit",
-            data: singer,
-            id: props.singer.id,
-          });
-          break;
-      }
-    } catch (error) {
-      console.log(error);
-      setErrorToast();
-    } finally {
-      closeModal();
-    }
-  };
-
-  const classes = {
-    inputGroup: "gap-1",
-    input: "p-2 bg-[#f1f1f1] border border-black/20 rounded-lg",
-    label: "text-[#3f3f3f] text-lg",
-  };
-
-  const title = props.type === "edit" ? `Edit '${props.singer.name}'` : `Add singer`;
+  if (!singerData) return;
 
   return (
-    <ModalWrapper className="w-[450px]">
-      <ModalHeader close={closeModal} title={title} />
+    <div className="w-[700px] max-w-[calc(100vw-40px)]">
+      <ModalHeader
+        close={close}
+        title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
+      />
 
-      <div className="space-y-3 pb-[40%] overflow-auto">
-        <div className={classes.inputGroup}>
-          <label className={classes.label}>Customer name:</label>
+      <div className="flex space-x-3">
+        <div className="space-y-2.5">
+          <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
+            <Image
+              className="object-cover object-center h-full"
+              blurHashEncode={singerData.blurhash_encode}
+              src={singerData.image_url}
+            />
+          </div>
+          <input
+            onChange={handleInputChange}
+            type="file"
+            multiple
+            accept="image/png, image/jpeg"
+            id="image_upload"
+            className="hidden"
+          />
+
+          <div className="space-x-2 flex">
+            <Button className={`${theme.content_bg}`} size={"clear"}>
+              <label htmlFor="image_upload" className={`px-5 py-1 cursor-pointer `}>
+                <PhotoIcon className="w-5" />
+              </label>
+            </Button>
+          </div>
+        </div>
+
+        <div className="flex-grow flex flex-col space-y-2.5">
           <Input
-            value={singer.name}
-            onChange={(e) => handleInput("name", e.target.value)}
-            placeholder="Enter name..."
-            className={classes.input}
+            ref={inputRef}
+            type="text"
+            placeholder="name..."
+            value={singerData.name}
+            onChange={(e) => updateSingerData({ name: e.target.value })}
+          />
+
+          <textarea
+            placeholder="..."
+            className={`${inputClasses} bg-white/10 rounded-md`}
+            value={singerData.description}
+            onChange={(e) => updateSingerData({ description: e.target.value })}
           />
         </div>
       </div>
 
-      <div className="text-center mt-5">
+      <p className="text-right mt-3">
         <Button
-          disabled={!ableToSubmit}
           loading={isFetching}
-          onClick={() => ableToSubmit && handleSubmit()}
+          color="primary"
+          onClick={handleSubmit}
+          disabled={!isValidToSubmit}
+          className={`font-playwriteCU rounded-full`}
         >
-          <CheckIcon className="w-6" />
-          <p className="text-white">Ok</p>
+          Save
         </Button>
-      </div>
-    </ModalWrapper>
+      </p>
+    </div>
   );
 }

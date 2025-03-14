@@ -35,6 +35,8 @@ export const initPlaylistObject = (
     name: "",
     song_ids: [],
     image_url: "",
+    singers: [],
+    singer_map: {},
     play_count: 0,
     blurhash_encode: "",
     is_public: true,

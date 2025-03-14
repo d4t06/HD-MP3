@@ -1,4 +1,13 @@
-import { Home, Search, MyMusic, Unauthorized, Playlist, EditSongLyric, SingerPage } from "../pages";
+import SingerLayout from "@/layout/dashboard/singer-layout";
+import {
+  Home,
+  Search,
+  MyMusic,
+  Unauthorized,
+  Playlist,
+  EditSongLyric,
+  SingerPage,
+} from "../pages";
 import {
   DashboardAddSongPage,
   DashboardEditSongPage,
@@ -9,6 +18,7 @@ import {
   DashboardPage,
   DashboardSongLyricPage,
   DashboardSongPage,
+  DashboardEditSingerPage,
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
@@ -29,7 +39,6 @@ const protectedRouteMap = {
 
 const privateRouteMap = {
   dashboard: "/dashboard",
-  singer: "/dashboard/singer",
   genre: "/dashboard/genre",
   playlist: "/dashboard/playlist",
   song: "/dashboard/song",
@@ -37,6 +46,8 @@ const privateRouteMap = {
   editSong: "/dashboard/song/:songId/edit",
   playlistDetail: "/dashboard/playlist/:id",
   songLyric: "/dashboard/lyric/:songId",
+  singer: "/dashboard/singer",
+  editSinger: "/dashboard/singer/:id",
 };
 
 export type PlaylistParamsType = {
@@ -74,7 +85,17 @@ const privateRoutes = [
   {
     path: privateRouteMap.singer,
     component: DashboardSingerPage,
-    layout: "",
+    layout: SingerLayout,
+  },
+  {
+    path: privateRouteMap.singer,
+    component: DashboardSingerPage,
+    layout: SingerLayout,
+  },
+  {
+    path: privateRouteMap.editSinger,
+    component: DashboardEditSingerPage,
+    layout: SingerLayout,
   },
   {
     path: privateRouteMap.playlistDetail,

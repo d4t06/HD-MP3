@@ -9,6 +9,7 @@ export { default as LinkItem } from "./ui/LinkItem";
 export { default as NotFound } from "./ui/NotFound";
 export { default as Center } from "./ui/Center";
 export { default as Title } from "./ui/Title";
+export { default as Table } from "./ui/Table";
 export { default as ModalHeader } from "./ModalHeader";
 export { default as AudioSetting } from "./AudioSetting";
 export { default as Skeleton } from "./skeleton/index";
