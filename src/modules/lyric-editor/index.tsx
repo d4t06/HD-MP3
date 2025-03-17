@@ -10,13 +10,12 @@ import EditLyricModal from "./_components/EditLyricModal";
 import useLyricEditor from "./_hooks/useLyricEditor";
 
 type Props = {
-  admin?: boolean;
   children?: ReactNode;
 };
 
 export type LyricStatus = "active" | "done" | "coming";
 
-export default function LyricEditor({ admin, children }: Props) {
+export default function LyricEditor({ children }: Props) {
   const { theme } = useThemeContext();
 
   const controlRef = useRef<LyricEditorControlRef>(null);
@@ -25,7 +24,6 @@ export default function LyricEditor({ admin, children }: Props) {
 
   const { isFetching, song, isChanged, isSubmitting } = useLyricEditor({
     audioRef,
-    admin,
   });
 
   const handleSubmit = () => {

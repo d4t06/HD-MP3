@@ -3,13 +3,13 @@ import { useThemeContext } from "@/stores";
 import { getDisable, getHidden } from "@/utils/appHelpers";
 import {
   ArrowPathIcon,
-  ArrowTrendingUpIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SearchbarSongList from "./_components/SearchbarSongList";
+import RecentSearchList from "./_components/RecentSearchList";
 
 export default function Search() {
   const { theme } = useThemeContext();
@@ -29,15 +29,11 @@ export default function Search() {
   } = useSearch();
 
   const classes = {
-    container: `relative h-[40px] flex px-3 ${
-      !isFocus ? theme.text_color : "text-white"
-    }`,
+    container: `relative h-[40px] flex px-3 w-[300px] ${theme.text_color} shadow-md`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
-    focusedContainer: `${theme.modal_bg} rounded-[20px_20px_0_0]`,
-    input: `bg-transparent outline-none ${isFocus ? "placeholder-white" : ""}`,
-    searchResultContainer: `${theme.modal_bg} rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
-    listWrapper:
-      "[&>*]:px-3 *:text-sm [&>*]:py-2 [&>*]:flex [&>*]:items-center  [&>*]:space-x-1 [&>*]:rounded-md hover:[&>*:not(div.absolute)]:bg-white/10",
+    focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
+    input: `bg-transparent outline-none ${isFocus ? "placeholder-white" : ""} w-full`,
+    searchResultContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -86,20 +82,12 @@ export default function Search() {
           className={`${getHidden(!isFocus)} ${classes.searchResultContainer}`}
         >
           {!searchResult.length ? (
-            <>
-              <div className="text-sm font-[500] mb-2">Suggestion keyword</div>
-              <div className={classes.listWrapper}>
-                <Link to="/search?q=nhac-tet">
-                  <ArrowTrendingUpIcon className="w-5" />
-                  <span>Nhac tet</span>
-                </Link>
-              </div>
-            </>
+            <RecentSearchList />
           ) : (
             <>
               <div className="text-sm font-[500] mb-2">Suggestion results</div>
 
-              <div className={`${classes.listWrapper} overflow-auto no-scrollbar`}>
+              <div className={`overflow-auto no-scrollbar`}>
                 <SearchbarSongList songs={searchResult} />
               </div>
             </>

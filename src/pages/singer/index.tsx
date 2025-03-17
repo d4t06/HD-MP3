@@ -10,7 +10,7 @@ function Content() {
 
   return (
     <>
-      <div className="mt-3 space-y-3">
+      <div className="space-y-3">
         <SingerInfo />
         <SingerSongList />
         <SingerPlaylist />

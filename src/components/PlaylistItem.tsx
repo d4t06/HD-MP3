@@ -3,6 +3,7 @@ import { FC } from "react";
 import { Link } from "react-router-dom";
 import Image from "./ui/Image";
 import playingIcon from "../assets/icon-playing.gif";
+import { Center, Square } from ".";
 
 interface Props {
   data: Playlist;
@@ -13,28 +14,22 @@ interface Props {
 }
 
 const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
-  const classes = {
-    imageContainer: `absolute inset-0 rounded-lg overflow-hidden ${
-      active && "flex items-center justify-center"
-    } `,
-  };
-
   const content = (
-    <div className="pt-[100%] relative">
-      {
-        <div className={classes.imageContainer}>
-          <Image
-            className={`hover:scale-[1.05] transition-transform duration-300 object-center object-cover ${
-              active ? "brightness-[90%]" : ""
-            }`}
-            src={data.image_url}
-            blurHashEncode={data.blurhash_encode}
-          />
+    <Square>
+      <Image
+        className={`hover:scale-[1.05] transition-transform object-cover ${
+          active ? "brightness-[90%]" : ""
+        }`}
+        src={data.image_url}
+        blurHashEncode={data.blurhash_encode}
+      />
 
-          {active && <img src={playingIcon} alt="" className=" absolute w-[30px]" />}
-        </div>
-      }
-    </div>
+      {active && (
+        <Center>
+          <img src={playingIcon} alt="" className="w-[30px]" />
+        </Center>
+      )}
+    </Square>
   );
 
   if (inDetail) return content;
@@ -46,7 +41,9 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
       </Link>
 
       <p className="text-lg font-[500] leading-[1.2] line-clamp-1 mt-1.5">{data.name}</p>
-      <p className="text-sm opacity-[.7] leading-[1.2] line-clamp-1">{data.distributor}</p>
+      <p className="text-sm opacity-[.7] leading-[1.2] line-clamp-1">
+        {data.distributor}
+      </p>
     </>
   );
 };

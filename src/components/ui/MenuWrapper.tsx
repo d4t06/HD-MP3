@@ -6,11 +6,11 @@ type Props = {
   children: ReactNode;
 };
 
-export function MenuWrapper({ children, className = "py-2" }: Props) {
+export function MenuWrapper({ children, className = "" }: Props) {
   const { theme } = useThemeContext();
 
   return (
-    <div className={`rounded-md ${theme.modal_bg} text-white ${className}`}>
+    <div className={`rounded-md py-2 ${theme.modal_bg} text-white ${className}`}>
       {children}
     </div>
   );

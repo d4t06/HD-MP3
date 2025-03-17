@@ -36,7 +36,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
     <>
       <SongSelectProvider>
         {!!playlistSongs.length && (
-          <CheckedBar variant={variant}>
+          <CheckedBar variant={variant === "others-playlist" ? "system" : "own-playlist"}>
             <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
           </CheckedBar>
         )}

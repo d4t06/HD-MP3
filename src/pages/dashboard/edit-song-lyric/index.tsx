@@ -4,7 +4,7 @@ import EditLyricContextProvider from "@/stores/EditLyricContext";
 export default function DashboardEditSongLyric() {
   return (
     <EditLyricContextProvider>
-      <LyricEditor admin></LyricEditor>
+      <LyricEditor></LyricEditor>
     </EditLyricContextProvider>
   );
 }

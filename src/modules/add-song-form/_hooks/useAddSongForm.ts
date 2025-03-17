@@ -3,16 +3,17 @@ import {
   deleteFile,
   myAddDoc,
   myUpdateDoc,
-  uploadBlob,
   uploadFile,
 } from "@/services/firebaseService";
-import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
 import { useToastContext } from "@/stores";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { parserSong } from "@/utils/parseSong";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
+import AddSongForm from "..";
+import { initSongObject } from "@/utils/factory";
+import { optimizeAndGetHashImage } from "@/services/appService";
 
-export default function useAddSongForm() {
+export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>) {
   const { setErrorToast, setSuccessToast } = useToastContext();
   const {
     songFile,
@@ -20,14 +21,16 @@ export default function useAddSongForm() {
     setSong,
     setImageFile,
     updateSongData,
+    setSongData,
     resetAddSongContext,
     songData,
     singers,
-    variant,
     song,
     genres,
-    imageBLob,
-    serImageBlob,
+    setGenres,
+    setSingers,
+    imageBlob,
+    setImageBlob,
     ...rest
   } = useAddSongContext();
 
@@ -36,7 +39,7 @@ export default function useAddSongForm() {
   const modalRef = useRef<ModalRef>(null);
 
   const isChanged = useMemo(() => {
-    if (variant.current === "add") return true;
+    if (props.variant === "add") return true;
     if (!song || !songData) return false;
 
     return (
@@ -52,14 +55,33 @@ export default function useAddSongForm() {
     const isValidSongData =
       !!songData?.name && !!singers.length && !!genres.length && isChanged;
 
-    return variant.current === "add" ? isValidSongData : isValidSongData || isChangeImage;
+    return props.variant === "add" ? isValidSongData : isValidSongData || isChangeImage;
   }, [isChangeImage, isChanged, singers, genres, songData]);
 
-  const handleCloseModalAfterFinished = () => {
-    switch (variant.current) {
+  const initSongData = () => {
+    switch (props.variant) {
       case "add":
-        setTimeout(() => resetAddSongContext(), 500);
-        () => modalRef.current?.close();
+        return initSongObject({
+          owner_email: props.ownerEmail,
+          distributor: props.distributor,
+          is_official: true,
+        });
+      case "edit":
+        // keep created_at, update updated_at field
+        const { id, updated_at, ...rest } = props.song;
+
+        setSingers(rest.singers);
+        setGenres(rest.genres);
+
+        return initSongObject(rest);
+    }
+  };
+
+  const handleCloseModalAfterFinished = () => {
+    switch (props.variant) {
+      case "add":
+        modalRef.current?.close();
+        setTimeout(() => resetAddSongContext(initSongData()), 500);
         break;
       case "edit":
         modalRef.current?.close();
@@ -81,7 +103,7 @@ export default function useAddSongForm() {
       if (payload.image) {
         const blob = new Blob([payload.image]);
 
-        serImageBlob(blob);
+        setImageBlob(blob);
         data.image_url = URL.createObjectURL(blob);
       }
 
@@ -107,33 +129,21 @@ export default function useAddSongForm() {
 
       setIsFetching(true);
 
-      if (imageFile) {
-        const imageBlob = await optimizeImage(imageFile);
-        if (imageBlob == undefined) return;
-
-        const uploadProcess = uploadBlob({
+      if (imageFile || imageBlob) {
+        const songImageData = await optimizeAndGetHashImage({
+          imageFile,
           blob: imageBlob,
-          folder: "/images/",
         });
 
-        const { encode } = await getBlurHashEncode(imageBlob);
-        const { filePath, fileURL } = await uploadProcess;
-
-        if (variant.current === "edit" && song?.image_file_path)
+        if (props.variant === "edit" && song?.image_file_path)
           deleteFile({
             filePath: song.image_file_path,
             msg: ">>> api: Delete image file",
           });
-
-        const imageData: Partial<SongSchema> = {
-          image_file_path: filePath,
-          image_url: fileURL,
-          blurhash_encode: encode,
-        };
-        Object.assign(newSongData, imageData);
+        Object.assign(newSongData, songImageData);
       }
 
-      switch (variant.current) {
+      switch (props.variant) {
         case "add": {
           if (!songFile) return;
 
@@ -199,6 +209,10 @@ export default function useAddSongForm() {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    setSongData(initSongData());
+  }, []);
 
   useEffect(() => {
     if (!songFile) return;

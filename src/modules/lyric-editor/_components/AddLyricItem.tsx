@@ -28,12 +28,12 @@ function AddLyricItem({ lyric, openModal, seek, theme, isLast }: Props) {
           </button>
         </p>
 
-        {isLast && (
+        {isLast && lyric.end !== lyric.start && (
           <button
-            className={`${theme.content_hover_text}`}
-            onClick={() => seek(lyric.start)}
+            className={`${theme.content_hover_text} pt-[10px]`}
+            onClick={() => seek(lyric.end)}
           >
-            {formatTime(lyric.end)}
+            {formatTime(+lyric.end)}
           </button>
         )}
       </div>

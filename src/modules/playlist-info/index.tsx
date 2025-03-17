@@ -25,7 +25,7 @@ export default function PLaylistInfo({
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const isActivePlaylist = playlist
-    ? (playStatus === "playing" || playStatus === "waiting") &&
+    ? (playStatus === "playing" || playStatus === "paused") &&
       currentSongData?.song.queue_id.includes(`${playlist.id}`)
     : false;
 
@@ -47,7 +47,7 @@ export default function PLaylistInfo({
           )}
         </div>
 
-        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3">
+        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:text-center">
           {showSkeleton ? (
             <div className="space-y-1 mb-3">
               <Skeleton className="h-[24px] w-[170px]" />

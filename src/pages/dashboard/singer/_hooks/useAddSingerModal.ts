@@ -1,5 +1,5 @@
-import { myAddDoc, myUpdateDoc, uploadBlob } from "@/services/firebaseService";
-import { getBlurHashEncode, optimizeImage } from "@/services/imageService";
+import { optimizeAndGetHashImage } from "@/services/appService";
+import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import { initSingerObject } from "@/utils/factory";
@@ -59,22 +59,9 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
       const newSingerData = { ...singerData };
 
       if (imageFile) {
-        const imageBlob = await optimizeImage(imageFile);
-        if (imageBlob == undefined) return;
-
-        const uploadProcess = uploadBlob({
-          blob: imageBlob,
-          folder: "/images/",
+        const imageData = await optimizeAndGetHashImage({
+          imageFile,
         });
-
-        const { encode } = await getBlurHashEncode(imageBlob);
-        const { filePath, fileURL } = await uploadProcess;
-
-        const imageData: Partial<SongSchema> = {
-          image_file_path: filePath,
-          image_url: fileURL,
-          blurhash_encode: encode,
-        };
 
         Object.assign(newSingerData, imageData);
       }

@@ -1,14 +1,8 @@
-import { devPlaylists } from "@/constants/playlist";
-import { devSongs } from "@/constants/songs";
-import { sleep } from "@/utils/appHelpers";
+import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
+import { playlistCollectionRef, songsCollectionRef } from "@/services/firebaseService";
+import { query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-
-// import { devSongs } from "@/constants/songs";
-// import { devPlaylists } from "@/constants/playlist";
-// import { collection, getDocs, query, where } from "firebase/firestore";
-// import { db } from "@/firebase";
-// import { nanoid } from "nanoid";
 
 export type SearchResultTab = "Song" | "Playlist";
 
@@ -22,54 +16,44 @@ export default function useGetSearchResult() {
 
   const [result, setResult] = useState<SearchResult>({ songs: [], playlists: [] });
 
+  const updateResult = (data: Partial<SearchResult>) => {
+    setResult((prev) => ({ ...prev, ...data }));
+  };
+
   const getResult = async () => {
     try {
-      if (!searchParams[0].get("q")) return;
+      const key = searchParams[0].get("q");
 
-      await sleep(1000);
-
-      // const songsCollectionRef = collection(db, "songs");
-      // const playlistCollectionRef = collection(db, "playlist");
-
-      // let searchQuery;
+      if (!key) return;
 
       switch (tab) {
         case "Song": {
-          // searchQuery = query(
-          //   songsCollectionRef,
-          //   where("name", "==", searchParams[0].get("q")),
-          // );
+          const searchQuery = query(
+            songsCollectionRef,
+            where("is_official", "==", true),
+            where("name", ">=", key),
+            where("name", "<=", key + "\uf8ff"),
+          );
 
-          // const songsSnap = await getDocs(searchQuery);
+          const result = await implementSongQuery(searchQuery);
 
-          // if (songsSnap.docs) {
-          //   const songs = songsSnap.docs.map(
-          //     (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
-          //   );
-
-          //   setResult({ songs, playlists: [] });
-          // }
-
-          setResult({ songs: devSongs, playlists: [] });
+          updateResult({ songs: result });
 
           break;
         }
         case "Playlist": {
-          // searchQuery = query(
-          //   playlistCollectionRef,
-          //   where("name", "==", searchParams[0].get("q")),
-          // );
+          console.log("gor here");
 
-          // const playlistSnap = await getDocs(searchQuery);
+          const searchQuery = query(
+            playlistCollectionRef,
+            where("is_public", "==", true),
+            where("name", ">=", key),
+            where("name", "<=", key + "\uf8ff"),
+          );
 
-          // if (playlistSnap.docs) {
-          //   const playlists = playlistSnap.docs.map((doc) => doc.data() as Playlist);
+          const result = await implementPlaylistQuery(searchQuery);
 
-          //   setResult({ playlists, songs: [] });
-          // }
-
-          // if shouldUpdateResult.current;
-          setResult({ songs: [], playlists: devPlaylists });
+          updateResult({ playlists: result });
 
           break;
         }

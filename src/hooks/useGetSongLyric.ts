@@ -26,12 +26,11 @@ export default function useSongLyric({ active }: { active: boolean }) {
 
       const lyricSnap = await myGetDoc({
         collectionName: "Lyrics",
-        id: currentSongData.song.id,
-        msg: ">>> api: get lyric doc",
+        id: currentSongData.song.is_has_lyric,
       });
 
       if (lyricSnap.exists()) {
-        const lyricData = lyricSnap.data() as RawSongLyric;
+        const lyricData = lyricSnap.data() as SongLyricSchema;
 
         if (typeof lyricData.real_time === "string")
           setSongLyrics(JSON.parse(lyricData.real_time || "[]"));

@@ -78,7 +78,7 @@ export default function AddGenreModal({
 
       <div className="space-y-3 overflow-auto">
         <div className={classes.inputGroup}>
-          <label className={classes.label}>Customer name:</label>
+          <label className={classes.label}>Genre name:</label>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}

@@ -40,8 +40,8 @@ export const PlaylistSkeleton = [...Array(2).keys()].map((index) => {
   return (
     <div key={index} className="w-1/4 p-[8px] max-[549px]:w-1/2">
       <Skeleton className="pt-[100%] rounded-lg" />
-      <Skeleton className="h-[21px] mt-1.5 w-full" />
-      <Skeleton className="h-[13px] mt-1 w-full" />
+      <Skeleton className="h-[21px] mt-1.5 w-3/4" />
+      <Skeleton className="h-[13px] mt-1 w-3/4" />
     </div>
   );
 });

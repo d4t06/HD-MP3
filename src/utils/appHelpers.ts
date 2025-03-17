@@ -9,13 +9,11 @@ export const request = axios.create({
 
 export const convertTimestampToString = (
   timeStamp: Timestamp,
-  opts?: { type: "date" | "time" }
+  opts?: { type: "date" | "time" },
 ) => {
-  if (opts?.type === 'date')
-  return new Date(timeStamp.toDate()).toLocaleDateString();
+  if (opts?.type === "date") return new Date(timeStamp.toDate()).toLocaleDateString();
 
   return new Date(timeStamp.toDate()).toLocaleString();
-
 };
 
 export const getLocalStorage = () =>
@@ -65,3 +63,4 @@ export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]
 
 export const getDisable = (v: boolean) => (v ? "disable" : "");
 export const getHidden = (v: boolean) => (v ? "hidden" : "");
+export const getClassses = (v: boolean, classes?: string) => (v ? classes : "");

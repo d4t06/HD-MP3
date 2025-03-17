@@ -1,15 +1,17 @@
-import { serverTimestamp, Timestamp } from "firebase/firestore";
+import { serverTimestamp } from "firebase/firestore";
 
 export const initSongObject = (
-  data: Partial<SongSchema> & { owner_email: string; distributor: string }
+  data: Partial<SongSchema> & { owner_email: string; distributor: string },
 ) => {
   const song: SongSchema = {
     name: "",
     image_url: "",
     song_url: "",
+    beat_url: "",
+    beat_file_path: "",
     duration: 0,
     play_count: 0,
-    is_has_lyric: false,
+    is_has_lyric: "",
     image_file_path: "",
     song_file_path: "",
     blurhash_encode: "",
@@ -29,7 +31,7 @@ export const initSongObject = (
 };
 
 export const initPlaylistObject = (
-  data: Partial<PlaylistSchema> & { owner_email: string; distributor: string }
+  data: Partial<PlaylistSchema> & { owner_email: string; distributor: string },
 ) => {
   const playlist: PlaylistSchema = {
     name: "",

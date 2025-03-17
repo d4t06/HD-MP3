@@ -1,11 +1,9 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
-// import { collection, getDocs, query, where } from "firebase/firestore";
-// import { db } from "@/firebase";
-// import { nanoid } from "nanoid";
-import { devSongs } from "@/constants/songs";
-import { sleep } from "@/utils/appHelpers";
 import { useSearchParams } from "react-router-dom";
 import { useDebounce } from "@/hooks";
+import { query, where } from "firebase/firestore";
+import { songsCollectionRef } from "@/services/firebaseService";
+import { implementSongQuery } from "@/services/appService";
 
 export default function useSearch() {
   const [value, setValue] = useState("");
@@ -30,10 +28,19 @@ export default function useSearch() {
 
     const node = e.target as Node;
 
+    const modalContents = document.querySelectorAll(".modal-content");
+
+    let isClickedSongItem = false;
+
+    modalContents.forEach((modalContent) =>
+      modalContent.contains(node) ? (isClickedSongItem = true) : {},
+    );
+
     if (
       formRef.current &&
       searchResultRef.current &&
       (formRef.current.contains(node) ||
+        isClickedSongItem ||
         searchResultRef.current.contains(node) ||
         popupContent?.contains(node))
     )
@@ -54,22 +61,16 @@ export default function useSearch() {
       try {
         setIsFetching(true);
 
-        await sleep(1000);
-        SetSearchResult(devSongs);
+        const searchQuery = query(
+          songsCollectionRef,
+          where("is_official", "==", true),
+          where("name", ">=", value),
+          where("name", "<=", value + "\uf8ff"),
+        );
 
-        // const songLstCollectionRef = collection(db, "playlist");
+        const result = await implementSongQuery(searchQuery);
 
-        // const querySearchSong = query(songLstCollectionRef, where("by", "==", "admin"));
-
-        // const songsSnap = await getDocs(querySearchSong);
-
-        // if (songsSnap.docs) {
-        //   const songs = songsSnap.docs.map(
-        //     (doc) => ({ ...doc.data(), song_in: "", queue_id: nanoid(4) }) as Song,
-        //   );
-
-        //   SetSearchResult(songs);
-        // }
+        SetSearchResult(result);
       } catch (error) {
         console.log(error);
       } finally {

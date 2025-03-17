@@ -10,9 +10,16 @@ type Props = {
   setSong: (song: Song) => void;
   getActive?: (song: Song, currentSong: Song) => boolean;
   songVariant?: ComponentProps<typeof SongItem>["variant"];
+  isHasCheckBox?: boolean;
 };
 
-export default function SongList({ songs, setSong, getActive, songVariant }: Props) {
+export default function SongList({
+  songs,
+  setSong,
+  getActive,
+  songVariant,
+  isHasCheckBox = true,
+}: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
@@ -34,7 +41,7 @@ export default function SongList({ songs, setSong, getActive, songVariant }: Pro
         }
         onClick={() => setSong(song)}
         variant={songVariant || (isOwnSong ? "own-song" : "system-song")}
-        isHasCheckBox
+        isHasCheckBox={isHasCheckBox}
         isLiked={user ? user.liked_song_ids.includes(song.id) : null}
         song={song}
         index={index}

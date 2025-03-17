@@ -1,16 +1,11 @@
 import { useToastContext } from "@/stores";
-import { RefObject, useState } from "react";
+import { useState } from "react";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
-import { ModalRef } from "@/components/Modal";
 import { useDispatch } from "react-redux";
 import { addSongToQueue } from "@/stores/redux/songQueueSlice";
 // import usePlaylistAction from "@/hooks/usePlaylistAction";
 
-type Props = {
-  modalRef: RefObject<ModalRef>;
-};
-
-export default function useCheckBar(_props: Props) {
+export default function useCheckBar() {
   const dispatch = useDispatch();
 
   const { selectedSongs, resetSelect } = useSongSelectContext();

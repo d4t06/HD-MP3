@@ -5,7 +5,7 @@ import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStat
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 type PlayBtnProps = {
@@ -52,6 +52,10 @@ export default function PlayPlaylistBtn() {
         return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
     }
   };
+
+  useEffect(() => {
+    dispatch(setPlayStatus({ triggerPlayStatus: playStatus }));
+  }, [playStatus]);
 
   if (!currentPlaylist) return <></>;
 

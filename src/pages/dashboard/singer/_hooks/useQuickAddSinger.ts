@@ -1,5 +1,6 @@
 import { myAddDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
+import { getDoc } from "firebase/firestore";
 import { useState } from "react";
 
 export default function useQuickAddSinger() {
@@ -20,7 +21,12 @@ export default function useQuickAddSinger() {
         data: data,
       });
 
-      const newSinger: Singer = { ...data, id: docRef.id };
+      const newSingerSnap = await getDoc(docRef);
+
+      const newSinger: Singer = {
+        ...(newSingerSnap.data() as SingerSchema),
+        id: docRef.id,
+      };
 
       setIsFetching(false);
 
@@ -29,8 +35,8 @@ export default function useQuickAddSinger() {
       return newSinger;
     } catch (error) {
       console.log({ error });
-    } finally {
       setErrorToast();
+    } finally {
       setIsFetching(false);
     }
   };

@@ -1,5 +1,5 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { ReactNode, useState } from "react";
+import { ComponentProps, ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 
 import useSongQueueAction from "@/hooks/useSongQueueAction";
@@ -17,6 +17,7 @@ import QueueSongMenu from "./_components/QueueSongMenu";
 import OwnSongMenu from "./_components/OwnSongMenu";
 import SystemSongMenu from "./_components/SystemSongMenu";
 import OwnPlaylistMenu from "./_components/OwnPlaylistMenu";
+import SongItem from "../song-item";
 
 function SongInfo({ song }: { song: Song }) {
   return (
@@ -41,7 +42,7 @@ export function SongMenuContent({ children, song }: { children: ReactNode; song:
   const { theme } = useThemeContext();
 
   return (
-    <MyPopupContent appendTo="portal" className="w-[200px]">
+    <MyPopupContent appendTo="portal" className="w-[240px]">
       <PopupWrapper className={`py-2`} p={"clear"} theme={theme}>
         <SongInfo song={song} />
         <MenuList>{children}</MenuList>
@@ -55,7 +56,7 @@ export function SongMenuContent({ children, song }: { children: ReactNode; song:
 type Props = {
   song: Song;
   index: number;
-  variant: "queue-song" | "own-song" | "system-song" | "own-playlist";
+  variant: ComponentProps<typeof SongItem>["variant"];
 };
 
 function SongMenu({ song, index, variant }: Props) {
@@ -89,7 +90,7 @@ function SongMenu({ song, index, variant }: Props) {
   };
 
   const classes = {
-    button: `${theme.content_hover_bg} p-2 rounded-full`,
+    button: `hover:bg-${theme.alpha} p-2 rounded-full`,
   };
 
   const getTriggerClass = () => {
@@ -103,6 +104,7 @@ function SongMenu({ song, index, variant }: Props) {
         <MyPopupTrigger setIsOpenParent={setIsOpenPopup}>
           <MyTooltip isWrapped content="Menu">
             <button
+              type="button"
               className={`block group-hover/main:block ${
                 classes.button
               } ${getTriggerClass()}`}
@@ -112,13 +114,15 @@ function SongMenu({ song, index, variant }: Props) {
           </MyTooltip>
         </MyPopupTrigger>
 
-        <span
-          className={`text-sm font-[500] hidden p-2 group-hover/main:hidden ${
-            isOpenPopup || variant === "queue-song" ? "hidden" : "md:block"
-          }`}
-        >
-          {formatTime(song.duration)}
-        </span>
+        {variant !== "queue-song" && (
+          <span
+            className={`text-sm font-[500] hidden p-2 group-hover/main:hidden ${
+              isOpenPopup ? "hidden" : "md:block"
+            }`}
+          >
+            {formatTime(song.duration)}
+          </span>
+        )}
 
         {renderMenu()}
       </MyPopup>

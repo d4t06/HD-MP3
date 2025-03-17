@@ -13,7 +13,6 @@ export { default as Table } from "./ui/Table";
 export { default as ModalHeader } from "./ModalHeader";
 export { default as AudioSetting } from "./AudioSetting";
 export { default as Skeleton } from "./skeleton/index";
-export { default as LyricItem } from "./child/LyricItem";
 export { default as Switch } from "./ui/Switch";
 export { default as Modal, type ModalRef } from "./Modal";
 export { default as PlaylistItem } from "./PlaylistItem";

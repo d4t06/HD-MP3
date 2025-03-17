@@ -1,4 +1,4 @@
-import { ElementRef, useEffect, useRef } from "react";
+import { ComponentType, ElementRef, useEffect, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import { initSongObject } from "@/utils/factory";
 import UploadSongBtn from "./_components/UploadSongBtn";
@@ -24,45 +24,19 @@ type Edit = {
 
 type Props = Add | Edit;
 
-export default function AddSongForm(props: Add | Edit) {
+export default function AddSongForm(props: Props) {
   const {
     isFetching,
     handleSubmit,
-    setSongData,
     updateSongData,
     songData,
     isValidToSubmit,
     songFile,
-    setGenres,
-    setSingers,
     modalRef,
     handleCloseModalAfterFinished,
-  } = useAddSongForm();
+  } = useAddSongForm(props);
 
   const audioRef = useRef<ElementRef<"audio">>(null);
-
-  const initSongData = (props: Props) => {
-    switch (props.variant) {
-      case "add":
-        return initSongObject({
-          owner_email: props.ownerEmail,
-          distributor: props.distributor,
-          is_official: true,
-        });
-      case "edit":
-        // keep created_at, update updated_at field
-        const { id, updated_at, ...rest } = props.song;
-
-        setSingers(rest.singers);
-        setGenres(rest.genres);
-
-        return initSongObject(rest);
-    }
-  };
-
-  useEffect(() => {
-    setSongData(initSongData(props));
-  }, []);
 
   if (props.variant === "add" && !songFile)
     return (

@@ -11,6 +11,7 @@ import { parserSong } from "@/utils/parseSong";
 import { initSingerObject, initSongObject } from "@/utils/factory";
 import { getDoc } from "firebase/firestore";
 import { nanoid } from "nanoid";
+import { optimizeAndGetHashImage } from "@/services/appService";
 
 // event listener
 // await promise
@@ -20,12 +21,11 @@ export default function useUploadSongs() {
   const { user, setUser } = useAuthContext();
   const { isDev } = useThemeContext();
 
-  const { uploadedSongs, setUploadedSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } = useSongContext();
   const { setIsUploading, isUploading, setUploadingSongs, resetUploadContext } =
     useUploadContext();
 
   // state
-  const fileIndexesNeeded = useRef<number[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -37,7 +37,6 @@ export default function useUploadSongs() {
     const inputEle = inputRef.current as HTMLInputElement;
     if (inputEle) {
       inputEle.value = "";
-      fileIndexesNeeded.current = [];
     }
 
     resetUploadContext();
@@ -53,6 +52,9 @@ export default function useUploadSongs() {
   const handleInputChange = async (e: ChangeEvent<HTMLInputElement>) => {
     try {
       if (!user) return;
+
+      const fileIndexesNeeded: number[] = [];
+      const imageBlobList: Blob[] = [];
 
       const fileLists = e.target.files as FileList;
       if (!fileLists.length) return;
@@ -71,23 +73,36 @@ export default function useUploadSongs() {
       // start loop create uploading songs
       for (let i = 0; i <= fileLists.length - 1; i++) {
         const songFile = fileLists[i];
-        const songData = await parserSong(songFile);
+        const result = await parserSong(songFile);
+        if (!result) continue;
 
-        if (!songData) continue;
+        const singerData: Partial<SingerSchema> = {
+          name: result.singer,
+          created_at: "",
+        };
 
         const songSinger: Singer = {
-          ...initSingerObject({
-            name: songData.singer,
-          }),
+          ...initSingerObject(singerData),
           id: "",
         };
 
+        const songData: Partial<SongSchema> = {
+          name: result.name,
+          singers: [songSinger],
+          duration: Math.floor(result.duration),
+          size: Math.floor(songFile.size / 1024),
+        };
+
+        const imageBlob = result.image ? new Blob([result.image]) : null;
+
+        if (imageBlob) {
+          imageBlobList.push(imageBlob);
+          songData.image_url = URL.createObjectURL(imageBlob);
+        }
+
         // init song data
         const songFileObject: SongSchema = initSongObject({
-          name: songData.name,
-          singers: [songSinger],
-          duration: Math.floor(songData.duration),
-          size: Math.floor(songFile.size / 1024),
+          ...songData,
           owner_email: user.email,
           distributor: user.display_name,
         });
@@ -100,13 +115,13 @@ export default function useUploadSongs() {
         }
 
         processSongsList.push(songFileObject);
-        fileIndexesNeeded.current = [...fileIndexesNeeded.current, i];
+        fileIndexesNeeded.push(i);
       }
 
       //end loop create uploading songs
 
       // check limit
-      if (uploadedSongs.length + fileIndexesNeeded.current.length > 5)
+      if (uploadedSongs.length + fileIndexesNeeded.length > 5)
         return setErrorMessage("You have reach the upload limit");
 
       // case all song are duplicate
@@ -120,8 +135,9 @@ export default function useUploadSongs() {
 
       setIsUploading(true);
       //   start loop upload songs
-      for (let index = 0; index < fileIndexesNeeded.current.length; index++) {
-        const fileIndex = fileIndexesNeeded.current[index];
+      for (let index = 0; index < fileIndexesNeeded.length; index++) {
+        const fileIndex = fileIndexesNeeded[index];
+        const blob = imageBlobList[index];
 
         const targetSongData = { ...processSongsList[index] };
 
@@ -131,6 +147,14 @@ export default function useUploadSongs() {
           namePrefix: user.email,
           msg: ">>> api: upload song file",
         });
+
+        if (blob) {
+          const newSongData = await optimizeAndGetHashImage({
+            blob,
+          });
+
+          Object.assign(targetSongData, newSongData);
+        }
 
         Object.assign(targetSongData, {
           song_file_path: filePath,
@@ -172,6 +196,8 @@ export default function useUploadSongs() {
       await myUpdateDoc({ collectionName: "Users", data: newUserData, id: user.email });
 
       setUser({ ...user, ...newUserData });
+
+      shouldFetchFavoriteSongs.current = true;
 
       setSuccessToast(`${processSongsList.length} songs uploaded`);
 

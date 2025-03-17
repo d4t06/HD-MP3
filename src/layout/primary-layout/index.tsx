@@ -14,7 +14,7 @@ export default function PrimaryLayout() {
 
   const classes = {
     page: `md:flex md:h-screen md:overflow-hidden ${theme.container} ${theme.text_color}`,
-    container: `h-full md:w-full px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:pb-[90px] md:overflow-auto`,
+    container: `h-full md:w-full px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:overflow-auto`,
   };
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function PrimaryLayout() {
         <Player />
       </div>
 
-      <ToastPortal />
+      <ToastPortal className="left-[20px] right-[unset]" />
 
       <UploadSongPortal />
     </>

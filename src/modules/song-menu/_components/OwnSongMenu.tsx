@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { SongMenuContent } from "..";
 import useSongItemAction from "@/modules/song-item/_hooks/useSongItemAction";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal";
+import AddToNewPlaylistMenuItem, { AddToPlaylistMenuModal } from "./AddToPlaylistMenuItem";
 
 type Props = {
   song: Song;
@@ -26,6 +27,7 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
+  const addToPlaylistModalRef = useRef<ModalRef>(null);
 
   const { action, loading } = useSongItemAction();
 
@@ -77,11 +79,8 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
           <PlusIcon className="w-5" />
           <span>Add to queue</span>
         </button>
-
-        <button onClick={() => handleOpenModal("add-to-playlist")}>
-          <PlusIcon className="w-5" />
-          <span>Add to playlist</span>
-        </button>
+        
+        <AddToNewPlaylistMenuItem modalRef={addToPlaylistModalRef} />
 
         <button onClick={() => handleOpenModal("edit")}>
           <AdjustmentsHorizontalIcon className="w-5" />
@@ -105,6 +104,8 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
       <Modal variant="animation" ref={modalRef}>
         {renderModal()}
       </Modal>
+
+      <AddToPlaylistMenuModal song={song} modalRef={addToPlaylistModalRef} />
     </>
   );
 }

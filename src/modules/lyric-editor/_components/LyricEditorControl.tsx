@@ -1,36 +1,20 @@
 import { useThemeContext } from "@/stores";
-import {
-  ElementRef,
-  Ref,
-  forwardRef,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from "react";
+import { ElementRef, Ref, forwardRef, useImperativeHandle, useRef } from "react";
 import {
   ArrowPathIcon,
   BackwardIcon,
-  DocumentTextIcon,
   ExclamationCircleIcon,
   ForwardIcon,
   MinusIcon,
   PauseIcon,
   PlayIcon,
   PlusIcon,
-  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
-import {
-  AudioSetting,
-  Button,
-  InputModal,
-  Modal,
-  ModalHeader,
-  ModalRef,
-} from "@/components";
+import { AudioSetting, Button } from "@/components";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
-import tutorial from "@/assets/tutorial/tutorial1.png";
 import { useLyricEditorAction } from "../_hooks/useLyricEditorAction";
+import MenuBtn from "./MenuBtn";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -42,15 +26,10 @@ export type LyricEditorControlRef = {
   submit: () => Promise<void>;
 };
 
-type Modal = "base-lyric" | "tutorial";
-
 function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>) {
   const { theme } = useThemeContext();
-  const { baseLyric, setBaseLyric, setIsChanged, song, lyrics } = useEditLyricContext();
+  const { song, lyrics } = useEditLyricContext();
 
-  const [modal, setModal] = useState<Modal | "">("");
-
-  const modalRef = useRef<ModalRef>(null);
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
   const { backward, forward, handlePlayPause, pause, seek, status, isClickPlay } =
@@ -72,44 +51,6 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
       }
     }
     handlePlayPause();
-  };
-
-  const closeModal = () => modalRef.current?.toggle();
-
-  const openModal = (modal: Modal) => {
-    setModal(modal);
-    modalRef.current?.toggle();
-  };
-
-  const renderModal = () => {
-    if (!modal) return;
-
-    switch (modal) {
-      case "base-lyric":
-        return (
-          <InputModal
-            variant="text-area"
-            title="Edit lyric"
-            initValue={baseLyric}
-            submit={handleSetBaseLyric}
-          />
-        );
-      case "tutorial":
-        return (
-          <div className="w-[500px] max-w-[90vw]">
-            <ModalHeader title="Tutorial" close={closeModal} />
-            <div className="h-[500px] max-h-[75vh] overflow-y-auto no-scrollbar">
-              <img className="w-full border rounded-[16px]" src={tutorial} alt="" />
-            </div>
-          </div>
-        );
-    }
-  };
-
-  const handleSetBaseLyric = (value: string) => {
-    setBaseLyric(value);
-    setIsChanged(true);
-    closeModal();
   };
 
   const classes = {
@@ -166,17 +107,10 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
           <span>2s</span>
           <ForwardIcon className="w-6" />
         </Button>
-        <Button onClick={() => openModal("base-lyric")} className={classes.button}>
-          <DocumentTextIcon className="w-6" />
-          <span>Edit lyric</span>
-        </Button>
 
-        <button
-          onClick={() => openModal("tutorial")}
-          className={`self-center ml-auto mt-2`}
-        >
-          <QuestionMarkCircleIcon className="w-6" />
-        </button>
+        <div className="ml-auto">
+          <MenuBtn />
+        </div>
       </div>
 
       <div
@@ -184,10 +118,6 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         style={{ backgroundColor: "rgba(255,255,255,.3)" }}
         className={`h-1 rounded-full mt-3 w-full`}
       ></div>
-
-      <Modal variant="animation" ref={modalRef}>
-        {renderModal()}
-      </Modal>
     </>
   );
 }

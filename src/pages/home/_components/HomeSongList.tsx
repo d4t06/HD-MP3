@@ -4,6 +4,7 @@ import useGetHomeSong from "../_hooks/useGetHomeSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
+import CheckedBar from "@/modules/check-bar";
 
 export default function HomeSongList() {
   const { handleSetSong } = useSetSong({ variant: "songs" });
@@ -17,6 +18,10 @@ export default function HomeSongList() {
         <Tab render={(t) => t} {...rest} />
       </div>
       <SongSelectProvider>
+        <CheckedBar variant="system">
+          <p className="font-[500] opacity-[.5]">Songs</p>
+        </CheckedBar>
+        
         <SongList
           songs={songMap[rest.tab].songs}
           setSong={(s) => handleSetSong(s.queue_id, [s])}

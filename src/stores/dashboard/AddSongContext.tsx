@@ -7,7 +7,7 @@ function useAddSong() {
   const [genres, setGenres] = useState<Genre[]>([]);
   const [imageFile, setImageFile] = useState<File>();
   const [song, setSong] = useState<Song>();
-  const [imageBLob, serImageBlob] = useState<Blob>();
+  const [imageBlob, setImageBlob] = useState<Blob>();
 
   const variant = useRef<"add" | "edit">("add");
 
@@ -36,9 +36,9 @@ function useAddSong() {
     setSongData({ ...songData, ...data });
   };
 
-  const resetAddSongContext = () => {
+  const resetAddSongContext = (song: SongSchema) => {
     setSongFile(undefined);
-    setSongData(undefined);
+    setSongData(song);
     setSingers([]);
     setGenres([]);
   };
@@ -60,8 +60,8 @@ function useAddSong() {
     genres,
     selectGenre,
     selectSinger,
-    imageBLob,
-    serImageBlob,
+    imageBlob,
+    setImageBlob,
     resetAddSongContext,
   };
 }

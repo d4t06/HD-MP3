@@ -1,17 +1,31 @@
 import { Modal, ModalRef } from "@/components";
-import { Button, ModalWrapper } from "@/pages/dashboard/_components";
+import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { PhotoIcon, QuestionMarkCircleIcon } from "@heroicons/react/24/outline";
+import {
+  PhotoIcon,
+  QuestionMarkCircleIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef } from "react";
 
 export default function UploadImageBtn() {
-  const { setImageFile, songData } = useAddSongContext();
+  const { setImageFile, songData, updateSongData, imageBlob, setImageBlob } =
+    useAddSongContext();
 
   const inputRef = useRef<HTMLInputElement>(null);
   const modalRef = useRef<ModalRef>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) setImageFile(e.target.files[0]);
+  };
+
+  const handleRemoveImage = () => {
+    if (!songData) return;
+
+    setImageBlob(undefined);
+    URL.revokeObjectURL(songData.image_url);
+
+    updateSongData({ image_url: "" });
   };
 
   return (
@@ -35,6 +49,16 @@ export default function UploadImageBtn() {
             <PhotoIcon className="w-6" />
           </label>
         </Button>
+
+        {imageBlob && (
+          <Button
+            onClick={handleRemoveImage}
+            className="h-[36px] justify-center w-[36px]"
+            size={"clear"}
+          >
+            <XMarkIcon className="w-6" />
+          </Button>
+        )}
 
         {songData?.image_url && (
           <Button

@@ -7,6 +7,7 @@ function usePlayer() {
   const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
   const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
   const [idle, setIdle] = useState(false);
+  const [isEnableBeat, setIsEnableBeat] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const controlRef = useRef<ControlRef>(null);
@@ -23,6 +24,8 @@ function usePlayer() {
     setIsHasAudioEle,
     activeTab,
     setActiveTab,
+    isEnableBeat,
+    setIsEnableBeat,
   };
 }
 

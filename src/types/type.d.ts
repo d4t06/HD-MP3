@@ -18,12 +18,14 @@ type Song = {
   image_file_path: string;
   song_url: string;
   song_file_path: string;
+  beat_url: string;
+  beat_file_path: string;
   owner_email: string;
   distributor: string;
   is_official: boolean;
   duration: number;
   play_count: number;
-  is_has_lyric: boolean;
+  is_has_lyric: string;
   blurhash_encode: string;
   singers: Singer[];
   singer_map: Record<string, boolean>;
@@ -64,13 +66,18 @@ type Playlist = {
 type PlaylistSchema = Omit<Playlist, "id">;
 
 type SongLyric = {
-  song_id: string;
+  id: string;
   base: string;
   real_time: RealTimeLyric[];
 };
 
-type SongLyricSchema = Omit<SongLyric, "real_time"> & {
+type SongLyricSchema = Omit<SongLyric, "real_time" | "id"> & {
   real_time: string;
+};
+
+type TempLyric = Omit<SongLyric, "real_time" | "id"> & {
+  real_time: string;
+  song_id: string;
 };
 
 type LyricTune = {

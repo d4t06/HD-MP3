@@ -6,8 +6,8 @@ type StateType = {
   queueSongs: Song[];
   currentQueueId: string | null;
   currentSongData: { song: Song; index: number } | null;
+  isFetching: boolean;
 };
-
 
 // get current from store, fix clear queue button
 // const queue = getLocalStorage()["queue"] || [];
@@ -16,6 +16,7 @@ const initialState: StateType = {
   /** update queue id in use control */
   currentQueueId: null,
   currentSongData: null,
+  isFetching: false,
 };
 
 function updateCurrentSongData(state: StateType) {
@@ -60,6 +61,10 @@ const songQueueSlice = createSlice({
         }
     },
 
+    setIsFetchingRecommend(state: StateType, action: PayloadAction<boolean>) {
+      state.isFetching = action.payload;
+    },
+
     addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
       const _songs = action.payload.songs.map((s) => ({ ...s, queue_id: nanoid(4) }));
 
@@ -81,6 +86,7 @@ export const {
   removeSongFromQueue,
   setQueue,
   resetSongQueue,
+  setIsFetchingRecommend,
 } = songQueueSlice.actions;
 
 export default songQueueSlice.reducer;

@@ -15,7 +15,7 @@ export default function useMyMusicAddPlaylist() {
   const myMusicAddPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
     try {
       if (!user) return;
-      const newPlaylist = await handleAddPlaylist(playlist, imageFile);
+      const newPlaylist = await handleAddPlaylist(playlist, imageFile, { push: false });
       if (newPlaylist) await action({ variant: "like", playlist: newPlaylist });
     } catch (error) {
       console.log({ error });

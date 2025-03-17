@@ -7,11 +7,27 @@ import {
 	DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
-import { FullScreenPlayerSetting, MyPopup, MyPopupContent, MyPopupTrigger, MyTooltip, Tabs } from "@/components";
+import {
+	FullScreenPlayerSetting,
+	MyPopup,
+	MyPopupContent,
+	MyPopupTrigger,
+	MyTooltip,
+	Switch,
+	Tabs,
+} from "@/components";
 
 export default function FullScreenPlayerHeader() {
 	const { theme } = useThemeContext();
-	const { activeTab, setActiveTab, idle, setIsOpenFullScreen } = usePlayerContext();
+	const {
+		activeTab,
+		setActiveTab,
+		idle,
+		setIsOpenFullScreen,
+		isEnableBeat,
+		setIsEnableBeat,
+		audioRef,
+	} = usePlayerContext();
 
 	const { currentSongData } = useSelector(selectSongQueue);
 
@@ -27,6 +43,22 @@ export default function FullScreenPlayerHeader() {
 		}, 300);
 	};
 
+	const handleEnableBeat = () => {
+		if (!audioRef.current || !currentSongData?.song) return;
+
+		const newValue = !isEnableBeat;
+
+		setIsEnableBeat(newValue);
+
+		const currentTime = audioRef.current.currentTime;
+
+		audioRef.current.src = newValue
+			? currentSongData.song.beat_url
+			: currentSongData.song.song_url;
+
+		audioRef.current.currentTime = currentTime;
+	};
+
 	const classes = {
 		button: `w-[38px] h-[38px] bg-white/10 rounded-[99px] transition-transform ${theme.content_hover_bg}`,
 		headerWrapper: `relative flex py-[25px] px-[40px] w-full items-center`,
@@ -34,18 +66,16 @@ export default function FullScreenPlayerHeader() {
 	};
 
 	return (
-		<div className={classes.headerWrapper}>
+		<div className={`${classes.headerWrapper} ${idle ? 'pointer-events-none': ''}`}>
 			{/* left */}
-			{idle && (
-				<div className={`absolute flex left-4`}>
+			{idle && currentSongData && (
+				<div className={`absolute left-4`}>
 					{activeTab !== "Songs" && (
 						<>
-							<p className={`font-playwriteCU text-sm`}>
-								{currentSongData?.song?.name || "..."}{" "}
+							<p className={`font-playwriteCU text-sm`}>{currentSongData.song.name}</p>
+							<p className="opacity-70 text-sm">
+								{currentSongData.song.singers.map((s, i) => s.name + (i ? ", " : ""))}
 							</p>
-							{/* <p className="opacity-70">
-								&nbsp;- {currentSongData?.song?.singer || "..."}
-							</p> */}
 						</>
 					)}
 				</div>
@@ -69,6 +99,13 @@ export default function FullScreenPlayerHeader() {
 							<DocumentTextIcon />
 						</button>
 					</MyTooltip>
+				)}
+
+				{activeTab === "Karaoke" && currentSongData?.song.beat_url && (
+					<div className="flex items-center space-x-1">
+						<span className="font-[500]">Beat</span>
+						<Switch active={isEnableBeat} cb={handleEnableBeat} />
+					</div>
 				)}
 
 				<MyPopup>

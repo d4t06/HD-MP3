@@ -8,12 +8,11 @@ import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
 
 type Props = {
-  admin?: boolean;
   isOpenFullScreen: boolean;
   song?: Song;
 };
 
-export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
+export default function SongInfo({ isOpenFullScreen, song }: Props) {
   const vinylRef = useRef<ElementRef<"div">>(null);
   const { theme } = useThemeContext();
 
@@ -21,20 +20,17 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
   useVinyl({ vinylRef });
 
   const classes = {
-    songInfoWrapper: `${admin ? "w-1/4" : "w-1/4 "}`,
     songInfoChild: "flex flex-row",
   };
 
   return (
-    <div className={`${classes.songInfoWrapper}  ${getHidden(isOpenFullScreen)}`}>
+    <div className={`w-1/4  ${getHidden(isOpenFullScreen)}`}>
       <div className={`${classes.songInfoChild} ${getHidden(isOpenFullScreen)}`}>
         <div
           ref={vinylRef}
-          className={`${
-            admin ? `w-[46px]` : "w-[56px]"
-          }  animate-[spin_8s_linear_infinite]`}
+          className={`w-[56px] h-[56px] animate-[spin_8s_linear_infinite]`}
         >
-          <Image src={song?.image_url} className={`rounded-full w-full`} />
+          <Image src={song?.image_url} className={`rounded-full h-full object-cover`} />
         </div>
 
         <div className="ml-2 flex-grow">
@@ -45,16 +41,20 @@ export default function SongInfo({ isOpenFullScreen, admin, song }: Props) {
             />
           </div>
           {song && (
-            <div className="leading-[1.2] text-sm opacity-[.7]">
-              {song.singers.map((s, i) => (
-                <Link
-                  to={`/singer/${s.id}`}
-                  className={`${theme.content_hover_text}  hover:underline`}
-                  key={i}
-                >
-                  {s.name + (i ? ", " : "")}
-                </Link>
-              ))}
+            <div className="leading-[1.2] text-sm opacity-[.7] line-clamp-1">
+              {song.singers.map((s, i) =>
+                s.id ? (
+                  <Link
+                    to={`/singer/${s.id}`}
+                    className={`${theme.content_hover_text}  hover:underline`}
+                    key={i}
+                  >
+                    {s.name + (i ? ", " : "")}
+                  </Link>
+                ) : (
+                  <span>{s.name + (i ? ", " : "")}</span>
+                ),
+              )}
             </div>
           )}
         </div>

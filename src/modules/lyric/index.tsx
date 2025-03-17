@@ -1,9 +1,10 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { Center, LyricItem } from "@/components";
+import { Center } from "@/components";
 import useLyric from "./_hooks/useLyric";
 import { LyricStatus } from "../lyric-editor";
+import LyricItem from "./LyricItem";
 
 interface Props {
   className: string;

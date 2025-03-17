@@ -12,7 +12,6 @@ import { useThemeContext } from "@/stores";
 import useControl from "./_hooks/useControl";
 
 interface Props {
-  admin?: boolean;
   variant: "mobile" | "desktop";
 }
 
@@ -23,7 +22,7 @@ export type ControlRef = {
   resetForNewSong: () => void;
 };
 
-function MusicControl({ admin, variant }: Props, ref: Ref<ControlRef>) {
+function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
   const { theme } = useThemeContext();
 
   const {
@@ -54,10 +53,8 @@ function MusicControl({ admin, variant }: Props, ref: Ref<ControlRef>) {
 
   const classes = {
     button: `p-1 rounded-full md:bg-transparent `,
-    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 ${
-      admin ? "hidden" : ""
-    }`,
-    progressContainer: `flex w-full flex-row items-center   ${admin ? "h-full" : ""}`,
+    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3`,
+    progressContainer: `flex w-full flex-row items-center `,
     processLineBase: `h-[6px] sm:h-1 flex-grow relative cursor-pointer rounded-[99px] shadow-[2px_2px_10px_rgba(0,0,0,.15)] `,
     icon: `w-[44px] sm:w-7`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
@@ -67,46 +64,42 @@ function MusicControl({ admin, variant }: Props, ref: Ref<ControlRef>) {
     <>
       {/* buttons */}
       <div className={`${classes.buttonsContainer}`}>
-        {!admin && (
-          <>
-            <button
-              disabled={queueSongs.length <= 1}
-              className={`relative ${classes.button} ${
-                isRepeat !== "no" && theme.content_text
-              }`}
-              onClick={handleRepeatSong}
-            >
-              <ArrowPathRoundedSquareIcon className={classes.icon} />
-              <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-                {isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : ""}
-              </span>
-            </button>
-            <button
-              disabled={queueSongs.length <= 1}
-              className={classes.button}
-              onClick={() => handlePrevious()}
-            >
-              <BackwardIcon className={classes.icon} />
-            </button>
+        <button
+          disabled={queueSongs.length <= 1}
+          className={`relative ${classes.button} ${
+            isRepeat !== "no" && theme.content_text
+          }`}
+          onClick={handleRepeatSong}
+        >
+          <ArrowPathRoundedSquareIcon className={classes.icon} />
+          <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
+            {isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : ""}
+          </span>
+        </button>
+        <button
+          disabled={queueSongs.length <= 1}
+          className={classes.button}
+          onClick={() => handlePrevious()}
+        >
+          <BackwardIcon className={classes.icon} />
+        </button>
 
-            <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
+        <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
 
-            <button
-              disabled={queueSongs.length <= 1}
-              className={`${classes.button}`}
-              onClick={() => handleNext()}
-            >
-              <ForwardIcon className={classes.icon} />
-            </button>
-            <button
-              disabled={queueSongs.length <= 1}
-              className={`${classes.button} ${isShuffle && theme.content_text}`}
-              onClick={handleShuffle}
-            >
-              <ArrowTrendingUpIcon className={classes.icon} />
-            </button>
-          </>
-        )}
+        <button
+          disabled={queueSongs.length <= 1}
+          className={`${classes.button}`}
+          onClick={() => handleNext()}
+        >
+          <ForwardIcon className={classes.icon} />
+        </button>
+        <button
+          disabled={queueSongs.length <= 1}
+          className={`${classes.button} ${isShuffle && theme.content_text}`}
+          onClick={handleShuffle}
+        >
+          <ArrowTrendingUpIcon className={classes.icon} />
+        </button>
       </div>
 
       {/* process */}
@@ -133,12 +126,6 @@ function MusicControl({ admin, variant }: Props, ref: Ref<ControlRef>) {
             {currentSongData?.song ? formatTime(currentSongData.song?.duration) : "0:00"}
           </span>
         </div>
-
-        {admin && (
-          <div className="flex items-center ml-3">
-            <PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
-          </div>
-        )}
       </div>
     </>
   );

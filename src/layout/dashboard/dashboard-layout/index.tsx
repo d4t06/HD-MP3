@@ -26,7 +26,7 @@ export default function DashBoardLayout() {
           <div className="flex flex-col flex-grow">
             <DashboardHeader />
 
-            <div className="main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0 md:pb-[80px]">
+            <div className="main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0">
               <Outlet />
             </div>
           </div>

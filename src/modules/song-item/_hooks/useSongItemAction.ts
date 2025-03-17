@@ -7,7 +7,7 @@ export default function useSongItemAction() {
   // stores
   const { user, updateUserData } = useAuthContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
-  const { uploadedSongs, setUploadedSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } = useSongContext();
 
   // state
   const [loading, setLoading] = useState(false);
@@ -58,6 +58,9 @@ export default function useSongItemAction() {
           });
 
           updateUserData(newUserData);
+
+          // refetch
+          shouldFetchFavoriteSongs.current = true;
 
           break;
         }

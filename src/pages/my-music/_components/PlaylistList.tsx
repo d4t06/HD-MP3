@@ -4,13 +4,11 @@ import AddNewPlaylistBtn from "./AddNewPlaylistBtn";
 import { useEffect } from "react";
 
 export default function MyMusicPlaylistList() {
-  const { isFetching, playlists, getPlaylist, user } = useMyMusicPlaylist();
+  const { isFetching, playlists, getPlaylist } = useMyMusicPlaylist();
 
   useEffect(() => {
-    if (!user) return;
-
     getPlaylist();
-  }, [user]);
+  }, []);
 
   return (
     <>

@@ -1,6 +1,9 @@
 import { useSongQueueAction } from "@/hooks";
 import { ArrowDownTrayIcon, MinusIcon } from "@heroicons/react/24/outline";
 import { SongMenuContent } from "..";
+import { useRef } from "react";
+import { ModalRef } from "@/components";
+import AddToPlaylistMenuItem, { AddToPlaylistMenuModal } from "./AddToPlaylistMenuItem";
 
 type Props = {
   song: Song;
@@ -10,7 +13,7 @@ type Props = {
 export default function QueueSongMenu({ song, index }: Props) {
   const { action } = useSongQueueAction();
 
-  //   const addSongToNewPlaylistModalRef = useRef<ModalRef>(null);
+  const modalRef = useRef<ModalRef>(null);
 
   const handleRemoveSongFromQueue = () => {
     action({
@@ -30,13 +33,15 @@ export default function QueueSongMenu({ song, index }: Props) {
           <span>Remove</span>
         </button>
 
+        <AddToPlaylistMenuItem modalRef={modalRef} />
+
         <a target="_blank" href={song.song_url}>
           <ArrowDownTrayIcon className="w-5" />
           <span>Download</span>
         </a>
-
-        {/* <AddSongToNewPlaylistModal modalRef={addSongToNewPlaylistModalRef} song={song} /> */}
       </SongMenuContent>
+
+      <AddToPlaylistMenuModal song={song} modalRef={modalRef} />
     </>
   );
 }

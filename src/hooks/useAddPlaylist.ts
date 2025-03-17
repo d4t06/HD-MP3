@@ -10,12 +10,16 @@ export default function useAddPlaylist() {
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const handleAddPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
+  const handleAddPlaylist = async (
+    playlist: PlaylistSchema,
+    imageFile?: File,
+    opts?: { push?: boolean }
+  ) => {
     try {
       setIsFetching(true);
 
       if (imageFile) {
-        const imageData = await optimizeAndGetHashImage(imageFile);
+        const imageData = await optimizeAndGetHashImage({ imageFile });
         Object.assign(playlist, imageData);
       }
 
@@ -31,7 +35,10 @@ export default function useAddPlaylist() {
         id: newDocRef.id,
       };
 
-      setPlaylists((prev) => [newPlaylist, ...prev]);
+      const { push = true } = opts || {};
+
+      if (push) setPlaylists((prev) => [newPlaylist, ...prev]);
+
       setSuccessToast(`Playlist created`);
 
       return newPlaylist;

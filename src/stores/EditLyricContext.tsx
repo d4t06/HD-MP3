@@ -1,3 +1,4 @@
+import { setLocalStorage } from "@/utils/appHelpers";
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
 const useEditLyric = () => {

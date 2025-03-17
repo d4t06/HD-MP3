@@ -1,4 +1,4 @@
-import { ElementRef, useRef, useState } from "react";
+import { ElementRef, useEffect, useRef, useState } from "react";
 import { useThemeContext } from "@/stores";
 import {
   BackwardIcon,
@@ -39,7 +39,9 @@ export default function EditLyricModal({ closeModal }: Props) {
     handleGrowWord,
     handleUpdateLyricText,
     updateLyricTune,
+    endTimeRangeProps,
     currentLyric,
+    setIsChangeTune,
   } = useEditLyricModal();
 
   const handleUpdateLyricTune = () => {
@@ -49,6 +51,8 @@ export default function EditLyricModal({ closeModal }: Props) {
 
   const handleSelectWord = (i: number) => {
     setCurrentIndex(i);
+
+    setIsChangeTune(true);
 
     growInputRef.current?.focus();
   };
@@ -78,19 +82,24 @@ export default function EditLyricModal({ closeModal }: Props) {
   };
 
   const renderItem = () => {
-    return words.map((w, index) => (
-      <Button
-        style={{ flexGrow: growList[index] }}
-        key={index}
-        onClick={() => handleSelectWord(index)}
-        size={"clear"}
-        className={`justify-center ${
-          currentIndex === index ? theme.content_bg : "bg-" + theme.alpha
-        }`}
-      >
-        {w}
-      </Button>
-    ));
+    return words.map((w, index) => {
+      const isActive = currentIndex === index;
+
+      return (
+        <Button
+          style={{ flexGrow: growList[index] }}
+          key={index}
+          ref={(el) => (isActive ? (refs.currentWordRef.current = el) : {})}
+          onClick={() => handleSelectWord(index)}
+          size={"clear"}
+          className={`word-item justify-center border ${theme.content_border} ${
+            isActive ? theme.content_bg : "bg-" + theme.alpha
+          }`}
+        >
+          {w}
+        </Button>
+      );
+    });
   };
 
   const renderIcon = () => {
@@ -105,6 +114,10 @@ export default function EditLyricModal({ closeModal }: Props) {
     input: `bg-${theme.alpha} text-lg rounded-[4px] outline-none w-full px-2 py-1`,
     button: `${theme.content_bg} rounded-full`,
   };
+
+  useEffect(() => {
+    if (refs.textRef.current) refs.textRef.current.value = currentLyric.text;
+  }, [isEdit]);
 
   return (
     <>
@@ -182,6 +195,7 @@ export default function EditLyricModal({ closeModal }: Props) {
             step={0.2}
             className="w-full"
             onChange={(e) => setEndPoint(+e.target.value)}
+            {...endTimeRangeProps}
           />
         </div>
 

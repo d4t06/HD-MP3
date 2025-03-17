@@ -7,7 +7,7 @@ import playingIcon from "@/assets/icon-playing.gif";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import SongMenu from "@/modules/song-menu";
 import { useSongSelectContext, useThemeContext } from "@/stores";
-import { getHidden } from "@/utils/appHelpers";
+import { getClassses, getHidden } from "@/utils/appHelpers";
 import { Image } from "@/components";
 import HearBtn from "./_components/HearBtn";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ type Props = {
   // null if user is null
   isLiked: boolean | null;
   isHasCheckBox: boolean;
-  variant: "system-song" | "own-song" | "queue-song" | "own-playlist";
+  variant: "system-song" | "own-song" | "queue-song" | "own-playlist"
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
@@ -29,17 +29,11 @@ export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 type CheckBoxProps = { onClick: () => void; isChecked: boolean; isSelected: boolean };
 
 function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
-  const classes = {
-    checkboxButton: `mr-3 `,
-  };
-
   return (
     <>
       <button
         onClick={onClick}
-        className={`${classes.checkboxButton} ${
-          !isSelected && "block md:hidden"
-        }  group-hover/main:block`}
+        className={`mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
       >
         {!isSelected ? (
           <StopIcon className="w-[18px]" />
@@ -48,11 +42,10 @@ function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
         )}
       </button>
       <button
-        className={`${
-          classes.checkboxButton
-        } hidden group-hover/main:hidden group-hover/main:mr-[0px] ${
-          !isChecked && "md:block"
-        }`}
+        className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClassses(
+          isChecked,
+          "md:hidden",
+        )}`}
       >
         <MusicalNoteIcon className="w-[18px]" />
       </button>
@@ -67,7 +60,7 @@ function SongItem({
   active = true,
   isLiked,
   index,
-  className,
+  className = "",
   ...props
 }: Props) {
   // stores
@@ -154,11 +147,19 @@ function SongItem({
             {import.meta.env.DEV && <span className="text-sm"> ({props.variant})</span>}
           </h5>
           <div className={`opacity-[.7] line-clamp-1 ${getSongSingerSize()}`}>
-            {song.singers.map((s, i) => (
-              <Link to={`/singer/${s.id}`} className={`${theme.content_hover_text}  hover:underline`} key={i}>
-                {s.name + (i ? ", " : "")}
-              </Link>
-            ))}
+            {song.singers.map((s, i) =>
+              s.id ? (
+                <Link
+                  to={`/singer/${s.id}`}
+                  className={`${theme.content_hover_text}  hover:underline`}
+                  key={i}
+                >
+                  {s.name + (i ? ", " : "")}
+                </Link>
+              ) : (
+                <span> {s.name + (i ? ", " : "")}</span>
+              ),
+            )}
           </div>
         </div>
       </div>
@@ -176,11 +177,24 @@ function SongItem({
 
   const renderRightContent = (
     <div className="flex items-center">
-      {isLiked != null && <HearBtn isLiked={isLiked} song={song} />}
+      {isLiked != null && (
+        <HearBtn
+          isSongActive={active}
+          songVariant={props.variant}
+          isLiked={isLiked}
+          song={song}
+        />
+      )}
 
-      <div className="flex justify-center w-[60px]">
+      {props.variant === "queue-song" ? (
         <SongMenu variant={props.variant} song={song} index={index} />
-      </div>
+      ) : (
+        <>
+          <div className="flex justify-center w-[60px]">
+            <SongMenu variant={props.variant} song={song} index={index} />
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -189,7 +203,7 @@ function SongItem({
       case "queue-song":
         return (
           <div
-            className={`${classes.itemContainer} group/main py-[6px] ${
+            className={`${classes.itemContainer} group/main ${
               active ? `${theme.content_bg} text-white` : `hover:bg-${theme.alpha}`
             }`}
           >
@@ -200,7 +214,7 @@ function SongItem({
       default:
         return (
           <div
-            className={`${classes.itemContainer} ${className || ""} group/main ${
+            className={`${classes.itemContainer} ${className} group/main ${
               active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
             }`}
           >

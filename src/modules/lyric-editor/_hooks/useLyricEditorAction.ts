@@ -2,7 +2,7 @@ import { db } from "@/firebase";
 import { useToastContext } from "@/stores";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { setLocalStorage } from "@/utils/appHelpers";
-import { doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -28,7 +28,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
   const isEnableAddBtn = isClickPlay && !!baseLyricArr.length && !isFinish;
 
   const addLyric = () => {
-    if (!audioEle || !baseLyricArr.length || isFinish) return;
+    if (!audioEle || !baseLyricArr.length || isFinish || !song) return;
     const currentTime = +audioEle.currentTime.toFixed(1);
 
     if (start.current === currentTime) return; // prevent double click
@@ -43,6 +43,19 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     start.current = currentTime; // update start for next lyric
 
     setLyrics((prev) => [...prev, lyric]);
+
+    // adding the 2 last lyric
+    if (baseLyricArr.length === lyrics.length + 2) {
+      const text = baseLyricArr[baseLyricArr.length - 1];
+
+      const lyric: RealTimeLyric = {
+        start: start.current, // started time of 2 last lyric
+        text,
+        end: song.duration,
+      };
+
+      setLyrics((prev) => [...prev, lyric]);
+    }
 
     setIsChanged(true);
   };
@@ -62,6 +75,18 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     }
   };
 
+  const setTempLyric = () => {
+    if (!song) return;
+
+    const tempLyric: TempLyric = {
+      song_id: song.id,
+      base: baseLyric,
+      real_time: JSON.stringify(lyrics),
+    };
+
+    setLocalStorage("temp-lyric", tempLyric);
+  };
+
   const submit = async () => {
     try {
       setIsFetching(true);
@@ -70,30 +95,32 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
-        song_id: song.id,
         real_time: JSON.stringify(lyrics),
         base: baseLyric,
       };
 
       const songRef = doc(db, "Songs", song.id);
-      const lyricRef = doc(db, "Playlists");
+      const lyricRef = doc(collection(db, "Lyrics"));
+
+      const newSongData: Partial<SongSchema> = {
+        is_has_lyric: lyricRef.id,
+        updated_at: serverTimestamp(),
+      };
 
       batch.set(lyricRef, newSongLyric);
-      batch.update(songRef, { updated_at: serverTimestamp() });
+      batch.update(songRef, newSongData);
 
-      batch.commit();
+      await batch.commit();
 
       setSuccessToast("Add lyric successful");
       setIsChanged(false);
 
       setLocalStorage("temp-lyric", "");
     } catch (error: any) {
-      setLocalStorage("temp-lyric", {
-        ...error,
-        real_time: JSON.stringify(error.real_time),
-      } as SongLyric);
-
+      console.log({ error });
       setErrorToast();
+
+      setTempLyric();
     } finally {
       setIsFetching(false);
     }

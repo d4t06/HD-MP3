@@ -58,8 +58,8 @@ export default function BottomPlayer() {
         isOpenFullScreen
           ? "border-transparent"
           : theme.image
-          ? theme.bottom_player_bg
-          : ""
+            ? theme.bottom_player_bg
+            : ""
       } ${inEdit && "translate-y-[100%] "} `}
     >
       {!theme.image && (

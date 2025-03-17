@@ -112,9 +112,7 @@ export default function useDashboardPlaylistActions() {
               if (newSingers.length == 5) break;
 
               currentSong.singers.forEach((s) => {
-                const foundedSinger = !!newSingers.find(
-                  (_s) => _s.id === s.id
-                );
+                const foundedSinger = !!newSingers.find((_s) => _s.id === s.id);
 
                 if (!foundedSinger) newSingers.push(s);
               });
@@ -148,7 +146,9 @@ export default function useDashboardPlaylistActions() {
           const newPlaylist = { ...playlist, ...props.playlist };
 
           if (props.imageFile) {
-            const imageData = await optimizeAndGetHashImage(props.imageFile);
+            const imageData = await optimizeAndGetHashImage({
+              imageFile: props.imageFile,
+            });
 
             if (playlist.image_file_path)
               await deleteFile({ filePath: playlist.image_file_path });

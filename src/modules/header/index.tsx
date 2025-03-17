@@ -119,12 +119,10 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`hidden md:block h-[60px] fixed top-0 right-0 left-[180px] z-[20] ${
-          theme.container
-        } ${scroll ? "shadow-lg bg-transparent" : ""}`}
+        className={`hidden md:block h-[60px] fixed top-0 right-0 left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
       >
         <div
-          className={`${scroll ? "" : "hidden "} absolute  inset-0 ${
+          className={`${scroll ? "" : "hidden "} absolute inset-0 ${
             theme.container
           } bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
         ></div>

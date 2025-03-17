@@ -45,7 +45,7 @@ const privateRouteMap = {
   addSong: "/dashboard/song/add-song",
   editSong: "/dashboard/song/:songId/edit",
   playlistDetail: "/dashboard/playlist/:id",
-  songLyric: "/dashboard/lyric/:songId",
+  songLyric: "/dashboard/lyric/:id",
   singer: "/dashboard/singer",
   editSinger: "/dashboard/singer/:id",
 };

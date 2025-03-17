@@ -3,10 +3,11 @@ import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { useThemeContext } from "@/stores";
 import { LyricStatus } from "../";
-import { LyricItem, ModalRef } from "@/components";
+import { ModalRef } from "@/components";
 // import { useLyricContext } from "@/stores/LyricContext";
 import { scrollIntoView } from "@/utils/appHelpers";
 import AddLyricItem from "./AddLyricItem";
+import LyricItem from "@/modules/lyric/LyricItem";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
@@ -56,11 +57,12 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
                 let status: LyricStatus =
                   index === lyrics.length
                     ? "active"
-                    : index < lyrics.length - 1
-                    ? "done"
-                    : "coming";
+                    : index < lyrics.length
+                      ? "done"
+                      : "coming";
 
-                if (index === baseLyricArr.length - 1) status = "active";
+                if (status === "done" && index === baseLyricArr.length - 1)
+                  status = "active";
 
                 return (
                   <LyricItem

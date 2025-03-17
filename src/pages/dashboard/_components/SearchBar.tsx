@@ -1,4 +1,11 @@
-import { Dispatch, FormEventHandler, SetStateAction } from "react";
+import {
+  Dispatch,
+  ElementRef,
+  FormEventHandler,
+  SetStateAction,
+  useEffect,
+  useRef,
+} from "react";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, Frame } from "./ui";
 import { Input } from "@/components";
@@ -15,12 +22,19 @@ export default function Searchbar({
   value,
   className = "",
 }: Props) {
+  const inputRef = useRef<ElementRef<"input">>(null);
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   return (
     <Frame className={className}>
       <form onSubmit={handleSubmit} className="flex gap-2 justify-between items-center">
         <div className="relative flex-grow flex items-center text-[#333]">
           <Input
             type="text"
+            ref={inputRef}
             value={value}
             onChange={(e) => setValue(e.target.value)}
             placeholder="..."

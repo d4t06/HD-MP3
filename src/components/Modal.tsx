@@ -126,7 +126,7 @@ function Modal(
                         `}
             ></div>
             <div
-              className={`absolute duration-300 transition-[transform,opacity] z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              className={`modal-content absolute duration-300 transition-[transform,opacity] z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                             ${
                               isMounted
                                 ? classes.mountedContent

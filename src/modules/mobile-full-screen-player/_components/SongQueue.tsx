@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import SongQueueItem from "./SongQueueItem";
+import { Skeleton } from "@/components";
 
 type Props = {
   currentIndex: number;
@@ -37,7 +38,7 @@ const hideSibling = (ele: HTMLDivElement) => {
 export default function MobileSongQueue({ currentIndex }: Props) {
   const dispatch = useDispatch();
   const { theme } = useThemeContext();
-  const { queueSongs } = useSelector(selectSongQueue);
+  const { queueSongs, isFetching } = useSelector(selectSongQueue);
 
   const activeSong = (e: MouseEvent, queueId: string) => {
     const ele = e.target as HTMLDivElement;
@@ -50,6 +51,10 @@ export default function MobileSongQueue({ currentIndex }: Props) {
       dispatch(setCurrentQueueId(queueId));
     }, 500);
   };
+
+  const skeleton = [...Array(5).keys()].map((i) => (
+    <Skeleton key={i} className="h-[40px] mt-1" />
+  ));
 
   const renderSongItems = () => (
     <>
@@ -74,7 +79,11 @@ export default function MobileSongQueue({ currentIndex }: Props) {
 
   return (
     <>
-      <SongSelectProvider>{renderSongItems()}</SongSelectProvider>
+      <SongSelectProvider>
+        {renderSongItems()}
+
+        {isFetching && skeleton}
+      </SongSelectProvider>
     </>
   );
 }

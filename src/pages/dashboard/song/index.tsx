@@ -16,7 +16,17 @@ export default function DashboardSong() {
     <>
       <Title title="Songs" />
 
-      <Searchbar className="self-start mt-3" {...rest} />
+      <div className="flex justify-between items-end mt-3">
+        <Searchbar {...rest} />
+        <Button
+          href="/dashboard/song/add-song"
+          className={`p-1.5`}
+          size={"clear"}
+        >
+          <PlusIcon className="w-6" />
+          <div className="hidden md:block">Add song</div>
+        </Button>
+      </div>
 
       <Tabs
         className={`mt-5 ${tab === "All" ? "pointer-events-none" : ""} self-start`}
@@ -57,15 +67,6 @@ export default function DashboardSong() {
           </Frame>
         )}
       </div>
-
-      <Button
-        href="/dashboard/song/add-song"
-        className={`!absolute right-[10px] bottom-5 p-1.5`}
-        size={"clear"}
-      >
-        <PlusIcon className="w-6" />
-        <div className="hidden md:block">Add song</div>
-      </Button>
     </>
   );
 }

@@ -82,7 +82,7 @@ export default function usePlaylistAction() {
           const newPlaylist = { ...playlist, ...data };
 
           if (imageFile) {
-            const imageData = await optimizeAndGetHashImage(imageFile);
+            const imageData = await optimizeAndGetHashImage({imageFile});
 
             if (playlist.image_file_path)
               await deleteFile({ filePath: playlist.image_file_path });

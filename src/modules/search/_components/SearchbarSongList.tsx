@@ -1,3 +1,4 @@
+import { NotFound } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -15,9 +16,9 @@ export default function SearchbarSongList({ songs }: Props) {
   return (
     <SongSelectProvider>
       {!!songs.length ? (
-        <SongList setSong={_handleSetSong} songs={songs} />
+        <SongList isHasCheckBox={false} setSong={_handleSetSong} songs={songs} />
       ) : (
-        <h1 className="text-[22px] text-center">...</h1>
+        <NotFound />
       )}
     </SongSelectProvider>
   );

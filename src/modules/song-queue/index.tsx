@@ -7,7 +7,7 @@ import {
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { Button } from "@/components";
+import { Button, Skeleton } from "@/components";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
 
@@ -16,7 +16,7 @@ function SongQueue() {
   const dispatch = useDispatch();
   const { theme } = useThemeContext();
   const { isOpenSongQueue, setIsOpenSongQueue, controlRef } = usePlayerContext();
-  const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
+  const { queueSongs, currentQueueId, isFetching } = useSelector(selectSongQueue);
 
   const handleSetSong = useCallback(
     (queueId: string) => {
@@ -24,7 +24,7 @@ function SongQueue() {
         dispatch(setCurrentQueueId(queueId));
       }
     },
-    [currentQueueId]
+    [currentQueueId],
   );
 
   const clearSongQueue = useCallback(() => {
@@ -33,6 +33,10 @@ function SongQueue() {
 
     setIsOpenSongQueue(false);
   }, []);
+
+  const skeleton = [...Array(5).keys()].map((i) => (
+    <Skeleton key={i} className="h-[56px] mt-1" />
+  ));
 
   const classes = {
     mainContainer: `fixed w-[300px] flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
@@ -52,11 +56,14 @@ function SongQueue() {
         <div className={classes.songListContainer}>
           <>
             <SongList
+              isHasCheckBox={false}
               songs={queueSongs}
               setSong={(s) => handleSetSong(s.queue_id)}
               songVariant="queue-song"
               getActive={(s, cur) => s.queue_id === cur.queue_id}
             />
+
+            {isFetching && skeleton}
 
             <div className="text-center">
               {!!queueSongs.length && (

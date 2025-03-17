@@ -29,7 +29,7 @@ export default function useControl() {
   const { user } = useAuthContext();
   const { queueSongs, currentSongData, currentQueueId } = useSelector(selectSongQueue);
   const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
-    selectAllPlayStatusStore
+    selectAllPlayStatusStore,
   );
 
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
@@ -434,8 +434,6 @@ export default function useControl() {
   useEffect(() => {
     if (!triggerPlayStatus || triggerPlayStatus === playStatus) return;
 
-    console.log("triggerPlayStatus", triggerPlayStatus);
-
     switch (triggerPlayStatus) {
       case "playing":
         play();
@@ -443,9 +441,6 @@ export default function useControl() {
       case "paused":
         pause();
         break;
-
-      default:
-        console.log("no trigger action");
     }
   }, [triggerPlayStatus]);
 

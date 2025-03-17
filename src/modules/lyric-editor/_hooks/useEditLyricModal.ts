@@ -1,6 +1,14 @@
 import { useEditLyricContext } from "@/stores/EditLyricContext";
 import createKeyFrame from "@/utils/createKeyFrame";
-import { ElementRef, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ElementRef,
+  FormEvent,
+  HTMLAttributes,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAudioControl } from "@/hooks";
 import { getWidthList } from "@/utils/getWidthList";
 
@@ -12,6 +20,7 @@ export default function useEditLyricModal() {
   const [words, setWords] = useState<string[]>([]);
   const [growList, setGrowList] = useState<number[]>([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [isChangeTune, setIsChangeTune] = useState(false);
 
   const [hadAudioEle, setHadAudioEle] = useState(false);
 
@@ -22,6 +31,7 @@ export default function useEditLyricModal() {
   const startTimeRangeRef = useRef<ElementRef<"input">>(null);
   const actuallyEndRef = useRef(0);
   const actuallyStartRef = useRef(0);
+  const tempActuallyStartRef = useRef(0);
   const startRefText = useRef<ElementRef<"span">>(null);
   const endRefText = useRef<ElementRef<"span">>(null);
 
@@ -29,10 +39,11 @@ export default function useEditLyricModal() {
   const wordWidthList = useRef<number[]>([]);
   const growListRef = useRef<number[]>([]);
   const isChanged = useRef(false);
+  const currentWordRef = useRef<HTMLButtonElement | null>(null);
 
   const currentLyric = useMemo(
     () => lyrics[selectLyricIndex],
-    [selectLyricIndex, lyrics]
+    [selectLyricIndex, lyrics],
   );
 
   const { play, pause, status, statusRef } = useAudioControl({
@@ -40,12 +51,10 @@ export default function useEditLyricModal() {
   });
 
   const handleUpdateLyricText = (e: FormEvent) => {
-    if (!selectLyricIndex) return;
-
     e.preventDefault();
-
     if (!textRef.current) return;
 
+    setIsEdit(false);
     updateLyric(selectLyricIndex, { text: textRef.current.value });
   };
 
@@ -114,12 +123,14 @@ export default function useEditLyricModal() {
 
     audioEle.currentTime = actuallyStartRef.current - 0.3;
 
-    const name = createKeyFrame(growListRef.current, wordWidthList.current);
+    if (!tempActuallyStartRef.current) {
+      const name = createKeyFrame(growListRef.current, wordWidthList.current);
 
-    overlayRef.current.style.animation = `${name} ${(
-      (actuallyEndRef.current - actuallyStartRef.current) /
-      audioRef.current.playbackRate
-    ).toFixed(1)}s linear`;
+      overlayRef.current.style.animation = `${name} ${(
+        (actuallyEndRef.current - actuallyStartRef.current) /
+        audioRef.current.playbackRate
+      ).toFixed(1)}s linear`;
+    }
 
     play();
   };
@@ -138,6 +149,10 @@ export default function useEditLyricModal() {
     actuallyEndRef.current = newEnd;
     if (endRefText.current) {
       endRefText.current.textContent = `${newEnd} / ${currentLyric.end}`;
+    }
+    if (tempActuallyStartRef.current) {
+      actuallyEndRef.current = newEnd;
+      actuallyStartRef.current = actuallyEndRef.current - 1;
     }
   };
 
@@ -163,18 +178,72 @@ export default function useEditLyricModal() {
       e.preventDefault();
       handlePlayPause();
     }
+
+    if (isChangeTune) {
+      const selectedButton = currentWordRef.current;
+      if (!selectedButton) return;
+
+      switch (e.key) {
+        case "ArrowRight":
+          if (selectedButton?.nextSibling)
+            (selectedButton?.nextSibling as HTMLButtonElement).click();
+
+          e.preventDefault();
+          break;
+        case "ArrowLeft":
+          e.preventDefault();
+          if (selectedButton?.previousSibling)
+            (selectedButton?.previousSibling as HTMLButtonElement).click();
+
+          break;
+      }
+    }
+  };
+
+  const handleClickOutside: EventListener = (e) => {
+    const node = e.target as Node;
+
+    const word = document.querySelectorAll(".word-item");
+
+    let isClickedWordItem = false;
+
+    word.forEach((modalContent) =>
+      modalContent.contains(node) ? (isClickedWordItem = true) : {},
+    );
+
+    if (isClickedWordItem) return;
+
+    setIsChangeTune(false);
+  };
+
+  const endTimeRangeProps: HTMLAttributes<HTMLInputElement> = {
+    onFocus: () => {
+      tempActuallyStartRef.current = actuallyStartRef.current;
+      actuallyStartRef.current = actuallyEndRef.current - 1;
+    },
+    onBlur: () => {
+      actuallyStartRef.current = tempActuallyStartRef.current;
+      tempActuallyStartRef.current = 0;
+    },
   };
 
   useEffect(() => {
+    console.log("add keydown event");
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [hadAudioEle]);
+  }, [hadAudioEle, isChangeTune]);
 
   useEffect(() => {
     setHadAudioEle(true);
+
+    window.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -251,6 +320,7 @@ export default function useEditLyricModal() {
       endRefText,
       audioRef,
       isChanged,
+      currentWordRef,
     },
     pause,
     setStartPoint,
@@ -265,5 +335,7 @@ export default function useEditLyricModal() {
     status,
     updateLyricTune,
     currentLyric,
+    endTimeRangeProps,
+    setIsChangeTune,
   };
 }
