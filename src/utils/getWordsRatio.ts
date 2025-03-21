@@ -1,4 +1,4 @@
-export const getWidthList = (containerEle: HTMLDivElement) => {
+export const getWordsRatio = (containerEle: HTMLDivElement) => {
   const totalWith = containerEle.clientWidth;
 
   const list: number[] = [];

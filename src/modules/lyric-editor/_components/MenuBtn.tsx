@@ -1,6 +1,5 @@
 import {
 	Button,
-	InputModal,
 	Modal,
 	ModalHeader,
 	ModalRef,
@@ -10,7 +9,6 @@ import {
 } from "@/components";
 import { MenuList, MenuWrapper } from "@/components/ui/MenuWrapper";
 import { useThemeContext } from "@/stores";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
@@ -21,6 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { TriggerRef } from "@/components/MyPopup";
 import EditStringLyicModal from "./EditStringLyricModal";
+import { useEditLyricContext } from "./EditLyricContext";
 
 type Modal = "lyric" | "tutorial" | "song-beat";
 

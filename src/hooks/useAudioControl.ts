@@ -1,25 +1,32 @@
 import { useThemeContext } from "@/stores";
 import { getLinearBg } from "@/utils/getLinearBg";
-import { RefObject, useEffect, useRef, useState } from "react";
+import { Dispatch, RefObject, SetStateAction, useEffect, useRef, useState } from "react";
+
+export type Status = "playing" | "paused" | "waiting" | "error";
 
 type Props = {
   audioEle: HTMLAudioElement;
   progressLineRef?: RefObject<HTMLDivElement>;
   baseColor?: string;
   color?: string;
+  statusFromParent?: Status;
+  setStatusFromParent?: Dispatch<SetStateAction<Status>>;
 };
-
-type Status = "playing" | "paused" | "waiting" | "error";
 
 export default function useAudioControl({
   audioEle,
   baseColor,
   color,
   progressLineRef,
+  setStatusFromParent,
+  statusFromParent,
 }: Props) {
   const { theme } = useThemeContext();
-  const [status, setStatus] = useState<Status>("paused");
+  const [localStatus, setLocalStatus] = useState<Status>("paused");
   const [isClickPlay, setIsClickPlay] = useState(false);
+
+  const status = statusFromParent || localStatus;
+  const setStatus = setStatusFromParent || setLocalStatus;
 
   const themeCode = useRef("");
   const statusRef = useRef<Status>(status);
@@ -59,7 +66,7 @@ export default function useAudioControl({
       progressLineRef.current.style.background = getLinearBg(
         color || themeCode.current,
         _progress,
-        baseColor
+        baseColor,
       );
   };
 

@@ -12,9 +12,9 @@ import {
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
 import { AudioSetting, Button } from "@/components";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { useLyricEditorAction } from "../_hooks/useLyricEditorAction";
 import MenuBtn from "./MenuBtn";
+import { useEditLyricContext } from "./EditLyricContext";
 
 type Props = {
   audioEle: HTMLAudioElement;

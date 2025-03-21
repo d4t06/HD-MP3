@@ -1,5 +1,5 @@
 import createKeyFrame from "@/utils/createKeyFrame";
-import { getWidthList } from "@/utils/getWidthList";
+import { getWordsRatio } from "@/utils/getWordsRatio";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { usePlayerContext } from "@/stores";
@@ -151,7 +151,7 @@ export default function useKaraoke({ active }: Props) {
         .split("_")
         .filter((v) => v)
         .map((v) => +v);
-      const widthList = getWidthList(
+      const widthList = getWordsRatio(
         _isOdd ? tempOddText.current : tempEventText.current
       );
 

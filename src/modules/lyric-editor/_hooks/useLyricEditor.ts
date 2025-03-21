@@ -1,9 +1,9 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
+import { useEditLyricContext } from "../_components/EditLyricContext";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
@@ -81,12 +81,32 @@ export default function useLyricEditor({ audioRef }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
+          type UndefineableRealTimeLyric = Omit<RealTimeLyric, "cutData"> & {
+            cutData?: number[][];
+          };
+
           const { base, real_time } = lyricSnapshot.data() as SongLyricSchema;
-          const lyrics = JSON.parse(real_time);
+          const wrongLyrics = JSON.parse(real_time) as UndefineableRealTimeLyric[];
+
+          // add field "syllables" and "cutPositions" to lyric if don't exist
+          const lyrics = wrongLyrics.map((l) => {
+            if (!l?.cutData) {
+              const words = l.text.trim().split(" ");
+
+              const cutData = words.map(() => []);
+              const newLyric: RealTimeLyric = {
+                ...l,
+                cutData,
+              };
+
+              return newLyric;
+            }
+
+            return l as RealTimeLyric;
+          });
 
           setBaseLyric(base);
           setLyrics(lyrics);
-
           updateIndex(lyrics);
         }
       }
@@ -118,8 +138,6 @@ export default function useLyricEditor({ audioRef }: Props) {
       if (song_id === song.id) {
         const lyrics = JSON.parse(real_time) as RealTimeLyric[];
 
-        console.log(lyrics);
-
         setBaseLyric(base);
         setLyrics(lyrics);
         updateIndex(lyrics);
@@ -127,7 +145,7 @@ export default function useLyricEditor({ audioRef }: Props) {
       }
     };
 
-    loadTempLyric();
+    // loadTempLyric();
   }, [song]);
 
   // update base lyric array

@@ -1,8 +1,8 @@
 import { db } from "@/firebase";
 import { useToastContext } from "@/stores";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import { useEditLyricContext } from "../_components/EditLyricContext";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -34,10 +34,15 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     if (start.current === currentTime) return; // prevent double click
 
     const text = baseLyricArr[lyrics.length];
+
+    const words = text.trim().split(" ");
+    const cutData = words.map(() => []);
+
     const lyric: RealTimeLyric = {
       start: start.current, // end time of prev lyric
       text,
       end: currentTime,
+      cutData,
     };
 
     start.current = currentTime; // update start for next lyric
@@ -48,10 +53,14 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     if (baseLyricArr.length === lyrics.length + 2) {
       const text = baseLyricArr[baseLyricArr.length - 1];
 
+      const words = text.trim().split(" ");
+      const cutData = words.map(() => []);
+
       const lyric: RealTimeLyric = {
         start: start.current, // started time of 2 last lyric
-        text,
         end: song.duration,
+        cutData,
+        text,
       };
 
       setLyrics((prev) => [...prev, lyric]);

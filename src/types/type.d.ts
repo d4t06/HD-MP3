@@ -91,6 +91,8 @@ interface RealTimeLyric {
   end: number;
   text: string;
   tune?: LyricTune;
+  // syllables: number[];
+  cutData: number[][];
 }
 
 type ThemeKeyType =

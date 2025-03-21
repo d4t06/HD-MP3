@@ -1,6 +1,5 @@
 import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { useThemeContext } from "@/stores";
 import { LyricStatus } from "../";
 import { ModalRef } from "@/components";
@@ -8,6 +7,7 @@ import { ModalRef } from "@/components";
 import { scrollIntoView } from "@/utils/appHelpers";
 import AddLyricItem from "./AddLyricItem";
 import LyricItem from "@/modules/lyric/LyricItem";
+import { useEditLyricContext } from "./EditLyricContext";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
@@ -42,6 +42,7 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
     if (typeof index !== "number") return;
 
     setSelectLyricIndex(index);
+
     modalRef.current?.open();
   };
 

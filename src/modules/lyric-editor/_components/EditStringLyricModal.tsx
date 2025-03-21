@@ -1,7 +1,7 @@
 import { Button, ModalHeader } from "@/components";
 import { useThemeContext } from "@/stores";
-import { useEditLyricContext } from "@/stores/EditLyricContext";
 import { ElementRef, useEffect, useRef, useState } from "react";
+import { useEditLyricContext } from "./EditLyricContext";
 
 type Props = {
   closeModal: () => void;

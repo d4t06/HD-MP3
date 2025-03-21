@@ -6,8 +6,9 @@ import LyricEditorControl, {
 import LyricEditorList from "./_components/LyricEditorList";
 import { useThemeContext } from "@/stores";
 import { Center, Title, Modal, ModalRef, Button } from "@/components";
-import EditLyricModal from "./_components/EditLyricModal";
 import useLyricEditor from "./_hooks/useLyricEditor";
+import EditLyricModal from "../edit-lyric-modal";
+import EditLyricProvider from "./_components/EditLyricContext";
 
 type Props = {
   children?: ReactNode;
@@ -15,7 +16,7 @@ type Props = {
 
 export type LyricStatus = "active" | "done" | "coming";
 
-export default function LyricEditor({ children }: Props) {
+function Content({ children }: Props) {
   const { theme } = useThemeContext();
 
   const controlRef = useRef<LyricEditorControlRef>(null);
@@ -50,7 +51,7 @@ export default function LyricEditor({ children }: Props) {
                 <>
                   <LyricEditorControl audioEle={audioRef.current} ref={controlRef} />
 
-                  <Modal variant="animation" ref={modalRef}>
+                  <Modal persisted variant="animation" ref={modalRef}>
                     <EditLyricModal closeModal={() => modalRef.current?.close()} />
                   </Modal>
                 </>
@@ -72,5 +73,13 @@ export default function LyricEditor({ children }: Props) {
         )
       )}
     </>
+  );
+}
+
+export default function LyricEditor() {
+  return (
+    <EditLyricProvider>
+      <Content />
+    </EditLyricProvider>
   );
 }
