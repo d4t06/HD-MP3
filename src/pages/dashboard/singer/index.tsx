@@ -1,6 +1,6 @@
 import { NotFound, Skeleton, Tabs } from "@/components";
 import Title from "@/components/ui/Title";
-  import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { SearchBar } from "../_components";
 import AddSingerBtn from "./_components/AddSingerBtn";
 import useDashboardSinger from "./_hooks/useDashboardSinger";
@@ -10,11 +10,11 @@ export default function DashboardSingerPage() {
   const { isFetching, singers, tab, setTab, ...rest } = useDashboardSinger();
 
   return (
-    <>
+    <div className="pb-[46px]">
       <Title title="Singer" />
 
-      <div className="flex justify-between">
-        <SearchBar className="self-start mt-3" {...rest} />
+      <div className="flex justify-between mt-3">
+        <SearchBar {...rest} />
         <AddSingerBtn />
       </div>
 
@@ -51,6 +51,6 @@ export default function DashboardSingerPage() {
           </DashboardTable>
         )}
       </div>
-    </>
+    </div>
   );
 }

@@ -5,16 +5,22 @@ import { useThemeContext } from "@/stores";
 import usePersistState from "@/hooks/usePersistState";
 import { useEffect } from "react";
 
-type Props = { audioEle: HTMLAudioElement; postLocalStorageKey: string };
+type Props = {
+  audioEle: HTMLAudioElement;
+  postLocalStorageKey: string;
+  className?: string;
+  positions?: "left" | "right";
+  bg?: string;
+};
 
 function useAudioSetting({ audioEle, postLocalStorageKey }: Props) {
   const [speed, setSpeed] = usePersistState<number>(
     `audio_speed_${postLocalStorageKey}`,
-    1,
+    1
   );
   const [volume, setVolume] = usePersistState<number>(
     `audio_volume_${postLocalStorageKey}`,
-    100,
+    100
   );
 
   useEffect(() => {
@@ -32,8 +38,10 @@ function useAudioSetting({ audioEle, postLocalStorageKey }: Props) {
 
 export default function AudioSetting({
   className = "",
+  positions = "right",
+  bg = "",
   ...props
-}: Props & { className?: string }) {
+}: Props) {
   const { theme } = useThemeContext();
 
   const { speed, volume, setVolume, setSpeed } = useAudioSetting(props);
@@ -46,8 +54,17 @@ export default function AudioSetting({
         </Button>
       </MyPopupTrigger>
 
-      <MyPopupContent className="top-[calc(100%+8px)] left-0 z-[9]" appendTo="parent">
-        <PopupWrapper className="w-[240px]" theme={theme}>
+      <MyPopupContent
+        className={`top-[calc(100%+8px)] ${
+          positions === "right" ? "left-0" : "right-0"
+        } z-[9]`}
+        appendTo="parent"
+      >
+        <PopupWrapper
+          bg="clear"
+          className={`w-[240px] ${bg ? bg : theme.modal_bg} `}
+          theme={theme}
+        >
           <div className="space-y-[6px]">
             <div className={`flex space-x-1`}>
               <div className="w-[110px] flex-shrink-0">Speed {speed}x</div>

@@ -26,7 +26,7 @@ export default function useSongLyric({ active }: { active: boolean }) {
 
       const lyricSnap = await myGetDoc({
         collectionName: "Lyrics",
-        id: currentSongData.song.is_has_lyric,
+        id: currentSongData.song.lyric_id,
       });
 
       if (lyricSnap.exists()) {

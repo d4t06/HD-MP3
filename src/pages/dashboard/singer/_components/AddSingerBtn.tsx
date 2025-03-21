@@ -14,7 +14,7 @@ export default function AddSingerBtn() {
     <>
       <Button
         onClick={() => modalRef.current?.open()}
-        className={`h-[32px]  space-x-1 px-2.5`}
+        className={`h-[32px]  space-x-1 px-2.5 ml-5`}
         size={"clear"}
       >
         <PlusIcon className="w-6" />

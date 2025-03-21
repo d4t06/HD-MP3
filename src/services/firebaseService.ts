@@ -149,25 +149,11 @@ export const deleteFile = async ({
   await deleteObject(fileRef);
 };
 
-export const deleteSong = async (song: Song) => {
-  await myDeleteDoc({
-    collectionName: "Songs",
-    id: song.id,
-    msg: ">>> api: delete song doc",
-  });
-
+export const deleteSongFiles = async (song: Song) => {
   await deleteFile({
     filePath: song.song_file_path,
     msg: ">>> api: delete song file",
   });
-
-  if (song.is_has_lyric) {
-    await myDeleteDoc({
-      collectionName: "Lyrics",
-      id: song.id,
-      msg: ">>> api: delete song lyric doc",
-    });
-  }
 
   if (song.image_file_path) {
     await deleteFile({
@@ -176,3 +162,4 @@ export const deleteSong = async (song: Song) => {
     });
   }
 };
+

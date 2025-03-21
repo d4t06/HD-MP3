@@ -1,44 +1,57 @@
-import { deleteSong } from "@/services/firebaseService";
+import { db } from "@/firebase";
+import { deleteSongFiles } from "@/services/firebaseService";
 import { useSongContext, useToastContext } from "@/stores";
+import { doc, writeBatch } from "firebase/firestore";
 import { useState } from "react";
 
 type DeleteSong = {
-	variant: "delete";
-	song: Song;
+  variant: "delete";
+  song: Song;
 };
 
 export type SongItemActionProps = DeleteSong;
 
 export default function useDashboardSongItemAction() {
-	const { setUploadedSongs, uploadedSongs } = useSongContext();
+  const { setUploadedSongs, uploadedSongs } = useSongContext();
 
-	const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
-	const { setSuccessToast, setErrorToast } = useToastContext();
+  const { setSuccessToast, setErrorToast } = useToastContext();
 
-	const actions = async (props: SongItemActionProps) => {
-		try {
-			setIsFetching(true);
+  const actions = async (props: SongItemActionProps) => {
+    try {
+      setIsFetching(true);
 
-			switch (props.variant) {
-				case "delete": {
-					const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
+      const batch = writeBatch(db);
+      const songRef = doc(db, "Songs", props.song.id);
 
-					await deleteSong(props.song);
-					setUploadedSongs(newSongs);
+      switch (props.variant) {
+        case "delete": {
+          const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
-					setSuccessToast(`'${props.song.name}' deleted`);
+          batch.delete(songRef);
+          if (props.song.lyric_id) {
+            const lyricRef = doc(db, "Lyrics", props.song.lyric_id);
+            batch.delete(lyricRef);
+          }
 
-					break;
-				}
-			}
-		} catch (err) {
-			console.log({ message: err });
-			setErrorToast();
-		} finally {
-			setIsFetching(false);
-		}
-	};
+          await Promise.all([batch.commit(), deleteSongFiles(props.song)]);
 
-	return { actions, isFetching };
+          // await deleteSong(props.song);
+          setUploadedSongs(newSongs);
+
+          setSuccessToast(`'${props.song.name}' deleted`);
+
+          break;
+        }
+      }
+    } catch (err) {
+      console.log({ message: err });
+      setErrorToast();
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  return { actions, isFetching };
 }

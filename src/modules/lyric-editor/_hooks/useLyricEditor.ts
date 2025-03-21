@@ -74,10 +74,10 @@ export default function useLyricEditor({ audioRef }: Props) {
         queue_id: "",
       };
 
-      if (song.is_has_lyric) {
+      if (song.lyric_id) {
         const lyricSnapshot = await myGetDoc({
           collectionName: "Lyrics",
-          id: song.is_has_lyric,
+          id: song.lyric_id,
         });
 
         if (lyricSnapshot.exists()) {
@@ -145,7 +145,7 @@ export default function useLyricEditor({ audioRef }: Props) {
       }
     };
 
-    // loadTempLyric();
+    loadTempLyric();
   }, [song]);
 
   // update base lyric array

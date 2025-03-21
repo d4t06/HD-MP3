@@ -24,7 +24,7 @@ const playlistSongSkeleton = (
 
 export default function PlaylistSongList({ variant, loading }: Props) {
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { handleSetSong } = useSetSong({ variant: "playlist" });
+  const { handleSetSong } = useSetSong({variant: 'playlist'});
 
   const _handleSetSong = (s: Song) => {
     handleSetSong(s.queue_id, playlistSongs);
@@ -36,7 +36,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
     <>
       <SongSelectProvider>
         {!!playlistSongs.length && (
-          <CheckedBar variant={variant === "others-playlist" ? "system" : "own-playlist"}>
+          <CheckedBar variant={variant === "others-playlist" ? "system-song" : "own-playlist"}>
             <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
           </CheckedBar>
         )}

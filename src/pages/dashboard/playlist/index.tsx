@@ -10,11 +10,11 @@ export default function DashboardPlaylist() {
   const { isFetching, playlists, tab, setTab, ...rest } = useDashboardPlaylist();
 
   return (
-    <>
+    <div className="pb-[46px]">
       <Title title="Playlists" />
 
-      <div className="flex justify-between">
-        <SearchBar className="self-start mt-3" {...rest} />
+      <div className="flex justify-between mt-3">
+        <SearchBar {...rest} />
         <AddNewPlaylistBtn />
       </div>
 
@@ -60,6 +60,6 @@ export default function DashboardPlaylist() {
           </Frame>
         )}
       </div>
-    </>
+    </div>
   );
 }

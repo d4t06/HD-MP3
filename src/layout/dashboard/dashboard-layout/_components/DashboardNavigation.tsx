@@ -29,7 +29,7 @@ export default function DashboardNavigation() {
     <>
       <Frame
         colors={"third"}
-        className={`absolute duration-[.25] flex flex-col
+        className={`absolute z-[99] duration-[.25] flex flex-col
 				transition-[left,opacity] bottom-[80px] 
 				${
           isOpen
@@ -49,7 +49,11 @@ export default function DashboardNavigation() {
         ref={buttonRef}
         size={"clear"}
         onClick={() => setIsOpen(!isOpen)}
-        className={`${theme.content_bg} !absolute bottom-5 left-[10px] p-1.5`}
+        className={`${theme.content_bg} !absolute transition-[left] bottom-[10px]  p-1.5 ${
+          isOpen
+            ? "left-[10px] "
+            : "left-[-10px]"
+        }`}
       >
         <Bars3Icon className="w-6" />
       </Button>

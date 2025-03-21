@@ -1,5 +1,9 @@
 import { setPlayStatus } from "@/stores/redux/PlayStatusSlice";
-import { selectSongQueue, setCurrentQueueId, setQueue } from "@/stores/redux/songQueueSlice";
+import {
+  selectSongQueue,
+  setCurrentQueueId,
+  setQueue,
+} from "@/stores/redux/songQueueSlice";
 // import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,10 +18,7 @@ export default function useSetSong({ variant }: Props) {
 
   const KEY: keyof Song = useMemo(() => {
     switch (variant) {
-      case "songs":
-      case "search-bar":
-        return "queue_id";
-      case "playlist":
+      default:
         return "queue_id";
     }
   }, []);
@@ -28,19 +29,11 @@ export default function useSetSong({ variant }: Props) {
       dispatch(setCurrentQueueId(queueId));
       dispatch(setPlayStatus({ playStatus: "loading" }));
 
-      const currentSongIdList = queueSongs.map((s) => s[KEY]);
+      const currentSongQueueIds = queueSongs.map((s) => s[KEY]);
       let isDiff =
         !queueSongs.length ||
         queueSongs.length !== songs.length ||
-        !!songs.find((s) => !currentSongIdList.includes(s[KEY]));
-
-      // if (variant === "playlist") {
-      //   const hasSetPlaylistQueue = getLocalStorage()["set_playlist_queue"];
-      //   if (!hasSetPlaylistQueue) {
-      //     isDiff = true;
-      //     setLocalStorage("set_playlist_queue", true);
-      //   }
-      // }
+        !!songs.find((s) => !currentSongQueueIds.includes(s[KEY]));
 
       if (isDiff) {
         console.log("set queue");

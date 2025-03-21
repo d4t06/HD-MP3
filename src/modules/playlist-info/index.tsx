@@ -31,7 +31,7 @@ export default function PLaylistInfo({
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
-    smallText: "text-sm leading-[1.2] opacity-[.7]",
+    smallText: "text-xs leading-[1.3] opacity-[.7] line-clamp-2",
   };
 
   return (
@@ -47,7 +47,7 @@ export default function PLaylistInfo({
           )}
         </div>
 
-        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:text-center">
+        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3">
           {showSkeleton ? (
             <div className="space-y-1 mb-3">
               <Skeleton className="h-[24px] w-[170px]" />
@@ -58,7 +58,7 @@ export default function PLaylistInfo({
           ) : (
             playlist && (
               <div className="space-y-1 mb-3">
-                <p className="text-xl leading-[1.2]">
+                <p className="text-xl font-[600] leading-[1.2]">
                   {playlist.name}
                   {import.meta.env.DEV && (
                     <span>
@@ -75,7 +75,10 @@ export default function PLaylistInfo({
                 )}
                 {variant === "others-playlist" && (
                   <>
-                    <p className={classes.smallText}>{playlist.play_count} plays</p>
+                    <p className={classes.smallText}>{playlist.like} likes</p>
+                    <p className={classes.smallText}>
+                      {playlist.singers.map((s, i) => (!!i ? ", " : "") + s.name)}
+                    </p>
                     <p className={classes.smallText}>
                       Last update:{" "}
                       {convertTimestampToString(playlist.updated_at, { type: "date" })}

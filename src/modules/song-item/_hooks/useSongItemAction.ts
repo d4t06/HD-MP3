@@ -1,7 +1,9 @@
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { useState } from "react";
 
-import { deleteSong, myUpdateDoc } from "@/services/firebaseService";
+import { deleteSongFiles } from "@/services/firebaseService";
+import { doc, increment, writeBatch } from "firebase/firestore";
+import { db } from "@/firebase";
 
 export default function useSongItemAction() {
   // stores
@@ -25,14 +27,31 @@ export default function useSongItemAction() {
   const action = async (props: DeleteSong | LikedSong) => {
     try {
       setLoading(true);
+      if (!user) throw new Error("User not found");
+      const batch = writeBatch(db);
+
+      const userRef = doc(db, "Users", user.email);
+      const songRef = doc(db, "Songs", props.song.id);
 
       switch (props.variant) {
         case "delete": {
           const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
-          await deleteSong(props.song);
-          setUploadedSongs(newSongs);
+          const newUserData: Partial<User> = {
+            liked_song_ids: user.liked_song_ids.filter((id) => id !== props.song.id),
+          };
 
+          batch.update(userRef, newUserData);
+
+          batch.delete(songRef);
+          if (props.song.lyric_id) {
+            const lyricRef = doc(db, "Lyrics", props.song.lyric_id);
+            batch.delete(lyricRef);
+          }
+
+          await Promise.all([batch.commit(), deleteSongFiles(props.song)]);
+
+          setUploadedSongs(newSongs);
           setSuccessToast(`'${props.song.name}' deleted`);
 
           break;
@@ -44,18 +63,23 @@ export default function useSongItemAction() {
           const newLikedSongIds = [...user.liked_song_ids];
           const index = newLikedSongIds.findIndex((id) => id === props.song.id);
 
-          if (index === -1) newLikedSongIds.unshift(props.song.id);
+          const isLike= index === -1;
+
+          if (isLike) newLikedSongIds.unshift(props.song.id);
           else newLikedSongIds.splice(index, 1);
 
           const newUserData: Partial<User> = {
             liked_song_ids: newLikedSongIds,
           };
 
-          await myUpdateDoc({
-            collectionName: "Users",
-            data: newUserData,
-            id: user.email,
-          });
+          const newSongData = {
+            like: increment(isLike? 1 : -1),
+          };
+
+          batch.update(userRef, newUserData);
+          batch.update(songRef, newSongData);
+
+          await batch.commit();
 
           updateUserData(newUserData);
 

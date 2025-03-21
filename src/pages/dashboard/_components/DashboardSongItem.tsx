@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import DashboardSongMenu from "./DashboardSongMenu";
+import DashboardSongMenu from "../_modules/song-menu";
 
 type Props = {
   song: Song;

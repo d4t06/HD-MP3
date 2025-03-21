@@ -88,7 +88,7 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
         </button>
         <Link to={`lyric/${song.id}`}>
           <DocumentTextIcon className="w-5" />
-          <span>{song.is_has_lyric ? "Edit lyric" : "Add lyric"}</span>
+          <span>{song.lyric_id ? "Edit lyric" : "Add lyric"}</span>
         </Link>
         <button onClick={() => handleOpenModal("delete")}>
           <TrashIcon className="w-5" />

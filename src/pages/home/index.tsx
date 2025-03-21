@@ -7,6 +7,7 @@
 import Footer from "@/layout/primary-layout/_components/Footer";
 import HomePlaylist from "./_components/HomePlaylist";
 import HomeSongList from "./_components/HomeSongList";
+import RecentPlaylist from "./_components/RecentPlaylist";
 // import { PlaylistList } from "@/components";
 
 export default function HomePage() {
@@ -27,6 +28,7 @@ export default function HomePage() {
   return (
     <>
       {/* {isOnMobile && <MobileNav />} */}
+      <RecentPlaylist />
 
       <HomePlaylist />
 

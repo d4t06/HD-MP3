@@ -3,139 +3,128 @@ import { useLyricEditorContext } from "../_components/LyricEditorContext";
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 
 type Props = {
-	audioEle: HTMLAudioElement;
+  audioEle: HTMLAudioElement;
 };
 
 export default function useRecord({ audioEle }: Props) {
-	const { currentSplitWords } = useEditLyricContext();
-	const {
-		eventRefs,
-		playerRef,
-		isChangedRef,
-		tabProps: { tab },
-		setGrowList,
-		actuallyStartRef,
-		status,
-	} = useLyricEditorContext();
+  const { currentSplitWords } = useEditLyricContext();
+  const {
+    eventRefs,
+    playerRef,
+    isChangedRef,
+    tabProps: { tab, setTab },
+    setGrowList,
+    actuallyStartRef,
+  } = useLyricEditorContext();
 
-	const [isRecording, setIsRecording] = useState(false);
-	const [localGrowList, setLocalGrowList] = useState<number[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const [localGrowList, setLocalGrowList] = useState<number[]>([]);
 
-	const startRef = useRef(Date.now());
-	const isCallPlay = useRef(false);
-	// const growListLengthRef = useRef(0);
-	const isPressedDown = useRef(false);
+  const startRef = useRef(Date.now());
+  const isCallPlay = useRef(false);
+  const isPressedDown = useRef(false);
 
-	const addRecord = () => {
-		// add the last item
-		// if (currentSplitWords.length === growListLengthRef.current + 1) {
-		// 	const grow = +(actuallyEndRef.current - audioEle.currentTime).toFixed(2);
+  const addRecord = () => {
+    const grow = +(+((Date.now() - startRef.current) / 1000).toFixed(2) + 1).toFixed(2);
+    setLocalGrowList((prev) => [...prev, grow]);
+  };
 
-		// 	setLocalGrowList((prev) => [...prev, grow]);
-		// } else {
-		// }
+  const record = () => {};
 
-		const grow = +(+((Date.now() - startRef.current) / 1000).toFixed(2) + 1).toFixed(2);
-		setLocalGrowList((prev) => [...prev, grow]);
-	};
+  const handleHold = () => {
+    startRef.current = Date.now();
 
-	const record = () => {};
+    if (!isCallPlay.current) {
+      isCallPlay.current = true;
+      playerRef.current?.play();
 
-	const handleHold = () => {
-		startRef.current = Date.now();
+      setIsRecording(true);
+    }
+  };
 
-		// if (currentSplitWords.length === growListLengthRef.current + 1) return addRecord();
+  const handleRelease = () => {
+    if (!isCallPlay.current) return;
 
-		if (!isCallPlay.current) {
-			isCallPlay.current = true;
-			playerRef.current?.play();
+    addRecord();
+  };
 
-			setIsRecording(true);
-		}
-	};
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === " ") {
+      if (!isPressedDown.current) {
+        e.preventDefault();
 
-	const handleRelease = () => {
-		if (!isCallPlay.current) return;
+        isPressedDown.current = true;
+        handleHold();
+      }
+    }
+  };
 
-		addRecord();
-	};
+  const handleKeyUp = (e: KeyboardEvent) => {
+    if (e.key === " ") {
+      e.preventDefault();
 
-	const handleKeyDown = (e: KeyboardEvent) => {
-		if (e.key === " ") {
-			if (!isPressedDown.current) {
-				e.preventDefault();
+      handleRelease();
+      isPressedDown.current = false;
+    }
+  };
 
-				isPressedDown.current = true;
-				handleHold();
-			}
-		}
-	};
+  const buttonProps: HTMLAttributes<HTMLButtonElement> = {
+    // onMouseUp: handleKeyUp,
+    // onMouseDown: handleKeyDown,
+  };
 
-	const handleKeyUp = (e: KeyboardEvent) => {
-		if (e.key === " ") {
-			e.preventDefault();
+  const clear = () => {
+    playerRef.current?.pause();
+    isCallPlay.current = false;
+    setLocalGrowList([]);
+    setIsRecording(false);
+  };
 
-			handleRelease();
-			isPressedDown.current = false;
-		}
-	};
+  const handleFinish = () => {
+    setGrowList(localGrowList);
+    isChangedRef.current = true;
 
-	const buttonProps: HTMLAttributes<HTMLButtonElement> = {
-		// onMouseUp: handleKeyUp,
-		// onMouseDown: handleKeyDown,
-	};
+    setTab("Edit");
 
-	const clear = () => {
-		playerRef.current?.pause();
-		isCallPlay.current = false;
-		// growListLengthRef.current = 0;
-		setLocalGrowList([]);
-		setIsRecording(false);
-	};
+    clear();
+  };
 
-	const handleFinish = () => {
-		setGrowList(localGrowList);
-		isChangedRef.current = true;
+  useEffect(() => {
+    // growListLengthRef.current = localGrowList.length;
 
-		clear();
-	};
+    if (localGrowList.length === currentSplitWords.length) {
+      handleFinish();
+    }
+  }, [localGrowList]);
 
-	useEffect(() => {
-		// growListLengthRef.current = localGrowList.length;
+  useEffect(() => {
+    if (tab !== "Record") return;
 
-		if (localGrowList.length === currentSplitWords.length) {
-			handleFinish();
-		}
-	}, [localGrowList]);
+    playerRef.current?.pause();
 
-	useEffect(() => {
-		if (tab !== "Record") return;
+    eventRefs.playWhenSpaceRef.current = false;
+    eventRefs.moveArrowToGrowRef.current = false;
 
-		playerRef.current?.pause();
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
 
-		eventRefs.playWhenSpaceRef.current = false;
-		eventRefs.moveArrowToGrowRef.current = false;
+    audioEle.currentTime = actuallyStartRef.current;
+    // audioEle.addEventListener("pause", handleFinish);
 
-		window.addEventListener("keydown", handleKeyDown);
-		window.addEventListener("keyup", handleKeyUp);
+    return () => {
+      playerRef.current?.pause();
 
-		audioEle.currentTime = actuallyStartRef.current;
-		// audioEle.addEventListener("pause", handleFinish);
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+      // audioEle.removeEventListener("pause", handleFinish);
+    };
+  }, [tab]);
 
-		return () => {
-			playerRef.current?.pause();
-
-			window.removeEventListener("keydown", handleKeyDown);
-			window.removeEventListener("keyup", handleKeyUp);
-			// audioEle.removeEventListener("pause", handleFinish);
-		};
-	}, [tab]);
-
-	return {
-		record,
-		localGrowList,
-		buttonProps,
-		clear,
-		isRecording,
-	};
+  return {
+    record,
+    localGrowList,
+    buttonProps,
+    clear,
+    isRecording,
+  };
 }

@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { doc, writeBatch } from "firebase/firestore";
+import { doc, increment, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default function usePlaylistAction() {
@@ -55,7 +55,7 @@ export default function usePlaylistAction() {
           const newLikedPlaylistIds = [...user.liked_playlist_ids];
           const index = newLikedPlaylistIds.findIndex((id) => id === props.playlist.id);
 
-          const isLike = index === -1;
+          const isLike= index === -1;
 
           if (isLike) newLikedPlaylistIds.unshift(props.playlist.id);
           else newLikedPlaylistIds.splice(index, 1);
@@ -64,9 +64,14 @@ export default function usePlaylistAction() {
             liked_playlist_ids: newLikedPlaylistIds,
           };
 
-          batch.update(userRef, newUserData);
+          const newPlaylistData = {
+            like: increment(isLike? 1 : -1),
+          };
 
-          batch.commit();
+          batch.update(userRef, newUserData);
+          batch.update(playlistRef, newPlaylistData);
+
+          await batch.commit();
 
           // should fetch new data or update data local ?
           if (isLike) setPlaylists((prev) => [props.playlist, ...prev]);
@@ -82,7 +87,7 @@ export default function usePlaylistAction() {
           const newPlaylist = { ...playlist, ...data };
 
           if (imageFile) {
-            const imageData = await optimizeAndGetHashImage({imageFile});
+            const imageData = await optimizeAndGetHashImage({ imageFile });
 
             if (playlist.image_file_path)
               await deleteFile({ filePath: playlist.image_file_path });
@@ -119,8 +124,6 @@ export default function usePlaylistAction() {
         case "delete": {
           const { playlist } = props;
 
-          batch.delete(playlistRef);
-
           if (playlist.image_file_path)
             await deleteFile({ filePath: playlist.image_file_path });
 
@@ -130,9 +133,15 @@ export default function usePlaylistAction() {
             ),
           };
 
+          batch.delete(playlistRef);
           batch.update(userRef, newUserData);
 
-          batch.commit();
+          await Promise.all([
+            batch.commit(),
+            playlist.image_file_path
+              ? deleteFile({ filePath: playlist.image_file_path })
+              : () => {},
+          ]);
 
           const newPlaylists = playlists.filter((p) => p.id !== playlist.id);
           setPlaylists(newPlaylists);

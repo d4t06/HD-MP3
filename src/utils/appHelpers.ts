@@ -63,4 +63,4 @@ export const scrollIntoView = (el: Element, behavior?: ScrollOptions["behavior"]
 
 export const getDisable = (v: boolean) => (v ? "disable" : "");
 export const getHidden = (v: boolean) => (v ? "hidden" : "");
-export const getClassses = (v: boolean, classes?: string) => (v ? classes : "");
+export const getClasses = (v: boolean, classes?: string) => (v ? classes : "");

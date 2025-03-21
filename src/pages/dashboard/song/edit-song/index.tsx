@@ -43,9 +43,9 @@ export default function EditSongPage() {
     );
 
   return (
-    <>
+    <div className="pb-[46px]">
       <Title className="mb-5" title="Edit Song" />
       <AddSongForm song={song} variant="edit" />
-    </>
+    </div>
   );
 }

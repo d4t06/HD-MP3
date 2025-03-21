@@ -3,22 +3,20 @@ import { useEffect } from "react";
 import { useLyricEditorContext } from "./LyricEditorContext";
 
 type Props = {
-	audioEle: HTMLAudioElement;
+  audioEle: HTMLAudioElement;
 };
 
-export default function EditLyricModalPlayler({ audioEle }: Props) {
-	const { playerRef } = useLyricEditorContext();
-	const { _play, _pause, handlePlayPause } = usePlayer({ audioEle });
+export default function EditLyricModalPlayer({ audioEle }: Props) {
+  const { playerRef } = useLyricEditorContext();
+  const { _play, _pause, handlePlayPause } = usePlayer({ audioEle });
 
-	useEffect(() => {
-		playerRef.current = {
-			handlePlayPause,
-			pause: _pause,
-			play: _play,
-		};
-	}, []);
+  useEffect(() => {
+    playerRef.current = {
+      handlePlayPause,
+      pause: _pause,
+      play: _play,
+    };
+  }, []);
 
-	return <></>;
+  return <></>;
 }
-
-// export default forwardRef(EditLyricModalPlayler);

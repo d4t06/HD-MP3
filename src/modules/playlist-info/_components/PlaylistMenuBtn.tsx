@@ -19,22 +19,7 @@ export function PlaylistMenuPopupContent({ children }: { children: ReactNode }) 
       appendTo="parent"
     >
       <MenuWrapper>
-        <MenuList>
-          {children}
-          {/* <button onClick={handleCopyLink}>
-                <LinkIcon className="w-5" />
-                <span>Copy link</span>
-              </button>
-              <button onClick={() => openModal("edit")}>
-                <PencilIcon className="w-5" />
-                <span>Edit</span>
-              </button>
-
-              <button onClick={() => openModal("delete")}>
-                <TrashIcon className="w-5" />
-                <span>Delete</span>
-              </button> */}
-        </MenuList>
+        <MenuList>{children}</MenuList>
       </MenuWrapper>
     </MyPopupContent>
   );
@@ -46,17 +31,9 @@ type Props = {
 
 export default function PlaylistMenuBtn({ variant }: Props) {
   const { theme } = useThemeContext();
-  const { setSuccessToast } = useToastContext();
   const [isOpenPopup, setIsOpenPopup] = useState<boolean>(false);
 
   const triggerRef = useRef<TriggerRef>(null);
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(location.href);
-    setSuccessToast("Link copied");
-
-    triggerRef.current?.close();
-  };
 
   return (
     <>

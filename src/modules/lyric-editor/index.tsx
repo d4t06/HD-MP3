@@ -41,7 +41,7 @@ function Content({ children }: Props) {
         </Center>
       ) : (
         song && (
-          <div className="flex flex-col h-full pb-5">
+          <div className="flex flex-col h-full">
             {children}
 
             <Title title={` Edit lyric - ${song?.name}`} />
@@ -61,7 +61,7 @@ function Content({ children }: Props) {
             <LyricEditorList modalRef={modalRef} controlRef={controlRef} />
 
             <Button
-              className={`${theme.content_bg} font-playwriteCU self-start rounded-full mt-5 `}
+              className={`${theme.content_bg} font-playwriteCU self-end md:self-start rounded-full mt-5 `}
               variant={"primary"}
               disabled={!isChanged}
               isLoading={isSubmitting}

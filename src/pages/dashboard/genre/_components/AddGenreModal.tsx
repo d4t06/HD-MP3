@@ -14,7 +14,6 @@ type Props = {
 type Edit = {
   type: "edit";
   genre: Genre;
-  index: number;
 };
 
 type Add = {
@@ -52,7 +51,6 @@ export default function AddGenreModal({
             type: "edit",
             name,
             id: props.genre.id,
-            index: props.index,
           });
           break;
       }

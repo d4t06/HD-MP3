@@ -49,9 +49,9 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
   return (
     <>
       <div
-        className={`flex flex-grow overflow-auto no-scrollbar text-[18px] rounded-xl pt-3 mt-3 ${theme.side_bar_bg}`}
+        className={`flex flex-grow overflow-auto no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg}`}
       >
-        <div className={"w-1/2 px-2"}>
+        <div className={"w-1/2"}>
           {!!baseLyricArr.length ? (
             <>
               {baseLyricArr.map((lyric, index) => {
@@ -82,7 +82,7 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
           )}
         </div>
 
-        <div className={"w-1/2 px-2 "}>
+        <div className={"w-1/2 "}>
           {!!lyrics?.length &&
             song &&
             lyrics.map((lyric, index) => (

@@ -13,14 +13,14 @@ export default function DashboardSong() {
   const { isFetching, uploadedSongs, setTab, tab, ...rest } = useDashboardSong();
 
   return (
-    <>
+    <div className="pb-[46px]">
       <Title title="Songs" />
 
-      <div className="flex justify-between items-end mt-3">
+      <div className="flex justify-between items-start mt-3">
         <Searchbar {...rest} />
         <Button
           href="/dashboard/song/add-song"
-          className={`p-1.5`}
+          className={`p-1.5 ml-5`}
           size={"clear"}
         >
           <PlusIcon className="w-6" />
@@ -67,6 +67,6 @@ export default function DashboardSong() {
           </Frame>
         )}
       </div>
-    </>
+    </div>
   );
 }

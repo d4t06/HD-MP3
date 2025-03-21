@@ -18,7 +18,7 @@ export default function HomeSongList() {
         <Tab render={(t) => t} {...rest} />
       </div>
       <SongSelectProvider>
-        <CheckedBar variant="system">
+        <CheckedBar variant="system-song">
           <p className="font-[500] opacity-[.5]">Songs</p>
         </CheckedBar>
         

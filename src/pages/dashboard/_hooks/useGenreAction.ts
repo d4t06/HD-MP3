@@ -15,7 +15,6 @@ export default function useGenreAction() {
     type: "edit";
     name: string;
     id: string;
-    index: number;
   };
 
   type Delete = {
@@ -50,10 +49,12 @@ export default function useGenreAction() {
 
         const newGenres = [...genres];
 
-        const target = { ...genres[props.index] };
+        const index = newGenres.findIndex((g) => g.id === props.id);
+
+        const target = { ...genres[index] };
         Object.assign(target, { name: props.name });
 
-        newGenres[props.index] = target;
+        newGenres[index] = target;
 
         setGenres(newGenres);
 

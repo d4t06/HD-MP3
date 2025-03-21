@@ -112,7 +112,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       const lyricRef = doc(collection(db, "Lyrics"));
 
       const newSongData: Partial<SongSchema> = {
-        is_has_lyric: lyricRef.id,
+        lyric_id: lyricRef.id,
         updated_at: serverTimestamp(),
       };
 

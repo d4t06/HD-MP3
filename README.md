@@ -122,7 +122,7 @@
 - [x] delete from playlist
 - [x] add lyrics
 - [x] active
-- [x] like song
+- [x] likesong
 - [x] Handle actually song when edit song
 - [x] Handle actually song when upload song
 - [x] Handle actually song when delete songs
@@ -175,7 +175,7 @@
 
 ### Issues
 
-- [x] không tải được like song ở trên mobile
+- [x] không tải được likesong ở trên mobile
 - [x] Nút điều khiển trên mobile to
 - [x] không load dươc lyric trên mobile
 - [x] dừng load lyric song khi song lỗi

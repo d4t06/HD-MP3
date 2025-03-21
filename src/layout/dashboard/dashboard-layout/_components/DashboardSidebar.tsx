@@ -33,7 +33,7 @@ export const routeList = [
     icon: <UserIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard",
+    path: "/dashboard/genre",
     title: "Genres",
     icon: <RectangleGroupIcon className="w-5 flex-shrink-0" />,
   },

@@ -58,7 +58,7 @@ export default function useGetHomePlaylist() {
               playlistCollectionRef,
               where("is_official", "==", true),
               where("is_public", "==", true),
-              orderBy("play_count", "desc")
+              orderBy("like", "desc")
             );
             break;
         }

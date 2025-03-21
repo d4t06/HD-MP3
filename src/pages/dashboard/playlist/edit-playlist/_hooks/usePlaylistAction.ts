@@ -10,12 +10,6 @@ import { useNavigate } from "react-router-dom";
 // import { getDoc } from "firebase/firestore";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { setCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
-
-// type AddPlaylist = {
-//   variant: "add-playlist";
-//   playlist: PlaylistSchema;
-// };
 
 type DeletePlaylist = {
   variant: "delete-playlist";
@@ -37,6 +31,16 @@ type RemoveSong = {
   song: Song;
 };
 
+type RemoveSinger = {
+  variant: "remove-singer";
+  singer: Singer;
+};
+
+type AddSinger = {
+  variant: "add-singer";
+  singer: Singer;
+};
+
 type UpdateImage = {
   variant: "update-image";
   song: Song;
@@ -44,7 +48,13 @@ type UpdateImage = {
 
 export type PlaylistActionProps =
   //   | AddPlaylist
-  DeletePlaylist | AddSongs | EditPlaylist | RemoveSong | UpdateImage;
+  | DeletePlaylist
+  | AddSongs
+  | EditPlaylist
+  | RemoveSong
+  | UpdateImage
+  | RemoveSinger
+  | AddSinger;
 
 export default function useDashboardPlaylistActions() {
   // stores
@@ -58,6 +68,24 @@ export default function useDashboardPlaylistActions() {
   // hooks
   const navigate = useNavigate();
   const { setErrorToast, setSuccessToast } = useToastContext();
+
+  const updatePlaylistSinger = async (singers: Singer[], id: string) => {
+    const newSingerMap: Playlist["singer_map"] = {};
+    singers.forEach((s) => (newSingerMap[s.id] = true));
+
+    const playlistData: Partial<Playlist> = {
+      singers: singers,
+      singer_map: newSingerMap,
+    };
+
+    await myUpdateDoc({
+      collectionName: "Playlists",
+      id: id,
+      data: playlistData,
+    });
+
+    updatePlaylistData(playlistData);
+  };
 
   const action = async (props: PlaylistActionProps) => {
     try {
@@ -105,25 +133,25 @@ export default function useDashboardPlaylistActions() {
             ),
           };
 
-          if (playlist.singers.length < 5) {
-            const newSingers: Singer[] = [...playlist.singers];
+          // if (playlist.singers.length < 5) {
+          //   const newSingers: Singer[] = [...playlist.singers];
 
-            for (const currentSong of props.songs) {
-              if (newSingers.length == 5) break;
+          //   for (const currentSong of props.songs) {
+          //     if (newSingers.length == 5) break;
 
-              currentSong.singers.forEach((s) => {
-                const foundedSinger = !!newSingers.find((_s) => _s.id === s.id);
+          //     const foundedSinger = !!newSingers.find(
+          //       (_s) => _s.id === currentSong.singers[0].id
+          //     );
 
-                if (!foundedSinger) newSingers.push(s);
-              });
-            }
+          //     if (!foundedSinger) newSingers.push(currentSong.singers[0]);
+          //   }
 
-            const data: Partial<Playlist> = {
-              singers: [...playlist.singers, ...newSingers],
-            };
+          //   const data: Partial<Playlist> = {
+          //     singers: [...playlist.singers, ...newSingers],
+          //   };
 
-            Object.assign(playlistData, data);
-          }
+          //   Object.assign(playlistData, data);
+          // }
 
           await myUpdateDoc({
             collectionName: "Playlists",
@@ -215,6 +243,28 @@ export default function useDashboardPlaylistActions() {
 
           setSuccessToast(`Playlist edited`);
 
+          break;
+        }
+        case "remove-singer": {
+          if (!playlist) throw new Error("playlist not found");
+          setIsFetching(true);
+
+          const newPlaylistSingers = playlist.singers.filter(
+            (s) => s.id !== props.singer.id
+          );
+
+          updatePlaylistSinger(newPlaylistSingers, playlist.id);
+
+          break;
+        }
+
+        case "add-singer": {
+          if (!playlist) throw new Error("playlist not found");
+          setIsFetching(true);
+
+          const newPlaylistSingers = [...playlist.singers, props.singer];
+
+          updatePlaylistSinger(newPlaylistSingers, playlist.id);
           break;
         }
       }

@@ -1,5 +1,6 @@
 import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
+import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
 import { useThemeContext } from "@/stores";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
@@ -38,9 +39,14 @@ export default function PlayPlaylistBtn() {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
+  const { updatePlaylist } = useUpdateRecentPlaylist();
 
   const handlePlayPlaylist = () => {
+    if (!currentPlaylist) return;
+
     const firstSong = playlistSongs[0];
+    updatePlaylist(currentPlaylist);
+
     handleSetSong(firstSong.queue_id, playlistSongs);
   };
 

@@ -7,7 +7,7 @@ import playingIcon from "@/assets/icon-playing.gif";
 import { CheckIcon } from "@heroicons/react/20/solid";
 import SongMenu from "@/modules/song-menu";
 import { useSongSelectContext, useThemeContext } from "@/stores";
-import { getClassses, getHidden } from "@/utils/appHelpers";
+import { getClasses, getHidden } from "@/utils/appHelpers";
 import { Image } from "@/components";
 import HearBtn from "./_components/HearBtn";
 import { Link } from "react-router-dom";
@@ -21,7 +21,7 @@ type Props = {
   // null if user is null
   isLiked: boolean | null;
   isHasCheckBox: boolean;
-  variant: "system-song" | "own-song" | "queue-song" | "own-playlist"
+  variant: "system-song" | "own-song" | "queue-song" | "own-playlist";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
@@ -42,9 +42,9 @@ function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
         )}
       </button>
       <button
-        className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClassses(
+        className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClasses(
           isChecked,
-          "md:hidden",
+          "md:hidden"
         )}`}
       >
         <MusicalNoteIcon className="w-[18px]" />
@@ -157,8 +157,8 @@ function SongItem({
                   {s.name + (i ? ", " : "")}
                 </Link>
               ) : (
-                <span> {s.name + (i ? ", " : "")}</span>
-              ),
+                <span key={i}> {s.name + (i ? ", " : "")}</span>
+              )
             )}
           </div>
         </div>
