@@ -7,14 +7,11 @@ import AddNewGenreButton from "./_components/AddNewGenreButton";
 import GenreItem from "./_components/GenreItem";
 
 export default function DashboardGenrePage() {
-  const { isFetching, api, shouldFetchGenre } = useGetGenre();
+  const { isFetching, api } = useGetGenre();
   const { _genres, ...rest } = useSearchGenre();
 
   useEffect(() => {
-    if (shouldFetchGenre.current) {
-      shouldFetchGenre.current = false;
-      api();
-    }
+    api();
   }, []);
 
   return (
@@ -32,7 +29,7 @@ export default function DashboardGenrePage() {
         {!isFetching && (
           <>
             {_genres.length ? (
-              <div className="flex flex-wrap -mt-1 -mx-1">
+              <div className="flex flex-wrap -mt-2 -mx-2">
                 {_genres.map((g, i) => (
                   <GenreItem genre={g} key={i} />
                 ))}

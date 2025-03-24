@@ -1,7 +1,7 @@
 import { serverTimestamp } from "firebase/firestore";
 
 export const initSongObject = (
-  data: Partial<SongSchema> & { owner_email: string; distributor: string }
+  data: Partial<SongSchema> & { owner_email: string; distributor: string },
 ) => {
   const song: SongSchema = {
     name: "",
@@ -31,7 +31,7 @@ export const initSongObject = (
 };
 
 export const initPlaylistObject = (
-  data: Partial<PlaylistSchema> & { owner_email: string; distributor: string }
+  data: Partial<PlaylistSchema> & { owner_email: string; distributor: string },
 ) => {
   const playlist: PlaylistSchema = {
     name: "",
@@ -60,10 +60,35 @@ export const initSingerObject = (data: Partial<SingerSchema>) => {
     description: "",
     image_file_path: "",
     image_url: "",
+    like: 0,
     created_at: serverTimestamp(),
     blurhash_encode: "",
     ...data,
   };
 
   return singer;
+};
+
+export const initLyricObject = ({
+  start,
+  end,
+  text,
+}: {
+  start: number;
+  end: number;
+  text: string;
+}) => {
+  const words = text.trim().split(" ");
+  const cut = words.map(() => []);
+  const grow = words.map(() => 0);
+
+  const lyric: Lyric = {
+    start, // started time of 2 last lyric
+    end,
+    tune: { start: start, end, grow },
+    cut,
+    text,
+  };
+
+  return lyric;
 };

@@ -4,14 +4,16 @@ import { collection, orderBy, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
 import { implementSongQuery } from "@/services/appService";
 
-type DashboardSongTab = "All" | "Result";
+const tabs = ["All", "Result"] as const;
+
+type Tab = (typeof tabs)[number];
 
 export default function useDashboardSong() {
   const { uploadedSongs, setUploadedSongs } = useSongContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
-  const [tab, setTab] = useState<DashboardSongTab>("All");
+  const [tab, setTab] = useState<Tab>("All");
 
   const { setErrorToast } = useToastContext();
 
@@ -78,5 +80,6 @@ export default function useDashboardSong() {
     uploadedSongs,
     tab,
     setTab,
+    tabs,
   };
 }

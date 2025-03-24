@@ -3,7 +3,7 @@ import { songsCollectionRef } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   tab: "favorite" | "uploaded";
@@ -35,7 +35,7 @@ export default function useGetMyMusicSong({ tab }: Props) {
             if (user.liked_song_ids.length) {
               const queryGetFavoriteSongs = query(
                 songsCollectionRef,
-                where(documentId(), "in", user.liked_song_ids),
+                where(documentId(), "in", user.liked_song_ids)
               );
 
               const result = await implementSongQuery(queryGetFavoriteSongs);
@@ -59,7 +59,7 @@ export default function useGetMyMusicSong({ tab }: Props) {
             const queryGetSongs = query(
               songsCollectionRef,
               where("owner_email", "==", user.email),
-              where("is_official", "==", false),
+              where("is_official", "==", false)
             );
 
             const result = await implementSongQuery(queryGetSongs);

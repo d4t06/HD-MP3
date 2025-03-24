@@ -2,7 +2,7 @@ import { implementPlaylistQuery } from "@/services/appService";
 import { playlistCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
-import { orderBy, query, where } from "firebase/firestore";
+import { limit, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const tabs = ["Newest", "Popular"] as const;
@@ -49,7 +49,8 @@ export default function useGetHomePlaylist() {
               playlistCollectionRef,
               where("is_official", "==", true),
               where("is_public", "==", true),
-              orderBy("updated_at", "desc")
+              orderBy("updated_at", "desc"),
+              limit(20),
             );
             break;
 
@@ -58,7 +59,8 @@ export default function useGetHomePlaylist() {
               playlistCollectionRef,
               where("is_official", "==", true),
               where("is_public", "==", true),
-              orderBy("like", "desc")
+              orderBy("like", "desc"),
+              limit(20),
             );
             break;
         }

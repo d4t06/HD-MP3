@@ -1,5 +1,6 @@
 import {
   ArrowRightOnRectangleIcon,
+  ComputerDesktopIcon,
   InformationCircleIcon,
   PaintBrushIcon,
 } from "@heroicons/react/24/outline";
@@ -8,6 +9,7 @@ import { useAuthContext, useThemeContext } from "@/stores";
 import { useMemo, useRef, useState } from "react";
 import useAuthAction from "@/hooks/useAuthActiont";
 import { MobileLinkSkeleton } from "@/components/skeleton";
+import { Link } from "react-router-dom";
 
 type Modal = "theme" | "info" | "logout";
 
@@ -63,11 +65,11 @@ export default function MobileSetting() {
   };
 
   return (
-    <>
+    <div className="md:hidden">
       <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>
 
       {user && (
-        <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-2`}>
+        <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-3`}>
           <Avatar className="h-[65px] w-[65px]" />
           <div className="ml-3">
             <p className="text-lg font-[500]">{user.display_name}</p>
@@ -90,6 +92,13 @@ export default function MobileSetting() {
             <span>Info</span>
           </button>
 
+          {user?.role === "ADMIN" && (
+            <Link to={'/dashboard'} className={classes.linkItem}>
+              <ComputerDesktopIcon className={classes.icon} />
+              <span>Dashboard</span>
+            </Link>
+          )}
+
           {user && (
             <button className={classes.linkItem} onClick={() => openModal("logout")}>
               <ArrowRightOnRectangleIcon className={classes.icon} />
@@ -99,11 +108,9 @@ export default function MobileSetting() {
         </div>
       )}
 
-      {
-        <Modal ref={modalRef} variant="animation">
-          {renderModal}
-        </Modal>
-      }
-    </>
+      <Modal ref={modalRef} variant="animation">
+        {renderModal}
+      </Modal>
+    </div>
   );
 }

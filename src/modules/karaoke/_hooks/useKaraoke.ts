@@ -4,6 +4,7 @@ import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { usePlayerContext } from "@/stores";
 import { useGetSongLyric } from "@/hooks";
+import { mergeGrow } from "@/utils/mergeGrow";
 
 type Props = {
   active: boolean;
@@ -17,7 +18,7 @@ const isOdd = (n: number) => {
 
 export default function useKaraoke({ active }: Props) {
   const { audioRef } = usePlayerContext();
-  if (!audioRef.current) throw new Error("useKaraoke !audioRef.current")
+  if (!audioRef.current) throw new Error("useKaraoke !audioRef.current");
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -64,7 +65,7 @@ export default function useKaraoke({ active }: Props) {
 
   const applyAnimation = (
     name: string,
-    lyric: RealTimeLyric,
+    lyric: Lyric,
     overlay: ElementRef<"p">,
     delay: number
   ) => {
@@ -137,29 +138,24 @@ export default function useKaraoke({ active }: Props) {
       )
         return;
 
-      const _isOdd = isOdd(nextIndex);
-
       const nextLyric = songLyrics[nextIndex];
+      const { tune, text, cut } = nextLyric;
 
-      const { tune = { grow: "", end: nextLyric.end } } = nextLyric;
-      const past =
-        currentTimeRef.current +
-        LYRIC_TIME_BOUNDED -
-        (nextLyric?.tune?.start || nextLyric.start);
+      const past = currentTimeRef.current + LYRIC_TIME_BOUNDED - tune.start;
+      const words = text.split(" ");
 
-      const growList = tune.grow
-        .split("_")
-        .filter((v) => v)
-        .map((v) => +v);
-      const widthList = getWordsRatio(
+      const _isOdd = isOdd(nextIndex);
+      const widthRatioList = getWordsRatio(
         _isOdd ? tempOddText.current : tempEventText.current
       );
+
+      const mergedGrowList = mergeGrow(words, cut, tune.grow);
 
       const overlayList = _isOdd
         ? [oddOverlay.current, evenOverlay.current]
         : [evenOverlay.current, oddOverlay.current];
 
-      const name = createKeyFrame(growList, widthList);
+      const name = createKeyFrame(mergedGrowList, widthRatioList);
       applyAnimation(name, nextLyric, overlayList[0], -past);
       clearAnimation(overlayList[1]);
     }

@@ -1,6 +1,5 @@
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { nanoid } from "nanoid";
 
 type StateType = {
   queueSongs: Song[];
@@ -66,7 +65,7 @@ const songQueueSlice = createSlice({
     },
 
     addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
-      const _songs = action.payload.songs.map((s) => ({ ...s, queue_id: nanoid(4) }));
+      const _songs = action.payload.songs;
 
       state.queueSongs.push(..._songs);
       setLocalStorage("queue", state.queueSongs);

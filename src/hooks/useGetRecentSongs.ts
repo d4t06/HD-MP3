@@ -17,7 +17,7 @@ export default function useGetRecentSong() {
       if (user && user.recent_song_ids.length) {
         const queryGetRecentSongs = query(
           songsCollectionRef,
-          where(documentId(), "in", user.recent_song_ids)
+          where(documentId(), "in", user.recent_song_ids),
         );
 
         const result = await implementSongQuery(queryGetRecentSongs);

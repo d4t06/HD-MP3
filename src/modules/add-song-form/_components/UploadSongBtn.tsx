@@ -27,7 +27,7 @@ export default function UploadSongBtn() {
       <Button className="" size={"clear"}>
         <label
           htmlFor="song_upload"
-          className={`inline-flex p-1 cursor-pointer`}
+          className={`inline-flex p-1.5 cursor-pointer`}
         >
           <ArrowUpTrayIcon className="w-6" />
         </label>

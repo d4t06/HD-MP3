@@ -2,7 +2,7 @@ import { implementSongQuery } from "@/services/appService";
 import { songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
-import { orderBy, query, where } from "firebase/firestore";
+import { limit, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 const tabs = ["Newest", "Popular"] as const;
@@ -12,34 +12,34 @@ type SongData = {
   shouldFetching: boolean;
   songs: Song[];
 };
-type PlaylistMap = Record<TabType, SongData>;
+type SongMap = Record<TabType, SongData>;
 
-const initPlaylistMap = () => {
+const initSongMap = () => {
   return tabs.reduce((r, key) => {
     const data: SongData = { songs: [], shouldFetching: true };
     return {
       ...r,
       [key]: data,
     };
-  }, {} as PlaylistMap);
+  }, {} as SongMap);
 };
 
 export default function useGetHomeSong() {
-  const [songMap, setSongMap] = useState<PlaylistMap>(initPlaylistMap);
+  const [songMap, setSongMap] = useState<SongMap>(initSongMap);
   const { setErrorToast } = useToastContext();
 
   const [tab, setTab] = useState<TabType>("Newest");
 
   const [isFetching, setIsFetching] = useState(true);
 
-  const getPlaylist = async () => {
+  const getSong = async () => {
     try {
-      const newPlaylistData = { ...songMap[tab] };
+      const newSongData = { ...songMap[tab] };
 
       setIsFetching(true);
 
-      if (newPlaylistData.shouldFetching) {
-        newPlaylistData.shouldFetching = false;
+      if (newSongData.shouldFetching) {
+        newSongData.shouldFetching = false;
 
         let getSongQuery;
 
@@ -48,7 +48,8 @@ export default function useGetHomeSong() {
             getSongQuery = query(
               songsCollectionRef,
               where("is_official", "==", true),
-              orderBy("updated_at", "desc")
+              orderBy("updated_at", "desc"),
+              limit(20),
             );
             break;
 
@@ -56,16 +57,17 @@ export default function useGetHomeSong() {
             getSongQuery = query(
               songsCollectionRef,
               where("is_official", "==", true),
-              orderBy("like", "desc")
+              orderBy("like", "desc"),
+              limit(20),
             );
             break;
         }
 
         if (getSongQuery) {
           const result = await implementSongQuery(getSongQuery);
-          newPlaylistData.songs = result;
+          newSongData.songs = result;
 
-          setSongMap((prev) => ({ ...prev, [tab]: newPlaylistData }));
+          setSongMap((prev) => ({ ...prev, [tab]: newSongData }));
         }
       } else await sleep(100);
     } catch (error) {
@@ -77,7 +79,7 @@ export default function useGetHomeSong() {
   };
 
   useEffect(() => {
-    getPlaylist();
+    getSong();
 
     return () => {
       setIsFetching(true);

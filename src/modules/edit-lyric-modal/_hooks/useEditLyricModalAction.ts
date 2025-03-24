@@ -4,23 +4,23 @@ import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyri
 export default function useEditLyricModalAction() {
   const { updateLyric, setIsChanged, selectLyricIndex } = useEditLyricContext();
 
-  const {
-    actuallyEndRef,
-    actuallyStartRef,
+  const { actuallyEndRef, actuallyStartRef, growList, text, cut } =
+    useLyricEditorContext();
 
-    growList,
-  } = useLyricEditorContext();
+  const updateLyricTune = async () => {
+    if (typeof selectLyricIndex !== "number")
+      throw new Error("selectLyricIndex is undefine");
 
-  const updateLyricTune = () => {
-    if (typeof selectLyricIndex !== "number") return;
-
-    const newLyricData: Partial<RealTimeLyric> = {
+    const newLyricData: Partial<Lyric> = {
       tune: {
         start: actuallyStartRef.current,
         end: actuallyEndRef.current,
-        grow: growList.join("_"),
+        grow: growList,
       },
+      cut,
+      text,
     };
+
     updateLyric(selectLyricIndex, newLyricData);
 
     setIsChanged(true);

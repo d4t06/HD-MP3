@@ -28,7 +28,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
       <div className={`${classes.songInfoChild} ${getHidden(isOpenFullScreen)}`}>
         <div
           ref={vinylRef}
-          className={`w-[56px] h-[56px] animate-[spin_8s_linear_infinite]`}
+          className={`w-[56px] h-[56px] flex-shrink-0 animate-[spin_8s_linear_infinite]`}
         >
           <Image src={song?.image_url} className={`rounded-full h-full object-cover`} />
         </div>
@@ -49,10 +49,10 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
                     className={`${theme.content_hover_text}  hover:underline`}
                     key={i}
                   >
-                    {s.name + (i ? ", " : "")}
+                    {(i ? ", " : "") + s.name}
                   </Link>
                 ) : (
-                  <span>{s.name + (i ? ", " : "")}</span>
+                  <span>{(i ? ", " : "") + s.name}</span>
                 ),
               )}
             </div>

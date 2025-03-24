@@ -1,4 +1,4 @@
-import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { MinusIcon } from "@heroicons/react/24/outline";
 import { CheckBarMenuContent } from "./CheckBarMenuBtn";
 import AddToPlaylistMenuItem, {
 	AddSelectSongsToPlaylistMenuModal,

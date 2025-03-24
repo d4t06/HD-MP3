@@ -1,5 +1,5 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { Button } from "@/pages/dashboard/_components";
+import { Button, ModalWrapper } from "@/pages/dashboard/_components";
 import { useRef, useState } from "react";
 import AddSingerModal from "../../_components/AddSingerModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -20,7 +20,9 @@ export default function SingerCta() {
 
   return (
     <>
-      <button onClick={() => openModal("more")} className="text-sm ml-auto !mt-0">See more</button>
+      <button onClick={() => openModal("more")} className="text-sm ml-auto !mt-0">
+        See more
+      </button>
 
       <div className="!mt-auto">
         <div className="space-x-2">
@@ -45,18 +47,24 @@ export default function SingerCta() {
       </div>
 
       {modal && (
-        <Modal ref={modalRef} variant="animation">
-          {modal === "more" && singer && (
-            <div className="w-[400px] max-w-[calc(100vw-40px)]">{singer.description}</div>
-          )}
-          {modal === "edit" && <AddSingerModal closeModal={closeModal} variant="edit" />}
-          {modal === "delete" && (
-            <ConfirmModal
-              loading={isFetching}
-              callback={() => action({ variant: "delete" })}
-              close={closeModal}
-            />
-          )}
+        <Modal wrapped={false} ref={modalRef} variant="animation">
+          <ModalWrapper className="w-[unset]">
+            {modal === "more" && singer && (
+              <div className="w-[400px] max-w-[calc(100vw-40px)]">
+                {singer.description}
+              </div>
+            )}
+            {modal === "edit" && (
+              <AddSingerModal closeModal={closeModal} variant="edit" />
+            )}
+            {modal === "delete" && (
+              <ConfirmModal
+                loading={isFetching}
+                callback={() => action({ variant: "delete" })}
+                close={closeModal}
+              />
+            )}
+          </ModalWrapper>
         </Modal>
       )}
     </>

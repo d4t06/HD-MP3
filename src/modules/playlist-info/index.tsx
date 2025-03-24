@@ -1,6 +1,6 @@
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+// import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { PlaylistItem, Skeleton } from "@/components";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
@@ -22,11 +22,10 @@ export default function PLaylistInfo({
 }: Props) {
   // stores
   const { currentSongData } = useSelector(selectSongQueue);
-  const { playStatus } = useSelector(selectAllPlayStatusStore);
+  // const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const isActivePlaylist = playlist
-    ? (playStatus === "playing" || playStatus === "paused") &&
-      currentSongData?.song.queue_id.includes(`${playlist.id}`)
+    ? currentSongData?.song.queue_id.includes(`${playlist.id}`)
     : false;
 
   const classes = {
@@ -95,7 +94,7 @@ export default function PLaylistInfo({
               <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0">
                 <PlaylistMenuBtn variant={variant} />
 
-                {isLiked !== null && <HearBtn isLiked={isLiked} playlist={playlist} />}
+                {variant !== "my-playlist" && isLiked !== null && <HearBtn isLiked={isLiked} playlist={playlist} />}
               </div>
             </div>
           )}

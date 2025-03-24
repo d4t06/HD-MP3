@@ -6,6 +6,7 @@ import { Skeleton } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
+import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";
@@ -23,11 +24,16 @@ const playlistSongSkeleton = (
 );
 
 export default function PlaylistSongList({ variant, loading }: Props) {
-  const { playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { handleSetSong } = useSetSong({variant: 'playlist'});
+  const { playlistSongs, currentPlaylist } = useSelector(selectCurrentPlaylist);
+  const { handleSetSong } = useSetSong({ variant: "playlist" });
+
+  const { updatePlaylist } = useUpdateRecentPlaylist();
 
   const _handleSetSong = (s: Song) => {
-    handleSetSong(s.queue_id, playlistSongs);
+    if (!currentPlaylist) return;
+
+    const isSetQueue = handleSetSong(s.queue_id, playlistSongs);
+    if (isSetQueue) updatePlaylist(currentPlaylist);
   };
 
   if (loading) return playlistSongSkeleton;
@@ -36,7 +42,9 @@ export default function PlaylistSongList({ variant, loading }: Props) {
     <>
       <SongSelectProvider>
         {!!playlistSongs.length && (
-          <CheckedBar variant={variant === "others-playlist" ? "system-song" : "own-playlist"}>
+          <CheckedBar
+            variant={variant === "others-playlist" ? "system-song" : "own-playlist"}
+          >
             <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
           </CheckedBar>
         )}

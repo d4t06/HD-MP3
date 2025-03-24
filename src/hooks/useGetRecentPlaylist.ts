@@ -1,5 +1,5 @@
 import { implementPlaylistQuery } from "@/services/appService";
-import { playlistCollectionRef, songsCollectionRef } from "@/services/firebaseService";
+import { playlistCollectionRef } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
@@ -14,15 +14,17 @@ export default function useGetRecentPlaylist() {
 
   const getRecentPlaylist = async () => {
     try {
-      if (user && user.recent_playlist_ids.length) {
-        const queryGetRecentPlaylists = query(
-          playlistCollectionRef,
-          where(documentId(), "in", user.recent_playlist_ids)
-        );
+      if (user) {
+        if (user.recent_song_ids.length) {
+          const queryGetRecentPlaylists = query(
+            playlistCollectionRef,
+            where(documentId(), "in", user.recent_song_ids),
+          );
 
-        const result = await implementPlaylistQuery(queryGetRecentPlaylists);
+          const result = await implementPlaylistQuery(queryGetRecentPlaylists);
 
-        setRecentPlaylists(result);
+          setRecentPlaylists(result);
+        }
       } else {
         const playlists: Playlist[] = getLocalStorage()["recent-playlists"] || [];
         setRecentPlaylists(playlists);

@@ -51,8 +51,9 @@ export default function FullScreenPlayer() {
         {activeTab !== "Songs" && (
           <p className={`text-center ${idle && classes.fadeTransition}`}>
             {currentSongData?.song?.name || "..."}
-            <span className="opacity-70">
-              {/* &nbsp;- {currentSongData?.song?.singer || "..."} */}
+            <span className="opacity-70 text-sm">
+              {" - "}
+              {currentSongData?.song.singers.map((s, i) => (i ? ", " : "") + s.name)}
             </span>
           </p>
         )}

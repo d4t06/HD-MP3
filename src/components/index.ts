@@ -19,7 +19,7 @@ export { default as PlaylistItem } from "./PlaylistItem";
 export { default as SettingMenu } from "./SettingMenu";
 export { default as SongThumbnail } from "./SongThumbnail";
 export { default as PlaylistList } from "./PlaylistList";
-export { default as Tabs } from "./Tabs";
+export { default as Tab } from "./Tab";
 export { default as UserItem } from "./UserItem";
 export { default as FullScreenPlayerSetting } from "./FullScreenPlayerSetting";
 export { default as Avatar } from "./ui/Avatar";

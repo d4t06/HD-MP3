@@ -7,9 +7,10 @@ import {
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/pages/dashboard/_components";
+import { useThemeContext } from "@/stores";
 
 export const routeList = [
   {
@@ -40,7 +41,11 @@ export const routeList = [
 ];
 
 export default function DashBoardSidebar() {
+  const { theme } = useThemeContext();
+
   const [isOpen, setIsOpen] = useState(false);
+
+  const location = useLocation();
 
   const pathName: string = "";
 
@@ -49,7 +54,7 @@ export default function DashBoardSidebar() {
     head: "h-[60px] flex items-center justify-center",
     logoText: "text-[22px] font-[500] whitespace-nowrap tracking-[-1px]",
     logoImage: "max-w-[50px] p-[4px]",
-    item: `flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 hover:bg-black/5`,
+    item: `flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 `,
     itemActive: "text-[#cd1818] bg-[#f1f1f1]",
     icon: "w-[24px] flex-shrink-0",
   };
@@ -57,17 +62,23 @@ export default function DashBoardSidebar() {
   return (
     <div className={`${classes.container} ${isOpen ? "w-[150px]" : "w-[70px]"}`}>
       <div className="md:mt-[60px]">
-        {routeList.map((r, i) => (
-          <Link
-            key={i}
-            className={`${classes.item} ${isOpen ? "!justify-start" : ""}
-                  ${pathName === r.path ? classes.itemActive : ""}`}
-            to={r.path}
-          >
-            {r.icon}
-            {isOpen && <span>{r.title}</span>}
-          </Link>
-        ))}
+        {routeList.map((r, i) => {
+          const active = location.pathname === r.path;
+
+          return (
+            <Link
+              key={i}
+              className={`
+              ${active ? theme.content_bg : "hover:bg-black/10"}
+              ${classes.item} ${isOpen ? "!justify-start" : ""}
+              ${pathName === r.path ? classes.itemActive : ""}`}
+              to={r.path}
+            >
+              {r.icon}
+              {isOpen && <span>{r.title}</span>}
+            </Link>
+          );
+        })}
 
         <Link
           to="/"

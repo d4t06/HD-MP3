@@ -4,7 +4,7 @@ import MyPopup, {
   MyPopupTrigger,
   TriggerRef,
 } from "@/components/MyPopup";
-import { useThemeContext, useToastContext } from "@/stores";
+import { useThemeContext } from "@/stores";
 import { ReactNode, useRef, useState } from "react";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import { MenuList, MenuWrapper } from "@/components/ui/MenuWrapper";

@@ -20,7 +20,7 @@ const MobileBottomPlayer = () => {
   const { currentSongData } = useSelector(selectSongQueue);
 
   const location = useLocation();
-  const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+  const inEdit = useMemo(() => location.pathname.includes("lyric"), [location]);
 
   const renderIcon = useMemo(() => {
     switch (playStatus) {
@@ -45,7 +45,7 @@ const MobileBottomPlayer = () => {
   };
 
   return (
-    <div className={`${classes.wrapper} ${inEdit ? "translate-y-full" : ""}`}>
+    <div className={`${classes.wrapper} ${inEdit ? "translate-y-[100%]" : ""}`}>
       <div
         className={`${classes.container} ${
           isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""

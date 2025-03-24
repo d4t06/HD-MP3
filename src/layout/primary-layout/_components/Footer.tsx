@@ -1,6 +1,6 @@
 function Footer() {
   const classes = {
-    container: `py-[30px] flex flex-col md:flex-row md:justify-between items-start`,
+    container: `pt-[30px] pb-[110px] md:mt-auto md:pb-[120px] md:flex md:justify-between md:items-center`,
     icon: "w-6 hover:scale-[1.1] transition linear ",
     copyRightText: "text-sm",
   };

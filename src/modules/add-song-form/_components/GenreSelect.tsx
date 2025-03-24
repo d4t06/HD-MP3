@@ -1,9 +1,11 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { Modal, ModalRef } from "@/components";
+import { Modal, ModalRef, Title } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
+import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export default function GenreSelect() {
   const { genres, selectGenre } = useAddSongContext();
@@ -18,9 +20,9 @@ export default function GenreSelect() {
 
   return (
     <>
-      <div className="space-y-1.5">
+      <div className="">
         <div className="flex space-x-2 items-center">
-          <span>Genre</span>
+          <Title title="Genre" />
 
           <Button
             onClick={() => modalRef.current?.open()}
@@ -31,18 +33,22 @@ export default function GenreSelect() {
           </Button>
         </div>
 
-        <Frame className="flex flex-wrap space-x-2">
-          {genres.length
-            ? genres.map((g, i) => (
-                <button
-                  onClick={() => selectGenre(g)}
-                  className="px-2 py-1 hover:border-red-300 rounded-md border border-black/10"
-                  key={i}
-                >
-                  {g.name}
-                </button>
-              ))
-            : "..."}
+        <Frame className="mt-1">
+          <div className="flex flex-wrap -ml-2 -mt-2">
+            {genres.length
+              ? genres.map((g, i) => (
+                  <ItemRightCtaFrame key={i}>
+                    <span>{g.name}</span>
+
+                    <div>
+                      <button onClick={() => selectGenre(g)}>
+                        <TrashIcon className="w-5" />
+                      </button>
+                    </div>
+                  </ItemRightCtaFrame>
+                ))
+              : "..."}
+          </div>
         </Frame>
       </div>
 

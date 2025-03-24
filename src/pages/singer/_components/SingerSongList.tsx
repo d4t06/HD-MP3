@@ -11,14 +11,16 @@ export default function SingerSongList() {
 
   return (
     <>
-      <Title title="Popular Songs" />
-      <SongSelectProvider>
-        {isFetching ? (
-          SongItemSkeleton
-        ) : (
-          <SongList songs={songs} setSong={(s) => handleSetSong(s.queue_id, [s])} />
-        )}
-      </SongSelectProvider>
+      <div>
+        <Title title="Popular Songs" />
+        <SongSelectProvider>
+          {isFetching ? (
+            SongItemSkeleton
+          ) : (
+            <SongList songs={songs} setSong={(s) => handleSetSong(s.queue_id, songs)} />
+          )}
+        </SongSelectProvider>
+      </div>
     </>
   );
 }

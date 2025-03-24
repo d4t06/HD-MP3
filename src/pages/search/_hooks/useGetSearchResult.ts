@@ -4,13 +4,15 @@ import { query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-export type SearchResultTab = "Song" | "Playlist";
+const tabs = ["Song", "Playlist"] as const;
+
+type Tab = (typeof tabs)[number];
 
 type SearchResult = { songs: Song[]; playlists: Playlist[] };
 
 export default function useGetSearchResult() {
   const [isFetching, setIsFetching] = useState(false);
-  const [tab, setTab] = useState<SearchResultTab>("Song");
+  const [tab, setTab] = useState<Tab>("Song");
 
   const searchParams = useSearchParams();
 
@@ -89,5 +91,6 @@ export default function useGetSearchResult() {
     setTab,
     getResult,
     result,
+    tabs,
   };
 }

@@ -1,11 +1,18 @@
 import { ControlRef } from "@/modules/music-control";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
+const desktopTabs = ["Songs", "Karaoke", "Lyric"] as const;
+const mobileTabs = ["Songs", "Playing", "Lyric"] as const;
+
+type Tab = (typeof desktopTabs)[number];
+type MobileTab = (typeof mobileTabs)[number];
+
 function usePlayer() {
   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
   const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
   const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
-  const [activeTab, setActiveTab] = useState<"Songs" | "Karaoke" | "Lyric">("Lyric");
+  const [activeTab, setActiveTab] = useState<Tab>("Lyric");
+  const [mobileActiveTab, setMobileActiveTab] = useState<MobileTab>("Lyric");
   const [idle, setIdle] = useState(false);
   const [isEnableBeat, setIsEnableBeat] = useState(false);
 
@@ -26,6 +33,10 @@ function usePlayer() {
     setActiveTab,
     isEnableBeat,
     setIsEnableBeat,
+    desktopTabs,
+    mobileActiveTab,
+    setMobileActiveTab,
+    mobileTabs
   };
 }
 

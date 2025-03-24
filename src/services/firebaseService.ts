@@ -150,16 +150,26 @@ export const deleteFile = async ({
 };
 
 export const deleteSongFiles = async (song: Song) => {
-  await deleteFile({
-    filePath: song.song_file_path,
-    msg: ">>> api: delete song file",
-  });
-
-  if (song.image_file_path) {
+  try {
     await deleteFile({
-      filePath: song.image_file_path,
-      msg: `>>> api: delete song's image file`,
+      filePath: song.song_file_path,
+      msg: ">>> api: delete song file",
     });
+
+    if (song.beat_file_path) {
+      await deleteFile({
+        filePath: song.beat_file_path,
+        msg: `>>> api: delete song's image file`,
+      });
+    }
+
+    if (song.image_file_path) {
+      await deleteFile({
+        filePath: song.image_file_path,
+        msg: `>>> api: delete song's image file`,
+      });
+    }
+  } catch (error) {
+    console.log({ error });
   }
 };
-

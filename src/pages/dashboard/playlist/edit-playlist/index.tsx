@@ -6,13 +6,14 @@ import useGetPlaylist from "./_hooks/useGetPlaylist";
 import { useMemo } from "react";
 import { formatTime } from "@/utils/appHelpers";
 import SingerItem from "./_components/SingerItem";
+import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
 
   const playlistDuration = useMemo(
     () => songs.reduce((prev, c) => prev + c.duration, 0),
-    [songs]
+    [songs],
   );
 
   if (isFetching)
@@ -30,9 +31,8 @@ export default function DashboardPlaylistDetail() {
     );
 
   return (
-    <>
-      <Title className="mb-5" title="Playlist detail" />
-      <div className="md:flex md:-mx-3 overflow-hidden">
+    <div className="pb-[46px]">
+      <div className="md:flex md:-mx-3">
         <div className="space-y-2.5 md:px-3">
           <div className="w-[200px] h-[200px] mx-auto">
             <Square>
@@ -44,35 +44,42 @@ export default function DashboardPlaylistDetail() {
             </Square>
           </div>
 
-          <Title title={playlist.name} />
+          <div>
+            <Title title={playlist.name} />
+
+            <Frame className="mt-1">
+              <p>{playlist.is_public ? "Public" : "Private"}</p>
+              <p>
+                {songs.length} songs - {formatTime(playlistDuration)}
+              </p>
+
+              <p>{playlist.like} likes</p>
+            </Frame>
+          </div>
 
           <DashboardPlaylistCta />
         </div>
 
         <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3">
-          <Title title={"Info"} />
+          <Title title={"Singers"} />
 
-          <Frame>
-            <p>{playlist.is_public ? "Public" : "Private"}</p>
-            <p>
-              {songs.length} songs - {formatTime(playlistDuration)}
-            </p>
-
-            <p>{playlist.like} likes</p>
+          <Frame className="mt-1">
+            {playlist.singers.length ? (
+              <div className="-mt-2 -ml-2 flex ">
+                {playlist.singers.map((s, i) => (
+                  <ItemRightCtaFrame key={i}>
+                    <SingerItem singer={s} />
+                  </ItemRightCtaFrame>
+                ))}
+              </div>
+            ) : (
+              <NotFound />
+            )}
           </Frame>
 
-          <Title title={"Singers"} className="mt-3" />
-
-          <Frame>
-            <div className="-mt-2 -mx-1 [&>*]:px-3 [&>*]:py-1 [&>*]:text-sm [&>*]:rounded-md [&>*]:border [&>*]:bg-[#f1f1f1] [&>*]:border-transparent hover:[&>*]:border-red-500">
-              {playlist.singers.map((s, i) => (
-                <SingerItem singer={s} key={i} />
-              ))}
-            </div>
-          </Frame>
           <Title title={"Songs"} className="mt-3" />
 
-          <Frame className="">
+          <Frame className="mt-1">
             <div className={`overflow-hidden`}>
               <Table
                 className="[&_td]:text-sm [&_tbody>tr]:border-t [&_tr]:border-black/10 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2 hover:[&_tr:not(div.absolute)]:bg-black/5"
@@ -94,6 +101,6 @@ export default function DashboardPlaylistDetail() {
           </Frame>
         </div>
       </div>
-    </>
+    </div>
   );
 }

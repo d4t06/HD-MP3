@@ -37,6 +37,8 @@ export default function SingerCta() {
         <div className="space-x-2 flex items-end">
           <PlaySingerSongBtn />
 
+          <HearBtn />
+
           <MyPopup>
             <MyPopupTrigger>
               <button
@@ -54,8 +56,6 @@ export default function SingerCta() {
               </PopupWrapper>
             </MyPopupContent>
           </MyPopup>
-
-          {singer && <HearBtn isLiked={false} singer={singer} />}
         </div>
       </div>
 

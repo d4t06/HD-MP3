@@ -5,6 +5,8 @@ import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
 import MyMusicPlaylistList from "./_components/PlaylistList";
 import Tab from "@/components/Tab";
+import BackBtn from "@/components/BackBtn";
+import MyMucisSingerList from "./_components/SingerList";
 
 const tabs = ["Favorite", "Uploaded"] as const;
 type TabType = (typeof tabs)[number];
@@ -14,22 +16,28 @@ export default function MyMusicPage() {
 
   return (
     <>
-      <MyMusicPlaylistList />
-      <div className="pt-[30px]"></div>
+      <div className="space-y-5">
+        <BackBtn />
 
-      <Title title="Songs" />
+        <MyMusicPlaylistList />
 
-      <div className="flex space-x-2 my-3">
-        <Tab
-          render={(t) => t}
-          setTab={setTab}
-          tab={tab}
-          tabs={["Favorite", "Uploaded"]}
-        />
+        <MyMucisSingerList />
+
+        <div>
+          <Title title="Songs" />
+
+          <div className="flex space-x-2 my-3">
+            <Tab
+              render={(t) => t}
+              setTab={setTab}
+              tab={tab}
+              tabs={["Favorite", "Uploaded"]}
+            />
+          </div>
+
+          {tab === "Favorite" ? <FavoriteSongList /> : <UploadedSongList />}
+        </div>
       </div>
-
-      {tab === "Favorite" ? <FavoriteSongList /> : <UploadedSongList />}
-
       <Footer />
     </>
   );

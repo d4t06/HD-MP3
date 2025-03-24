@@ -33,7 +33,7 @@ export default function useLyricEditor({ audioRef }: Props) {
   const params = useParams<{ id: string }>();
   // const navigate = useNavigate();
 
-  const updateIndex = (lyrics: RealTimeLyric[]) => {
+  const updateIndex = (lyrics: Lyric[]) => {
     if (!lyrics.length) return;
 
     const latestIndex = lyrics.length - 1;
@@ -51,7 +51,7 @@ export default function useLyricEditor({ audioRef }: Props) {
     const tempLyric: TempLyric = {
       song_id: song.id,
       base: baseLyric,
-      real_time: JSON.stringify(lyrics),
+      lyrics: JSON.stringify(lyrics),
     };
 
     setLocalStorage("temp-lyric", tempLyric);
@@ -81,33 +81,12 @@ export default function useLyricEditor({ audioRef }: Props) {
         });
 
         if (lyricSnapshot.exists()) {
-          type UndefineableRealTimeLyric = Omit<RealTimeLyric, "cutData"> & {
-            cutData?: number[][];
-          };
-
-          const { base, real_time } = lyricSnapshot.data() as SongLyricSchema;
-          const wrongLyrics = JSON.parse(real_time) as UndefineableRealTimeLyric[];
-
-          // add field "syllables" and "cutPositions" to lyric if don't exist
-          const lyrics = wrongLyrics.map((l) => {
-            if (!l?.cutData) {
-              const words = l.text.trim().split(" ");
-
-              const cutData = words.map(() => []);
-              const newLyric: RealTimeLyric = {
-                ...l,
-                cutData,
-              };
-
-              return newLyric;
-            }
-
-            return l as RealTimeLyric;
-          });
+          const { base, lyrics } = lyricSnapshot.data() as SongLyricSchema;
+          const parseLyrics = JSON.parse(lyrics) as Lyric[];
 
           setBaseLyric(base);
-          setLyrics(lyrics);
-          updateIndex(lyrics);
+          setLyrics(parseLyrics);
+          updateIndex(parseLyrics);
         }
       }
 
@@ -132,15 +111,15 @@ export default function useLyricEditor({ audioRef }: Props) {
     const loadTempLyric = () => {
       if (!song) return;
 
-      const { base, real_time, song_id }: TempLyric =
+      const { base, lyrics, song_id }: TempLyric =
         getLocalStorage()["temp-lyric"] || {};
 
       if (song_id === song.id) {
-        const lyrics = JSON.parse(real_time) as RealTimeLyric[];
+        const parsedLyrics = JSON.parse(lyrics) as Lyric[];
 
         setBaseLyric(base);
-        setLyrics(lyrics);
-        updateIndex(lyrics);
+        setLyrics(parsedLyrics);
+        updateIndex(parsedLyrics);
         setIsChanged(true);
       }
     };

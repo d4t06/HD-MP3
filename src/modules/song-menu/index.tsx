@@ -2,13 +2,8 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ComponentProps, ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 
-import useSongQueueAction from "@/hooks/useSongQueueAction";
 import { useThemeContext } from "@/stores";
-import MyPopup, {
-  MyPopupContent,
-  MyPopupTrigger,
-  usePopoverContext,
-} from "@/components/MyPopup";
+import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { Image, PopupWrapper } from "@/components";
 import { MenuList } from "@/components/ui/MenuWrapper";
 import MyTooltip from "@/components/MyTooltip";
@@ -62,30 +57,19 @@ type Props = {
 function SongMenu({ song, index, variant }: Props) {
   // stores
   const { theme } = useThemeContext();
-  const { close } = usePopoverContext();
 
   const [isOpenPopup, setIsOpenPopup] = useState(false);
-
-  const { action } = useSongQueueAction();
-
-  const handleAddSongToQueue = () => {
-    action({
-      variant: "add",
-      songs: [song],
-    });
-    close();
-  };
 
   const renderMenu = () => {
     switch (variant) {
       case "queue-song":
         return <QueueSongMenu song={song} index={index} />;
       case "own-song":
-        return <OwnSongMenu addSongToQueue={handleAddSongToQueue} song={song} />;
+        return <OwnSongMenu song={song} />;
       case "own-playlist":
-        return <OwnPlaylistMenu addSongToQueue={handleAddSongToQueue} song={song} />;
+        return <OwnPlaylistMenu song={song} />;
       case "system-song":
-        return <SystemSongMenu addSongToQueue={handleAddSongToQueue} song={song} />;
+        return <SystemSongMenu song={song} />;
     }
   };
 

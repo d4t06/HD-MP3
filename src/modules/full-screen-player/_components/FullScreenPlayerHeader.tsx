@@ -1,4 +1,4 @@
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { useAuthContext, usePlayerContext, useThemeContext } from "@/stores";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
 import {
@@ -14,14 +14,14 @@ import {
 	MyPopupTrigger,
 	MyTooltip,
 	Switch,
-	Tabs,
 } from "@/components";
+import FullScreenPlayerTab from "./Tabs";
 
 export default function FullScreenPlayerHeader() {
+	const { user } = useAuthContext();
 	const { theme } = useThemeContext();
 	const {
 		activeTab,
-		setActiveTab,
 		idle,
 		setIsOpenFullScreen,
 		isEnableBeat,
@@ -33,13 +33,20 @@ export default function FullScreenPlayerHeader() {
 
 	const navigate = useNavigate();
 
+	const isOwnSong = currentSongData
+		? user
+			? currentSongData.song.owner_email === user.email &&
+				currentSongData.song.is_official === false
+			: false
+		: false;
+
 	/** navigate to edit lyric page */
 	const handleEdit = () => {
 		if (!currentSongData?.song) return;
 		setIsOpenFullScreen(false);
 
 		setTimeout(() => {
-			navigate(`/mysongs/edit/${currentSongData?.song.id}`);
+			navigate(`/my-music/lyric/${currentSongData?.song.id}`);
 		}, 300);
 	};
 
@@ -66,7 +73,7 @@ export default function FullScreenPlayerHeader() {
 	};
 
 	return (
-		<div className={`${classes.headerWrapper} ${idle ? 'pointer-events-none': ''}`}>
+		<div className={`${classes.headerWrapper} ${idle ? "pointer-events-none" : ""}`}>
 			{/* left */}
 			{idle && currentSongData && (
 				<div className={`absolute left-4`}>
@@ -74,26 +81,20 @@ export default function FullScreenPlayerHeader() {
 						<>
 							<p className={`font-playwriteCU text-sm`}>{currentSongData.song.name}</p>
 							<p className="opacity-70 text-sm">
-								{currentSongData.song.singers.map((s, i) => s.name + (i ? ", " : ""))}
+								{currentSongData.song.singers.map((s, i) => (i ? ", " : "") + s.name)}
 							</p>
 						</>
 					)}
 				</div>
 			)}
 			{/* tabs */}
-			<Tabs
-				inFullScreen
-				activeTab={activeTab}
-				setActiveTab={setActiveTab}
-				className={`${idle && classes.fadeTransition}`}
-				tabs={["Songs", "Karaoke", "Lyric"]}
-				render={(tab) => tab}
-			/>
+			<FullScreenPlayerTab />
+
 			{/* right */}
 			<div
 				className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 			>
-				{activeTab === "Lyric" && (
+				{isOwnSong && activeTab === "Lyric" && (
 					<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">
 						<button onClick={() => handleEdit()} className={`p-2 ${classes.button}`}>
 							<DocumentTextIcon />

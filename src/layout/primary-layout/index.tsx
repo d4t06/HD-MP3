@@ -6,6 +6,7 @@ import Header from "@/modules/header";
 import ToastPortal from "@/modules/toast-portal";
 import UploadSongPortal from "@/modules/upload-song-portal/idnex";
 import { Outlet } from "react-router-dom";
+import { PushBrowserHistory } from "@/stores/global/NavigationContext";
 
 export default function PrimaryLayout() {
   const { theme } = useThemeContext();
@@ -14,7 +15,7 @@ export default function PrimaryLayout() {
 
   const classes = {
     page: `md:flex md:h-screen md:overflow-hidden ${theme.container} ${theme.text_color}`,
-    container: `h-full md:w-full px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:overflow-auto`,
+    container: `h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:overflow-auto`,
   };
 
   useEffect(() => {
@@ -38,9 +39,11 @@ export default function PrimaryLayout() {
         <Player />
       </div>
 
-      <ToastPortal className="left-[20px] right-[unset]" />
+      <ToastPortal className="left-[50%] translate-x-[-50%] bottom-[90px] md:bottom-[100px] md:left-[20px] md:translate-x-0" />
 
       <UploadSongPortal />
+
+      <PushBrowserHistory />
     </>
   );
 }

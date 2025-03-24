@@ -12,12 +12,14 @@ export default function MyMusicPlaylistList() {
 
   return (
     <>
-      <div className="flex justify-between items-end">
-        <Title title="Playlist" />
+      <div>
+        <div className="flex justify-between items-center">
+          <Title title="Playlist" />
 
-        <AddNewPlaylistBtn />
+          <AddNewPlaylistBtn />
+        </div>
+        <PlaylistList loading={isFetching} playlists={playlists} />
       </div>
-      <PlaylistList loading={isFetching} playlists={playlists} />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { NotFound, Skeleton, Tabs } from "@/components";
+import { NotFound, Skeleton, Tab } from "@/components";
 import Title from "@/components/ui/Title";
 import { Link } from "react-router-dom";
 import { SearchBar } from "../_components";
@@ -7,7 +7,7 @@ import useDashboardSinger from "./_hooks/useDashboardSinger";
 import DashboardTable from "../_components/ui/Table";
 
 export default function DashboardSingerPage() {
-  const { isFetching, singers, tab, setTab, ...rest } = useDashboardSinger();
+  const { isFetching, singers, tabs, tab, setTab, ...rest } = useDashboardSinger();
 
   return (
     <div className="pb-[46px]">
@@ -18,13 +18,9 @@ export default function DashboardSingerPage() {
         <AddSingerBtn />
       </div>
 
-      <Tabs
-        className={`mt-5 ${tab === "All" ? "pointer-events-none" : ""} self-start`}
-        tabs={["All", "Result"]}
-        render={(t) => t}
-        activeTab={tab}
-        setActiveTab={setTab}
-      />
+      <div className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}>
+        <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
+      </div>
 
       <div className="mt-3">
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}

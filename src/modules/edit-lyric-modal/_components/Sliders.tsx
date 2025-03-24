@@ -56,7 +56,7 @@ export default function Sliders() {
 					ref={eleRefs.growInputRef}
 					type="range"
 					id="grow"
-					min={1}
+					min={0}
 					max={30}
 					step={0.2}
 					className="w-full"

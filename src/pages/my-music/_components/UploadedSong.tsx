@@ -32,7 +32,7 @@ export default function UploadedSongList() {
 
   return (
     <SongSelectProvider>
-      <CheckedBar variant="my-songs">
+      <CheckedBar variant="uploaded-song">
         {isFetching ? (
           <>
             <div className="h-[30px] mb-[10px] flex items-center">

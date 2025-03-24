@@ -1,4 +1,4 @@
-import { NotFound, Skeleton, Tabs } from "@/components";
+import { NotFound, Skeleton, Tab } from "@/components";
 import Title from "@/components/ui/Title";
 import useDashboardPlaylist from "./_hooks/useDashboardPlaylist";
 import Table from "@/components/ui/Table";
@@ -7,7 +7,7 @@ import { Frame, SearchBar } from "../_components";
 import AddNewPlaylistBtn from "./_components/AddNewPlaylistBtn";
 
 export default function DashboardPlaylist() {
-  const { isFetching, playlists, tab, setTab, ...rest } = useDashboardPlaylist();
+  const { isFetching, playlists, tab, tabs, setTab, ...rest } = useDashboardPlaylist();
 
   return (
     <div className="pb-[46px]">
@@ -18,13 +18,9 @@ export default function DashboardPlaylist() {
         <AddNewPlaylistBtn />
       </div>
 
-      <Tabs
-        className={`mt-5 ${tab === "All" ? "pointer-events-none" : ""} self-start`}
-        tabs={["All", "Result"]}
-        render={(t) => t}
-        activeTab={tab}
-        setActiveTab={setTab}
-      />
+      <div className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}>
+        <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
+      </div>
 
       <div className="mt-3">
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}

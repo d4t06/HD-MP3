@@ -1,15 +1,16 @@
-import { ComponentType, ElementRef, useEffect, useRef } from "react";
+import { ElementRef, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { initSongObject } from "@/utils/factory";
 import UploadSongBtn from "./_components/UploadSongBtn";
-import { Center, Image, Input, Modal } from "@/components";
+import { Center, Image, Input, Modal, Title } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
 import useAddSongForm from "./_hooks/useAddSongForm";
 import FinishedModal from "./_components/FinishedModal";
-import { Button } from "@/pages/dashboard/_components";
+import { Button, Frame } from "@/pages/dashboard/_components";
 import UploadImageBtn from "./_components/UploadImageBtn";
+import { formatTime } from "@/utils/appHelpers";
+import EditSongBtn from "./_components/EditSongBtn";
 
 type Add = {
   variant: "add";
@@ -69,26 +70,52 @@ export default function AddSongForm(props: Props) {
                 />
               </div>
 
-              <UploadImageBtn />
+              {props.variant === "edit" && (
+                <div className="w-full">
+                  <Title title={songData.name} />
+
+                  <Frame className="[&>*]:text-sm ">
+                    <p>Duration: {formatTime(songData.duration)}</p>
+                    <p>Size: {songData.size} kb</p>
+                    <p>Like: {songData.like}</p>
+                  </Frame>
+                </div>
+              )}
+
+              <div className="space-x-2 flex w-full">
+                <UploadImageBtn />
+
+                {props.variant === "edit" && <EditSongBtn />}
+              </div>
             </div>
 
             <div className="mt-5 md:mt-0 space-y-3 flex-grow">
               {audioRef.current && (
                 <AudioPLayer
                   variant={props.variant}
-                  size={songData.size}
-                  duration={songData.duration}
+                  // size={songData.size}
+                  // duration={songData.duration}
                   audioEle={audioRef.current}
                 />
               )}
 
-              <div className="space-y-1">
-                <label>Song name</label>
-                <Input
-                  value={songData.name}
-                  onChange={(e) => updateSongData({ name: e.target.value })}
-                />
-              </div>
+              {props.variant === "add" && (
+                <Frame>
+                  <span>
+                    Duration: {formatTime(songData.duration)} , Size: {songData.size}kb
+                  </span>
+                </Frame>
+              )}
+
+              {props.variant === "add" && (
+                <div className="">
+                  <Title title="Name" />
+                  <Input
+                    value={songData.name}
+                    onChange={(e) => updateSongData({ name: e.target.value })}
+                  />
+                </div>
+              )}
 
               <SingerSelect />
               <GenreSelect />

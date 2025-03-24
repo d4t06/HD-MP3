@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
-import { NavigationProvider, useThemeContext } from "@/stores";
+import { useThemeContext } from "@/stores";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase";
 import {
@@ -128,9 +128,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         ></div>
 
         <div className="px-[40px] items-center flex h-full">
-          <NavigationProvider>
-            <NavigationButton className="mr-5" />
-          </NavigationProvider>
+          <NavigationButton className="mr-5" />
 
           <Search />
 

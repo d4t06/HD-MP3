@@ -20,6 +20,9 @@ function SongInfo({ song }: { song: Song }) {
 
         <div className="ml-2 text-sm">
           <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
+          <h5 className="line-clamp-1 text-sm opacity-[.7]">
+            {song.singers.map((s, i) => (i ? ", " : "") + s.name)}
+          </h5>
         </div>
       </div>
     </div>

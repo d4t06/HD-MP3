@@ -1,4 +1,5 @@
 import { Status } from "@/hooks/useAudioControl";
+import { splitStringByCutPositions } from "@/utils/lyricEditorHelper";
 import {
   createContext,
   ElementRef,
@@ -20,6 +21,11 @@ type TabType = (typeof tabs)[number];
 
 function useLyricEditor() {
   const [wordIndex, setWordIndex] = useState(0);
+
+  //   local data
+  const [localLyricIndex, setLoacalLyricIndex] = useState<number>();
+  const [text, setText] = useState("");
+  const [cut, setCut] = useState<number[][]>([[]]);
   const [growList, setGrowList] = useState<number[]>([]);
   // const [isEditText, setIsEditText] = useState(false); // for keyboard event and text area
   const [isOpenEditLyricModal, SetIsOpenEditLyricModal] = useState(false); // for keyboard event
@@ -49,6 +55,26 @@ function useLyricEditor() {
   const playWhenSpaceRef = useRef(true);
   const moveArrowToGrowRef = useRef(false);
 
+  const currentWords = useMemo(() => text.split(" ").filter((v) => v.trim()), [text]);
+
+  const currentWordsData = useMemo(() => {
+    return currentWords.map((w, i) => ({
+      text: w,
+      positions: cut[i],
+    }));
+  }, [text, cut]);
+
+  const currentSplitWords = useMemo(() => {
+    const splitWords: string[] = [];
+
+    currentWordsData.forEach((data) => {
+      const words = splitStringByCutPositions(data.text, data.positions);
+      splitWords.push(...words);
+    });
+
+    return splitWords.filter((w) => w);
+  }, [text, cut]);
+
   return {
     eleRefs: {
       endTimeRangeRef,
@@ -72,6 +98,10 @@ function useLyricEditor() {
       moveArrowToGrowRef,
     },
 
+    currentWords,
+    currentWordsData,
+    currentSplitWords,
+
     actuallyEndRef,
     playerRef,
     actuallyStartRef,
@@ -87,6 +117,12 @@ function useLyricEditor() {
     SetIsOpenEditLyricModal,
     setStatus,
     status,
+    text,
+    setText,
+    cut,
+    setCut,
+    localLyricIndex,
+    setLoacalLyricIndex,
   };
 }
 

@@ -2,75 +2,73 @@ import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyri
 import { useEffect } from "react";
 import { useLyricEditorContext } from "../_components/LyricEditorContext";
 import { getWordsRatio } from "@/utils/getWordsRatio";
+import { mergeGrow } from "@/utils/mergeGrow";
 
 export default function useEditLyricModalSideEffect() {
-	const { selectLyricIndex, currentLyric, currentWords, currentSplitWords } =
-		useEditLyricContext();
+  const { selectLyricIndex, currentLyric } = useEditLyricContext();
 
-	const {
-		eleRefs,
-		actuallyEndRef,
-		actuallyStartRef,
-		mergedGrowListRef,
-		wordsRatioRef,
-		growList,
-		setGrowList,
-	} = useLyricEditorContext();
+  const {
+    eleRefs,
+    actuallyEndRef,
+    mergedGrowListRef,
+    actuallyStartRef,
+    wordsRatioRef,
+    setGrowList,
+    setCut,
+    setText,
+    currentWords,
+  } = useLyricEditorContext();
 
-	const { tempWordRef, endTimeRangeRef, startTimeRangeRef, startRefText, endRefText } =
-		eleRefs;
+  const { tempWordRef, endTimeRangeRef, startTimeRangeRef, startRefText, endRefText } =
+    eleRefs;
 
-	useEffect(() => {
-		if (!tempWordRef.current) return;
+  // change when lyirc text change
+  useEffect(() => {
+    if (!tempWordRef.current) return;
 
-		const list = getWordsRatio(tempWordRef.current);
-		wordsRatioRef.current = list;
-	}, [currentWords]);
+    const list = getWordsRatio(tempWordRef.current);
+    wordsRatioRef.current = list;
+  }, [currentWords]);
 
+  // only change when index changed, not lyric data
+  useEffect(() => {
+    if (!currentLyric) return;
 
-// update growListRef in usePlayer
-	// useEffect(() => {
-	// 	growListRef.current = growList;
-	// }, [growList]);
+    const grow = currentLyric.tune.grow;
 
-	// update growlist
-	useEffect(() => {
-		const _growList = currentLyric?.tune
-			? currentLyric.tune.grow.split("_").map((v) => +v)
-			: [];
+    const words = currentLyric.text.split(" ").filter((v) => v.trim());
+    setText(currentLyric.text);
+    setCut(currentLyric.cut);
 
-		currentSplitWords.forEach((_w, index) => {
-			if (typeof _growList[index] !== "number") _growList[index] = 1;
-		});
+    const mergedGrowList = mergeGrow(words, currentLyric.cut, grow);
+    setGrowList(grow);
+    mergedGrowListRef.current = mergedGrowList;
 
-		setGrowList(_growList);
-	}, [currentLyric]);
+    // update slider
+    if (
+      endRefText.current &&
+      startRefText.current &&
+      startTimeRangeRef.current &&
+      endTimeRangeRef.current
+    ) {
+      actuallyStartRef.current = currentLyric?.tune
+        ? currentLyric.tune.start
+        : currentLyric.start;
+      startRefText.current.innerText = `${currentLyric.start} / ${actuallyStartRef.current}`;
 
-	// update time
-	useEffect(() => {
-		if (!currentLyric) return;
+      startTimeRangeRef.current.max = currentLyric.end + "";
+      startTimeRangeRef.current.value = actuallyStartRef.current + "";
 
-		if (
-			endRefText.current &&
-			startRefText.current &&
-			startTimeRangeRef.current &&
-			endTimeRangeRef.current
-		) {
-			actuallyStartRef.current = currentLyric?.tune
-				? currentLyric.tune.start
-				: currentLyric.start;
-			startRefText.current.innerText = `${currentLyric.start} / ${actuallyStartRef.current}`;
+      actuallyEndRef.current = currentLyric?.tune
+        ? currentLyric.tune.end
+        : currentLyric.end;
+      endRefText.current.innerText = `${actuallyEndRef.current} / ${currentLyric.end}`;
 
-			startTimeRangeRef.current.max = currentLyric.end + "";
-			startTimeRangeRef.current.value = actuallyStartRef.current + "";
+      endTimeRangeRef.current.max = currentLyric.end + "";
+      endTimeRangeRef.current.value = actuallyEndRef.current + "";
+    }
+  }, [selectLyricIndex]);
 
-			actuallyEndRef.current = currentLyric?.tune
-				? currentLyric.tune.end
-				: currentLyric.end;
-			endRefText.current.innerText = `${actuallyEndRef.current} / ${currentLyric.end}`;
-
-			endTimeRangeRef.current.max = currentLyric.end + "";
-			endTimeRangeRef.current.value = actuallyEndRef.current + "";
-		}
-	}, [selectLyricIndex]);
+  // useEffect(() => {//   setLoacalLyricIndex(selectLyricIndex);
+  // }, [selectLyricIndex]);
 }

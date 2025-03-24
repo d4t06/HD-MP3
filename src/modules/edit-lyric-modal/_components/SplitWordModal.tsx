@@ -4,51 +4,50 @@ import { useThemeContext } from "@/stores";
 import { splitStringByCutPositions } from "@/utils/lyricEditorHelper";
 import { ScissorsIcon } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
+import { useLyricEditorContext } from "./LyricEditorContext";
 
 type Props = {
-  wordData: { text: string; cutPositions: number[] };
+  wordData: { text: string; positions: number[] };
   wordIndex: number;
   closeModal: () => void;
 };
 
 export default function SplitWordModal({ wordData, wordIndex, closeModal }: Props) {
   const { theme } = useThemeContext();
-  const { updateLyric, currentLyric, selectLyricIndex } = useEditLyricContext();
+  const { currentLyric, selectLyricIndex } = useEditLyricContext();
+  const { setCut, cut } = useLyricEditorContext();
 
-  const [localCutPositions, setLocalCutPosition] = useState(wordData.cutPositions);
+  const [localCut, seLocalCut] = useState(wordData.positions);
 
   const localSplitWords = useMemo(
-    () => splitStringByCutPositions(wordData.text, localCutPositions).filter((w) => w),
-    [localCutPositions]
+    () => splitStringByCutPositions(wordData.text, localCut).filter((w) => w),
+    [localCut]
   );
 
   const characters = useMemo(() => wordData.text.split(""), []);
 
   const splitWord = (index: number) => {
-    const newCutPositons = [...localCutPositions];
+    const newCutPositions = [...localCut];
 
-    const foundedIndex = localCutPositions.findIndex((i) => i === index);
+    const foundedIndex = localCut.findIndex((i) => i === index);
 
     if (foundedIndex === -1) {
-      newCutPositons.push(index);
-    } else newCutPositons.splice(foundedIndex, 1);
+      newCutPositions.push(index);
+    } else newCutPositions.splice(foundedIndex, 1);
 
-    setLocalCutPosition(newCutPositons);
+    seLocalCut(newCutPositions);
   };
 
   const apply = () => {
     if (!currentLyric || selectLyricIndex === undefined) return;
 
-    const sortedNewCutPositions = localCutPositions.sort((a, b) => a - b);
+    const sortedNewCut = localCut.sort((a, b) => a - b);
 
-    const newTextCutPositons = [...currentLyric.cutData];
-    newTextCutPositons[wordIndex] = sortedNewCutPositions;
+    const newCut = [...cut];
+    newCut[wordIndex] = sortedNewCut;
 
-    const newLyricData: Partial<RealTimeLyric> = {
-      cutData: newTextCutPositons,
-    };
+    setCut(newCut);
 
-    updateLyric(selectLyricIndex, newLyricData);
     closeModal();
   };
 
@@ -65,7 +64,7 @@ export default function SplitWordModal({ wordData, wordIndex, closeModal }: Prop
 
       <div className="mt-3 flex justify-center">
         {characters.map((c, i) => {
-          const isSplited = localCutPositions.includes(i);
+          const isSplited = localCut.includes(i);
 
           return (
             <div key={i}>

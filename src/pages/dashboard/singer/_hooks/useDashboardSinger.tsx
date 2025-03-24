@@ -5,7 +5,9 @@ import { singerCollectionRef } from "@/services/firebaseService";
 import { implementSingerQuery } from "@/services/appService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 
-type Tab = "All" | "Result";
+const tabs = ["All", "Result"] as const;
+
+type Tab = (typeof tabs)[number];
 
 export default function useDashboardSinger() {
   const { setSingers, singers } = useSingerContext();
@@ -25,7 +27,7 @@ export default function useDashboardSinger() {
       const searchQuery = query(
         singerCollectionRef,
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff")
+        where("name", "<=", value + "\uf8ff"),
       );
 
       const result = await implementSingerQuery(searchQuery);
@@ -69,5 +71,6 @@ export default function useDashboardSinger() {
     singers,
     tab,
     setTab,
+    tabs
   };
 }

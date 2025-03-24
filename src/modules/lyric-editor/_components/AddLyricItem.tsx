@@ -2,7 +2,7 @@ import { formatTime } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 
 type Props = {
-  lyric: RealTimeLyric;
+  lyric: Lyric;
   seek: (time: number) => void;
   theme: ThemeType & { alpha: string };
   isLast: boolean;

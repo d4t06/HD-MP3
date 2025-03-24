@@ -1,7 +1,7 @@
 import { Modal, ModalRef } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { Button } from "../../_components";
+import { Button, ModalWrapper } from "../../_components";
 
 import AddSingerModal from "./AddSingerModal";
 
@@ -21,8 +21,10 @@ export default function AddSingerBtn() {
         <div className="hidden md:block">Add new singer</div>
       </Button>
 
-      <Modal ref={modalRef} variant="animation">
-        <AddSingerModal closeModal={closeModal} variant="add" />
+      <Modal wrapped={false} ref={modalRef} variant="animation">
+        <ModalWrapper className="w-[unset]">
+          <AddSingerModal closeModal={closeModal} variant="add" />
+        </ModalWrapper>
       </Modal>
     </>
   );

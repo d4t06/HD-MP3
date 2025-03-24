@@ -21,11 +21,12 @@ export default function usePersistAuth() {
             email: u.email as string,
             display_name: u.displayName as string,
             photo_url: u.photoURL as string,
-            liked_song_ids: userDoc?.liked_song_ids || [],
-            recent_playlist_ids: userDoc?.recent_playlist_ids || [],
-            recent_song_ids: userDoc?.recent_song_ids || [],
-            role: userDoc?.role || "USER",
-            liked_playlist_ids: userDoc?.liked_playlist_ids || [],
+            liked_song_ids: userDoc.liked_song_ids || [],
+            recent_playlist_ids: userDoc.recent_playlist_ids || [],
+            recent_song_ids: userDoc.recent_song_ids || [],
+            liked_singer_ids: userDoc.liked_singer_ids || [],
+            role: userDoc.role || "USER",
+            liked_playlist_ids: userDoc.liked_playlist_ids || [],
           };
 
           //  new user

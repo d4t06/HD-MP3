@@ -18,6 +18,7 @@ import {
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
 import { getLinearBg } from "@/utils/getLinearBg";
+import { myUpdateDoc } from "@/services/firebaseService";
 
 export default function useControl() {
   const { isOpenFullScreen, audioRef } = usePlayerContext();
@@ -26,7 +27,7 @@ export default function useControl() {
   // use stores
   const dispatch = useDispatch();
   const { theme } = useThemeContext();
-  const { user } = useAuthContext();
+  const { user, updateUserData } = useAuthContext();
   const { queueSongs, currentSongData, currentQueueId } = useSelector(selectSongQueue);
   const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
     selectAllPlayStatusStore,
@@ -52,6 +53,7 @@ export default function useControl() {
   const timelineEleRef = useRef<HTMLDivElement>(null);
   const currentTimeEleRef = useRef<HTMLDivElement>(null);
   const playStatusRef = useRef<PlayStatus>("paused");
+  const recentSongIdsRef = useRef<string[]>([]);
 
   // use hook
   const location = useLocation();
@@ -334,6 +336,38 @@ export default function useControl() {
       }
     }
 
+    if (currentSongDataRef.current) {
+      if (user) {
+        const songId = currentSongDataRef.current.song.id;
+
+        const newUserRecentSongIds = [...recentSongIdsRef.current];
+        const founded = newUserRecentSongIds.includes(songId);
+
+        if (!founded) {
+          const newUserData: Partial<User> = {
+            recent_song_ids: [...newUserRecentSongIds, songId],
+          };
+
+          updateUserData(newUserData);
+          myUpdateDoc({
+            collectionName: "Users",
+            data: newUserData,
+            id: user.email,
+          });
+        }
+      } else {
+        const newRecentSongs = (getLocalStorage()["recent-songs"] || []) as Song[];
+
+        const founded = newRecentSongs.find(
+          (s) => s.id === currentSongDataRef.current?.song.id,
+        );
+
+        if (!founded) newRecentSongs.unshift(currentSongDataRef.current.song);
+
+        setLocalStorage("recent-songs", newRecentSongs);
+      }
+    }
+
     // normal active song case
     play();
   };
@@ -362,6 +396,10 @@ export default function useControl() {
       handleNext();
     } else dispatch(setPlayStatus({ playStatus: "error" }));
   };
+
+  useEffect(() => {
+    if (user) recentSongIdsRef.current = user.recent_song_ids;
+  }, [user]);
 
   //   load current song in local storage
   useEffect(() => {

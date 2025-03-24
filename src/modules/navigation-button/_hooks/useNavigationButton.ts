@@ -1,15 +1,13 @@
 import { useNavigationContext } from "@/stores";
-import { useEffect, useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function useNavigationButton() {
-  const { behind, ahead, setBehind, setAhead } = useNavigationContext();
+  const { behind, ahead, shouldStoreLocation, setBehind, setAhead } =
+    useNavigationContext();
 
   const location = useLocation();
   const navigator = useNavigate();
-
-  const shouldStoreLocation = useRef(true);
-  const firstTimeRunEffect = useRef(true);
 
   const currentLocation = useMemo(() => location.pathname + location.search, [location]);
 
@@ -45,19 +43,9 @@ export default function useNavigationButton() {
     }
   };
 
-  useEffect(() => {
-    if (firstTimeRunEffect.current) {
-      firstTimeRunEffect.current = false;
-      return;
-    }
+  const goHome = () => {
+    navigator("/");
+  };
 
-    return () => {
-      if (shouldStoreLocation.current) {
-        if (ahead.length) setAhead([]);
-        setBehind((prev) => [...prev, currentLocation]);
-      } else shouldStoreLocation.current = true;
-    };
-  }, [location.pathname]);
-
-  return { ahead, behind, backward, forward };
+  return { ahead, behind, backward, forward, goHome };
 }

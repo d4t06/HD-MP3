@@ -4,6 +4,9 @@ import useDashboardPlaylistActions, {
 } from "@/pages/dashboard/playlist/edit-playlist/_hooks/usePlaylistAction";
 import { DashboardSongMenuWrapper } from "..";
 import { PhotoIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { useRef } from "react";
+import { Modal, ModalRef, Title } from "@/components";
+import { ModalWrapper } from "@/pages/dashboard/_components";
 
 type Props = {
   song: Song;
@@ -13,8 +16,16 @@ export default function PlaylistMenu({ song }: Props) {
   const { action, isFetching, playlist } = useDashboardPlaylistActions();
   const { close } = usePopoverContext();
 
+  const modalRef = useRef<ModalRef>(null);
+
   const classes = {
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
+  };
+
+  const openModal = () => {
+    modalRef.current?.open();
+
+    close();
   };
 
   const handlePlaylistAction = async (props: PlaylistActionProps) => {
@@ -33,6 +44,12 @@ export default function PlaylistMenu({ song }: Props) {
         });
 
         break;
+
+      case "add-singer": {
+        await action({ variant: "add-singer", singer: props.singer });
+
+        modalRef.current?.close();
+      }
     }
 
     close();
@@ -53,14 +70,7 @@ export default function PlaylistMenu({ song }: Props) {
           <span>Remove</span>
         </button>
 
-        <button
-          onClick={() =>
-            handlePlaylistAction({
-              variant: "add-singer",
-              singer: song.singers[0],
-            })
-          }
-        >
+        <button onClick={openModal}>
           <PlusIcon className="w-5" />
           <span>Add singer to playlist</span>
         </button>
@@ -88,6 +98,26 @@ export default function PlaylistMenu({ song }: Props) {
           </div>
         )}
       </DashboardSongMenuWrapper>
+
+      <Modal wrapped={false} variant="animation" ref={modalRef}>
+        <ModalWrapper>
+          <Title title="Singers" />
+          <div className="space-x-2 mt-3 [&>*]:px-3 [&>*]:py-1 [&>*]:rounded-md  [&>*]:bg-[#f1f1f1] hover:[&>*]:bg-black/10">
+            {song.singers.map((s) => (
+              <button
+                onClick={() =>
+                  handlePlaylistAction({
+                    variant: "add-singer",
+                    singer: s,
+                  })
+                }
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        </ModalWrapper>
+      </Modal>
     </>
   );
 }

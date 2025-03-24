@@ -9,11 +9,13 @@ function useSong() {
   const [uploadedSongs, setUploadedSongs] = useState<Song[]>([]);
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [singers, setSingers] = useState<Singer[]>([]);
 
   //   const ranGetSong = useRef(false);
   const shouldFetchUserSongs = useRef(true);
   const shouldFetchFavoriteSongs = useRef(true);
   const shouldFetchUserPlaylists = useRef(true);
+  const shouldFetchUserSingers = useRef(true);
 
   const updateSong = (props: { song: Partial<Song>; id: string }) => {
     const newSongs = [...uploadedSongs];
@@ -41,6 +43,8 @@ function useSong() {
     shouldFetchUserPlaylists,
     shouldFetchFavoriteSongs,
     updateSong,
+    singers, setSingers,
+    shouldFetchUserSingers
   };
 }
 

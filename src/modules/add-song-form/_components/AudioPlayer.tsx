@@ -7,17 +7,17 @@ import {
 } from "@heroicons/react/24/outline";
 import { ElementRef, useRef } from "react";
 import UploadSongBtn from "./UploadSongBtn";
-import { Button, Frame } from "@/pages/dashboard/_components";
-import { formatTime } from "@/utils/appHelpers";
+import { Button } from "@/pages/dashboard/_components";
+// import { formatTime } from "@/utils/appHelpers";
 
 type Props = {
   audioEle: HTMLAudioElement;
-  duration: number;
-  size: number;
+  // duration: number;
+  // size: number;
   variant: "add" | "edit";
 };
 
-export default function AudioPLayer({ audioEle, duration, variant, size }: Props) {
+export default function AudioPLayer({ audioEle, variant }: Props) {
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
   const { status, handlePlayPause } = useAudioControl({
@@ -51,17 +51,11 @@ export default function AudioPLayer({ audioEle, duration, variant, size }: Props
 
         {variant === "add" && <UploadSongBtn />}
       </div>
-
-      <Frame>
-        <span>
-          Duration: {formatTime(duration)} , Size: {size}kb
-        </span>
-        <div
-          style={{ backgroundColor: "rgab(0,0,0,.05)" }}
-          ref={progressLineRef}
-          className={`h-1 rounded-full mt-3 w-full`}
-        ></div>
-      </Frame>
+      <div
+        style={{ backgroundColor: "rgab(0,0,0,.05)" }}
+        ref={progressLineRef}
+        className={`h-1 rounded-full mt-3 w-full`}
+      ></div>
     </>
   );
 }

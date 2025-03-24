@@ -45,6 +45,7 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
     return (
       songData.name !== song.name ||
       singers.length !== song.singers.length ||
+      songData.like !== song.like ||
       genres.length !== song.genres.length
     );
   }, [songData, song, singers, genres]);

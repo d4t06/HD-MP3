@@ -23,6 +23,7 @@ export default function EditStringLyicModal({ closeModal }: Props) {
     const formatedLyric = value
       .split(/\r?\n/)
       .filter((v) => v)
+      .filter((v) => v.trim())
       .join("\r\n");
 
     setBaseLyric(formatedLyric);

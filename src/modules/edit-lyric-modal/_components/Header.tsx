@@ -1,7 +1,7 @@
-import { AudioSetting } from "@/components";
-import Tab from "@/components/Tab";
+import { AudioSetting, Tab } from "@/components";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import EditLyricModalPlayer from "./Player";
+import { useThemeContext } from "@/stores";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -10,19 +10,19 @@ type Props = {
 export default function Header({ audioEle }: Props) {
   const { tabProps } = useLyricEditorContext();
 
+  const { theme } = useThemeContext();
+
   return (
     <>
       <EditLyricModalPlayer audioEle={audioEle} />
 
       <div className="flex items-center justify-between">
-        <div className="bg-black/10 p-1 rounded-full [&>button]:border-none">
-          <Tab {...tabProps} render={(t) => t} />
-        </div>
+        <Tab className="bg-white/10" {...tabProps} render={(t) => t} />
 
         <AudioSetting
           positions="left"
-          bg="bg-[#5a9e87]"
-          className="bg-transparent hover:bg-black/10 p-1"
+          bg={theme.content_bg}
+          className="bg-transparent hover:bg-white/10"
           audioEle={audioEle}
           postLocalStorageKey="edit_lyric_tune"
         />

@@ -6,8 +6,10 @@ export default function SingerPlaylist() {
 
   return (
     <>
-      <Title title="Popular Playlists" />
-      <PlaylistList playlists={playlists} loading={isFetching} />
+      <div>
+        <Title title="Popular Playlists" />
+        <PlaylistList playlists={playlists} loading={isFetching} />
+      </div>
     </>
   );
 }

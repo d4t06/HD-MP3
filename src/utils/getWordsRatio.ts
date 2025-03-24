@@ -3,7 +3,7 @@ export const getWordsRatio = (containerEle: HTMLDivElement) => {
 
   const list: number[] = [];
   containerEle.childNodes.forEach((child) => {
-    list.push(Math.round(((child as HTMLSpanElement).clientWidth / totalWith) * 100));
+    list.push(Math.round(((child as HTMLSpanElement).offsetWidth / totalWith) * 100));
   });
 
   return list;

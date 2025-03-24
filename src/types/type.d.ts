@@ -6,6 +6,7 @@ type User = {
   photo_url: string;
   liked_playlist_ids: string[];
   liked_song_ids: string[];
+  liked_singer_ids: string[];
   recent_song_ids: string[];
   recent_playlist_ids: string[];
   role: string;
@@ -70,32 +71,31 @@ type PlaylistSchema = Omit<Playlist, "id">;
 type SongLyric = {
   id: string;
   base: string;
-  real_time: RealTimeLyric[];
+  lyrics: Lyric[];
 };
 
-type SongLyricSchema = Omit<SongLyric, "real_time" | "id"> & {
-  real_time: string;
-};
-
-type TempLyric = Omit<SongLyric, "real_time" | "id"> & {
-  real_time: string;
-  song_id: string;
-};
-
-type LyricTune = {
-  grow: string;
-  end: number;
-  start: number;
-};
-
-interface RealTimeLyric {
+interface Lyric {
   start: number;
   end: number;
   text: string;
-  tune?: LyricTune;
-  // syllables: number[];
-  cutData: number[][];
+  tune: LyricTune;
+  cut: number[][];
 }
+
+type LyricTune = {
+  grow: number[];
+  end: number;
+  start: number;
+};
+
+type SongLyricSchema = Omit<SongLyric, "lyrics" | "id"> & {
+  lyrics: string;
+};
+
+type TempLyric = Omit<SongLyric, "lyrics" | "id"> & {
+  lyrics: string;
+  song_id: string;
+};
 
 type ThemeKeyType =
   | "red"
@@ -142,6 +142,7 @@ type Singer = {
   image_file_path: string;
   blurhash_encode: string;
   description: string;
+  like: number;
   created_at: Timestamp;
 };
 

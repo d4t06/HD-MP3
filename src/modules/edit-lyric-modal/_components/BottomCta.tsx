@@ -3,7 +3,6 @@ import { useLyricEditorContext } from "./LyricEditorContext";
 import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import useEditLyricModalAction from "../_hooks/useEditLyricModalAction";
-import { getDisable } from "@/utils/appHelpers";
 
 type Props = {
 	closeModal: () => void;
@@ -48,6 +47,7 @@ export default function BottomCta({ closeModal }: Props) {
 		<div className={`flex justify-end space-x-2 mt-5 `}>
 			<Button
 				color="primary"
+				disabled={selectLyricIndex === 0}
 				onClick={() => handleNavigate("prev")}
 				className={`font-playwriteCU`}
 			>
@@ -56,6 +56,7 @@ export default function BottomCta({ closeModal }: Props) {
 			</Button>
 			<Button
 				color="primary"
+				disabled={selectLyricIndex === lyrics.length - 1}
 				onClick={() => handleNavigate("next")}
 				className={`font-playwriteCU`}
 			>

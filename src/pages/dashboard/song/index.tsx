@@ -1,7 +1,7 @@
 import Title from "@/components/ui/Title";
 import useDashboardSong from "./_hooks/useDashboardSong";
 import Table from "@/components/ui/Table";
-import { NotFound, Skeleton, Tabs } from "@/components";
+import { NotFound, Skeleton, Tab } from "@/components";
 import { useThemeContext } from "@/stores";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import Searchbar from "../_components/SearchBar";
@@ -10,7 +10,7 @@ import { Button, DashboardSongItem, Frame } from "../_components";
 export default function DashboardSong() {
   const { theme } = useThemeContext();
 
-  const { isFetching, uploadedSongs, setTab, tab, ...rest } = useDashboardSong();
+  const { isFetching, uploadedSongs,tabs, setTab, tab, ...rest } = useDashboardSong();
 
   return (
     <div className="pb-[46px]">
@@ -18,23 +18,20 @@ export default function DashboardSong() {
 
       <div className="flex justify-between items-start mt-3">
         <Searchbar {...rest} />
-        <Button
-          href="/dashboard/song/add-song"
-          className={`p-1.5 ml-5`}
-          size={"clear"}
-        >
+        <Button href="/dashboard/song/add-song" className={`p-1.5 ml-5`} size={"clear"}>
           <PlusIcon className="w-6" />
           <div className="hidden md:block">Add song</div>
         </Button>
       </div>
 
-      <Tabs
-        className={`mt-5 ${tab === "All" ? "pointer-events-none" : ""} self-start`}
-        tabs={["All", "Result"]}
-        render={(t) => t}
-        activeTab={tab}
-        setActiveTab={setTab}
-      />
+      <div className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}>
+        <Tab
+          tabs={tabs}
+          render={(t) => t}
+          tab={tab}
+          setTab={setTab}
+        />
+      </div>
 
       <div className="mt-3">
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}

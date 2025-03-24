@@ -1,6 +1,6 @@
 import { NotFound, Title } from "@/components";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import Skeleton, { SongItemSkeleton } from "@/components/skeleton";
+import Skeleton from "@/components/skeleton";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
 import { Link } from "react-router-dom";
@@ -32,7 +32,7 @@ export default function SingerSongList() {
                         className={`hover:text-green-500 hover:underline`}
                         key={i}
                       >
-                        {s.name + (i ? ", " : "")}
+                        {(i ? ", " : "") + s.name}
                       </Link>
                     ))}
                   </td>

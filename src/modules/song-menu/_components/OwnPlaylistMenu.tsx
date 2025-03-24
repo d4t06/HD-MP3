@@ -1,18 +1,13 @@
-import {
-  ArrowDownTrayIcon,
-  ArrowPathIcon,
-  MinusIcon,
-  PlusIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon, ArrowPathIcon, MinusIcon } from "@heroicons/react/24/outline";
 import { SongMenuContent } from "..";
 import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
+import AddToQueueMenuItem from "./AddToQueueMenuItem";
 
 type Props = {
-  addSongToQueue: () => void;
   song: Song;
 };
 
-export default function OwnPlaylistMenu({ addSongToQueue, song }: Props) {
+export default function OwnPlaylistMenu({ song }: Props) {
   const { isFetching } = usePlaylistAction();
 
   return (
@@ -20,10 +15,7 @@ export default function OwnPlaylistMenu({ addSongToQueue, song }: Props) {
       <SongMenuContent song={song}>
         {import.meta.env.DEV && <p>own playlist menu</p>}
 
-        <button onClick={addSongToQueue}>
-          <PlusIcon className="w-5" />
-          <span>Add to queue</span>
-        </button>
+        <AddToQueueMenuItem song={song} />
 
         <button>
           {!isFetching ? (

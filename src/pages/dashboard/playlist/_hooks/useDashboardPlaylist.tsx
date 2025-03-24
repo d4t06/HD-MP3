@@ -4,14 +4,16 @@ import { orderBy, query, where } from "firebase/firestore";
 import { playlistCollectionRef } from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
 
-type DashboardSongTab = "All" | "Result";
+const tabs = ["All", "Result"] as const;
+
+type Tab = typeof tabs[number]
 
 export default function useDashboardPlaylist() {
   const { setPlaylists, playlists } = useSongContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
-  const [tab, setTab] = useState<DashboardSongTab>("All");
+  const [tab, setTab] = useState<Tab>("All");
 
   const { setErrorToast } = useToastContext();
 
@@ -25,7 +27,7 @@ export default function useDashboardPlaylist() {
         playlistCollectionRef,
         where("is_official", "==", true),
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff")
+        where("name", "<=", value + "\uf8ff"),
       );
 
       const result = await implementPlaylistQuery(searchQuery);
@@ -47,7 +49,7 @@ export default function useDashboardPlaylist() {
       const searchQuery = query(
         playlistCollectionRef,
         where("is_official", "==", true),
-        orderBy("updated_at", "desc")
+        orderBy("updated_at", "desc"),
       );
 
       const result = await implementPlaylistQuery(searchQuery);
@@ -73,5 +75,6 @@ export default function useDashboardPlaylist() {
     playlists,
     tab,
     setTab,
+    tabs
   };
 }

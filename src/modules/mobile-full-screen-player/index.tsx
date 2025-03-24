@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { Tabs, FullScreenPlayerSetting } from "@/components";
+import { FullScreenPlayerSetting } from "@/components";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
@@ -16,16 +16,14 @@ import MusicControl from "../music-control";
 import MobileSongQueue from "./_components/SongQueue";
 import ScrollText from "../scroll-text";
 import SleepTimerButton from "../sleep-timer-button";
+import FullScreenPlayerTab from "../full-screen-player/_components/Tabs";
 
 export default function MobileFullScreenPlayer() {
   // use stores
-  const { controlRef, setIsOpenFullScreen, isOpenFullScreen } = usePlayerContext();
+  const { controlRef, setIsOpenFullScreen, isOpenFullScreen, mobileActiveTab } =
+    usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { songBackground } = useSelector(selectAllPlayStatusStore);
-
-  // state
-  const [activeTab, setActiveTab] = useState<"Songs" | "Playing" | "Lyric">("Playing");
-  // const [scalingImage, _setScalingImage] = useState(false);
 
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
@@ -73,14 +71,7 @@ export default function MobileFullScreenPlayer() {
               </MyPopupContent>
             </MyPopup>
 
-            <Tabs
-              inFullScreen
-              className="w-fit font-[500]"
-              setActiveTab={setActiveTab}
-              activeTab={activeTab}
-              render={(tab) => tab}
-              tabs={["Songs", "Playing", "Lyric"]}
-            />
+            <FullScreenPlayerTab variant="mobile" />
 
             <button
               className={`${classes.button} p-[6px] bg-white/10`}
@@ -93,14 +84,14 @@ export default function MobileFullScreenPlayer() {
           {/* container */}
           <div ref={containerRef} className={classes.container}>
             {/* >>> song image */}
-            <div className={`${activeTab != "Playing" ? "flex" : "sm:flex"}`}>
+            <div className={`${mobileActiveTab != "Playing" ? "flex" : "sm:flex"}`}>
               <MobileSongThumbnail
-                expand={activeTab === "Playing"}
+                expand={mobileActiveTab === "Playing"}
                 imageUrl={currentSongData?.song.image_url}
               />
 
               <div
-                className={`ml-2 ${activeTab != "Playing" ? "block" : "hidden sm:block"}`}
+                className={`ml-2 ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
                   {currentSongData?.song.name}
@@ -116,7 +107,7 @@ export default function MobileFullScreenPlayer() {
             {/* >>> song name */}
             <div
               className={`mt-5 justify-between items-center ${
-                activeTab != "Playing" ? "hidden" : "flex sm:hidden"
+                mobileActiveTab != "Playing" ? "hidden" : "flex sm:hidden"
               }`}
             >
               <div className="flex-grow">
@@ -129,7 +120,7 @@ export default function MobileFullScreenPlayer() {
                 {/* <div className={"h-[28px]"}>
                   <ScrollText
                     className={`opacity-60 ${
-                      activeTab === "Playing" ? "text-lg" : "text-base"
+                      mobileActiveTab === "Playing" ? "text-lg" : "text-base"
                     }`}
                     content={currentSongData?.song.singer || "..."}
                   />
@@ -143,9 +134,9 @@ export default function MobileFullScreenPlayer() {
             <LyricContextProvider>
               {/* >>> lyric tab */}
               <LyricsList
-                active={isOpenFullScreen && activeTab === "Lyric"}
+                active={isOpenFullScreen && mobileActiveTab === "Lyric"}
                 className={`text-center ${
-                  activeTab === "Lyric" ? "flex-1 block" : "hidden"
+                  mobileActiveTab === "Lyric" ? "flex-1 block" : "hidden"
                 }`}
               />
               {/* <<< end lyric tab */}
@@ -154,7 +145,7 @@ export default function MobileFullScreenPlayer() {
             {/* >>> song list tab */}
             <div
               className={`leading-[2.2] font-playwriteCU my-2 ${
-                activeTab === "Songs" ? "" : "hidden"
+                mobileActiveTab === "Songs" ? "" : "hidden"
               }`}
             >
               Playing next
@@ -162,7 +153,7 @@ export default function MobileFullScreenPlayer() {
 
             <div
               className={`flex-grow no-scrollbar overflow-auto ${
-                activeTab === "Songs" ? "" : "hidden"
+                mobileActiveTab === "Songs" ? "" : "hidden"
               }`}
             >
               {currentSongData && (
@@ -174,8 +165,8 @@ export default function MobileFullScreenPlayer() {
             {/* control */}
             <div
               className={`${classes.control} ${
-                activeTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
-              } ${activeTab === "Playing" ? "flex-grow" : ""}`}
+                mobileActiveTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
+              } ${mobileActiveTab === "Playing" ? "flex-grow" : ""}`}
             >
               <MusicControl variant="mobile" ref={controlRef} />
             </div>

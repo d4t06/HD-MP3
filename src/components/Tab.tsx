@@ -7,23 +7,32 @@ type Props<T> = {
   tab: T;
   tabs: readonly T[];
   render: (item: T) => ReactNode;
+  className?: string;
 };
 
-export default function Tab<T>({ setTab, render, tab, tabs }: Props<T>) {
+export default function Tab<T>({ setTab, render, tab, tabs, className = "" }: Props<T>) {
   const { theme } = useThemeContext();
 
   const classes = {
-    inActiveTab: `border border-${theme.alpha} bg-transparent`,
+    inActiveTab: ` hover:bg-${theme.alpha}`,
     activeTab: `${theme.content_bg}`,
   };
 
-  return tabs.map((t, i) => (
-    <Button
-      key={i}
-      onClick={() => setTab(t)}
-      className={`${t === tab ? classes.activeTab : classes.inActiveTab}`}
-    >
-      {render(t)}
-    </Button>
-  ));
+  return (
+    <div className={`bg-${theme.alpha} p-1.5 space-x-1 rounded-full ${className}`}>
+      {tabs.map((t, i) => (
+        <Button
+          size={"clear"}
+          key={i}
+          onClick={(e) => {
+            setTab(t);
+            (e.target as HTMLButtonElement).blur();
+          }}
+          className={`py-1 px-4 ${t === tab ? classes.activeTab : classes.inActiveTab}`}
+        >
+          {render(t)}
+        </Button>
+      ))}
+    </div>
+  );
 }

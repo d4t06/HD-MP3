@@ -5,6 +5,5 @@ export { default as useDebounce } from "./useDebounce";
 export { default as useFunctionDebounce } from "./useFunctionDebounce";
 export { default as useGetPlaylist } from "./useGetPlaylist";
 export { default as useGetSongLyric } from "./useGetSongLyric";
-export { default as useGetSongPlaylist } from "./useGetSongPlaylist";
 export { default as useSongQueueAction } from "./useSongQueueAction";
 export { default as useAddPlaylist } from "./useAddPlaylist";

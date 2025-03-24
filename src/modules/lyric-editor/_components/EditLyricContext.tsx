@@ -1,11 +1,10 @@
-import { splitStringByCutPositions } from "@/utils/lyricEditorHelper";
 import { createContext, ReactNode, useContext, useMemo, useRef, useState } from "react";
 
 const useEditLyric = () => {
   const [song, setSong] = useState<Song>();
   const [baseLyric, setBaseLyric] = useState<string>("");
   const [baseLyricArr, setBaseLyricArr] = useState<string[]>([]);
-  const [lyrics, setLyrics] = useState<RealTimeLyric[]>([]);
+  const [lyrics, setLyrics] = useState<Lyric[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
   const [selectLyricIndex, setSelectLyricIndex] = useState<number>();
@@ -14,39 +13,13 @@ const useEditLyric = () => {
 
   const currentLyric = useMemo(
     () => (selectLyricIndex !== undefined ? lyrics[selectLyricIndex] : undefined),
-    [selectLyricIndex, lyrics],
+    [selectLyricIndex, lyrics]
   );
 
-  const currentWords = useMemo(
-    () => (currentLyric ? currentLyric.text.trim().split(" ") : []),
-    [currentLyric?.text],
-  );
-
-  const currentLyricWordsData = useMemo(() => {
-    if (!currentLyric) return [];
-
-    return currentWords.map((w, i) => ({
-      text: w,
-      cutPositions: currentLyric.cutData[i],
-    }));
-  }, [currentLyric]);
-
-  const currentSplitWords = useMemo(() => {
-    const splitWords: string[] = [];
-
-    currentLyricWordsData.forEach((data) => {
-      const words = splitStringByCutPositions(data.text, data.cutPositions);
-      splitWords.push(...words);
-    });
-
-    return splitWords.filter((w) => w);
-  }, [currentLyric]);
-
-  const updateLyric = (index: number, payload: Partial<RealTimeLyric>) => {
+  const updateLyric = (index: number, payload: Partial<Lyric>) => {
     setLyrics((prev) => {
       const target = { ...prev[index], ...payload };
       prev[index] = target;
-
       return [...prev];
     });
   };
@@ -68,10 +41,7 @@ const useEditLyric = () => {
     start,
     selectLyricIndex,
     setSelectLyricIndex,
-    currentLyricWordsData,
     currentLyric,
-    currentSplitWords,
-    currentWords,
   };
 };
 

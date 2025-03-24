@@ -3,97 +3,95 @@ import { useLyricEditorContext } from "../_components/LyricEditorContext";
 import { HTMLAttributes } from "react";
 
 export default function useSlider() {
-	const { currentLyric } = useEditLyricContext();
+  const { currentLyric } = useEditLyricContext();
 
-	const {
-		eleRefs,
-		isChangedRef,
+  const {
+    eleRefs,
+    isChangedRef,
+    actuallyEndRef,
+    actuallyStartRef,
+    tempActuallyStartRef,
+    setGrowList,
+  } = useLyricEditorContext();
 
-		actuallyEndRef,
-		actuallyStartRef,
-		tempActuallyStartRef,
+  const { startRefText, endRefText } = eleRefs;
 
-		setGrowList,
-	} = useLyricEditorContext();
+  type Range = {
+    variant: "range";
+    value: number;
+    index: number;
+  };
 
-	const { startRefText, endRefText } = eleRefs;
+  type Button = {
+    variant: "button";
+    action: "minus" | "plus";
+    index: number;
+  };
 
-	type Range = {
-		variant: "range";
-		value: number;
-		index: number;
-	};
+  const handleGrowWord = (props: Range | Button) => {
+    if (props.variant === "range" && props.value < 1) return;
 
-	type Button = {
-		variant: "button";
-		action: "minus" | "plus";
-		index: number;
-	};
+    isChangedRef.current = true;
 
-	const handleGrowWord = (props: Range | Button) => {
-		if (props.variant === "range" && props.value < 1) return;
+    setGrowList((prev) => {
+      const _prev = [...prev];
 
-		isChangedRef.current = true;
+      let newValue = _prev[props.index];
 
-		setGrowList((prev) => {
-			const _prev = [...prev];
+      switch (props.variant) {
+        case "range":
+          newValue = props.value;
+          break;
+        case "button":
+          newValue = +(
+            props.action === "minus" ? newValue - 0.2 : newValue + 0.2
+          ).toFixed(1);
+      }
 
-			let newValue = _prev[props.index];
+      _prev[props.index] = newValue;
 
-			switch (props.variant) {
-				case "range":
-					newValue = props.value;
-					break;
-				case "button":
-					newValue = +(
-						props.action === "minus" ? newValue - 0.2 : newValue + 0.2
-					).toFixed(1);
-			}
+      return _prev;
+    });
+  };
 
-			_prev[props.index] = newValue;
+  const setEndPoint = (time: number) => {
+    if (!currentLyric) return;
 
-			return _prev;
-		});
-	};
+    const newEnd = +time.toFixed(1);
+    isChangedRef.current = true;
 
-	const setEndPoint = (time: number) => {
-		if (!currentLyric) return;
+    actuallyEndRef.current = newEnd;
+    if (endRefText.current) {
+      endRefText.current.textContent = `${newEnd} / ${currentLyric.end}`;
+    }
+    if (tempActuallyStartRef.current) {
+      actuallyEndRef.current = newEnd;
+      actuallyStartRef.current = newEnd - 1;
+    }
+  };
 
-		const newEnd = +time.toFixed(1);
-		isChangedRef.current = true;
+  const setStartPoint = (time: number) => {
+    if (!currentLyric) return;
 
-		actuallyEndRef.current = newEnd;
-		if (endRefText.current) {
-			endRefText.current.textContent = `${newEnd} / ${currentLyric.end}`;
-		}
-		if (tempActuallyStartRef.current) {
-			actuallyEndRef.current = newEnd;
-			actuallyStartRef.current = actuallyEndRef.current - 1;
-		}
-	};
+    const newStart = +time.toFixed(1);
+    isChangedRef.current = true;
 
-	const setStartPoint = (time: number) => {
-		if (!currentLyric) return;
+    actuallyStartRef.current = newStart;
+    if (startRefText.current) {
+      startRefText.current.textContent = `${currentLyric.start} / ${newStart}`;
+    }
+  };
 
-		const newStart = +time.toFixed(1);
-		isChangedRef.current = true;
+  const endTimeRangeProps: HTMLAttributes<HTMLInputElement> = {
+    onFocus: () => {
+      tempActuallyStartRef.current = actuallyStartRef.current;
+      actuallyStartRef.current = actuallyEndRef.current - 1;
+    },
+    onBlur: () => {
+      actuallyStartRef.current = tempActuallyStartRef.current;
+      tempActuallyStartRef.current = 0;
+    },
+  };
 
-		actuallyStartRef.current = newStart;
-		if (startRefText.current) {
-			startRefText.current.textContent = `${currentLyric.start} / ${newStart}`;
-		}
-	};
-
-	const endTimeRangeProps: HTMLAttributes<HTMLInputElement> = {
-		onFocus: () => {
-			tempActuallyStartRef.current = actuallyStartRef.current;
-			actuallyStartRef.current = actuallyEndRef.current - 1;
-		},
-		onBlur: () => {
-			actuallyStartRef.current = tempActuallyStartRef.current;
-			tempActuallyStartRef.current = 0;
-		},
-	};
-
-	return { setEndPoint, setStartPoint, endTimeRangeProps, handleGrowWord };
+  return { setEndPoint, setStartPoint, endTimeRangeProps, handleGrowWord };
 }

@@ -7,9 +7,10 @@ type Props = {
   text: string;
   openModal: () => void;
   index: number;
+  isShowScissor: boolean;
 };
 
-export function WordItem({ text, openModal, index }: Props) {
+export function WordItem({ text, openModal, isShowScissor, index }: Props) {
   const { theme } = useThemeContext();
   const { growList, setWordIndex, wordIndex, eventRefs, eleRefs } =
     useLyricEditorContext();
@@ -28,7 +29,7 @@ export function WordItem({ text, openModal, index }: Props) {
   return (
     <div
       ref={(el) => (active ? (eleRefs.currentWordRef.current = el) : {})}
-      style={{ flexGrow: growList[index] }}
+      style={{ flexGrow: growList[index] !== 0 ? growList[index] : 1 }}
       onClick={handleSelectWord}
       className={`word-item cursor-pointer relative rounded-full flex items-center justify-center border ${
         theme.content_border
@@ -36,7 +37,7 @@ export function WordItem({ text, openModal, index }: Props) {
     >
       <span>{text}</span>
 
-      {text.length > 1 && active && (
+      {isShowScissor && active && (
         <Button
           onClick={openModal}
           size={"clear"}

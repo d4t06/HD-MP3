@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { ConfirmModal, Modal, ModalRef } from "@/components";
 import AddSongsToPlaylistModal from "./AddSongsToPlaylistModal";
-import { Button } from "@/pages/dashboard/_components";
+import { Button, ModalWrapper } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
@@ -107,8 +107,8 @@ export default function DashboardPlaylistCta() {
         <span>Add song</span>
       </Button>
 
-      <Modal variant="animation" ref={modalRef}>
-        {renderModal()}
+      <Modal wrapped={false} variant="animation" ref={modalRef}>
+        <ModalWrapper className="w-[unset]">{renderModal()}</ModalWrapper>
       </Modal>
     </div>
   );

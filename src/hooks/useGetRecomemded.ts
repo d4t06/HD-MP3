@@ -5,7 +5,7 @@ import {
 	selectSongQueue,
 	setIsFetchingRecommend,
 } from "@/stores/redux/songQueueSlice";
-import { documentId, query, where } from "firebase/firestore";
+import { documentId, limit, query, where } from "firebase/firestore";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function useGetRecommend() {
@@ -18,7 +18,10 @@ export default function useGetRecommend() {
 
 			dispatch(setIsFetchingRecommend(true));
 
-			const wheres = song.genres.map((g) => where(`genre_map.${g.id}`, "==", true));
+			const wheres = song.genres.map(
+				(g) => where(`genre_map.${g.id}`, "==", true),
+				limit(20),
+			);	
 
 			const exceptQuery = where(documentId(), "!=", song.id);
 

@@ -32,9 +32,9 @@ export default function useSongLyric({ active }: { active: boolean }) {
       if (lyricSnap.exists()) {
         const lyricData = lyricSnap.data() as SongLyricSchema;
 
-        if (typeof lyricData.real_time === "string")
-          setSongLyrics(JSON.parse(lyricData.real_time || "[]"));
-        else setSongLyrics(lyricData.real_time);
+        if (typeof lyricData.lyrics === "string")
+          setSongLyrics(JSON.parse(lyricData.lyrics || "[]"));
+        else setSongLyrics(lyricData.lyrics);
       }
     } catch (error) {
       console.log({ message: error });

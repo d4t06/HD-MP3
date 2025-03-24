@@ -1,20 +1,22 @@
 import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { useLyricEditorContext } from "../_components/LyricEditorContext";
-import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
+import { mergeGrow } from "@/utils/mergeGrow";
 
 type Props = {
   audioEle: HTMLAudioElement;
 };
 
 export default function useRecord({ audioEle }: Props) {
-  const { currentSplitWords } = useEditLyricContext();
   const {
-    eventRefs,
     playerRef,
     isChangedRef,
     tabProps: { tab, setTab },
     setGrowList,
+    cut,
     actuallyStartRef,
+    mergedGrowListRef,
+    currentSplitWords,
+    currentWords,
   } = useLyricEditorContext();
 
   const [isRecording, setIsRecording] = useState(false);
@@ -25,11 +27,9 @@ export default function useRecord({ audioEle }: Props) {
   const isPressedDown = useRef(false);
 
   const addRecord = () => {
-    const grow = +(+((Date.now() - startRef.current) / 1000).toFixed(2) + 1).toFixed(2);
+    const grow = +((Date.now() - startRef.current) / 1000).toFixed(1);
     setLocalGrowList((prev) => [...prev, grow]);
   };
-
-  const record = () => {};
 
   const handleHold = () => {
     startRef.current = Date.now();
@@ -68,9 +68,17 @@ export default function useRecord({ audioEle }: Props) {
     }
   };
 
+  const handlePointDown = () => {
+    handleHold();
+  };
+
+  const handlePointUp = () => {
+    handleRelease();
+  };
+
   const buttonProps: HTMLAttributes<HTMLButtonElement> = {
-    // onMouseUp: handleKeyUp,
-    // onMouseDown: handleKeyDown,
+    onPointerDown: handlePointDown,
+    onPointerUp: handlePointUp,
   };
 
   const clear = () => {
@@ -81,17 +89,17 @@ export default function useRecord({ audioEle }: Props) {
   };
 
   const handleFinish = () => {
-    setGrowList(localGrowList);
     isChangedRef.current = true;
 
-    setTab("Edit");
+    setGrowList(localGrowList);
+    const mergedGrow = mergeGrow(currentWords, cut, localGrowList);
+    mergedGrowListRef.current = mergedGrow;
 
+    setTab("Edit");
     clear();
   };
 
   useEffect(() => {
-    // growListLengthRef.current = localGrowList.length;
-
     if (localGrowList.length === currentSplitWords.length) {
       handleFinish();
     }
@@ -102,26 +110,19 @@ export default function useRecord({ audioEle }: Props) {
 
     playerRef.current?.pause();
 
-    eventRefs.playWhenSpaceRef.current = false;
-    eventRefs.moveArrowToGrowRef.current = false;
-
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
-
     audioEle.currentTime = actuallyStartRef.current;
-    // audioEle.addEventListener("pause", handleFinish);
 
     return () => {
       playerRef.current?.pause();
 
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      // audioEle.removeEventListener("pause", handleFinish);
     };
   }, [tab]);
 
   return {
-    record,
     localGrowList,
     buttonProps,
     clear,

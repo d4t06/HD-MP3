@@ -4,7 +4,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { Provider } from "react-redux";
 import reduxStore from "./stores/redux/index.ts";
-import { AuthProvider, SongProvider, ThemeProvider, ToastProvider } from "./stores";
+import {
+  AuthProvider,
+  NavigationProvider,
+  SongProvider,
+  ThemeProvider,
+  ToastProvider,
+} from "./stores";
 import UploadSongProvider from "./stores/UploadContext.tsx";
 import PersistAuth from "./modules/persist-auth/index.tsx";
 
@@ -16,14 +22,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <SongProvider>
             <ToastProvider>
               <UploadSongProvider>
-                <PersistAuth>
-                  <App />
-                </PersistAuth>
+                <NavigationProvider>
+                  <PersistAuth>
+                    <App />
+                  </PersistAuth>
+                </NavigationProvider>
               </UploadSongProvider>
             </ToastProvider>
           </SongProvider>
         </ThemeProvider>
       </AuthProvider>
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

@@ -45,9 +45,9 @@ export default function PlayPlaylistBtn() {
     if (!currentPlaylist) return;
 
     const firstSong = playlistSongs[0];
-    updatePlaylist(currentPlaylist);
 
-    handleSetSong(firstSong.queue_id, playlistSongs);
+    const isSetQueue = handleSetSong(firstSong.queue_id, playlistSongs);
+    if (isSetQueue) updatePlaylist(currentPlaylist);
   };
 
   const handlePlayPause = () => {

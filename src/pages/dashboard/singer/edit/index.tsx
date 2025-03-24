@@ -6,7 +6,7 @@ import GetSingerProvider from "./_components/GetSingerContext";
 function Content() {
   return (
     <>
-      <div className="pt-3 pb-[46px] space-y-3">
+      <div className="pb-[46px] space-y-3">
         <SingerInfo />
         <SingerSongList />
         <SingerPlaylist />

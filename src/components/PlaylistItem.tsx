@@ -40,8 +40,8 @@ const PlaylistItem: FC<Props> = ({ data, inDetail, active, link }) => {
         {content}
       </Link>
 
-      <p className="text-lg font-[500] leading-[1.2] line-clamp-1 mt-1.5">{data.name}</p>
-      <p className="text-sm opacity-[.7] leading-[1.2] line-clamp-1">
+      <p className="text-lg font-[500] leading-[1.3] line-clamp-1 mt-1.5">{data.name}</p>
+      <p className="text-sm opacity-[.7] leading-[1.3] line-clamp-1">
         {data.distributor}
       </p>
     </>

@@ -49,7 +49,7 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
   return (
     <>
       <div
-        className={`flex flex-grow overflow-auto no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg}`}
+        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg}`}
       >
         <div className={"w-1/2"}>
           {!!baseLyricArr.length ? (

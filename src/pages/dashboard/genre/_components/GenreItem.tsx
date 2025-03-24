@@ -1,9 +1,10 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { Frame, ModalWrapper } from "../../_components";
+import { ModalWrapper } from "../../_components";
 import { useRef, useState } from "react";
 import AddGenreModal from "./AddGenreModal";
 import { useGenreAction } from "../../_hooks";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
 
 type Props = {
   genre: Genre;
@@ -28,18 +29,18 @@ export default function GenreItem({ genre }: Props) {
 
   return (
     <>
-      <Frame className="mx-1 mt-2 flex items-center">
-        {genre.name}
+      <ItemRightCtaFrame>
+        <span>{genre.name}</span>
 
-        <div className="pl-2 ml-2 border border-transparent border-l-black/10 flex space-x-1 items-center">
-          <button onClick={() => openModal("edit")}>
+        <div>
+          <button className="" onClick={() => openModal("edit")}>
             <PencilIcon className="w-5" />
           </button>
           <button onClick={() => openModal("delete")}>
             <TrashIcon className="w-5" />
           </button>
         </div>
-      </Frame>
+      </ItemRightCtaFrame>
 
       <Modal variant="animation" ref={modalRef} wrapped={false}>
         {modal === "edit" && (

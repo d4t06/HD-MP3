@@ -31,7 +31,7 @@ export default function BottomPlayer() {
 
   const location = useLocation();
 
-  const inEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+  const inEdit = useMemo(() => location.pathname.includes("lyric"), [location]);
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);

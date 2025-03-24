@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
 const useLyric = () => {
-  const [songLyrics, setSongLyrics] = useState<RealTimeLyric[]>([]);
+  const [songLyrics, setSongLyrics] = useState<Lyric[]>([]);
   const [loading, setLoading] = useState(false);
 
   const ranGetLyric = useRef(false);

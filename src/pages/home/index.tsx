@@ -8,6 +8,8 @@ import Footer from "@/layout/primary-layout/_components/Footer";
 import HomePlaylist from "./_components/HomePlaylist";
 import HomeSongList from "./_components/HomeSongList";
 import RecentPlaylist from "./_components/RecentPlaylist";
+import MobileNav from "./_components/MobileNav";
+import MobileSetting from "./_components/MobileSetting";
 // import { PlaylistList } from "@/components";
 
 export default function HomePage() {
@@ -27,21 +29,17 @@ export default function HomePage() {
 
   return (
     <>
-      {/* {isOnMobile && <MobileNav />} */}
-      <RecentPlaylist />
+      <div className="space-y-5">
+        <MobileNav />
 
-      <HomePlaylist />
+        <RecentPlaylist />
 
-      <HomeSongList />
+        <HomePlaylist />
 
-      {/* <PlaylistList loading={isFetching} playlists={sysSongPlaylist.playlists} />
+        <HomeSongList />
 
-      <HomeSongList loading={isFetching} />
-      {isOnMobile && (
-        <div className="mt-[30px]">
-          <MobileSetting />
-        </div>
-      )} */}
+        <MobileSetting />
+      </div>
 
       <Footer />
     </>

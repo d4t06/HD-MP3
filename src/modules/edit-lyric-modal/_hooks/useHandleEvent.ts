@@ -6,41 +6,37 @@ export default function useHandleEvent() {
 		isOpenEditLyricModal,
 		playerRef,
 		eleRefs: { currentWordRef },
-		// isChangeWordGrow,
-		// setIsChangeWordGrow,
-		// isEditText,
 		eventRefs,
 	} = useLyricEditorContext();
 
-	const playSongWhenSpace = (e: KeyboardEvent) => {
-		if (!eventRefs.playWhenSpaceRef.current) return;
-
+	const handleKeyDown = (e: KeyboardEvent) => {
 		if (e.key === " ") {
+			if (!eventRefs.playWhenSpaceRef.current) return;
 			e.preventDefault();
 
 			playerRef.current?.handlePlayPause();
 		}
-	};
 
-	const moveArrowToGrow = (e: KeyboardEvent) => {
-		if (!eventRefs.moveArrowToGrowRef.current) return;
+		if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+			if (!eventRefs.moveArrowToGrowRef.current) return;
 
-		const selectedWord = currentWordRef.current;
-		if (!selectedWord) return;
+			const selectedWord = currentWordRef.current;
+			if (!selectedWord) return;
 
-		switch (e.key) {
-			case "ArrowRight":
-				e.preventDefault();
-				if (selectedWord?.nextSibling)
-					(selectedWord?.nextSibling as HTMLDivElement).click();
+			switch (e.key) {
+				case "ArrowRight":
+					e.preventDefault();
+					if (selectedWord?.nextSibling)
+						(selectedWord?.nextSibling as HTMLDivElement).click();
 
-				break;
-			case "ArrowLeft":
-				e.preventDefault();
-				if (selectedWord?.previousSibling)
-					(selectedWord?.previousSibling as HTMLDivElement).click();
+					break;
+				case "ArrowLeft":
+					e.preventDefault();
+					if (selectedWord?.previousSibling)
+						(selectedWord?.previousSibling as HTMLDivElement).click();
 
-				break;
+					break;
+			}
 		}
 	};
 
@@ -67,14 +63,12 @@ export default function useHandleEvent() {
 	useEffect(() => {
 		// if (isEditText) return;
 
-		window.addEventListener("keydown", playSongWhenSpace);
 		window.addEventListener("mousedown", handleClickOutsideWordItem);
-		window.addEventListener("keydown", moveArrowToGrow);
+		window.addEventListener("keydown", handleKeyDown);
 
 		return () => {
 			window.removeEventListener("mousedown", handleClickOutsideWordItem);
-			window.removeEventListener("keydown", playSongWhenSpace);
-			window.removeEventListener("keydown", moveArrowToGrow);
+			window.removeEventListener("keydown", handleKeyDown);
 		};
 	}, [isOpenEditLyricModal]);
 

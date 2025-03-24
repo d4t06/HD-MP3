@@ -30,7 +30,7 @@ export default function DashBoardLayout() {
               <Outlet />
             </div>
           </div>
-          <ToastPortal className="md:bottom-[40px]" />
+          <ToastPortal className="left-[50%] translate-x-[-50%] bottom-[60px] md:left-[20px] md:translate-x-0" />
         </div>
       </GenreProvider>
     </>

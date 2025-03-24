@@ -1,0 +1,44 @@
+import { usePlayerContext } from "@/stores";
+// generic
+
+type Props = {
+  variant?: "mobile" | "desktop";
+};
+
+export default function FullScreenPlayerTab({ variant = "desktop" }: Props) {
+  const {
+    desktopTabs,
+    activeTab,
+    setActiveTab,
+    mobileActiveTab,
+    mobileTabs,
+    setMobileActiveTab,
+  } = usePlayerContext();
+
+  const tab = variant === "desktop" ? activeTab : mobileActiveTab;
+  const setTab = variant === "desktop" ? setActiveTab : setMobileActiveTab;
+  const tabs = variant === "desktop" ? desktopTabs : mobileTabs;
+
+  const classes = {
+    item: "px-3 md:px-8 leading-[30px] font-[600] cursor-pointer  rounded-full",
+  };
+
+  return (
+    <ul className={`inline-flex mx-auto rounded-full space-x-1 bg-white/10 p-1 `}>
+      {tabs.map((item, index) => {
+        const isActive = item === tab;
+
+        return (
+          <li
+            key={index}
+            // @ts-ignore
+            onClick={() => setTab(item)}
+            className={`${classes.item} ${isActive ? "bg-white/20" : "hover:bg-white/5"}`}
+          >
+            {item}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

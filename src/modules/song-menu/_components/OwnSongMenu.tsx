@@ -5,7 +5,6 @@ import {
   AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
   DocumentTextIcon,
-  PlusIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
@@ -13,15 +12,17 @@ import { Link } from "react-router-dom";
 import { SongMenuContent } from "..";
 import useSongItemAction from "@/modules/song-item/_hooks/useSongItemAction";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal";
-import AddToNewPlaylistMenuItem, { AddToPlaylistMenuModal } from "./AddToPlaylistMenuItem";
+import AddToNewPlaylistMenuItem, {
+  AddToPlaylistMenuModal,
+} from "./AddToPlaylistMenuItem";
+import AddToQueueMenuItem from "./AddToQueueMenuItem";
 
 type Props = {
   song: Song;
-  addSongToQueue: () => void;
 };
 type Modal = "edit" | "delete" | "add-to-playlist";
 
-export default function OwnSongMenu({ song, addSongToQueue }: Props) {
+export default function OwnSongMenu({ song }: Props) {
   const { close } = usePopoverContext();
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -75,11 +76,8 @@ export default function OwnSongMenu({ song, addSongToQueue }: Props) {
       <SongMenuContent song={song}>
         {import.meta.env.DEV && <p>own song menu</p>}
 
-        <button onClick={addSongToQueue}>
-          <PlusIcon className="w-5" />
-          <span>Add to queue</span>
-        </button>
-        
+        <AddToQueueMenuItem song={song} />
+
         <AddToNewPlaylistMenuItem modalRef={addToPlaylistModalRef} />
 
         <button onClick={() => handleOpenModal("edit")}>

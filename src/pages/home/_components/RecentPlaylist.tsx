@@ -42,8 +42,10 @@ export default function RecentPlaylist() {
 
   return (
     <>
-      <Title title="Recent listening" />
-      <div className={`flex flex-row flex-wrap -mx-[8px] `}>{renderPlaylists()}</div>
+      <div>
+        <Title title="Recent listening" />
+        <div className={`flex flex-row flex-wrap -mx-[8px] `}>{renderPlaylists()}</div>
+      </div>
     </>
   );
 }

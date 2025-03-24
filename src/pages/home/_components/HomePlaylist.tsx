@@ -7,13 +7,15 @@ export default function HomePlaylist() {
 
   return (
     <>
-      <Title title="Playlist" />
+      <div>
+        <Title title="Playlist" />
 
-      <div className="flex space-x-2 my-3">
-        <Tab render={(t) => t} {...rest} />
+        <div className="flex space-x-2 my-2">
+          <Tab render={(t) => t} {...rest} />
+        </div>
+
+        <PlaylistList loading={isFetching} playlists={playlistMap[rest.tab].playlists} />
       </div>
-
-      <PlaylistList loading={isFetching} playlists={playlistMap[rest.tab].playlists} />
     </>
   );
 }

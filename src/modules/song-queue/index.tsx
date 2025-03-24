@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -7,9 +7,14 @@ import {
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { Button, Skeleton } from "@/components";
+import { Button, Skeleton, Tab } from "@/components";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
+import RecentSong from "./_components/RecentSong";
+
+const tabs = ["Queue", "Recent"] as const;
+
+export type QueueTab = (typeof tabs)[number];
 
 function SongQueue() {
   // stores
@@ -17,6 +22,8 @@ function SongQueue() {
   const { theme } = useThemeContext();
   const { isOpenSongQueue, setIsOpenSongQueue, controlRef } = usePlayerContext();
   const { queueSongs, currentQueueId, isFetching } = useSelector(selectSongQueue);
+
+  const [tab, setTab] = useState<QueueTab>("Queue");
 
   const handleSetSong = useCallback(
     (queueId: string) => {
@@ -41,7 +48,7 @@ function SongQueue() {
   const classes = {
     mainContainer: `fixed w-[300px] flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
     songListContainer:
-      "flex-grow overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar",
+      "flex-grow overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar mt-3",
   };
 
   return (
@@ -51,33 +58,43 @@ function SongQueue() {
           isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
         }     `}
       >
-        <div className="leading-[2.2] font-playwriteCU mb-2">Song queue</div>
+        <Tab
+          className="w-fit mx-auto"
+          tab={tab}
+          setTab={setTab}
+          tabs={tabs}
+          render={(t) => t}
+        />
 
         <div className={classes.songListContainer}>
-          <>
-            <SongList
-              isHasCheckBox={false}
-              songs={queueSongs}
-              setSong={(s) => handleSetSong(s.queue_id)}
-              songVariant="queue-song"
-              getActive={(s, cur) => s.queue_id === cur.queue_id}
-            />
+          {tab === "Queue" ? (
+            <>
+              <SongList
+                isHasCheckBox={false}
+                songs={queueSongs}
+                setSong={(s) => handleSetSong(s.queue_id)}
+                songVariant="queue-song"
+                getActive={(s, cur) => s.queue_id === cur.queue_id}
+              />
 
-            {isFetching && skeleton}
+              {isFetching && skeleton}
 
-            <div className="text-center">
-              {!!queueSongs.length && (
-                <Button
-                  onClick={clearSongQueue}
-                  size={"clear"}
-                  className={`${theme.content_bg} rounded-full my-5 px-3 py-1 space-x-1`}
-                >
-                  <TrashIcon className="w-6" />
-                  <span className="font-playwriteCU leading-[2.2]">Clear</span>
-                </Button>
-              )}
-            </div>
-          </>
+              <div className="text-center">
+                {!!queueSongs.length && (
+                  <Button
+                    onClick={clearSongQueue}
+                    size={"clear"}
+                    className={`${theme.content_bg} rounded-full my-5 px-3 py-1 space-x-1`}
+                  >
+                    <TrashIcon className="w-6" />
+                    <span className="font-playwriteCU leading-[2.2]">Clear</span>
+                  </Button>
+                )}
+              </div>
+            </>
+          ) : (
+            <RecentSong setTab={setTab} />
+          )}
         </div>
       </div>
     </SongSelectProvider>

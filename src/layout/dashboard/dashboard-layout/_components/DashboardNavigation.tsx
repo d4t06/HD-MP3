@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Bars3Icon } from "@heroicons/react/24/outline";
-import { useThemeContext } from "@/stores";
 import { routeList } from "./DashboardSidebar";
 import { Button, Frame } from "@/pages/dashboard/_components";
 
 export default function DashboardNavigation() {
-  const { theme } = useThemeContext();
-
   const [isOpen, setIsOpen] = useState(false);
 
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -30,8 +27,8 @@ export default function DashboardNavigation() {
       <Frame
         colors={"third"}
         className={`absolute z-[99] duration-[.25] flex flex-col
-				transition-[left,opacity] bottom-[80px] 
-				${
+        transition-[left,opacity] bottom-[80px] 
+        ${
           isOpen
             ? "left-[10px] opacity-[1] pointer-events-auto"
             : "left-0 opacity-[0] pointer-events-none"
@@ -49,11 +46,7 @@ export default function DashboardNavigation() {
         ref={buttonRef}
         size={"clear"}
         onClick={() => setIsOpen(!isOpen)}
-        className={`${theme.content_bg} !absolute transition-[left] bottom-[10px]  p-1.5 ${
-          isOpen
-            ? "left-[10px] "
-            : "left-[-10px]"
-        }`}
+        className={`!absolute transition-[left] bottom-[10px] left-[10px]  p-1.5`}
       >
         <Bars3Icon className="w-6" />
       </Button>

@@ -1,9 +1,11 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { Modal, ModalRef } from "@/components";
+import { Modal, ModalRef, Title } from "@/components";
 import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
+import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 export default function SingerSelect() {
   const { singers, selectSinger } = useAddSongContext();
@@ -19,9 +21,9 @@ export default function SingerSelect() {
 
   return (
     <>
-      <div className="space-y-1.5">
+      <div className="">
         <div className="flex space-x-2 items-center">
-          <span>Singer</span>
+          <Title title="Singer" />
 
           <Button
             onClick={() => modalRef.current?.open()}
@@ -32,18 +34,22 @@ export default function SingerSelect() {
           </Button>
         </div>
 
-        <Frame className="flex flex-wrap space-x-2">
-          {singers.length
-            ? singers.map((s, i) => (
-                <button
-                  onClick={() => selectSinger(s)}
-                  className="px-2 py-1 hover:border-red-300 rounded-md border border-black/10"
-                  key={i}
-                >
-                  {s.name}
-                </button>
-              ))
-            : "..."}
+        <Frame className=" mt-1">
+          <div className="flex flex-wrap -ml-2 -mt-2">
+            {singers.length
+              ? singers.map((s, i) => (
+                  <ItemRightCtaFrame key={i}>
+                    <span>{s.name}</span>
+
+                    <div className="flex">
+                      <button onClick={() => selectSinger(s)}>
+                        <TrashIcon className="w-5" />
+                      </button>
+                    </div>
+                  </ItemRightCtaFrame>
+                ))
+              : "..."}
+          </div>
         </Frame>
       </div>
 

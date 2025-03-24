@@ -22,13 +22,10 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
 
   const closeAddSingerModal = () => modalRef.current?.close();
 
-  const { shouldFetchGenre, api, isFetching, setIsFetching } = useGetGenre();
+  const { api, isFetching } = useGetGenre();
 
   useEffect(() => {
-    if (shouldFetchGenre.current) {
-      shouldFetchGenre.current = false;
-      api();
-    } else setIsFetching(false);
+    api();
   }, []);
 
   return (

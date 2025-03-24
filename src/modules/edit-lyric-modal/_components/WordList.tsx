@@ -1,11 +1,11 @@
-import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import { WordItem } from "./WordItem";
 import { useMemo, useRef, useState } from "react";
 import { Modal, ModalRef } from "@/components";
 import SplitWordModal from "./SplitWordModal";
+import { useLyricEditorContext } from "./LyricEditorContext";
 
 export default function WordList() {
-  const { currentSplitWords, currentLyricWordsData } = useEditLyricContext();
+  const { currentSplitWords, currentWordsData, currentWords } = useLyricEditorContext();
 
   const [currentWordIndex, setCurrentWordIndex] = useState<number>();
 
@@ -14,9 +14,7 @@ export default function WordList() {
   const wordIndexBySplitWordIndex = useMemo(() => {
     const wordIndexBySplitWordIndex: Record<number, number> = {};
 
-    const numberOfCutByWord = currentLyricWordsData.map(
-      (data) => data.cutPositions.length
-    );
+    const numberOfCutByWord = currentWordsData.map((data) => data.positions.length);
 
     let i = 0;
     numberOfCutByWord.forEach((number, index) => {
@@ -32,14 +30,12 @@ export default function WordList() {
     });
 
     return wordIndexBySplitWordIndex;
-  }, [currentLyricWordsData]);
+  }, [currentWordsData]);
 
   const currentWord = useMemo(
     () =>
-      currentWordIndex !== undefined
-        ? currentLyricWordsData[currentWordIndex]
-        : undefined,
-    [currentWordIndex, currentLyricWordsData]
+      currentWordIndex !== undefined ? currentWordsData[currentWordIndex] : undefined,
+    [currentWordIndex, currentWordsData],
   );
 
   const handleOpenModal = (wordIndex: number) => {
@@ -51,14 +47,20 @@ export default function WordList() {
   return (
     <>
       <div className="flex h-[44px] mt-5">
-        {currentSplitWords.map((w, i) => (
-          <WordItem
-            key={i}
-            index={i}
-            openModal={() => handleOpenModal(wordIndexBySplitWordIndex[i])}
-            text={w}
-          />
-        ))}
+        {currentSplitWords.map((w, i) => {
+          const parentWordIndex = wordIndexBySplitWordIndex[i];
+          const parentWord = currentWords[parentWordIndex];
+
+          return (
+            <WordItem
+              isShowScissor={parentWord ? parentWord.length > 1 : false}
+              key={i}
+              index={i}
+              openModal={() => handleOpenModal(parentWordIndex)}
+              text={w}
+            />
+          );
+        })}
       </div>
 
       <Modal variant="animation" ref={modalRef}>

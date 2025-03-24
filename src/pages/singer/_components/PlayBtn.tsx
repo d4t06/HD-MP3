@@ -1,12 +1,11 @@
 import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
-import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
-import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSingerContext } from "./SingerContext";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
 type PlayBtnProps = {
   children: ReactNode;
@@ -31,15 +30,19 @@ function PlayBtn({ onClick, children }: PlayBtnProps) {
 
 export default function PlaySingerSongBtn() {
   const dispatch = useDispatch();
-  const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
-  const { currentSongData } = useSelector(selectSongQueue);
+  const { songs, singer } = useSingerContext();
+
   const { playStatus } = useSelector(selectAllPlayStatusStore);
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
-  const handlePlay = () => {
-    const firstSong = playlistSongs[0];
-    handleSetSong(firstSong.queue_id, playlistSongs);
+  const handlePlaySingerSong = () => {
+    const firstSong = songs[0];
+
+    console.log(songs)
+
+    handleSetSong(firstSong.queue_id, songs);
   };
 
   const handlePlayPause = () => {
@@ -50,20 +53,27 @@ export default function PlaySingerSongBtn() {
         return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
     }
   };
-
-  switch (playStatus) {
-    case "loading":
-    case "paused":
-      return (
-        <PlayBtn onClick={handlePlayPause}>
-          <PlayIcon className="w-7" />
-        </PlayBtn>
-      );
-    default:
-      return (
-        <PlayBtn onClick={handlePlayPause}>
-          <PauseIcon className="w-7" />
-        </PlayBtn>
-      );
+  if (singer ? currentSongData?.song.queue_id.includes(singer.id) : false) {
+    switch (playStatus) {
+      case "loading":
+      case "paused":
+        return (
+          <PlayBtn onClick={handlePlayPause}>
+            <PlayIcon className="w-7" />
+          </PlayBtn>
+        );
+      default:
+        return (
+          <PlayBtn onClick={handlePlayPause}>
+            <PauseIcon className="w-7" />
+          </PlayBtn>
+        );
+    }
+  } else {
+    return (
+      <PlayBtn onClick={handlePlaySingerSong}>
+        <PlayIcon className="w-7" />
+      </PlayBtn>
+    );
   }
 }

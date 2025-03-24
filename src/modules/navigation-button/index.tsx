@@ -17,12 +17,6 @@ export default function NavigationButton({ className = "" }: Props) {
 
       <button onClick={forward} className={`relative ${getDisable(!ahead.length)}`}>
         <ArrowRightIcon className="w-5" />
-
-        {/* <div className="absolute left-full w-[200px] text-sm">
-          {ahead.map((b, i) => (
-            <p key={i}>{b}</p>
-          ))}
-        </div> */}
       </button>
     </div>
   );

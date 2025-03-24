@@ -69,6 +69,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
               type="text"
               id="name"
               placeholder=""
+              className="bg-[#f1f1f1]"
               value={singerData.name}
               onChange={(e) => updateSingerData({ name: e.target.value })}
             />
@@ -82,7 +83,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
             <textarea
               placeholder="..."
               id="description"
-              className={`${inputClasses} w-full bg-white/10 rounded-md min-h-[100px]`}
+              className={`${inputClasses} w-full bg-[#f1f1f1] rounded-md min-h-[100px]`}
               value={singerData.description}
               onChange={(e) => updateSingerData({ description: e.target.value })}
             />

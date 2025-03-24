@@ -41,7 +41,7 @@ function Content({ children }: Props) {
         </Center>
       ) : (
         song && (
-          <div className="flex flex-col h-full">
+          <div className="flex-grow flex flex-col overflow-hidden">
             {children}
 
             <Title title={` Edit lyric - ${song?.name}`} />

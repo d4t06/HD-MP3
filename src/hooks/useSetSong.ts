@@ -38,8 +38,12 @@ export default function useSetSong({ variant }: Props) {
       if (isDiff) {
         console.log("set queue");
         dispatch(setQueue({ songs }));
+
+        return true;
       }
     }
+
+    return false;
   };
 
   return { handleSetSong, currentSongData, queueSongs, currentQueueId };

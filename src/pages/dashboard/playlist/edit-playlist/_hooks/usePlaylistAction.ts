@@ -47,7 +47,6 @@ type UpdateImage = {
 };
 
 export type PlaylistActionProps =
-  //   | AddPlaylist
   | DeletePlaylist
   | AddSongs
   | EditPlaylist
@@ -89,69 +88,44 @@ export default function useDashboardPlaylistActions() {
 
   const action = async (props: PlaylistActionProps) => {
     try {
-      if (!user) return;
+      if (!user) throw new Error("User not found");
+      if (!playlist) throw new Error("playlist not found");
+
+      setIsFetching(true);
 
       switch (props.variant) {
         case "delete-playlist": {
-          if (!playlist) throw new Error("playlist not found");
-          setIsFetching(true);
+          await Promise.all([
+            myDeleteDoc({
+              collectionName: "Playlists",
+              id: playlist.id,
+            }),
+            playlist.image_file_path
+              ? deleteFile({ filePath: playlist.image_file_path })
+              : () => {},
+          ]);
 
-          // >>> api
-          await myDeleteDoc({
-            collectionName: "Playlists",
-            id: playlist.id,
-            msg: ">>> api: delete playlist doc",
-          });
-
-          if (playlist.image_file_path)
-            await deleteFile({ filePath: playlist.image_file_path });
-
-          setIsFetching(false);
           navigate("/dashboard/playlist");
 
           break;
         }
         case "add-songs": {
-          if (!playlist) throw new Error("playlist not found");
-
-          setIsFetching(true);
-
           const newPlaylistSongs = [...songs, ...props.songs];
           const newSongIds = newPlaylistSongs.map((s) => s.id);
 
           const playlistData: Partial<Playlist> = {
             song_ids: newSongIds,
-            singer_map: newPlaylistSongs.reduce(
-              (prev, s) => ({
-                ...prev,
-                ...s.singers.reduce(
-                  (prev, singer) => ({ ...prev, [singer.id]: true }),
-                  {} as Playlist["singer_map"]
-                ),
-              }),
-              {} as Playlist["singer_map"]
-            ),
+            // singer_map: newPlaylistSongs.reduce(
+            //   (prev, s) => ({
+            //     ...prev,
+            //     ...s.singers.reduce(
+            //       (prev, singer) => ({ ...prev, [singer.id]: true }),
+            //       {} as Playlist["singer_map"],
+            //     ),
+            //   }),
+            //   {} as Playlist["singer_map"],
+            // ),
           };
-
-          // if (playlist.singers.length < 5) {
-          //   const newSingers: Singer[] = [...playlist.singers];
-
-          //   for (const currentSong of props.songs) {
-          //     if (newSingers.length == 5) break;
-
-          //     const foundedSinger = !!newSingers.find(
-          //       (_s) => _s.id === currentSong.singers[0].id
-          //     );
-
-          //     if (!foundedSinger) newSingers.push(currentSong.singers[0]);
-          //   }
-
-          //   const data: Partial<Playlist> = {
-          //     singers: [...playlist.singers, ...newSingers],
-          //   };
-
-          //   Object.assign(playlistData, data);
-          // }
 
           await myUpdateDoc({
             collectionName: "Playlists",
@@ -168,9 +142,6 @@ export default function useDashboardPlaylistActions() {
           break;
         }
         case "edit-playlist": {
-          if (!playlist) return;
-          setIsFetching(true);
-
           const newPlaylist = { ...playlist, ...props.playlist };
 
           if (props.imageFile) {
@@ -197,9 +168,6 @@ export default function useDashboardPlaylistActions() {
           break;
         }
         case "remove-song": {
-          if (!playlist) throw new Error("playlist not found");
-          setIsFetching(true);
-
           const newPlaylistSongs = songs.filter((s) => s.id !== props.song.id);
 
           const songsData: Partial<Playlist> = {
@@ -219,9 +187,6 @@ export default function useDashboardPlaylistActions() {
           break;
         }
         case "update-image": {
-          if (!playlist) throw new Error("playlist not found");
-          setIsFetching(true);
-
           const imageData: Partial<PlaylistSchema> = {
             image_url: props.song.image_url,
             blurhash_encode: props.song.blurhash_encode,
@@ -241,30 +206,31 @@ export default function useDashboardPlaylistActions() {
 
           updatePlaylistData(imageData);
 
-          setSuccessToast(`Playlist edited`);
+          setSuccessToast(`Playlist edited;`);
 
           break;
         }
         case "remove-singer": {
-          if (!playlist) throw new Error("playlist not found");
-          setIsFetching(true);
-
           const newPlaylistSingers = playlist.singers.filter(
-            (s) => s.id !== props.singer.id
+            (s) => s.id !== props.singer.id,
           );
 
           updatePlaylistSinger(newPlaylistSingers, playlist.id);
 
+          setSuccessToast("Singer removed");
           break;
         }
 
         case "add-singer": {
-          if (!playlist) throw new Error("playlist not found");
-          setIsFetching(true);
+          const newPlaylistSingers = [...playlist.singers];
 
-          const newPlaylistSingers = [...playlist.singers, props.singer];
+          const founded = newPlaylistSingers.find((s) => s.id === props.singer.id);
+          if (founded) return;
+
+          newPlaylistSingers.push(props.singer);
 
           updatePlaylistSinger(newPlaylistSingers, playlist.id);
+          setSuccessToast("Singer added");
           break;
         }
       }

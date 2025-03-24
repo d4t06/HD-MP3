@@ -8,7 +8,7 @@ import {
 import { useAuthContext, useThemeContext } from "@/stores";
 import useAuthAction from "@/hooks/useAuthActiont";
 import { MobileLinkSkeleton } from "@/components/skeleton";
-import { Button, LinkItem } from "@/components";
+import { Button, LinkItem, Title } from "@/components";
 
 export default function MobileNav() {
   const { theme } = useThemeContext();
@@ -32,8 +32,8 @@ export default function MobileNav() {
   };
 
   return (
-    <div className="pb-[30px]">
-      <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Library</div>
+    <div className="block md:hidden">
+    <Title title="Library" className="mb-1" />
       {userLoading ? (
         [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
       ) : (
@@ -41,7 +41,7 @@ export default function MobileNav() {
           {user ? (
             <>
               <LinkItem
-                to="/"
+                to="/my-music"
                 className={classes.linkItem}
                 icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
                 label="All songs"
@@ -49,7 +49,7 @@ export default function MobileNav() {
               />
 
               <LinkItem
-                to="/"
+                to="/my-music"
                 className={classes.linkItem}
                 icon={<HeartIcon className={classes.icon + theme.content_text} />}
                 label="Favorite"
@@ -57,7 +57,7 @@ export default function MobileNav() {
               />
 
               <LinkItem
-                to="/"
+                to="/my-music"
                 className={classes.linkItem}
                 icon={<ClockIcon className={classes.icon + theme.content_text} />}
                 label="Recent"
@@ -67,7 +67,7 @@ export default function MobileNav() {
           ) : (
             <Button
               onClick={handleLogIn}
-              className={`${theme.content_bg} rounded-md space-x-1 py-1`}
+              className={`${theme.content_bg} rounded-md`}
             >
               <ArrowRightOnRectangleIcon className="w-7" />
               <span className="font-playwriteCU leading-[2.2]">Login</span>

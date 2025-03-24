@@ -44,7 +44,7 @@ const ToastPortal = ({
   return (
     <>
       {createPortal(
-        <div className={`fixed z-[199] top-[10px] right-[20px] md:top-[unset] md:bottom-[100px] ${className}`}>
+        <div className={`fixed z-[199] ${className}`}>
           <div className="flex flex-col gap-[10px]">
             {!!toasts.length &&
               toasts.map((toast, index) => (

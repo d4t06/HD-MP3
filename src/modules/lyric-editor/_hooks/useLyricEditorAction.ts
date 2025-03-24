@@ -3,6 +3,7 @@ import { useToastContext } from "@/stores";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
 import { useEditLyricContext } from "../_components/EditLyricContext";
+import { initLyricObject } from "@/utils/factory";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -29,21 +30,12 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
 
   const addLyric = () => {
     if (!audioEle || !baseLyricArr.length || isFinish || !song) return;
-    const currentTime = +audioEle.currentTime.toFixed(1);
 
+    const currentTime = +audioEle.currentTime.toFixed(1);
     if (start.current === currentTime) return; // prevent double click
 
     const text = baseLyricArr[lyrics.length];
-
-    const words = text.trim().split(" ");
-    const cutData = words.map(() => []);
-
-    const lyric: RealTimeLyric = {
-      start: start.current, // end time of prev lyric
-      text,
-      end: currentTime,
-      cutData,
-    };
+    const lyric = initLyricObject({ start: start.current, end: currentTime, text });
 
     start.current = currentTime; // update start for next lyric
 
@@ -52,16 +44,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     // adding the 2 last lyric
     if (baseLyricArr.length === lyrics.length + 2) {
       const text = baseLyricArr[baseLyricArr.length - 1];
-
-      const words = text.trim().split(" ");
-      const cutData = words.map(() => []);
-
-      const lyric: RealTimeLyric = {
-        start: start.current, // started time of 2 last lyric
-        end: song.duration,
-        cutData,
-        text,
-      };
+      const lyric = initLyricObject({ start: start.current, end: song.duration, text });
 
       setLyrics((prev) => [...prev, lyric]);
     }
@@ -79,7 +62,6 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       audioEle.currentTime = prevStart;
 
       setLyrics((prev) => prev.slice(0, -1));
-      // setCurrentLyricIndex((prev) => prev - 1);
       setIsChanged(true);
     }
   };
@@ -90,7 +72,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     const tempLyric: TempLyric = {
       song_id: song.id,
       base: baseLyric,
-      real_time: JSON.stringify(lyrics),
+      lyrics: JSON.stringify(lyrics),
     };
 
     setLocalStorage("temp-lyric", tempLyric);
@@ -104,20 +86,28 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
-        real_time: JSON.stringify(lyrics),
+        lyrics: JSON.stringify(lyrics),
         base: baseLyric,
       };
 
       const songRef = doc(db, "Songs", song.id);
-      const lyricRef = doc(collection(db, "Lyrics"));
 
-      const newSongData: Partial<SongSchema> = {
-        lyric_id: lyricRef.id,
-        updated_at: serverTimestamp(),
-      };
+      // case add lyric
+      if (!song.lyric_id) {
+        const lyricRef = doc(collection(db, "Lyrics"));
+        const newSongData: Partial<SongSchema> = {
+          lyric_id: lyricRef.id,
+          updated_at: serverTimestamp(),
+        };
 
-      batch.set(lyricRef, newSongLyric);
-      batch.update(songRef, newSongData);
+        batch.set(lyricRef, newSongLyric);
+        batch.update(songRef, newSongData);
+
+        // case update existed lyric
+      } else {
+        const lyricRef = doc(db, "Lyrics", song.lyric_id);
+        batch.update(lyricRef, newSongLyric);
+      }
 
       await batch.commit();
 

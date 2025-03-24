@@ -35,7 +35,7 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
 
   const classes = {
     col: "w-1/2 flex flex-col px-2",
-    box: `rounded-lg bg-white/10 overflow-hidden p-2`,
+    box: `rounded-lg bg-black/10 overflow-hidden p-2`,
     songItem: `rounded-md w-full p-1 text-left`,
   };
 
@@ -54,7 +54,7 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
                   <button
                     key={i}
                     onClick={() => selectSong(s)}
-                    className={`${classes.songItem} bg-${theme.alpha} ${theme.content_hover_bg}`}
+                    className={`${classes.songItem} bg-black/10 ${theme.content_hover_bg}`}
                   >
                     <h5 className="">{s.name}</h5>
                   </button>
@@ -73,7 +73,7 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
               <button
                 key={i}
                 onClick={() => selectSong(s)}
-                className={`${classes.songItem} ${theme.content_bg} hover:bg-${theme.alpha}`}
+                className={`${classes.songItem} ${theme.content_bg} hover:brightness-95`}
               >
                 <h5 className="">{s.name}</h5>
               </button>

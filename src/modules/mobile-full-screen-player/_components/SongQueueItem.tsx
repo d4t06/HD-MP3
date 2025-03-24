@@ -1,5 +1,4 @@
 import { MouseEventHandler, useMemo } from "react";
-import { CheckIcon, StopIcon } from "@heroicons/react/24/outline";
 import Image from "@/components/ui/Image";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
 
@@ -47,31 +46,11 @@ export default function SongQueueItem({ song, theme, ...props }: Props) {
 
   const classes = {
     itemContainer: `items-center justify-between cursor-pointer border-b 
-    last:border-none border-${theme.alpha} flex rounded-md p-2 ${
-      isSelected && "bg-" + theme.alpha
-    }`,
+    last:border-none border-white/10 flex rounded-md p-2`,
     button: `${theme.content_bg} rounded-full`,
     songListButton: `mr-[10px] px-[5px]`,
     imageFrame: `w-[54px] h-[54px] relative rounded-[4px] overflow-hidden flex-shrink-0`,
     before: `after:content-[''] after:absolute after:h-[100%] after:w-[10px] after:right-[100%]`,
-  };
-
-  const renderCheckBox = () => {
-    switch (props.variant) {
-      case "select": {
-        return (
-          <>
-            {!isSelected ? (
-              <StopIcon className="w-5 mr-1" />
-            ) : (
-              <CheckIcon className="w-5 mr-1" />
-            )}
-          </>
-        );
-      }
-      default:
-        return <></>;
-    }
   };
 
   return (
@@ -80,9 +59,7 @@ export default function SongQueueItem({ song, theme, ...props }: Props) {
         onClick={handleItemClick}
         className={`target-class opacity-100 transition-[opacity,transform] duration-500 ${classes.itemContainer} `}
       >
-        <div className={`flex flex-row w-[100%]`}>
-          {renderCheckBox()}
-
+        <div className={`flex`}>
           <div className="flex-grow flex">
             <div className={`${classes.imageFrame}  `}>
               <Image blurHashEncode={song.blurhash_encode} src={song.image_url} />
@@ -90,10 +67,14 @@ export default function SongQueueItem({ song, theme, ...props }: Props) {
 
             {/* song info */}
             <div className={`ml-[10px]`}>
-              <h5 className={`text-lg line-clamp-1 ${isSelected && theme.content_text}`}>
+              <p className={`text-lg line-clamp-1 ${isSelected && theme.content_text}`}>
                 {song.name}
-              </h5>
-              {/* <p className="opacity-60 bg-blend-lighten line-clamp-1">{song.singer}</p> */}
+              </p>
+              <p className="opacity-60 bg-blend-lighten line-clamp-1">
+                {song.singers.map((s, i) => (
+                  <span key={i}> {(i ? ", " : "") + s.name}</span>
+                ))}
+              </p>
             </div>
           </div>
         </div>

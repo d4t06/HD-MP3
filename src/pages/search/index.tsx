@@ -1,13 +1,14 @@
-import { NotFound, PlaylistList, Tabs } from "@/components";
+import { NotFound, PlaylistList, Tab } from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
 import SongList from "@/modules/song-item/_components/SongList";
 import useGetRecommend from "@/hooks/useGetRecomemded";
+import BackBtn from "@/components/BackBtn";
 
 export default function SearchResultPage() {
-  const { isFetching, result, tab, setTab } = useGetSearchResult();
+  const { isFetching, result, tab, setTab, tabs } = useGetSearchResult();
 
   const { handleSetSong } = useSetSong({ variant: "search-bar" });
   const { getRecommend } = useGetRecommend();
@@ -42,16 +43,16 @@ export default function SearchResultPage() {
 
   return (
     <>
+      <div className="mb-5">
+        <BackBtn />
+      </div>
+
       <div className="flex items-center mt-3">
         <div className="text-2xl font-bold">Result</div>
 
-        <Tabs
-          className={`ml-5 ${isFetching ? "disable" : ""}`}
-          tabs={["Song", "Playlist"] as Array<typeof tab>}
-          render={(t) => <p>{t}</p>}
-          activeTab={tab}
-          setActiveTab={setTab}
-        />
+        <div className={`ml-5 ${isFetching ? "disable" : ""}`}>
+          <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />;
+        </div>
       </div>
 
       <SongSelectProvider>

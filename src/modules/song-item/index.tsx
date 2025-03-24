@@ -33,7 +33,7 @@ function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
     <>
       <button
         onClick={onClick}
-        className={`mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
+        className={`mr-2 md:mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
       >
         {!isSelected ? (
           <StopIcon className="w-[18px]" />
@@ -44,7 +44,7 @@ function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
       <button
         className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClasses(
           isChecked,
-          "md:hidden"
+          "md:hidden",
         )}`}
       >
         <MusicalNoteIcon className="w-[18px]" />
@@ -154,11 +154,11 @@ function SongItem({
                   className={`${theme.content_hover_text}  hover:underline`}
                   key={i}
                 >
-                  {s.name + (i ? ", " : "")}
+                  {(i ? ", " : "") + s.name}
                 </Link>
               ) : (
-                <span key={i}> {s.name + (i ? ", " : "")}</span>
-              )
+                <span key={i}> {(i ? ", " : "") + s.name}</span>
+              ),
             )}
           </div>
         </div>
@@ -179,6 +179,7 @@ function SongItem({
     <div className="flex items-center">
       {isLiked != null && (
         <HearBtn
+          className="p-2"
           isSongActive={active}
           songVariant={props.variant}
           isLiked={isLiked}
@@ -190,7 +191,7 @@ function SongItem({
         <SongMenu variant={props.variant} song={song} index={index} />
       ) : (
         <>
-          <div className="flex justify-center w-[60px]">
+          <div className="flex justify-center md:w-[60px]">
             <SongMenu variant={props.variant} song={song} index={index} />
           </div>
         </>
