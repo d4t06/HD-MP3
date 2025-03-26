@@ -39,7 +39,7 @@ export default function BottomPlayer() {
   };
 
   const classes = {
-    wrapper: `border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 px-6 h-[90px]`,
+    wrapper: `hidden md:block border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
     controlWrapper: `flex max-w-[420px] flex-grow ${

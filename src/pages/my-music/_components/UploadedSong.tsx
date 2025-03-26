@@ -62,9 +62,9 @@ export default function UploadedSongList() {
 
         {!isFetching && (
           <>
-            {songCount ? (
+            {!!songCount ? (
               <>
-                {uploadedSongs.length && (
+                {!!uploadedSongs.length && (
                   <SongList
                     setSong={(s) => _handleSetSong(s.queue_id)}
                     songs={uploadedSongs}

@@ -1,4 +1,4 @@
-import { NotFound, PlaylistList, Tab } from "@/components";
+import { NotFound, PlaylistList, SingerItem, Tab } from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -38,6 +38,17 @@ export default function SearchResultPage() {
         if (result.playlists.length)
           return <PlaylistList loading={false} playlists={result.playlists} />;
         else return <NotFound className="mx-auto" />;
+
+      case "Singers":
+        if (result.singers.length)
+          return (
+            <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
+              {result.singers.map((s, i) => (
+                <SingerItem variant="singer-item" singer={s} key={i} />
+              ))}
+            </div>
+          );
+        else return <NotFound className="mx-auto" />;
     }
   };
 
@@ -51,7 +62,7 @@ export default function SearchResultPage() {
         <div className="text-2xl font-bold">Result</div>
 
         <div className={`ml-5 ${isFetching ? "disable" : ""}`}>
-          <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />;
+          <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
         </div>
       </div>
 

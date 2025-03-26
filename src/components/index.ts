@@ -26,3 +26,4 @@ export { default as Avatar } from "./ui/Avatar";
 export { default as MyTooltip } from "./MyTooltip";
 export { default as MyPopup, MyPopupContent, MyPopupTrigger } from "./MyPopup";
 export { default as  CopyLinkMenuItem} from "./CopyLinkMenuItem";
+export { default as  SingerItem} from "./SingerItem";

@@ -6,7 +6,9 @@ import Header from "@/modules/header";
 import ToastPortal from "@/modules/toast-portal";
 import UploadSongPortal from "@/modules/upload-song-portal/idnex";
 import { Outlet } from "react-router-dom";
-import { PushBrowserHistory } from "@/stores/global/NavigationContext";
+import NavigationProvider, {
+  PushBrowserHistory,
+} from "@/stores/global/NavigationContext";
 
 export default function PrimaryLayout() {
   const { theme } = useThemeContext();
@@ -28,22 +30,24 @@ export default function PrimaryLayout() {
 
   return (
     <>
-      <div className={`${classes.page}`}>
-        {/* hidden in mobile */}
-        <Sidebar />
-        <div ref={containerRef} className={classes.container}>
-          {/* hide in mobile */}
-          <Header contentRef={containerRef} />
-          <Outlet />
+      <NavigationProvider>
+        <div className={`${classes.page}`}>
+          {/* hidden in mobile */}
+          <Sidebar />
+          <div ref={containerRef} className={classes.container}>
+            {/* hide in mobile */}
+            <Header contentRef={containerRef} />
+            <Outlet />
+          </div>
+          <Player />
         </div>
-        <Player />
-      </div>
 
-      <ToastPortal className="left-[50%] translate-x-[-50%] bottom-[90px] md:bottom-[100px] md:left-[20px] md:translate-x-0" />
+        <ToastPortal className="left-[50%] translate-x-[-50%] top-[10px] md:top-[unset] md:bottom-[100px] md:left-[20px] md:translate-x-0" />
 
-      <UploadSongPortal />
+        <UploadSongPortal />
 
-      <PushBrowserHistory />
+        <PushBrowserHistory />
+      </NavigationProvider>
     </>
   );
 }

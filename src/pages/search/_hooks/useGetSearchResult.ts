@@ -1,14 +1,26 @@
-import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
-import { playlistCollectionRef, songsCollectionRef } from "@/services/firebaseService";
+import {
+  implementPlaylistQuery,
+  implementSingerQuery,
+  implementSongQuery,
+} from "@/services/appService";
+import {
+  playlistCollectionRef,
+  singerCollectionRef,
+  songsCollectionRef,
+} from "@/services/firebaseService";
 import { query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = ["Song", "Playlist"] as const;
+const tabs = ["Song", "Playlist", "Singers"] as const;
 
 type Tab = (typeof tabs)[number];
 
-type SearchResult = { songs: Song[]; playlists: Playlist[] };
+const initResult = {
+  songs: [] as Song[],
+  playlists: [] as Playlist[],
+  singers: [] as Singer[],
+};
 
 export default function useGetSearchResult() {
   const [isFetching, setIsFetching] = useState(false);
@@ -16,9 +28,9 @@ export default function useGetSearchResult() {
 
   const searchParams = useSearchParams();
 
-  const [result, setResult] = useState<SearchResult>({ songs: [], playlists: [] });
+  const [result, setResult] = useState<typeof initResult>(initResult);
 
-  const updateResult = (data: Partial<SearchResult>) => {
+  const updateResult = (data: Partial<typeof initResult>) => {
     setResult((prev) => ({ ...prev, ...data }));
   };
 
@@ -44,8 +56,6 @@ export default function useGetSearchResult() {
           break;
         }
         case "Playlist": {
-          console.log("gor here");
-
           const searchQuery = query(
             playlistCollectionRef,
             where("is_public", "==", true),
@@ -56,6 +66,19 @@ export default function useGetSearchResult() {
           const result = await implementPlaylistQuery(searchQuery);
 
           updateResult({ playlists: result });
+
+          break;
+        }
+        case "Singers": {
+          const searchQuery = query(
+            singerCollectionRef,
+            where("name", ">=", key),
+            where("name", "<=", key + "\uf8ff"),
+          );
+
+          const result = await implementSingerQuery(searchQuery);
+
+          updateResult({ singers: result });
 
           break;
         }

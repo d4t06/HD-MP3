@@ -4,6 +4,7 @@ import { SongMenuContent } from "..";
 import { useRef } from "react";
 import { ModalRef } from "@/components";
 import AddToPlaylistMenuItem, { AddToPlaylistMenuModal } from "./AddToPlaylistMenuItem";
+import { usePopoverContext } from "@/components/MyPopup";
 
 type Props = {
   song: Song;
@@ -12,6 +13,7 @@ type Props = {
 
 export default function QueueSongMenu({ song, index }: Props) {
   const { action } = useSongQueueAction();
+  const { close } = usePopoverContext();
 
   const modalRef = useRef<ModalRef>(null);
 

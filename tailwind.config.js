@@ -2,8 +2,6 @@
 
 export default {
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  corePlugins: {  },
-
   theme: {
     container: {
       center: true,
@@ -28,14 +26,14 @@ export default {
     },
   },
   safelist: [
-    "bg-[#000]/10",
-    "bg-[#fff]/10",
-    "text-[#000]/10",
-    "text-[#fff]/10",
-    "hover:bg-[#000]/10",
-    "hover:bg-[#fff]/10",
-    "border-[#fff]/10",
-    "border-[#000]/10",
+    "bg-[#000]/5",
+    "bg-[#fff]/5",
+    "text-[#000]/5",
+    "text-[#fff]/5",
+    "hover:bg-[#000]/5",
+    "hover:bg-[#fff]/5",
+    "border-[#fff]/5",
+    "border-[#000]/5",
   ],
   plugins: [],
 };

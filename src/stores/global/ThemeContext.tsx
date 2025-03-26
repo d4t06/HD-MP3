@@ -18,10 +18,10 @@ if (localStorageThemeId) {
 const initialState = {
   theme: {
     ...initTheme,
-    alpha: initTheme.type === "light" ? "[#000]/10" : "[#fff]/10",
+    alpha: initTheme.type === "light" ? "[#000]/5" : "[#fff]/5",
     text_color: initTheme.type === "light" ? "text-[#333]" : "text-[#fff]",
   },
-  isOnMobile: window.innerWidth < 800,
+  isOnMobile: window.innerWidth < 768, //md breakpont
   isDev: import.meta.env.DEV,
 };
 
@@ -46,7 +46,7 @@ const reducer = (state: StateType, action: ReducerAction): StateType => {
         ...state,
         theme: {
           ...theme,
-          alpha: theme.type === "dark" ? "[#fff]/10" : "[#000]/10",
+          alpha: theme.type === "dark" ? "[#fff]/5" : "[#000]/5",
           text_color: theme.type === "light" ? "text-[#333]" : "text-[#fff]",
         },
       };

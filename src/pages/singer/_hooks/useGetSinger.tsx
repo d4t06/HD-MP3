@@ -2,13 +2,17 @@ import { useToastContext } from "@/stores";
 import { useSingerContext } from "../_components/SingerContext";
 import { useEffect, useRef } from "react";
 import { query, where } from "firebase/firestore";
-import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
+import {
+  myGetDoc,
+  playlistCollectionRef,
+  songsCollectionRef,
+} from "@/services/firebaseService";
 import { useNavigate, useParams } from "react-router-dom";
-import { implementSongQuery } from "@/services/appService";
+import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
 import { nanoid } from "nanoid/non-secure";
 
 export default function useGetSinger() {
-  const { setIsFetching, setSinger, setSongs } = useSingerContext();
+  const { setIsFetching, setSinger, setSongs, setPlaylists } = useSingerContext();
   const { setErrorToast } = useToastContext();
 
   const params = useParams();
@@ -27,15 +31,21 @@ export default function useGetSinger() {
 
       const queryGetSongs = query(
         songsCollectionRef,
-        where(`singer_map.${singer.id}`, "==", true)
+        where(`singer_map.${singer.id}`, "==", true),
+      );
+      const queryGetPlaylists = query(
+        playlistCollectionRef,
+        where(`singer_map.${singer.id}`, "==", true),
       );
 
       const songs = await implementSongQuery(queryGetSongs, {
         getQueueId: () => nanoid(4) + "_" + singer.id,
       });
+      const playlists = await implementPlaylistQuery(queryGetPlaylists);
 
-      setSinger(singer);
       setSongs(songs);
+      setSinger(singer);
+      setPlaylists(playlists);
     } catch (error) {
       console.log({ error });
       setErrorToast();

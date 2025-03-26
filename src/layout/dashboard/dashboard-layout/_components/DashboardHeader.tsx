@@ -1,8 +1,12 @@
-import { NavigationProvider, useThemeContext } from "@/stores";
+import { useThemeContext } from "@/stores";
 
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import MyPopup, { MyPopupContent, MyPopupTrigger, TriggerRef } from "@/components/MyPopup";
+import MyPopup, {
+  MyPopupContent,
+  MyPopupTrigger,
+  TriggerRef,
+} from "@/components/MyPopup";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import Modal, { ModalRef } from "@/components/Modal";
 import { AppInfo, Appearance, SettingMenu } from "@/components";
@@ -65,9 +69,7 @@ export default function DashboardHeader() {
             <span className={`${theme.content_text} ml-[4px] uppercase`}>Dashboard</span>
           </Link>
 
-          <NavigationProvider>
-            <NavigationButton className="ml-5" />
-          </NavigationProvider>
+          <NavigationButton className="ml-5" />
         </div>
 
         <div className="flex">

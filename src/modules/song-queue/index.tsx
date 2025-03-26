@@ -46,7 +46,7 @@ function SongQueue() {
   ));
 
   const classes = {
-    mainContainer: `fixed w-[300px] flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
+    mainContainer: `hidden fixed w-[300px] md:flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
     songListContainer:
       "flex-grow overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar mt-3",
   };
@@ -59,7 +59,7 @@ function SongQueue() {
         }     `}
       >
         <Tab
-          className="w-fit mx-auto"
+          className="w-fit mx-auto text-sm"
           tab={tab}
           setTab={setTab}
           tabs={tabs}

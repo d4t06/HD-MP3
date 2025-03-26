@@ -21,7 +21,7 @@ export default function useSongLyric({ active }: { active: boolean }) {
 
   const getLyric = async () => {
     try {
-      if (!currentSongData) return setLoading(false);
+      if (!currentSongData || !currentSongData.song.lyric_id) return setLoading(false);
       setLoading(true);
 
       const lyricSnap = await myGetDoc({

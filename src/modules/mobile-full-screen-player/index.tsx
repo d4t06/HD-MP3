@@ -45,7 +45,7 @@ export default function MobileFullScreenPlayer() {
       <div
         ref={wrapperRef}
         style={{ transform: "translate(0, 100%)", zIndex: "-10" }}
-        className={`fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
+        className={`block md:hidden fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
       >
         {songBackground && (
           <div className={classes.bgImage}>

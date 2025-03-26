@@ -13,10 +13,6 @@ type Props = {
 export default function PlaylistList({ className = "", playlists, loading }: Props) {
   const { currentSongData } = useSelector(selectSongQueue);
 
-  const classes = {
-    playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
-  };
-
   const render = () => {
     if (!playlists.length) return <NotFound less className="mx-auto" />;
 
@@ -24,7 +20,7 @@ export default function PlaylistList({ className = "", playlists, loading }: Pro
       const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
-        <div key={index} className={classes.playlistItem}>
+        <div key={index} className="p-2 w-1/2 md:w-1/4">
           <PlaylistItem active={active} data={playlist} />
         </div>
       );
