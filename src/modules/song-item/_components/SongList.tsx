@@ -23,7 +23,7 @@ export default function SongList({
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
-  if (!songs.length) return <NotFound less />;
+  if (!songs.length) return <NotFound variant="less" />;
 
   return songs.map((song, index) => {
     const isOwnSong = user

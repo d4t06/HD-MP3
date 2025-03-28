@@ -1,11 +1,4 @@
-import {
-  Dispatch,
-  ElementRef,
-  FormEventHandler,
-  SetStateAction,
-  useEffect,
-  useRef,
-} from "react";
+import { Dispatch, FormEventHandler, RefObject, SetStateAction } from "react";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, Frame } from "./ui";
 import { Input } from "@/components";
@@ -15,19 +8,15 @@ type Props = {
   value: string;
   setValue: Dispatch<SetStateAction<string>>;
   className?: string;
+  inputRef?: RefObject<HTMLInputElement>;
 };
 export default function Searchbar({
   handleSubmit,
   setValue,
   value,
   className = "",
+  inputRef,
 }: Props) {
-  const inputRef = useRef<ElementRef<"input">>(null);
-
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
-
   return (
     <Frame className={className}>
       <form onSubmit={handleSubmit} className="flex gap-2 justify-between items-center">

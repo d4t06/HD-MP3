@@ -1,11 +1,10 @@
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ReactNode } from "react";
-
 import { useThemeContext } from "@/stores";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { PopupWrapper } from "@/components";
 import { MenuList } from "@/components/ui/MenuWrapper";
-import FavoriteSongMenu from "./FavoriteSongMenu";
+import SystemSongCheckMenu from "./SystemSongCheckMenu";
 
 export function CheckBarMenuContent({ children }: { children: ReactNode }) {
 	const { theme } = useThemeContext();
@@ -28,7 +27,7 @@ export default function CheckBarMenuBtn({ variant }: Props) {
 	const renderMenu = () => {
 		switch (variant) {
 			default:
-				return <FavoriteSongMenu />;
+				return <SystemSongCheckMenu />;
 		}
 	};
 

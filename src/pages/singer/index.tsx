@@ -5,9 +5,17 @@ import SingerProvider from "./_components/SingerContext";
 import SingerPlaylist from "./_components/SingerPlaylist";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import BackBtn from "@/components/BackBtn";
+import { Center, NotFound } from "@/components";
 
 function Content() {
-  useGetSinger();
+  const { isFetching, singer } = useGetSinger();
+
+  if (!isFetching && !singer)
+    return (
+      <Center>
+        <NotFound variant="with-home-button" />
+      </Center>
+    );
 
   return (
     <>

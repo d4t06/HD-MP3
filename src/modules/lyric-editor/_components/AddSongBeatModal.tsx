@@ -5,15 +5,13 @@ import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import { useThemeContext } from "@/stores";
 
 type Props = {
-	song: Song;
 	closeModal: () => void;
 };
 
-export default function AddSongBeatModal({ song, closeModal }: Props) {
+export default function AddSongBeatModal({ closeModal }: Props) {
 	const { theme } = useThemeContext();
-	const { songFile, setSongFile, isFetching, handleSubmit } = useAddSongBeatModal({
+	const { songFile, setSongFile, isFetching, handleSubmit, song } = useAddSongBeatModal({
 		closeModal,
-		song,
 	});
 
 	const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,8 +30,8 @@ export default function AddSongBeatModal({ song, closeModal }: Props) {
 				className="hidden"
 			/>
 
-			{(songFile || song.beat_url) && (
-				<audio src={songFile ? URL.createObjectURL(songFile) : song.image_url} controls />
+			{song && (songFile || song?.beat_url) && (
+				<audio src={songFile ? URL.createObjectURL(songFile) : song.beat_url} controls />
 			)}
 
 			<Button size={"clear"}>

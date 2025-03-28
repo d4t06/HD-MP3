@@ -57,8 +57,9 @@ export default function SingerCta() {
             {modal === "edit" && (
               <AddSingerModal closeModal={closeModal} variant="edit" />
             )}
-            {modal === "delete" && (
+            {modal === "delete" && singer && (
               <ConfirmModal
+                label={`Delete singer '${singer.name}'`}
                 loading={isFetching}
                 callback={() => action({ variant: "delete" })}
                 close={closeModal}

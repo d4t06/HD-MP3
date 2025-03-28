@@ -72,7 +72,7 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
               );
             })
           ) : (
-            <NotFound less />
+            <NotFound variant="less" />
           )}
         </div>
 

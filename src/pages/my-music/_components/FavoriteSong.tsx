@@ -28,21 +28,19 @@ export default function FavoriteSongList() {
       </CheckedBar>
 
       {/* song list */}
-      <div className="">
-        {isFetching && SongItemSkeleton}
+      {isFetching && SongItemSkeleton}
 
-        {!isFetching && (
-          <>
-            {favoriteSongs.length ? (
-              <>
-                <SongList setSong={_handleSetSong} songs={favoriteSongs} />
-              </>
-            ) : (
-              <NotFound />
-            )}
-          </>
-        )}
-      </div>
+      {!isFetching && (
+        <>
+          {favoriteSongs.length ? (
+            <>
+              <SongList setSong={_handleSetSong} songs={favoriteSongs} />
+            </>
+          ) : (
+            <NotFound />
+          )}
+        </>
+      )}
     </SongSelectProvider>
   );
 }

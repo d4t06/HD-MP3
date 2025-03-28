@@ -13,6 +13,7 @@ export default function FullScreenPlayerTab({ variant = "desktop" }: Props) {
     mobileActiveTab,
     mobileTabs,
     setMobileActiveTab,
+    idle,
   } = usePlayerContext();
 
   const tab = variant === "desktop" ? activeTab : mobileActiveTab;
@@ -21,10 +22,13 @@ export default function FullScreenPlayerTab({ variant = "desktop" }: Props) {
 
   const classes = {
     item: "px-3 md:px-8 leading-[30px] font-[600] cursor-pointer  rounded-full",
+    fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
   };
 
   return (
-    <ul className={`inline-flex mx-auto rounded-full space-x-1 bg-white/10 p-1 `}>
+    <ul
+      className={`inline-flex mx-auto rounded-full space-x-1 bg-white/10 p-1 ${idle ? classes.fadeTransition : ""}`}
+    >
       {tabs.map((item, index) => {
         const isActive = item === tab;
 

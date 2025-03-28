@@ -3,7 +3,7 @@ import { useToastContext } from "@/stores";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { Query, documentId, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 async function implementQuery(query: Query) {
   const songsSnap = await getDocs(query);
@@ -26,6 +26,7 @@ export default function useGetPlaylist() {
   const ranEffect = useRef(false);
 
   const params = useParams();
+  const navigator = useNavigate()
 
   const { setErrorToast } = useToastContext();
 
@@ -34,6 +35,8 @@ export default function useGetPlaylist() {
       if (!params.id) return;
 
       const docRef = await myGetDoc({ collectionName: "Playlists", id: params.id });
+
+      if (!docRef.exists()) return navigator("/dashboard/playlist")
 
       const playlist: Playlist = {
         ...(docRef.data() as PlaylistSchema),

@@ -19,6 +19,7 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
   const { _genres, ...rest } = useSearchGenre();
 
   const modalRef = useRef<ModalRef>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const closeAddSingerModal = () => modalRef.current?.close();
 
@@ -26,13 +27,14 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
 
   useEffect(() => {
     api();
+    inputRef.current?.focus();
   }, []);
 
   return (
     <>
       <ModalWrapper>
         <ModalHeader title="Genre" close={closeModal} />
-        <DebounceSearchBar {...rest} />
+        <DebounceSearchBar inputRef={inputRef} {...rest} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">
           {isFetching ? (

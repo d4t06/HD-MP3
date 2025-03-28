@@ -26,7 +26,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   if (!singerData) return;
 
   return (
-    <div className="w-[700px] max-w-[calc(100vw-40px)]">
+    <div className="w-[700px]">
       <ModalHeader
         close={props.closeModal}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}

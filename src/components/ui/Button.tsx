@@ -55,7 +55,6 @@ type Props = ButtonHTMLAttributes<HTMLButtonElement> &
     children: ReactNode;
     isLoading?: boolean;
     onClick?: MouseEventHandler;
-    href?: string;
   };
 
 function Button(

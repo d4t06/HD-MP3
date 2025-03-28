@@ -12,17 +12,12 @@ type Props = {
 
 export default function RecentSong({ setTab }: Props) {
 	const dispatch = useDispatch();
-	// const { user } = useAuthContext();
-
-	// const [recentSongs, setRecentSongs] = useState<Song[]>([]);
-	// const [isFetching, setIsFetching] = useState(true);
-
 	const ranEffect = useRef(false);
 
 	const { getRecentSongs, isFetching, recentSongs } = useGetRecentSong();
 
 	const skeleton = [...Array(5).keys()].map((i) => (
-		<Skeleton key={i} className="h-[56px] mt-1" />
+		<Skeleton key={i} className="h-[57px] mt-1" />
 	));
 
 	const handleSetSong = (song: Song) => {
@@ -37,31 +32,6 @@ export default function RecentSong({ setTab }: Props) {
 		setTab("Queue");
 	};
 
-	// const getRecentSong = async () => {
-	// 	try {
-	// 		if (user && user.recent_song_ids.length) {
-	// 			const queryGetRecentSongs = query(
-	// 				songsCollectionRef,
-	// 				where(documentId(), "in", user.recent_song_ids),
-	// 			);
-
-	// 			const result = await implementSongQuery(queryGetRecentSongs);
-
-	// 			setRecentSongs(result);
-	// 		} else {
-	// 			const songs: Song[] = getLocalStorage()["recent-songs"] || [];
-
-	// 			await sleep(100);
-
-	// 			setRecentSongs(songs);
-	// 		}
-	// 	} catch (error) {
-	// 		console.log({ message: error });
-	// 	} finally {
-	// 		setIsFetching(false);
-	// 	}
-	// };
-
 	useEffect(() => {
 		if (!ranEffect.current) {
 			ranEffect.current = true;
@@ -71,5 +41,12 @@ export default function RecentSong({ setTab }: Props) {
 
 	if (isFetching) return skeleton;
 
-	return <SongList songs={recentSongs} setSong={handleSetSong} />;
+	return (
+		<SongList
+			isHasCheckBox={false}
+			songVariant="recent-song"
+			songs={recentSongs}
+			setSong={handleSetSong}
+		/>
+	);
 }

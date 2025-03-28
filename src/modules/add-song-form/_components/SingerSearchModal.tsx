@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function SingerSearchModal({ choose, closeModal }: Props) {
-  const { result, isFetching, ...rest } = useSearchSinger({});
+  const { result, isShowResult, isFetching, ...rest } = useSearchSinger({});
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -26,23 +26,24 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
         <Searchbar {...rest} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">
-          {isFetching ? (
-            <Loading className="h-full" />
-          ) : (
-            <>
-              {result.length ? (
-                result.map((singer, i) => (
-                  <Frame key={i} onClick={() => choose(singer)}>
-                    <p className={`text-lg`}>{singer.name}</p>
-                  </Frame>
-                ))
-              ) : (
-                <>
-                  <NotFound />
-                </>
-              )}
-            </>
-          )}
+          {isShowResult &&
+            (isFetching ? (
+              <Loading className="h-full" />
+            ) : (
+              <>
+                {result.length ? (
+                  result.map((singer, i) => (
+                    <Frame key={i} onClick={() => choose(singer)}>
+                      <p className={`text-lg`}>{singer.name}</p>
+                    </Frame>
+                  ))
+                ) : (
+                  <>
+                    <NotFound />
+                  </>
+                )}
+              </>
+            ))}
         </div>
         <p className="text-center mt-auto">
           <Button onClick={() => modalRef.current?.open()}>

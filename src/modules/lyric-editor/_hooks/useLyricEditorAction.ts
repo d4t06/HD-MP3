@@ -111,7 +111,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
 
       await batch.commit();
 
-      setSuccessToast("Add lyric successful");
+      setSuccessToast("Edit lyric successful");
       setIsChanged(false);
 
       setLocalStorage("temp-lyric", "");

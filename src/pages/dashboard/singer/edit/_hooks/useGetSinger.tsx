@@ -23,7 +23,7 @@ export default function useGetSinger() {
       if (!params.id) return;
 
       const singerSnap = await myGetDoc({ collectionName: "Singers", id: params.id });
-      if (!singerSnap.exists()) navigator("/");
+      if (!singerSnap.exists()) navigator("/dashboard/singer");
 
       const singer: Singer = { ...(singerSnap.data() as SingerSchema), id: params.id };
 

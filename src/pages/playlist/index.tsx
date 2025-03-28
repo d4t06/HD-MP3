@@ -31,7 +31,7 @@ export default function PlaylistDetail() {
   if (!isFetching && !currentPlaylist)
     return (
       <Center>
-        <NotFound />
+        <NotFound variant="with-home-button" />
       </Center>
     );
 

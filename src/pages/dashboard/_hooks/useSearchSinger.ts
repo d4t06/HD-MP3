@@ -10,6 +10,7 @@ type Props = {
 export default function useSearchSinger({ afterSearched = () => {} }: Props) {
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(false);
+  const [isShowResult, setIsShowResult] = useState(false);
 
   const [result, setResult] = useState<Singer[]>([]);
 
@@ -20,20 +21,21 @@ export default function useSearchSinger({ afterSearched = () => {} }: Props) {
       e.preventDefault();
       e.stopPropagation();
       setIsFetching(true);
+      setIsShowResult(true);
 
       const singerCollectionRef = collection(db, "Singers");
 
       const searchQuery = query(
         singerCollectionRef,
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff")
+        where("name", "<=", value + "\uf8ff"),
       );
 
       const docSnaps = await getDocs(searchQuery);
 
       if (docSnaps.docs) {
         const result = docSnaps.docs.map(
-          (doc) => ({ ...doc.data(), id: doc.id } as Singer)
+          (doc) => ({ ...doc.data(), id: doc.id }) as Singer,
         );
 
         setResult(result);
@@ -47,5 +49,5 @@ export default function useSearchSinger({ afterSearched = () => {} }: Props) {
     }
   };
 
-  return { value, setValue, result, handleSubmit, isFetching };
+  return { value, isShowResult, setValue, result, handleSubmit, isFetching };
 }

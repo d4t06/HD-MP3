@@ -23,12 +23,7 @@ export default function DashboardPlaylistDetail() {
       </Center>
     );
 
-  if (!playlist)
-    return (
-      <Center>
-        <NotFound />
-      </Center>
-    );
+  if (!playlist) return <></>;
 
   return (
     <div className="pb-[46px]">

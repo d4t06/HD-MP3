@@ -1,4 +1,4 @@
-import { Image, NotFound, Skeleton, Square } from "@/components";
+import { Image, Skeleton, Square } from "@/components";
 import { useSingerContext } from "./SingerContext";
 import SingerCta from "./SingerCta";
 import { useThemeContext } from "@/stores";
@@ -9,7 +9,7 @@ export default function SingerInfo() {
   const { theme } = useThemeContext();
   const { isFetching, singer } = useSingerContext();
 
-  if (!isFetching && !singer) return <NotFound less />;
+  if (!isFetching && !singer) return <></>;
 
   return (
     <>
@@ -30,12 +30,12 @@ export default function SingerInfo() {
           </div>
         </div>
 
-        <div className="w-[70%] z-0 mx-auto md:w-1/4 md:flex-shrink-0 md:m-unset">
+        <div className="w-[70%] z-0 relative mx-auto md:w-1/4 md:flex-shrink-0 md:m-unset">
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (
             <Square>
-              <Image src={singer?.image_url} />
+              <Image src={singer?.image_url} blurHashEncode={singer?.blurhash_encode} />
             </Square>
           )}
         </div>

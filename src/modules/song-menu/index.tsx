@@ -68,8 +68,26 @@ function SongMenu({ song, index, variant }: Props) {
         return <OwnSongMenu song={song} />;
       case "own-playlist":
         return <OwnPlaylistMenu song={song} />;
-      case "system-song":
+      default:
         return <SystemSongMenu song={song} />;
+    }
+  };
+
+  const renderSongDuration = () => {
+    switch (variant) {
+      case "queue-song":
+      case "recent-song":
+        return <></>;
+      default:
+        return (
+          <span
+            className={`text-sm font-[500] hidden p-2 group-hover/main:hidden ${
+              isOpenPopup ? "hidden" : "md:block"
+            }`}
+          >
+            {formatTime(song.duration)}
+          </span>
+        );
     }
   };
 
@@ -98,16 +116,7 @@ function SongMenu({ song, index, variant }: Props) {
           </MyTooltip>
         </MyPopupTrigger>
 
-        {variant !== "queue-song" && (
-          <span
-            className={`text-sm font-[500] hidden p-2 group-hover/main:hidden ${
-              isOpenPopup ? "hidden" : "md:block"
-            }`}
-          >
-            {formatTime(song.duration)}
-          </span>
-        )}
-
+        {renderSongDuration()}
         {renderMenu()}
       </MyPopup>
     </>

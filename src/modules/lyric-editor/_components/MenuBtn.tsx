@@ -56,7 +56,7 @@ export default function MenuBtn() {
 					</div>
 				);
 			case "song-beat":
-				return song && <AddSongBeatModal closeModal={closeModal} song={song} />;
+				return song && <AddSongBeatModal closeModal={closeModal} />;
 		}
 	};
 

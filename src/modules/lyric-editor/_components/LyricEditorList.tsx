@@ -69,7 +69,7 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
                   <LyricItem
                     ref={status === "active" ? activeLyricRef : null}
                     activeColor={theme.type === "light" ? theme.content_text : ""}
-                    className="pt-[37px] mr-[24px]"
+                    className="pt-[38px] mr-[24px]"
                     key={index}
                     status={status}
                     text={lyric}

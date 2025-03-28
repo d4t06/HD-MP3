@@ -344,6 +344,7 @@ export default function useControl() {
         const founded = newUserRecentSongIds.includes(songId);
 
         if (!founded) {
+          console.log("push recent songs");
           const newUserData: Partial<User> = {
             recent_song_ids: [...newUserRecentSongIds, songId],
           };

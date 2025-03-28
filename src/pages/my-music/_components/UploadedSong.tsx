@@ -40,7 +40,7 @@ export default function UploadedSongList() {
             </div>
           </>
         ) : (
-          <div className="flex justify-between w-full">
+          <div className="flex justify-between items-center w-full">
             <p className="font-[500] opacity-[.5]">{songCount} Songs</p>
 
             <button disabled={isUploading}>

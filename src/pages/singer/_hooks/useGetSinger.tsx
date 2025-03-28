@@ -7,16 +7,15 @@ import {
   playlistCollectionRef,
   songsCollectionRef,
 } from "@/services/firebaseService";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
 import { nanoid } from "nanoid/non-secure";
 
 export default function useGetSinger() {
-  const { setIsFetching, setSinger, setSongs, setPlaylists } = useSingerContext();
+  const { setIsFetching, setSinger, isFetching, setSongs, singer, setPlaylists } = useSingerContext();
   const { setErrorToast } = useToastContext();
 
   const params = useParams();
-  const navigator = useNavigate();
 
   const ranEffect = useRef(false);
 
@@ -25,7 +24,7 @@ export default function useGetSinger() {
       if (!params.id) return;
 
       const singerSnap = await myGetDoc({ collectionName: "Singers", id: params.id });
-      if (!singerSnap.exists()) navigator("/");
+      if (!singerSnap.exists()) return;
 
       const singer: Singer = { ...(singerSnap.data() as SingerSchema), id: params.id };
 
@@ -61,4 +60,7 @@ export default function useGetSinger() {
       getSinger();
     }
   }, []);
+
+
+  return {singer, isFetching}
 }

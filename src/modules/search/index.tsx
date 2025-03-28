@@ -32,7 +32,7 @@ export default function Search() {
     container: `relative h-[40px] flex px-3 w-[300px] ${theme.text_color} shadow-md`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
     focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
-    input: `bg-transparent outline-none ${isFocus ? "placeholder-white" : ""} w-full`,
+    input: `bg-transparent outline-none  w-full ${theme.type === "light" ? "placeholder:text-black" : "placeholder:text-white"}`,
     searchResultContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
   };
 

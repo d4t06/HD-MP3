@@ -1,4 +1,4 @@
-import { Image, NotFound, Skeleton, Square } from "@/components";
+import { Image, Skeleton, Square } from "@/components";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import SingerCta from "./SingerCta";
 import { useGetSingerContext } from "./GetSingerContext";
@@ -7,7 +7,7 @@ export default function SingerInfo() {
   const { singer } = useSingerContext();
   const { isFetching } = useGetSingerContext();
 
-  if (!isFetching && !singer) return <NotFound less />;
+  if (!isFetching && !singer) return <></>;
 
   return (
     <>

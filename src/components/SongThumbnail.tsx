@@ -20,7 +20,7 @@ const SongThumbnail = (
   const classes = {
     container: "flex flex-col",
     imageFrame:
-      "group relative transition-[width] duration-[.3s] origin-center rounded-[6px] overflow-hidden",
+      "group relative transition-[width] duration-[.3s] origin-center rounded-xl overflow-hidden",
     image: "select-none object-cover object-center rounded w-full",
     overlay: `absolute  ${
       active ? "" : "inset-0 hidden bg-black/40 items-center justify-center"

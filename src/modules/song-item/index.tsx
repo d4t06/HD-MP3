@@ -21,7 +21,7 @@ type Props = {
   // null if user is null
   isLiked: boolean | null;
   isHasCheckBox: boolean;
-  variant: "system-song" | "own-song" | "queue-song" | "own-playlist";
+  variant: "system-song" | "own-song" | "queue-song" | "recent-song" | "own-playlist";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
@@ -82,9 +82,7 @@ function SongItem({
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
     checkboxButton: `mr-3 text-[inherit]`,
     itemContainer: `w-full sm:group/container flex flex-row rounded justify-between p-[10px] border-b border-${theme.alpha} last:border-none`,
-    imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0 ${
-      props.variant === "queue-song" ? "w-[40px] h-[40px]" : "h-[54px] w-[54px]"
-    }`,
+    imageFrame: ` relative rounded-[4px] overflow-hidden flex-shrink-0`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",
   };
@@ -113,15 +111,27 @@ function SongItem({
   const getSongNameSize = () => {
     switch (props.variant) {
       case "queue-song":
+      case "recent-song":
         return "text-sm";
       default:
         return "";
     }
   };
 
+  const getSongImageSize = () => {
+    switch (props.variant) {
+      case "queue-song":
+      case "recent-song":
+        return "w-10 h-10";
+      default:
+        return "h-[54px] w-[54px]";
+    }
+  };
+
   const getSongSingerSize = () => {
     switch (props.variant) {
       case "queue-song":
+      case "recent-song":
         return "text-xs";
       default:
         return "text-sm";
@@ -135,7 +145,7 @@ function SongItem({
       )}
 
       <div className="flex-grow flex" onClick={isOnMobile ? onClick : () => {}}>
-        <div className={`${classes.imageFrame}`}>
+        <div className={`${classes.imageFrame} ${getSongImageSize()}`}>
           <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
           {imageOverlay}
         </div>
@@ -169,9 +179,25 @@ function SongItem({
   const renderLeftContent = () => {
     switch (props.variant) {
       case "queue-song":
+      case "recent-song":
         return leftContent;
       default:
         return <div className="flex flex-grow overflow-hidden">{leftContent}</div>;
+    }
+  };
+
+  const renderMenu = () => {
+    switch (props.variant) {
+      case "queue-song":
+      case "recent-song":
+        return <SongMenu variant={props.variant} song={song} index={index} />;
+
+      default:
+        return (
+          <div className="flex justify-center md:w-[60px]">
+            <SongMenu variant={props.variant} song={song} index={index} />
+          </div>
+        );
     }
   };
 
@@ -187,21 +213,14 @@ function SongItem({
         />
       )}
 
-      {props.variant === "queue-song" ? (
-        <SongMenu variant={props.variant} song={song} index={index} />
-      ) : (
-        <>
-          <div className="flex justify-center md:w-[60px]">
-            <SongMenu variant={props.variant} song={song} index={index} />
-          </div>
-        </>
-      )}
+      {renderMenu()}
     </div>
   );
 
   const renderContent = () => {
     switch (props.variant) {
       case "queue-song":
+      case "recent-song":
         return (
           <div
             className={`${classes.itemContainer} group/main ${

@@ -1,6 +1,7 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function useGetSong() {
   const [isFetching, setIsFetching] = useState(true);
@@ -8,11 +9,14 @@ export default function useGetSong() {
 
   const ranEffect = useRef(false);
 
+  const navigator = useNavigate()
+
   const { setErrorToast } = useToastContext();
 
   const getSong = async (id: string) => {
     try {
       const docRef = await myGetDoc({ collectionName: "Songs", id });
+      if (!docRef.exists()) return navigator("/dashboard/song")
 
       const song: Song = {
         ...(docRef.data() as SongSchema),

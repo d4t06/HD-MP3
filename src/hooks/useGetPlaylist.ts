@@ -1,9 +1,9 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch } from "react-redux";
 import { useAuthContext, useToastContext } from "../stores";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { documentId, getDocs, query, where } from "firebase/firestore";
 import {
   resetCurrentPlaylist,
@@ -15,14 +15,12 @@ export default function useGetPlaylist() {
   // stores
   const dispatch = useDispatch();
   const { setErrorToast } = useToastContext();
-  const { user } = useAuthContext();
+  const { user, loading } = useAuthContext();
 
   // hooks
   const params = useParams<PlaylistParamsType>();
-  const navigator = useNavigate();
 
   // state
-  const ranEffect = useRef(false);
   const [isFetching, setIsFetching] = useState(true);
 
   const getPlaylist = async () => {
@@ -49,7 +47,7 @@ export default function useGetPlaylist() {
 
     const queryGetSongs = query(
       songsCollectionRef,
-      where(documentId(), "in", playlist.song_ids)
+      where(documentId(), "in", playlist.song_ids),
     );
     const songsSnap = await getDocs(queryGetSongs);
 
@@ -83,7 +81,7 @@ export default function useGetPlaylist() {
         ? playlist.owner_email === user.email && !playlist.is_official
         : false;
 
-      if (!isOwnerOfPlaylist && !playlist.is_public) return navigator("/");
+      if (!isOwnerOfPlaylist && !playlist.is_public) return;
 
       const playlistSongs = await getSongs(playlist);
 
@@ -91,7 +89,7 @@ export default function useGetPlaylist() {
         setCurrentPlaylist({
           playlist: playlist,
           songs: playlistSongs,
-        })
+        }),
       );
     } catch (error) {
       console.log({ message: error });
@@ -102,16 +100,14 @@ export default function useGetPlaylist() {
   };
 
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
+    if (loading) return;
 
-      init();
-    }
+    init();
 
     return () => {
       dispatch(resetCurrentPlaylist());
     };
-  }, []);
+  }, [loading]);
 
   return { isFetching };
 }

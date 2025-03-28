@@ -26,6 +26,7 @@ export default function HearBtn({
   const getMainClass = () => {
     switch (songVariant) {
       case "queue-song":
+      case "recent-song":
         return "mr-1";
       default:
         return "";
@@ -36,6 +37,7 @@ export default function HearBtn({
     if (isLiked)
       switch (songVariant) {
         case "queue-song":
+        case "recent-song":
           return "";
         default:
           return "!block";
@@ -46,7 +48,8 @@ export default function HearBtn({
   const likedHeartIconClass = () => {
     switch (songVariant) {
       case "queue-song":
-       return isSongActive ? "text-white" : theme.content_text;
+      case "recent-song":
+        return isSongActive ? "text-white" : theme.content_text;
       default:
         return theme.content_text;
     }

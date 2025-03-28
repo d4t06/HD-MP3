@@ -14,7 +14,7 @@ export default function PlaylistList({ className = "", playlists, loading }: Pro
   const { currentSongData } = useSelector(selectSongQueue);
 
   const render = () => {
-    if (!playlists.length) return <NotFound less className="mx-auto" />;
+    if (!playlists.length) return <NotFound className="mx-auto" />;
 
     return playlists.map((playlist, index) => {
       const active = currentSongData?.song.queue_id.includes(playlist.id);

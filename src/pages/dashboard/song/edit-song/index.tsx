@@ -3,7 +3,7 @@ import AddSongForm from "@/modules/add-song-form";
 import useGetSong from "../../_hooks/ueGetSong";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Center, NotFound } from "@/components";
+import { Center } from "@/components";
 import { Loading } from "../../_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 
@@ -35,12 +35,7 @@ export default function EditSongPage() {
         <Loading />
       </Center>
     );
-  if (!song)
-    return (
-      <Center>
-        <NotFound />
-      </Center>
-    );
+  if (!song) return <></>;
 
   return (
     <div className="pb-[46px]">
