@@ -1,15 +1,15 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useSongContext, useToastContext } from "@/stores";
+import { useToastContext } from "@/stores";
 import { orderBy, query, where } from "firebase/firestore";
 import { playlistCollectionRef } from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
 
 const tabs = ["All", "Result"] as const;
 
-type Tab = typeof tabs[number]
+type Tab = (typeof tabs)[number];
 
-export default function useDashboardPlaylist() {
-  const { setPlaylists, playlists } = useSongContext();
+export default function useDashboardAlbum() {
+  const [albums, setAlbums] = useState<Playlist[]>([]);
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
@@ -25,14 +25,13 @@ export default function useDashboardPlaylist() {
 
       const searchQuery = query(
         playlistCollectionRef,
-        where("is_official", "==", true),
-        where("is_album", "==", false),
+        where("is_album", "==", true),
         where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
+        where("name", "<=", value + "\uf8ff")
       );
 
       const result = await implementPlaylistQuery(searchQuery);
-      setPlaylists(result);
+      setAlbums(result);
 
       setTab("Result");
     } catch (err) {
@@ -43,19 +42,18 @@ export default function useDashboardPlaylist() {
     }
   };
 
-  const handleGetPlaylist = async () => {
+  const handleGetAlbum = async () => {
     try {
       setIsFetching(true);
 
       const searchQuery = query(
         playlistCollectionRef,
-        where("is_official", "==", true),
-        where("is_album", "==", false),
-        orderBy("updated_at", "desc"),
+        where("is_album", "==", true),
+        orderBy("created_at", "desc")
       );
 
       const result = await implementPlaylistQuery(searchQuery);
-      setPlaylists(result);
+      setAlbums(result);
     } catch (err) {
       console.log({ message: err });
 
@@ -66,7 +64,7 @@ export default function useDashboardPlaylist() {
   };
 
   useEffect(() => {
-    if (tab === "All") handleGetPlaylist();
+    if (tab === "All") handleGetAlbum();
   }, [tab]);
 
   return {
@@ -74,9 +72,10 @@ export default function useDashboardPlaylist() {
     value,
     setValue,
     handleSubmit,
-    playlists,
+    albums,
     tab,
     setTab,
-    tabs
+    tabs,
+    setAlbums
   };
 }

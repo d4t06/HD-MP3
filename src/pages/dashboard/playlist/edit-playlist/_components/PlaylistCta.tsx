@@ -1,14 +1,13 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
-import SongSelectProvider from "@/stores/SongSelectContext";
-import { ConfirmModal, Modal, ModalRef } from "@/components";
-import AddSongsToPlaylistModal from "./AddSongsToPlaylistModal";
+  import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { Button, ModalWrapper } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
@@ -69,9 +68,16 @@ export default function DashboardPlaylistCta() {
 
       case "add-song-to-playlist":
         return (
-          <SongSelectProvider>
-            <AddSongsToPlaylistModal closeModal={closeModal} />
-          </SongSelectProvider>
+          <AddSongsToPlaylistModal
+            isLoading={isFetching}
+            submit={(songs) =>
+              handlePlaylistAction({
+                variant: "add-songs",
+                songs,
+              })
+            }
+            closeModal={closeModal}
+          />
         );
     }
   };

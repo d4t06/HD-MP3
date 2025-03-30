@@ -27,6 +27,8 @@ export default function DashboardPlaylistDetail() {
 
   return (
     <div className="pb-[46px]">
+      <Title title="Edit playlist" className="mb-3" />
+
       <div className="md:flex md:-mx-3">
         <div className="space-y-2.5 md:px-3">
           <div className="w-[200px] h-[200px] mx-auto">

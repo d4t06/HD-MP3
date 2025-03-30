@@ -2,15 +2,12 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
 function useGenre() {
   const [genres, setGenres] = useState<Genre[]>([]);
-  const [languages, setLanguages] = useState<Language[]>([]);
 
   const shouldFetchGenre = useRef(true);
 
   return {
     genres,
     shouldFetchGenre,
-    languages,
-    setLanguages,
     setGenres,
   };
 }

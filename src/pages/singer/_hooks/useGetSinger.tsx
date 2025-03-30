@@ -12,7 +12,8 @@ import { implementPlaylistQuery, implementSongQuery } from "@/services/appServic
 import { nanoid } from "nanoid/non-secure";
 
 export default function useGetSinger() {
-  const { setIsFetching, setSinger, isFetching, setSongs, singer, setPlaylists } = useSingerContext();
+  const { setIsFetching, setSinger, setAlbums, isFetching, setSongs, singer, setPlaylists } =
+    useSingerContext();
   const { setErrorToast } = useToastContext();
 
   const params = useParams();
@@ -32,19 +33,27 @@ export default function useGetSinger() {
         songsCollectionRef,
         where(`singer_map.${singer.id}`, "==", true),
       );
+      const songs = await implementSongQuery(queryGetSongs, {
+        getQueueId: () => nanoid(4) + "_" + singer.id,
+      });
+
       const queryGetPlaylists = query(
         playlistCollectionRef,
         where(`singer_map.${singer.id}`, "==", true),
       );
+      const playlistsAndAlbums = await implementPlaylistQuery(queryGetPlaylists);
 
-      const songs = await implementSongQuery(queryGetSongs, {
-        getQueueId: () => nanoid(4) + "_" + singer.id,
-      });
-      const playlists = await implementPlaylistQuery(queryGetPlaylists);
+      const playlists: Playlist[] = [];
+      const albums: Playlist[] = [];
+
+      playlistsAndAlbums.forEach((p) =>
+        p.is_album ? albums.push(p) : playlists.push(p),
+      );
 
       setSongs(songs);
       setSinger(singer);
       setPlaylists(playlists);
+      setAlbums(albums)
     } catch (error) {
       console.log({ error });
       setErrorToast();
@@ -61,6 +70,5 @@ export default function useGetSinger() {
     }
   }, []);
 
-
-  return {singer, isFetching}
+  return { singer, isFetching };
 }

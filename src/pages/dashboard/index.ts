@@ -8,3 +8,4 @@ export { default as DashboardSingerPage } from "./singer";
 export { default as DashboardGenrePage } from "./genre";
 export { default as DashboardSongLyricPage } from "./edit-song-lyric";
 export { default as DashboardEditSingerPage } from "./singer/edit";
+export { default as DashboardAlbumPage } from "./album";

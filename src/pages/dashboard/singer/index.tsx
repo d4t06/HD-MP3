@@ -18,7 +18,9 @@ export default function DashboardSingerPage() {
         <AddSingerBtn />
       </div>
 
-      <div className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}>
+      <div
+        className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}
+      >
         <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
       </div>
 
@@ -29,9 +31,9 @@ export default function DashboardSingerPage() {
           <DashboardTable colList={["Name", ""]}>
             {singers.length ? (
               singers.map((s, i) => (
-                <tr className="hover:bg-black/10" key={i}>
+                <tr key={i}>
                   <td>
-                    <Link to={`/dashboard/singer/${s.id}`}>{s.name}</Link>
+                    <Link className="hover:underline" to={`/dashboard/singer/${s.id}`}>{s.name}</Link>
                   </td>
 
                   <td>-</td>

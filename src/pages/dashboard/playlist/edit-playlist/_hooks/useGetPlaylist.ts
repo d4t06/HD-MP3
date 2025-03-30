@@ -1,22 +1,10 @@
+import { implementSongQuery } from "@/services/appService";
 import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
-import { Query, documentId, getDocs, query, where } from "firebase/firestore";
+import { documentId, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
-async function implementQuery(query: Query) {
-  const songsSnap = await getDocs(query);
-
-  if (songsSnap.docs) {
-    const result = songsSnap.docs.map((doc) => {
-      const song: Song = { ...(doc.data() as SongSchema), id: doc.id, queue_id: "" };
-      return song;
-    });
-
-    return result;
-  } else return [];
-}
 
 export default function useGetPlaylist() {
   const [isFetching, setIsFetching] = useState(true);
@@ -26,7 +14,7 @@ export default function useGetPlaylist() {
   const ranEffect = useRef(false);
 
   const params = useParams();
-  const navigator = useNavigate()
+  const navigator = useNavigate();
 
   const { setErrorToast } = useToastContext();
 
@@ -36,7 +24,7 @@ export default function useGetPlaylist() {
 
       const docRef = await myGetDoc({ collectionName: "Playlists", id: params.id });
 
-      if (!docRef.exists()) return navigator("/dashboard/playlist")
+      if (!docRef.exists()) return navigator("/dashboard/playlist");
 
       const playlist: Playlist = {
         ...(docRef.data() as PlaylistSchema),
@@ -49,7 +37,7 @@ export default function useGetPlaylist() {
           where(documentId(), "in", playlist.song_ids),
         );
 
-        const result = await implementQuery(queryGetSongs);
+        const result = await implementSongQuery(queryGetSongs);
         setSongs(result);
       }
 

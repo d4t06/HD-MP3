@@ -20,7 +20,7 @@ export default function DashboardGenrePage() {
 
       <div className="flex justify-between items-start mt-3">
         <DebounceSearchBar {...rest} />
-        <AddNewGenreButton />
+        <AddNewGenreButton value={rest.value} />
       </div>
 
       <div className="mt-3">
@@ -30,8 +30,8 @@ export default function DashboardGenrePage() {
           <>
             {_genres.length ? (
               <div className="flex flex-wrap -mt-2 -mx-2">
-                {_genres.map((g, i) => (
-                  <GenreItem genre={g} key={i} />
+                {_genres.map((g) => (
+                  <GenreItem genre={g} key={g.id} />
                 ))}
               </div>
             ) : (

@@ -46,7 +46,7 @@ export default function PlaylistMenuBtn({ variant }: Props) {
             } $
             } `}
           >
-            <AdjustmentsHorizontalIcon className="w-6" />
+            <AdjustmentsHorizontalIcon className="w-5" />
           </Button>
         </MyPopupTrigger>
 

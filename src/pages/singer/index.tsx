@@ -6,6 +6,7 @@ import SingerPlaylist from "./_components/SingerPlaylist";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import BackBtn from "@/components/BackBtn";
 import { Center, NotFound } from "@/components";
+import SingerAlbum from "./_components/SingerAlbum";
 
 function Content() {
   const { isFetching, singer } = useGetSinger();
@@ -23,6 +24,7 @@ function Content() {
         <BackBtn />
         <SingerInfo />
         <SingerSongList />
+        <SingerAlbum />
         <SingerPlaylist />
       </div>
 

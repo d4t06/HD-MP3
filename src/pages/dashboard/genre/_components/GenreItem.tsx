@@ -27,6 +27,11 @@ export default function GenreItem({ genre }: Props) {
 
   const closeModal = () => modalRef.current?.close();
 
+  const handleDeleteGenre = async () => {
+    await action({ type: "delete", id: genre.id });
+    // closeModal();
+  };
+
   return (
     <>
       <ItemRightCtaFrame>
@@ -50,7 +55,7 @@ export default function GenreItem({ genre }: Props) {
         {modal === "delete" && (
           <ModalWrapper>
             <ConfirmModal
-              callback={() => action({ type: "delete", id: genre.id })}
+              callback={handleDeleteGenre}
               close={closeModal}
               loading={isFetching}
               label={`Delete genre '${genre.name}'`}

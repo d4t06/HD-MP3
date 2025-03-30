@@ -1,21 +1,22 @@
 import { NotFound, Skeleton, Tab } from "@/components";
 import Title from "@/components/ui/Title";
-import useDashboardPlaylist from "./_hooks/useDashboardPlaylist";
 import { Link } from "react-router-dom";
 import { SearchBar } from "../_components";
-import AddNewPlaylistBtn from "./_components/AddNewPlaylistBtn";
+import AddNewAlbumBtn from "./_components/AddNewAlbumBtn";
+import useDashboardAlbum from "./_hooks/useDashboardAlbum";
 import DashboardTable from "../_components/ui/Table";
 
-export default function DashboardPlaylist() {
-  const { isFetching, playlists, tab, tabs, setTab, ...rest } = useDashboardPlaylist();
+export default function DashboardAlbum() {
+  const { isFetching, albums, tab, tabs, setTab, setAlbums, ...rest } =
+    useDashboardAlbum();
 
   return (
     <div className="pb-[46px]">
-      <Title title="Playlists" />
+      <Title title="Albums" />
 
       <div className="flex justify-between mt-3">
         <SearchBar {...rest} />
-        <AddNewPlaylistBtn />
+        <AddNewAlbumBtn setAlbums={setAlbums} />
       </div>
 
       <div
@@ -28,16 +29,16 @@ export default function DashboardPlaylist() {
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
-          <DashboardTable colList={["Name", "Played", "Songs", ""]}>
-            {playlists.length ? (
-              playlists.map((p, i) => (
+          <DashboardTable colList={["Name", "Singer", ""]}>
+            {albums.length ? (
+              albums.map((p, i) => (
                 <tr key={i}>
                   <td>
-                    <Link className="hover:underline" to={`/dashboard/playlist/${p.id}`}>
-                      {p.name}
-                    </Link>
+                    <Link className="hover:underline" to={`/dashboard/album/${p.id}`}>{p.name}</Link>
                   </td>
-                  <td>-</td>
+                  <td>
+                    <Link to={`/dashboard/${p.singers[0].id}`}>{p.singers[0].name}</Link>
+                  </td>
                   <td>-</td>
 
                   <td>-</td>

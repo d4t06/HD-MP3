@@ -2,10 +2,11 @@ import { createContext, ReactNode, useContext, useState } from "react";
 
 function useSinger() {
   const [singers, setSingers] = useState<Singer[]>([]);
-  
+
   const [singer, setSinger] = useState<Singer>();
   const [songs, setSongs] = useState<Song[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [albums, setAlbums] = useState<Playlist[]>([]);
 
   return {
     singer,
@@ -16,6 +17,8 @@ function useSinger() {
     setSongs,
     playlists,
     setPlaylists,
+    albums,
+    setAlbums,
   };
 }
 

@@ -15,7 +15,7 @@ export default function HearBtn({ isLiked, playlist, className = "p-1.5" }: Prop
 
   // define style
   const classes = {
-    button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[43px] flex justify-center`,
+    button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[40px] flex justify-center`,
   };
 
   return (

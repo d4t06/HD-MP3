@@ -9,6 +9,8 @@ function useSinger() {
 
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
+  const [albums, setAlbums] = useState<Playlist[]>([]);
+
   return {
     singer,
     setSinger,
@@ -17,6 +19,8 @@ function useSinger() {
     songs,
     setSongs,
     playlists,
+    albums,
+    setAlbums,
     setPlaylists,
   };
 }

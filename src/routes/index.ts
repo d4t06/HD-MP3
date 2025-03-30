@@ -19,9 +19,11 @@ import {
   DashboardSongLyricPage,
   DashboardSongPage,
   DashboardEditSingerPage,
+  DashboardAlbumPage,
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
+import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
 
 const pubicRouteMap = {
   home: "/",
@@ -48,6 +50,8 @@ const privateRouteMap = {
   songLyric: "/dashboard/lyric/:id",
   singer: "/dashboard/singer",
   editSinger: "/dashboard/singer/:id",
+  album: "/dashboard/album",
+  editAlbum: "/dashboard/album/:id",
 };
 
 export type PlaylistParamsType = {
@@ -97,6 +101,16 @@ const privateRoutes = [
     path: privateRouteMap.playlistDetail,
     component: DashboardEditPlaylistPage,
     layout: PlaylistLayout,
+  },
+  {
+    path: privateRouteMap.album,
+    component: DashboardAlbumPage,
+    layout: "",
+  },
+  {
+    path: privateRouteMap.editAlbum,
+    component: DashboardEditAlbumPage,
+    layout: "",
   },
   {
     path: privateRouteMap.song,

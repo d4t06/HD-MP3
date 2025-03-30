@@ -1,7 +1,7 @@
 import ModalHeader from "@/components/ModalHeader";
 import Input from "@/components/ui/Input";
 import { useToastContext } from "@/stores";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import useGenreAction from "../../_hooks/useGenreAction";
 import { Button, ModalWrapper } from "../../_components/ui";
@@ -32,6 +32,8 @@ export default function AddGenreModal({
 
   const { action, isFetching } = useGenreAction();
   const { setErrorToast } = useToastContext();
+
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const ableToSubmit = !!name;
 
@@ -68,6 +70,10 @@ export default function AddGenreModal({
     label: "text-[#3f3f3f] text-lg",
   };
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   const title = props.type === "edit" ? `Edit '${props.genre.name}'` : `Add genre`;
 
   return (
@@ -78,6 +84,7 @@ export default function AddGenreModal({
         <div className={classes.inputGroup}>
           <label className={classes.label}>Genre name:</label>
           <Input
+            ref={inputRef}
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter name..."

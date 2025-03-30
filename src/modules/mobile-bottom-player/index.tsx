@@ -66,14 +66,14 @@ const MobileBottomPlayer = () => {
             <div className="flex-grow  ml-[10px]">
               {currentSongData?.song.song_url && (
                 <>
-                  <div className="h-[30px] relative overflow-hidden">
-                    <div className="absolute left-0 whitespace-nowrap font-playwriteCU leading-[1.5]">
-                      {currentSongData?.song.name || "name"}
-                    </div>
-                  </div>
-                  {/* <p className={`opacity-70 line-clamp-1`}>
-                    {currentSongData?.song.singer || "singer"}
-                  </p> */}
+                  <p className="font-playwriteCU line-clamp-1">
+                    {currentSongData?.song.name || "..."}
+                  </p>
+                  <p className={`opacity-70 text-sm line-clamp-1`}>
+                    {currentSongData?.song.singers.map(
+                      (s, i) => (i ? ", " : "") + s.name,
+                    )}
+                  </p>
                 </>
               )}
             </div>

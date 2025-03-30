@@ -1,29 +1,26 @@
-import { useThemeContext } from "@/stores";
+import { useSongSelectContext, useThemeContext } from "@/stores";
 import { useMemo } from "react";
 import { ModalHeader } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
-import useAddSongToPlaylistModal from "../_hooks/useAddSongToPlaylistModal";
 import { CheckIcon } from "@heroicons/react/24/outline";
+import useSearchSong from "./_hooks/useSearchSong";
+import SongSelectProvider from "@/stores/SongSelectContext";
 
 type Props = {
   closeModal: () => void;
+  submit: (songs: Song[]) => void;
+  isLoading: boolean;
 };
 
-export default function AddSongsToPlaylistModal({ closeModal }: Props) {
+function Content({ closeModal, submit, isLoading }: Props) {
   const { theme } = useThemeContext();
 
-  const {
-    isFetching,
-    songs,
-    selectedSongs,
-    handleAddSongsToPlaylist,
-    selectSong,
-    actionFetching,
-    ...rest
-  } = useAddSongToPlaylistModal();
+  const { songs, isFetching, ...rest } = useSearchSong();
+  const { selectedSongs, selectSong } = useSongSelectContext();
 
-  const _handleAddSongsToPlaylist = async () => {
-    await handleAddSongsToPlaylist();
+  const handleSubmit = async () => {
+    if (!selectedSongs.length) return;
+    submit(selectedSongs);
     closeModal();
   };
 
@@ -40,7 +37,7 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
   };
 
   return (
-    <div className="w-[700px] max-w-[85vw] h-[80vh] flex flex-col">
+    <>
       <ModalHeader close={closeModal} title="Add song to playist" />
 
       <div className="flex-grow flex flex-col md:flex-row md:-mx-3 overflow-hidden">
@@ -83,11 +80,23 @@ export default function AddSongsToPlaylistModal({ closeModal }: Props) {
       </div>
 
       <p className="text-right mt-3">
-        <Button loading={actionFetching} onClick={_handleAddSongsToPlaylist}>
+        <Button
+          disabled={!selectedSongs.length}
+          loading={isLoading}
+          onClick={handleSubmit}
+        >
           <CheckIcon className="w-6" />
           <span>Add</span>
         </Button>
       </p>
-    </div>
+    </>
+  );
+}
+
+export default function AddSongsToPlaylistModal(props: Props) {
+  return (
+    <SongSelectProvider>
+      <Content {...props} />
+    </SongSelectProvider>
   );
 }

@@ -1,42 +1,32 @@
 import { useThemeContext } from "@/stores";
-import { CheckIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 
 type Props = {
   toast: Toast;
   onClick?: (id: string) => void;
   className?: string;
-  variant?: "notify";
 };
 
-type MessageProps = {
-  className?: string;
-  message: string;
-  variant?: "message";
-};
-
-export default function ToastItem({ className = "", ...props }: Props | MessageProps) {
+export default function ToastItem({ className = "", toast, onClick }: Props) {
   const { theme } = useThemeContext();
 
-  const variant = props.variant || "notify";
   const [isOpen, setIsOpen] = useState(false);
 
   const classes = {
     icon: `w-6`,
-    container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center ${theme.content_bg} border border-${theme.alpha}`,
+    container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center ${theme.modal_bg}`,
     text: `font-[500] text-sm`,
     open: "opacity-[1] translate-x-0",
     init: "opacity-0 translate-x-10",
   };
 
   const renderIcon = () => {
-    if (props.variant === "notify") {
-      switch (props.toast.variant) {
-        case "success":
-          return <CheckIcon className={`${classes.icon}`} />;
-        case "error":
-          return <XMarkIcon className={`${classes.icon}`} />;
-      }
+    switch (toast.variant) {
+      case "success":
+        return <CheckIcon  className={`${classes.icon} text-emerald-500`} />;
+      case "error":
+        return <XMarkIcon className={`${classes.icon} text-red-500`} />;
     }
   };
 
@@ -48,20 +38,13 @@ export default function ToastItem({ className = "", ...props }: Props | MessageP
 
   return (
     <div
-      onClick={() =>
-        props.variant === "notify" && props.onClick
-          ? props.onClick(props.toast.id)
-          : undefined
-      }
-      className={`${classes.container} ${className} ${isOpen ? classes.open : classes.init} `}
+      onClick={() => (onClick ? onClick(toast.id) : undefined)}
+      className={`${classes.container} ${className} ${
+        isOpen ? classes.open : classes.init
+      } `}
     >
-      {variant === "notify" && renderIcon()}
-
-      <p className={classes.text}>
-        {/*@ts-ignore*/}
-        {variant === "notify" && props.toast.desc}
-        {props.variant === "message" && props.message}
-      </p>
+      {renderIcon()}
+      <p className={classes.text}>{toast.desc}</p>
     </div>
   );
 }

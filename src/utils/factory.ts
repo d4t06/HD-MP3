@@ -41,6 +41,7 @@ export const initPlaylistObject = (
     singer_map: {},
     genre_map: {},
     genres: [],
+    is_album: false,
     like: 0,
     blurhash_encode: "",
     is_public: true,
@@ -52,6 +53,24 @@ export const initPlaylistObject = (
   };
 
   return playlist;
+};
+
+export const initAlbumObject = ({
+  owner_email,
+  distributor,
+  ...data
+}: Partial<PlaylistSchema> & {
+  owner_email: string;
+  distributor: string;
+}) => {
+  return initPlaylistObject({
+    owner_email,
+    is_album: true,
+    is_official: true,
+    is_public: true,
+    distributor,
+    ...data,
+  });
 };
 
 export const initSingerObject = (data: Partial<SingerSchema>) => {

@@ -4,7 +4,11 @@ import { useRef } from "react";
 import { Button } from "../../_components";
 import AddGenreModal from "./AddGenreModal";
 
-export default function AddNewGenreButton() {
+type Props = {
+  value: string;
+};
+
+export default function AddNewGenreButton({ value }: Props) {
   const modalRef = useRef<ModalRef>(null);
 
   return (
@@ -19,7 +23,11 @@ export default function AddNewGenreButton() {
       </Button>
 
       <Modal ref={modalRef} variant="animation" wrapped={false}>
-        <AddGenreModal type="add" closeModal={() => modalRef.current?.close()} />
+        <AddGenreModal
+          genreName={value}
+          type="add"
+          closeModal={() => modalRef.current?.close()}
+        />
       </Modal>
     </>
   );

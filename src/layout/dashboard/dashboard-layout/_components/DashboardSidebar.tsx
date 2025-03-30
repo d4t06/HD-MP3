@@ -29,6 +29,11 @@ export const routeList = [
     icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
   },
   {
+    path: "/dashboard/album",
+    title: "Albums",
+    icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
+  },
+  {
     path: "/dashboard/singer",
     title: "Singers",
     icon: <UserIcon className="w-5 flex-shrink-0" />,
