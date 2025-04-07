@@ -5,6 +5,7 @@ import { Image, Input, ModalHeader } from "@/components";
 import useAddSingerModal, { UseAddSingerModalProps } from "../_hooks/useAddSingerModal";
 import { inputClasses } from "@/components/ui/Input";
 import { Button } from "../../_components";
+import { ContentWrapper } from "../../_components/ui/ModalWrapper";
 
 export default function AddSingerModal(props: UseAddSingerModalProps) {
   const { theme } = useThemeContext();
@@ -26,7 +27,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   if (!singerData) return;
 
   return (
-    <div className="w-[700px]">
+    <ContentWrapper className="w-[700px]">
       <ModalHeader
         close={props.closeModal}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}
@@ -102,6 +103,6 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
           Save
         </Button>
       </p>
-    </div>
+    </ContentWrapper>
   );
 }

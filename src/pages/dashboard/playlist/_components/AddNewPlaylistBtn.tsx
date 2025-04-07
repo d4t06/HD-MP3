@@ -5,6 +5,7 @@ import { useAuthContext } from "@/stores";
 import { Button } from "../../_components";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import { useAddPlaylist } from "@/hooks";
+import { ContentWrapper } from "../../_components/ui/ModalWrapper";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();
@@ -35,13 +36,15 @@ export default function AddNewPlaylistBtn() {
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <AddPlaylistModal
-          close={closeModal}
-          isLoading={isFetching}
-          variant="add"
-          user={user}
-          submit={_handleAddPlaylist}
-        />
+        <ContentWrapper className="w-[500px]">
+          <AddPlaylistModal
+            close={closeModal}
+            isLoading={isFetching}
+            variant="add"
+            user={user}
+            submit={_handleAddPlaylist}
+          />
+        </ContentWrapper>
       </Modal>
     </>
   );

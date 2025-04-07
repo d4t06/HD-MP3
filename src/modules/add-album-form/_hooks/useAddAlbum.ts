@@ -34,7 +34,7 @@ export default function useAddAlbum(props: ComponentProps<typeof AddAlbumModal>)
 
 		return (
 			albumData.name !== album.name ||
-			(singer && singer.id !== album.singers[0].id) ||
+			singer.id !== album.singers[0].id ||
 			!!songs.find((s) => !album.song_ids.includes(s.id))
 		);
 	}, [albumData, album, singer, songs]);
@@ -116,6 +116,9 @@ export default function useAddAlbum(props: ComponentProps<typeof AddAlbumModal>)
 						distributor: props.user.email,
 					}),
 				);
+
+				setSinger(props.singer);
+
 				break;
 
 			case "edit":

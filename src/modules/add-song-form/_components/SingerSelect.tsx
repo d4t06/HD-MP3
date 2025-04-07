@@ -1,11 +1,12 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { Modal, ModalRef, Title } from "@/components";
+import { ModalRef, Title } from "@/components";
 import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import DashBoardModal from "@/pages/dashboard/_components/ui/Modal";
 
 export default function SingerSelect() {
   const { singers, selectSinger } = useAddSongContext();
@@ -53,9 +54,9 @@ export default function SingerSelect() {
         </Frame>
       </div>
 
-      <Modal wrapped={false} variant="animation" ref={modalRef}>
+      <DashBoardModal ref={modalRef}>
         <SingerSearchModal closeModal={closeModal} choose={handleChoose} />
-      </Modal>
+      </DashBoardModal>
     </>
   );
 }

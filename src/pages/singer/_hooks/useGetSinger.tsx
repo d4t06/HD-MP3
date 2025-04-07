@@ -12,8 +12,15 @@ import { implementPlaylistQuery, implementSongQuery } from "@/services/appServic
 import { nanoid } from "nanoid/non-secure";
 
 export default function useGetSinger() {
-  const { setIsFetching, setSinger, setAlbums, isFetching, setSongs, singer, setPlaylists } =
-    useSingerContext();
+  const {
+    setIsFetching,
+    setSinger,
+    setAlbums,
+    isFetching,
+    setSongs,
+    singer,
+    setPlaylists,
+  } = useSingerContext();
   const { setErrorToast } = useToastContext();
 
   const params = useParams();
@@ -53,7 +60,7 @@ export default function useGetSinger() {
       setSongs(songs);
       setSinger(singer);
       setPlaylists(playlists);
-      setAlbums(albums)
+      setAlbums(albums);
     } catch (error) {
       console.log({ error });
       setErrorToast();

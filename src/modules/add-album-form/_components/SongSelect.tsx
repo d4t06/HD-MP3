@@ -1,9 +1,9 @@
 import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Modal, ModalRef } from "@/components";
+import { ModalRef } from "@/components";
 import { useRef } from "react";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
-import { Button, ModalWrapper } from "@/pages/dashboard/_components";
+import { Button, DashboardModal } from "@/pages/dashboard/_components";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 
 export default function AlbumSongSelect() {
@@ -52,7 +52,7 @@ export default function AlbumSongSelect() {
 						</tr>
 					))}
 
-					<tr>
+					<tr className="!bg-white">
 						<td colSpan={3}>
 							<p className="text-center">
 								<Button onClick={() => modalRef.current?.open()}>
@@ -65,15 +65,13 @@ export default function AlbumSongSelect() {
 				</DashboardTable>
 			</div>
 
-			<Modal wrapped={false} variant="animation" ref={modalRef}>
-				<ModalWrapper className="w-[700px] min-h-[50vh]">
-					<AddSongsToPlaylistModal
-						submit={handleSetSongs}
-						closeModal={() => modalRef.current?.close()}
-						isLoading={false}
-					/>
-				</ModalWrapper>
-			</Modal>
+			<DashboardModal wrapped={false} variant="animation" ref={modalRef}>
+				<AddSongsToPlaylistModal
+					submit={handleSetSongs}
+					closeModal={() => modalRef.current?.close()}
+					isLoading={false}
+				/>
+			</DashboardModal>
 		</>
 	);
 }

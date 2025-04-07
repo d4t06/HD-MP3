@@ -6,6 +6,8 @@ type Props = {
 export default function useMobileFullScreenPlayer({ isOpenFullScreen }: Props) {
   const wrapperRef = useRef<ElementRef<"div">>(null);
 
+  // const scrollRef = useRef(0);
+
   useEffect(() => {
     const wrapperEle = wrapperRef.current;
     if (!wrapperEle) return;
@@ -21,16 +23,29 @@ export default function useMobileFullScreenPlayer({ isOpenFullScreen }: Props) {
     }
   }, [isOpenFullScreen]);
 
-  const handleOverflow = () => {
-    const body = document.querySelector("body");
-    if (body) {
-      if (isOpenFullScreen) body.style.overflow = "hidden";
-      else body.style.overflow = "auto";
-    }
-  };
-  useEffect(() => {
-    handleOverflow();
-  }, [isOpenFullScreen]);
+  // const handleOverflow = () => {
+  //   const body = document.querySelector("body");
+  //   // const pageContainer = document.querySelector(".page-container") as HTMLElement;
+
+  //   if (body) {
+  //     if (isOpenFullScreen) {
+
+  //       body.style.overflow = "hidden";
+  //     } else {
+  //       setTimeout(() => {
+  //         window.scrollTo({
+  //           top: scrollRef.current,
+  //         });
+  //       }, 0);
+
+  //       body.style.overflow = "auto";
+  //       pageContainer.style.position = "unset";
+  //     }
+  //   }
+  // };
+  // useEffect(() => {
+  //   handleOverflow();
+  // }, [isOpenFullScreen]);
 
   return { wrapperRef };
 }

@@ -1,5 +1,6 @@
-import { Input, Modal, ModalHeader, ModalRef } from "@/components";
-import { Button, ModalWrapper } from "@/pages/dashboard/_components";
+import { Input, ModalHeader, ModalRef } from "@/components";
+import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
@@ -27,43 +28,46 @@ export default function EditSongBtn() {
 		<>
 			<Button
 				onClick={() => modalRef.current?.open()}
-				className="h-[36px] justify-center w-[36px]"
+				className="p-1 justify-center md:px-3"
 				size={"clear"}
 			>
 				<PencilIcon className="w-5" />
+				<span className="hidden md:block">Edit</span>
 			</Button>
 
-			<Modal variant="animation" wrapped={false} ref={modalRef}>
-				<ModalWrapper>
+			<DashboardModal variant="animation" wrapped={false} ref={modalRef}>
+				<ContentWrapper>
 					<ModalHeader title="Edit song" close={() => modalRef.current?.close()} />
 
-					<div>
-						<p>Name:</p>
-						<Input
-							className="bg-black/10"
-							value={localSongData?.name}
-							onChange={(e) => updateLocalSongData({ name: e.target.value })}
-						/>
-					</div>
+					<div className="space-y-2.5">
+						<div>
+							<p>Name:</p>
+							<Input
+								className="bg-black/10"
+								value={localSongData?.name}
+								onChange={(e) => updateLocalSongData({ name: e.target.value })}
+							/>
+						</div>
 
-					<div className="t">
-						<p>Like:</p>
-						<Input
-							className="bg-black/10"
-							value={localSongData?.like}
-							onChange={(e) =>
-								!isNaN(+e.target.value)
-									? updateLocalSongData({ like: +e.target.value })
-									: {}
-							}
-						/>
+						<div className="t">
+							<p>Like:</p>
+							<Input
+								className="bg-black/10"
+								value={localSongData?.like}
+								onChange={(e) =>
+									!isNaN(+e.target.value)
+										? updateLocalSongData({ like: +e.target.value })
+										: {}
+								}
+							/>
+						</div>
 					</div>
 
 					<p className="mt-5 text-right">
 						<Button onClick={_updateSongData}>Ok</Button>
 					</p>
-				</ModalWrapper>
-			</Modal>
+				</ContentWrapper>
+			</DashboardModal>
 		</>
 	);
 }

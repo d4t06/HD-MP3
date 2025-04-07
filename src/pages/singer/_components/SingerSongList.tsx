@@ -17,7 +17,7 @@ export default function SingerSongList() {
           {isFetching ? (
             SongItemSkeleton
           ) : (
-            <SongList songs={songs} setSong={(s) => handleSetSong(s.queue_id, songs)} />
+            <SongList songs={songs} setSong={(s) => handleSetSong(s.queue_id, [s])} />
           )}
         </SongSelectProvider>
       </div>

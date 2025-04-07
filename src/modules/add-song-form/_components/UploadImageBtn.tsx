@@ -1,5 +1,6 @@
-import { Modal, ModalRef } from "@/components";
-import { Button } from "@/pages/dashboard/_components";
+import { ModalRef } from "@/components";
+import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import {
   PhotoIcon,
@@ -33,9 +34,10 @@ export default function UploadImageBtn() {
       <Button className="" size={"clear"}>
         <label
           htmlFor="image_upload"
-          className={`inline-flex py-1.5 space-x-1 cursor-pointer px-5 `}
+          className={`inline-flex p-1 space-x-1 cursor-pointer md:px-3`}
         >
           <PhotoIcon className="w-6" />
+          <span className="hidden md:block">Change image</span>
         </label>
       </Button>
 
@@ -52,10 +54,11 @@ export default function UploadImageBtn() {
       {songData?.image_url && (
         <Button
           onClick={() => modalRef.current?.open()}
-          className="h-[36px] justify-center w-[36px]"
+          className="p-1 justify-center md:px-3"
           size={"clear"}
         >
           <QuestionMarkCircleIcon className="w-6" />
+          <span className="hidden md:block">Image info</span>
         </Button>
       )}
       <input
@@ -69,10 +72,12 @@ export default function UploadImageBtn() {
       />
 
       {songData?.image_url && (
-        <Modal variant="animation" ref={modalRef}>
-          <p>Url: {songData?.image_url}</p>
-          <p>Hash: {songData?.blurhash_encode}</p>
-        </Modal>
+        <DashboardModal variant="animation" ref={modalRef} wrapped={false}>
+          <ContentWrapper>
+            <p>Url: {songData?.image_url}</p>
+            <p>Hash: {songData?.blurhash_encode}</p>
+          </ContentWrapper>
+        </DashboardModal>
       )}
     </>
   );

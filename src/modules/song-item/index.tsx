@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { MouseEventHandler, useMemo } from "react";
 
 import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
@@ -138,13 +138,25 @@ function SongItem({
     }
   };
 
+  const handleMobileClick: MouseEventHandler = (e) => {
+    if (!isOnMobile) return;
+
+    const node = e.target as HTMLElement;
+
+console.log(node.tagName)
+
+    if (node.tagName === "A") return;
+
+    onClick();
+  };
+
   const leftContent = (
     <>
       {isHasCheckBox && (
         <CheckBox isChecked={isChecked} isSelected={isSelected} onClick={handleSelect} />
       )}
 
-      <div className="flex-grow flex" onClick={isOnMobile ? onClick : () => {}}>
+      <div className="flex-grow flex" onClick={handleMobileClick}>
         <div className={`${classes.imageFrame} ${getSongImageSize()}`}>
           <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
           {imageOverlay}

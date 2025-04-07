@@ -1,11 +1,12 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { Modal, ModalRef, Title } from "@/components";
+import { ModalRef, Title } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
 import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import DashBoardModal from "@/pages/dashboard/_components/ui/Modal";
 
 export default function GenreSelect() {
   const { genres, selectGenre } = useAddSongContext();
@@ -52,9 +53,9 @@ export default function GenreSelect() {
         </Frame>
       </div>
 
-      <Modal wrapped={false} variant="animation" ref={modalRef}>
+      <DashBoardModal ref={modalRef}>
         <GenreSearchModal closeModal={closeModal} choose={handleChoose} />
-      </Modal>
+      </DashBoardModal>
     </>
   );
 }

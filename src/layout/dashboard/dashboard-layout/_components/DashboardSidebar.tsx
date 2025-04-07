@@ -1,5 +1,6 @@
 import {
   ComputerDesktopIcon,
+  FilmIcon,
   HomeIcon,
   MusicalNoteIcon,
   NewspaperIcon,
@@ -31,7 +32,7 @@ export const routeList = [
   {
     path: "/dashboard/album",
     title: "Albums",
-    icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
+    icon: <FilmIcon className="w-5 flex-shrink-0" />,
   },
   {
     path: "/dashboard/singer",

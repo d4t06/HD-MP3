@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { formatTime } from "@/utils/appHelpers";
 import SingerItem from "./_components/SingerItem";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
+import PlaylistLike from "./_components/PlaylistLike";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
@@ -50,7 +51,7 @@ export default function DashboardPlaylistDetail() {
                 {songs.length} songs - {formatTime(playlistDuration)}
               </p>
 
-              <p>{playlist.like} likes</p>
+              <PlaylistLike  variant="edit" playlist={playlist} />
             </Frame>
           </div>
 

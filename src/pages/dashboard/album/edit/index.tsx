@@ -6,8 +6,6 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 export default function DashboardEditAlbumPage() {
 	const { album, isFetching } = useGetAlbum();
 
-	console.log(album);
-
 	if (isFetching)
 		return (
 			<Center>

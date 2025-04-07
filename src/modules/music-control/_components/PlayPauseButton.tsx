@@ -33,7 +33,7 @@ function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
   return (
     <>
       <button
-        className={`p-1  inline-flex items-center justify-center`}
+        className={`inline-flex items-center justify-center`}
         onClick={() => handlePlayPause()}
       >
         {renderIcon()}

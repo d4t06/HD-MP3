@@ -36,7 +36,7 @@ export default function AddNewAlbumBtn({ setAlbums }: Props) {
       <Modal wrapped={false} ref={modalRef} variant="animation">
         <ModalWrapper className="w-[800px]">
           <Title title="Add album" />
-          <AddAlbumForm variant="add" user={user} callback={handlePushAlbum} />
+          <AddAlbumForm className="overflow-auto" variant="add" user={user} callback={handlePushAlbum} />
         </ModalWrapper>
       </Modal>
     </>

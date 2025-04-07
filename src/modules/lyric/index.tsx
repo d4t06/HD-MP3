@@ -38,7 +38,7 @@ export default function LyricsList({ className, active }: Props) {
           status={status}
           key={index}
           text={l.text}
-          className={` mb-[30px] last:mb-[50vh]`}
+          className={`mb-[10px] md:mb-[30px] last:mb-[50vh]`}
         />
       );
     });

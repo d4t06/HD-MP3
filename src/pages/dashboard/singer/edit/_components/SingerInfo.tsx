@@ -12,7 +12,7 @@ export default function SingerInfo() {
   return (
     <>
       <div className="md:flex">
-        <div className="w-[70%] mx-auto md:w-1/4 md:flex-shrink-0 md:m-unset">
+        <div className="w-[260px] h-[260px] mx-auto md:m-unset">
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (

@@ -61,8 +61,8 @@ export default function AddSongForm(props: Props) {
       {songData && (
         <>
           <div className="md:flex md:space-x-5">
-            <div className="flex flex-col items-center md:block space-y-2.5">
-              <div className="w-[200px] h-[200px] bg-black/5 rounded-lg overflow-hidden">
+            <div className="flex flex-col items-center md:w-1/3 md:block space-y-2.5">
+              <div className="w-[200px] h-[200px] mx-auto bg-black/5 rounded-lg overflow-hidden">
                 <Image
                   className="object-cover h-full"
                   blurHashEncode={songData.blurhash_encode}
@@ -82,9 +82,8 @@ export default function AddSongForm(props: Props) {
                 </div>
               )}
 
-              <div className="space-x-2 flex w-full">
+              <div className="-mt-2 -ml-2 flex flex-wrap w-full [&_button]:mt-2 [&_button]:ml-2">
                 <UploadImageBtn />
-
                 {props.variant === "edit" && <EditSongBtn />}
               </div>
             </div>

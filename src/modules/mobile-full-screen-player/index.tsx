@@ -12,11 +12,12 @@ import { usePlayerContext } from "@/stores";
 import useMobileFullScreenPlayer from "./_hooks/useMobileFullScreenPlayer";
 import MobileSongThumbnail from "./_components/SongThumbnail";
 import LyricsList from "../lyric";
-import MusicControl from "../music-control";
 import MobileSongQueue from "./_components/SongQueue";
 import ScrollText from "../scroll-text";
 import SleepTimerButton from "../sleep-timer-button";
 import FullScreenPlayerTab from "../full-screen-player/_components/Tabs";
+import { Link } from "react-router-dom";
+import MobileFullScreenControl from "./_components/Control";
 
 export default function MobileFullScreenPlayer() {
   // use stores
@@ -34,7 +35,7 @@ export default function MobileFullScreenPlayer() {
   const classes = {
     headerWrapper: "flex mb-4",
     container: "flex-grow flex flex-col relative overflow-hidden",
-    control: "flex flex-col-reverse justify-center",
+    control: "",
 
     bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
     button: "flex justify-center items-center rounded-full w-[38px]",
@@ -96,9 +97,11 @@ export default function MobileFullScreenPlayer() {
                 <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
                   {currentSongData?.song.name}
                 </p>
-                {/* <div className="opacity-70 translate-y-[-4px] leading-[1] line-clamp-1">
-                  {currentSongData?.song.singer}
-                </div> */}
+                <div className={`opacity-[.7] line-clamp-1 text-sm`}>
+                  {currentSongData?.song.singers.map((s, i) => (
+                    <span key={i}> {(i ? ", " : "") + s.name}</span>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -117,14 +120,17 @@ export default function MobileFullScreenPlayer() {
                     content={currentSongData?.song.name || "..."}
                   />
                 </div>
-                {/* <div className={"h-[28px]"}>
-                  <ScrollText
-                    className={`opacity-60 ${
-                      mobileActiveTab === "Playing" ? "text-lg" : "text-base"
-                    }`}
-                    content={currentSongData?.song.singer || "..."}
-                  />
-                </div> */}
+                <div className={`opacity-[.7] line-clamp-1 text-sm`}>
+                  {currentSongData?.song.singers.map((s, i) =>
+                    s.id ? (
+                      <Link to={`/singer/${s.id}`} key={i}>
+                        {(i ? ", " : "") + s.name}
+                      </Link>
+                    ) : (
+                      <span key={i}> {(i ? ", " : "") + s.name}</span>
+                    ),
+                  )}
+                </div>
               </div>
 
               <SleepTimerButton />
@@ -135,7 +141,7 @@ export default function MobileFullScreenPlayer() {
               {/* >>> lyric tab */}
               <LyricsList
                 active={isOpenFullScreen && mobileActiveTab === "Lyric"}
-                className={`text-center ${
+                className={`text-left ${
                   mobileActiveTab === "Lyric" ? "flex-1 block" : "hidden"
                 }`}
               />
@@ -166,9 +172,9 @@ export default function MobileFullScreenPlayer() {
             <div
               className={`${classes.control} ${
                 mobileActiveTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
-              } ${mobileActiveTab === "Playing" ? "flex-grow" : ""}`}
+              } ${mobileActiveTab === "Playing" ? "mt-auto" : ""}`}
             >
-              <MusicControl variant="mobile" ref={controlRef} />
+              <MobileFullScreenControl ref={controlRef} />
             </div>
           </div>
         </div>

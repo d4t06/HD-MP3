@@ -69,7 +69,6 @@ export default function FullScreenPlayerSetting() {
             <p className={classes.text}>Song background</p>
             <Switch
               size="thin"
-              className="bg-white/10"
               active={songBackground}
               cb={() => dispatch(togglePlayControl({ variant: "songBackground" }))}
             />

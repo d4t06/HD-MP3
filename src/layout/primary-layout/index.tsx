@@ -16,8 +16,8 @@ export default function PrimaryLayout() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const classes = {
-    page: `md:flex md:h-screen md:overflow-hidden ${theme.container} ${theme.text_color}`,
-    container: `h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:overflow-auto`,
+    page: `md:flex md:h-screen  ${theme.container} ${theme.text_color}`,
+    container: `md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[30px] md:pt-[60px] md:overflow-auto`,
   };
 
   useEffect(() => {

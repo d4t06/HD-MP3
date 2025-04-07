@@ -2,7 +2,6 @@ import { useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
-  ForwardIcon,
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
@@ -13,7 +12,7 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { Image } from "@/components";
 
-const MobileBottomPlayer = () => {
+export default function MobileBottomPlayer() {
   const { theme } = useThemeContext();
   const { controlRef, isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
@@ -37,11 +36,11 @@ const MobileBottomPlayer = () => {
   }, [playStatus]);
 
   const classes = {
-    wrapper: `block md:hidden fixed bottom-0 transition-transform w-full h-[80px] border-t border-${theme.alpha} z-40  px-4`,
+    wrapper: `block md:hidden fixed bottom-0 transition-transform w-full h-[80px] overflow-hidden border-t border-${theme.alpha} z-40  px-4`,
     container: `absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
-    cta: `pl-2 flex-shrink-0`,
+    cta: `ml-2 flex-shrink-0`,
   };
 
   return (
@@ -52,7 +51,7 @@ const MobileBottomPlayer = () => {
         }`}
       ></div>
 
-      <div className={`flex items-center  h-full`}>
+      <div className={`flex justify-between items-center h-full`}>
         <div
           onClick={() => (currentSongData?.song.name ? setIsOpenFullScreen(true) : {})}
           className={`mobile-current-song flex-grow`}
@@ -63,7 +62,7 @@ const MobileBottomPlayer = () => {
               <Image src={currentSongData?.song.image_url} className="rounded-full" />
             </div>
 
-            <div className="flex-grow  ml-[10px]">
+            <div className="flex-grow ml-2">
               {currentSongData?.song.song_url && (
                 <>
                   <p className="font-playwriteCU line-clamp-1">
@@ -88,13 +87,11 @@ const MobileBottomPlayer = () => {
           >
             {renderIcon}
           </button>
-          <button onClick={() => controlRef.current?.handleNext()} className={`p-[4px]`}>
+          {/*    <button onClick={() => controlRef.current?.handleNext()} className={`p-[4px]`}>
             <ForwardIcon className="w-10" />
-          </button>
+          </button>*/}
         </div>
       </div>
     </div>
   );
-};
-
-export default MobileBottomPlayer;
+}

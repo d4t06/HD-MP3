@@ -5,8 +5,9 @@ import useDashboardPlaylistActions, {
 import { DashboardSongMenuWrapper } from "..";
 import { PhotoIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
-import { Modal, ModalRef, Title } from "@/components";
-import { ModalWrapper } from "@/pages/dashboard/_components";
+import { ModalRef, Title } from "@/components";
+import { DashboardModal } from "@/pages/dashboard/_components";
+import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 
 type Props = {
   song: Song;
@@ -99,12 +100,13 @@ export default function PlaylistMenu({ song }: Props) {
         )}
       </DashboardSongMenuWrapper>
 
-      <Modal wrapped={false} variant="animation" ref={modalRef}>
-        <ModalWrapper>
+      <DashboardModal ref={modalRef}>
+        <ContentWrapper>
           <Title title="Singers" />
           <div className="space-x-2 mt-3 [&>*]:px-3 [&>*]:py-1 [&>*]:rounded-md  [&>*]:bg-[#f1f1f1] hover:[&>*]:bg-black/10">
-            {song.singers.map((s) => (
+            {song.singers.map((s, i) => (
               <button
+                key={i}
                 onClick={() =>
                   handlePlaylistAction({
                     variant: "add-singer",
@@ -116,8 +118,8 @@ export default function PlaylistMenu({ song }: Props) {
               </button>
             ))}
           </div>
-        </ModalWrapper>
-      </Modal>
+        </ContentWrapper>
+      </DashboardModal>
     </>
   );
 }

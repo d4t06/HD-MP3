@@ -39,9 +39,6 @@ export default function PlaySingerSongBtn() {
 
   const handlePlaySingerSong = () => {
     const firstSong = songs[0];
-
-    console.log(songs)
-
     handleSetSong(firstSong.queue_id, songs);
   };
 

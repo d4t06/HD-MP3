@@ -1,13 +1,15 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
-  import { ConfirmModal, Modal, ModalRef } from "@/components";
+import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { Button, ModalWrapper } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
+import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
+import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
@@ -40,19 +42,21 @@ export default function DashboardPlaylistCta() {
 
         return (
           <>
-            <AddPlaylistModal
-              submit={(playlist, imageFile) =>
-                handlePlaylistAction({
-                  variant: "edit-playlist",
-                  playlist,
-                  imageFile,
-                })
-              }
-              variant="edit"
-              isLoading={isFetching}
-              playlist={playlist}
-              close={closeModal}
-            />
+            <ContentWrapper className="w-[500px]">
+              <AddPlaylistModal
+                submit={(_playlist, imageFile) =>
+                  handlePlaylistAction({
+                    variant: "edit-playlist",
+                    playlist: _playlist,
+                    imageFile,
+                  })
+                }
+                variant="edit"
+                isLoading={isFetching}
+                playlist={playlist}
+                close={closeModal}
+              />
+            </ContentWrapper>
           </>
         );
 
@@ -82,40 +86,30 @@ export default function DashboardPlaylistCta() {
     }
   };
 
-  const classes = {
-    button: "p-1.5",
-  };
-
   return (
-    <div className="space-x-2">
-      <Button
-        onClick={() => openModal("edit")}
-        size={"clear"}
-        className={`${classes.button} `}
-      >
-        <PencilIcon className="w-5" />
-      </Button>
+    <>
+      <ButtonCtaFrame>
+        <Button onClick={() => openModal("edit")} size={"clear"}>
+          <PencilIcon className="w-5" />
 
-      <Button
-        onClick={() => openModal("delete")}
-        size={"clear"}
-        className={`${classes.button} `}
-      >
-        <TrashIcon className="w-5" />
-      </Button>
+          <span>Edit</span>
+        </Button>
 
-      <Button
-        onClick={() => openModal("add-song-to-playlist")}
-        size={"clear"}
-        className={`${classes.button} `}
-      >
-        <PlusIcon className="w-5" />
-        <span>Add song</span>
-      </Button>
+        <Button onClick={() => openModal("delete")} size={"clear"}>
+          <TrashIcon className="w-5" />
+
+          <span>Delete</span>
+        </Button>
+
+        <Button onClick={() => openModal("add-song-to-playlist")} size={"clear"}>
+          <PlusIcon className="w-5" />
+          <span>Add song</span>
+        </Button>
+      </ButtonCtaFrame>
 
       <Modal wrapped={false} variant="animation" ref={modalRef}>
         <ModalWrapper className="w-[unset]">{renderModal()}</ModalWrapper>
       </Modal>
-    </div>
+    </>
   );
 }

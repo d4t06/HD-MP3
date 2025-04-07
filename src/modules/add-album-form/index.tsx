@@ -7,6 +7,12 @@ import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button } from "@/pages/dashboard/_components";
 import AlbumSingerSelect from "./_components/SingerSelect";
 import AlbumSongSelect from "./_components/SongSelect";
+import DeleteAlbumBtn from "./_components/DeleteAlbumBtn";
+import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
+
+type BaseProps = {
+  className?: string;
+};
 
 type Add = {
   variant: "add";
@@ -20,9 +26,9 @@ type Edit = {
   album: Playlist;
 };
 
-type Props = Add | Edit;
+type Props = (Add | Edit) & BaseProps;
 
-function Content(props: Props) {
+function Content({ className = "", ...props }: Props) {
   const { theme } = useThemeContext();
 
   const { albumData, setImageFile } = useAddAlbumContext();
@@ -36,9 +42,9 @@ function Content(props: Props) {
 
   return (
     <>
-      <div className="md:flex overflow-auto">
+      <div className={`md:flex ${className}`}>
         <div className="space-y-2.5">
-          <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
+          <div className="w-[200px] mx-auto h-[200px] rounded-lg overflow-hidden">
             <Image
               className="object-cover object-center h-full"
               blurHashEncode={albumData.blurhash_encode}
@@ -54,18 +60,23 @@ function Content(props: Props) {
             className="hidden"
           />
 
-          <div className="space-x-2 flex">
-            <Button className={`${theme.content_bg}`} size={"clear"}>
-              <label htmlFor="image_upload" className={`px-5 py-1 cursor-pointer `}>
-                <PhotoIcon className="w-5" />
-              </label>
-            </Button>
+          <div>
+            <ButtonCtaFrame>
+              <Button className={`${theme.content_bg} !p-0`} size={"clear"}>
+                <label htmlFor="image_upload" className={`md:px-3 p-1.5 inline-flex space-x-1 cursor-pointer `}>
+                  <PhotoIcon className="w-5" />
+
+                  <span>Change image</span>
+                </label>
+              </Button>
+
+              {props.variant === "edit" && <DeleteAlbumBtn />}
+            </ButtonCtaFrame>
           </div>
         </div>
 
-        <div className="mt-3 md:mt-0 md:ml-3 flex-grow flex flex-col space-y-2.5">
+        <div className="mt-3 md:w-3/4 md:mt-0 md:ml-3 flex-grow flex flex-col space-y-2.5">
           <AlbumSingerSelect />
-
           <AlbumSongSelect />
         </div>
       </div>

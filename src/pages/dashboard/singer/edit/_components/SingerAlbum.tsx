@@ -3,14 +3,20 @@ import { useGetSingerContext } from "./GetSingerContext";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import { NotFound, Skeleton, Title } from "@/components";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
+import AddAlbumBtn from "./AddAlbumBtn";
 
 export default function SingerAlbum() {
   const { albums } = useSingerContext();
   const { isFetching } = useGetSingerContext();
 
+
+
   return (
     <>
-      <Title title="Albums" />
+      <div className="flex justify-between items-center">
+        <Title title="Albums" />
+        <AddAlbumBtn />
+      </div>
 
       {isFetching && <Skeleton className="h-[100px]" />}
 

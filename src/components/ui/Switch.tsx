@@ -4,10 +4,10 @@ type Props = {
   cb: () => void;
   active: boolean;
   size?: "default" | "thin";
-  className?: string;
+  inActiveBg?: string;
 };
 
-export default function Switch({ cb, active, className = "", size = "default" }: Props) {
+export default function Switch({ cb, active, inActiveBg = "bg-white/10", size = "default" }: Props) {
   const { theme } = useThemeContext();
 
   const classes = {
@@ -23,8 +23,9 @@ export default function Switch({ cb, active, className = "", size = "default" }:
       onClick={cb}
       className={`relative  cursor-pointer ${
         size === "default" ? "h-[24px]" : "h-[20px]"
-      } rounded-[99px] w-[40px] ${className || ""} 
-         ${active ? theme.content_bg : "bg-white/10"} `}
+      } rounded-[99px] w-[40px] 
+         ${active ? theme.content_bg : inActiveBg} `}
+
     >
       <div
         className={`${classes.circle} ${active ? classes.active : classes.inActive}`}
