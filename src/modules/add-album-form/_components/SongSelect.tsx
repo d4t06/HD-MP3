@@ -5,6 +5,7 @@ import { useRef } from "react";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
 import { Button, DashboardModal } from "@/pages/dashboard/_components";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function AlbumSongSelect() {
 	const { songs, setSongs } = useAddAlbumContext();
@@ -27,43 +28,43 @@ export default function AlbumSongSelect() {
 
 	return (
 		<>
-			<div>
-				<p className="text-lg mb-1">Songs</p>
-				<DashboardTable colList={["Name", "Singer", ""]}>
-					{songs.map((s, i) => (
-						<tr key={i}>
-							<td>
-								<span>{s.name}</span>
-							</td>
-							<td>
-								{s.singers.map((s, i) => (
-									<span className="hover:underline" key={i}>
-										{!!i && ", "}
-										{s.name}
-									</span>
-								))}
-							</td>
+			<DashboardTable colList={["Name", "Singer", "Like", " "]}>
+				{songs.map((s, i) => (
+					<tr key={i}>
+						<td>
+							<span>{s.name}</span>
+						</td>
+						<td>
+							{s.singers.map((s, i) => (
+								<span className="hover:underline" key={i}>
+									{!!i && ", "}
+									{s.name}
+								</span>
+							))}
+						</td>
+						<td>
+							<span>{abbreviateNumber(s.like)}</span>
+						</td>
 
-							<td>
-								<Button onClick={() => removeSong(s)} size={"clear"} className="p-1">
-									<TrashIcon className="w-5" />
-								</Button>
-							</td>
-						</tr>
-					))}
-
-					<tr className="!bg-white">
-						<td colSpan={3}>
-							<p className="text-center">
-								<Button onClick={() => modalRef.current?.open()}>
-									<PlusIcon className="w-6" />
-									<span>Add song</span>
-								</Button>
-							</p>
+						<td>
+							<Button onClick={() => removeSong(s)} size={"clear"} className="p-1">
+								<TrashIcon className="w-5" />
+							</Button>
 						</td>
 					</tr>
-				</DashboardTable>
-			</div>
+				))}
+
+				<tr className="!bg-white border-none">
+					<td colSpan={3}>
+						<p className="text-center">
+							<Button onClick={() => modalRef.current?.open()}>
+								<PlusIcon className="w-6" />
+								<span>Add song</span>
+							</Button>
+						</p>
+					</td>
+				</tr>
+			</DashboardTable>
 
 			<DashboardModal wrapped={false} variant="animation" ref={modalRef}>
 				<AddSongsToPlaylistModal

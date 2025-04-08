@@ -45,7 +45,7 @@ export default function AudioPLayer({ audioEle, variant }: Props) {
   return (
     <>
       <div className="flex items-end justify-between">
-        <Button className={`p-1`} size={"clear"} onClick={handlePlayPause}>
+        <Button className={`p-1.5`} size={"clear"} onClick={handlePlayPause}>
           {renderPlayPausedButton()}
         </Button>
 

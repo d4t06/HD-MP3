@@ -2,6 +2,7 @@ import { Image, Skeleton, Square } from "@/components";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import SingerCta from "./SingerCta";
 import { useGetSingerContext } from "./GetSingerContext";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function SingerInfo() {
   const { singer } = useSingerContext();
@@ -36,7 +37,10 @@ export default function SingerInfo() {
               <>
                 <p className="text-3xl leading-[2] font-playwriteCU">{singer.name}</p>
 
-                <p>{singer.like} likes</p>
+                <p>
+                  <span className="text-red-500 text-xl">&#10084;</span>{" "}
+                  {abbreviateNumber(singer.like)}
+                </p>
 
                 <p className="line-clamp-2">{singer.description}</p>
 

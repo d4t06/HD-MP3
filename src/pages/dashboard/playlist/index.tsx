@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { SearchBar } from "../_components";
 import AddNewPlaylistBtn from "./_components/AddNewPlaylistBtn";
 import DashboardTable from "../_components/ui/Table";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function DashboardPlaylist() {
   const { isFetching, playlists, tab, tabs, setTab, ...rest } = useDashboardPlaylist();
@@ -28,7 +29,7 @@ export default function DashboardPlaylist() {
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
-          <DashboardTable colList={["Name", "Played", "Songs", ""]}>
+          <DashboardTable colList={["Name", "Like", ""]}>
             {playlists.length ? (
               playlists.map((p, i) => (
                 <tr key={i}>
@@ -37,9 +38,7 @@ export default function DashboardPlaylist() {
                       {p.name}
                     </Link>
                   </td>
-                  <td>-</td>
-                  <td>-</td>
-
+                  <td>{abbreviateNumber(p.like)}</td>
                   <td>-</td>
                 </tr>
               ))

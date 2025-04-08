@@ -1,10 +1,9 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { useSelector } from "react-redux";
-import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { Center } from "@/components";
 import useLyric from "./_hooks/useLyric";
 import { LyricStatus } from "../lyric-editor";
 import LyricItem from "./LyricItem";
+import { usePlayerContext } from "@/stores";
 
 interface Props {
   className: string;
@@ -13,16 +12,18 @@ interface Props {
 
 export default function LyricsList({ className, active }: Props) {
   // state
-  const { lyricSize } = useSelector(selectAllPlayStatusStore);
+  const {
+    playerConig: { lyricSize },
+  } = usePlayerContext();
 
   const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyric({
     active,
   });
 
   const lyricSizeMap = {
-    small: "text-[20px] sm:text-[30px]",
-    medium: "text-[25px] sm:text-[35px]",
-    large: "text-[30px] sm:text-[40px]",
+    small: "text-[16px] sm:text-[26px]",
+    medium: "text-[20px] sm:text-[30px]",
+    large: "text-[26px] sm:text-[46px]",
   };
 
   const renderItem = () => {
@@ -38,7 +39,8 @@ export default function LyricsList({ className, active }: Props) {
           status={status}
           key={index}
           text={l.text}
-          className={`mb-[10px] md:mb-[30px] last:mb-[50vh]`}
+          activeColor="scale-[1.3]"
+          className={`leading-[1.3] mb-3 w-[70%] md:mb-5 last:mb-[50vh]`}
         />
       );
     });

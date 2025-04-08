@@ -7,6 +7,7 @@ import { PencilIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
 import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function PlaylistLike(props: PlaylistModalVariantProps) {
 	const { playlist } = usePlaylistContext();
@@ -33,10 +34,13 @@ export default function PlaylistLike(props: PlaylistModalVariantProps) {
 
 	return (
 		<>
-			<div className="flex space-x-1">
-				<p>{playlist.like} likes</p>
+			<div className="flex items-center space-x-2">
+				<p className="mt-1 font-[500]">
+					<span className="text-red-500 text-xl">&#10084;</span>{" "}
+					{abbreviateNumber(playlist.like)}
+				</p>
 
-				<button onClick={() => modalRef.current?.open()}>
+				<button className="" onClick={() => modalRef.current?.open()}>
 					<PencilIcon className="w-5" />
 				</button>
 			</div>
@@ -48,14 +52,9 @@ export default function PlaylistLike(props: PlaylistModalVariantProps) {
 						<Input
 							id="like"
 							ref={inputRef}
-							type="text"
-							placeholder=""
-							value={playlistData?.like ? playlistData.like : 0}
-							onChange={(e) =>
-								!isNaN(+e.target.value)
-									? updatePlaylistData({ like: +e.target.value })
-									: {}
-							}
+							type="number"
+							value={playlistData?.like + ""}
+							onChange={(e) => updatePlaylistData({ like: +e.target.value })}
 						/>
 					</div>
 

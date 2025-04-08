@@ -34,7 +34,7 @@ export default function UploadImageBtn() {
       <Button className="" size={"clear"}>
         <label
           htmlFor="image_upload"
-          className={`inline-flex p-1 space-x-1 cursor-pointer md:px-3`}
+          className={`inline-flex p-1.5 space-x-1 cursor-pointer md:px-3`}
         >
           <PhotoIcon className="w-6" />
           <span className="hidden md:block">Change image</span>
@@ -54,7 +54,7 @@ export default function UploadImageBtn() {
       {songData?.image_url && (
         <Button
           onClick={() => modalRef.current?.open()}
-          className="p-1 justify-center md:px-3"
+          className="p-1.5 justify-center md:px-3"
           size={"clear"}
         >
           <QuestionMarkCircleIcon className="w-6" />

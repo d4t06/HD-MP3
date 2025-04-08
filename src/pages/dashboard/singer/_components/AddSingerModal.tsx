@@ -27,13 +27,13 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   if (!singerData) return;
 
   return (
-    <ContentWrapper className="w-[700px]">
+    <ContentWrapper className="w-[700px] flex flex-col md:block">
       <ModalHeader
         close={props.closeModal}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}
       />
 
-      <div className="flex space-x-3">
+      <div className="flex-grow overflow-auto md:flex md:flex-[unset] md:overflow-hidden">
         <div className="space-y-2.5">
           <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
             <Image
@@ -60,7 +60,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
           </div>
         </div>
 
-        <div className="flex-grow flex flex-col space-y-2.5">
+        <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-3">
           <div className="space-y-1">
             <label htmlFor="name" className="opacity-[.8]">
               Name:
@@ -89,6 +89,22 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
               onChange={(e) => updateSingerData({ description: e.target.value })}
             />
           </div>
+
+          {props.variant === "edit" && (
+            <div className="space-y-1">
+              <label htmlFor="like" className="opacity-[.8]">
+                Like:
+              </label>
+
+              <Input
+                id="like"
+                className={`bg-[#f1f1f1]`}
+                type="number"
+                value={singerData.like + ""}
+                onChange={(e) => updateSingerData({ like: +e.target.value })}
+              />
+            </div>
+          )}
         </div>
       </div>
 

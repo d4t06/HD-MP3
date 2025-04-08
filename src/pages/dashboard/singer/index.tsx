@@ -5,6 +5,7 @@ import { SearchBar } from "../_components";
 import AddSingerBtn from "./_components/AddSingerBtn";
 import useDashboardSinger from "./_hooks/useDashboardSinger";
 import DashboardTable from "../_components/ui/Table";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function DashboardSingerPage() {
   const { isFetching, singers, tabs, tab, setTab, ...rest } = useDashboardSinger();
@@ -28,15 +29,17 @@ export default function DashboardSingerPage() {
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
-          <DashboardTable colList={["Name", ""]}>
+          <DashboardTable colList={["Name", "Like"]}>
             {singers.length ? (
               singers.map((s, i) => (
                 <tr key={i}>
                   <td>
-                    <Link className="hover:underline" to={`/dashboard/singer/${s.id}`}>{s.name}</Link>
+                    <Link className="hover:underline" to={`/dashboard/singer/${s.id}`}>
+                      {s.name}
+                    </Link>
                   </td>
 
-                  <td>-</td>
+                  <td>{abbreviateNumber(s.like)}</td>
                 </tr>
               ))
             ) : (

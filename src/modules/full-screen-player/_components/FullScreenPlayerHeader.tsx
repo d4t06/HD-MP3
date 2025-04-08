@@ -13,21 +13,13 @@ import {
 	MyPopupContent,
 	MyPopupTrigger,
 	MyTooltip,
-	Switch,
 } from "@/components";
 import FullScreenPlayerTab from "./Tabs";
 
 export default function FullScreenPlayerHeader() {
 	const { user } = useAuthContext();
 	const { theme } = useThemeContext();
-	const {
-		activeTab,
-		idle,
-		setIsOpenFullScreen,
-		isEnableBeat,
-		setIsEnableBeat,
-		audioRef,
-	} = usePlayerContext();
+	const { activeTab, idle, setIsOpenFullScreen } = usePlayerContext();
 
 	const { currentSongData } = useSelector(selectSongQueue);
 
@@ -48,22 +40,6 @@ export default function FullScreenPlayerHeader() {
 		setTimeout(() => {
 			navigate(`/my-music/lyric/${currentSongData?.song.id}`);
 		}, 300);
-	};
-
-	const handleEnableBeat = () => {
-		if (!audioRef.current || !currentSongData?.song) return;
-
-		const newValue = !isEnableBeat;
-
-		setIsEnableBeat(newValue);
-
-		const currentTime = audioRef.current.currentTime;
-
-		audioRef.current.src = newValue
-			? currentSongData.song.beat_url
-			: currentSongData.song.song_url;
-
-		audioRef.current.currentTime = currentTime;
 	};
 
 	const classes = {
@@ -100,13 +76,6 @@ export default function FullScreenPlayerHeader() {
 							<DocumentTextIcon />
 						</button>
 					</MyTooltip>
-				)}
-
-				{activeTab === "Karaoke" && currentSongData?.song.beat_url && (
-					<div className="flex items-center space-x-1">
-						<span className="font-[500]">Beat</span>
-						<Switch active={isEnableBeat} cb={handleEnableBeat} />
-					</div>
 				)}
 
 				<MyPopup>

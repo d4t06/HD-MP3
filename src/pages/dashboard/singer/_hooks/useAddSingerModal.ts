@@ -36,7 +36,9 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
     if (!singer || !singerData) return false;
 
     return (
-      singerData.name !== singer.name || singerData.description !== singer.description
+      singerData.name !== singer.name ||
+      singerData.description !== singer.description ||
+      singerData.like !== singer.like
     );
   }, [singerData]);
 

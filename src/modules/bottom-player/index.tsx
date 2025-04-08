@@ -20,7 +20,6 @@ export default function BottomPlayer() {
   const { theme } = useThemeContext();
   const {
     isOpenFullScreen,
-    controlRef,
     isOpenSongQueue,
     setIsOpenFullScreen,
     setIsOpenSongQueue,
@@ -80,7 +79,7 @@ export default function BottomPlayer() {
         <div
           className={` ${classes.controlWrapper} ${getDisable(currentQueueId === null)}`}
         >
-          <MusicControl variant="desktop" ref={controlRef} />
+          <MusicControl />
         </div>
 
         <div className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}>

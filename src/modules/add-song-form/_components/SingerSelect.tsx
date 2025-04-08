@@ -28,10 +28,10 @@ export default function SingerSelect() {
 
           <Button
             onClick={() => modalRef.current?.open()}
-            className={`p-1`}
+            className={`p-1.5`}
             size={"clear"}
           >
-            <PlusIcon className="w-5" />
+            <PlusIcon className="w-6" />
           </Button>
         </div>
 

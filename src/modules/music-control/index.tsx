@@ -7,49 +7,33 @@ import {
 
 import PlayPauseButton from "./_components/PlayPauseButton";
 import { formatTime } from "@/utils/appHelpers";
-import { forwardRef, Ref, useImperativeHandle } from "react";
-import { useThemeContext } from "@/stores";
-import useControl from "./_hooks/useControl";
+import { usePlayerContext, useThemeContext } from "@/stores";
+import { useSelector } from "react-redux";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 
-interface Props {
-  variant: "mobile" | "desktop";
-}
+// export type ControlRef = {
+//   handlePlayPause: () => void;
+//   handleNext: () => void;
+//   pause: () => void;
+//   resetForNewSong: () => void;
+// };
 
-export type ControlRef = {
-  handlePlayPause: () => void;
-  handleNext: () => void;
-  pause: () => void;
-  resetForNewSong: () => void;
-};
-
-function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
+export default function MusicControl() {
   const { theme } = useThemeContext();
 
   const {
+    playerConig: { isShuffle, repeat },
     isOpenFullScreen,
-    currentSongData,
-    handleSeek,
-    handlePlayPause,
-    handleNext,
-    handlePrevious,
-    handleRepeatSong,
-    handleShuffle,
-    isRepeat,
-    isShuffle,
-    playStatus,
-    queueSongs,
-    currentTimeEleRef,
     timelineEleRef,
-    resetForNewSong,
-    pause,
-  } = useControl();
+    currentTimeEleRef,
+  } = usePlayerContext();
+  const { currentSongData, queueSongs } = useSelector(selectSongQueue);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
-  useImperativeHandle(ref, () => ({
-    handlePlayPause,
-    handleNext,
-    pause,
-    resetForNewSong,
-  }));
+  const { next, previous, toggleRepeat, toggleShuffle, handlePlayPause, handleSeek } =
+    usePlayerAction();
 
   const classes = {
     button: `p-1 rounded-full md:bg-transparent `,
@@ -67,19 +51,19 @@ function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
         <button
           disabled={queueSongs.length <= 1}
           className={`relative ${classes.button} ${
-            isRepeat !== "no" && theme.content_text
+            repeat !== "no" && theme.content_text
           }`}
-          onClick={handleRepeatSong}
+          onClick={toggleRepeat}
         >
           <ArrowPathRoundedSquareIcon className={classes.icon} />
           <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-            {isRepeat === "one" ? "1" : isRepeat === "all" ? "-" : ""}
+            {repeat === "one" ? "1" : repeat === "all" ? "-" : ""}
           </span>
         </button>
         <button
           disabled={queueSongs.length <= 1}
           className={classes.button}
-          onClick={() => handlePrevious()}
+          onClick={previous}
         >
           <BackwardIcon className={classes.icon} />
         </button>
@@ -89,14 +73,14 @@ function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
         <button
           disabled={queueSongs.length <= 1}
           className={`${classes.button}`}
-          onClick={() => handleNext()}
+          onClick={next}
         >
           <ForwardIcon className={classes.icon} />
         </button>
         <button
           disabled={queueSongs.length <= 1}
           className={`${classes.button} ${isShuffle && theme.content_text}`}
-          onClick={handleShuffle}
+          onClick={toggleShuffle}
         >
           <ArrowTrendingUpIcon className={classes.icon} />
         </button>
@@ -105,7 +89,7 @@ function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
       {/* process */}
       <div
         className={`${classes.progressContainer} ${
-          variant === "desktop" && isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
+          isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
         <div className="w-[44px] sm:w-9">
@@ -131,4 +115,4 @@ function MusicControl({ variant }: Props, ref: Ref<ControlRef>) {
   );
 }
 
-export default forwardRef(MusicControl);
+// export default forwardRef(MusicControl);

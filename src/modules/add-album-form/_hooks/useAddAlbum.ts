@@ -48,8 +48,6 @@ export default function useAddAlbum(props: ComponentProps<typeof AddAlbumModal>)
 		return props.variant === "add" ? isValid : isValid || isChangeImage;
 	}, [isChangeImage, isChanged, albumData, singer, songs]);
 
-	console.log(isValidToSubmit, isChanged);
-
 	const submit = async () => {
 		try {
 			if (!albumData || !singer) return;

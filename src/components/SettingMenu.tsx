@@ -1,15 +1,7 @@
-import {
-  InformationCircleIcon,
-  PaintBrushIcon,
-  PlayCircleIcon,
-} from "@heroicons/react/24/outline";
+import { InformationCircleIcon, PaintBrushIcon } from "@heroicons/react/24/outline";
 
 import PopupWrapper from "./ui/PopupWrapper";
-import { Switch } from ".";
-import { useDispatch } from "react-redux";
-import { setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { useThemeContext } from "@/stores";
-import usePersistState from "@/hooks/usePersistState";
 
 type Modal = "theme" | "info";
 
@@ -20,17 +12,9 @@ type Props = {
 
 export default function SettingMenu({ openModal, variant }: Props) {
   const { theme } = useThemeContext();
-  const dispatch = useDispatch();
 
   const handleOpenModal = (modal: Modal) => {
     openModal(modal);
-  };
-
-  const [isCrossFade, setIsCrossFade] = usePersistState("isCrossFade", false);
-
-  const handleSetCrossFade = () => {
-    setIsCrossFade(!isCrossFade);
-    dispatch(setPlayStatus({ isCrossFade: !isCrossFade }));
   };
 
   const classes = {
@@ -44,14 +28,6 @@ export default function SettingMenu({ openModal, variant }: Props) {
       case "client":
         return (
           <>
-            <li className={`${classes.menuItem} justify-between cursor-default`}>
-              <div className="flex items-center">
-                <PlayCircleIcon className={classes.icon} />
-                Cross fade
-              </div>
-              <Switch active={isCrossFade} cb={handleSetCrossFade} />
-            </li>
-
             <li
               className={`${classes.menuItem}`}
               onClick={() => handleOpenModal("theme")}

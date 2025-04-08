@@ -81,7 +81,7 @@ export default function DashboardPlaylistDetail() {
             <div className={`overflow-hidden`}>
               <Table
                 className="[&_td]:text-sm [&_tbody>tr]:border-t [&_tr]:border-black/10 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2 hover:[&_tr:not(div.absolute)]:bg-black/5"
-                colList={["Name", "Singer", ""]}
+                colList={["Name", "Singer", "Like", ""]}
               >
                 {songs.length ? (
                   songs.map((s, i) => (

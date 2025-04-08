@@ -1,42 +1,86 @@
-import { ControlRef } from "@/modules/music-control";
+// import { ControlRef } from "@/modules/music-control";
+import { getLocalStorage } from "@/utils/appHelpers";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
 const desktopTabs = ["Songs", "Karaoke", "Lyric"] as const;
-const mobileTabs = ["Songs", "Playing", "Lyric"] as const;
+const mobileTabs = ["Playing", "Lyric"] as const;
 
 type Tab = (typeof desktopTabs)[number];
 type MobileTab = (typeof mobileTabs)[number];
 
+type LyricSize = "small" | "medium" | "large";
+type Repeat = "one" | "all" | "no";
+
+type PlayerConfig = {
+  lyricSize: LyricSize;
+  repeat: Repeat;
+  isShuffle: boolean;
+  isEnableBeat: boolean;
+  isCrossFade: boolean;
+  songBackground: boolean;
+};
+
+const storage = getLocalStorage();
+
 function usePlayer() {
   const [isOpenFullScreen, setIsOpenFullScreen] = useState<boolean>(false);
   const [isOpenSongQueue, setIsOpenSongQueue] = useState<boolean>(false);
-  const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
+  // const [_isHasAudioEle, setIsHasAudioEle] = useState(false);
   const [activeTab, setActiveTab] = useState<Tab>("Lyric");
   const [mobileActiveTab, setMobileActiveTab] = useState<MobileTab>("Lyric");
   const [idle, setIdle] = useState(false);
-  const [isEnableBeat, setIsEnableBeat] = useState(false);
+
+  const [playerConig, setPlayerConfig] = useState<PlayerConfig>({
+    lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
+    repeat: (storage["isRepeat"] || "no") as Repeat,
+    isShuffle: storage["isShuffle"] || false,
+    isCrossFade: storage["isCrossFade"] || false,
+    songBackground: storage["songBackground"] || true,
+    isEnableBeat: false,
+  });
+
+  // const [isEnableBeat, setIsEnableBeat] = useState(false);
+  // const [lyricSize, setLyricSize] = useState<LyricSize>("medium");
+  // const [repeat, setRepeat] = useState<Repeat>("no");
+
+  const firstTimeSongLoaded = useRef(true);
+  const startFadeWhenEnd = useRef(0); // for cross fade
+  const isPlayingNewSong = useRef(true); // for cross fade
+  const themeCodeRef = useRef("");
+  const shouldSyncSongDuration = useRef(false);
 
   const audioRef = useRef<HTMLAudioElement>(null);
-  const controlRef = useRef<ControlRef>(null);
+  const timelineEleRef = useRef<HTMLDivElement>(null);
+  const currentTimeEleRef = useRef<HTMLDivElement>(null);
+
+  const updatePlayerConfig = (data: Partial<PlayerConfig>) => {
+    setPlayerConfig((prev) => ({ ...prev, ...data }));
+  };
 
   return {
     audioRef,
-    controlRef,
+    themeCodeRef,
     isOpenFullScreen,
     isOpenSongQueue,
     idle,
     setIdle,
     setIsOpenFullScreen,
     setIsOpenSongQueue,
-    setIsHasAudioEle,
+    // setIsHasAudioEle,
     activeTab,
     setActiveTab,
-    isEnableBeat,
-    setIsEnableBeat,
     desktopTabs,
     mobileActiveTab,
     setMobileActiveTab,
-    mobileTabs
+    mobileTabs,
+    playerConig,
+    updatePlayerConfig,
+    firstTimeSongLoaded,
+    timelineEleRef,
+    currentTimeEleRef,
+    startFadeWhenEnd,
+    isPlayingNewSong,
+    shouldSyncSongDuration,
   };
 }
 
@@ -44,7 +88,7 @@ type ContextType = ReturnType<typeof usePlayer>;
 
 const Context = createContext<ContextType | null>(null);
 
-export default function PlayerContextProvider({ children }: { children: ReactNode }) {
+export default function PlayerProvider({ children }: { children: ReactNode }) {
   return <Context.Provider value={usePlayer()}>{children}</Context.Provider>;
 }
 

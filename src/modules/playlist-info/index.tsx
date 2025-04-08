@@ -105,7 +105,7 @@ export default function PLaylistInfo({
             playlist && (
               <>
                 <p className="text-xl font-[600] leading-[1.2]">{playlist.name}</p>
-                <div className="flex-col items-center flex mt-2.5 text-[#666]">
+                <div className=" mt-2.5 text-[#666]">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
               </>
@@ -113,7 +113,7 @@ export default function PLaylistInfo({
           )}
 
           {playlist && (
-            <div className="flex flex-col items-center md:flex-row md:mt-auto lg:flex-col lg:mt-3">
+            <div className="flex flex-col items-center mt-3 md:flex-row md:mt-auto lg:flex-col lg:mt-3">
               <PlayPlaylistBtn />
               <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0">
                 <PlaylistMenuBtn variant={variant} />

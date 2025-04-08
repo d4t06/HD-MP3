@@ -8,7 +8,7 @@ function Footer() {
   return (
     <div className={`${classes.container}`}>
       <p className={classes.copyRightText}>
-        Make with ❤️ by d4t06 <br /> © All rights no reserve ¯\_(ツ)_/¯
+        Make with  <span className="text-red-500">&#10084;</span>  by d4t06 <br /> © All rights no reserve ¯\_(ツ)_/¯
       </p>
 
       <div className="flex items-center mt-[20px] md:mt-0 space-x-[10px]">

@@ -1,22 +1,44 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useThemeContext } from "@/stores";
-import {
-  selectAllPlayStatusStore,
-  setPlayStatus,
-  togglePlayControl,
-} from "@/stores/redux/PlayStatusSlice";
+import { usePlayerContext, useThemeContext } from "@/stores";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { Button, PopupWrapper, Switch } from ".";
+import { useSelector } from "react-redux";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
 export default function FullScreenPlayerSetting() {
   const { theme } = useThemeContext();
-  const dispatch = useDispatch();
 
-  const { lyricSize, songBackground } = useSelector(selectAllPlayStatusStore);
+  const {
+    playerConig: { isCrossFade, isEnableBeat, lyricSize, songBackground },
+    updatePlayerConfig,
+    audioRef,
+    shouldSyncSongDuration,
+  } = usePlayerContext();
+  const { currentSongData } = useSelector(selectSongQueue);
 
   const handleChangeLyricSize = (size: typeof lyricSize) => {
-    dispatch(setPlayStatus({ lyricSize: size }));
+    updatePlayerConfig({ lyricSize: size });
     setLocalStorage("lyricSize", size);
+  };
+
+  const handleToggleBeat = () => {
+    if (!audioRef.current || !currentSongData?.song) return;
+
+    const newValue = !isEnableBeat;
+
+    const currentTime = audioRef.current.currentTime;
+
+    setLocalStorage("current_time", currentTime);
+
+    shouldSyncSongDuration.current = true;
+
+    audioRef.current.src = newValue
+      ? currentSongData.song.beat_url
+      : currentSongData.song.song_url;
+
+    // audioRef.current.currentTime = currentTime // fix scroll top lyric list
+
+
+    updatePlayerConfig({ isEnableBeat: newValue });
   };
 
   const classes = {
@@ -29,7 +51,7 @@ export default function FullScreenPlayerSetting() {
   return (
     <>
       <div className="w-[240px] sm:w-[220px]">
-        <PopupWrapper p={"clear"} className="space-y-[6px] text-white py-3" theme={theme}>
+        <PopupWrapper p={"clear"} className="text-white py-3" theme={theme}>
           <div className={`${classes.itemContainer}`}>
             <p className={classes.text}>Lyric size</p>
             <div className="flex space-x-[8px]">
@@ -70,7 +92,22 @@ export default function FullScreenPlayerSetting() {
             <Switch
               size="thin"
               active={songBackground}
-              cb={() => dispatch(togglePlayControl({ variant: "songBackground" }))}
+              cb={() => updatePlayerConfig({ songBackground: !songBackground })}
+            />
+          </div>
+
+          {currentSongData?.song.beat_url && (
+            <div className={`${classes.itemContainer}`}>
+              <p className={classes.text}>Song beat</p>
+              <Switch size="thin" active={isEnableBeat} cb={handleToggleBeat} />
+            </div>
+          )}
+          <div className={`${classes.itemContainer}`}>
+            <p className={classes.text}>Cross fade</p>
+            <Switch
+              size="thin"
+              active={isCrossFade}
+              cb={() => updatePlayerConfig({ isCrossFade: !isCrossFade })}
             />
           </div>
         </PopupWrapper>

@@ -3,6 +3,8 @@ import axios from "axios";
 
 const isDev: boolean = import.meta.env.DEV;
 
+const STORAGE_KEY = isDev ? 'HD-MP3_DEV' : 'HD-MP3'
+
 export const request = axios.create({
   baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
 });
@@ -17,13 +19,13 @@ export const convertTimestampToString = (
 };
 
 export const getLocalStorage = () =>
-  JSON.parse(localStorage.getItem("HD-MP3") || "{}") as Record<string, any>;
+  JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") as Record<string, any>;
 
 export const setLocalStorage = (key: string, value: any) => {
   const storage = getLocalStorage();
   storage[key] = value;
 
-  return localStorage.setItem("HD-MP3", JSON.stringify(storage));
+  return localStorage.setItem(STORAGE_KEY, JSON.stringify(storage));
 };
 
 export const formatTime = (time: number) => {

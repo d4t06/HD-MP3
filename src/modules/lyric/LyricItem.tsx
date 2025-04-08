@@ -10,12 +10,12 @@ type Props = {
 
 function LyricItem(
   { text, className = "", status, activeColor }: Props,
-  ref: Ref<HTMLParagraphElement>
+  ref: Ref<HTMLParagraphElement>,
 ) {
   const getClass = () => {
     switch (status) {
       case "coming":
-        return "";
+        return "disable";
       case "active":
         return `${activeColor || "text-[#ffed00]"} active-lyric`;
       case "done":
@@ -30,7 +30,7 @@ function LyricItem(
   }, [status]);
 
   return (
-    <p ref={ref} className={`${className} select-none  font-[700] ${getClass()}`}>
+    <p ref={ref} className={`${className} transition-transform duration-[.3s] origin-left select-none font-[700] ${getClass()}`}>
       {text}
     </p>
   );

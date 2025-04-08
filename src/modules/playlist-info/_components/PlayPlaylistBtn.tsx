@@ -1,13 +1,14 @@
 import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
+import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import { useThemeContext } from "@/stores";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
-import { ReactNode, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { ReactNode } from "react";
+import { useSelector } from "react-redux";
 
 type PlayBtnProps = {
   children: ReactNode;
@@ -33,10 +34,12 @@ function PlayBtn({ onClick, children, text }: PlayBtnProps) {
 }
 
 export default function PlayPlaylistBtn() {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
   const { currentPlaylist, playlistSongs } = useSelector(selectCurrentPlaylist);
   const { currentSongData } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
+
+  const { handlePlayPause } = usePlayerAction();
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
   const { updatePlaylist } = useUpdateRecentPlaylist();
@@ -50,18 +53,18 @@ export default function PlayPlaylistBtn() {
     if (isSetQueue) updatePlaylist(currentPlaylist);
   };
 
-  const handlePlayPause = () => {
-    switch (playStatus) {
-      case "playing":
-        return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
-      case "paused":
-        return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
-    }
-  };
+  // const handlePlayPause = () => {
+  //   switch (playStatus) {
+  //     case "playing":
+  //       return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+  //     case "paused":
+  //       return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
+  //   }
+  // };
 
-  useEffect(() => {
-    dispatch(setPlayStatus({ triggerPlayStatus: playStatus }));
-  }, [playStatus]);
+  // useEffect(() => {
+  //   dispatch(setPlayStatus({ triggerPlayStatus: playStatus }));
+  // }, [playStatus]);
 
   if (!currentPlaylist) return <></>;
 

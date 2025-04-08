@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   useAuthContext,
@@ -7,7 +7,7 @@ import {
   useToastContext,
 } from "@/stores";
 
-import { formatTime, getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 
 import { useLocation } from "react-router-dom";
 import {
@@ -17,11 +17,22 @@ import {
 } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
-import { getLinearBg } from "@/utils/getLinearBg";
 import { myUpdateDoc } from "@/services/firebaseService";
+import usePlayerAction from "./usePlayerAction";
 
-export default function useControl() {
-  const { isOpenFullScreen, audioRef } = usePlayerContext();
+export default function usePlayerEffect() {
+  const {
+    isOpenFullScreen,
+    playerConig: { repeat, isShuffle, isCrossFade, isEnableBeat },
+    audioRef,
+    firstTimeSongLoaded,
+    startFadeWhenEnd,
+    isPlayingNewSong,
+    timelineEleRef,
+    currentTimeEleRef,
+    themeCodeRef,
+    shouldSyncSongDuration,
+  } = usePlayerContext();
   if (!audioRef.current) throw new Error("Use Control audioRef.current is undefined");
 
   // use stores
@@ -29,77 +40,32 @@ export default function useControl() {
   const { theme } = useThemeContext();
   const { user, updateUserData } = useAuthContext();
   const { queueSongs, currentSongData, currentQueueId } = useSelector(selectSongQueue);
-  const { playStatus, triggerPlayStatus, isRepeat, isShuffle, isCrossFade } = useSelector(
-    selectAllPlayStatusStore,
-  );
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
   // state
-  const firstTimeSongLoaded = useRef(true);
   const currentSongDataRef = useRef<{ song: Song; index: number }>();
 
-  const prevSeekTime = useRef(0); // prevent double click
-  const startFadeWhenEnd = useRef(0); // for cross fade
-  // for update timeline background
-  const themeCode = useRef(theme.content_code);
   const isEndOfList = useRef(false); // handle end song
-  const isPlayingNewSong = useRef(true); // for cross fade
-  // only need song when song error if end event fire
-  const isSongEnd = useRef(false);
-  // for handle song error
-  const isShowMessageWhenSongError = useRef(false);
+  const isEndEventFired = useRef(false); // handle error
+  const isShowMessageWhenSongError = useRef(false); // handle error
 
-  const timelineEleRef = useRef<HTMLDivElement>(null);
-  const currentTimeEleRef = useRef<HTMLDivElement>(null);
+  // const timelineEleRef = useRef<HTMLDivElement>(null);
+  // const currentTimeEleRef = useRef<HTMLDivElement>(null);
   const playStatusRef = useRef<PlayStatus>("paused");
   const recentSongIdsRef = useRef<string[]>([]);
 
   // use hook
   const location = useLocation();
   const { setErrorToast } = useToastContext();
-  //   const { currentQueueId, handleNext, handlePrevious, handleRepeatSong, handleShuffle } =
-  //     usePlayerControl();
+  const { next, updateProgressElement, play, pause } = usePlayerAction();
 
   const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
-  const memoStorage = useMemo(() => getLocalStorage(), []);
-
-  const play = async (updateTime?: boolean) => {
-    try {
-      if (firstTimeSongLoaded.current) {
-        firstTimeSongLoaded.current = false;
-
-        if (updateTime) {
-          const storage = getLocalStorage();
-
-          const currentTime = storage["current_time"] || 0;
-          audioRef.current!.currentTime = currentTime;
-        }
-      }
-
-      await audioRef.current!.play();
-      isShowMessageWhenSongError.current = false;
-      isSongEnd.current = false;
-
-      if (!user) return;
-      if (isPlayingNewSong.current) {
-        if (isCrossFade) audioRef.current!.volume = 0;
-        isPlayingNewSong.current = false;
-      }
-    } catch (error) {}
-  };
-
-  const pause = () => {
-    audioRef.current!.pause();
-  };
+  const MEMO_STORAGE = useMemo(() => getLocalStorage(), []);
 
   const getNewSong = (index: number) => {
     return queueSongs[index];
-  };
-
-  const handlePlayPause = () => {
-    if (playStatus === "playing") pause();
-    if (playStatus === "paused") play(true);
   };
 
   const handlePause = () => {
@@ -109,102 +75,15 @@ export default function useControl() {
   const handlePlaying = () => {
     if (playStatus !== "playing") {
       dispatch(setPlayStatus({ playStatus: "playing" }));
+
+      isShowMessageWhenSongError.current = false;
     }
-  };
-
-  const handleNext = () => {
-    if (!currentSongData) return;
-
-    let newIndex = currentSongData.index + 1;
-    let newSong: Song;
-
-    if (newIndex < queueSongs.length) {
-      newSong = queueSongs[newIndex];
-    } else {
-      newIndex = 0;
-      newSong = queueSongs[0];
-    }
-
-    dispatch(setCurrentQueueId(newSong.queue_id));
-  };
-
-  const handlePrevious = () => {
-    if (!currentSongData) return;
-    // if (currentIndexRef.current === null) return;
-
-    let newIndex = currentSongData.index - 1;
-    let newSong: Song;
-    if (newIndex >= 0) {
-      newSong = queueSongs[newIndex];
-    } else {
-      newSong = queueSongs[queueSongs.length - 1];
-      newIndex = queueSongs.length - 1;
-    }
-
-    dispatch(setCurrentQueueId(newSong.queue_id));
-  };
-
-  const handleShuffle = () => {
-    const newValue = !isShuffle;
-    dispatch(setPlayStatus({ isShuffle: newValue }));
-
-    setLocalStorage("isShuffle", newValue);
-  };
-
-  const handleRepeatSong = () => {
-    let value: typeof isRepeat;
-    switch (isRepeat) {
-      case "no":
-        value = "one";
-        break;
-      case "one":
-        value = "all";
-        break;
-      case "all":
-        value = "no";
-        break;
-      default:
-        value = "no";
-    }
-
-    setLocalStorage("isRepeat", value);
-    dispatch(setPlayStatus({ isRepeat: value }));
   };
 
   const resetForNewSong = () => {
     if (timelineEleRef.current && currentTimeEleRef.current) {
       currentTimeEleRef.current.innerText = "0:00";
       timelineEleRef.current.style.background = "rgba(255, 255, 255, 0.15)";
-    }
-  };
-
-  const handleSeek = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-    const node = e.target as HTMLElement;
-
-    if (timelineEleRef.current) {
-      const clientRect = node.getBoundingClientRect();
-
-      const length = e.clientX - clientRect.left;
-      const lengthRatio = length / timelineEleRef.current.offsetWidth;
-      const newSeekTime = Math.round(lengthRatio * audioRef.current!.duration);
-
-      const currentTime = audioRef.current!.currentTime;
-
-      if (prevSeekTime.current) {
-        if (
-          Math.abs(currentTime - prevSeekTime.current) < 1 &&
-          Math.abs(newSeekTime - prevSeekTime.current) < 1
-        ) {
-          return;
-        }
-      }
-
-      updateProgressElement(newSeekTime);
-
-      if (firstTimeSongLoaded.current) {
-        setLocalStorage("current_time", newSeekTime);
-      } else audioRef.current!.currentTime = newSeekTime;
-      prevSeekTime.current = newSeekTime;
     }
   };
 
@@ -227,20 +106,6 @@ export default function useControl() {
     }
   };
 
-  const updateProgressElement = (time?: number) => {
-    const timeLine = timelineEleRef.current;
-    const currentTimeEle = currentTimeEleRef.current;
-
-    const currentTime = time || audioRef.current!.currentTime;
-
-    if (audioRef.current!.duration && timeLine) {
-      const ratio = currentTime / (audioRef.current!.duration / 100);
-      timeLine.style.background = getLinearBg(themeCode.current, +ratio.toFixed(1));
-    }
-
-    if (currentTimeEle) currentTimeEle.innerText = formatTime(currentTime) || "0:00";
-  };
-
   /** still call one when set new song
    * case glitch play playlist button
    * fix: dispatch setSong => playStatus = 'loading'
@@ -259,17 +124,19 @@ export default function useControl() {
   };
 
   const handleEnded = () => {
+    console.log("end");
+
     if (!currentSongDataRef.current) return;
     const storage = getLocalStorage();
     const volInStore = storage["volume"] || 1;
     const timer = storage["timer"];
 
-    if (isRepeat === "one" && !!timer && timer !== 1) {
+    if (repeat === "one" && !!timer && timer !== 1) {
       return play();
     }
 
     audioRef.current!.volume = volInStore;
-    isSongEnd.current = true;
+    isEndEventFired.current = true;
 
     if (isShuffle) {
       let randomIndex: number = currentSongDataRef.current.index;
@@ -281,13 +148,15 @@ export default function useControl() {
       return dispatch(setCurrentQueueId(newSong.queue_id));
     }
 
-    if (timer === 1) isEndOfList.current = true;
-    else if (currentSongDataRef.current.index === queueSongs.length - 1) {
-      if (isRepeat === "all") isEndOfList.current = false;
+    if (timer === 0 && MEMO_STORAGE["is_timer"]) {
+      isEndOfList.current = true;
+      setLocalStorage("is_timer", false);
+    } else if (currentSongDataRef.current.index === queueSongs.length - 1) {
+      if (repeat === "all" || timer > 1) isEndOfList.current = false;
       else isEndOfList.current = true;
     }
 
-    return handleNext();
+    return next();
   };
 
   const handleLoadStart = () => {
@@ -299,7 +168,7 @@ export default function useControl() {
 
     const audioDuration = audioRef.current!.duration;
     // setIsLoaded(true);
-    const localQueueId = memoStorage["current_queue_id"];
+    // const prevQueueId = MEMO_STORAGE["current_queue_id"];
 
     // update control props
     startFadeWhenEnd.current = audioDuration - 3;
@@ -316,26 +185,27 @@ export default function useControl() {
       dispatch(setPlayStatus({ playStatus: "paused" }));
 
       if (firstTimeSongLoaded.current) {
+        firstTimeSongLoaded.current = false;
+
+        shouldSyncSongDuration.current = true;
+
+        // const isPlaySongBefore =
+        //   prevQueueId === currentSongDataRef.current?.song.queue_id;
+        // if (isPlaySongBefore)
+
         /** update 23/10/2024
-         *  update it when click play button
+         * do not update song' current time here
+         * cause' it cause error on iphone
+         * update it when user click play song
          */
-        // firstTimeSongLoaded.current = false;
 
-        const isPlaySongBefore =
-          localQueueId === currentSongDataRef.current?.song.queue_id;
-        if (isPlaySongBefore) {
-          /** update 23/10/2024
-           * do not update song' current time here
-           * cause' it cause error on iphone
-           * update it when user click play song
-           */
-
-          updateProgressElement(memoStorage["current_time"] || 0);
-          return;
-        }
+        updateProgressElement(MEMO_STORAGE["current_time"] || 0);
+        return;
+        // }
       }
     }
 
+    // push recent song
     if (currentSongDataRef.current) {
       if (user) {
         const songId = currentSongDataRef.current.song.id;
@@ -385,7 +255,7 @@ export default function useControl() {
     }
 
     // if song end event don't fire
-    if (!isSongEnd.current) return dispatch(setPlayStatus({ playStatus: "error" }));
+    if (!isEndEventFired.current) return dispatch(setPlayStatus({ playStatus: "error" }));
 
     if (queueSongs.length > 1) {
       // case end of list
@@ -394,7 +264,7 @@ export default function useControl() {
         return;
       }
 
-      handleNext();
+      next();
     } else dispatch(setPlayStatus({ playStatus: "error" }));
   };
 
@@ -404,10 +274,10 @@ export default function useControl() {
 
   //   load current song in local storage
   useEffect(() => {
-    const currentId = (memoStorage["current_queue_id"] as string) || null;
-    if (currentId && queueSongs.length) {
-      dispatch(setCurrentQueueId(currentId));
-    } else firstTimeSongLoaded.current = false;
+    const currentId = (MEMO_STORAGE["current_queue_id"] as string) || null;
+
+    if (currentId && queueSongs.length) dispatch(setCurrentQueueId(currentId));
+    else firstTimeSongLoaded.current = false;
   }, []);
 
   // add events listener
@@ -439,12 +309,17 @@ export default function useControl() {
       return;
     }
 
-    audioRef.current!.src = currentSongData.song.song_url;
+    audioRef.current!.src =
+      isEnableBeat && currentSongData.song.beat_url
+        ? currentSongData.song.beat_url
+        : currentSongData.song.song_url;
     currentSongDataRef.current = currentSongData;
 
     return () => {
       resetForNewSong();
       isPlayingNewSong.current = true;
+
+      if (shouldSyncSongDuration.current) shouldSyncSongDuration.current = false;
     };
   }, [currentSongData?.song]);
 
@@ -470,25 +345,14 @@ export default function useControl() {
     playStatusRef.current = playStatus;
   }, [playStatus]);
 
-  useEffect(() => {
-    if (!triggerPlayStatus || triggerPlayStatus === playStatus) return;
-
-    switch (triggerPlayStatus) {
-      case "playing":
-        play();
-        break;
-      case "paused":
-        pause();
-        break;
-    }
-  }, [triggerPlayStatus]);
-
   //   update song end event
   useEffect(() => {
+    console.log("add end event");
+
     audioRef.current!.addEventListener("ended", handleEnded);
 
     return () => audioRef.current?.removeEventListener("ended", handleEnded);
-  }, [isRepeat, isShuffle, currentQueueId, queueSongs]);
+  }, [repeat, isShuffle, currentQueueId, queueSongs]);
 
   //   update time update event
   useEffect(() => {
@@ -502,12 +366,10 @@ export default function useControl() {
 
   // update time line background color
   useEffect(() => {
-    if (!currentSongDataRef.current) return;
-
-    if (isOpenFullScreen) themeCode.current = "#fff";
-    else themeCode.current = theme.content_code;
+    if (isOpenFullScreen) themeCodeRef.current = "#fff";
+    else themeCodeRef.current = theme.content_code;
     // if user no click play yet
-    updateProgressElement(firstTimeSongLoaded.current ? memoStorage["current_time"] : 0);
+    updateProgressElement(firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0);
   }, [theme, isOpenFullScreen]);
 
   // prevent song autoplay after edit finish
@@ -517,24 +379,17 @@ export default function useControl() {
     }
   }, [isInEdit]);
 
-  return {
-    isOpenFullScreen,
-    timelineEleRef,
-    currentTimeEleRef,
-    handleSeek,
-    playStatus,
-    currentSongData,
-    play,
-    pause,
-    handlePlayPause,
-    isRepeat,
-    isShuffle,
-    isCrossFade,
-    handlePrevious,
-    handleRepeatSong,
-    handleShuffle,
-    queueSongs,
-    resetForNewSong,
-    handleNext,
-  };
+  // useEffect(() => {
+  //   if (!audioRef.current || !currentSongData?.song) return;
+
+  //   const newValue = !isEnableBeat;
+
+  //   const currentTime = audioRef.current.currentTime;
+
+  //   audioRef.current.src = newValue
+  //     ? currentSongData.song.beat_url
+  //     : currentSongData.song.song_url;
+
+  //   audioRef.current.currentTime = currentTime;
+  // }, [isEnableBeat]);
 }

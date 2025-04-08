@@ -27,18 +27,14 @@ export default function SingerCta() {
 
       <div className="mt-3 md:!mt-auto">
         <ButtonCtaFrame>
-          <Button
-            onClick={() => openModal("edit")}
-            className={`h-[32px]  space-x-1 px-2.5`}
-            size={"clear"}
-          >
+          <Button onClick={() => openModal("edit")} className={`md:px-3`} size={"clear"}>
             <PencilIcon className="w-6" />
             <div className="hidden md:block">Edit singer</div>
           </Button>
 
           <Button
             onClick={() => openModal("delete")}
-            className={`h-[32px]  space-x-1 px-2.5`}
+            className={`md:px-3`}
             size={"clear"}
           >
             <TrashIcon className="w-6" />
@@ -47,22 +43,20 @@ export default function SingerCta() {
         </ButtonCtaFrame>
       </div>
 
-      {modal && (
-        <DashboardModal ref={modalRef}>
-          {modal === "more" && singer && (
-            <div className="w-[400px] max-w-[calc(100vw-40px)]">{singer.description}</div>
-          )}
-          {modal === "edit" && <AddSingerModal closeModal={closeModal} variant="edit" />}
-          {modal === "delete" && singer && (
-            <ConfirmModal
-              label={`Delete singer '${singer.name}'`}
-              loading={isFetching}
-              callback={() => action({ variant: "delete" })}
-              close={closeModal}
-            />
-          )}
-        </DashboardModal>
-      )}
+      <DashboardModal ref={modalRef}>
+        {modal === "more" && singer && (
+          <div className="w-[400px] max-w-[calc(100vw-40px)]">{singer.description}</div>
+        )}
+        {modal === "edit" && <AddSingerModal closeModal={closeModal} variant="edit" />}
+        {modal === "delete" && singer && (
+          <ConfirmModal
+            label={`Delete singer '${singer.name}'`}
+            loading={isFetching}
+            callback={() => action({ variant: "delete" })}
+            close={closeModal}
+          />
+        )}
+      </DashboardModal>
     </>
   );
 }

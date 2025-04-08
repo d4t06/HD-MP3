@@ -28,10 +28,10 @@ export default function EditSongBtn() {
 		<>
 			<Button
 				onClick={() => modalRef.current?.open()}
-				className="p-1 justify-center md:px-3"
+				className="p-1.5 justify-center md:px-3"
 				size={"clear"}
 			>
-				<PencilIcon className="w-5" />
+				<PencilIcon className="w-6" />
 				<span className="hidden md:block">Edit</span>
 			</Button>
 
@@ -63,7 +63,7 @@ export default function EditSongBtn() {
 						</div>
 					</div>
 
-					<p className="mt-5 text-right">
+					<p className="mt-6 text-right">
 						<Button onClick={_updateSongData}>Ok</Button>
 					</p>
 				</ContentWrapper>

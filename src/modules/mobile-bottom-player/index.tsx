@@ -11,12 +11,15 @@ import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { Image } from "@/components";
+import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 
 export default function MobileBottomPlayer() {
   const { theme } = useThemeContext();
-  const { controlRef, isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
+  const { isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
+
+  const {handlePlayPause} =usePlayerAction()
 
   const location = useLocation();
   const inEdit = useMemo(() => location.pathname.includes("lyric"), [location]);
@@ -83,7 +86,7 @@ export default function MobileBottomPlayer() {
         <div className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}>
           <button
             className={`p-[4px]`}
-            onClick={() => controlRef.current?.handlePlayPause()}
+            onClick={handlePlayPause}
           >
             {renderIcon}
           </button>

@@ -9,12 +9,12 @@ import { useRef } from "react";
 
 export default function AddAlbumBtn() {
 	const { user } = useAuthContext();
-	const { singer, setPlaylists } = useSingerContext();
+	const { singer, setAlbums } = useSingerContext();
 
 	const modalRef = useRef<ModalRef>(null);
 
 	const handleAddAlbumToList = (album: Playlist) => {
-		setPlaylists((prev) => [album, ...prev]);
+		setAlbums((prev) => [album, ...prev]);
 	};
 
 	return (

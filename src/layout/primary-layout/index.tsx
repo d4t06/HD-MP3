@@ -9,6 +9,7 @@ import { Outlet } from "react-router-dom";
 import NavigationProvider, {
   PushBrowserHistory,
 } from "@/stores/global/NavigationContext";
+import PlayerProvider from "@/stores/PlayerContext";
 
 export default function PrimaryLayout() {
   const { theme } = useThemeContext();
@@ -30,24 +31,26 @@ export default function PrimaryLayout() {
 
   return (
     <>
-      <NavigationProvider>
-        <div className={`${classes.page}`}>
-          {/* hidden in mobile */}
-          <Sidebar />
-          <div ref={containerRef} className={classes.container}>
-            {/* hide in mobile */}
-            <Header contentRef={containerRef} />
-            <Outlet />
+      <PlayerProvider>
+        <NavigationProvider>
+          <div className={`${classes.page}`}>
+            {/* hidden in mobile */}
+            <Sidebar />
+            <div ref={containerRef} className={classes.container}>
+              {/* hide in mobile */}
+              <Header contentRef={containerRef} />
+              <Outlet />
+            </div>
+            <Player />
           </div>
-          <Player />
-        </div>
 
-        <ToastPortal className="left-[50%] translate-x-[-50%] top-[10px] md:top-[unset] md:bottom-[100px] md:left-[20px] md:translate-x-0" />
+          <ToastPortal className="left-[50%] translate-x-[-50%] top-[10px] md:top-[unset] md:bottom-[100px] md:left-[20px] md:translate-x-0" />
 
-        <UploadSongPortal />
+          <UploadSongPortal />
 
-        <PushBrowserHistory />
-      </NavigationProvider>
+          <PushBrowserHistory />
+        </NavigationProvider>
+      </PlayerProvider>
     </>
   );
 }

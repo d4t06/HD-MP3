@@ -1,30 +1,28 @@
 import { useRef } from "react";
-import { ChevronDownIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
+import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { FullScreenPlayerSetting } from "@/components";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
-import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import LyricContextProvider from "@/stores/LyricContext";
 import { usePlayerContext } from "@/stores";
 import useMobileFullScreenPlayer from "./_hooks/useMobileFullScreenPlayer";
-import MobileSongThumbnail from "./_components/SongThumbnail";
+import SongThumbnail from "./_components/SongThumbnail";
 import LyricsList from "../lyric";
-import MobileSongQueue from "./_components/SongQueue";
 import ScrollText from "../scroll-text";
-import SleepTimerButton from "../sleep-timer-button";
-import FullScreenPlayerTab from "../full-screen-player/_components/Tabs";
 import { Link } from "react-router-dom";
 import MobileFullScreenControl from "./_components/Control";
 
 export default function MobileFullScreenPlayer() {
   // use stores
-  const { controlRef, setIsOpenFullScreen, isOpenFullScreen, mobileActiveTab } =
-    usePlayerContext();
+  const {
+    isOpenFullScreen,
+    playerConig: { songBackground },
+    mobileActiveTab,
+  } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
-  const { songBackground } = useSelector(selectAllPlayStatusStore);
 
   // ref
   const containerRef = useRef<HTMLDivElement>(null);
@@ -35,10 +33,9 @@ export default function MobileFullScreenPlayer() {
   const classes = {
     headerWrapper: "flex mb-4",
     container: "flex-grow flex flex-col relative overflow-hidden",
-    control: "",
+    control: "mt-auto",
 
     bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
-    button: "flex justify-center items-center rounded-full w-[38px]",
   };
 
   return (
@@ -59,37 +56,13 @@ export default function MobileFullScreenPlayer() {
         )}
 
         <div className="h-full z-10 p-4 flex flex-col">
-          <div className={classes.headerWrapper}>
-            <MyPopup appendOnPortal>
-              <MyPopupTrigger>
-                <button className={`${classes.button} p-[6px] left-0 bg-white/10`}>
-                  <Cog6ToothIcon className="w-full" />
-                </button>
-              </MyPopupTrigger>
-
-              <MyPopupContent appendTo="portal" position="right-bottom" origin="top left">
-                <FullScreenPlayerSetting />
-              </MyPopupContent>
-            </MyPopup>
-
-            <FullScreenPlayerTab variant="mobile" />
-
-            <button
-              className={`${classes.button} p-[6px] bg-white/10`}
-              onClick={() => setIsOpenFullScreen(false)}
-            >
-              <ChevronDownIcon className="w-6" />
-            </button>
-          </div>
-
           {/* container */}
           <div ref={containerRef} className={classes.container}>
             {/* >>> song image */}
-            <div className={`${mobileActiveTab != "Playing" ? "flex" : "sm:flex"}`}>
-              <MobileSongThumbnail
-                expand={mobileActiveTab === "Playing"}
-                imageUrl={currentSongData?.song.image_url}
-              />
+            <div
+              className={`${mobileActiveTab != "Playing" ? "flex items-center" : "sm:flex"}`}
+            >
+              <SongThumbnail imageUrl={currentSongData?.song.image_url} />
 
               <div
                 className={`ml-2 ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
@@ -103,6 +76,24 @@ export default function MobileFullScreenPlayer() {
                   ))}
                 </div>
               </div>
+
+              {mobileActiveTab === "Lyric" && (
+                <MyPopup appendOnPortal>
+                  <MyPopupTrigger>
+                    <button className={` p-[6px] rounded-full ml-auto  bg-white/10`}>
+                      <Cog6ToothIcon className="w-6" />
+                    </button>
+                  </MyPopupTrigger>
+
+                  <MyPopupContent
+                    appendTo="portal"
+                    position="left-bottom"
+                    origin="top right"
+                  >
+                    <FullScreenPlayerSetting />
+                  </MyPopupContent>
+                </MyPopup>
+              )}
             </div>
 
             {/* <<< end song image */}
@@ -132,8 +123,6 @@ export default function MobileFullScreenPlayer() {
                   )}
                 </div>
               </div>
-
-              <SleepTimerButton />
             </div>
             {/* <<< end song name */}
 
@@ -148,33 +137,9 @@ export default function MobileFullScreenPlayer() {
               {/* <<< end lyric tab */}
             </LyricContextProvider>
 
-            {/* >>> song list tab */}
-            <div
-              className={`leading-[2.2] font-playwriteCU my-2 ${
-                mobileActiveTab === "Songs" ? "" : "hidden"
-              }`}
-            >
-              Playing next
-            </div>
-
-            <div
-              className={`flex-grow no-scrollbar overflow-auto ${
-                mobileActiveTab === "Songs" ? "" : "hidden"
-              }`}
-            >
-              {currentSongData && (
-                <MobileSongQueue currentIndex={currentSongData.index} />
-              )}
-            </div>
-            {/* <<< end song list tab */}
-
             {/* control */}
-            <div
-              className={`${classes.control} ${
-                mobileActiveTab === "Songs" ? "opacity-0 pointer-events-none h-[0px]" : ""
-              } ${mobileActiveTab === "Playing" ? "mt-auto" : ""}`}
-            >
-              <MobileFullScreenControl ref={controlRef} />
+            <div className={`${classes.control}`}>
+              <MobileFullScreenControl />
             </div>
           </div>
         </div>

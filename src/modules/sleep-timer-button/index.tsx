@@ -2,19 +2,19 @@ import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useThemeContext } from "@/stores";
 import { useRef } from "react";
 import { Modal, TimerModal, ModalRef, MyTooltip } from "@/components";
-import useCountDown from "./_hooks/useCountDown";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 
 export default function SleepTimerButton() {
   const { theme } = useThemeContext();
 
+  const dispatch = useDispatch();
+  const { countDown } = useSelector(selectAllPlayStatusStore);
+
   const modalRef = useRef<ModalRef>(null);
 
-  const { countDown, isActive, clearTimer, setIsActive } = useCountDown();
-
-  const activeTimer = (t: number) => setIsActive(t);
-
   const handleTriggerClick = () => {
-    if (isActive) clearTimer(true);
+    if (!!countDown) dispatch(setPlayStatus({ countDown: 0 }));
     else modalRef.current?.open();
   };
 
@@ -28,7 +28,7 @@ export default function SleepTimerButton() {
   return (
     <>
       <div className={classes.container}>
-        {!!isActive ? (
+        {!!countDown ? (
           <MyTooltip content="Clear timer">
             <button className="group flex items-center" onClick={handleTriggerClick}>
               <span className="text-base opacity-70 sm:text-sm group-hover:hidden">
@@ -49,7 +49,10 @@ export default function SleepTimerButton() {
       </div>
 
       <Modal ref={modalRef} variant="animation">
-        <TimerModal active={activeTimer} closeModal={() => modalRef.current?.close()} />
+        <TimerModal
+          active={(t) => dispatch(setPlayStatus({ countDown: t }))}
+          closeModal={() => modalRef.current?.close()}
+        />
       </Modal>
     </>
   );

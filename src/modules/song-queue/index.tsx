@@ -11,6 +11,7 @@ import { Button, Skeleton, Tab } from "@/components";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
 import RecentSong from "./_components/RecentSong";
+import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 
 const tabs = ["Queue", "Recent"] as const;
 
@@ -20,8 +21,10 @@ function SongQueue() {
   // stores
   const dispatch = useDispatch();
   const { theme } = useThemeContext();
-  const { isOpenSongQueue, setIsOpenSongQueue, controlRef } = usePlayerContext();
+  const { isOpenSongQueue, setIsOpenSongQueue } = usePlayerContext();
   const { queueSongs, currentQueueId, isFetching } = useSelector(selectSongQueue);
+
+  const { resetForNewSong } = usePlayerAction();
 
   const [tab, setTab] = useState<QueueTab>("Queue");
 
@@ -36,7 +39,7 @@ function SongQueue() {
 
   const clearSongQueue = useCallback(() => {
     dispatch(resetSongQueue());
-    controlRef.current?.resetForNewSong();
+    resetForNewSong();
 
     setIsOpenSongQueue(false);
   }, []);

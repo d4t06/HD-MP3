@@ -5,7 +5,6 @@ import { usePlayerContext } from "@/stores";
 import {
   PlayStatus,
   selectAllPlayStatusStore,
-  setPlayStatus,
 } from "@/stores/redux/PlayStatusSlice";
 
 const handleTouchPadScroll = () => {
@@ -111,16 +110,16 @@ export default function useScrollSong() {
     if (!activeSongRef.current) return;
     const centeredEle = document.querySelector(".song-thumb.centered");
 
-    if (!centeredEle || centeredEle.getAttribute("queue-id") === currentQueueId) {
-      console.log("go here");
+    // if (!centeredEle || centeredEle.getAttribute("queue-id") === currentQueueId) {
+    //   console.log("go here");
 
-      switch (playStatusRef.current) {
-        case "playing":
-          return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
-        case "paused":
-          return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
-      }
-    }
+    //   switch (playStatusRef.current) {
+    //     case "playing":
+    //       return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
+    //     case "paused":
+    //       return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
+    //   }
+    // }
 
     const newQueueId = centeredEle?.getAttribute("queue-id");
     if (newQueueId) dispatch(setCurrentQueueId(newQueueId));

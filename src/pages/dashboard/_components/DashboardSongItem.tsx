@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import DashboardSongMenu from "../_modules/song-menu";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 type Props = {
   song: Song;
@@ -23,6 +24,8 @@ export default function DashboardSongItem({ song, className = "", variant }: Pro
           </Link>
         ))}
       </td>
+
+      <td>{abbreviateNumber(song.like)}</td>
 
       <td>
         <DashboardSongMenu variant={variant} song={song} />

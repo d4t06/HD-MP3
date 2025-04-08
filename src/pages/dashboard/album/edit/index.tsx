@@ -16,9 +16,9 @@ export default function DashboardEditAlbumPage() {
 	if (!album) return <></>;
 
 	return (
-		<>
+		<div className="pb-[46px]">
 			<Title title="Edit album" className="mb-3" />
 			<AddAlbumForm variant="edit" album={album} />
-		</>
+		</div>
 	);
 }

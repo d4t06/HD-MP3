@@ -8,26 +8,10 @@ import {
 	useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { PopupWrapper } from ".";
-import { useThemeContext } from "../stores";
 
-type BaseProps = {
-	className?: string;
+type Props = {
 	children: ReactNode;
-	wrapped?: boolean;
-	persisted?: boolean;
 };
-
-type NoAnimation = {
-	variant?: "default";
-	closeModal: () => void;
-};
-
-type WithAnimation = {
-	variant?: "animation";
-};
-
-type Props = BaseProps & (NoAnimation | WithAnimation);
 
 export type ModalRef = {
 	toggle: () => void;
@@ -36,17 +20,9 @@ export type ModalRef = {
 	setModalPersist: (v: boolean) => void;
 };
 
-function Modal(
-	{ children, className, persisted = false, wrapped = true, ...props }: Props,
-	ref: Ref<ModalRef>,
-) {
-	const variant = props.variant || "default";
-
-	const { theme } = useThemeContext();
-
-	const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
-	const [isMounted, setIsMounted] = useState(variant === "default" ? true : false);
-	const [persist, setPersist] = useState(persisted);
+function Modal({ children }: Props, ref: Ref<ModalRef>) {
+	const [isOpen, setIsOpen] = useState(false);
+	const [isMounted, setIsMounted] = useState(false);
 
 	const toggle = () => {
 		if (isMounted) setIsMounted(false);
@@ -59,37 +35,23 @@ function Modal(
 
 	const close = () => {
 		setIsMounted(false);
-		setPersist(false);
-	};
-
-	const setModalPersist = (v: boolean) => {
-		setPersist(v);
 	};
 
 	const handleOverlayClick: MouseEventHandler = (e) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		if (persist) return;
-
-		if (variant === "default") {
-			// @ts-ignore
-			props.closeModal ? props.closeModal() : "";
-		}
-
-		if (variant === "animation") close();
+		close();
 	};
 
 	useImperativeHandle(ref, () => ({
 		toggle,
 		close,
 		open,
-		setModalPersist,
+		setModalPersist: () => {},
 	}));
 
 	useEffect(() => {
-		if (variant === "default") return;
-
 		if (!isMounted) {
 			setTimeout(() => {
 				setIsOpen(false);
@@ -98,8 +60,6 @@ function Modal(
 	}, [isMounted]);
 
 	useEffect(() => {
-		if (variant === "default") return;
-
 		if (isOpen) {
 			setTimeout(() => {
 				setIsMounted(true);
@@ -108,10 +68,10 @@ function Modal(
 	}, [isOpen]);
 
 	const classes = {
-		unMountedContent: "translate-y-full opacity-0",
-		mountedContent: "translate-y-0 opacity-100",
+		unMountedContent: "translate-y-full ",
+		mountedContent: "translate-y-0",
 		unMountedLayer: "opacity-0",
-		mountedLayer: "opacity-40",
+		mountedLayer: "opacity-20",
 	};
 
 	return (
@@ -126,7 +86,7 @@ function Modal(
                         `}
 						></div>
 						<div
-							className={`modal-content absolute duration-300 transition-[transform,opacity] z-[99]
+							className={`modal-content absolute bottom-0 left-0 right-0 duration-300 transition-[transform,opacity] z-[99]
                             ${
 															isMounted
 																? classes.mountedContent
@@ -134,7 +94,7 @@ function Modal(
 														}
                         `}
 						>
-							children
+							{children}
 						</div>
 					</div>,
 					document.getElementById("portals")!,

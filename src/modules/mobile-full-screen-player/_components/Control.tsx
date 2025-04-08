@@ -1,35 +1,30 @@
 import { formatTime } from "@/utils/appHelpers";
-import { forwardRef, Ref, useImperativeHandle } from "react";
-import PlayPauseButton from "@/modules/music-control/_components/PlayPauseButton";
-import useControl from "@/modules/music-control/_hooks/useControl";
-import { Bars3Icon } from "@heroicons/react/24/outline";
 
-export type ControlRef = {
-	handlePlayPause: () => void;
-	handleNext: () => void;
-	pause: () => void;
-	resetForNewSong: () => void;
-};
+// import { forwardRef} from "react";
+import MenuButton from "./MenuBtn";
+import PlayBtn from "./PlayBtn";
+import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
+import { usePlayerContext } from "@/stores";
+import { useSelector } from "react-redux";
+import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
-function MobileFullScreenControl({}, ref: Ref<ControlRef>) {
-	const {
-		currentSongData,
-		handleSeek,
-		handlePlayPause,
-		handleNext,
-		playStatus,
-		currentTimeEleRef,
-		timelineEleRef,
-		resetForNewSong,
-		pause,
-	} = useControl();
+// export type ControlRef = {
+// 	handlePlayPause: () => void;
+// 	handleNext: () => void;
+// 	pause: () => void;
+// 	resetForNewSong: () => void;
+// };
 
-	useImperativeHandle(ref, () => ({
-		handlePlayPause,
-		handleNext,
-		pause,
-		resetForNewSong,
-	}));
+export default function MobileFullScreenControl() {
+
+	const {timelineEleRef, currentTimeEleRef} = usePlayerContext()
+
+	const {playStatus} = useSelector(selectAllPlayStatusStore)
+	const {currentSongData} = useSelector(selectSongQueue)
+
+	const { handleSeek, handlePlayPause } = usePlayerAction();
+
 
 	const classes = {
 		buttonsContainer: `w-full flex items-center justify-between space-x-2 mt-2`,
@@ -66,14 +61,12 @@ function MobileFullScreenControl({}, ref: Ref<ControlRef>) {
 
 			{/* buttons */}
 			<div className={`${classes.buttonsContainer}`}>
-				<PlayPauseButton playStatus={playStatus} handlePlayPause={handlePlayPause} />
+				<PlayBtn playStatus={playStatus} handlePlayPause={handlePlayPause} />
 
-				<button className="p-1 bg-white/10 rounded-full">
-					<Bars3Icon className="w-5" />
-				</button>
+				<MenuButton />
 			</div>
 		</>
 	);
 }
 
-export default forwardRef(MobileFullScreenControl);
+// export default forwardRef(MobileFullScreenControl);

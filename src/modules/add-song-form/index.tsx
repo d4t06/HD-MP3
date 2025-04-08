@@ -11,6 +11,7 @@ import { Button, Frame } from "@/pages/dashboard/_components";
 import UploadImageBtn from "./_components/UploadImageBtn";
 import { formatTime } from "@/utils/appHelpers";
 import EditSongBtn from "./_components/EditSongBtn";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 type Add = {
   variant: "add";
@@ -77,14 +78,19 @@ export default function AddSongForm(props: Props) {
                   <Frame className="[&>*]:text-sm ">
                     <p>Duration: {formatTime(songData.duration)}</p>
                     <p>Size: {songData.size} kb</p>
-                    <p>Like: {songData.like}</p>
+                    <p className="mt-1 font-[500]">
+                      <span className="text-red-500 text-xl">&#10084;</span>{" "}
+                      {abbreviateNumber(songData.like)}
+                    </p>
                   </Frame>
                 </div>
               )}
 
-              <div className="-mt-2 -ml-2 flex flex-wrap w-full [&_button]:mt-2 [&_button]:ml-2">
-                <UploadImageBtn />
-                {props.variant === "edit" && <EditSongBtn />}
+              <div className="w-full">
+                <div className="-mt-2 -ml-2 flex flex-wrap w-full [&_button]:mt-2 [&_button]:ml-2">
+                  <UploadImageBtn />
+                  {props.variant === "edit" && <EditSongBtn />}
+                </div>
               </div>
             </div>
 

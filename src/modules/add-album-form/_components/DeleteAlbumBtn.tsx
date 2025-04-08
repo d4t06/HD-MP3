@@ -34,7 +34,7 @@ export default function DeleteAlbumBtn() {
 	return (
 		<>
 			<Button size={"clear"} onClick={() => modalRef.current?.open()}>
-				<TrashIcon className="w-5" />
+				<TrashIcon className="w-6" />
 				<span>Delete</span>
 			</Button>
 
