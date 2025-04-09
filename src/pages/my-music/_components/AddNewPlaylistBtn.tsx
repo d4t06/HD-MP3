@@ -32,13 +32,15 @@ export default function AddNewPlaylistBtn() {
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <AddPlaylistModal
-          close={closeModal}
-          isLoading={isFetching}
-          variant="add"
-          user={user}
-          submit={_handleAddPlaylist}
-        />
+        <div className={`max-h-[80vh] max-w-[85vw] w-[400px]`}>
+          <AddPlaylistModal
+            close={closeModal}
+            isLoading={isFetching}
+            variant="add"
+            user={user}
+            submit={_handleAddPlaylist}
+          />
+        </div>
       </Modal>
     </>
   );

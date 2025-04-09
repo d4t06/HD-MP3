@@ -17,8 +17,7 @@ export default function useCountDown() {
   const countDownRef = useRef(0);
 
   const handleSongEnd = () => {
-
-console.log('song end')
+    console.log("song end");
 
     setLocalStorage("timer", countDownRef.current - 1);
     return dispatch(setPlayStatus({ countDown: countDownRef.current - 1 }));
@@ -34,11 +33,12 @@ console.log('song end')
   useEffect(() => {
     if (!countDown || !audioRef.current) return;
 
-    setLocalStorage("is_timer", true);
     audioRef.current.addEventListener("ended", handleSongEnd);
 
     if (!firstTimeSongLoaded.current) {
       setLocalStorage("timer", countDown);
+      setLocalStorage("is_timer", true);
+
       if (playStatus === "paused") handlePlayPause();
     }
 

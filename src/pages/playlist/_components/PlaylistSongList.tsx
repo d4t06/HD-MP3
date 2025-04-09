@@ -29,6 +29,8 @@ export default function PlaylistSongList({ variant, loading }: Props) {
 
   const { updatePlaylist } = useUpdateRecentPlaylist();
 
+  const isAlbumAndHasImage = currentPlaylist?.is_album && !!currentPlaylist?.image_url;
+
   const _handleSetSong = (s: Song) => {
     if (!currentPlaylist) return;
 
@@ -50,6 +52,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
         )}
 
         <SongList
+          imageUrl={isAlbumAndHasImage ? currentPlaylist.image_url : ""}
           songs={playlistSongs}
           setSong={(s) => _handleSetSong(s)}
           songVariant={variant === "my-playlist" ? "own-playlist" : "system-song"}

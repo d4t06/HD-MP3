@@ -8,6 +8,7 @@ import { convertTimestampToString } from "@/utils/appHelpers";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
 import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 type Props = {
   playlist: Playlist | null;
@@ -42,12 +43,15 @@ export default function PLaylistInfo({
     return (
       <>
         <Link
-          className={`hover:underline ${theme.content_hover_text} ${classes.smallText}`}
+          className={`block hover:underline ${theme.content_hover_text} ${classes.smallText}`}
           to={`/singer/${playlist.singers[0].id}}`}
         >
           {playlist.singers[0].name}
         </Link>
-        <p className={classes.smallText}>{playlist.like} likes</p>
+        <p className={classes.smallText}>
+          <span className="text-red-500">&#10084; </span>
+          {abbreviateNumber(playlist.like)}
+        </p>
       </>
     );
   };
@@ -63,7 +67,10 @@ export default function PLaylistInfo({
       case "others-playlist":
         return (
           <>
-            <p className={classes.smallText}>{playlist.like} likes</p>
+            <p className={classes.smallText}>
+              <span className="text-red-500">&#10084; </span>
+              {abbreviateNumber(playlist.like)}
+            </p>
             <p className={classes.smallText}>
               {playlist.singers.map((s, i) => (
                 <span>{(!!i ? ", " : "") + s.name}</span>
@@ -105,7 +112,7 @@ export default function PLaylistInfo({
             playlist && (
               <>
                 <p className="text-xl font-[600] leading-[1.2]">{playlist.name}</p>
-                <div className=" mt-2.5 text-[#666]">
+                <div className="mt-2.5 text-[#666]">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
               </>

@@ -40,7 +40,7 @@ export default function DashboardAlbum() {
                     </Link>
                   </td>
                   <td>
-                    <Link to={`/dashboard/${p.singers[0].id}`}>{p.singers[0].name}</Link>
+                    <Link to={`/dashboard/singer/${p.singers[0].id}`}>{p.singers[0].name}</Link>
                   </td>
                   <td>{abbreviateNumber(p.like)}</td>
                 </tr>

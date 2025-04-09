@@ -148,11 +148,11 @@ export default function usePlayerEffect() {
       return dispatch(setCurrentQueueId(newSong.queue_id));
     }
 
-    if (timer === 0 && MEMO_STORAGE["is_timer"]) {
+    if (timer === 0 && storage["is_timer"]) {
       isEndOfList.current = true;
       setLocalStorage("is_timer", false);
     } else if (currentSongDataRef.current.index === queueSongs.length - 1) {
-      if (repeat === "all" || timer > 1) isEndOfList.current = false;
+      if (repeat === "all" || timer >= 1) isEndOfList.current = false;
       else isEndOfList.current = true;
     }
 

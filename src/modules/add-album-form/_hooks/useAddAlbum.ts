@@ -35,6 +35,7 @@ export default function useAddAlbum(props: ComponentProps<typeof AddAlbumModal>)
 		return (
 			albumData.name !== album.name ||
 			singer.id !== album.singers[0].id ||
+			albumData.like !== album.like ||
 			!!songs.find((s) => !album.song_ids.includes(s.id))
 		);
 	}, [albumData, album, singer, songs]);

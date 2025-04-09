@@ -73,7 +73,7 @@ export default function MenuBtn() {
 				</MyPopupTrigger>
 
 				<MyPopupContent className="top-[calc(100%+8px)] right-0 z-[9]" appendTo="parent">
-					<MenuWrapper className="w-[120px]">
+					<MenuWrapper className="w-[140px]">
 						<MenuList>
 							<button onClick={() => openModal("lyric")}>
 								<PencilIcon className="w-5" />

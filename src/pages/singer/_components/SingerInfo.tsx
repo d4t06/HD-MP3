@@ -4,6 +4,7 @@ import SingerCta from "./SingerCta";
 import { useThemeContext } from "@/stores";
 
 import simonCat from "@/assets/simon_empty.png";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function SingerInfo() {
   const { theme } = useThemeContext();
@@ -51,7 +52,10 @@ export default function SingerInfo() {
               <>
                 <p className="text-3xl leading-[2] font-playwriteCU">{singer.name}</p>
 
-                <p>{singer.like} likes</p>
+                <p>
+                  <span className="text-red-500">&#10084; </span>
+                  {abbreviateNumber(singer.like)}
+                </p>
 
                 <p className="line-clamp-2">{singer.description}</p>
 

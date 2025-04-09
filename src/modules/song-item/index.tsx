@@ -21,6 +21,7 @@ type Props = {
   // null if user is null
   isLiked: boolean | null;
   isHasCheckBox: boolean;
+  imageUrl?: string;
   variant: "system-song" | "own-song" | "queue-song" | "recent-song" | "own-playlist";
 };
 
@@ -61,6 +62,7 @@ function SongItem({
   isLiked,
   index,
   className = "",
+  imageUrl,
   ...props
 }: Props) {
   // stores
@@ -143,7 +145,7 @@ function SongItem({
 
     const node = e.target as HTMLElement;
 
-console.log(node.tagName)
+    console.log(node.tagName);
 
     if (node.tagName === "A") return;
 
@@ -158,7 +160,7 @@ console.log(node.tagName)
 
       <div className="flex-grow flex" onClick={handleMobileClick}>
         <div className={`${classes.imageFrame} ${getSongImageSize()}`}>
-          <Image src={song.image_url} blurHashEncode={song.blurhash_encode} />
+          <Image src={imageUrl || song.image_url} blurHashEncode={song.blurhash_encode} />
           {imageOverlay}
         </div>
 
