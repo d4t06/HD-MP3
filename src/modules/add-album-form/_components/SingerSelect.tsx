@@ -1,4 +1,4 @@
-import { Input, Modal, ModalRef } from "@/components";
+import { Input, ModalRef } from "@/components";
 import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";

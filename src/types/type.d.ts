@@ -156,7 +156,15 @@ type Genre = {
 
 type GenreSchema = Omit<Genre, "id">;
 
-type Language = {
+type UserComment = {
   id: string;
-  name: string;
+  user_email: string;
+  user_name: string;
+  user_image_url: string;
+  text: string;
+  target_id: string;
+  comment_id: string;
+  like: number;
+  updated_at: Timestamp;
+  created_at: Timestamp;
 };
