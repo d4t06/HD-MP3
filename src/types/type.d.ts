@@ -9,6 +9,7 @@ type User = {
   liked_singer_ids: string[];
   recent_song_ids: string[];
   recent_playlist_ids: string[];
+  liked_comment_ids: string[];
   role: string;
 };
 
@@ -165,6 +166,10 @@ type UserComment = {
   target_id: string;
   comment_id: string;
   like: number;
+  reply: number;
+  replies: UserComment[];
   updated_at: Timestamp;
   created_at: Timestamp;
 };
+
+type UserCommentSchema = Omit<UserComment, "id" | "replies">;

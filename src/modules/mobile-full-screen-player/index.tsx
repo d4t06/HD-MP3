@@ -38,6 +38,9 @@ export default function MobileFullScreenPlayer() {
     bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
   };
 
+
+  console.log('render')
+
   return (
     <>
       <div
@@ -100,7 +103,7 @@ export default function MobileFullScreenPlayer() {
 
             {/* >>> song name */}
             <div
-              className={`mt-5 justify-between items-center ${
+              className={`mt-2 justify-between items-center ${
                 mobileActiveTab != "Playing" ? "hidden" : "flex sm:hidden"
               }`}
             >

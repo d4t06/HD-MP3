@@ -8,6 +8,7 @@ import { usePlayerContext } from "@/stores";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import CommnetProvider from "@/modules/comment/components/CommemtContext";
 
 // export type ControlRef = {
 // 	handlePlayPause: () => void;
@@ -17,14 +18,12 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 // };
 
 export default function MobileFullScreenControl() {
+	const { timelineEleRef, currentTimeEleRef } = usePlayerContext();
 
-	const {timelineEleRef, currentTimeEleRef} = usePlayerContext()
-
-	const {playStatus} = useSelector(selectAllPlayStatusStore)
-	const {currentSongData} = useSelector(selectSongQueue)
+	const { playStatus } = useSelector(selectAllPlayStatusStore);
+	const { currentSongData } = useSelector(selectSongQueue);
 
 	const { handleSeek, handlePlayPause } = usePlayerAction();
-
 
 	const classes = {
 		buttonsContainer: `w-full flex items-center justify-between space-x-2 mt-2`,
@@ -63,7 +62,9 @@ export default function MobileFullScreenControl() {
 			<div className={`${classes.buttonsContainer}`}>
 				<PlayBtn playStatus={playStatus} handlePlayPause={handlePlayPause} />
 
-				<MenuButton />
+				<CommnetProvider target="song">
+					<MenuButton />
+				</CommnetProvider>
 			</div>
 		</>
 	);

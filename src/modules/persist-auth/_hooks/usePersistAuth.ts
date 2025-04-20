@@ -2,6 +2,7 @@ import { auth } from "@/firebase";
 import useGetMyMusicPlaylist from "@/pages/my-music/_hooks/useGetMyMusicPlaylist";
 import { myGetDoc, myAddDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
+import { getLocalStorage } from "@/utils/appHelpers";
 import { useEffect } from "react";
 
 export default function usePersistAuth() {
@@ -27,6 +28,7 @@ export default function usePersistAuth() {
             liked_singer_ids: userDoc.liked_singer_ids || [],
             role: userDoc.role || "USER",
             liked_playlist_ids: userDoc.liked_playlist_ids || [],
+            liked_comment_ids: getLocalStorage()["liked_comment_ids"] || [],
           };
 
           //  new user

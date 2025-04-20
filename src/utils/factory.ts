@@ -111,3 +111,25 @@ export const initLyricObject = ({
 
   return lyric;
 };
+
+export const initCommentObject = ({
+  user,
+  target_id,
+  ...data
+}: Partial<UserCommentSchema> & { user: User; target_id: string }) => {
+  const singer: UserCommentSchema = {
+    target_id,
+    text: "",
+    like: 0,
+    reply: 0,
+    comment_id: "",
+    user_email: user.email,
+    user_image_url: user.photo_url,
+    user_name: user.display_name,
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+    ...data,
+  };
+
+  return singer;
+};

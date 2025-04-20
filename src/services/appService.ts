@@ -53,6 +53,8 @@ export async function implementSingerQuery(query: Query) {
   } else return [];
 }
 
+
+
 export const optimizeAndGetHashImage = async ({
   imageFile,
   blob,

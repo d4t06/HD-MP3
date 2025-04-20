@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 
 type Props = {
 	children: ReactNode;
+	onClose?: () => void;
 };
 
 export type ModalRef = {
@@ -20,7 +21,7 @@ export type ModalRef = {
 	setModalPersist: (v: boolean) => void;
 };
 
-function Modal({ children }: Props, ref: Ref<ModalRef>) {
+function Modal({ children, onClose }: Props, ref: Ref<ModalRef>) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -55,6 +56,7 @@ function Modal({ children }: Props, ref: Ref<ModalRef>) {
 		if (!isMounted) {
 			setTimeout(() => {
 				setIsOpen(false);
+				onClose && onClose();
 			}, 400);
 		}
 	}, [isMounted]);
