@@ -35,9 +35,14 @@ export default function useCommentAction() {
 			if (!user) return;
 
 			setIsFetching(true);
+
 			switch (props.type) {
 				case "add": {
-					const comment = initCommentObject({ user, target_id: props.target_id, text: props.text });
+					const comment = initCommentObject({
+						user,
+						target_id: props.target_id,
+						text: props.text,
+					});
 
 					const docRef = await myAddDoc({
 						collectionName: "Comments",
@@ -61,14 +66,12 @@ export default function useCommentAction() {
 				}
 
 				case "like": {
-					const { id } = props;
-
 					const newLikedCommentIds = [...user.liked_comment_ids];
-					const foundedIndex = newLikedCommentIds.findIndex((id) => id === id);
+					const foundedIndex = newLikedCommentIds.findIndex((id) => id === props.id);
 
 					const isLike = foundedIndex === -1;
 
-					if (isLike) newLikedCommentIds.push(id);
+					if (isLike) newLikedCommentIds.push(props.id);
 					else newLikedCommentIds.splice(foundedIndex, 1);
 
 					const newCommentData = {
@@ -78,7 +81,7 @@ export default function useCommentAction() {
 					await myUpdateDoc({
 						collectionName: "Comments",
 						data: newCommentData,
-						id,
+						id: props.id,
 					});
 
 					const newUserData: Partial<User> = {

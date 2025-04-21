@@ -29,7 +29,7 @@ export function WordItem({ text, openModal, isShowScissor, index }: Props) {
   return (
     <div
       ref={(el) => (active ? (eleRefs.currentWordRef.current = el) : {})}
-      style={{ flexGrow: growList[index] !== 0 ? growList[index] : 1 }}
+      style={{ flexGrow: growList[index] !== 0 ? growList[index] : 0.05 }}
       onClick={handleSelectWord}
       className={`word-item cursor-pointer relative rounded-full flex items-center justify-center border ${
         theme.content_border

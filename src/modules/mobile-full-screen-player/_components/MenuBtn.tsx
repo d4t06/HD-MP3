@@ -5,9 +5,9 @@ import { useRef } from "react";
 import ControlMenu from "./ControlMenu";
 import { ChatBubbleLeftRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { usePlayerContext } from "@/stores";
-import MobileSongComment from "@/modules/comment/components/MobileSongComment";
 import { useCommentContext } from "@/modules/comment/components/CommemtContext";
-import useGetSongComment from "@/modules/comment/hooks/useGetSongComment";
+import MobileComment from "@/modules/comment/components/MobileComment";
+import SongComment from "@/modules/comment/components/SongComment";
 
 export default function MenuButton() {
 	const { setIsOpenFullScreen } = usePlayerContext();
@@ -16,8 +16,6 @@ export default function MenuButton() {
 	const modalRef = useRef<ModalRef>(null);
 
 	const commentModalRef = useRef<ModalRef>(null);
-
-	useGetSongComment();
 
 	const handleOpenCommentPopup = () => {
 		commentModalRef.current?.open();
@@ -45,7 +43,9 @@ export default function MenuButton() {
 			</SlideModal>
 
 			<SlideModal onClose={() => setIsOpenComment(false)} ref={commentModalRef}>
-				<MobileSongComment />
+				<MobileComment themeType="dark">
+					<SongComment />
+				</MobileComment>
 			</SlideModal>
 		</>
 	);

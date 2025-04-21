@@ -2,9 +2,12 @@ import CommentList from "..";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Center } from "@/components";
 import { useCommentContext } from "./CommemtContext";
+import useGetSongComment from "../hooks/useGetSongComment";
 
 export default function SongComment() {
 	const { isFetching, comments } = useCommentContext();
+
+	useGetSongComment();
 
 	if (isFetching)
 		return (

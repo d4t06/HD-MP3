@@ -42,19 +42,16 @@ export default function UserInput() {
 	};
 
 	return (
-		<div className="flex w-full">
+		<div className="flex w-full z-0">
 			<Input placeholder="..." ref={inputRef} />
 			<Button
 				onClick={handleAddComment}
-				className="ml-2"
+				className="ml-2 w-[70px] justify-center"
+				isLoading={isFetching}
 				color="primary"
 				rounded={"full"}
 			>
-				{isFetching ? (
-					<ArrowPathIcon className="w-5" />
-				) : (
-					<MusicalNoteIcon className="w-5" />
-				)}
+				<MusicalNoteIcon className="w-5" />
 			</Button>
 		</div>
 	);

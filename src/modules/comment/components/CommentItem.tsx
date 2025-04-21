@@ -46,7 +46,7 @@ export default function CommentItem({ comment, index }: Props) {
 
 	return (
 		<>
-			<div className="p-2">
+			<div className="p-2 text-white">
 				<div className="flex w-full items-start space-x-1.5">
 					<div className="flex-shrink-0 w-[48px] h-[48px] rounded-full overflow-hidden">
 						<Image src={comment.user_image_url} />
@@ -57,7 +57,7 @@ export default function CommentItem({ comment, index }: Props) {
 							<Link className="text-[#ccc] line-clamp-1 text-sm font-[500]" to={"/"}>
 								{comment.user_name}
 							</Link>
-							<div className="mt-1.5 break-all">{comment.text}</div>
+							<div className="mt-1.5 break-all text-white">{comment.text}</div>
 						</div>
 
 						<div className="flex space-x-2 text-sm mt-1">
@@ -114,7 +114,7 @@ export default function CommentItem({ comment, index }: Props) {
 
 			<Modal variant="animation" ref={modalRef}>
 				<ConfirmModal
-				label="Delete comment"
+					label="Delete comment"
 					close={() => modalRef.current?.close}
 					loading={isFetching}
 					callback={handleDeleteComment}

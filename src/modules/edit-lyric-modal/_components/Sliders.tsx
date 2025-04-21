@@ -57,8 +57,8 @@ export default function Sliders() {
 					type="range"
 					id="grow"
 					min={0}
-					max={30}
-					step={0.2}
+					max={10}
+					step={0.1}
 					className="w-full"
 					value={growList[wordIndex] + ""}
 					onChange={(e) =>

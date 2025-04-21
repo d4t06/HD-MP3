@@ -29,8 +29,6 @@ export default function useSlider() {
   };
 
   const handleGrowWord = (props: Range | Button) => {
-    if (props.variant === "range" && props.value < 1) return;
-
     isChangedRef.current = true;
 
     setGrowList((prev) => {
@@ -44,9 +42,11 @@ export default function useSlider() {
           break;
         case "button":
           newValue = +(
-            props.action === "minus" ? newValue - 0.2 : newValue + 0.2
+            props.action === "minus" ? newValue - 0.1 : newValue + 0.1
           ).toFixed(1);
       }
+
+      if (newValue < 0) newValue = 0;
 
       _prev[props.index] = newValue;
 

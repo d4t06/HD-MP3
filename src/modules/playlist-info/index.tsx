@@ -9,6 +9,8 @@ import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
 import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import ChatBtn from "./_components/ChatBtn";
+import CommnetProvider from "../comment/components/CommemtContext";
 
 type Props = {
   playlist: Playlist | null;
@@ -128,6 +130,10 @@ export default function PLaylistInfo({
                 {variant !== "my-playlist" && isLiked !== null && (
                   <HearBtn isLiked={isLiked} playlist={playlist} />
                 )}
+
+                <CommnetProvider target="playlist">
+                  <ChatBtn />
+                </CommnetProvider>
               </div>
             </div>
           )}

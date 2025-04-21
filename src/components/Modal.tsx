@@ -25,6 +25,7 @@ type NoAnimation = {
 
 type WithAnimation = {
   variant?: "animation";
+  onClose?: () => void;
 };
 
 type Props = BaseProps & (NoAnimation | WithAnimation);
@@ -93,6 +94,9 @@ function Modal(
     if (!isMounted) {
       setTimeout(() => {
         setIsOpen(false);
+
+        // @ts-ignore
+        props.onClose && props.onClose();
       }, 400);
     }
   }, [isMounted]);

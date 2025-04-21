@@ -2,14 +2,12 @@ import { useAuthContext, usePlayerContext, useThemeContext } from "@/stores";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
 import {
-	ChatBubbleLeftRightIcon,
 	ChevronDownIcon,
 	Cog6ToothIcon,
 	DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import {
-	Button,
 	FullScreenPlayerSetting,
 	MyPopup,
 	MyPopupContent,
@@ -17,8 +15,8 @@ import {
 	MyTooltip,
 } from "@/components";
 import FullScreenPlayerTab from "./Tabs";
-import { useState } from "react";
-import SongComment from "@/modules/comment/components/SongComment";
+import CommnentButton from "./CommentButton";
+import CommnetProvider from "@/modules/comment/components/CommemtContext";
 
 export default function FullScreenPlayerHeader() {
 	const { user } = useAuthContext();
@@ -26,8 +24,6 @@ export default function FullScreenPlayerHeader() {
 	const { activeTab, idle, setIsOpenFullScreen } = usePlayerContext();
 
 	const { currentSongData } = useSelector(selectSongQueue);
-
-	const [isOpenComment, setIsOpenComment] = useState(false);
 
 	const navigate = useNavigate();
 
@@ -56,8 +52,6 @@ export default function FullScreenPlayerHeader() {
 
 	return (
 		<>
-			<SongComment isOpen={isOpenComment} setIsOpen={setIsOpenComment} />
-
 			<div className={`${classes.headerWrapper} ${idle ? "pointer-events-none" : ""}`}>
 				{/* left */}
 				{idle && currentSongData && (
@@ -79,11 +73,9 @@ export default function FullScreenPlayerHeader() {
 				<div
 					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 				>
-					<MyTooltip position="top-[calc(100%+8px)]" content="Comment">
-						<button onClick={() => setIsOpenComment(true)} className={`p-2 ${classes.button}`}>
-							<ChatBubbleLeftRightIcon />
-						</button>
-					</MyTooltip>
+					<CommnetProvider target="song">
+						<CommnentButton />
+					</CommnetProvider>
 
 					{isOwnSong && activeTab === "Lyric" && (
 						<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">

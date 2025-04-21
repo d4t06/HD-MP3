@@ -1,20 +1,20 @@
 import { useEffect } from "react";
 import { useCommentContext } from "../components/CommemtContext";
 import { useSelector } from "react-redux";
-import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import useGetComment from "./useGetComment";
+import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 
-export default function useGetSongComment() {
+export default function useGetPlaylistComment() {
 	const { shouldFetchComment, setComments, isOpenComment } = useCommentContext();
-	const { currentSongData } = useSelector(selectSongQueue);
+	const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
 	const { fetchComment } = useGetComment();
 
 	const handleGetSongComment = async () => {
-		if (!currentSongData?.song) return;
+		if (!currentPlaylist) return;
 
 		const comments = await fetchComment({
-			target_id: currentSongData.song.id,
+			target_id: currentPlaylist.id,
 		});
 
 		if (comments) setComments(comments);
@@ -22,7 +22,7 @@ export default function useGetSongComment() {
 	};
 
 	useEffect(() => {
-		if (!isOpenComment || !currentSongData?.song) return;
+		if (!isOpenComment || !currentPlaylist) return;
 
 		if (shouldFetchComment.current) {
 			shouldFetchComment.current = false;
@@ -30,12 +30,4 @@ export default function useGetSongComment() {
 			handleGetSongComment();
 		}
 	}, [isOpenComment]);
-
-	useEffect(() => {
-		return () => {
-			if (!shouldFetchComment.current) shouldFetchComment.current = true;
-		};
-	}, [currentSongData?.song]);
-
-	console.log(shouldFetchComment.current);
 }
