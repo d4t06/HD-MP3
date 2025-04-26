@@ -1,15 +1,29 @@
-import { myAddDoc, myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
+import {
+	commentCollectionRef,
+	myAddDoc,
+	myDeleteDoc,
+	myUpdateDoc,
+} from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { useState } from "react";
 import { useCommentContext } from "../components/CommemtContext";
-import { getDoc, increment } from "firebase/firestore";
+import {
+	doc,
+	getDoc,
+	getDocs,
+	increment,
+	query,
+	where,
+	writeBatch,
+} from "firebase/firestore";
 import { initCommentObject } from "@/utils/factory";
 import { setLocalStorage } from "@/utils/appHelpers";
+import { db } from "@/firebase";
 
 export default function useCommentAction() {
 	const { user, updateUserData } = useAuthContext();
 
-	const { setComments } = useCommentContext();
+	const { setComments, comments } = useCommentContext();
 
 	const [isFetching, setIsFetching] = useState(false);
 
@@ -24,13 +38,19 @@ export default function useCommentAction() {
 		id: string;
 	};
 
-	type Delete = {
-		type: "delete";
-		id: string;
-		index: number;
+	type Reply = {
+		type: "reply";
+		text: string;
+		comment: UserComment;
+		comment_index: number;
 	};
 
-	const action = async (props: Add | Like | Delete) => {
+	type Delete = {
+		type: "delete";
+		comment: UserComment;
+	};
+
+	const action = async (props: Add | Like | Delete | Reply) => {
 		try {
 			if (!user) return;
 
@@ -59,6 +79,54 @@ export default function useCommentAction() {
 						};
 
 						setComments((prev) => [newComment, ...prev]);
+						setIsFetching(false);
+					}
+
+					break;
+				}
+
+				case "reply": {
+					const { comment, comment_index, text } = props;
+
+					const newCommentPayload = initCommentObject({
+						user,
+						target_id: comment.target_id,
+						text: text,
+						comment_id: comment.id,
+					});
+
+					const newCommentDocRef = await myAddDoc({
+						collectionName: "Comments",
+						data: newCommentPayload,
+					});
+
+					const newCommentSnap = await getDoc(newCommentDocRef);
+
+					if (newCommentSnap.exists()) {
+						const newCommentData = {
+							reply: increment(1),
+						};
+
+						await myUpdateDoc({
+							collectionName: "Comments",
+							data: newCommentData,
+							id: comment.id,
+						});
+
+						const newComment: UserComment = {
+							...(newCommentSnap.data() as UserCommentSchema),
+							id: newCommentDocRef.id,
+							replies: [],
+						};
+
+						const newComments = [...comments];
+
+						newComments[comment_index] = {
+							...newComments[comment_index],
+							replies: [...newComments[comment_index].replies, newComment],
+						};
+
+						setComments(newComments);
 						setIsFetching(false);
 					}
 
@@ -95,10 +163,33 @@ export default function useCommentAction() {
 				}
 
 				case "delete": {
-					await myDeleteDoc({
-						collectionName: "Comments",
-						id: props.id,
-					});
+					const commentRef = doc(db, "Comments", props.comment.id);
+
+					const batch = writeBatch(db);
+
+					batch.delete(commentRef);
+
+					if (!!props.comment.reply) {
+						console.log(`Delete ${props.comment.reply} replies `);
+
+						const queryGetReplies = query(
+							commentCollectionRef,
+							where("comment_id", "==", props.comment.id),
+						);
+
+						const repliesSnap = await getDocs(queryGetReplies);
+
+						// const commitBatchPromises: Promise<void>[] = [];
+
+						repliesSnap.forEach((replySnap) => {
+							batch.delete(replySnap.ref);
+							// commitBatchPromises.push(batch.commit());
+						});
+
+						// await Promise.all(commitBatchPromises);
+					}
+
+					await batch.commit();
 
 					const newLikedCommentIds = [...user.liked_comment_ids];
 
@@ -110,7 +201,7 @@ export default function useCommentAction() {
 						setLocalStorage("liked_comment_ids", newLikedCommentIds);
 					}
 
-					setComments((prev) => prev.filter((g) => g.id !== props.id));
+					setComments((prev) => prev.filter((g) => g.id !== props.comment.id));
 
 					break;
 				}

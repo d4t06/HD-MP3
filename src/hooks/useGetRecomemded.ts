@@ -14,14 +14,12 @@ export default function useGetRecommend() {
 
 	const getRecommend = async (song: Song) => {
 		try {
-			console.log("getRecommend");
-
 			dispatch(setIsFetchingRecommend(true));
 
 			const wheres = song.genres.map(
 				(g) => where(`genre_map.${g.id}`, "==", true),
 				limit(20),
-			);	
+			);
 
 			const exceptQuery = where(documentId(), "!=", song.id);
 

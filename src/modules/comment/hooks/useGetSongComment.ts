@@ -5,20 +5,27 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import useGetComment from "./useGetComment";
 
 export default function useGetSongComment() {
-	const { shouldFetchComment, setComments, isOpenComment } = useCommentContext();
+	const { shouldFetchComment, setComments, isOpenComment, setIsFetching } =
+		useCommentContext();
 	const { currentSongData } = useSelector(selectSongQueue);
 
 	const { fetchComment } = useGetComment();
 
 	const handleGetSongComment = async () => {
-		if (!currentSongData?.song) return;
+		try {
+			if (!currentSongData?.song) return;
 
-		const comments = await fetchComment({
-			target_id: currentSongData.song.id,
-		});
+			const comments = await fetchComment({
+				target_id: currentSongData.song.id,
+			});
 
-		if (comments) setComments(comments);
-		else setComments([]);
+			if (comments) setComments(comments);
+			else setComments([]);
+		} catch (error) {
+			console.log({ error });
+		} finally {
+			setIsFetching(false);
+		}
 	};
 
 	useEffect(() => {
@@ -36,6 +43,4 @@ export default function useGetSongComment() {
 			if (!shouldFetchComment.current) shouldFetchComment.current = true;
 		};
 	}, [currentSongData?.song]);
-
-	console.log(shouldFetchComment.current);
 }

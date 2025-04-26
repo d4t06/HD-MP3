@@ -156,6 +156,8 @@ export default function usePlayerEffect() {
       else isEndOfList.current = true;
     }
 
+    if (queueSongs.length === 1) return resetForNewSong();
+
     return next();
   };
 

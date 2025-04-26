@@ -53,6 +53,18 @@ export async function implementSingerQuery(query: Query) {
   } else return [];
 }
 
+export async function implementUserQuery(query: Query) {
+  const userSnaps = await getDocs(query);
+
+  if (userSnaps.docs.length) {
+    const result = userSnaps.docs.map((doc) => {
+      const user: User = doc.data() as User;
+      return user;
+    });
+
+    return result;
+  } else return [];
+}
 
 
 export const optimizeAndGetHashImage = async ({

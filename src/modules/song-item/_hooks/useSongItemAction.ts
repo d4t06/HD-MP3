@@ -41,9 +41,11 @@ export default function useSongItemAction() {
             liked_song_ids: user.liked_song_ids.filter((id) => id !== props.song.id),
           };
 
+          // update user data
           batch.update(userRef, newUserData);
-
+          // delete song doc
           batch.delete(songRef);
+          // delete lyric
           if (props.song.lyric_id) {
             const lyricRef = doc(db, "Lyrics", props.song.lyric_id);
             batch.delete(lyricRef);
@@ -63,7 +65,7 @@ export default function useSongItemAction() {
           const newLikedSongIds = [...user.liked_song_ids];
           const index = newLikedSongIds.findIndex((id) => id === props.song.id);
 
-          const isLike= index === -1;
+          const isLike = index === -1;
 
           if (isLike) newLikedSongIds.unshift(props.song.id);
           else newLikedSongIds.splice(index, 1);
@@ -73,7 +75,7 @@ export default function useSongItemAction() {
           };
 
           const newSongData = {
-            like: increment(isLike? 1 : -1),
+            like: increment(isLike ? 1 : -1),
           };
 
           batch.update(userRef, newUserData);

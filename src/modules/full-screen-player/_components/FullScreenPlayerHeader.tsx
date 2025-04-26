@@ -74,7 +74,7 @@ export default function FullScreenPlayerHeader() {
 					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 				>
 					<CommnetProvider target="song">
-						<CommnentButton />
+						<CommnentButton show={currentSongData?.song.is_official} />
 					</CommnetProvider>
 
 					{isOwnSong && activeTab === "Lyric" && (

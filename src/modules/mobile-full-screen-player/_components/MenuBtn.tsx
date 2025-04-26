@@ -43,7 +43,7 @@ export default function MenuButton() {
 			</SlideModal>
 
 			<SlideModal onClose={() => setIsOpenComment(false)} ref={commentModalRef}>
-				<MobileComment themeType="dark">
+				<MobileComment>
 					<SongComment />
 				</MobileComment>
 			</SlideModal>

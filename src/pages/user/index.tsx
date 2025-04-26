@@ -1,10 +1,18 @@
 import BackBtn from "@/components/BackBtn";
 import useGetUser from "./hooks/useGetUser";
-import { Center, PlaylistList } from "@/components";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { Center, Image, NotFound, PlaylistList, Skeleton, Title } from "@/components";
+import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
+import Footer from "@/layout/primary-layout/_components/Footer";
 
 export default function UserPage() {
 	const { playlists, isFetching, user } = useGetUser();
+
+	if (!isFetching && !user)
+		return (
+			<Center>
+				<NotFound variant="with-home-button" />
+			</Center>
+		);
 
 	return (
 		<>
@@ -13,16 +21,43 @@ export default function UserPage() {
 			</div>
 
 			<div className="space-y-5">
-				{isFetching ? (
-					<Center>
-						<ArrowPathIcon className="w-6 animate-spin" />
-					</Center>
-				) : (
-					<div>{user?.display_name}</div>
-				)}
+				<div className="flex flex-col md:flex-row items-center">
+					{isFetching ? (
+						<Skeleton className="w-[100px] h-[100px] rounded-full" />
+					) : (
+						user && (
+							<div className="w-[100px] h-[100px] rounded-full overflow-hidden">
+								<Image src={user.photo_url} />
+							</div>
+						)
+					)}
 
-				<PlaylistList loading={isFetching} playlists={playlists} />
+					<div className="text-center mt-3 md:mt-0 md:ml-3 md:text-left ">
+						{isFetching ? (
+							<>
+								<Skeleton className="w-[300px] h-[30px]" />
+								<Skeleton className="w-[200px] h-[22px] mt-1" />
+							</>
+						) : (
+							user && (
+								<>
+									<p className="font-semibold text-2xl">{user.display_name}</p>
+									<p className="text-[#666]">
+										Last seen: {daysSinceTimestamp(user.last_seen)}
+									</p>
+								</>
+							)
+						)}
+					</div>
+				</div>
+
+				<div>
+					<Title title="Playlists" />
+					<PlaylistList loading={isFetching} playlists={playlists} />
+				</div>
 			</div>
+
+			<Footer />
 		</>
 	);
 }

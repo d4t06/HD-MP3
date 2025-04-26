@@ -19,7 +19,7 @@ export default function ChatBtn() {
 
 	// define style
 	const classes = {
-		button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[40px] flex justify-center`,
+		button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[40px] flex items-center justify-center`,
 	};
 
 	return (

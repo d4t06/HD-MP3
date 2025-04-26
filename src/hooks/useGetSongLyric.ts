@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { myGetDoc } from "@/services/firebaseService";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
@@ -15,7 +15,7 @@ export default function useSongLyric({ active }: { active: boolean }) {
   const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
     useLyricContext();
 
-  const [isSongLoaded, setIsSongLoaded] = useState(false);
+  // const [isSongLoaded, setIsSongLoaded] = useState(false);
 
   const timerId = useRef<NodeJS.Timeout>();
 
@@ -45,30 +45,30 @@ export default function useSongLyric({ active }: { active: boolean }) {
 
   const resetForNewSong = () => {
     clearTimeout(timerId.current);
-    setIsSongLoaded(false);
+    // setIsSongLoaded(false);
     setLoading(true);
     setSongLyrics([]);
     ranGetLyric.current = false;
   };
 
   //  add audio event
-  useEffect(() => {
-    const handleSongLoaded = async () => {
-      setIsSongLoaded(true);
-    };
+  // useEffect(() => {
+  //   const handleSongLoaded = async () => {
+  //     setIsSongLoaded(true);
+  //   };
 
-    audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
+  //   audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
 
-    return () => {
-      // audio possible undefine when component unmounted
-      audioRef.current?.removeEventListener("loadeddata", handleSongLoaded);
-    };
-  }, []);
+  //   return () => {
+  //     // audio possible undefine when component unmounted
+  //     audioRef.current?.removeEventListener("loadeddata", handleSongLoaded);
+  //   };
+  // }, []);
 
   //  api get lyric
   useEffect(() => {
     if (songLyrics.length) return;
-    if (isSongLoaded && active) {
+    if (active) {
       if (!ranGetLyric.current) {
         ranGetLyric.current = true;
         timerId.current = setTimeout(() => {
@@ -76,7 +76,7 @@ export default function useSongLyric({ active }: { active: boolean }) {
         }, 500);
       }
     }
-  }, [isSongLoaded, active]);
+  }, [active]);
 
   //  reset
   useEffect(() => {

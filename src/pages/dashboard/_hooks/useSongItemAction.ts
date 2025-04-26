@@ -1,7 +1,7 @@
 import { db } from "@/firebase";
-import { deleteSongFiles } from "@/services/firebaseService";
+import { commentCollectionRef, deleteSongFiles } from "@/services/firebaseService";
 import { useSongContext, useToastContext } from "@/stores";
-import { doc, writeBatch } from "firebase/firestore";
+import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { useState } from "react";
 
 type DeleteSong = {
@@ -25,21 +25,32 @@ export default function useDashboardSongItemAction() {
       const batch = writeBatch(db);
       const songRef = doc(db, "Songs", props.song.id);
 
+      const commentSnap = await getDocs(
+        query(commentCollectionRef, where("target_id", "==", props.song.id)),
+      );
+
       switch (props.variant) {
         case "delete": {
           const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
+          // delete song doc
           batch.delete(songRef);
+
+          // delete song lyric
           if (props.song.lyric_id) {
             const lyricRef = doc(db, "Lyrics", props.song.lyric_id);
             batch.delete(lyricRef);
           }
 
+          // delete comments
+           if (!commentSnap.empty) {
+            console.log(`Delete ${commentSnap.docs.length} comments`);
+            commentSnap.forEach((snap) => batch.delete(snap.ref));
+          }
+
           await Promise.all([batch.commit(), deleteSongFiles(props.song)]);
 
-          // await deleteSong(props.song);
           setUploadedSongs(newSongs);
-
           setSuccessToast(`'${props.song.name}' deleted`);
 
           break;

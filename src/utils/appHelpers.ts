@@ -1,22 +1,12 @@
-import { Timestamp } from "firebase/firestore";
 import axios from "axios";
 
 const isDev: boolean = import.meta.env.DEV;
 
-const STORAGE_KEY = isDev ? 'HD-MP3_DEV' : 'HD-MP3'
+const STORAGE_KEY = isDev ? "HD-MP3_DEV" : "HD-MP3";
 
 export const request = axios.create({
   baseURL: import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
 });
-
-export const convertTimestampToString = (
-  timeStamp: Timestamp,
-  opts?: { type: "date" | "time" },
-) => {
-  if (opts?.type === "date") return new Date(timeStamp.toDate()).toLocaleDateString();
-
-  return new Date(timeStamp.toDate()).toLocaleString();
-};
 
 export const getLocalStorage = () =>
   JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") as Record<string, any>;

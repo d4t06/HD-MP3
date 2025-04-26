@@ -1,6 +1,5 @@
 // import { useEffect } from "react";
 
-import appConfig from "@/config/app";
 import { useAuthContext, useThemeContext } from "@/stores";
 import { usePlayerContext } from "@/stores/PlayerContext";
 import FullScreenPlayer from "@/modules/full-screen-player";
@@ -8,7 +7,6 @@ import SongQueue from "@/modules/song-queue";
 import BottomPlayer from "@/modules/bottom-player";
 import MobileFullScreenPlayer from "@/modules/mobile-full-screen-player";
 import MobileBottomPlayer from "@/modules/mobile-bottom-player";
-import useIdle from "../_hooks/useIdle";
 import PlayerEffect from "./PlayerEffect";
 
 export default function Player() {
@@ -17,8 +15,6 @@ export default function Player() {
   const { audioRef } = usePlayerContext();
 
   useAuthContext(); // for update audioRef
-
-  useIdle(appConfig.focusDelay, isOnMobile);
 
   const desktopContent = audioRef.current && (
     <>

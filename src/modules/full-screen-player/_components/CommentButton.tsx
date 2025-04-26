@@ -6,7 +6,11 @@ import { useThemeContext } from "@/stores";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 
-export default function CommnentButton() {
+type Props = {
+	show: boolean;
+};
+
+export default function CommnentButton({ show }: Props) {
 	const { theme } = useThemeContext();
 	const { setIsOpenComment } = useCommentContext();
 
@@ -16,14 +20,16 @@ export default function CommnentButton() {
 
 	return (
 		<>
-			<MyTooltip position="top-[calc(100%+8px)]" content="Comment">
-				<button
-					onClick={() => setIsOpenComment(true)}
-					className={`p-2 ${classes.button}`}
-				>
-					<ChatBubbleLeftRightIcon />
-				</button>
-			</MyTooltip>
+			{show && (
+				<MyTooltip position="top-[calc(100%+8px)]" content="Comment">
+					<button
+						onClick={() => setIsOpenComment(true)}
+						className={`p-2 ${classes.button}`}
+					>
+						<ChatBubbleLeftRightIcon />
+					</button>
+				</MyTooltip>
+			)}
 
 			{createPortal(
 				<DesktopComment themeType="dark">

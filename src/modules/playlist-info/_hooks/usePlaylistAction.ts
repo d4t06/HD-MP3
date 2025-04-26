@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { deleteFile, myUpdateDoc } from "@/services/firebaseService";
+import {
+  commentCollectionRef,
+  deleteFile,
+  myUpdateDoc,
+} from "@/services/firebaseService";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { doc, increment, writeBatch } from "firebase/firestore";
+import { doc, getDocs, increment, query, where, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default function usePlaylistAction() {
@@ -55,7 +59,7 @@ export default function usePlaylistAction() {
           const newLikedPlaylistIds = [...user.liked_playlist_ids];
           const index = newLikedPlaylistIds.findIndex((id) => id === props.playlist.id);
 
-          const isLike= index === -1;
+          const isLike = index === -1;
 
           if (isLike) newLikedPlaylistIds.unshift(props.playlist.id);
           else newLikedPlaylistIds.splice(index, 1);
@@ -65,7 +69,7 @@ export default function usePlaylistAction() {
           };
 
           const newPlaylistData = {
-            like: increment(isLike? 1 : -1),
+            like: increment(isLike ? 1 : -1),
           };
 
           batch.update(userRef, newUserData);
@@ -124,17 +128,27 @@ export default function usePlaylistAction() {
         case "delete": {
           const { playlist } = props;
 
-          if (playlist.image_file_path)
-            await deleteFile({ filePath: playlist.image_file_path });
+          const commentSnap = await getDocs(
+            query(commentCollectionRef, where("target_id", "==", playlist.id)),
+          );
 
           const newUserData: Partial<User> = {
             liked_playlist_ids: user.liked_playlist_ids.filter(
-              (id) => id !== playlist.id
+              (id) => id !== playlist.id,
             ),
           };
 
+          // delete playlist doc
           batch.delete(playlistRef);
+          
+          // update user doc
           batch.update(userRef, newUserData);
+
+          // delete comments doc
+          if (!commentSnap.empty) {
+            console.log(`Delete ${commentSnap.docs.length} comments`);
+            commentSnap.forEach((snap) => batch.delete(snap.ref));
+          }
 
           await Promise.all([
             batch.commit(),

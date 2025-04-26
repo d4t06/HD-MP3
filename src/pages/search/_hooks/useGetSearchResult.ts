@@ -2,17 +2,19 @@ import {
   implementPlaylistQuery,
   implementSingerQuery,
   implementSongQuery,
+  implementUserQuery,
 } from "@/services/appService";
 import {
   playlistCollectionRef,
   singerCollectionRef,
   songsCollectionRef,
+  userCollectionRef,
 } from "@/services/firebaseService";
 import { query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = ["Song", "Playlist", "Singers"] as const;
+const tabs = ["Song", "Playlist", "Singers", "Users"] as const;
 
 type Tab = (typeof tabs)[number];
 
@@ -20,6 +22,7 @@ const initResult = {
   songs: [] as Song[],
   playlists: [] as Playlist[],
   singers: [] as Singer[],
+  users: [] as User[],
 };
 
 export default function useGetSearchResult() {
@@ -79,6 +82,21 @@ export default function useGetSearchResult() {
           const result = await implementSingerQuery(searchQuery);
 
           updateResult({ singers: result });
+
+          break;
+        }
+        case "Users": {
+          const searchQuery = query(
+            userCollectionRef,
+            where("display_name", ">=", key),
+            where("display_name", "<=", key + "\uf8ff"),
+          );
+
+          const result = await implementUserQuery(searchQuery);
+
+          console.log(result)
+
+          updateResult({ users: result });
 
           break;
         }

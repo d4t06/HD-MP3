@@ -4,13 +4,13 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { PlaylistItem, Skeleton } from "@/components";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
-import { convertTimestampToString } from "@/utils/appHelpers";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
 import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
 import CommnetProvider from "../comment/components/CommemtContext";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 
 type Props = {
   playlist: Playlist | null;
@@ -36,7 +36,8 @@ export default function PLaylistInfo({
 
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
-    smallText: "text-xs",
+    smallText: "",
+    link: `${theme.content_hover_text} hover:underline`,
   };
 
   const renderAlbumInfo = () => {
@@ -50,7 +51,7 @@ export default function PLaylistInfo({
         >
           {playlist.singers[0].name}
         </Link>
-        <p className={classes.smallText}>
+        <p className="text-sm">
           <span className="text-red-500">&#10084; </span>
           {abbreviateNumber(playlist.like)}
         </p>
@@ -64,23 +65,40 @@ export default function PLaylistInfo({
     switch (variant) {
       case "my-playlist":
         return (
-          <p className={classes.smallText}>{playlist.is_public ? "Public" : "Private"}</p>
+          <>
+            <p className={classes.smallText}>
+              {playlist.is_public ? "Public" : "Private"}
+            </p>
+          </>
         );
       case "others-playlist":
         return (
           <>
-            <p className={classes.smallText}>
-              <span className="text-red-500">&#10084; </span>
+            <p>
+              <span className="text-red-500 text-base">&#10084; </span>
               {abbreviateNumber(playlist.like)}
             </p>
-            <p className={classes.smallText}>
-              {playlist.singers.map((s, i) => (
-                <span>{(!!i ? ", " : "") + s.name}</span>
-              ))}
-            </p>
+            {!!playlist.singers.length && (
+              <p className={classes.smallText}>
+                {playlist.singers.map((s, i) => (
+                  <Link key={i} className={`${classes.link}`} to={`/singer/${s.id}`}>
+                    {(!!i ? ", " : "") + s.name}
+                  </Link>
+                ))}
+              </p>
+            )}
+
+            {!playlist.is_official && (
+              <p className={classes.smallText}>
+                Provided by{" "}
+                <Link className={classes.link} to={`/user/${playlist.owner_email}`}>
+                  {playlist.distributor}
+                </Link>
+              </p>
+            )}
             <p className={classes.smallText}>
               Last update:{" "}
-              {convertTimestampToString(playlist.updated_at, {
+              {dateFromTimestamp(playlist.updated_at, {
                 type: "date",
               })}
             </p>
@@ -102,9 +120,11 @@ export default function PLaylistInfo({
           )}
         </div>
 
-        <div className="flex flex-col text-center mt-3 md:text-left md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:text-center">
+        <div
+          className={`flex flex-col items-center mt-3 md:items-start md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:items-center`}
+        >
           {showSkeleton ? (
-            <div className="space-y-1 my-3">
+            <div className="space-y-1 flex flex-col items-center">
               <Skeleton className="h-[24px] w-[170px]" />
               <Skeleton className="h-[17px] w-[170px]" />
               <Skeleton className="h-[17px] w-[60px]" />
@@ -114,7 +134,7 @@ export default function PLaylistInfo({
             playlist && (
               <>
                 <p className="text-xl font-[600] leading-[1.2]">{playlist.name}</p>
-                <div className="mt-2.5 text-[#666]">
+                <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-[13px]">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
               </>

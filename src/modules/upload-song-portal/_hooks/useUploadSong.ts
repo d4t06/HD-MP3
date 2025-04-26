@@ -117,7 +117,6 @@ export default function useUploadSongs() {
         processSongsList.push(songFileObject);
         fileIndexesNeeded.push(i);
       }
-
       //end loop create uploading songs
 
       // check limit

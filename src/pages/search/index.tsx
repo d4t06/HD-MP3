@@ -1,4 +1,4 @@
-import { NotFound, PlaylistList, SingerItem, Tab } from "@/components";
+import { Image, NotFound, PlaylistList, SingerItem, Tab } from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -6,6 +6,7 @@ import useGetSearchResult from "./_hooks/useGetSearchResult";
 import SongList from "@/modules/song-item/_components/SongList";
 import useGetRecommend from "@/hooks/useGetRecomemded";
 import BackBtn from "@/components/BackBtn";
+import { Link } from "react-router-dom";
 
 export default function SearchResultPage() {
   const { isFetching, result, tab, setTab, tabs } = useGetSearchResult();
@@ -45,6 +46,27 @@ export default function SearchResultPage() {
             <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
               {result.singers.map((s, i) => (
                 <SingerItem variant="singer-item" singer={s} key={i} />
+              ))}
+            </div>
+          );
+        else return <NotFound className="mx-auto" />;
+      case "Users":
+        if (result.users.length)
+          return (
+            <div>
+              {result.users.map((u) => (
+                <div key={u.email} className="flex items-start">
+                  <div className="w-[46px] h-[46px] rounded-full overflow-hidden">
+                    <Image src={u.photo_url} />
+                  </div>
+
+                  <Link
+                    to={`/user/${u.email}`}
+                    className="font-semibold mt-3 md:mt-0 md:ml-3"
+                  >
+                    {u.display_name}
+                  </Link>
+                </div>
               ))}
             </div>
           );

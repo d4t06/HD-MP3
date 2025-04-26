@@ -1,32 +1,26 @@
 import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid, ChevronDownIcon } from "@heroicons/react/20/solid";
-import { Timestamp } from "firebase/firestore";
+import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
 import { useAuthContext } from "@/stores";
 import useCommentAction from "../hooks/useCommentAction";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
+import UserInput from "./UserInput";
+import GetReplyBtn from "./GetReplyBtn";
 
 type Props = {
 	comment: UserComment;
 	index: number;
+	level: 1 | 2;
 };
 
-function daysSinceTimestamp(timestamp: Timestamp) {
-	const date = timestamp.toDate();
-	const now = new Date();
-
-	const differenceInMilliseconds = now.getTime() - date.getTime();
-	const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
-
-	if (differenceInDays) return differenceInDays + " days ago";
-	return "Today";
-}
-
-export default function CommentItem({ comment, index }: Props) {
+export default function CommentItem({ comment, index, level }: Props) {
 	const { user } = useAuthContext();
 
 	const { action, isFetching } = useCommentAction();
+
+	const [isReplying, setIsReplying] = useState(false);
 
 	const currentAction = useRef<"like" | "delete">("like");
 	const modalRef = useRef<ModalRef>(null);
@@ -37,8 +31,7 @@ export default function CommentItem({ comment, index }: Props) {
 	const handleDeleteComment = async () => {
 		await action({
 			type: "delete",
-			id: comment.id,
-			index,
+			comment: comment,
 		});
 
 		modalRef.current?.close();
@@ -46,68 +39,96 @@ export default function CommentItem({ comment, index }: Props) {
 
 	return (
 		<>
-			<div className="p-2 text-white">
+			<div className={`${level == 1 ? "py-2" : "mt-2"} `}>
 				<div className="flex w-full items-start space-x-1.5">
-					<div className="flex-shrink-0 w-[48px] h-[48px] rounded-full overflow-hidden">
+					<div
+						className={`flex-shrink-0 ${level === 1 ? "w-[48px] h-[48px]" : "w-[40px] h-[40px]"} rounded-full overflow-hidden`}
+					>
 						<Image src={comment.user_image_url} />
 					</div>
 
-					<div className="flex-grow">
-						<div className="p-2 rounded-md bg-[#2f2f2f]">
-							<Link className="text-[#ccc] line-clamp-1 text-sm font-[500]" to={"/"}>
-								{comment.user_name}
-							</Link>
-							<div className="mt-1.5 break-all text-white">{comment.text}</div>
-						</div>
+					<div className="flex-grow text-[13px]">
+						<div className="flex">
+							<div className="flex-grow">
+								<div className="p-2 rounded-md bg-[#333]">
+									<Link
+										className="text-[#ccc] line-clamp-1 font-[500]"
+										to={`/user/${comment.user_email}`}
+									>
+										{comment.user_name}
+									</Link>
+									<div className="mt-1 break-all text-white">{comment.text}</div>
+								</div>
 
-						<div className="flex space-x-2 text-sm mt-1">
-							<span className="text-[#ccc]">
-								{daysSinceTimestamp(comment.created_at)}
-							</span>
+								<div className="flex space-x-2 mt-1">
+									<span className="text-[#ccc]">
+										{daysSinceTimestamp(comment.created_at)}
+									</span>
 
-							{isOwner ? (
+									{user && (
+										<>
+											{isOwner ? (
+												<button
+													onClick={() => {
+														currentAction.current = "delete";
+														modalRef.current?.open();
+													}}
+												>
+													Delete
+												</button>
+											) : (
+												level === 1 && (
+													<button onClick={() => setIsReplying(true)}>Reply</button>
+												)
+											)}
+										</>
+									)}
+								</div>
+
+								{!!comment.reply && level === 1 && !comment.replies.length && (
+									<GetReplyBtn comment={comment} commentIndex={index} />
+								)}
+							</div>
+
+							<div className="flex flex-col items-center">
 								<button
+									className="p-1"
 									onClick={() => {
-										currentAction.current = "delete";
-										modalRef.current?.open();
+										currentAction.current = "like";
+										action({ type: "like", id: comment.id });
 									}}
 								>
-									Delete
+									{isFetching && currentAction.current === "like" ? (
+										<ArrowPathIcon className="w-6 animate-spin" />
+									) : (
+										<>
+											{isLiked ? (
+												<HeartIconSolid className={`w-6 text-red-500`} />
+											) : (
+												<HeartIcon className="w-6" />
+											)}
+										</>
+									)}
 								</button>
-							) : (
-								<button>Reply</button>
-							)}
+								<span>{comment.like}</span>
+							</div>
 						</div>
 
-						{!!comment.reply && (
-							<button className="mt-1 text-[#ccc] text-sm flex items-center space-x-1">
-								<span>View {comment.replies.length} replies</span>
-								<ChevronDownIcon className="w-5" />
-							</button>
-						)}
-					</div>
+						{!!comment.replies.length &&
+							comment.replies.map((c, i) => (
+								<CommentItem key={i} comment={c} index={index} level={2} />
+							))}
 
-					<div className="flex flex-col items-center">
-						<button
-							className="p-1"
-							onClick={() => {
-								currentAction.current = "like";
-								action({ type: "like", id: comment.id });
-							}}
-						>
-							{isFetching && currentAction.current === "like" ? (
-								<ArrowPathIcon className="w-6 animate-spin" />
-							) : (
-								<>
-									{isLiked ? (
-										<HeartIconSolid className={`w-6 text-red-500`} />
-									) : (
-										<HeartIcon className="w-6" />
-									)}
-								</>
-							)}
-						</button>
-						<span>{comment.like}</span>
+						{isReplying && (
+							<div className="mt-2">
+								<UserInput
+									onSubmited={() => setIsReplying(false)}
+									comment_index={index}
+									variant="reply"
+									comment={comment}
+								/>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>

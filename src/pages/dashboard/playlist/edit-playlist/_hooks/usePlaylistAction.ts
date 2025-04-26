@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthContext, useToastContext } from "@/stores";
 import {
+  commentCollectionRef,
   deleteFile,
   //   myAddDoc,
   myDeleteDoc,
@@ -10,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 // import { getDoc } from "firebase/firestore";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { optimizeAndGetHashImage } from "@/services/appService";
+import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
+import { db } from "@/firebase";
 
 type DeletePlaylist = {
   variant: "delete-playlist";
@@ -95,11 +98,24 @@ export default function useDashboardPlaylistActions() {
 
       switch (props.variant) {
         case "delete-playlist": {
+          const batch = writeBatch(db);
+
+          const playlistRef = doc(db, "Playlists", playlist.id);
+          const commentSnap = await getDocs(
+            query(commentCollectionRef, where("target_id", "==", playlist.id)),
+          );
+
+          // delete playlist doc
+          batch.delete(playlistRef);
+
+          // delete comments doc
+          if (!commentSnap.empty) {
+            console.log(`Delete ${commentSnap.docs.length} comments`);
+            commentSnap.forEach((snap) => batch.delete(snap.ref));
+          }
+
           await Promise.all([
-            myDeleteDoc({
-              collectionName: "Playlists",
-              id: playlist.id,
-            }),
+            batch.commit(),
             playlist.image_file_path
               ? deleteFile({ filePath: playlist.image_file_path })
               : () => {},

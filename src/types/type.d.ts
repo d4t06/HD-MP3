@@ -11,6 +11,7 @@ type User = {
   recent_playlist_ids: string[];
   liked_comment_ids: string[];
   role: string;
+  last_seen: Timestamp
 };
 
 type Song = {
@@ -44,7 +45,8 @@ type SongSchema = Omit<Song, "id" | "queue_id">;
 type ParserSong = {
   name: string;
   singer: string;
-  lyric: string;
+  image: ArrayBuffer | null;
+  duration: number;
 };
 
 type Playlist = {

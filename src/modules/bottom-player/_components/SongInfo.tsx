@@ -52,7 +52,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
                     {(i ? ", " : "") + s.name}
                   </Link>
                 ) : (
-                  <span>{(i ? ", " : "") + s.name}</span>
+                  <span key={i}>{(i ? ", " : "") + s.name}</span>
                 ),
               )}
             </div>

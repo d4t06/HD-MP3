@@ -1,14 +1,9 @@
 import { useToastContext } from "@/stores";
 import { useEffect, useRef, useState } from "react";
 import { query, where } from "firebase/firestore";
-import {
-	myGetDoc,
-	playlistCollectionRef,
-	songsCollectionRef,
-} from "@/services/firebaseService";
+import { myGetDoc, playlistCollectionRef } from "@/services/firebaseService";
 import { useParams } from "react-router-dom";
-import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
-import { nanoid } from "nanoid/non-secure";
+import { implementPlaylistQuery } from "@/services/appService";
 
 export default function useGetUser() {
 	const [user, setUser] = useState<User>();
@@ -33,6 +28,8 @@ export default function useGetUser() {
 			const queryGetPlaylists = query(
 				playlistCollectionRef,
 				where(`owner_email`, "==", userData.email),
+				where(`is_public`, "==", true),
+				where(`is_official`, "==", false),
 			);
 			const playlistsAndAlbums = await implementPlaylistQuery(queryGetPlaylists);
 

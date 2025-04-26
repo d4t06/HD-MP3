@@ -12,15 +12,21 @@ export default function CommentList({ comments }: Props) {
 
 	return (
 		<>
-			<div className="flex-grow overflow-auto">
+			<div className="flex-grow overflow-auto no-scrollbar">
 				{comments.length ? (
-					comments.map((c, i) => <CommentItem index={i} key={c.id} comment={c} />)
+					comments.map((c, i) => (
+						<CommentItem level={1} index={i} key={c.id} comment={c} />
+					))
 				) : (
 					<Center>...</Center>
 				)}
 			</div>
 
-			{user && <UserInput />}
+			{user && (
+				<div className="pt-1.5">
+					<UserInput variant="comment" />
+				</div>
+			)}
 		</>
 	);
 }
