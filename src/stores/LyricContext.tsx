@@ -4,9 +4,9 @@ const useLyric = () => {
   const [songLyrics, setSongLyrics] = useState<Lyric[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const ranGetLyric = useRef(false);
+  const shouldGetLyric = useRef(true);
 
-  return { songLyrics, setSongLyrics, loading, setLoading, ranGetLyric };
+  return { songLyrics, setSongLyrics, loading, setLoading, shouldGetLyric };
 };
 
 type ContextType = ReturnType<typeof useLyric>;

@@ -9,8 +9,9 @@ import { Button, SongThumbnail } from "@/components";
 import Lyric from "@/modules/lyric";
 import Karaoke from "@/modules/karaoke";
 import useScrollSong from "../_hooks/useScrollSong";
+import { GetSongLyric } from "@/components";
 
-export default function FullScreenPlayerSongList() {
+export default function FullScreenPlayerContent() {
   const dispatch = useDispatch();
 
   const { activeTab, isOpenFullScreen, idle } = usePlayerContext();
@@ -117,28 +118,29 @@ export default function FullScreenPlayerSongList() {
         </>
       )}
 
-      {/* lyric tab */}
       <LyricContextProvider>
-        <div className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}>
-          {/* {renderLyricTab} */}
-          <div className={classes.lyricTabContainer}>
-            {/* left */}
-            <SongThumbnail active={true} data={currentSongData?.song} />
-
-            {/* right */}
-            <Lyric
-              className={`w-full ml-[40px] h-full`}
-              active={isOpenFullScreen && activeTab === "Lyric"}
-            />
-          </div>
-        </div>
-        <div
-          className={`absolute inset-0 z-20 flex flex-col items-center justify-center ${
-            activeTab === "Karaoke" ? "" : "hidden"
-          }`}
+        <GetSongLyric
+          isOpenLyricTabs={
+            isOpenFullScreen && (activeTab === "Lyric" || activeTab === "Karaoke")
+          }
         >
-          <Karaoke active={isOpenFullScreen && activeTab === "Karaoke"} />
-        </div>
+          <div
+            className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}
+          >
+            <div className={classes.lyricTabContainer}>
+              <SongThumbnail active={true} data={currentSongData?.song} />
+              <Lyric className={`w-full ml-[40px] h-full`} />
+            </div>
+          </div>
+
+          <div
+            className={`absolute inset-0 z-20 flex flex-col items-center justify-center ${
+              activeTab === "Karaoke" ? "" : "hidden"
+            }`}
+          >
+            <Karaoke />
+          </div>
+        </GetSongLyric>
       </LyricContextProvider>
     </>
   );

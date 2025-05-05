@@ -1,17 +1,13 @@
-import { ElementRef, useEffect, useRef, useState } from "react";
+import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
 import { scrollIntoView } from "@/utils/appHelpers";
-import { usePlayerContext } from "@/stores";
-import { useGetSongLyric } from "@/hooks";
-
-interface Props {
-  active: boolean;
-}
+import { useLyricContext, usePlayerContext } from "@/stores";
 
 const LYRIC_TIME_BOUNDED = 0.3;
 
-export default function useLyric({ active }: Props) {
-  const { audioRef } = usePlayerContext();
-  if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
+export default function useLyric() {
+  const { songLyrics, loading } = useLyricContext();
+  const { audioRef, isOpenFullScreen, activeTab } = usePlayerContext();
+  if (!audioRef.current) throw new Error("useLyric !audioRef.current");
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -21,9 +17,10 @@ export default function useLyric({ active }: Props) {
   const lyricRefs = useRef<ElementRef<"div">[]>([]);
   const currentIndexRef = useRef(0);
 
-  const { loading, songLyrics } = useGetSongLyric({
-    active,
-  });
+  const isOpenLyricTab = useMemo(
+    () => isOpenFullScreen && activeTab === "Lyric",
+    [isOpenFullScreen, activeTab],
+  );
 
   const handleTimeUpdate = () => {
     const direction =
@@ -71,17 +68,17 @@ export default function useLyric({ active }: Props) {
   //  immediate scroll to active songs when change tab
   useEffect(() => {
     handleTimeUpdate();
-  }, [active]);
+  }, [isOpenLyricTab]);
 
   //  add event listeners
   useEffect(() => {
-    if (!active || !songLyrics.length) return;
+    if (!isOpenLyricTab || !songLyrics.length) return;
     audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
       audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [active, songLyrics]);
+  }, [isOpenLyricTab, songLyrics]);
 
   //  reset when change song
   useEffect(() => {

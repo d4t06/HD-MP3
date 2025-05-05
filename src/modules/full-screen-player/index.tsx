@@ -4,7 +4,7 @@ import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
 import { usePlayerContext } from "@/stores";
 import FullScreenPlayerHeader from "./_components/FullScreenPlayerHeader";
-import FullScreenPlayerSongList from "./_components/FullScreenPlayerSongList";
+import FullScreenPlayerContent from "./_components/FullScreenPlayerContent";
 
 export default function FullScreenPlayer() {
   // use stores
@@ -43,7 +43,7 @@ export default function FullScreenPlayer() {
 
         {/* content */}
         <div className={classes.content}>
-          <FullScreenPlayerSongList />
+          <FullScreenPlayerContent />
         </div>
 
         {activeTab !== "Songs" && (

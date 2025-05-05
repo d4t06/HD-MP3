@@ -3,13 +3,9 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import useKaraoke from "./_hooks/useKaraoke";
 import KaraokeItem from "./_components/KaraokeItem";
 
-type Props = {
-  active: boolean;
-};
-
-export default function Karaoke({ active }: Props) {
+export default function Karaoke() {
   const { loading, evenOverlay, oddOverlay, tempEventText, tempOddText, textData } =
-    useKaraoke({ active });
+    useKaraoke();
 
   if (loading)
     return (

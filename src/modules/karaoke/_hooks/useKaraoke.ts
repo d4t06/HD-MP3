@@ -1,14 +1,10 @@
 import createKeyFrame from "@/utils/createKeyFrame";
 import { getWordsRatio } from "@/utils/getWordsRatio";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
-import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
-import { usePlayerContext } from "@/stores";
-import { useGetSongLyric } from "@/hooks";
+import { PlayStatus, selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import { useLyricContext, usePlayerContext } from "@/stores";
 import { mergeGrow } from "@/utils/mergeGrow";
-
-type Props = {
-  active: boolean;
-};
+import { useSelector } from "react-redux";
 
 const LYRIC_TIME_BOUNDED = 0.3;
 
@@ -16,9 +12,12 @@ const isOdd = (n: number) => {
   return n % 2 !== 0;
 };
 
-export default function useKaraoke({ active }: Props) {
-  const { audioRef } = usePlayerContext();
+export default function useKaraoke() {
+  const { songLyrics, loading } = useLyricContext();
+  const { audioRef, isOpenFullScreen, activeTab } = usePlayerContext();
   if (!audioRef.current) throw new Error("useKaraoke !audioRef.current");
+
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -34,7 +33,12 @@ export default function useKaraoke({ active }: Props) {
 
   const isSwitchedTabs = useRef(false); // readd animation when switch between tabs
 
-  const { songLyrics, loading, playStatus } = useGetSongLyric({ active });
+  const isOpenKaraokeTab = useMemo(
+    () => isOpenFullScreen && activeTab == "Karaoke",
+    [isOpenFullScreen, activeTab],
+  );
+
+  // const { songLyrics, loading, playStatus } = useGetSongLyric({ active });
 
   const textData = useMemo(() => {
     if (!songLyrics.length) return { odd: "", even: "" };
@@ -67,7 +71,7 @@ export default function useKaraoke({ active }: Props) {
     name: string,
     lyric: Lyric,
     overlay: ElementRef<"p">,
-    delay: number
+    delay: number,
   ) => {
     let state = "running";
     if (playsStatusRef.current === "paused") state = "paused";
@@ -146,7 +150,7 @@ export default function useKaraoke({ active }: Props) {
 
       const _isOdd = isOdd(nextIndex);
       const widthRatioList = getWordsRatio(
-        _isOdd ? tempOddText.current : tempEventText.current
+        _isOdd ? tempOddText.current : tempEventText.current,
       );
 
       const mergedGrowList = mergeGrow(words, cut, tune.grow);
@@ -173,22 +177,22 @@ export default function useKaraoke({ active }: Props) {
 
   // immediately show lyric when tab active
   useEffect(() => {
-    if (active) {
+    if (isOpenKaraokeTab) {
       isSwitchedTabs.current = true;
       if (playStatus === "paused") handleTimeUpdate();
     }
-  }, [active]);
+  }, [isOpenKaraokeTab]);
 
   // decide whatever run or not
   useEffect(() => {
-    if (!songLyrics.length || !active) return;
+    if (!songLyrics.length || !isOpenKaraokeTab) return;
 
     audioRef.current!.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
       audioRef.current!.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [songLyrics, active]);
+  }, [songLyrics, isOpenKaraokeTab]);
 
   // reset when change song
   useEffect(() => {

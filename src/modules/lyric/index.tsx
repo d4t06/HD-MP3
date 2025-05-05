@@ -7,18 +7,15 @@ import { usePlayerContext } from "@/stores";
 
 interface Props {
   className: string;
-  active: boolean;
 }
 
-export default function LyricsList({ className, active }: Props) {
+export default function Lyric({ className }: Props) {
   // state
   const {
     playerConig: { lyricSize },
   } = usePlayerContext();
 
-  const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyric({
-    active,
-  });
+  const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyric();
 
   const lyricSizeMap = {
     small: "text-[16px] sm:text-[26px]",

@@ -1,8 +1,7 @@
 import {
 	commentCollectionRef,
 	myAddDoc,
-	myDeleteDoc,
-	myUpdateDoc,
+myUpdateDoc,
 } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { useState } from "react";

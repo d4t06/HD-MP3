@@ -6,16 +6,14 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useLyricContext } from "@/stores/LyricContext";
 import { usePlayerContext } from "@/stores";
 
-export default function useSongLyric({ active }: { active: boolean }) {
+export default function useGetSongLyric({ active }: { active: boolean }) {
   const { audioRef } = usePlayerContext();
   if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
 
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
-  const { setLoading, setSongLyrics, songLyrics, loading, ranGetLyric } =
+  const { setLoading, setSongLyrics, songLyrics, loading, shouldGetLyric } =
     useLyricContext();
-
-  // const [isSongLoaded, setIsSongLoaded] = useState(false);
 
   const timerId = useRef<NodeJS.Timeout>();
 
@@ -44,50 +42,39 @@ export default function useSongLyric({ active }: { active: boolean }) {
   };
 
   const resetForNewSong = () => {
+    console.log("resetForNewSong");
+
     clearTimeout(timerId.current);
-    // setIsSongLoaded(false);
     setLoading(true);
     setSongLyrics([]);
-    ranGetLyric.current = false;
+    shouldGetLyric.current = true;
   };
-
-  //  add audio event
-  // useEffect(() => {
-  //   const handleSongLoaded = async () => {
-  //     setIsSongLoaded(true);
-  //   };
-
-  //   audioRef.current!.addEventListener("loadeddata", handleSongLoaded);
-
-  //   return () => {
-  //     // audio possible undefine when component unmounted
-  //     audioRef.current?.removeEventListener("loadeddata", handleSongLoaded);
-  //   };
-  // }, []);
 
   //  api get lyric
   useEffect(() => {
-    if (songLyrics.length) return;
     if (active) {
-      if (!ranGetLyric.current) {
-        ranGetLyric.current = true;
+      if (shouldGetLyric.current) {
+        shouldGetLyric.current = false;
         timerId.current = setTimeout(() => {
           getLyric();
         }, 500);
       }
     }
-  }, [active]);
+  }, [currentSongData?.song.id, active]);
+
+  useEffect(() => {
+    return () => {
+      resetForNewSong();
+    };
+  }, [currentSongData?.song.id]);
 
   //  reset
   useEffect(() => {
     if (playStatus === "error") {
       setLoading(false);
-      return;
-    }
-    return () => {
       resetForNewSong();
-    };
-  }, [currentSongData, playStatus === "error"]);
+    }
+  }, [playStatus === "error"]);
 
   return { songLyrics, loading, playStatus };
 }

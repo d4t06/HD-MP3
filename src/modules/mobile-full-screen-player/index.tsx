@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { FullScreenPlayerSetting } from "@/components";
+import { FullScreenPlayerSetting, GetSongLyric } from "@/components";
 import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
@@ -10,7 +10,7 @@ import LyricContextProvider from "@/stores/LyricContext";
 import { usePlayerContext } from "@/stores";
 import useMobileFullScreenPlayer from "./_hooks/useMobileFullScreenPlayer";
 import SongThumbnail from "./_components/SongThumbnail";
-import LyricsList from "../lyric";
+import Lyric from "../lyric";
 import ScrollText from "../scroll-text";
 import { Link } from "react-router-dom";
 import MobileFullScreenControl from "./_components/Control";
@@ -37,9 +37,6 @@ export default function MobileFullScreenPlayer() {
 
     bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
   };
-
-
-  console.log('render')
 
   return (
     <>
@@ -131,13 +128,15 @@ export default function MobileFullScreenPlayer() {
 
             <LyricContextProvider>
               {/* >>> lyric tab */}
-              <LyricsList
-                active={isOpenFullScreen && mobileActiveTab === "Lyric"}
-                className={`text-left ${
-                  mobileActiveTab === "Lyric" ? "flex-1 block" : "hidden"
-                }`}
-              />
-              {/* <<< end lyric tab */}
+              <GetSongLyric
+                isOpenLyricTabs={isOpenFullScreen && mobileActiveTab == "Lyric"}
+              >
+                <Lyric
+                  className={`text-left ${
+                    mobileActiveTab === "Lyric" ? "flex-1 block" : "hidden"
+                  }`}
+                />
+              </GetSongLyric>
             </LyricContextProvider>
 
             {/* control */}

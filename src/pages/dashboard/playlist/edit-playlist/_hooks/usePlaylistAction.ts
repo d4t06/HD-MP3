@@ -3,12 +3,9 @@ import { useAuthContext, useToastContext } from "@/stores";
 import {
   commentCollectionRef,
   deleteFile,
-  //   myAddDoc,
-  myDeleteDoc,
   myUpdateDoc,
 } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
-// import { getDoc } from "firebase/firestore";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
