@@ -42,12 +42,18 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
     if (props.variant === "add") return true;
     if (!song || !songData) return false;
 
-    return (
+    const lengthCheck =
       songData.name !== song.name ||
       singers.length !== song.singers.length ||
       songData.like !== song.like ||
-      genres.length !== song.genres.length
-    );
+      genres.length !== song.genres.length;
+
+    if (lengthCheck) return true;
+
+    const isChaneSinger = !singers.find((s) => song.singers.find((_s) => _s.id == s.id));
+    const isChangeGenere = !genres.find((g) => song.genres.find((_g) => _g.id == g.id));
+
+    return isChaneSinger || isChangeGenere;
   }, [songData, song, singers, genres]);
 
   const isChangeImage = !!imageFile;

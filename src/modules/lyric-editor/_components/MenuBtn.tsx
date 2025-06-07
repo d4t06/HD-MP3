@@ -23,7 +23,11 @@ import { useEditLyricContext } from "./EditLyricContext";
 
 type Modal = "lyric" | "tutorial" | "song-beat";
 
-export default function MenuBtn() {
+type Props = {
+	pause: () => void
+}
+
+export default function MenuBtn({pause}: Props) {
 	const { theme } = useThemeContext();
 	const { song } = useEditLyricContext();
 
@@ -33,6 +37,7 @@ export default function MenuBtn() {
 	const triggerRef = useRef<TriggerRef>(null);
 
 	const openModal = (m: Modal) => {
+		pause();
 		setModal(m);
 		modalRef.current?.open();
 		triggerRef.current?.close();

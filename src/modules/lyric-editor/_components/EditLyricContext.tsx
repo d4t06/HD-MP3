@@ -7,13 +7,14 @@ const useEditLyric = () => {
   const [lyrics, setLyrics] = useState<Lyric[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
   const [selectLyricIndex, setSelectLyricIndex] = useState<number>();
 
   const start = useRef(0);
 
   const currentLyric = useMemo(
     () => (selectLyricIndex !== undefined ? lyrics[selectLyricIndex] : undefined),
-    [selectLyricIndex, lyrics]
+    [selectLyricIndex, lyrics],
   );
 
   const updateLyric = (index: number, payload: Partial<Lyric>) => {
@@ -42,6 +43,8 @@ const useEditLyric = () => {
     selectLyricIndex,
     setSelectLyricIndex,
     currentLyric,
+    isPreview,
+    setIsPreview,
   };
 };
 

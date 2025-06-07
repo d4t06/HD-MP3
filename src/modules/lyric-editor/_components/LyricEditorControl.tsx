@@ -4,6 +4,7 @@ import {
   ArrowPathIcon,
   BackwardIcon,
   ExclamationCircleIcon,
+  EyeIcon,
   ForwardIcon,
   MinusIcon,
   PauseIcon,
@@ -28,7 +29,7 @@ export type LyricEditorControlRef = {
 
 function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>) {
   const { theme } = useThemeContext();
-  const { song, lyrics } = useEditLyricContext();
+  const { song, lyrics, isPreview, setIsPreview } = useEditLyricContext();
 
   const progressLineRef = useRef<ElementRef<"div">>(null);
 
@@ -108,8 +109,18 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
           <ForwardIcon className="w-6" />
         </Button>
 
+        <Button
+          onClick={() => {
+            setIsPreview(!isPreview);
+          }}
+          className={classes.button}
+        >
+          <EyeIcon className="w-6" />
+          <span>Preview</span>
+        </Button>
+
         <div className="ml-auto">
-          <MenuBtn />
+          <MenuBtn pause={pause} />
         </div>
       </div>
 

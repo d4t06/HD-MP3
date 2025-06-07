@@ -1,4 +1,4 @@
-import { ElementRef, ReactNode, useRef } from "react";
+import { ElementRef, ReactNode, useEffect, useRef, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import LyricEditorControl, {
   LyricEditorControlRef,
@@ -14,10 +14,14 @@ type Props = {
   children?: ReactNode;
 };
 
+type Modal = "edit-lyric";
+
 export type LyricStatus = "active" | "done" | "coming";
 
 function Content({ children }: Props) {
   const { theme } = useThemeContext();
+
+  const [modal, setModal] = useState<Modal | "">("");
 
   const controlRef = useRef<LyricEditorControlRef>(null);
   const audioRef = useRef<ElementRef<"audio">>(null);
@@ -31,6 +35,14 @@ function Content({ children }: Props) {
     controlRef.current?.pause();
     controlRef.current?.submit();
   };
+
+  const openModal = (m: Modal) => {
+    setModal(m);
+    modalRef.current?.open();
+  };
+
+  const closeModal = () => modalRef.current?.close();
+
 
   return (
     <>
@@ -52,13 +64,18 @@ function Content({ children }: Props) {
                   <LyricEditorControl audioEle={audioRef.current} ref={controlRef} />
 
                   <Modal persisted variant="animation" ref={modalRef}>
-                    <EditLyricModal closeModal={() => modalRef.current?.close()} />
+                    {modal === "edit-lyric" && <EditLyricModal closeModal={closeModal} />}
                   </Modal>
                 </>
               )}
             </div>
 
-            <LyricEditorList modalRef={modalRef} controlRef={controlRef} />
+            <LyricEditorList
+              controlRef={controlRef}
+              openEditModal={() => {
+                openModal("edit-lyric");
+              }}
+            />
 
             <Button
               className={`${theme.content_bg} font-playwriteCU self-end md:self-start rounded-full mt-5 `}

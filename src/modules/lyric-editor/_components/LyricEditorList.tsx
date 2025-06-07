@@ -2,16 +2,14 @@ import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useThemeContext } from "@/stores";
 import { LyricStatus } from "../";
-import { ModalRef } from "@/components";
-// import { useLyricContext } from "@/stores/LyricContext";
-import { scrollIntoView } from "@/utils/appHelpers";
+import { getClasses, scrollIntoView } from "@/utils/appHelpers";
 import AddLyricItem from "./AddLyricItem";
 import LyricItem from "@/modules/lyric/LyricItem";
 import { useEditLyricContext } from "./EditLyricContext";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
-  modalRef: RefObject<ModalRef>;
+  openEditModal: () => void;
 };
 
 function useLyricEditorList() {
@@ -28,9 +26,10 @@ function useLyricEditorList() {
   return { activeLyricRef };
 }
 
-export default function LyricEditorList({ controlRef, modalRef }: Props) {
+export default function LyricEditorList({ controlRef, openEditModal }: Props) {
   const { theme } = useThemeContext();
-  const { baseLyricArr, lyrics, setSelectLyricIndex, song } = useEditLyricContext();
+  const { baseLyricArr, lyrics, setSelectLyricIndex, song, isPreview } =
+    useEditLyricContext();
 
   const { activeLyricRef } = useLyricEditorList();
 
@@ -43,15 +42,15 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
 
     setSelectLyricIndex(index);
 
-    modalRef.current?.open();
+    openEditModal();
   };
 
   return (
     <>
       <div
-        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg}`}
+        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg} ${getClasses(isPreview, "justify-center")}`}
       >
-        <div className={"w-1/2"}>
+        <div className={`w-1/2 ${getClasses(isPreview, "hidden")}`}>
           {!!baseLyricArr.length ? (
             <>
               {baseLyricArr.map((lyric, index) => {
@@ -82,17 +81,17 @@ export default function LyricEditorList({ controlRef, modalRef }: Props) {
           )}
         </div>
 
-        <div className={"w-1/2 "}>
+        <div className={`w-1/2 ${getClasses(isPreview, "text-center")}`}>
           {!!lyrics?.length &&
             song &&
             lyrics.map((lyric, index) => (
               <AddLyricItem
                 openModal={() => handleOpenEditLyricModal(index)}
                 seek={handleSeek}
+                isPreview={isPreview}
                 lyric={lyric}
                 isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1}
                 key={index}
-                theme={theme}
               />
             ))}
         </div>

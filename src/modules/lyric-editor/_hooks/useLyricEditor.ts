@@ -1,6 +1,6 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
-import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
+// import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useEditLyricContext } from "../_components/EditLyricContext";
@@ -20,8 +20,6 @@ export default function useLyricEditor({ audioRef }: Props) {
     setBaseLyric,
     setLyrics,
     isChanged,
-    lyrics,
-    setIsChanged,
     isFetching: isSubmitting,
     start,
   } = useEditLyricContext();
@@ -45,17 +43,17 @@ export default function useLyricEditor({ audioRef }: Props) {
     }
   };
 
-  const setTempLyric = () => {
-    if (!song) return;
+  // const setTempLyric = () => {
+  //   if (!song) return;
 
-    const tempLyric: TempLyric = {
-      song_id: song.id,
-      base: baseLyric,
-      lyrics: JSON.stringify(lyrics),
-    };
+  //   const tempLyric: TempLyric = {
+  //     song_id: song.id,
+  //     base: baseLyric,
+  //     lyrics: JSON.stringify(lyrics),
+  //   };
 
-    setLocalStorage("temp-lyric", tempLyric);
-  };
+  //   setLocalStorage("temp-lyric", tempLyric);
+  // };
 
   const getSong = async () => {
     try {
@@ -106,27 +104,6 @@ export default function useLyricEditor({ audioRef }: Props) {
     }
   }, [user]);
 
-  // load localStorage
-  useEffect(() => {
-    const loadTempLyric = () => {
-      if (!song) return;
-
-      const { base, lyrics, song_id }: TempLyric =
-        getLocalStorage()["temp-lyric"] || {};
-
-      if (song_id === song.id) {
-        const parsedLyrics = JSON.parse(lyrics) as Lyric[];
-
-        setBaseLyric(base);
-        setLyrics(parsedLyrics);
-        updateIndex(parsedLyrics);
-        setIsChanged(true);
-      }
-    };
-
-    loadTempLyric();
-  }, [song]);
-
   // update base lyric array
   useEffect(() => {
     if (!baseLyric) return;
@@ -135,21 +112,19 @@ export default function useLyricEditor({ audioRef }: Props) {
     setBaseLyricArr(filteredLyric);
   }, [baseLyric]);
 
-  //  user going to reload the page
+  //  warn user when reload page without save change
   useEffect(() => {
     if (!isChanged) return;
-
-    const handleWindowReload = (e: BeforeUnloadEvent) => {
+    const handleBeforeRefresh = (e: BeforeUnloadEvent) => {
       e.preventDefault();
-      setTempLyric();
     };
 
-    window.addEventListener("beforeunload", handleWindowReload);
+    window.addEventListener("beforeunload", handleBeforeRefresh);
 
     return () => {
-      window.removeEventListener("beforeunload", handleWindowReload);
+      window.removeEventListener("beforeunload", handleBeforeRefresh);
     };
-  }, [isChanged, baseLyric, lyrics]);
+  }, [isChanged]);
 
   return { isFetching, song, isChanged, isSubmitting };
 }
