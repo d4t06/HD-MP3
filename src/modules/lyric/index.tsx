@@ -3,7 +3,8 @@ import { Center } from "@/components";
 import useLyric from "./_hooks/useLyric";
 import { LyricStatus } from "../lyric-editor";
 import LyricItem from "./LyricItem";
-import { usePlayerContext } from "@/stores";
+import { useLyricContext, usePlayerContext } from "@/stores";
+import { useMemo } from "react";
 
 interface Props {
   className: string;
@@ -13,9 +14,25 @@ export default function Lyric({ className }: Props) {
   // state
   const {
     playerConig: { lyricSize },
+    audioRef,
+    isOpenFullScreen,
+    activeTab,
   } = usePlayerContext();
 
-  const { loading, songLyrics, currentIndex, containerRef, lyricRefs } = useLyric();
+  if (!audioRef.current) throw new Error("audioRef error");
+
+  const { loading, songLyrics } = useLyricContext();
+
+  const isOpenLyricTab = useMemo(
+    () => isOpenFullScreen && activeTab === "Lyric",
+    [isOpenFullScreen, activeTab],
+  );
+
+  const { currentIndex, containerRef, lyricRefs } = useLyric({
+    audioEle: audioRef.current,
+    isActive: isOpenLyricTab,
+    lyrics: songLyrics,
+  });
 
   const lyricSizeMap = {
     small: "text-[16px] sm:text-[26px]",

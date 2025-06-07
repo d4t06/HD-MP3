@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { ModalHeader } from "@/components";
+import { ModalContentWrapper, ModalHeader } from "@/components";
 import Header from "./_components/Header";
 import LyricEditorProvider, {
   useLyricEditorContext,
@@ -31,7 +31,7 @@ function Content({ closeModal }: Props) {
 
   return (
     <>
-      <div className="max-w-[90vw] w-[600px] relative">
+      <ModalContentWrapper  className="w-[800px]">
         <ModalHeader title="Edit lyric" close={closeModal} />
 
         <audio src={song?.song_url} ref={audioRef} />
@@ -77,7 +77,7 @@ function Content({ closeModal }: Props) {
         </div>
 
         <BottomCta closeModal={closeModal} />
-      </div>
+      </ModalContentWrapper>
     </>
   );
 }

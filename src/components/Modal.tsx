@@ -153,4 +153,9 @@ function Modal(
   );
 }
 
+function ModalContentWrapper({ children, className = "w-[400px]" }: Props) {
+  return <div className={`max-h-[80vh] max-w-[90vw] ${className}`}>{children}</div>;
+}
+
 export default forwardRef(Modal);
+export { ModalContentWrapper };

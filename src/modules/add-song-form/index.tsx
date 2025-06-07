@@ -8,10 +8,9 @@ import GenreSelect from "./_components/GenreSelect";
 import useAddSongForm from "./_hooks/useAddSongForm";
 import FinishedModal from "./_components/FinishedModal";
 import { Button, Frame } from "@/pages/dashboard/_components";
-import UploadImageBtn from "./_components/UploadImageBtn";
 import { formatTime } from "@/utils/appHelpers";
-import EditSongBtn from "./_components/EditSongBtn";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import ButtonGroup from "./_components/ButtonGroup";
 
 type Add = {
   variant: "add";
@@ -87,10 +86,7 @@ export default function AddSongForm(props: Props) {
               )}
 
               <div className="w-full">
-                <div className="-mt-2 -ml-2 flex flex-wrap w-full [&_button]:mt-2 [&_button]:ml-2">
-                  <UploadImageBtn />
-                  {props.variant === "edit" && <EditSongBtn />}
-                </div>
+                <ButtonGroup isEdit={props.variant === "edit"} />
               </div>
             </div>
 

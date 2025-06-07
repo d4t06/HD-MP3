@@ -16,11 +16,11 @@ type Props = {
 function useAudioSetting({ audioEle, postLocalStorageKey }: Props) {
   const [speed, setSpeed] = usePersistState<number>(
     `audio_speed_${postLocalStorageKey}`,
-    1
+    1,
   );
   const [volume, setVolume] = usePersistState<number>(
     `audio_volume_${postLocalStorageKey}`,
-    100
+    100,
   );
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function AudioSetting({
   const { speed, volume, setVolume, setSpeed } = useAudioSetting(props);
 
   return (
-    <MyPopup>
+    <MyPopup appendOnPortal>
       <MyPopupTrigger>
         <Button className={`${theme.content_bg} rounded-full ${className}`}>
           <Cog6ToothIcon className="w-6" />
@@ -55,10 +55,13 @@ export default function AudioSetting({
       </MyPopupTrigger>
 
       <MyPopupContent
-        className={`top-[calc(100%+8px)] ${
-          positions === "right" ? "left-0" : "right-0"
-        } z-[9]`}
-        appendTo="parent"
+        {...(positions === "right"
+          ? { position: "right-bottom", origin: "top left" }
+          : { position: "left-bottom", origin: "top right" })}
+        // className={`top-[calc(100%+8px)] ${
+        //   positions === "right" ? "left-0" : "right-0"
+        // } z-[9]`}
+        appendTo="portal"
       >
         <PopupWrapper
           bg="clear"

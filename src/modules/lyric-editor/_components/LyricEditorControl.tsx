@@ -77,7 +77,7 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
 
   return (
     <>
-      <div className="flex items-start flex-wrap -mt-2 -ml-2">
+      <div className="flex items-start flex-wrap -mt-2 -ml-2 [&_button]:outline-none">
         <AudioSetting
           className="mt-2 ml-2"
           audioEle={audioEle}
@@ -87,12 +87,16 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         <Button className={classes.button} onClick={_handlePlayPaused}>
           {renderPlayPausedButton()}
         </Button>
-        <Button disabled={!isEnableAddBtn} onClick={addLyric} className={classes.button}>
+        <Button
+          disabled={!isEnableAddBtn || isPreview}
+          onClick={addLyric}
+          className={classes.button}
+        >
           <PlusIcon className="w-6" />
           <span>Add</span>
         </Button>
         <Button
-          disabled={!lyrics.length}
+          disabled={!lyrics.length || isPreview}
           onClick={removeLyric}
           className={classes.button}
         >
@@ -112,11 +116,12 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         <Button
           onClick={() => {
             setIsPreview(!isPreview);
+            pause();
           }}
           className={classes.button}
         >
           <EyeIcon className="w-6" />
-          <span>Preview</span>
+          <span>{!isPreview ? "Preview" : "Edit"}</span>
         </Button>
 
         <div className="ml-auto">

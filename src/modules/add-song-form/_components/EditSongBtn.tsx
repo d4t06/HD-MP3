@@ -2,13 +2,14 @@ import { Input, ModalHeader, ModalRef } from "@/components";
 import { Button, DashboardModal } from "@/pages/dashboard/_components";
 import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { PencilIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function EditSongBtn() {
 	const modalRef = useRef<ModalRef>(null);
 
-	const { songData, updateSongData } = useAddSongContext();
+	const { songData, updateSongData, song } = useAddSongContext();
 
 	const [localSongData, setLocalSongData] = useState<Partial<Song>>({
 		name: songData?.name,
@@ -34,6 +35,13 @@ export default function EditSongBtn() {
 				<PencilIcon className="w-6" />
 				<span className="hidden md:block">Edit</span>
 			</Button>
+
+			<Link to={`/dashboard/lyric/${song?.id}`}>
+				<Button>
+					<ClipboardDocumentIcon className="w-6" />
+					<span>Lyric</span>
+				</Button>
+			</Link>
 
 			<DashboardModal variant="animation" wrapped={false} ref={modalRef}>
 				<ContentWrapper>

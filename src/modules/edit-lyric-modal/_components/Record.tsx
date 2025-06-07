@@ -24,8 +24,8 @@ export default function Record({ audioEle }: Props) {
         <XMarkIcon className="w-6" />
       </Button>
 
-      <div className="h-[240px] flex flex-col justify-center">
-        <div className="md:text-xl font-[700]">
+      <div className="flex-grow flex flex-col justify-center">
+        <div className="md:text-xl font-[700] text-center">
           {currentSplitWords.map((w, i) => {
             return (
               <span

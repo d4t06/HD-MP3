@@ -6,32 +6,40 @@ import { getClasses, scrollIntoView } from "@/utils/appHelpers";
 import AddLyricItem from "./AddLyricItem";
 import LyricItem from "@/modules/lyric/LyricItem";
 import { useEditLyricContext } from "./EditLyricContext";
+import useLyric from "@/modules/lyric/_hooks/useLyric";
 
 type Props = {
   controlRef: RefObject<LyricEditorControlRef>;
   openEditModal: () => void;
+  audioEle: HTMLAudioElement;
 };
 
 function useLyricEditorList() {
-  const { lyrics } = useEditLyricContext();
+  const { lyrics, isPreview } = useEditLyricContext();
 
   const activeLyricRef = useRef<ElementRef<"p">>(null);
 
   useEffect(() => {
-    if (!activeLyricRef.current) return;
+    if (!activeLyricRef.current || isPreview) return;
 
-    scrollIntoView(activeLyricRef.current);
-  }, [lyrics.length]);
+    scrollIntoView(activeLyricRef.current, "instant");
+  }, [lyrics.length, isPreview]);
 
   return { activeLyricRef };
 }
 
-export default function LyricEditorList({ controlRef, openEditModal }: Props) {
+export default function LyricEditorList({ controlRef, audioEle, openEditModal }: Props) {
   const { theme } = useThemeContext();
   const { baseLyricArr, lyrics, setSelectLyricIndex, song, isPreview } =
     useEditLyricContext();
 
   const { activeLyricRef } = useLyricEditorList();
+
+  const { currentIndex, lyricRefs } = useLyric({
+    audioEle,
+    isActive: isPreview,
+    lyrics,
+  });
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
@@ -39,6 +47,8 @@ export default function LyricEditorList({ controlRef, openEditModal }: Props) {
 
   const handleOpenEditLyricModal = (index: number) => {
     if (typeof index !== "number") return;
+
+    controlRef.current?.pause();
 
     setSelectLyricIndex(index);
 
@@ -84,16 +94,30 @@ export default function LyricEditorList({ controlRef, openEditModal }: Props) {
         <div className={`w-1/2 ${getClasses(isPreview, "text-center")}`}>
           {!!lyrics?.length &&
             song &&
-            lyrics.map((lyric, index) => (
-              <AddLyricItem
-                openModal={() => handleOpenEditLyricModal(index)}
-                seek={handleSeek}
-                isPreview={isPreview}
-                lyric={lyric}
-                isLast={index === lyrics.length - 1 && index !== baseLyricArr.length - 1}
-                key={index}
-              />
-            ))}
+            lyrics.map((lyric, index) => {
+              let status: LyricStatus = "coming";
+
+              if (isPreview) {
+                if (currentIndex === index) status = "active";
+                else if (index < currentIndex) status = "done";
+              }
+
+              return (
+                <AddLyricItem
+                  ref={(el) => (lyricRefs.current[index] = el!)}
+                  openModal={() => handleOpenEditLyricModal(index)}
+                  seek={handleSeek}
+                  isPreview={isPreview}
+                  lyric={lyric}
+                  status={status}
+                  activeColor={theme.type === "light" ? theme.content_text : ""}
+                  isLast={
+                    index === lyrics.length - 1 && index !== baseLyricArr.length - 1
+                  }
+                  key={index}
+                />
+              );
+            })}
         </div>
       </div>
     </>

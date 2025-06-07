@@ -43,7 +43,6 @@ function Content({ children }: Props) {
 
   const closeModal = () => modalRef.current?.close();
 
-
   return (
     <>
       <audio className="hidden" ref={audioRef} src={song?.song_url}></audio>
@@ -70,12 +69,15 @@ function Content({ children }: Props) {
               )}
             </div>
 
-            <LyricEditorList
-              controlRef={controlRef}
-              openEditModal={() => {
-                openModal("edit-lyric");
-              }}
-            />
+            {audioRef.current && (
+              <LyricEditorList
+                controlRef={controlRef}
+                audioEle={audioRef.current}
+                openEditModal={() => {
+                  openModal("edit-lyric");
+                }}
+              />
+            )}
 
             <Button
               className={`${theme.content_bg} font-playwriteCU self-end md:self-start rounded-full mt-5 `}

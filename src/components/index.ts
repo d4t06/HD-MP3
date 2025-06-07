@@ -14,7 +14,7 @@ export { default as ModalHeader } from "./ModalHeader";
 export { default as AudioSetting } from "./AudioSetting";
 export { default as Skeleton } from "./skeleton/index";
 export { default as Switch } from "./ui/Switch";
-export { default as Modal, type ModalRef } from "./Modal";
+export { default as Modal, ModalContentWrapper, type ModalRef } from "./Modal";
 export { default as PlaylistItem } from "./PlaylistItem";
 export { default as SettingMenu } from "./SettingMenu";
 export { default as SongThumbnail } from "./SongThumbnail";

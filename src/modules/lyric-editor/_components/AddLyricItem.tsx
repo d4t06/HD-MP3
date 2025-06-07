@@ -1,5 +1,7 @@
 import { formatTime, getClasses } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
+import { Ref, forwardRef } from "react";
+import { LyricStatus } from "..";
 
 type Props = {
   lyric: Lyric;
@@ -7,9 +9,23 @@ type Props = {
   isLast: boolean;
   openModal: () => void;
   isPreview: boolean;
+  activeColor: string;
+  status: LyricStatus;
 };
 
-function AddLyricItem({ lyric, openModal, seek, isLast, isPreview }: Props) {
+function AddLyricItem(
+  { lyric, openModal, seek, isLast, status, activeColor, isPreview }: Props,
+  ref: Ref<HTMLParagraphElement>,
+) {
+  const getClass = () => {
+    switch (status) {
+      case "active":
+        return `${activeColor || "text-[#ffed00]"} active-lyric`;
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
       <div className="pt-[10px] last:mb-[30vh]">
@@ -21,7 +37,8 @@ function AddLyricItem({ lyric, openModal, seek, isLast, isPreview }: Props) {
         </button>
 
         <p
-          className={`font-[700] select-none relative ${getClasses(!isPreview, "pr-6")}`}
+          ref={ref}
+          className={`font-[700] select-none relative ${getClasses(!isPreview, "pr-6")} ${getClass()}`}
         >
           {lyric.text}
 
@@ -42,4 +59,4 @@ function AddLyricItem({ lyric, openModal, seek, isLast, isPreview }: Props) {
   );
 }
 
-export default AddLyricItem;
+export default forwardRef(AddLyricItem);

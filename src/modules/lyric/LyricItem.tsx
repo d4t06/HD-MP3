@@ -1,5 +1,5 @@
 import { LyricStatus } from "@/modules/lyric-editor";
-import { Ref, forwardRef, useEffect } from "react";
+import { Ref, forwardRef } from "react";
 
 type Props = {
   text: string;
@@ -23,11 +23,11 @@ function LyricItem(
     }
   };
 
-  useEffect(() => {
-    if (status === "active") {
-      scroll();
-    }
-  }, [status]);
+  // useEffect(() => {
+  //   if (status === "active") {
+  //     scroll();
+  //   }
+  // }, [status]);
 
   return (
     <p ref={ref} className={`${className} transition-transform duration-[.3s] origin-left select-none font-[700] ${getClass()}`}>

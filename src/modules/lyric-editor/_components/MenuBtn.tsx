@@ -12,6 +12,7 @@ import { useThemeContext } from "@/stores";
 import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
+	ArrowTopRightOnSquareIcon,
 	Bars3Icon,
 	MusicalNoteIcon,
 	PencilIcon,
@@ -24,10 +25,10 @@ import { useEditLyricContext } from "./EditLyricContext";
 type Modal = "lyric" | "tutorial" | "song-beat";
 
 type Props = {
-	pause: () => void
-}
+	pause: () => void;
+};
 
-export default function MenuBtn({pause}: Props) {
+export default function MenuBtn({ pause }: Props) {
 	const { theme } = useThemeContext();
 	const { song } = useEditLyricContext();
 
@@ -93,6 +94,11 @@ export default function MenuBtn({pause}: Props) {
 							<button onClick={() => openModal("song-beat")}>
 								<MusicalNoteIcon className="w-5" />
 								<span>Song beat</span>
+							</button>
+
+							<button onClick={() => openModal("song-beat")}>
+								<ArrowTopRightOnSquareIcon className="w-5" />
+								<span>Export</span>
 							</button>
 						</MenuList>
 					</MenuWrapper>
