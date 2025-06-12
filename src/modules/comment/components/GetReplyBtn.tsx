@@ -1,8 +1,8 @@
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import useGetComment from "../hooks/useGetComment";
 import { useState } from "react";
-import { useCommentContext } from "./CommemtContext";
+import { useCommentContext } from "./CommentContext";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import { useGetComment } from "@/hooks";
 
 type Props = {
 	commentIndex: number;

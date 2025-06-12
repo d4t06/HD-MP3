@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useCommentContext } from "../components/CommemtContext";
+import { useCommentContext } from "../components/CommentContext";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import useGetComment from "./useGetComment";
+import { useGetComment } from "@/hooks";
 
 export default function useGetSongComment() {
 	const { shouldFetchComment, setComments, isOpenComment, setIsFetching } =

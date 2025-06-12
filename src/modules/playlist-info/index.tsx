@@ -9,7 +9,7 @@ import { Link } from "react-router-dom";
 import { useThemeContext } from "@/stores";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
-import CommnetProvider from "../comment/components/CommemtContext";
+import CommentProvider from "../comment/components/CommentContext";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 
 type Props = {
@@ -151,9 +151,9 @@ export default function PLaylistInfo({
                   <HearBtn isLiked={isLiked} playlist={playlist} />
                 )}
 
-                <CommnetProvider target="playlist">
+                <CommentProvider target="playlist">
                   <ChatBtn />
-                </CommnetProvider>
+                </CommentProvider>
               </div>
             </div>
           )}

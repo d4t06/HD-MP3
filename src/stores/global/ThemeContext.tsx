@@ -66,7 +66,11 @@ const useTheme = () => {
     });
   }, []);
 
-  return { state, setTheme };
+  const themeClass = (white: string, black: string) => {
+    return state.theme.type === "light" ? white : black;
+  };
+
+  return { state, setTheme, themeClass };
 };
 
 type ContextType = ReturnType<typeof useTheme>;

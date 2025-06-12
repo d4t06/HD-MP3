@@ -7,3 +7,4 @@ export { default as useGetPlaylist } from "./useGetPlaylist";
 export { default as useGetSongLyric } from "./useGetSongLyric";
 export { default as useSongQueueAction } from "./useSongQueueAction";
 export { default as useAddPlaylist } from "./useAddPlaylist";
+export { default as useGetComment } from "./useGetComment";

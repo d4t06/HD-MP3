@@ -8,7 +8,7 @@ import { usePlayerContext } from "@/stores";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import CommnetProvider from "@/modules/comment/components/CommemtContext";
+import CommentProvider from "@/modules/comment/components/CommentContext";
 
 // export type ControlRef = {
 // 	handlePlayPause: () => void;
@@ -62,9 +62,9 @@ export default function MobileFullScreenControl() {
 			<div className={`${classes.buttonsContainer}`}>
 				<PlayBtn playStatus={playStatus} handlePlayPause={handlePlayPause} />
 
-				<CommnetProvider target="song">
+				<CommentProvider target="song">
 					<MenuButton />
-				</CommnetProvider>
+				</CommentProvider>
 			</div>
 		</>
 	);

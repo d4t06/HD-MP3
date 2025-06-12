@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { usePlayerContext } from "../_components/PlayerContext";
-import { uesCurrentIndexContext } from "@/pages/for-you/_stores/CurrentIndex";
+import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -8,7 +8,7 @@ type Props = {
 
 export default function uesAudioEffect({ audioEle }: Props) {
   const { setStatus, shouldPlayAfterLoaded, canPlay } = usePlayerContext();
-  const { firstTimeSongLoaded, currentIndex } = uesCurrentIndexContext();
+  const { firstTimeSongLoaded, currentSong } = useSongsContext();
 
   const handleLoadStart = () => {
     setStatus("loading");
@@ -36,7 +36,9 @@ export default function uesAudioEffect({ audioEle }: Props) {
 
   useEffect(() => {
     if (canPlay) {
-      audioEle.src = SONGS[currentIndex].song_url;
+      if (currentSong) {
+        audioEle.src = currentSong.song_url;
+      }
     }
   }, [canPlay]);
 

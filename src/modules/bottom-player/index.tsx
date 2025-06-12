@@ -17,6 +17,7 @@ export default function BottomPlayer() {
   const { audioRef, idle } = usePlayerContext();
   if (!audioRef.current) throw new Error("BottomPlayer !audioRef.current");
 
+
   const { theme } = useThemeContext();
   const {
     isOpenFullScreen,
@@ -30,7 +31,7 @@ export default function BottomPlayer() {
 
   const location = useLocation();
 
-  const inEdit = useMemo(() => location.pathname.includes("lyric"), [location]);
+  const shouldHide = useMemo(() => location.pathname.includes("lyric") || location.pathname === "/", [location]);
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);
@@ -38,7 +39,7 @@ export default function BottomPlayer() {
   };
 
   const classes = {
-    wrapper: `hidden md:block border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
+    wrapper: `bottom-player hidden md:block border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
     controlWrapper: `flex max-w-[420px] flex-grow ${
@@ -59,7 +60,7 @@ export default function BottomPlayer() {
           : theme.image
             ? theme.bottom_player_bg
             : ""
-      } ${inEdit && "translate-y-[100%] "} `}
+      } ${shouldHide && "translate-y-[100%] "} `}
     >
       {!theme.image && (
         <div

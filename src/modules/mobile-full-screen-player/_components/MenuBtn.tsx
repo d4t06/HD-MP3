@@ -5,7 +5,7 @@ import { useRef } from "react";
 import ControlMenu from "./ControlMenu";
 import { ChatBubbleLeftRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { usePlayerContext } from "@/stores";
-import { useCommentContext } from "@/modules/comment/components/CommemtContext";
+import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import MobileComment from "@/modules/comment/components/MobileComment";
 import SongComment from "@/modules/comment/components/SongComment";
 

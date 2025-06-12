@@ -4,7 +4,7 @@ import useCommentAction from "../hooks/useCommentAction";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { useCommentContext } from "./CommemtContext";
+import { useCommentContext } from "./CommentContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useAuthContext } from "@/stores";
 

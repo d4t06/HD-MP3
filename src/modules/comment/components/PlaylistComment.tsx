@@ -1,7 +1,7 @@
 import CommentList from "..";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { Center } from "@/components";
-import { useCommentContext } from "./CommemtContext";
+import { useCommentContext } from "./CommentContext";
 import useGetPlaylistComment from "../hooks/useGetPlaylistComment";
 
 export default function PlaylistComment() {

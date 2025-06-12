@@ -1,6 +1,6 @@
-import { uesCurrentIndexContext } from "@/pages/for-you/_stores/CurrentIndex";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { usePlayerContext } from "../_components/PlayerContext";
+import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 
 type Props = {
 	index: number;
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function useSongItemEffect({ index, songItemRef }: Props) {
-	const { currentIndex, setCurrentIndex } = uesCurrentIndexContext();
+	const { currentIndex, setCurrentIndex } = useSongsContext();
 	const { setCanPlay, canPlay, controlRef, statusRef } = usePlayerContext();
 	const [isIntoView, setIsIntoView] = useState(false);
 

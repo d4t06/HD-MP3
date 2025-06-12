@@ -1,4 +1,4 @@
-import { ElementRef, ReactNode, useEffect, useRef, useState } from "react";
+import { ElementRef, ReactNode, useRef, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import LyricEditorControl, {
   LyricEditorControlRef,

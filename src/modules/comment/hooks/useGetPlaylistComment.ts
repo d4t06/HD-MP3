@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useCommentContext } from "../components/CommemtContext";
+import { useCommentContext } from "../components/CommentContext";
 import { useSelector } from "react-redux";
-import useGetComment from "./useGetComment";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
+import { useGetComment } from "@/hooks";
 
 export default function useGetPlaylistComment() {
 	const { shouldFetchComment, setComments, isOpenComment, setIsFetching } =

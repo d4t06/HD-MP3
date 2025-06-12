@@ -1,5 +1,5 @@
 import { useThemeContext } from "@/stores";
-import { useCommentContext } from "./CommemtContext";
+import { useCommentContext } from "./CommentContext";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 

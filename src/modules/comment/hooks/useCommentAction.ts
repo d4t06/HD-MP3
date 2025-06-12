@@ -5,7 +5,7 @@ myUpdateDoc,
 } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { useState } from "react";
-import { useCommentContext } from "../components/CommemtContext";
+import { useCommentContext } from "../components/CommentContext";
 import {
 	doc,
 	getDoc,

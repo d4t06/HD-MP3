@@ -1,5 +1,5 @@
 import { MyTooltip } from "@/components";
-import { useCommentContext } from "@/modules/comment/components/CommemtContext";
+import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import DesktopComment from "@/modules/comment/components/DesktopComment";
 import SongComment from "@/modules/comment/components/SongComment";
 import { useThemeContext } from "@/stores";
@@ -10,7 +10,7 @@ type Props = {
 	show: boolean;
 };
 
-export default function CommnentButton({ show }: Props) {
+export default function CommentButton({ show }: Props) {
 	const { theme } = useThemeContext();
 	const { setIsOpenComment } = useCommentContext();
 

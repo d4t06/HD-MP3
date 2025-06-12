@@ -27,7 +27,7 @@ type ContextType = ReturnType<typeof useComment>;
 
 const context = createContext<ContextType | null>(null);
 
-export default function CommnetProvider({
+export default function CommentProvider({
 	children,
 	target,
 }: { children: ReactNode } & Props) {
@@ -44,7 +44,7 @@ export default function CommnetProvider({
 
 export function useCommentContext() {
 	const ct = useContext(context);
-	if (!ct) throw new Error("CommnetProvider not provided");
+	if (!ct) throw new Error("CommentProvider not provided");
 
 	return ct;
 }

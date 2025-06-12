@@ -1,6 +1,6 @@
 import { Modal, ModalRef } from "@/components";
 import SlideModal from "@/components/SlideModal";
-import { useCommentContext } from "@/modules/comment/components/CommemtContext";
+import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import MobileComment from "@/modules/comment/components/MobileComment";
 import PlaylistComment from "@/modules/comment/components/PlaylistComment";
 import { useThemeContext } from "@/stores";

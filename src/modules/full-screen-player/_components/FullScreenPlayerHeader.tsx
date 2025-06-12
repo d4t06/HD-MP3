@@ -16,7 +16,7 @@ import {
 } from "@/components";
 import FullScreenPlayerTab from "./Tabs";
 import CommnentButton from "./CommentButton";
-import CommnetProvider from "@/modules/comment/components/CommemtContext";
+import CommentProvider from "@/modules/comment/components/CommentContext";
 
 export default function FullScreenPlayerHeader() {
 	const { user } = useAuthContext();
@@ -73,9 +73,9 @@ export default function FullScreenPlayerHeader() {
 				<div
 					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 				>
-					<CommnetProvider target="song">
+					<CommentProvider target="song">
 						<CommnentButton show={!!currentSongData?.song.is_official} />
-					</CommnetProvider>
+					</CommentProvider>
 
 					{isOwnSong && activeTab === "Lyric" && (
 						<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">

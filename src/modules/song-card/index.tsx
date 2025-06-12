@@ -1,0 +1,94 @@
+import { forwardRef, useImperativeHandle, useRef, type Ref, type RefObject } from "react";
+import SongControl from "./_components/SongControl";
+import PlayerProvider, { usePlayerContext } from "./_components/PlayerContext";
+import { Blurhash } from "react-blurhash";
+import SongLyric from "./_components/SongLyric";
+import useSongItemEffect from "./_hooks/useSongItemEffect";
+import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
+
+type Props = {
+  song: Song;
+  index: number;
+};
+
+function Content({
+  song,
+  index,
+  songItemRef,
+}: Props & { songItemRef: RefObject<HTMLDivElement | null> }) {
+  const { controlRef } = usePlayerContext();
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useSongItemEffect({ index, songItemRef: songItemRef });
+
+  return (
+    <>
+      <div className="relative z-0 flex items-center flex-shrink-0 text-white h-full w-full sm:w-auto sm:aspect-[3/5] rounded-xl overflow-hidden">
+        <div className="absolute inset-0 z-[-1] overflow-hidden ">
+          {song.blurhash_encode && (
+            <Blurhash hash={song.blurhash_encode} height={"100%"} width={"100%"} />
+          )}
+        </div>
+
+        <div className="absolute top-0 left-0 w-full p-4 z-[99]">
+          {audioRef.current && <SongLyric audioEle={audioRef.current} />}
+        </div>
+
+        <div className="w-full aspect-[1/1] overflow relative mask-image">
+          <img
+            onClick={() => controlRef.current?.handlePlayPause()}
+            className="w-full object-cover"
+            src={song.image_url}
+          />
+        </div>
+
+        <div className="absolute z-0 bottom-0 left-0 w-full">
+          <div className="relative p-4">
+            <div className="absolute inset-0 z-[-1] bg-gradient-to-b to-black/60 from-transparent"></div>
+
+            <div className="text-xl font-semibold">{song.name}</div>
+            <div className="opacity-[.8]">
+              {song.singers.map((s, i) => (
+                <span key={i}> {(i ? ", " : "") + s.name}</span>
+              ))}
+            </div>
+            <div className="mt-5">
+              {audioRef.current && <SongControl audioEle={audioRef.current} />}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <audio className="hidden" ref={audioRef} />
+    </>
+  );
+}
+
+function SongCart(props: Props, ref: Ref<HTMLDivElement>) {
+  const { isOpenComment } = useSongsContext();
+
+  const innerRef = useRef<HTMLDivElement | null>(null);
+
+  useImperativeHandle(ref, () => innerRef.current!);
+
+  return (
+    <>
+      <div
+        data-index={props.index}
+        className="relative h-full min-h-[360px]  snap-center"
+        ref={innerRef}
+      >
+        <div
+          className={`absolute h-full w-full p-4 sm:flex justify-center ${isOpenComment ? "right-[200px]" : "right-0"}`}
+        >
+          <PlayerProvider>
+            <Content {...props} songItemRef={innerRef} />
+          </PlayerProvider>
+        </div>
+      </div>
+    </>
+  );
+}
+
+export default forwardRef(SongCart);
