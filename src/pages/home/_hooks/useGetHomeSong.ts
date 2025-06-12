@@ -67,6 +67,8 @@ export default function useGetHomeSong() {
           const result = await implementSongQuery(getSongQuery);
           newSongData.songs = result;
 
+          console.log(result)
+
           setSongMap((prev) => ({ ...prev, [tab]: newSongData }));
         }
       } else await sleep(100);

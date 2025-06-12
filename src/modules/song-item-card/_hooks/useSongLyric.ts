@@ -1,5 +1,4 @@
-import { ElementRef, useEffect, useRef, useState } from "react";
-import { scrollIntoView } from "@/utils/appHelpers";
+import { useEffect, useRef, useState } from "react";
 // import { useLyricContext, usePlayerContext } from "@/stores";
 
 const LYRIC_TIME_BOUNDED = 0.3;
@@ -11,21 +10,10 @@ type Props = {
 };
 
 export default function useLyric({ audioEle, lyrics, isActive }: Props) {
-  // const { songLyrics, loading } = useLyricContext();
-  // const { audioRef, isOpenFullScreen, activeTab } = usePlayerContext();
-  // if (!audioRef.current) throw new Error("useLyric !audioRef.current");
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const scrollBehavior = useRef<ScrollBehavior>("instant");
   const currentTimeRef = useRef(0);
-  const lyricRefs = useRef<ElementRef<"div">[]>([]);
   const currentIndexRef = useRef(0);
-
-  // const isOpenLyricTab = useMemo(
-  //   () => isOpenFullScreen && activeTab === "Lyric",
-  //   [isOpenFullScreen, activeTab],
-  // );
 
   const handleTimeUpdate = () => {
     const direction =
@@ -58,32 +46,10 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
     }
 
     if (nextIndex !== currentIndexRef.current) {
-      if (Math.abs(nextIndex - currentIndexRef.current) > 5)
-        scrollBehavior.current = "instant";
-
       currentIndexRef.current = nextIndex;
       setCurrentIndex(nextIndex);
-
-      scrollIntoView(lyricRefs.current[nextIndex], scrollBehavior.current);
-
-      if (scrollBehavior.current === "instant") scrollBehavior.current = "smooth";
     }
   };
-
-  const reset = () => {
-    setCurrentIndex(0);
-    currentIndexRef.current = 0;
-    currentTimeRef.current = 0;
-  };
-
-  //  immediate scroll to active songs when change tab
-  useEffect(() => {
-    if (isActive) handleTimeUpdate();
-
-    return () => {
-      if (!isActive) reset();
-    };
-  }, [isActive]);
 
   //  add event listeners
   useEffect(() => {
@@ -95,15 +61,7 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
     };
   }, [lyrics, isActive]);
 
-  //  reset when change song
-  useEffect(() => {
-    return () => {
-      reset();
-    };
-  }, [lyrics]);
-
   return {
     currentIndex,
-    lyricRefs,
   };
 }

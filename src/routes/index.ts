@@ -25,9 +25,11 @@ import {
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
 import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
+import ForYouPage from "@/pages/for-you";
 
 const pubicRouteMap = {
   home: "/",
+  discorver: "/discover",
   search: "/search",
   playlist: "/playlist/:id",
   login: "/login",
@@ -60,7 +62,8 @@ export type PlaylistParamsType = {
   id: string;
 };
 const publicRoutes = [
-  { path: pubicRouteMap.home, component: Home, layout: "" },
+  { path: pubicRouteMap.home, component: ForYouPage, layout: "" },
+  { path: pubicRouteMap.discorver, component: Home, layout: "" },
   { path: pubicRouteMap.playlist, component: Playlist, layout: "" },
   { path: pubicRouteMap.search, component: Search, layout: "" },
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },

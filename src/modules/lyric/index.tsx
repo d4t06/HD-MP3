@@ -28,7 +28,7 @@ export default function Lyric({ className }: Props) {
     [isOpenFullScreen, activeTab],
   );
 
-  const { currentIndex, containerRef, lyricRefs } = useLyric({
+  const { currentIndex, lyricRefs } = useLyric({
     audioEle: audioRef.current,
     isActive: isOpenLyricTab,
     lyrics: songLyrics,
@@ -66,7 +66,6 @@ export default function Lyric({ className }: Props) {
 
   return (
     <div
-      ref={containerRef}
       className={`${classes.container} ${
         lyricSizeMap[lyricSize || "medium"]
       } ${className}`}

@@ -2,6 +2,7 @@ import {
   HomeIcon,
   MusicalNoteIcon,
   ComputerDesktopIcon,
+  GlobeAsiaAustraliaIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components";
@@ -30,13 +31,31 @@ export default function Sidebar() {
     );
   });
 
+  const getActiveClasses = (condition: boolean) => {
+    if (condition)
+      return `${theme.content_text} ${theme.container} ${theme.content_border}`;
+
+    return "border-transparent";
+  };
+
   //  define styles
   const classes = {
     container: `w-[180px] relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
-    navItem: `  px-3 py-2 leading-[2.2] font-playwriteCU flex items-center ${theme.content_hover_text}`,
-    icon: "w-7 mr-2",
-    link: "w-full border-l-[4px]",
-    activeLink: `${theme.content_text} ${theme.container} ${theme.content_border}  `,
+    linkList: `
+      [&_div]:px-3 
+      [&_div]:py-2
+      ${
+        theme.type === "light" ? "hover:[&_div]:bg-black/10" : "hover:[&_div]:bg-white/10"
+      }
+      [&_div]:space-x-2 
+      [&_div]:leading-[2.2] 
+      [&_div]:font-playwriteCU 
+      [&_div]:flex 
+      [&_div]:items-center
+      [&_svg]:w-7
+      [&_a]:border-l-[4px]
+      [&_a]:w-full
+      `,
   };
 
   return (
@@ -47,19 +66,31 @@ export default function Sidebar() {
           <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
         </Link>
       </div>
-      <div className="flex flex-col items-start">
+      <div className={`flex flex-col items-start ${classes.linkList}`}>
         {userLoading && menuItemSkeletons}
 
         {!userLoading && (
           <>
             <Link
-              className={`${classes.link} ${
-                location.pathname === "/" ? classes.activeLink : "border-transparent"
-              }`}
+              className={`
+              ${getActiveClasses(location.pathname === "/")}
+            `}
               to={"/"}
             >
-              <div className={classes.navItem}>
-                <HomeIcon className={classes.icon} />
+              <div>
+                <HomeIcon />
+                <span>For You</span>
+              </div>
+            </Link>
+
+            <Link
+              className={`
+              ${getActiveClasses(location.pathname === "/discover")}
+            `}
+              to={"/discover"}
+            >
+              <div>
+                <GlobeAsiaAustraliaIcon />
                 <span>Discover</span>
               </div>
             </Link>
@@ -67,29 +98,20 @@ export default function Sidebar() {
             {user && (
               <>
                 <Link
-                  className={`${classes.link}  ${
-                    location.pathname.includes("my-music")
-                      ? classes.activeLink
-                      : "border-transparent"
-                  }`}
+                  className={`
+                  ${getActiveClasses(location.pathname === "/my-music")}`}
                   to={"/my-music"}
                 >
-                  <div className={classes.navItem}>
-                    <MusicalNoteIcon className={classes.icon} />
+                  <div>
+                    <MusicalNoteIcon />
                     <span>My Song</span>
                   </div>
                 </Link>
 
                 {user.role === "ADMIN" && (
-                  <Link
-                    to={"/dashboard"}
-                    className={`${classes.link} border-transparent`}
-                  >
-                    <div
-                      onClick={handleNavigateToDashboard}
-                      className={` ${classes.navItem}`}
-                    >
-                      <ComputerDesktopIcon className={classes.icon} />
+                  <Link to={"/dashboard"} className={`border-transparent`}>
+                    <div onClick={handleNavigateToDashboard}>
+                      <ComputerDesktopIcon />
                       <span className="">Dashboard</span>
                     </div>
                   </Link>

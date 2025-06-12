@@ -4,12 +4,8 @@ import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useLyricContext } from "@/stores/LyricContext";
-import { usePlayerContext } from "@/stores";
 
 export default function useGetSongLyric({ active }: { active: boolean }) {
-  const { audioRef } = usePlayerContext();
-  if (!audioRef.current) throw new Error("useSongLyric !audioRef.current");
-
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
   const { setLoading, setSongLyrics, songLyrics, loading, shouldGetLyric } =
