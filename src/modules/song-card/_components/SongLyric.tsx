@@ -46,7 +46,7 @@ export default function SongLyric({ audioEle }: Props) {
 
   const classes = {
     container:
-      "no-scrollbar [&_p]:w-[70%] [&_p]:select-none [&_p]:font-[700] aspect-[5/3] pt-4	",
+      "no-scrollbar [&_p]:w-[70%] [&_p]:select-none [&_p]:font-[700] pt-4	",
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function SongLyric({ audioEle }: Props) {
         Object.assign(subLyricRef.current.style, {
           transform: "translateY(0px)",
         });
-    }, 0);
+    }, 10);
   }, [currentIndex, lyrics]);
 
   return (

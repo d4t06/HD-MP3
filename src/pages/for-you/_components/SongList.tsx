@@ -39,7 +39,7 @@ export default function SongList() {
 
   return (
     <div
-      className={`relative transition-[right] duration-[.3s] h-full snap-y snap-mandatory overflow-auto no-scrollbar`}
+      className={`h-full snap-y snap-mandatory overflow-auto no-scrollbar flex flex-col items-center`}
     >
       {isFetching && <p>Loading</p>}
 

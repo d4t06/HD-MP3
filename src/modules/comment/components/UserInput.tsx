@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useCommentContext } from "./CommentContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
-import { useAuthContext } from "@/stores";
+import { useAuthContext, useThemeContext } from "@/stores";
 
 type Props = {
 	onSubmited?: () => void;
@@ -27,6 +27,7 @@ export default function UserInput({
 	...props
 }: (SendComment | SendReply) & Props) {
 	const { user } = useAuthContext();
+	const {themeClass, theme} = useThemeContext()
 
 	const { target } = useCommentContext();
 	const { currentSongData } = useSelector(selectSongQueue);
@@ -85,13 +86,13 @@ export default function UserInput({
 				<Image src={user?.photo_url} className="rounded-full" />
 			</div>
 
-			<div className="rounded-lg ml-2 flex-grow bg-[#333] flex items-center">
+			<div className={`rounded-lg ml-2 flex-grow  flex items-center ${themeClass('bg-black/10 text-black', 'bg-white/10')}`}>
 				<Input
 					className="bg-transparent border-none"
 					placeholder={inputPlaceholder}
 					ref={inputRef}
 				/>
-				<Button onClick={handleAddComment} className="" isLoading={isFetching}>
+				<Button onClick={handleAddComment} className={theme.content_text} isLoading={isFetching}>
 					<PaperAirplaneIcon className="w-5" />
 				</Button>
 			</div>

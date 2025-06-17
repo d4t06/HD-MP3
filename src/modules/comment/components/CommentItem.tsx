@@ -2,7 +2,7 @@ import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
-import { useAuthContext } from "@/stores";
+import { useAuthContext, useThemeContext } from "@/stores";
 import useCommentAction from "../hooks/useCommentAction";
 import { useRef, useState } from "react";
 import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
@@ -13,9 +13,16 @@ type Props = {
 	comment: UserComment;
 	index: number;
 	level: 1 | 2;
+	variant?: "dark-bg " | "theme-bg";
 };
 
-export default function CommentItem({ comment, index, level }: Props) {
+export default function CommentItem({
+	comment,
+	index,
+	level,
+	variant = "dark-bg ",
+}: Props) {
+	const { themeClass } = useThemeContext();
 	const { user } = useAuthContext();
 
 	const { action, isFetching } = useCommentAction();
@@ -49,19 +56,19 @@ export default function CommentItem({ comment, index, level }: Props) {
 
 					<div className="flex-grow text-[13px]">
 						<div className="flex">
-							<div className="flex-grow">
-								<div className="p-2 rounded-md bg-[#333]">
+							<div className="flex-grow ml-2">
+								<div className={`rounded-md ${variant === 'theme-bg' ? themeClass("text-black", "text-white") : 'text-white'}`}>
 									<Link
-										className="text-[#ccc] line-clamp-1 font-[500]"
+										className={`font-medium line-clamp-1 font-[500] ${variant === 'theme-bg' ? themeClass("text-[#333]", "text-[#f1f1f1]") : 'text-[#f1f1f1]'}`}
 										to={`/user/${comment.user_email}`}
 									>
 										{comment.user_name}
 									</Link>
-									<div className="mt-1 break-all text-white">{comment.text}</div>
+									<div className="mt-1 break-all">{comment.text}</div>
 								</div>
 
 								<div className="flex space-x-2 mt-1">
-									<span className="text-[#ccc]">
+									<span className="opacity-[.7]">
 										{daysSinceTimestamp(comment.created_at)}
 									</span>
 

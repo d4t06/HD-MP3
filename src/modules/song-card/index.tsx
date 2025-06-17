@@ -76,11 +76,11 @@ function SongCart(props: Props, ref: Ref<HTMLDivElement>) {
     <>
       <div
         data-index={props.index}
-        className="relative h-full min-h-[360px]  snap-center"
+        className="h-full flex-shrink-0 p-4 min-h-[360px] snap-center"
         ref={innerRef}
       >
         <div
-          className={`absolute h-full w-full p-4 sm:flex justify-center ${isOpenComment ? "right-[200px]" : "right-0"}`}
+          className={`relative h-full w-full ${isOpenComment ? "lg:right-[calc(400px*0.5)] " : ""}`}
         >
           <PlayerProvider>
             <Content {...props} songItemRef={innerRef} />

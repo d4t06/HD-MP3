@@ -19,10 +19,13 @@ export default function MobileBottomPlayer() {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
 
-  const {handlePlayPause} =usePlayerAction()
+  const { handlePlayPause } = usePlayerAction();
 
   const location = useLocation();
-  const inEdit = useMemo(() => location.pathname.includes("lyric"), [location]);
+  const shouldHide = useMemo(
+    () => location.pathname.includes("lyric") || location.pathname === "/",
+    [location],
+  );
 
   const renderIcon = useMemo(() => {
     switch (playStatus) {
@@ -47,7 +50,7 @@ export default function MobileBottomPlayer() {
   };
 
   return (
-    <div className={`${classes.wrapper} ${inEdit ? "translate-y-[100%]" : ""}`}>
+    <div className={`${classes.wrapper} ${shouldHide ? "translate-y-[100%]" : ""}`}>
       <div
         className={`${classes.container} ${
           isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""
@@ -84,10 +87,7 @@ export default function MobileBottomPlayer() {
 
         {/* cta */}
         <div className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}>
-          <button
-            className={`p-[4px]`}
-            onClick={handlePlayPause}
-          >
+          <button className={`p-[4px]`} onClick={handlePlayPause}>
             {renderIcon}
           </button>
           {/*    <button onClick={() => controlRef.current?.handleNext()} className={`p-[4px]`}>

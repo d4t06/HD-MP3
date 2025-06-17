@@ -1,7 +1,13 @@
 import { getDocs, orderBy, query, where } from "firebase/firestore";
 import { commentCollectionRef } from "@/services/firebaseService";
+import { useState } from "react";
+import { useToastContext } from "@/stores";
 
 export default function useGetComment() {
+  const [isFetching, setIsFetching] = useState(true);
+
+  const { setErrorToast } = useToastContext();
+
   const fetchComment = async ({
     target_id,
     comment_id,
@@ -9,41 +15,49 @@ export default function useGetComment() {
     target_id?: string;
     comment_id?: string;
   }) => {
-    if (import.meta.env.DEV) console.log("get comment");
+    try {
+      setIsFetching(true);
 
-    let searchQuery = query(commentCollectionRef);
+      if (import.meta.env.DEV) console.log("get comment");
 
-    if (target_id) {
-      searchQuery = query(
-        searchQuery,
-        where("target_id", "==", target_id),
-        where("comment_id", "==", ""),
-        orderBy("updated_at", "desc"),
-      );
-    }
+      let searchQuery = query(commentCollectionRef);
 
-    if (comment_id)
-      searchQuery = query(
-        searchQuery,
-        where("comment_id", "==", comment_id),
-        orderBy("created_at", "asc"),
-      );
+      if (target_id) {
+        searchQuery = query(
+          searchQuery,
+          where("target_id", "==", target_id),
+          where("comment_id", "==", ""),
+          orderBy("updated_at", "desc"),
+        );
+      }
 
-    const commentSnaps = await getDocs(searchQuery);
+      if (comment_id)
+        searchQuery = query(
+          searchQuery,
+          where("comment_id", "==", comment_id),
+          orderBy("created_at", "asc"),
+        );
 
-    if (!!commentSnaps.docs.length) {
-      const result = commentSnaps.docs.map((doc) => {
-        const singer: UserComment = {
-          ...(doc.data() as UserCommentSchema),
-          id: doc.id,
-          replies: [],
-        };
-        return singer;
-      });
+      const commentSnaps = await getDocs(searchQuery);
 
-      return result;
+      if (!!commentSnaps.docs.length) {
+        const result = commentSnaps.docs.map((doc) => {
+          const singer: UserComment = {
+            ...(doc.data() as UserCommentSchema),
+            id: doc.id,
+            replies: [],
+          };
+          return singer;
+        });
+
+        return result;
+      }
+    } catch (error) {
+      setErrorToast();
+    } finally {
+      setIsFetching(false);
     }
   };
 
-  return { fetchComment };
+  return { fetchComment, isFetching };
 }

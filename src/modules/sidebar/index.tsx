@@ -40,21 +40,28 @@ export default function Sidebar() {
 
   //  define styles
   const classes = {
-    container: `w-[180px] relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
+    container: `w-[80px] xl:w-[180px]  relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
     linkList: `
-      [&_div]:px-3 
-      [&_div]:py-2
       ${
         theme.type === "light" ? "hover:[&_div]:bg-black/10" : "hover:[&_div]:bg-white/10"
       }
-      [&_div]:space-x-2 
+      [&_div]:py-3
       [&_div]:leading-[2.2] 
       [&_div]:font-playwriteCU 
       [&_div]:flex 
+      [&_div]:flex-col 
       [&_div]:items-center
+      [&_div]:space-y-1 
+
+      xl[&_div]:space-y-0 
+      xl:[&_div]:space-x-2 
+      xl:[&_div]:px-3
+      xl:[&_div]:flex-row 
+      xl:[&_div]:items-center
       [&_svg]:w-7
-      [&_a]:border-l-[4px]
+      xl:[&_a]:border-l-[4px]
       [&_a]:w-full
+      [&_span]:text-[10px]
       `,
   };
 
