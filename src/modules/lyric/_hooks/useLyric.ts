@@ -1,6 +1,5 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { scrollIntoView } from "@/utils/appHelpers";
-// import { useLyricContext, usePlayerContext } from "@/stores";
 
 const LYRIC_TIME_BOUNDED = 0.3;
 
@@ -11,10 +10,6 @@ type Props = {
 };
 
 export default function useLyric({ audioEle, lyrics, isActive }: Props) {
-  // const { songLyrics, loading } = useLyricContext();
-  // const { audioRef, isOpenFullScreen, activeTab } = usePlayerContext();
-  // if (!audioRef.current) throw new Error("useLyric !audioRef.current");
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const scrollBehavior = useRef<ScrollBehavior>("instant");
@@ -22,12 +17,9 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
   const lyricRefs = useRef<ElementRef<"div">[]>([]);
   const currentIndexRef = useRef(0);
 
-  // const isOpenLyricTab = useMemo(
-  //   () => isOpenFullScreen && activeTab === "Lyric",
-  //   [isOpenFullScreen, activeTab],
-  // );
-
   const handleTimeUpdate = () => {
+    if (lyricRefs.current[0] === null) return;
+
     const direction =
       audioEle.currentTime > currentTimeRef.current ? "forward" : "backward";
 
@@ -57,6 +49,11 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
         break;
     }
 
+    /*
+    when song change, the current time reset to 0 immediate
+    before the lyrics full displed which cause ele not found error
+    */
+
     if (nextIndex !== currentIndexRef.current) {
       if (Math.abs(nextIndex - currentIndexRef.current) > 5)
         scrollBehavior.current = "instant";
@@ -64,7 +61,8 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
       currentIndexRef.current = nextIndex;
       setCurrentIndex(nextIndex);
 
-      scrollIntoView(lyricRefs.current[nextIndex], scrollBehavior.current);
+      if (!!lyricRefs.current[nextIndex])
+        scrollIntoView(lyricRefs.current[nextIndex], scrollBehavior.current);
 
       if (scrollBehavior.current === "instant") scrollBehavior.current = "smooth";
     }
@@ -88,6 +86,7 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
   //  add event listeners
   useEffect(() => {
     if (!isActive || !lyrics.length) return;
+
     audioEle.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {

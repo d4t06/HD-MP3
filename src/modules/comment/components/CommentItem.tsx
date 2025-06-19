@@ -13,14 +13,14 @@ type Props = {
 	comment: UserComment;
 	index: number;
 	level: 1 | 2;
-	variant?: "dark-bg " | "theme-bg";
+	variant?: "dark-bg" | "theme-bg";
 };
 
 export default function CommentItem({
 	comment,
 	index,
 	level,
-	variant = "dark-bg ",
+	variant = "dark-bg",
 }: Props) {
 	const { themeClass } = useThemeContext();
 	const { user } = useAuthContext();
@@ -46,10 +46,10 @@ export default function CommentItem({
 
 	return (
 		<>
-			<div className={`${level == 1 ? "py-2" : "mt-2"} `}>
+			<div className={`${level == 1 ? "py-3" : "mt-2"} `}>
 				<div className="flex w-full items-start space-x-1.5">
 					<div
-						className={`flex-shrink-0 ${level === 1 ? "w-[48px] h-[48px]" : "w-[40px] h-[40px]"} rounded-full overflow-hidden`}
+						className={`flex-shrink-0 ${level === 1 ? "w-[40px] h-[40px]" : "w-[36px] h-[36px]"} rounded-full overflow-hidden`}
 					>
 						<Image src={comment.user_image_url} />
 					</div>

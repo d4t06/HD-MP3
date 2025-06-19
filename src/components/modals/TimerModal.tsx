@@ -1,5 +1,5 @@
-import ModalHeader from "../ModalHeader";
 import { useThemeContext } from "@/stores";
+import { ModalHeader } from ".";
 
 type Props = {
   closeModal: () => void;

@@ -28,6 +28,9 @@ export default function useGetMyMusicPlaylist() {
           where(documentId(), "in", user.liked_playlist_ids)
         );
 
+
+        if (import.meta.env.DEV) console.log('useGetMyMusicPlaylist, get user playlists')
+
         const result = await implementPlaylistQuery(queryGetUserPlaylist);
 
         const showAblePlaylist = result.filter((p) => {

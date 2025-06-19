@@ -1,10 +1,16 @@
-import { forwardRef, useImperativeHandle, useRef, type Ref, type RefObject } from "react";
+import {
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  type Ref,
+  type RefObject,
+} from "react";
 import SongControl from "./_components/SongControl";
 import PlayerProvider, { usePlayerContext } from "./_components/PlayerContext";
 import { Blurhash } from "react-blurhash";
 import SongLyric from "./_components/SongLyric";
-import useSongItemEffect from "./_hooks/useSongItemEffect";
 import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
+import useSongCardEffect from "./_hooks/useSongCardEffect";
 
 type Props = {
   song: Song;
@@ -20,19 +26,26 @@ function Content({
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  useSongItemEffect({ index, songItemRef: songItemRef });
+  useSongCardEffect({ index, songItemRef: songItemRef });
 
   return (
     <>
       <div className="relative z-0 flex items-center flex-shrink-0 text-white h-full w-full sm:w-auto sm:aspect-[3/5] rounded-xl overflow-hidden">
         <div className="absolute inset-0 z-[-1] overflow-hidden ">
           {song.blurhash_encode && (
-            <Blurhash hash={song.blurhash_encode} height={"100%"} width={"100%"} />
+            <Blurhash
+              hash={song.blurhash_encode}
+              height={"100%"}
+              width={"100%"}
+            />
           )}
         </div>
 
-        <div className="absolute top-0 left-0 w-full p-4 z-[99]">
+        <div className="absolute top-0 p-4 left-0 w-full z-[99]">
           {audioRef.current && <SongLyric audioEle={audioRef.current} />}
+          {/* <div className="relative p-4"> */}
+          {/* <div className="absolute inset-0 z-[-1] bg-gradient-to-t to-black/60 from-transparent"></div> */}
+          {/* </div> */}
         </div>
 
         <div className="w-full aspect-[1/1] overflow relative mask-image">
@@ -53,8 +66,10 @@ function Content({
                 <span key={i}> {(i ? ", " : "") + s.name}</span>
               ))}
             </div>
-            <div className="mt-5">
-              {audioRef.current && <SongControl audioEle={audioRef.current} />}
+            <div className="mt-2">
+              {audioRef.current && (
+                <SongControl song={song} audioEle={audioRef.current} />
+              )}
             </div>
           </div>
         </div>
@@ -65,7 +80,7 @@ function Content({
   );
 }
 
-function SongCart(props: Props, ref: Ref<HTMLDivElement>) {
+function SongCard(props: Props, ref: Ref<HTMLDivElement>) {
   const { isOpenComment } = useSongsContext();
 
   const innerRef = useRef<HTMLDivElement | null>(null);
@@ -77,10 +92,10 @@ function SongCart(props: Props, ref: Ref<HTMLDivElement>) {
       <div
         data-index={props.index}
         className="h-full flex-shrink-0 p-4 min-h-[360px] snap-center"
-        ref={innerRef}
       >
         <div
-          className={`relative h-full w-full ${isOpenComment ? "lg:right-[calc(400px*0.5)] " : ""}`}
+          className={`relative h-full w-full transition-[right] duration-[.3s]  ${isOpenComment ? "semi-lg:right-[calc(400px*0.5)] " : "right-0"}`}
+          ref={innerRef}
         >
           <PlayerProvider>
             <Content {...props} songItemRef={innerRef} />
@@ -91,4 +106,4 @@ function SongCart(props: Props, ref: Ref<HTMLDivElement>) {
   );
 }
 
-export default forwardRef(SongCart);
+export default forwardRef(SongCard);

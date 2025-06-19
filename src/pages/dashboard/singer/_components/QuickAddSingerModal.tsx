@@ -1,5 +1,4 @@
-import ModalHeader from "@/components/ModalHeader";
-import Input from "@/components/ui/Input";
+import {ModalHeader, Input} from "@/components";
 import { initSingerObject } from "@/utils/factory";
 import { useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";

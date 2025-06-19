@@ -1,30 +1,42 @@
 import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
-import { ChatBubbleBottomCenterIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ChatBubbleBottomCenterIcon } from "@heroicons/react/20/solid";
+import HeartBtn from "./HeartBtn";
+import { useAuthContext } from "@/stores";
 
-export default function SongItemCta() {
+type Props = {
+  song: Song;
+};
+
+export default function SongItemCta({ song }: Props) {
   const { setIsOpenComment } = useSongsContext();
+
+  const { user } = useAuthContext();
 
   return (
     <div
       className="flex 
 			space-x-2
 			[&_button]:rounded-full
-			[&_button]:p-1.5
-			[&_button]:bg-white/10
+			[&_button]:p-2
+			[&_svg]:w-6
+			hover:[&_button]:bg-white/10
 			[&_div]:flex-col
 			[&_div]:flex
 			[&_span]:text-center
 			[&_span]:font-medium
 		 "
     >
-      <div>
-        <button>
-          <HeartIcon className="w-6" />
-        </button>
-      </div>
+      {user && (
+        <div>
+          <HeartBtn
+            isLiked={user.liked_song_ids.includes(song.id)}
+            song={song}
+          />
+        </div>
+      )}
       <div>
         <button onClick={() => setIsOpenComment(true)}>
-          <ChatBubbleBottomCenterIcon className="w-6" />
+          <ChatBubbleBottomCenterIcon />
         </button>
       </div>
     </div>

@@ -23,7 +23,11 @@ export default {
         sans: ["Inter", "system-ui"],
         playwriteCU: ["Playwrite CU", "system-ui"],
       },
+      screens: {
+        'semi-lg': '896px'
+      }
     },
+    
   },
   safelist: [
     "bg-[#000]/5",

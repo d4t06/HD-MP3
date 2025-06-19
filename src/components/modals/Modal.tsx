@@ -1,3 +1,4 @@
+import { useThemeContext } from "@/stores";
 import {
   forwardRef,
   MouseEventHandler,
@@ -8,8 +9,6 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
-import { PopupWrapper } from ".";
-import { useThemeContext } from "../stores";
 
 type BaseProps = {
   className?: string;
@@ -43,10 +42,12 @@ function Modal(
 ) {
   const variant = props.variant || "default";
 
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
-  const [isMounted, setIsMounted] = useState(variant === "default" ? true : false);
+  const [isMounted, setIsMounted] = useState(
+    variant === "default" ? true : false,
+  );
   const [persist, setPersist] = useState(persisted);
 
   const toggle = () => {
@@ -138,13 +139,14 @@ function Modal(
                             }
                         `}
             >
-              {wrapped ? (
+              {children}
+              {/* {wrapped ? (
                 <PopupWrapper className={className || ""} theme={theme}>
                   {children}
                 </PopupWrapper>
               ) : (
                 children
-              )}
+              )}*/}
             </div>
           </div>,
           document.getElementById("portals")!,
@@ -153,8 +155,24 @@ function Modal(
   );
 }
 
-function ModalContentWrapper({ children, className = "w-[400px]" }: Props) {
-  return <div className={`max-h-[80vh] max-w-[90vw] ${className}`}>{children}</div>;
+function ModalContentWrapper({
+  children,
+  noStyle,
+  className = "w-[400px]",
+}: {
+  children: ReactNode;
+  className?: string;
+  noStyle?: boolean;
+}) {
+  const { theme } = useThemeContext();
+
+  return (
+    <div
+      className={`max-h-[80vh] max-w-[90vw] text-white ${!noStyle ? "p-3 rounded-xl" : ""} ${theme.modal_bg} ${className}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 export default forwardRef(Modal);

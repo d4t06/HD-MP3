@@ -9,11 +9,10 @@ export default function useGetLyric() {
 
   const timerId = useRef<NodeJS.Timeout>();
 
-  const { _loading, getLyric } = useGetSongLyric({});
+  const { loading, getLyric } = useGetSongLyric({});
 
   const handleGetLyric = async () => {
-
-    if (currentSong) {
+    if (!!currentSong && !!currentSong.lyric_id) {
       const lyric = await getLyric(currentSong);
       if (lyric) setLyrics(JSON.parse(lyric?.lyrics));
     }
@@ -29,5 +28,5 @@ export default function useGetLyric() {
     }
   }, [canPlay]);
 
-  return { isFetching: _loading };
+  return { isFetching: loading };
 }

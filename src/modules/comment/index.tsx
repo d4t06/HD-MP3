@@ -1,7 +1,6 @@
 import { useAuthContext } from "@/stores";
 import CommentItem from "./components/CommentItem";
 import UserInput from "./components/UserInput";
-import { Center } from "@/components";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { ComponentProps } from "react";
 
@@ -24,9 +23,9 @@ export default function CommentList({
 		<>
 			<div className={`flex-grow overflow-auto no-scrollbar ${className}`}>
 				{isFetching && (
-					<Center>
+					<p className="text-center">
 						<ArrowPathIcon className="animate-spin w-7" />
-					</Center>
+					</p>
 				)}
 
 				{!isFetching && (
@@ -36,7 +35,7 @@ export default function CommentList({
 								<CommentItem variant={variant} level={1} index={i} key={c.id} comment={c} />
 							))
 						) : (
-							<Center>...</Center>
+							<p className="text-center">...</p>
 						)}
 					</>
 				)}

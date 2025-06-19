@@ -3,16 +3,13 @@ import { myGetDoc } from "@/services/firebaseService";
 
 type Props = {
   setLoadingFromParent?: (v: boolean) => void;
-  loadingFromParent?: boolean;
 };
 
-export default function useGetSongLyric({
-  loadingFromParent,
+export default function useGetLyric({
   setLoadingFromParent,
 }: Props) {
   const [loading, setLoading] = useState(false);
 
-  const _loading = loadingFromParent || loading;
   const _setLoading = setLoadingFromParent || setLoading;
 
   const getLyric = async (song: Song) => {
@@ -22,6 +19,7 @@ export default function useGetSongLyric({
       const lyricSnap = await myGetDoc({
         collectionName: "Lyrics",
         id: song.lyric_id,
+        msg: "useGetLyric, get lyric"
       });
 
       if (lyricSnap.exists()) {
@@ -31,9 +29,9 @@ export default function useGetSongLyric({
     } catch (error) {
       console.log({ message: error });
     } finally {
-      setLoading(false);
+      _setLoading(false);
     }
   };
 
-  return { getLyric, _loading };
+  return { getLyric, loading };
 }

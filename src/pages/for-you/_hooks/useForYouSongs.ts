@@ -2,7 +2,7 @@ import { implementSongQuery } from "@/services/appService";
 import { songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { limit, orderBy, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSongsContext } from "../_stores/SongsContext";
 
 export default function useGetForYouSongs() {
@@ -10,6 +10,8 @@ export default function useGetForYouSongs() {
   const { setErrorToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(true);
+
+  const ranEffect = useRef(false);
 
   const getSong = async () => {
     try {
@@ -22,6 +24,8 @@ export default function useGetForYouSongs() {
         limit(20),
       );
 
+      if (import.meta.env.DEV) console.log("useGetForYouSongs, get song docs");
+
       const result = await implementSongQuery(getSongQuery);
       setSongs((prev) => [...prev, ...result]);
     } catch (error) {
@@ -33,11 +37,10 @@ export default function useGetForYouSongs() {
   };
 
   useEffect(() => {
-    getSong();
-
-    return () => {
-      setIsFetching(true);
-    };
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getSong();
+    }
   }, []);
 
   return { isFetching, getSong };

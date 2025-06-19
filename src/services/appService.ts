@@ -32,7 +32,10 @@ export async function implementPlaylistQuery(query: Query) {
 
   if (playlistsSnap.docs.length) {
     const result = playlistsSnap.docs.map((doc) => {
-      const playlist: Playlist = { ...(doc.data() as PlaylistSchema), id: doc.id };
+      const playlist: Playlist = {
+        ...(doc.data() as PlaylistSchema),
+        id: doc.id,
+      };
       return playlist;
     });
 
@@ -65,7 +68,6 @@ export async function implementUserQuery(query: Query) {
     return result;
   } else return [];
 }
-
 
 export const optimizeAndGetHashImage = async ({
   imageFile,

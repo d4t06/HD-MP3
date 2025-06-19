@@ -1,4 +1,4 @@
-import { ModalRef } from "@/components/Modal";
+import { ModalRef } from "@/components";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { deleteFile, myUpdateDoc } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";

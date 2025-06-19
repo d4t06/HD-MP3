@@ -8,7 +8,7 @@ import MyPopup, {
   TriggerRef,
 } from "@/components/MyPopup";
 import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import Modal, { ModalRef } from "@/components/Modal";
+import {Modal, ModalRef } from "@/components";
 import { AppInfo, Appearance, SettingMenu } from "@/components";
 import NavigationButton from "@/modules/navigation-button";
 

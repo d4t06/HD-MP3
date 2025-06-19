@@ -5,7 +5,6 @@ import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
 import SongList from "@/modules/song-item/_components/SongList";
 import useGetRecommend from "@/hooks/useGetRecomemded";
-import BackBtn from "@/components/BackBtn";
 import { Link } from "react-router-dom";
 
 export default function SearchResultPage() {
@@ -76,9 +75,9 @@ export default function SearchResultPage() {
 
   return (
     <>
-      <div className="mb-5">
+      {/* <div className="mb-5">
         <BackBtn />
-      </div>
+      </div> */}
 
       <div className="flex items-center mt-3">
         <div className="text-2xl font-bold">Result</div>

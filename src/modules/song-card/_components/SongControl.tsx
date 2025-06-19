@@ -12,9 +12,10 @@ import SongItemCta from "./SongItemCta";
 
 type Props = {
 	audioEle: HTMLAudioElement;
+	song: Song
 };
 
-export default function SongControl({ audioEle }: Props) {
+export default function SongControl({ audioEle,song }: Props) {
 	const { status, controlRef } = usePlayerContext();
 
 	const progressLineRef = useRef<HTMLDivElement>(null);
@@ -48,7 +49,7 @@ export default function SongControl({ audioEle }: Props) {
 	};
 
 	const classes = {
-		before: `before:content-[''] before:w-[100%] before:h-3 before:absolute before:bottom-full`,
+		before: `before:content-[''] before:w-[100%] before:h-4 before:absolute before:bottom-full before:translate-y-[50%]`,
 	};
 
 	return (
@@ -59,7 +60,7 @@ export default function SongControl({ audioEle }: Props) {
 				</button>
 
 				<div className="flex space-x-2 ml-auto">
-					<SongItemCta />
+					<SongItemCta song={song} />
 				</div>
 			</div>
 			<div className="h-2 flex items-center mt-3">

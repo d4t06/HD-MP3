@@ -11,13 +11,13 @@ import {
   Modal,
   SettingMenu,
   PopupWrapper,
+  ModalRef,
 } from "@/components";
 import {
   AdjustmentsHorizontalIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import { ModalRef } from "@/components/Modal";
 import MyPopup, {
   MyPopupContent,
   MyPopupTrigger,
@@ -79,7 +79,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     setScroll(scrollTop);
   };
 
-  const AvatarSkeleton = <Skeleton className="h-[40px] w-[40px] rounded-full" />;
+  const AvatarSkeleton = (
+    <Skeleton className="h-[40px] w-[40px] rounded-full" />
+  );
 
   const renderModal = useMemo(() => {
     switch (modal) {
@@ -119,7 +121,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`hidden md:block h-[60px] fixed top-0 right-0 left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
+        className={`hidden md:block h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
       >
         <div
           className={`${scroll ? "" : "hidden "} absolute inset-0 ${
@@ -136,7 +138,11 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
           <div className="flex space-x-3 ml-auto">
             <MyPopup>
               <MyPopupTrigger ref={settingTriggerRef}>
-                <MyTooltip isWrapped position="top-[calc(100%+8px)]" content="Settings">
+                <MyTooltip
+                  isWrapped
+                  position="top-[calc(100%+8px)]"
+                  content="Settings"
+                >
                   <button
                     className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
                   >
@@ -154,9 +160,16 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
             </MyPopup>
 
             <MyPopup>
-              <MyPopupTrigger ref={avatarTriggerRef} className="flex items-center">
+              <MyPopupTrigger
+                ref={avatarTriggerRef}
+                className="flex items-center"
+              >
                 <button className="flex hover:brightness-90">
-                  {loading ? AvatarSkeleton : <Avatar className="w-[40px] h-[40px]" />}
+                  {loading ? (
+                    AvatarSkeleton
+                  ) : (
+                    <Avatar className="w-[40px] h-[40px]" />
+                  )}
                 </button>
               </MyPopupTrigger>
 
@@ -191,7 +204,10 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                     )}
 
                     {!loggedInUser && (
-                      <button className={`${classes.menuItem}`} onClick={handleLogIn}>
+                      <button
+                        className={`${classes.menuItem}`}
+                        onClick={handleLogIn}
+                      >
                         <ArrowLeftOnRectangleIcon className={classes.icon} />
                         Log in
                       </button>

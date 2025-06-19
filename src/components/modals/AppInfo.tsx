@@ -1,4 +1,4 @@
-import ModalHeader from "../ModalHeader";
+import { ModalHeader } from ".";
 
 export default function AppInfo({ close }: { close: () => void }) {
   return (

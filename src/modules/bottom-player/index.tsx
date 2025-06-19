@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
@@ -12,6 +12,7 @@ import MyTooltip from "@/components/MyTooltip";
 import MusicControl from "../music-control";
 import useThemeBgImage from "./_hooks/useThemeBgImage";
 import SleepTimerButton from "../sleep-timer-button";
+import { useHideBottomPlayer } from "@/hooks";
 
 export default function BottomPlayer() {
   const { audioRef, idle } = usePlayerContext();
@@ -28,10 +29,8 @@ export default function BottomPlayer() {
   const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
 
   const { containerRef } = useThemeBgImage();
+  const {shouldHide} = useHideBottomPlayer({audioEle: audioRef.current})
 
-  const location = useLocation();
-
-  const shouldHide = useMemo(() => location.pathname.includes("lyric") || location.pathname === "/", [location]);
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);

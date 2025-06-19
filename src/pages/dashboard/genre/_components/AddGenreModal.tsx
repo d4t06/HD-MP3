@@ -1,10 +1,9 @@
-import ModalHeader from "@/components/ModalHeader";
-import Input from "@/components/ui/Input";
+import { ModalContentWrapper, ModalHeader, Input } from "@/components";
 import { useToastContext } from "@/stores";
 import { useEffect, useRef, useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import useGenreAction from "../../_hooks/useGenreAction";
-import { Button, ModalWrapper } from "../../_components/ui";
+import { Button } from "../../_components";
 
 type Props = {
   closeModal: () => void;
@@ -27,7 +26,7 @@ export default function AddGenreModal({
   ...props
 }: (Add | Edit) & Props) {
   const [name, setName] = useState(
-    props.type === "add" ? props.genreName || "" : props.genre.name
+    props.type === "add" ? props.genreName || "" : props.genre.name,
   );
 
   const { action, isFetching } = useGenreAction();
@@ -74,10 +73,11 @@ export default function AddGenreModal({
     inputRef.current?.focus();
   }, []);
 
-  const title = props.type === "edit" ? `Edit '${props.genre.name}'` : `Add genre`;
+  const title =
+    props.type === "edit" ? `Edit '${props.genre.name}'` : `Add genre`;
 
   return (
-    <ModalWrapper className="w-[450px]">
+    <ModalContentWrapper className="w-[450px]">
       <ModalHeader close={closeModal} title={title} />
 
       <div className="space-y-3 overflow-auto">
@@ -103,6 +103,6 @@ export default function AddGenreModal({
           <p className="text-white">Ok</p>
         </Button>
       </div>
-    </ModalWrapper>
+    </ModalContentWrapper>
   );
 }

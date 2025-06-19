@@ -1,5 +1,4 @@
 import { Button, Image, Input } from "@/components";
-import { PaperAirplaneIcon } from "@heroicons/react/24/outline";
 import useCommentAction from "../hooks/useCommentAction";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
@@ -7,6 +6,7 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useCommentContext } from "./CommentContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useAuthContext, useThemeContext } from "@/stores";
+import { PaperAirplaneIcon, PlayIcon } from "@heroicons/react/20/solid";
 
 type Props = {
 	onSubmited?: () => void;
@@ -88,12 +88,12 @@ export default function UserInput({
 
 			<div className={`rounded-lg ml-2 flex-grow  flex items-center ${themeClass('bg-black/10 text-black', 'bg-white/10')}`}>
 				<Input
-					className="bg-transparent border-none"
+					className="bg-transparent border-none text-white"
 					placeholder={inputPlaceholder}
 					ref={inputRef}
 				/>
 				<Button onClick={handleAddComment} className={theme.content_text} isLoading={isFetching}>
-					<PaperAirplaneIcon className="w-5" />
+					<PlayIcon className="w-6" />
 				</Button>
 			</div>
 		</div>

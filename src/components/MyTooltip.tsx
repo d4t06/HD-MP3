@@ -98,7 +98,7 @@ function MyToolTip(
 
           {!state?.isOpen && open && (
             <div
-              className={`${classes.container} absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md ${position} ${className}`}
+              className={`${classes.container} absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md z-[999] ${position} ${className}`}
             >
               {content}
             </div>

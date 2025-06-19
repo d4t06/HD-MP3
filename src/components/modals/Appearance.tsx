@@ -1,6 +1,6 @@
 import { specialThemes, themes } from "@/constants/themes";
 import { useThemeContext } from "@/stores";
-import ModalHeader from "../ModalHeader";
+import {ModalHeader} from ".";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 

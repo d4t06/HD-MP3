@@ -16,7 +16,10 @@ import {
   setPlayStatus,
 } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
-import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
+import {
+  selectSongQueue,
+  setCurrentQueueId,
+} from "@/stores/redux/songQueueSlice";
 import { myUpdateDoc } from "@/services/firebaseService";
 import usePlayerAction from "./usePlayerAction";
 
@@ -33,13 +36,15 @@ export default function usePlayerEffect() {
     themeCodeRef,
     shouldSyncSongDuration,
   } = usePlayerContext();
-  if (!audioRef.current) throw new Error("Use Control audioRef.current is undefined");
+  if (!audioRef.current)
+    throw new Error("Use Control audioRef.current is undefined");
 
   // use stores
   const dispatch = useDispatch();
   const { theme } = useThemeContext();
   const { user, updateUserData } = useAuthContext();
-  const { queueSongs, currentSongData, currentQueueId } = useSelector(selectSongQueue);
+  const { queueSongs, currentSongData, currentQueueId } =
+    useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
@@ -61,7 +66,10 @@ export default function usePlayerEffect() {
   const { setErrorToast } = useToastContext();
   const { next, updateProgressElement, play, pause } = usePlayerAction();
 
-  const isInEdit = useMemo(() => location.pathname.includes("edit"), [location]);
+  const isInEdit = useMemo(
+    () => location.pathname.includes("edit"),
+    [location],
+  );
   const MEMO_STORAGE = useMemo(() => getLocalStorage(), []);
 
   const getNewSong = (index: number) => {
@@ -100,7 +108,8 @@ export default function usePlayerEffect() {
     }
 
     if (currentTime >= startFadeWhenEnd.current) {
-      const volumeValue = ((audioRef.current!.duration - currentTime) / 2) * volInStore;
+      const volumeValue =
+        ((audioRef.current!.duration - currentTime) / 2) * volInStore;
       // console.log("check val", volumeValue.toFixed(2), volInStore);
       audioRef.current!.volume = volumeValue;
     }
@@ -162,7 +171,8 @@ export default function usePlayerEffect() {
   };
 
   const handleLoadStart = () => {
-    if (currentSongDataRef.current) dispatch(setPlayStatus({ playStatus: "loading" }));
+    if (currentSongDataRef.current)
+      dispatch(setPlayStatus({ playStatus: "loading" }));
   };
 
   const handleLoaded = () => {
@@ -174,7 +184,10 @@ export default function usePlayerEffect() {
 
     // update control props
     startFadeWhenEnd.current = audioDuration - 3;
-    setLocalStorage("current_queue_id", currentSongDataRef.current.song.queue_id);
+    setLocalStorage(
+      "current_queue_id",
+      currentSongDataRef.current.song.queue_id,
+    );
 
     // case end of list
     if (isEndOfList.current) {
@@ -229,7 +242,8 @@ export default function usePlayerEffect() {
           });
         }
       } else {
-        const newRecentSongs = (getLocalStorage()["recent-songs"] || []) as Song[];
+        const newRecentSongs = (getLocalStorage()["recent-songs"] ||
+          []) as Song[];
 
         const founded = newRecentSongs.find(
           (s) => s.id === currentSongDataRef.current?.song.id,
@@ -257,7 +271,8 @@ export default function usePlayerEffect() {
     }
 
     // if song end event don't fire
-    if (!isEndEventFired.current) return dispatch(setPlayStatus({ playStatus: "error" }));
+    if (!isEndEventFired.current)
+      return dispatch(setPlayStatus({ playStatus: "error" }));
 
     if (queueSongs.length > 1) {
       // case end of list
@@ -321,7 +336,8 @@ export default function usePlayerEffect() {
       resetForNewSong();
       isPlayingNewSong.current = true;
 
-      if (shouldSyncSongDuration.current) shouldSyncSongDuration.current = false;
+      if (shouldSyncSongDuration.current)
+        shouldSyncSongDuration.current = false;
     };
   }, [currentSongData?.song]);
 
@@ -349,8 +365,6 @@ export default function usePlayerEffect() {
 
   //   update song end event
   useEffect(() => {
-    console.log("add end event");
-
     audioRef.current!.addEventListener("ended", handleEnded);
 
     return () => audioRef.current?.removeEventListener("ended", handleEnded);
@@ -371,7 +385,9 @@ export default function usePlayerEffect() {
     if (isOpenFullScreen) themeCodeRef.current = "#fff";
     else themeCodeRef.current = theme.content_code;
     // if user no click play yet
-    updateProgressElement(firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0);
+    updateProgressElement(
+      firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0,
+    );
   }, [theme, isOpenFullScreen]);
 
   // prevent song autoplay after edit finish
