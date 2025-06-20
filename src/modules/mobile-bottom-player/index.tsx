@@ -2,30 +2,38 @@ import { useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
+  GlobeAsiaAustraliaIcon,
+  HomeIcon,
+  MagnifyingGlassIcon,
   PauseCircleIcon,
   PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext, useThemeContext } from "@/stores";
 import { Image } from "@/components";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
+import useHideMobileBottomPlayer from "./_hooks/useHideMobileBottomPlayer";
+import MyMusicNavItem from "./_components/MyMusicNavItem";
 
 export default function MobileBottomPlayer() {
+  const { isOpenFullScreen, setIsOpenFullScreen, audioRef } =
+    usePlayerContext();
+
+  if (!audioRef.current) return <></>;
+
   const { theme } = useThemeContext();
-  const { isOpenFullScreen, setIsOpenFullScreen } = usePlayerContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
 
   const { handlePlayPause } = usePlayerAction();
 
-  const location = useLocation();
-  const shouldHide = useMemo(
-    () => location.pathname.includes("lyric") || location.pathname === "/",
-    [location],
-  );
+  const { shouldHideAll, shouldHidePlayer, location } =
+    useHideMobileBottomPlayer({
+      audioEle: audioRef.current,
+    });
 
   const renderIcon = useMemo(() => {
     switch (playStatus) {
@@ -41,8 +49,13 @@ export default function MobileBottomPlayer() {
     }
   }, [playStatus]);
 
+  const getActiveClasses = (condition: boolean) => {
+    if (condition) return `${theme.content_text}`;
+    return "";
+  };
+
   const classes = {
-    wrapper: `block md:hidden fixed bottom-0 transition-transform w-full h-[80px] overflow-hidden border-t border-${theme.alpha} z-40  px-4`,
+    wrapper: `block md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-${theme.alpha} z-[9]`,
     container: `absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
@@ -50,22 +63,31 @@ export default function MobileBottomPlayer() {
   };
 
   return (
-    <div className={`${classes.wrapper} ${shouldHide ? "translate-y-[100%]" : ""}`}>
+    <div
+      className={`${classes.wrapper} ${shouldHideAll ? "translate-y-[100%]" : ""}`}
+    >
       <div
-        className={`${classes.container} ${
+        className={`${classes.container} ${shouldHidePlayer ? "hidden" : ""} ${
           isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""
         }`}
       ></div>
 
-      <div className={`flex justify-between items-center h-full`}>
+      <div
+        className={`flex justify-between items-center px-4 py-3 ${shouldHidePlayer ? "hidden" : ""}`}
+      >
         <div
-          onClick={() => (currentSongData?.song.name ? setIsOpenFullScreen(true) : {})}
+          onClick={() =>
+            currentSongData?.song.name ? setIsOpenFullScreen(true) : {}
+          }
           className={`mobile-current-song flex-grow`}
         >
           {/* song image, name and singer */}
           <div className={classes.songImageWrapper}>
             <div className={classes.image}>
-              <Image src={currentSongData?.song.image_url} className="rounded-full" />
+              <Image
+                src={currentSongData?.song.image_url}
+                className="rounded-full"
+              />
             </div>
 
             <div className="flex-grow ml-2">
@@ -86,7 +108,9 @@ export default function MobileBottomPlayer() {
         </div>
 
         {/* cta */}
-        <div className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}>
+        <div
+          className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}
+        >
           <button className={`p-[4px]`} onClick={handlePlayPause}>
             {renderIcon}
           </button>
@@ -94,6 +118,55 @@ export default function MobileBottomPlayer() {
             <ForwardIcon className="w-10" />
           </button>*/}
         </div>
+      </div>
+
+      <div
+        className={`flex items-center py-1 justify-evenly [&_div]:flex 
+      [&_div]:flex-col 
+      [&_div]:items-center
+      [&_svg]:w-6
+      [&_span]:text-[10px]
+      ${!shouldHidePlayer ? "border-t border-" + theme.alpha : ""}
+      `}
+      >
+        <Link
+          className={`
+              ${getActiveClasses(location.pathname === "/")}
+            `}
+          to={"/"}
+        >
+          <div>
+            <HomeIcon />
+            <span>For You</span>
+          </div>
+        </Link>
+
+        <Link
+          className={`
+              ${getActiveClasses(location.pathname === "/discover")}
+            `}
+          to={"/discover"}
+        >
+          <div>
+            <GlobeAsiaAustraliaIcon />
+            <span>Discover</span>
+          </div>
+        </Link>
+
+        <Link
+          className={`
+              ${getActiveClasses(location.pathname === "/search")}
+            `}
+          to={"/search"}
+        >
+          <div>
+            <MagnifyingGlassIcon />
+            <span>Search</span>
+          </div>
+        </Link>
+        <MyMusicNavItem
+          ActiveClass={getActiveClasses(location.pathname === "/my-music")}
+        />
       </div>
     </div>
   );

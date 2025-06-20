@@ -1,5 +1,4 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { ModalWrapper } from "../../_components";
 import { useRef, useState } from "react";
 import AddGenreModal from "./AddGenreModal";
 import { useGenreAction } from "../../_hooks";
@@ -47,20 +46,18 @@ export default function GenreItem({ genre }: Props) {
         </div>
       </ItemRightCtaFrame>
 
-      <Modal variant="animation" ref={modalRef} wrapped={false}>
+      <Modal variant="animation" ref={modalRef}>
         {modal === "edit" && (
           <AddGenreModal type="edit" genre={genre} closeModal={closeModal} />
         )}
 
         {modal === "delete" && (
-          <ModalWrapper>
-            <ConfirmModal
-              callback={handleDeleteGenre}
-              close={closeModal}
-              loading={isFetching}
-              label={`Delete genre '${genre.name}'`}
-            />
-          </ModalWrapper>
+          <ConfirmModal
+            callback={handleDeleteGenre}
+            close={closeModal}
+            loading={isFetching}
+            label={`Delete genre '${genre.name}'`}
+          />
         )}
       </Modal>
     </>

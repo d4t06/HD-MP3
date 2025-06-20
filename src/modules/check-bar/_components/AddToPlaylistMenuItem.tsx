@@ -1,4 +1,4 @@
-import { Modal, ModalRef } from "@/components";
+import { Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { usePopoverContext } from "@/components/MyPopup";
 import { RefObject } from "react";
@@ -10,7 +10,11 @@ type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
-export function AddSelectSongsToPlaylistMenuModal({ modalRef }: { modalRef: RefObject<ModalRef> }) {
+export function AddSelectSongsToPlaylistMenuModal({
+  modalRef,
+}: {
+  modalRef: RefObject<ModalRef>;
+}) {
   const { user } = useAuthContext();
 
   const { selectedSongs } = useSongSelectContext();
@@ -32,13 +36,15 @@ export function AddSelectSongsToPlaylistMenuModal({ modalRef }: { modalRef: RefO
 
   return (
     <Modal variant="animation" ref={modalRef}>
-      <AddPlaylistModal
-        close={() => modalRef.current?.close()}
-        submit={handleAddSongToNewPlaylist}
-        isLoading={isFetching}
-        variant="add"
-        user={user}
-      />
+      <ModalContentWrapper className="w-[600px]">
+        <AddPlaylistModal
+          close={() => modalRef.current?.close()}
+          submit={handleAddSongToNewPlaylist}
+          isLoading={isFetching}
+          variant="add"
+          user={user}
+        />
+      </ModalContentWrapper>
     </Modal>
   );
 }

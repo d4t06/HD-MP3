@@ -1,6 +1,6 @@
 import { specialThemes, themes } from "@/constants/themes";
 import { useThemeContext } from "@/stores";
-import {ModalHeader} from ".";
+import {ModalContentWrapper, ModalHeader} from ".";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { CheckCircleIcon } from "@heroicons/react/24/outline";
 
@@ -47,7 +47,6 @@ export default function Appearance({ close }: { close: () => void }) {
   const classes = {
     songItemContainer: `w-full border-b border-${themeInStore.alpha} last:border-none`,
     icon: `w-6 h-6 mr-2 inline`,
-    popupWrapper: "w-[900px] max-w-[calc(90vw-40px)]",
     themeContainer:
       "overflow-y-auto overflow-x-hidden no-scrollbar h-[calc(70vh-60px)]  pb-[5vh]",
     themeList: "flex flex-row -mx-2 -mt-3 flex-wrap",
@@ -73,7 +72,7 @@ export default function Appearance({ close }: { close: () => void }) {
   });
 
   return (
-    <div className={classes.popupWrapper}>
+    <ModalContentWrapper className="w-[900px]">
       <ModalHeader close={close} title="Themes" />
       <div className={classes.themeContainer}>
         <h2 className="text-lg font-semibold mb-[10px] mt-[30px]">Specical</h2>
@@ -85,6 +84,6 @@ export default function Appearance({ close }: { close: () => void }) {
         <h2 className="text-lg font-semibold mb-[10px] mt-[30px]">Light</h2>
         <div className={classes.themeList}>{lightThemes}</div>
       </div>
-    </div>
+    </ModalContentWrapper>
   );
 }

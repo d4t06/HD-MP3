@@ -22,7 +22,7 @@ export default function AddNewGenreButton({ value }: Props) {
         <div className="hidden md:block">Add genre</div>
       </Button>
 
-      <Modal ref={modalRef} variant="animation" wrapped={false}>
+      <Modal ref={modalRef} variant="animation">
         <AddGenreModal
           genreName={value}
           type="add"

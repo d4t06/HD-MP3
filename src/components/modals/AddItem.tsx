@@ -1,7 +1,7 @@
 import { FormEvent, useEffect, useState, useRef, ReactNode, useMemo } from "react";
 import Button from "../ui/Button";
 import { useThemeContext } from "@/stores";
-import { ModalHeader } from ".";
+import { ModalContentWrapper, ModalHeader } from ".";
 
 type Props = {
 	closeModal: () => void;
@@ -46,7 +46,7 @@ export default function AddItem({
 	};
 
 	return (
-		<div className="w-[400px] max-w-[85vw]">
+		<ModalContentWrapper>
 			<ModalHeader close={closeModal} title={title} />
 			<form action="" onSubmit={handleSubmit}>
 				{variant === "input" && (
@@ -82,6 +82,6 @@ export default function AddItem({
 					</Button>
 				</p>
 			</form>
-		</div>
+		</ModalContentWrapper>
 	);
 }

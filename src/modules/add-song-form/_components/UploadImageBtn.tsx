@@ -1,6 +1,5 @@
-import { ModalRef } from "@/components";
-import { Button, DashboardModal } from "@/pages/dashboard/_components";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
+import { Modal, ModalContentWrapper, ModalRef } from "@/components";
+import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import {
   PhotoIcon,
@@ -72,12 +71,12 @@ export default function UploadImageBtn() {
       />
 
       {songData?.image_url && (
-        <DashboardModal variant="animation" ref={modalRef} wrapped={false}>
-          <ContentWrapper>
+        <Modal variant="animation" ref={modalRef}>
+          <ModalContentWrapper>
             <p>Url: {songData?.image_url}</p>
             <p>Hash: {songData?.blurhash_encode}</p>
-          </ContentWrapper>
-        </DashboardModal>
+          </ModalContentWrapper>
+        </Modal>
       )}
     </>
   );

@@ -1,6 +1,6 @@
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
-import { Button, PopupWrapper } from ".";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "./MyPopup";
+import { Button, PopupWrapper } from "..";
+import MyPopup, { MyPopupContent, MyPopupTrigger } from "../MyPopup";
 import { useThemeContext } from "@/stores";
 import usePersistState from "@/hooks/usePersistState";
 import { useEffect } from "react";
@@ -58,9 +58,6 @@ export default function AudioSetting({
         {...(positions === "right"
           ? { position: "right-bottom", origin: "top left" }
           : { position: "left-bottom", origin: "top right" })}
-        // className={`top-[calc(100%+8px)] ${
-        //   positions === "right" ? "left-0" : "right-0"
-        // } z-[9]`}
         appendTo="portal"
       >
         <PopupWrapper

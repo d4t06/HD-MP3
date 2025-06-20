@@ -14,7 +14,7 @@ import { query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = ["Song", "Playlist", "Singers", "Users"] as const;
+const tabs = ["Song", "Playlist", "Singer", "User"] as const;
 
 type Tab = (typeof tabs)[number];
 
@@ -72,7 +72,7 @@ export default function useGetSearchResult() {
 
           break;
         }
-        case "Singers": {
+        case "Singer": {
           const searchQuery = query(
             singerCollectionRef,
             where("name", ">=", key),
@@ -85,7 +85,7 @@ export default function useGetSearchResult() {
 
           break;
         }
-        case "Users": {
+        case "User": {
           const searchQuery = query(
             userCollectionRef,
             where("display_name", ">=", key),

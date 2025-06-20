@@ -1,8 +1,16 @@
 import { useMemo, useRef, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
-import { Input, ModalHeader, ModalRef } from "@/components";
-import { Button, DashboardModal, ItemRightCtaFrame } from "@/pages/dashboard/_components";
+import {
+  Input,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+} from "@/components";
+import {
+  Button,
+  DashboardModal,
+  ItemRightCtaFrame,
+} from "@/pages/dashboard/_components";
 import { useAddAlbumContext } from "./AddAlbumContext";
 import SingerSearchModal from "@/modules/add-song-form/_components/SingerSearchModal";
 
@@ -11,11 +19,14 @@ type Props = {
 };
 
 export default function EditAlbumModal({ closeModal }: Props) {
-  const { albumData, singer, setSinger, updateAlbumData } = useAddAlbumContext();
+  const { albumData, singer, setSinger, updateAlbumData } =
+    useAddAlbumContext();
 
-  if (!albumData || !singer) throw new Error("albumData or singer is undefined");
+  if (!albumData || !singer)
+    throw new Error("albumData or singer is undefined");
 
-  const [localAlbumData, setLocalAlbumData] = useState<PlaylistSchema>(albumData);
+  const [localAlbumData, setLocalAlbumData] =
+    useState<PlaylistSchema>(albumData);
   const [localSinger, setLocalSinger] = useState<Singer>(singer);
 
   const modalRef = useRef<ModalRef>(null);
@@ -40,7 +51,7 @@ export default function EditAlbumModal({ closeModal }: Props) {
 
   const handleChooseSinger = (s: Singer) => {
     setLocalSinger(s);
-    modalRef.current?.close()
+    modalRef.current?.close();
   };
 
   const handleSubmit = () => {
@@ -54,7 +65,7 @@ export default function EditAlbumModal({ closeModal }: Props) {
 
   return (
     <>
-      <ContentWrapper>
+      <ModalContentWrapper>
         <ModalHeader close={closeModal} title={"Edit album"} />
 
         <div className="flex-grow overflow-auto">
@@ -101,7 +112,9 @@ export default function EditAlbumModal({ closeModal }: Props) {
                 className={`bg-[#f1f1f1]`}
                 type="number"
                 value={localAlbumData.like + ""}
-                onChange={(e) => updateLocalAlbumData({ like: +e.target.value })}
+                onChange={(e) =>
+                  updateLocalAlbumData({ like: +e.target.value })
+                }
               />
             </div>
           </div>
@@ -117,7 +130,7 @@ export default function EditAlbumModal({ closeModal }: Props) {
             Save
           </Button>
         </p>
-      </ContentWrapper>
+      </ModalContentWrapper>
 
       <DashboardModal ref={modalRef}>
         <SingerSearchModal

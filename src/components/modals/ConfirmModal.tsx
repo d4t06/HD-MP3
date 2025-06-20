@@ -1,5 +1,5 @@
 import { useThemeContext } from "@/stores";
-import { Button } from "..";
+import { Button, ModalContentWrapper, ModalHeader } from "..";
 import { ReactNode } from "react";
 type Props = {
   callback: () => void;
@@ -18,19 +18,13 @@ export default function ConfirmModal({
   children,
   close,
   desc = "This action cannot be undone",
-  className,
 }: Props) {
   const { theme } = useThemeContext();
 
   return (
-    <div
-      className={`${className || "w-[400px] max-w-[calc(90vw-40px)]"} ${
-        loading ? "disable" : ""
-      }`}
-    >
-      <div className="text-xl font-playwriteCU leading-[2.2] mb-3">
-        {label || "Wait a minute"}
-      </div>
+    <ModalContentWrapper disable={loading} className={`w-[400px]`}>
+      <ModalHeader close={close} title={label || "Wait a minute"} />
+
       {desc && <p className="font-semibold text-lg text-red-400">{desc}</p>}
 
       <div className="flex space-x-3 mt-5">
@@ -56,6 +50,6 @@ export default function ConfirmModal({
           </>
         )}
       </div>
-    </div>
+    </ModalContentWrapper>
   );
 }

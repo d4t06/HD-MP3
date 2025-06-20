@@ -1,4 +1,11 @@
-import { Image, NotFound, PlaylistList, SingerItem, Tab } from "@/components";
+import {
+  Image,
+  NotFound,
+  PlaylistList,
+  SingerItem,
+  Tab,
+  Title,
+} from "@/components";
 import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -6,6 +13,8 @@ import useGetSearchResult from "./_hooks/useGetSearchResult";
 import SongList from "@/modules/song-item/_components/SongList";
 import useGetRecommend from "@/hooks/useGetRecomemded";
 import { Link } from "react-router-dom";
+import Search from "@/modules/search";
+// import BackBtn from "@/components/BackBtn";
 
 export default function SearchResultPage() {
   const { isFetching, result, tab, setTab, tabs } = useGetSearchResult();
@@ -39,7 +48,7 @@ export default function SearchResultPage() {
           return <PlaylistList loading={false} playlists={result.playlists} />;
         else return <NotFound className="mx-auto" />;
 
-      case "Singers":
+      case "Singer":
         if (result.singers.length)
           return (
             <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
@@ -49,7 +58,7 @@ export default function SearchResultPage() {
             </div>
           );
         else return <NotFound className="mx-auto" />;
-      case "Users":
+      case "User":
         if (result.users.length)
           return (
             <div>
@@ -75,17 +84,18 @@ export default function SearchResultPage() {
 
   return (
     <>
-      {/* <div className="mb-5">
-        <BackBtn />
-      </div> */}
-
-      <div className="flex items-center mt-3">
-        <div className="text-2xl font-bold">Result</div>
-
-        <div className={`ml-5 ${isFetching ? "disable" : ""}`}>
-          <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
-        </div>
+      <div className="md:hidden">
+        <Search />
       </div>
+
+      <Title title="Result" className="mt-1 md:mt-0" />
+      <Tab
+        className="w-fit [&_button]:text-sm md:[&_button]:text-base"
+        tabs={tabs}
+        render={(t) => t}
+        tab={tab}
+        setTab={setTab}
+      />
 
       <SongSelectProvider>
         <div className="mt-5">

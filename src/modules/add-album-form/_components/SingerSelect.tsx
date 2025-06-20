@@ -1,9 +1,9 @@
-import { Input, ModalRef } from "@/components";
+import { Input, Modal, ModalRef } from "@/components";
 import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import SingerSearchModal from "@/modules/add-song-form/_components/SingerSearchModal";
-import { Button, DashboardModal, Frame, ItemRightCtaFrame } from "@/pages/dashboard/_components";
+import { Button, Frame, ItemRightCtaFrame } from "@/pages/dashboard/_components";
 
 export default function AlbumSingerSelect() {
 	const { singer, setSinger, albumData, updateAlbumData } = useAddAlbumContext();
@@ -59,12 +59,12 @@ export default function AlbumSingerSelect() {
 				</div>
 			</Frame>
 
-			<DashboardModal ref={modalRef}>
+			<Modal variant="animation" ref={modalRef}>
 				<SingerSearchModal
 					choose={handleChooseSinger}
 					closeModal={() => modalRef.current?.close()}
 				/>
-			</DashboardModal>
+			</Modal>
 		</>
 	);
 }

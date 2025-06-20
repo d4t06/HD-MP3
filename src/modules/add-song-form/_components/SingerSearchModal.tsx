@@ -1,7 +1,6 @@
-import { Modal, ModalHeader, ModalRef, NotFound } from "@/components";
+import { Modal, ModalContentWrapper, ModalHeader, ModalRef, NotFound } from "@/components";
 import { Button, Frame, Loading } from "@/pages/dashboard/_components";
 import Searchbar from "@/pages/dashboard/_components/SearchBar";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { useSearchSinger } from "@/pages/dashboard/_hooks";
 import QuickAddSingerModal from "@/pages/dashboard/singer/_components/QuickAddSingerModal";
 
@@ -22,7 +21,7 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
 
   return (
     <>
-      <ContentWrapper>
+      <ModalContentWrapper>
         <ModalHeader title="Singers" close={closeModal} />
         <Searchbar {...rest} />
 
@@ -52,9 +51,9 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
             <span>Add new singer</span>
           </Button>
         </p>
-      </ContentWrapper>
+      </ModalContentWrapper>
 
-      <Modal ref={modalRef} wrapped={false} variant="animation">
+      <Modal ref={modalRef} variant="animation">
         <QuickAddSingerModal
           afterSubmit={choose}
           singerName={rest.value}

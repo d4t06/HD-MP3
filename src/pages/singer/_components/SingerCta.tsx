@@ -1,6 +1,7 @@
 import {
   CopyLinkMenuItem,
   Modal,
+  ModalContentWrapper,
   ModalRef,
   MyPopup,
   MyPopupContent,
@@ -29,7 +30,10 @@ export default function SingerCta() {
 
   return (
     <>
-      <button onClick={() => openModal("more")} className="text-sm ml-auto !mt-0">
+      <button
+        onClick={() => openModal("more")}
+        className="text-sm ml-auto !mt-0"
+      >
         See more
       </button>
 
@@ -62,7 +66,7 @@ export default function SingerCta() {
       {modal && (
         <Modal ref={modalRef} variant="animation">
           {modal === "more" && singer && (
-            <div className="w-[400px] max-w-[calc(100vw-40px)]">{singer.description}</div>
+            <ModalContentWrapper>{singer.description}</ModalContentWrapper>
           )}
         </Modal>
       )}

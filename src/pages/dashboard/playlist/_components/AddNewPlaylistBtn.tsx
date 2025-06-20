@@ -1,11 +1,10 @@
-import { Modal, ModalRef } from "@/components";
+import { Modal, ModalRef, Button, ModalContentWrapper } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { useAuthContext } from "@/stores";
-import { Button } from "../../_components";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import { useAddPlaylist } from "@/hooks";
-import { ContentWrapper } from "../../_components/ui/ModalWrapper";
+// import { ContentWrapper } from "../../_components/ui/ModalWrapper";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();
@@ -30,13 +29,14 @@ export default function AddNewPlaylistBtn() {
         onClick={() => modalRef.current?.open()}
         className={`self-start p-1.5 ml-5`}
         size={"clear"}
+        color="primary"
       >
         <PlusIcon className="w-6" />
         <div className="hidden md:block">Add new playlist</div>
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <ContentWrapper className="w-[500px]">
+        <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
             close={closeModal}
             isLoading={isFetching}
@@ -44,7 +44,7 @@ export default function AddNewPlaylistBtn() {
             user={user}
             submit={_handleAddPlaylist}
           />
-        </ContentWrapper>
+        </ModalContentWrapper>
       </Modal>
     </>
   );

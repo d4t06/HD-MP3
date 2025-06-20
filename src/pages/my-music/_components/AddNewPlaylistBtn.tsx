@@ -1,4 +1,4 @@
-import { Button, Modal, ModalRef } from "@/components";
+import { Button, Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { useAuthContext } from "@/stores";
@@ -32,7 +32,7 @@ export default function AddNewPlaylistBtn() {
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-        <div className={`max-h-[80vh] max-w-[85vw] w-[400px]`}>
+        <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
             close={closeModal}
             isLoading={isFetching}
@@ -40,7 +40,7 @@ export default function AddNewPlaylistBtn() {
             user={user}
             submit={_handleAddPlaylist}
           />
-        </div>
+        </ModalContentWrapper>
       </Modal>
     </>
   );

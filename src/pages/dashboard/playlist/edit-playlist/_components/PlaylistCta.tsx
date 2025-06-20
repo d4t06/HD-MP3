@@ -1,14 +1,18 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { useRef, useState } from "react";
-import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { Button, ModalWrapper } from "@/pages/dashboard/_components";
+import {
+  ConfirmModal,
+  Modal,
+  ModalContentWrapper,
+  ModalRef,
+} from "@/components";
+import { Button } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
@@ -22,7 +26,8 @@ export default function DashboardPlaylistCta() {
 
   const openModal = (m: Modal) => {
     setModal(m);
-    if (modal === "add-song-to-playlist") modalRef.current?.setModalPersist(true);
+    if (modal === "add-song-to-playlist")
+      modalRef.current?.setModalPersist(true);
 
     modalRef.current?.open();
   };
@@ -42,7 +47,7 @@ export default function DashboardPlaylistCta() {
 
         return (
           <>
-            <ContentWrapper className="w-[500px]">
+            <ModalContentWrapper className="w-[600px]">
               <AddPlaylistModal
                 submit={(_playlist, imageFile) =>
                   handlePlaylistAction({
@@ -56,7 +61,7 @@ export default function DashboardPlaylistCta() {
                 playlist={playlist}
                 close={closeModal}
               />
-            </ContentWrapper>
+            </ModalContentWrapper>
           </>
         );
 
@@ -65,7 +70,9 @@ export default function DashboardPlaylistCta() {
           <ConfirmModal
             loading={isFetching}
             label={"Delete playlist ?"}
-            callback={() => handlePlaylistAction({ variant: "delete-playlist" })}
+            callback={() =>
+              handlePlaylistAction({ variant: "delete-playlist" })
+            }
             close={closeModal}
           />
         );
@@ -101,14 +108,17 @@ export default function DashboardPlaylistCta() {
           <span>Delete</span>
         </Button>
 
-        <Button onClick={() => openModal("add-song-to-playlist")} size={"clear"}>
+        <Button
+          onClick={() => openModal("add-song-to-playlist")}
+          size={"clear"}
+        >
           <PlusIcon className="w-5" />
           <span>Add song</span>
         </Button>
       </ButtonCtaFrame>
 
-      <Modal wrapped={false} variant="animation" ref={modalRef}>
-        <ModalWrapper className="w-[unset]">{renderModal()}</ModalWrapper>
+      <Modal variant="animation" ref={modalRef}>
+        {renderModal()}
       </Modal>
     </>
   );

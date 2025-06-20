@@ -103,7 +103,8 @@ export default function AddSongForm(props: Props) {
               {props.variant === "add" && (
                 <Frame>
                   <span>
-                    Duration: {formatTime(songData.duration)} , Size: {songData.size}kb
+                    Duration: {formatTime(songData.duration)} , Size:{" "}
+                    {songData.size}kb
                   </span>
                 </Frame>
               )}
@@ -137,7 +138,6 @@ export default function AddSongForm(props: Props) {
           <Modal
             persisted={props.variant === "add" ? true : false}
             ref={modalRef}
-            wrapped={false}
             variant="animation"
           >
             <FinishedModal

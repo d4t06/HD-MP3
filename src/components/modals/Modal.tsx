@@ -13,7 +13,6 @@ import { createPortal } from "react-dom";
 type BaseProps = {
   className?: string;
   children: ReactNode;
-  wrapped?: boolean;
   persisted?: boolean;
 };
 
@@ -37,7 +36,7 @@ export type ModalRef = {
 };
 
 function Modal(
-  { children, className, persisted = false, wrapped = true, ...props }: Props,
+  { children, className, persisted = false, ...props }: Props,
   ref: Ref<ModalRef>,
 ) {
   const variant = props.variant || "default";
@@ -140,13 +139,6 @@ function Modal(
                         `}
             >
               {children}
-              {/* {wrapped ? (
-                <PopupWrapper className={className || ""} theme={theme}>
-                  {children}
-                </PopupWrapper>
-              ) : (
-                children
-              )}*/}
             </div>
           </div>,
           document.getElementById("portals")!,
@@ -158,8 +150,10 @@ function Modal(
 function ModalContentWrapper({
   children,
   noStyle,
+  disable,
   className = "w-[400px]",
 }: {
+  disable?: boolean;
   children: ReactNode;
   className?: string;
   noStyle?: boolean;
@@ -168,7 +162,7 @@ function ModalContentWrapper({
 
   return (
     <div
-      className={`max-h-[80vh] max-w-[90vw] text-white ${!noStyle ? "p-3 rounded-xl" : ""} ${theme.modal_bg} ${className}`}
+      className={`max-h-[80vh] max-w-[90vw] flex flex-col  ${disable ? "disabled" : ""} ${!noStyle ? "p-3 rounded-xl" : ""} ${location.hash.includes("/dashboard") ? "bg-white text-black" : theme.modal_bg + " text-white"} ${className}`}
     >
       {children}
     </div>

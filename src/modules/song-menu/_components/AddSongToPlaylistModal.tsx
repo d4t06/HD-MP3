@@ -1,7 +1,14 @@
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { useAuthContext, useSongContext, useThemeContext } from "@/stores";
-import { Button, Modal, ModalHeader, ModalRef, NotFound } from "@/components";
+import {
+  Button,
+  Modal,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+  NotFound,
+} from "@/components";
 import useAddSongToPlaylist from "../_hooks/useAddSongToPlaylist";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
@@ -18,7 +25,8 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
 
   const { addToPlaylist, isFetching } = useAddSongToPlaylist();
 
-  const { myMusicAddPlaylist, isFetching: addPlaylistFetching } = useMyMusicAddPlaylist();
+  const { myMusicAddPlaylist, isFetching: addPlaylistFetching } =
+    useMyMusicAddPlaylist();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -34,7 +42,7 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
 
   const handleAddSongToNewPlaylist = async (
     playlist: PlaylistSchema,
-    imageFile?: File
+    imageFile?: File,
   ) => {
     playlist.song_ids = [song.id];
 
@@ -48,7 +56,7 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
 
   return (
     <>
-      <div className={`w-[300px] max-h-[80vh] max-w-[calc(90vw-40px)] flex flex-col `}>
+      <ModalContentWrapper>
         <ModalHeader close={closeModal} title={"Playlists"} />
         <div
           className={`flex-grow flex flex-col overflow-auto space-y-2 ${
@@ -76,23 +84,27 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
           )}
         </div>
 
-        <Button
-          className={`${theme.content_bg} mt-5 rounded-full justify-center`}
-          onClick={() => modalRef.current?.open()}
-        >
-          <PlusIcon className="w-5" />
-          <span>Add new playlist</span>
-        </Button>
-      </div>
+        <p className="text-center">
+          <Button
+            className={`${theme.content_bg} mt-5 rounded-full justify-center`}
+            onClick={() => modalRef.current?.open()}
+          >
+            <PlusIcon className="w-5" />
+            <span>Add new playlist</span>
+          </Button>
+        </p>
+      </ModalContentWrapper>
 
       <Modal variant="animation" ref={modalRef}>
-        <AddPlaylistModal
-          close={() => modalRef.current?.close()}
-          submit={handleAddSongToNewPlaylist}
-          isLoading={isFetching || addPlaylistFetching}
-          variant="add"
-          user={user}
-        />
+        <ModalContentWrapper className="w-[600px]">
+          <AddPlaylistModal
+            close={() => modalRef.current?.close()}
+            submit={handleAddSongToNewPlaylist}
+            isLoading={isFetching || addPlaylistFetching}
+            variant="add"
+            user={user}
+          />
+        </ModalContentWrapper>
       </Modal>
     </>
   );

@@ -20,9 +20,9 @@ export default function DashboardSingerPage() {
       </div>
 
       <div
-        className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}
+        className={`mt-5 w-fit self-start`}
       >
-        <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
+        <Tab disable={tab === 'All'} tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
       </div>
 
       <div className="mt-3">

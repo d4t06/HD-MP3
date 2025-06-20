@@ -1,11 +1,10 @@
 import { useSongSelectContext, useThemeContext } from "@/stores";
 import { useMemo } from "react";
-import { ModalHeader } from "@/components";
+import { ModalContentWrapper, ModalHeader } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import useSearchSong from "./_hooks/useSearchSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 
 type Props = {
   closeModal: () => void;
@@ -39,11 +38,10 @@ function Content({ closeModal, submit, isLoading }: Props) {
 
   return (
     <>
-      <ContentWrapper className="w-[750px] h-[500px] flex flex-col overflow-hidden">
+      <ModalContentWrapper className="w-[600px] h-[400px]">
         <ModalHeader close={closeModal} title="Add song" />
 
         <div className="flex-grow flex flex-col md:flex-row -mx-2">
-
           <div className={`${classes.col}`}>
             <SearchBar {...rest} />
 
@@ -68,7 +66,9 @@ function Content({ closeModal, submit, isLoading }: Props) {
           <div className={`${classes.col} mt-3 md:mt-0`}>
             <div className="font-[500] mb-3">Selected:</div>
 
-            <div className={`${classes.box} flex-grow overflow-auto space-y-2 `}>
+            <div
+              className={`${classes.box} flex-grow overflow-auto space-y-2 `}
+            >
               {selectedSongs.map((s, i) => (
                 <button
                   key={i}
@@ -92,7 +92,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
             <span>Add</span>
           </Button>
         </p>
-      </ContentWrapper>
+      </ModalContentWrapper>
     </>
   );
 }

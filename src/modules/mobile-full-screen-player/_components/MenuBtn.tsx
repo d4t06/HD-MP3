@@ -1,5 +1,4 @@
-import { ModalRef } from "@/components";
-import SlideModal from "@/components/SlideModal";
+import { ModalRef, SlideModal } from "@/components";
 import { Bars3Icon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import ControlMenu from "./ControlMenu";

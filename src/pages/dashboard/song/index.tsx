@@ -7,7 +7,8 @@ import { Button, DashboardSongItem } from "../_components";
 import DashboardTable from "../_components/ui/Table";
 
 export default function DashboardSong() {
-  const { isFetching, uploadedSongs, tabs, setTab, tab, ...rest } = useDashboardSong();
+  const { isFetching, uploadedSongs, tabs, setTab, tab, ...rest } =
+    useDashboardSong();
 
   return (
     <div className="pb-[46px]">
@@ -15,16 +16,24 @@ export default function DashboardSong() {
 
       <div className="flex justify-between items-start mt-3">
         <Searchbar {...rest} />
-        <Button href="/dashboard/song/add-song" className={`p-1.5 ml-5`} size={"clear"}>
+        <Button
+          href="/dashboard/song/add-song"
+          className={`p-1.5 ml-5`}
+          size={"clear"}
+        >
           <PlusIcon className="w-6" />
           <div className="hidden md:block">Add song</div>
         </Button>
       </div>
 
-      <div
-        className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}
-      >
-        <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
+      <div className={`mt-5 w-fit self-start`}>
+        <Tab
+          disable={tab === "All"}
+          tabs={tabs}
+          render={(t) => t}
+          tab={tab}
+          setTab={setTab}
+        />
       </div>
 
       <div className="mt-3">

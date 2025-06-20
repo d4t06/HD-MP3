@@ -1,8 +1,13 @@
-import { Modal, ModalRef, Title } from "@/components";
+import {
+  ModalRef,
+  Modal,
+  ModalContentWrapper,
+  ModalHeader,
+} from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { useAuthContext } from "@/stores";
-import { Button, ModalWrapper } from "../../_components";
+import { Button } from "../../_components";
 import AddAlbumForm from "@/modules/add-album-form";
 
 type Props = {
@@ -33,11 +38,19 @@ export default function AddNewAlbumBtn({ setAlbums }: Props) {
         <div className="hidden md:block">Add new album</div>
       </Button>
 
-      <Modal wrapped={false} ref={modalRef} variant="animation">
-        <ModalWrapper className="w-[800px]">
-          <Title title="Add album" />
-          <AddAlbumForm className="overflow-auto" variant="add" user={user} callback={handlePushAlbum} />
-        </ModalWrapper>
+      <Modal ref={modalRef} variant="animation">
+        <ModalContentWrapper className="w-[800px]">
+          <ModalHeader
+            close={() => modalRef.current?.close()}
+            title="Add album"
+          />
+          <AddAlbumForm
+            className="overflow-auto"
+            variant="add"
+            user={user}
+            callback={handlePushAlbum}
+          />
+        </ModalContentWrapper>
       </Modal>
     </>
   );

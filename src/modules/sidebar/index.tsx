@@ -31,10 +31,8 @@ export default function Sidebar() {
   });
 
   const getActiveClasses = (condition: boolean) => {
-    if (condition)
-      return `${theme.content_text}`;
-
-    return "border-transparent";
+    if (condition) return `${theme.content_text}`;
+    return "";
   };
 
   //  define styles

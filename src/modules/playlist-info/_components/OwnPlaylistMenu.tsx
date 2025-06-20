@@ -1,4 +1,10 @@
-import { ConfirmModal, CopyLinkMenuItem, Modal, ModalRef } from "@/components";
+import {
+  ConfirmModal,
+  CopyLinkMenuItem,
+  Modal,
+  ModalContentWrapper,
+  ModalRef,
+} from "@/components";
 import { usePopoverContext } from "@/components/MyPopup";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useRef, useState } from "react";
@@ -28,7 +34,10 @@ export default function OwnPlaylistMenu() {
   };
   const closeModal = () => modalRef.current?.close();
 
-  const handleEditPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
+  const handleEditPlaylist = async (
+    playlist: PlaylistSchema,
+    imageFile?: File,
+  ) => {
     if (!currentPlaylist) return;
 
     await action({
@@ -48,13 +57,15 @@ export default function OwnPlaylistMenu() {
         return <></>;
       case "edit":
         return (
-          <AddPlaylistModal
-            isLoading={isFetching}
-            playlist={currentPlaylist}
-            submit={handleEditPlaylist}
-            variant="edit"
-            close={closeModal}
-          />
+          <ModalContentWrapper className="w-[600px]">
+            <AddPlaylistModal
+              isLoading={isFetching}
+              playlist={currentPlaylist}
+              submit={handleEditPlaylist}
+              variant="edit"
+              close={closeModal}
+            />
+          </ModalContentWrapper>
         );
 
       case "delete":

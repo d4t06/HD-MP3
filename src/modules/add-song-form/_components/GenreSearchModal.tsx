@@ -1,6 +1,5 @@
-import { Modal, ModalHeader, ModalRef, NotFound } from "@/components";
+import { Modal, ModalContentWrapper, ModalHeader, ModalRef, NotFound } from "@/components";
 import { Button, Frame, DebounceSearchBar, Loading } from "@/pages/dashboard/_components";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { useSearchGenre, useGetGenre } from "@/pages/dashboard/_hooks";
 import AddGenreModal from "@/pages/dashboard/genre/_components/AddGenreModal";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -27,7 +26,7 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
 
   return (
     <>
-      <ContentWrapper>
+      <ModalContentWrapper>
         <ModalHeader title="Genre" close={closeModal} />
         <DebounceSearchBar inputRef={inputRef} {...rest} />
 
@@ -56,9 +55,9 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
             <span>Add new genre</span>
           </Button>
         </p>
-      </ContentWrapper>
+      </ModalContentWrapper>
 
-      <Modal ref={modalRef} wrapped={false} variant="animation">
+      <Modal ref={modalRef}  variant="animation">
         <AddGenreModal
           afterSubmit={choose}
           genreName={rest.value}

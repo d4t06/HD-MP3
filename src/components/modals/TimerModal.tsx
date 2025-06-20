@@ -1,5 +1,5 @@
 import { useThemeContext } from "@/stores";
-import { ModalHeader } from ".";
+import { ModalContentWrapper, ModalHeader } from ".";
 
 type Props = {
   closeModal: () => void;
@@ -34,12 +34,12 @@ function TimerModal({ closeModal, active }: Props) {
   });
 
   return (
-    <div className="w-[300px] max-w-[calc(100vw-40px)]">
+    <ModalContentWrapper>
       <ModalHeader close={closeModal} title="Sleep timer" />
       <div>
         <div className="flex flex-wrap -mt-2 -ml-2 mb-3">{renderItems}</div>
       </div>
-    </div>
+    </ModalContentWrapper>
   );
 }
 

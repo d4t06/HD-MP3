@@ -1,5 +1,5 @@
-import { Image, Title } from "@/components";
-import { Button, ModalWrapper } from "@/pages/dashboard/_components";
+import { Image, ModalContentWrapper, ModalHeader } from "@/components";
+import { Button } from "@/pages/dashboard/_components";
 import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 type Props = {
@@ -9,8 +9,8 @@ type Props = {
 
 export default function FinishedModal({ handleCloseModal, variant }: Props) {
   return (
-    <ModalWrapper>
-      <Title title="Finished" />
+    <ModalContentWrapper>
+      <ModalHeader close={handleCloseModal} title="Finished" />
       <Image
         width="w-[120px]"
         className="mx-auto w-[120px]"
@@ -28,6 +28,6 @@ export default function FinishedModal({ handleCloseModal, variant }: Props) {
           <span>{variant === "add" ? "Add more" : "Ok"}</span>
         </Button>
       </div>
-    </ModalWrapper>
+    </ModalContentWrapper>
   );
 }

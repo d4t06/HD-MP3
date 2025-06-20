@@ -1,6 +1,7 @@
 import {
 	Button,
 	Modal,
+	ModalContentWrapper,
 	ModalHeader,
 	ModalRef,
 	MyPopup,
@@ -54,12 +55,12 @@ export default function MenuBtn({ pause }: Props) {
 				return <EditStringLyicModal closeModal={closeModal} />;
 			case "tutorial":
 				return (
-					<div className="w-[500px] max-w-[90vw]">
+					<ModalContentWrapper className="w-[500px] ">
 						<ModalHeader title="Tutorial" close={closeModal} />
 						<div className="h-[500px] max-h-[75vh] overflow-y-auto no-scrollbar">
 							<img className="w-full border rounded-[16px]" src="" alt="" />
 						</div>
-					</div>
+					</ModalContentWrapper>
 				);
 			case "song-beat":
 				return song && <AddSongBeatModal closeModal={closeModal} />;

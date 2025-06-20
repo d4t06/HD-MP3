@@ -1,5 +1,4 @@
-import { PlaylistList, Title } from "@/components";
-import Tab from "@/components/Tab";
+import { PlaylistList, Title, Tab } from "@/components";
 import useGetHomePlaylist from "../_hooks/useGetHomePlaylist";
 
 export default function HomePlaylist() {

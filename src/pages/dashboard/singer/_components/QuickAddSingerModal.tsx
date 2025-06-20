@@ -1,8 +1,8 @@
-import {ModalHeader, Input} from "@/components";
+import { ModalHeader, Input, ModalContentWrapper } from "@/components";
 import { initSingerObject } from "@/utils/factory";
 import { useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Button, ModalWrapper } from "../../_components";
+import { Button } from "../../_components";
 import useQuickAddSinger from "../_hooks/useQuickAddSinger";
 
 type Props = {
@@ -19,7 +19,7 @@ export default function QuickAddSingerModal({
   const [singer, setSinger] = useState(
     initSingerObject({
       name: singerName,
-    })
+    }),
   );
 
   const { addSinger, isFetching } = useQuickAddSinger();
@@ -47,7 +47,7 @@ export default function QuickAddSingerModal({
   };
 
   return (
-    <ModalWrapper className="w-[450px]">
+    <ModalContentWrapper className="w-[450px]">
       <ModalHeader close={closeModal} title={"Add singer"} />
 
       <div className="space-y-3 overflow-auto">
@@ -72,6 +72,6 @@ export default function QuickAddSingerModal({
           <p className="text-white">Ok</p>
         </Button>
       </div>
-    </ModalWrapper>
+    </ModalContentWrapper>
   );
 }

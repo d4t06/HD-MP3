@@ -1,4 +1,4 @@
-import { ConfirmModal, ModalRef } from "@/components";
+import { ConfirmModal, ModalContentWrapper, ModalRef } from "@/components";
 import { Button, DashboardModal } from "@/pages/dashboard/_components";
 import { useRef, useState } from "react";
 import AddSingerModal from "../../_components/AddSingerModal";
@@ -21,13 +21,20 @@ export default function SingerCta() {
 
   return (
     <>
-      <button onClick={() => openModal("more")} className="text-sm ml-auto !mt-0">
+      <button
+        onClick={() => openModal("more")}
+        className="text-sm ml-auto !mt-0"
+      >
         See more
       </button>
 
       <div className="mt-3 md:!mt-auto">
         <ButtonCtaFrame>
-          <Button onClick={() => openModal("edit")} className={`md:px-3`} size={"clear"}>
+          <Button
+            onClick={() => openModal("edit")}
+            className={`md:px-3`}
+            size={"clear"}
+          >
             <PencilIcon className="w-6" />
             <div className="hidden md:block">Edit singer</div>
           </Button>
@@ -45,9 +52,11 @@ export default function SingerCta() {
 
       <DashboardModal ref={modalRef}>
         {modal === "more" && singer && (
-          <div className="w-[400px] max-w-[calc(100vw-40px)]">{singer.description}</div>
+          <ModalContentWrapper>{singer.description}</ModalContentWrapper>
         )}
-        {modal === "edit" && <AddSingerModal closeModal={closeModal} variant="edit" />}
+        {modal === "edit" && (
+          <AddSingerModal closeModal={closeModal} variant="edit" />
+        )}
         {modal === "delete" && singer && (
           <ConfirmModal
             label={`Delete singer '${singer.name}'`}

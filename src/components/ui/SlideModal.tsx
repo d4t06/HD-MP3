@@ -21,7 +21,7 @@ export type ModalRef = {
 	setModalPersist: (v: boolean) => void;
 };
 
-function Modal({ children, onClose }: Props, ref: Ref<ModalRef>) {
+function SlideModal({ children, onClose }: Props, ref: Ref<ModalRef>) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -105,4 +105,4 @@ function Modal({ children, onClose }: Props, ref: Ref<ModalRef>) {
 	);
 }
 
-export default forwardRef(Modal);
+export default forwardRef(SlideModal);

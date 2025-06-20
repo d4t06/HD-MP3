@@ -20,10 +20,14 @@ export default function DashboardAlbum() {
         <AddNewAlbumBtn setAlbums={setAlbums} />
       </div>
 
-      <div
-        className={`mt-5 w-fit ${tab === "All" ? "pointer-events-none" : ""} self-start`}
-      >
-        <Tab tabs={tabs} render={(t) => t} tab={tab} setTab={setTab} />
+      <div className={`mt-5 w-fit  self-start`}>
+        <Tab
+          disable={tab === "All"}
+          tabs={tabs}
+          render={(t) => t}
+          tab={tab}
+          setTab={setTab}
+        />
       </div>
 
       <div className="mt-3">
@@ -35,12 +39,17 @@ export default function DashboardAlbum() {
               albums.map((p, i) => (
                 <tr key={i}>
                   <td>
-                    <Link className="hover:underline" to={`/dashboard/album/${p.id}`}>
+                    <Link
+                      className="hover:underline"
+                      to={`/dashboard/album/${p.id}`}
+                    >
                       {p.name}
                     </Link>
                   </td>
                   <td>
-                    <Link to={`/dashboard/singer/${p.singers[0].id}`}>{p.singers[0].name}</Link>
+                    <Link to={`/dashboard/singer/${p.singers[0].id}`}>
+                      {p.singers[0].name}
+                    </Link>
                   </td>
                   <td>{abbreviateNumber(p.like)}</td>
                 </tr>

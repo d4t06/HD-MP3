@@ -1,9 +1,9 @@
 import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { ModalRef } from "@/components";
+import { Modal, ModalRef } from "@/components";
 import { useRef } from "react";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
-import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import { Button } from "@/pages/dashboard/_components";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
@@ -66,13 +66,13 @@ export default function AlbumSongSelect() {
 				</tr>
 			</DashboardTable>
 
-			<DashboardModal wrapped={false} variant="animation" ref={modalRef}>
+			<Modal variant="animation" ref={modalRef}>
 				<AddSongsToPlaylistModal
 					submit={handleSetSongs}
 					closeModal={() => modalRef.current?.close()}
 					isLoading={false}
 				/>
-			</DashboardModal>
+			</Modal>
 		</>
 	);
 }

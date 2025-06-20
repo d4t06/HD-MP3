@@ -1,76 +1,76 @@
-import { Input, ModalRef } from "@/components";
+import { Input, Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { PlaylistModalVariantProps } from "@/modules/add-playlist-form";
 import useAddPlaylistForm from "@/modules/add-playlist-form/_hooks/useAddPlaylistForm";
-import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import { Button } from "@/pages/dashboard/_components";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
-import { ContentWrapper } from "@/pages/dashboard/_components/ui/ModalWrapper";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function PlaylistLike(props: PlaylistModalVariantProps) {
-	const { playlist } = usePlaylistContext();
-	const { updatePlaylistData, playlistData, isValidToSubmit } = useAddPlaylistForm(props);
+  const { playlist } = usePlaylistContext();
+  const { updatePlaylistData, playlistData, isValidToSubmit } =
+    useAddPlaylistForm(props);
 
-	const { action, isFetching } = useDashboardPlaylistActions();
+  const { action, isFetching } = useDashboardPlaylistActions();
 
-	const modalRef = useRef<ModalRef>(null);
-	const inputRef = useRef<HTMLInputElement>(null);
+  const modalRef = useRef<ModalRef>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-	const handleAddPlaylist = async () => {
-		if (!playlistData || !isValidToSubmit) return;
+  const handleAddPlaylist = async () => {
+    if (!playlistData || !isValidToSubmit) return;
 
-		//  it must be change something here!!
-		await action({
-			variant: "edit-playlist",
-			playlist: playlistData,
-		});
+    //  it must be change something here!!
+    await action({
+      variant: "edit-playlist",
+      playlist: playlistData,
+    });
 
-		modalRef.current?.close();
-	};
+    modalRef.current?.close();
+  };
 
-	if (!playlist) return;
+  if (!playlist) return;
 
-	return (
-		<>
-			<div className="flex items-center space-x-2">
-				<p className="mt-1 font-[500]">
-					<span className="text-red-500 text-xl">&#10084;</span>{" "}
-					{abbreviateNumber(playlist.like)}
-				</p>
+  return (
+    <>
+      <div className="flex items-center space-x-2">
+        <p className="mt-1 font-[500]">
+          <span className="text-red-500 text-xl">&#10084;</span>{" "}
+          {abbreviateNumber(playlist.like)}
+        </p>
 
-				<button className="" onClick={() => modalRef.current?.open()}>
-					<PencilIcon className="w-5" />
-				</button>
-			</div>
+        <button className="" onClick={() => modalRef.current?.open()}>
+          <PencilIcon className="w-5" />
+        </button>
+      </div>
 
-			<DashboardModal wrapped={false} variant="animation" ref={modalRef}>
-				<ContentWrapper>
-					<div>
-						<label htmlFor="like">Like</label>
-						<Input
-							id="like"
-							ref={inputRef}
-							type="number"
-							value={playlistData?.like + ""}
-							onChange={(e) => updatePlaylistData({ like: +e.target.value })}
-						/>
-					</div>
+      <Modal variant="animation" ref={modalRef}>
+        <ModalContentWrapper>
+          <div>
+            <label htmlFor="like">Like</label>
+            <Input
+              id="like"
+              ref={inputRef}
+              type="number"
+              value={playlistData?.like + ""}
+              onChange={(e) => updatePlaylistData({ like: +e.target.value })}
+            />
+          </div>
 
-					<p className="text-right mt-5 md:mt-0">
-						<Button
-							loading={isFetching}
-							color="primary"
-							onClick={handleAddPlaylist}
-							disabled={!isValidToSubmit}
-							className={`font-playwriteCU rounded-full`}
-						>
-							Save
-						</Button>
-					</p>
-				</ContentWrapper>
-			</DashboardModal>
-		</>
-	);
+          <p className="text-right mt-5">
+            <Button
+              loading={isFetching}
+              color="primary"
+              onClick={handleAddPlaylist}
+              disabled={!isValidToSubmit}
+              className={`font-playwriteCU rounded-full`}
+            >
+              Save
+            </Button>
+          </p>
+        </ModalContentWrapper>
+      </Modal>
+    </>
+  );
 }

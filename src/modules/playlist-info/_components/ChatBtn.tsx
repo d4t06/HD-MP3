@@ -1,5 +1,4 @@
-import { Modal, ModalRef } from "@/components";
-import SlideModal from "@/components/SlideModal";
+import { Modal, ModalRef, SlideModal } from "@/components";
 import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import MobileComment from "@/modules/comment/components/MobileComment";
 import PlaylistComment from "@/modules/comment/components/PlaylistComment";

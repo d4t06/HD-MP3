@@ -29,7 +29,7 @@ export default function Search() {
   } = useSearch();
 
   const classes = {
-    container: `relative h-[40px] flex px-3 w-[300px] ${theme.text_color} shadow-md`,
+    container: `relative h-[40px] flex px-3 w-full md:w-[300px] ${theme.text_color} shadow-md`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
     focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
     input: `bg-transparent outline-none  w-full ${theme.type === "light" ? "placeholder:text-black" : "placeholder:text-white"}`,

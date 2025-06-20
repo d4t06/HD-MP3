@@ -1,4 +1,4 @@
-import { Button, ModalHeader } from "@/components";
+import { Button, ModalContentWrapper, ModalHeader } from "@/components";
 import { useThemeContext } from "@/stores";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useEditLyricContext } from "./EditLyricContext";
@@ -56,7 +56,8 @@ export default function EditStringLyicModal({ closeModal }: Props) {
       }
     };
 
-    if (textareaRef.current) textareaRef.current.addEventListener("scroll", handleScroll);
+    if (textareaRef.current)
+      textareaRef.current.addEventListener("scroll", handleScroll);
 
     return () => {
       if (textareaRef.current)
@@ -65,16 +66,18 @@ export default function EditStringLyicModal({ closeModal }: Props) {
   }, []);
 
   return (
-    <div className="w-[500px] max-w-[85vw]">
+    <ModalContentWrapper className="w-[500px]">
       <ModalHeader close={closeModal} title="Edit lyric" />
 
-      <div className="relative h-[60vh] overflow-hidden rounded-md bg-white/10 ">
+      <div className={`relative h-[60vh] overflow-hidden rounded-md bg-${theme.alpha} `}>
         <div
           ref={backRef}
           className="whitespace-break-spaces text-transparent px-2 py-2 absolute leading-[40px] h-full overflow-auto top-0 left-0 w-full"
           dangerouslySetInnerHTML={{
             __html: applyHighlights(
-              lyrics.length === baseLyricArr.length ? lyrics.length - 1 : lyrics.length,
+              lyrics.length === baseLyricArr.length
+                ? lyrics.length - 1
+                : lyrics.length,
             ),
           }}
         ></div>
@@ -89,10 +92,14 @@ export default function EditStringLyicModal({ closeModal }: Props) {
       </div>
 
       <p className="ml-auto mt-5">
-        <Button onClick={handleSubmit} color="primary" className={`rounded-full`}>
+        <Button
+          onClick={handleSubmit}
+          color="primary"
+          className={`rounded-full`}
+        >
           Save
         </Button>
       </p>
-    </div>
+    </ModalContentWrapper>
   );
 }

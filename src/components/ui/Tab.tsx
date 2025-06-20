@@ -1,16 +1,24 @@
 import { useThemeContext } from "@/stores";
-import { Button } from ".";
+import { Button } from "..";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
 type Props<T> = {
   setTab: Dispatch<SetStateAction<T>>;
   tab: T;
   tabs: readonly T[];
+  disable?: boolean;
   render: (item: T) => ReactNode;
   className?: string;
 };
 
-export default function Tab<T>({ setTab, render, tab, tabs, className = "" }: Props<T>) {
+export default function Tab<T>({
+  setTab,
+  render,
+  disable,
+  tab,
+  tabs,
+  className = "",
+}: Props<T>) {
   const { theme } = useThemeContext();
 
   const classes = {
@@ -19,7 +27,9 @@ export default function Tab<T>({ setTab, render, tab, tabs, className = "" }: Pr
   };
 
   return (
-    <div className={`bg-${theme.alpha} p-1.5 space-x-1 rounded-full ${className}`}>
+    <div
+      className={`bg-${theme.alpha} ${disable ? "disable" : ""} p-1.5 space-x-1 rounded-full ${className}`}
+    >
       {tabs.map((t, i) => (
         <Button
           size={"clear"}
