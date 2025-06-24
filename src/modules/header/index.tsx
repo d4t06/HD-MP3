@@ -12,17 +12,17 @@ import {
   SettingMenu,
   PopupWrapper,
   ModalRef,
+  MyPopup,
+  MyPopupContent,
+  MyPopupTrigger,
+  TriggerRef,
 } from "@/components";
 import {
   AdjustmentsHorizontalIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
-import MyPopup, {
-  MyPopupContent,
-  MyPopupTrigger,
-  TriggerRef,
-} from "@/components/MyPopup";
+
 import MyTooltip from "@/components/MyTooltip";
 import useAuthAction from "@/hooks/useAuthActiont";
 import NavigationButton from "../navigation-button";
@@ -151,7 +151,6 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 </MyTooltip>
               </MyPopupTrigger>
               <MyPopupContent
-                appendTo="parent"
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
@@ -174,7 +173,6 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
               </MyPopupTrigger>
 
               <MyPopupContent
-                appendTo="parent"
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >

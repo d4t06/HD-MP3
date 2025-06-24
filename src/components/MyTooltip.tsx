@@ -11,7 +11,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { usePopoverContext } from "./MyPopup";
+import { usePopoverContext } from "./popup/PopupContext";
 
 type PropsFromPopup = {
   onClick?: () => void;

@@ -5,7 +5,6 @@ import {
   ModalContentWrapper,
   ModalRef,
 } from "@/components";
-import { usePopoverContext } from "@/components/MyPopup";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
@@ -18,7 +17,6 @@ type Modal = "edit" | "delete";
 
 export default function OwnPlaylistMenu() {
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
-  const { close } = usePopoverContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -29,7 +27,6 @@ export default function OwnPlaylistMenu() {
   const openModal = (m: Modal) => {
     setModal(m);
 
-    close();
     modalRef.current?.open();
   };
   const closeModal = () => modalRef.current?.close();
@@ -90,12 +87,12 @@ export default function OwnPlaylistMenu() {
       <PlaylistMenuPopupContent>
         <CopyLinkMenuItem />
         <button onClick={() => openModal("edit")}>
-          <PencilIcon className="w-5" />
+          <PencilIcon />
           <span>Edit</span>
         </button>
 
         <button onClick={() => openModal("delete")}>
-          <TrashIcon className="w-5" />
+          <TrashIcon />
           <span>Delete</span>
         </button>
       </PlaylistMenuPopupContent>

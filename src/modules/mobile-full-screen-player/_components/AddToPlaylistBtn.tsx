@@ -22,7 +22,7 @@ export default function AddToPlaylistBtn({ song }: Props) {
 			<Modal variant="animation" ref={modalRef}>
 				<AddSongToPlaylistModal
 					closeModal={() => modalRef.current?.close()}
-					song={song}
+					songs={[song]}
 				/>
 			</Modal>
 		</>

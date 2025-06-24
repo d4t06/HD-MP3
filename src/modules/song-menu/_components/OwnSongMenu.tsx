@@ -1,5 +1,4 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
-import { usePopoverContext } from "@/components/MyPopup";
 import EditSongModal from "@/modules/edit-song-modal";
 import {
   AdjustmentsHorizontalIcon,
@@ -23,7 +22,6 @@ type Props = {
 type Modal = "edit" | "delete" | "add-to-playlist";
 
 export default function OwnSongMenu({ song }: Props) {
-  const { close } = usePopoverContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -35,7 +33,6 @@ export default function OwnSongMenu({ song }: Props) {
   const handleOpenModal = (m: Modal) => {
     setModal(m);
     modalRef.current?.open();
-    close();
   };
 
   const closeModal = () => {
@@ -67,7 +64,7 @@ export default function OwnSongMenu({ song }: Props) {
       case "edit":
         return <EditSongModal modalRef={modalRef} song={song} />;
       case "add-to-playlist":
-        return <AddSongToPlaylistModal closeModal={closeModal} song={song} />;
+        return <AddSongToPlaylistModal closeModal={closeModal} songs={[song]} />;
     }
   };
 
@@ -81,20 +78,20 @@ export default function OwnSongMenu({ song }: Props) {
         <AddToNewPlaylistMenuItem modalRef={addToPlaylistModalRef} />
 
         <button onClick={() => handleOpenModal("edit")}>
-          <AdjustmentsHorizontalIcon className="w-5" />
+          <AdjustmentsHorizontalIcon  />
           <span>Edit</span>
         </button>
         <Link to={`lyric/${song.id}`}>
-          <DocumentTextIcon className="w-5" />
+          <DocumentTextIcon  />
           <span>{song.lyric_id ? "Edit lyric" : "Add lyric"}</span>
         </Link>
         <button onClick={() => handleOpenModal("delete")}>
-          <TrashIcon className="w-5" />
+          <TrashIcon  />
           <span>Delete</span>
         </button>
 
         <a target="_blank" href={song.song_url}>
-          <ArrowDownTrayIcon className="w-5" />
+          <ArrowDownTrayIcon  />
           <span>Download</span>
         </a>
       </SongMenuContent>

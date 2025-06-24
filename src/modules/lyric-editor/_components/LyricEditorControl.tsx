@@ -1,5 +1,5 @@
 import { useThemeContext } from "@/stores";
-import { ElementRef, Ref, forwardRef, useImperativeHandle, useRef } from "react";
+import { Ref, forwardRef, useImperativeHandle } from "react";
 import {
   ArrowPathIcon,
   BackwardIcon,
@@ -27,20 +27,34 @@ export type LyricEditorControlRef = {
   submit: () => Promise<void>;
 };
 
-function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>) {
-  const { theme } = useThemeContext();
+function LyricEditorControl(
+  { audioEle }: Props,
+  ref: Ref<LyricEditorControlRef>,
+) {
+  const { theme, themeClass } = useThemeContext();
   const { song, lyrics, isPreview, setIsPreview } = useEditLyricContext();
 
-  const progressLineRef = useRef<ElementRef<"div">>(null);
+  const PROGRESS_LINE_BG = themeClass("rgba(0,0,0,.15)", "rgba(255,255,255,.15)")
 
-  const { backward, forward, handlePlayPause, pause, seek, status, isClickPlay } =
-    useAudioControl({ audioEle, progressLineRef });
-
-  const { addLyric, removeLyric, isEnableAddBtn, submit } = useLyricEditorAction({
-    audioEle,
+  const {
+    backward,
+    forward,
+    handlePlayPause,
+    currentTimeRef,
+    durationRef,
+    progressLineRef,
+    pause,
+    seek,
+    status,
     isClickPlay,
-    song,
-  });
+  } = useAudioControl({ audioEle, baseColor: PROGRESS_LINE_BG });
+
+  const { addLyric, removeLyric, isEnableAddBtn, submit } =
+    useLyricEditorAction({
+      audioEle,
+      isClickPlay,
+      song,
+    });
 
   useImperativeHandle(ref, () => ({ seek, pause, submit }));
 
@@ -114,6 +128,7 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         </Button>
 
         <Button
+        disabled={!lyrics.length}
           onClick={() => {
             setIsPreview(!isPreview);
             pause();
@@ -129,11 +144,21 @@ function LyricEditorControl({ audioEle }: Props, ref: Ref<LyricEditorControlRef>
         </div>
       </div>
 
-      <div
-        ref={progressLineRef}
-        style={{ backgroundColor: "rgba(255,255,255,.3)" }}
-        className={`h-1 rounded-full mt-3 w-full`}
-      ></div>
+      <div className="flex items-center mt-3">
+        <div className="text-sm w-[50px]" ref={currentTimeRef}>
+          00:00
+        </div>
+
+        <div
+          ref={progressLineRef}
+          style={{ backgroundColor: PROGRESS_LINE_BG }}
+          className={`h-1 rounded-full w-full`}
+        ></div>
+
+        <div className="text-sm w-[50px] text-right" ref={durationRef}>
+          00:00
+        </div>
+      </div>
     </>
   );
 }

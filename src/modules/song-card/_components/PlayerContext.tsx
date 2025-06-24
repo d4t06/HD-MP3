@@ -1,6 +1,6 @@
+import { Status } from "@/hooks/useAudioControl";
 import { createContext, useContext, useRef, useState, type ReactNode } from "react";
 
-type Status = "playing" | "paused" | "error" | "loading" | "idle";
 
 export type SongControlRef = {
   pause: () => void;

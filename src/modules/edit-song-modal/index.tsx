@@ -1,7 +1,7 @@
 import { ChangeEvent, MouseEventHandler, RefObject, useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 
-import { Image, Button, ModalHeader, ModalRef, Input } from "@/components";
+import { Image, Button, ModalHeader, ModalRef, Input, ModalContentWrapper } from "@/components";
 import { useThemeContext } from "@/stores";
 import { getDisable } from "@/utils/appHelpers";
 import useEditSongModal from "./_hooks/useEditSongModal";
@@ -42,10 +42,10 @@ export default function EditSongModal({ song, modalRef }: Props) {
   };
 
   return (
-    <div
+    <ModalContentWrapper
       className={`${getDisable(
         isFetching
-      )} w-[500px] max-h-[80vh] max-w-[90vw] text-white flex flex-col`}
+      )} w-[500px]`}
     >
       <input
         ref={inputFileRef}
@@ -118,6 +118,6 @@ export default function EditSongModal({ song, modalRef }: Props) {
           Save
         </Button>
       </div>
-    </div>
+    </ModalContentWrapper>
   );
 }

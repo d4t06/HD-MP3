@@ -22,7 +22,7 @@ export default function ConfirmModal({
   const { theme } = useThemeContext();
 
   return (
-    <ModalContentWrapper disable={loading} className={`w-[400px]`}>
+    <ModalContentWrapper disable={loading} className={`w-[450px]`}>
       <ModalHeader close={close} title={label || "Wait a minute"} />
 
       {desc && <p className="font-semibold text-lg text-red-400">{desc}</p>}

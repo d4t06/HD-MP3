@@ -31,13 +31,16 @@ function Content({ closeModal }: Props) {
 
   return (
     <>
-      <ModalContentWrapper  className="w-[800px]">
+      <ModalContentWrapper className="w-[800px]">
         <ModalHeader title="Edit lyric" close={closeModal} />
 
         <audio src={song?.song_url} ref={audioRef} />
 
         {/* temp words */}
-        <div ref={eleRefs.tempWordRef} className="absolute inline-block opacity-0">
+        <div
+          ref={eleRefs.tempWordRef}
+          className="absolute inline-block opacity-0"
+        >
           {currentWords.map((w, i) => (
             <span key={i}>
               {w}
@@ -49,7 +52,9 @@ function Content({ closeModal }: Props) {
         {audioRef.current && <Header audioEle={audioRef.current} />}
         <div className="mt-5">
           {audioRef.current && (
-            <div className={`${tabProps.tab === "Record" ? "block" : "hidden"}`}>
+            <div
+              className={`${tabProps.tab === "Record" ? "block" : "hidden"}`}
+            >
               <Record audioEle={audioRef.current} />
             </div>
           )}
@@ -58,20 +63,6 @@ function Content({ closeModal }: Props) {
             <Sliders />
             <Preview />
 
-            {/*<p>
-              {growList.map((g, i) => (
-                <span key={i} className="w-[30px] inline-block">
-                  {(!!i ? " " : "") + g}
-                </span>
-              ))}
-            </p>
-            <p>
-              {mergedGrowListRef.current.map((g, i) => (
-                <span key={i} className="w-[30px] inline-block">
-                  {(!!i ? " " : "") + g}
-                </span>
-              ))}
-            </p>*/}
             <WordList />
           </div>
         </div>

@@ -4,11 +4,10 @@ import useAddAlbum from "./_hooks/useAddAlbum";
 import { ChangeEvent } from "react";
 import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { Button, Frame } from "@/pages/dashboard/_components";
+import { Button, Frame, ButtonCtaFrame } from "@/pages/dashboard/_components";
 import AlbumSingerSelect from "./_components/SingerSelect";
 import AlbumSongSelect from "./_components/SongSelect";
 import DeleteAlbumBtn from "./_components/DeleteAlbumBtn";
-import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
 import EditAlbumBtn from "./_components/EditAlbumBtn";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 

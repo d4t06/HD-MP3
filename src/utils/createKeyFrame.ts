@@ -1,9 +1,14 @@
 import { nanoid } from "nanoid";
 
-export default function createKeyFrame(growList: number[], widthList: number[]) {
+export default function createKeyFrame(
+  growList: number[],
+  widthList: number[],
+) {
   const name = `lyric_${nanoid(4)}`;
 
-  const style = document.querySelector("style");
+  const style = document.querySelector(
+    "style.keyframe",
+  ) as HTMLStyleElement | null;
   if (!style) return name;
 
   let keyFrame = `@keyframes ${name}{0%{width:0%}`;

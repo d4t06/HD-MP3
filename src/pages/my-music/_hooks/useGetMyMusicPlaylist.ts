@@ -14,9 +14,12 @@ export default function useGetMyMusicPlaylist() {
 
   const [isFetching, setIsFetching] = useState(true);
 
-  const getPlaylist = async () => {
+  const getPlaylist = async (userProp?: User) => {
     try {
-      if (!user) return;
+
+      const _user = userProp || user
+
+      if (!_user) return;
 
       setIsFetching(true);
 
@@ -25,7 +28,7 @@ export default function useGetMyMusicPlaylist() {
 
         const queryGetUserPlaylist = query(
           playlistCollectionRef,
-          where(documentId(), "in", user.liked_playlist_ids)
+          where(documentId(), "in", _user.liked_playlist_ids)
         );
 
 
@@ -34,7 +37,7 @@ export default function useGetMyMusicPlaylist() {
         const result = await implementPlaylistQuery(queryGetUserPlaylist);
 
         const showAblePlaylist = result.filter((p) => {
-          const isOwnerOfPlaylist = !p.is_official && p.owner_email === user.email;
+          const isOwnerOfPlaylist = !p.is_official && p.owner_email === _user.email;
 
           if (isOwnerOfPlaylist) return true;
           else if (p.is_public) return true;

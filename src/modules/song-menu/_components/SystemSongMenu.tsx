@@ -23,7 +23,7 @@ export default function SystemSongMenu({ song }: Props) {
         <AddToNewPlaylistMenuItem modalRef={modalRef} />
 
         <a target="_blank" href={song.song_url}>
-          <ArrowDownTrayIcon className="w-5" />
+          <ArrowDownTrayIcon />
           <span>Download</span>
         </a>
       </SongMenuContent>

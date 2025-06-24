@@ -30,34 +30,26 @@ export default function UploadImageBtn() {
 
   return (
     <>
-      <Button className="" size={"clear"}>
+      <Button className="except" size={"clear"}>
         <label
           htmlFor="image_upload"
-          className={`inline-flex p-1.5 space-x-1 cursor-pointer md:px-3`}
+          className={`inline-flex p-1.5 space-x-1 md:px-3`}
         >
-          <PhotoIcon className="w-6" />
-          <span className="hidden md:block">Change image</span>
+          <PhotoIcon />
+          <span>Change image</span>
         </label>
       </Button>
 
       {imageBlob && (
-        <Button
-          onClick={handleRemoveImage}
-          className="h-[36px] justify-center w-[36px]"
-          size={"clear"}
-        >
-          <XMarkIcon className="w-6" />
+        <Button onClick={handleRemoveImage} size={"clear"}>
+          <XMarkIcon />
         </Button>
       )}
 
       {songData?.image_url && (
-        <Button
-          onClick={() => modalRef.current?.open()}
-          className="p-1.5 justify-center md:px-3"
-          size={"clear"}
-        >
-          <QuestionMarkCircleIcon className="w-6" />
-          <span className="hidden md:block">Image info</span>
+        <Button onClick={() => modalRef.current?.open()} size={"clear"}>
+          <QuestionMarkCircleIcon />
+          <span>Image info</span>
         </Button>
       )}
       <input

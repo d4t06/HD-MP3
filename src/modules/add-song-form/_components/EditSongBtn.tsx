@@ -32,18 +32,14 @@ export default function EditSongBtn() {
 
   return (
     <>
-      <Button
-        onClick={() => modalRef.current?.open()}
-        className="p-1.5 justify-center md:px-3"
-        size={"clear"}
-      >
-        <PencilIcon className="w-6" />
-        <span className="hidden md:block">Edit</span>
+      <Button onClick={() => modalRef.current?.open()} size={"clear"}>
+        <PencilIcon />
+        <span>Edit</span>
       </Button>
 
       <Link to={`/dashboard/lyric/${song?.id}`}>
-        <Button>
-          <ClipboardDocumentIcon className="w-6" />
+        <Button size={"clear"}>
+          <ClipboardDocumentIcon />
           <span>Lyric</span>
         </Button>
       </Link>

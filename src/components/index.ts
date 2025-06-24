@@ -1,4 +1,5 @@
 export * from "./modals";
+export * from "./popup";
 
 export { default as Button } from "./ui/Button";
 export { default as Image } from "./ui/Image";
@@ -22,7 +23,6 @@ export { default as SongThumbnail } from "./SongThumbnail";
 export { default as PlaylistList } from "./PlaylistList";
 export { default as FullScreenPlayerSetting } from "./FullScreenPlayerSetting";
 export { default as MyTooltip } from "./MyTooltip";
-export { default as MyPopup, MyPopupContent, MyPopupTrigger } from "./MyPopup";
 export { default as CopyLinkMenuItem } from "./CopyLinkMenuItem";
 export { default as SingerItem } from "./SingerItem";
 export { default as GetSongLyric } from "./GetSongLyric";

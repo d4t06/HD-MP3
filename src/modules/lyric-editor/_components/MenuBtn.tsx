@@ -1,114 +1,144 @@
 import {
-	Button,
-	Modal,
-	ModalContentWrapper,
-	ModalHeader,
-	ModalRef,
-	MyPopup,
-	MyPopupContent,
-	MyPopupTrigger,
+  Button,
+  MenuWrapper,
+  Modal,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+  MyPopup,
+  MyPopupContent,
+  MyPopupTrigger,
+  VerticalMenu,
 } from "@/components";
-import { MenuList, MenuWrapper } from "@/components/ui/MenuWrapper";
 import { useThemeContext } from "@/stores";
 import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
-	ArrowTopRightOnSquareIcon,
-	Bars3Icon,
-	MusicalNoteIcon,
-	PencilIcon,
-	QuestionMarkCircleIcon,
+  ArrowDownTrayIcon,
+  ArrowTopRightOnSquareIcon,
+  Bars3Icon,
+  MusicalNoteIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
-import { TriggerRef } from "@/components/MyPopup";
 import EditStringLyicModal from "./EditStringLyricModal";
 import { useEditLyricContext } from "./EditLyricContext";
+import useImportLyric from "../_hooks/useImportLyric";
+import useExportLyric from "../_hooks/useExportLyric";
 
-type Modal = "lyric" | "tutorial" | "song-beat";
+type Modal = "lyric" | "song-beat" | "export";
 
 type Props = {
-	pause: () => void;
+  pause: () => void;
 };
 
 export default function MenuBtn({ pause }: Props) {
-	const { theme } = useThemeContext();
-	const { song } = useEditLyricContext();
+  const { theme } = useThemeContext();
+  const { song, lyrics } = useEditLyricContext();
 
-	const [modal, setModal] = useState<Modal | "">("");
+  const [modal, setModal] = useState<Modal | "">("");
 
-	const modalRef = useRef<ModalRef>(null);
-	const triggerRef = useRef<TriggerRef>(null);
+  const modalRef = useRef<ModalRef>(null);
 
-	const openModal = (m: Modal) => {
-		pause();
-		setModal(m);
-		modalRef.current?.open();
-		triggerRef.current?.close();
-	};
+  const { handleInputChange } = useImportLyric();
+  const { exportLyric } = useExportLyric();
 
-	const closeModal = () => modalRef.current?.close();
+  const openModal = (m: Modal) => {
+    pause();
+    setModal(m);
+    modalRef.current?.open();
+  };
 
-	const renderModal = () => {
-		if (!modal) return;
+  const closeModal = () => modalRef.current?.close();
 
-		switch (modal) {
-			case "lyric":
-				return <EditStringLyicModal closeModal={closeModal} />;
-			case "tutorial":
-				return (
-					<ModalContentWrapper className="w-[500px] ">
-						<ModalHeader title="Tutorial" close={closeModal} />
-						<div className="h-[500px] max-h-[75vh] overflow-y-auto no-scrollbar">
-							<img className="w-full border rounded-[16px]" src="" alt="" />
-						</div>
-					</ModalContentWrapper>
-				);
-			case "song-beat":
-				return song && <AddSongBeatModal closeModal={closeModal} />;
-		}
-	};
+  const renderModal = () => {
+    if (!modal) return;
 
-	return (
-		<>
-			<MyPopup>
-				<MyPopupTrigger ref={triggerRef}>
-					<Button
-						size={"clear"}
-						className={`${theme.content_bg} h-[36px] w-[36px] justify-center rounded-full mt-2`}
-					>
-						<Bars3Icon className="w-6" />
-					</Button>
-				</MyPopupTrigger>
+    switch (modal) {
+      case "lyric":
+        return <EditStringLyicModal closeModal={closeModal} />;
 
-				<MyPopupContent className="top-[calc(100%+8px)] right-0 z-[9]" appendTo="parent">
-					<MenuWrapper className="w-[140px]">
-						<MenuList>
-							<button onClick={() => openModal("lyric")}>
-								<PencilIcon className="w-5" />
+      case "song-beat":
+        return song && <AddSongBeatModal closeModal={closeModal} />;
+      case "export":
+        return (
+          <ModalContentWrapper>
+            <ModalHeader title="Export" close={closeModal} />
 
-								<span>Edit lyric</span>
-							</button>
-							<button onClick={() => openModal("tutorial")}>
-								<QuestionMarkCircleIcon className="w-5" />
+            <div className="flex ">
+              <Button
+                color="primary"
+                onClick={() => exportLyric({ type: "json" })}
+              >
+                JSON
+              </Button>
+              <Button
+                color="primary"
+                onClick={() => exportLyric({ type: "srt" })}
+                className="ml-2"
+              >
+                JRC
+              </Button>
+            </div>
+          </ModalContentWrapper>
+        );
+    }
+  };
 
-								<span>Tutorial</span>
-							</button>
-							<button onClick={() => openModal("song-beat")}>
-								<MusicalNoteIcon className="w-5" />
-								<span>Song beat</span>
-							</button>
+  return (
+    <>
+      <input
+        id="import_lyric"
+        onChange={handleInputChange}
+        type="file"
+        className="hidden"
+      />
 
-							<button onClick={() => openModal("song-beat")}>
-								<ArrowTopRightOnSquareIcon className="w-5" />
-								<span>Export</span>
-							</button>
-						</MenuList>
-					</MenuWrapper>
-				</MyPopupContent>
-			</MyPopup>
+      <MyPopup appendOnPortal>
+        <MyPopupTrigger>
+          <Button
+            size={"clear"}
+            className={`${theme.content_bg} h-[36px] w-[36px] justify-center rounded-full mt-2`}
+          >
+            <Bars3Icon className="w-6" />
+          </Button>
+        </MyPopupTrigger>
 
-			<Modal variant="animation" ref={modalRef}>
-				{renderModal()}
-			</Modal>
-		</>
-	);
+        <MyPopupContent origin="top right">
+          <MenuWrapper className="w-[140px]">
+            <VerticalMenu>
+              <button onClick={() => openModal("lyric")}>
+                <PencilIcon />
+
+                <span>Edit lyric</span>
+              </button>
+
+              <button onClick={() => openModal("song-beat")}>
+                <MusicalNoteIcon />
+                <span>Song beat</span>
+              </button>
+
+              <button className="!p-0">
+                <label
+                  className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
+                  htmlFor="import_lyric"
+                >
+                  <ArrowDownTrayIcon />
+                  <span>Import</span>
+                </label>
+              </button>
+
+              <button disabled={!lyrics.length} onClick={() => openModal("export")}>
+                <ArrowTopRightOnSquareIcon />
+                <span>Export</span>
+              </button>
+            </VerticalMenu>
+          </MenuWrapper>
+        </MyPopupContent>
+      </MyPopup>
+
+      <Modal variant="animation" ref={modalRef}>
+        {renderModal()}
+      </Modal>
+    </>
+  );
 }

@@ -2,14 +2,18 @@ import { useThemeContext } from "@/stores";
 
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import MyPopup, {
+
+import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
+import { Modal, ModalRef } from "@/components";
+import {
+  AppInfo,
+  Appearance,
+  SettingMenu,
   MyPopupContent,
   MyPopupTrigger,
   TriggerRef,
-} from "@/components/MyPopup";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
-import {Modal, ModalRef } from "@/components";
-import { AppInfo, Appearance, SettingMenu } from "@/components";
+  MyPopup,
+} from "@/components";
 import NavigationButton from "@/modules/navigation-button";
 
 type Modal = "theme" | "info";
@@ -66,7 +70,9 @@ export default function DashboardHeader() {
         <div className="flex">
           <Link to={"/dashboard"} className="text-xl font-[500]">
             HD
-            <span className={`${theme.content_text} ml-[4px] uppercase`}>Dashboard</span>
+            <span className={`${theme.content_text} ml-[4px] uppercase`}>
+              Dashboard
+            </span>
           </Link>
 
           <NavigationButton className="ml-5" />
@@ -82,7 +88,6 @@ export default function DashboardHeader() {
               </button>
             </MyPopupTrigger>
             <MyPopupContent
-              appendTo="parent"
               className="top-[calc(100%+8px)] right-0"
               animationClassName="origin-top-right"
             >

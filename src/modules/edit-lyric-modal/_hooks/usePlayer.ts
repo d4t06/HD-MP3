@@ -38,7 +38,10 @@ export default function usePlayer({ audioEle }: Props) {
     // except case changing end time
     if (!tempActuallyStartRef.current) {
       if (overlayRef.current) {
-        const name = createKeyFrame(mergedGrowListRef.current, wordsRatioRef.current);
+        const name = createKeyFrame(
+          mergedGrowListRef.current,
+          wordsRatioRef.current,
+        );
         overlayRef.current.style.animation = `${name} ${(
           (actuallyEndRef.current - actuallyStartRef.current) /
           audioEle.playbackRate
@@ -57,7 +60,8 @@ export default function usePlayer({ audioEle }: Props) {
   };
 
   const handleTimeUpdate = () => {
-    if (+audioEle.currentTime.toFixed(1) >= actuallyEndRef.current) return _pause();
+    if (+audioEle.currentTime.toFixed(1) >= actuallyEndRef.current)
+      return _pause();
   };
 
   useEffect(() => {

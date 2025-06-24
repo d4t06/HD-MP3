@@ -2,8 +2,6 @@ import { useEffect, type RefObject } from "react";
 import { usePlayerContext } from "../_components/PlayerContext";
 import { getLinearBg } from "@/utils/getLinearBg";
 
-export type Status = "playing" | "paused" | "waiting" | "error";
-
 type Props = {
   audioEle: HTMLAudioElement;
   progressLineRef?: RefObject<HTMLDivElement | null>;

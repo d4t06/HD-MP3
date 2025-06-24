@@ -25,6 +25,7 @@ export default function SingerItem(props: SkeletonProps | Props) {
 					<Link to={`/singer/${props.singer.id}`}>
 						<Square className="!rounded-full">
 							<Image
+								blurHashEncode={props.singer.blurhash_encode}
 								src={props.singer.image_url}
 								className="hover:scale-[1.05] transition-transform"
 							/>

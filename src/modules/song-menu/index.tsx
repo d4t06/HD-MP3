@@ -3,10 +3,14 @@ import { ComponentProps, ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 
 import { useThemeContext } from "@/stores";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
-import { Image, PopupWrapper } from "@/components";
-import { MenuList } from "@/components/ui/MenuWrapper";
-import MyTooltip from "@/components/MyTooltip";
+import {
+  Image,
+  MyPopup,
+  MyPopupContent,
+  MyPopupTrigger,
+  VerticalMenu,
+  MenuWrapper,
+} from "@/components";
 
 import QueueSongMenu from "./_components/QueueSongMenu";
 import OwnSongMenu from "./_components/OwnSongMenu";
@@ -19,7 +23,10 @@ function SongInfo({ song }: { song: Song }) {
     <div className="px-2 mb-3">
       <div className={`p-3 bg-[#fff]/5 rounded-md flex`}>
         <div className="w-[50px] h-[50px] rounded overflow-hidden flex-shrink-0">
-          <Image src={song.image_url} className="object-cover object-center w-full" />
+          <Image
+            src={song.image_url}
+            className="object-cover object-center w-full"
+          />
         </div>
 
         <div className="ml-1 text-sm">
@@ -33,17 +40,23 @@ function SongInfo({ song }: { song: Song }) {
   );
 }
 
-export function SongMenuContent({ children, song }: { children: ReactNode; song: Song }) {
-  const { theme } = useThemeContext();
-
+export function SongMenuContent({
+  children,
+  song,
+}: {
+  children: ReactNode;
+  song: Song;
+}) {
   return (
-    <MyPopupContent appendTo="portal" className="w-[240px]">
-      <PopupWrapper className={`py-2`} p={"clear"} theme={theme}>
+    <MyPopupContent className="w-[240px]">
+      <MenuWrapper>
         <SongInfo song={song} />
-        <MenuList>{children}</MenuList>
+        <VerticalMenu>{children}</VerticalMenu>
 
-        <p className="text-xs text-center opacity-70 mt-3">By {song.distributor}</p>
-      </PopupWrapper>
+        <p className="text-xs text-center opacity-70 mt-3">
+          By {song.distributor}
+        </p>
+      </MenuWrapper>
     </MyPopupContent>
   );
 }
@@ -58,7 +71,7 @@ function SongMenu({ song, index, variant }: Props) {
   // stores
   const { theme } = useThemeContext();
 
-  const [isOpenPopup, setIsOpenPopup] = useState(false);
+  const [isOpenPopup, _setIsOpenPopup] = useState(false);
 
   const renderMenu = () => {
     switch (variant) {
@@ -103,17 +116,18 @@ function SongMenu({ song, index, variant }: Props) {
   return (
     <>
       <MyPopup appendOnPortal>
-        <MyPopupTrigger setIsOpenParent={setIsOpenPopup}>
-          <MyTooltip isWrapped content="Menu">
-            <button
-              type="button"
-              className={`block group-hover/main:block ${
-                classes.button
-              } ${getTriggerClass()}`}
-            >
-              <Bars3Icon className="w-5" />
-            </button>
-          </MyTooltip>
+        {/*setIsOpenParent={setIsOpenPopup}*/}
+        <MyPopupTrigger>
+          {/*<MyTooltip isWrapped content="Menu">*/}
+          <button
+            type="button"
+            className={`block group-hover/main:block ${
+              classes.button
+            } ${getTriggerClass()}`}
+          >
+            <Bars3Icon className="w-5" />
+          </button>
+          {/*</MyTooltip>*/}
         </MyPopupTrigger>
 
         {renderSongDuration()}

@@ -26,8 +26,6 @@ export default function useSongCardEffect({ index, songItemRef }: Props) {
   // play song when active
   useEffect(() => {
     if (isActive) {
-      console.log("active", currentIndex, index);
-
       if (canPlay) {
         controlRef.current?.play();
       } else {
@@ -54,8 +52,6 @@ export default function useSongCardEffect({ index, songItemRef }: Props) {
   useEffect(() => {
     timerId.current = setTimeout(() => {
       if (isIntoView) {
-        console.log("is into view");
-
         setCurrentIndex(index);
       }
     }, 600);

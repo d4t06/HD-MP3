@@ -1,8 +1,13 @@
 import { useRef } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
-import { FullScreenPlayerSetting, GetSongLyric } from "@/components";
-import MyPopup, { MyPopupContent, MyPopupTrigger } from "@/components/MyPopup";
+import {
+  FullScreenPlayerSetting,
+  GetSongLyric,
+  MyPopup,
+  MyPopupContent,
+  MyPopupTrigger,
+} from "@/components";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
@@ -35,7 +40,8 @@ export default function MobileFullScreenPlayer() {
     container: "flex-grow flex flex-col relative overflow-hidden",
     control: "mt-auto",
 
-    bgImage: "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
+    bgImage:
+      "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
   };
 
   return (
@@ -80,16 +86,14 @@ export default function MobileFullScreenPlayer() {
               {mobileActiveTab === "Lyric" && (
                 <MyPopup appendOnPortal>
                   <MyPopupTrigger>
-                    <button className={` p-[6px] rounded-full ml-auto  bg-white/10`}>
+                    <button
+                      className={` p-[6px] rounded-full ml-auto  bg-white/10`}
+                    >
                       <Cog6ToothIcon className="w-6" />
                     </button>
                   </MyPopupTrigger>
 
-                  <MyPopupContent
-                    appendTo="portal"
-                    position="left-bottom"
-                    origin="top right"
-                  >
+                  <MyPopupContent position="left-bottom" origin="top right">
                     <FullScreenPlayerSetting />
                   </MyPopupContent>
                 </MyPopup>

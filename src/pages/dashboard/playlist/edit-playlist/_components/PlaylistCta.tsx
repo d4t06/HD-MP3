@@ -7,13 +7,12 @@ import {
   ModalContentWrapper,
   ModalRef,
 } from "@/components";
-import { Button } from "@/pages/dashboard/_components";
+import { Button, ButtonCtaFrame } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
-import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
@@ -97,13 +96,13 @@ export default function DashboardPlaylistCta() {
     <>
       <ButtonCtaFrame>
         <Button onClick={() => openModal("edit")} size={"clear"}>
-          <PencilIcon className="w-5" />
+          <PencilIcon />
 
           <span>Edit</span>
         </Button>
 
         <Button onClick={() => openModal("delete")} size={"clear"}>
-          <TrashIcon className="w-5" />
+          <TrashIcon />
 
           <span>Delete</span>
         </Button>
@@ -112,7 +111,7 @@ export default function DashboardPlaylistCta() {
           onClick={() => openModal("add-song-to-playlist")}
           size={"clear"}
         >
-          <PlusIcon className="w-5" />
+          <PlusIcon />
           <span>Add song</span>
         </Button>
       </ButtonCtaFrame>

@@ -4,7 +4,7 @@ import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
 import MyMusicPlaylistList from "./_components/PlaylistList";
-import MyMucisSingerList from "./_components/SingerList";
+import SingerList from "./_components/SingerList";
 
 const tabs = ["Favorite", "Uploaded"] as const;
 type TabType = (typeof tabs)[number];
@@ -17,7 +17,7 @@ export default function MyMusicPage() {
       <div className="space-y-5">
         <MyMusicPlaylistList />
 
-        <MyMucisSingerList />
+        <SingerList />
 
         <div>
           <Title title="Songs" />

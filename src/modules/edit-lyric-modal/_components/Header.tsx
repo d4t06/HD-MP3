@@ -22,7 +22,6 @@ export default function Header({ audioEle }: Props) {
         <AudioSetting
           positions="left"
           bg={theme.content_bg}
-          className="bg-transparent hover:bg-white/10"
           audioEle={audioEle}
           postLocalStorageKey="edit_lyric_tune"
         />

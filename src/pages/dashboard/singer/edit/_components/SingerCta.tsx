@@ -1,10 +1,13 @@
 import { ConfirmModal, ModalContentWrapper, ModalRef } from "@/components";
-import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import {
+  Button,
+  DashboardModal,
+  ButtonCtaFrame,
+} from "@/pages/dashboard/_components";
 import { useRef, useState } from "react";
 import AddSingerModal from "../../_components/AddSingerModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import useDashboardSingerAction from "../_hooks/useSingerAction";
-import ButtonCtaFrame from "@/pages/dashboard/_components/ui/buttonCtaFrame";
 
 export default function SingerCta() {
   const [modal, setModal] = useState<"edit" | "delete" | "more" | "">("");
@@ -36,7 +39,7 @@ export default function SingerCta() {
             size={"clear"}
           >
             <PencilIcon className="w-6" />
-            <div className="hidden md:block">Edit singer</div>
+            <span>Edit singer</span>
           </Button>
 
           <Button
@@ -45,7 +48,7 @@ export default function SingerCta() {
             size={"clear"}
           >
             <TrashIcon className="w-6" />
-            <div className="hidden md:block">Delete</div>
+            <span>Delete</span>
           </Button>
         </ButtonCtaFrame>
       </div>

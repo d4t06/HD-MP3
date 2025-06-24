@@ -6,13 +6,13 @@ import {
   MyPopup,
   MyPopupContent,
   MyPopupTrigger,
-  PopupWrapper,
+  MenuWrapper,
+  VerticalMenu,
 } from "@/components";
 import { useRef, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import PlaySingerSongBtn from "./PlayBtn";
 import { useSingerContext } from "./SingerContext";
-import { MenuList } from "@/components/ui/MenuWrapper";
 import { useThemeContext } from "@/stores";
 import HearBtn from "./HearBtn";
 
@@ -52,12 +52,12 @@ export default function SingerCta() {
               </button>
             </MyPopupTrigger>
 
-            <MyPopupContent appendTo="parent">
-              <PopupWrapper theme={theme} p={"clear"} className="py-2">
-                <MenuList className="w-[140px]">
+            <MyPopupContent>
+              <MenuWrapper className="w-[140px]">
+                <VerticalMenu>
                   <CopyLinkMenuItem />
-                </MenuList>
-              </PopupWrapper>
+                </VerticalMenu>
+              </MenuWrapper>
             </MyPopupContent>
           </MyPopup>
         </div>

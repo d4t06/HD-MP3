@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useSongsContext } from "../_stores/SongsContext";
 import SongCard from "@/modules/song-card";
 import useGetForYouSongs from "../_hooks/useForYouSongs";
+import { Center } from "@/components";
+import loadingGif from "@/assets/loading.gif";
 
 export default function SongList() {
   const { setCurrentIndex, songs } = useSongsContext();
@@ -25,7 +27,14 @@ export default function SongList() {
   const content = useMemo(() => {
     return songs.map((item, index) => {
       if (songs.length === index + 1) {
-        return <SongCard index={index} key={index} ref={lastElementRef} song={item} />;
+        return (
+          <SongCard
+            index={index}
+            key={index}
+            ref={lastElementRef}
+            song={item}
+          />
+        );
       }
       return <SongCard index={index} key={index} song={item} />;
     });
@@ -41,7 +50,11 @@ export default function SongList() {
     <div
       className={`h-full snap-y snap-mandatory overflow-auto no-scrollbar flex flex-col items-center`}
     >
-      {isFetching && <p>Loading</p>}
+      {isFetching && (
+        <Center>
+          <img src={loadingGif} className="w-[250px] max-w-[90vw]" />
+        </Center>
+      )}
 
       {content}
     </div>

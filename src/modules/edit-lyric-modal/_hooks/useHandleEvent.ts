@@ -14,6 +14,8 @@ export default function useHandleEvent() {
 			if (!eventRefs.playWhenSpaceRef.current) return;
 			e.preventDefault();
 
+			console.log('handle play pause')
+
 			playerRef.current?.handlePlayPause();
 		}
 

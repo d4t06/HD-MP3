@@ -43,7 +43,7 @@ export default function usePersistAuth() {
         //  get user liked playlists
         else
           await Promise.all([
-            getPlaylist(),
+            getPlaylist(user),
             myUpdateDoc({
               collectionName: "Users",
               id: user.email,

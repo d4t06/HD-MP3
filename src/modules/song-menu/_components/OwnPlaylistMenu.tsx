@@ -1,15 +1,13 @@
-import { ArrowDownTrayIcon, ArrowPathIcon, MinusIcon } from "@heroicons/react/24/outline";
+import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { SongMenuContent } from "..";
-import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
 import AddToQueueMenuItem from "./AddToQueueMenuItem";
+import RemoveSongFromPlaylistMenuItem from "./RemoveSongFromPlaylistMenuItem";
 
 type Props = {
   song: Song;
 };
 
 export default function OwnPlaylistMenu({ song }: Props) {
-  const { isFetching } = usePlaylistAction();
-
   return (
     <>
       <SongMenuContent song={song}>
@@ -17,16 +15,7 @@ export default function OwnPlaylistMenu({ song }: Props) {
 
         <AddToQueueMenuItem song={song} />
 
-        <button>
-          {!isFetching ? (
-            <>
-              <MinusIcon className="w-5" />
-              <span>Remove</span>
-            </>
-          ) : (
-            <ArrowPathIcon className="w-5 animate-spin" />
-          )}
-        </button>
+        <RemoveSongFromPlaylistMenuItem song={song} />
 
         <a target="_blank" href={song.song_url}>
           <ArrowDownTrayIcon className="w-5" />

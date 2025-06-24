@@ -1,10 +1,10 @@
-import { Modal, ModalRef, Button, ModalContentWrapper } from "@/components";
+import { Modal, ModalRef, ModalContentWrapper } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { useAuthContext } from "@/stores";
 import AddPlaylistModal from "@/modules/add-playlist-form";
 import { useAddPlaylist } from "@/hooks";
-// import { ContentWrapper } from "../../_components/ui/ModalWrapper";
+import { Button } from "../../_components";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();

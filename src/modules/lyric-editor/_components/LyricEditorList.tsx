@@ -18,17 +18,31 @@ function useLyricEditorList() {
   const { lyrics, isPreview } = useEditLyricContext();
 
   const activeLyricRef = useRef<ElementRef<"p">>(null);
+  const behavior = useRef<ScrollBehavior>("instant");
 
   useEffect(() => {
     if (!activeLyricRef.current || isPreview) return;
 
-    scrollIntoView(activeLyricRef.current, "instant");
+    scrollIntoView(activeLyricRef.current, behavior.current);
+
+    behavior.current = "instant";
+    if (behavior.current === "instant") behavior.current = "smooth";
   }, [lyrics.length, isPreview]);
+
+  useEffect(() => {
+    return () => {
+      behavior.current = "instant";
+    };
+  }, [isPreview]);
 
   return { activeLyricRef };
 }
 
-export default function LyricEditorList({ controlRef, audioEle, openEditModal }: Props) {
+export default function LyricEditorList({
+  controlRef,
+  audioEle,
+  openEditModal,
+}: Props) {
   const { theme } = useThemeContext();
   const { baseLyricArr, lyrics, setSelectLyricIndex, song, isPreview } =
     useEditLyricContext();
@@ -77,7 +91,9 @@ export default function LyricEditorList({ controlRef, audioEle, openEditModal }:
                 return (
                   <LyricItem
                     ref={status === "active" ? activeLyricRef : null}
-                    activeColor={theme.type === "light" ? theme.content_text : ""}
+                    activeColor={
+                      theme.type === "light" ? theme.content_text : ""
+                    }
                     className="pt-[38px] mr-[24px]"
                     key={index}
                     status={status}
@@ -112,7 +128,8 @@ export default function LyricEditorList({ controlRef, audioEle, openEditModal }:
                   status={status}
                   activeColor={theme.type === "light" ? theme.content_text : ""}
                   isLast={
-                    index === lyrics.length - 1 && index !== baseLyricArr.length - 1
+                    index === lyrics.length - 1 &&
+                    index !== baseLyricArr.length - 1
                   }
                   key={index}
                 />

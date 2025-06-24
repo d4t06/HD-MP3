@@ -1,3 +1,4 @@
+import { ButtonCtaFrame } from "@/pages/dashboard/_components";
 import EditSongBtn from "./EditSongBtn";
 import UploadImageBtn from "./UploadImageBtn";
 
@@ -8,10 +9,10 @@ type Props = {
 export default function EditSongButtons({ isEdit }: Props) {
 	return (
 		<>
-			<div className="-mt-2 -ml-2 flex flex-wrap w-full [&_button]:mt-2 [&_button]:ml-2">
+			<ButtonCtaFrame>
 				<UploadImageBtn />
 				{isEdit && <EditSongBtn />}
-			</div>
+			</ButtonCtaFrame>
 		</>
 	);
 }

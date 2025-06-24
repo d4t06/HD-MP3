@@ -2,7 +2,7 @@ import { SingerItem, Skeleton, Title } from "@/components";
 import { useEffect } from "react";
 import useGetMyMusicSinger from "../_hooks/useGetMyMusicSinger";
 
-export default function MyMucisSingerList() {
+export default function MyMusicSingerList() {
   const { isFetching, singers, getSinger } = useGetMyMusicSinger();
 
   const singerSkeleton = [...Array(3).keys()].map((i) => (

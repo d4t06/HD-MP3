@@ -14,11 +14,11 @@ import AddPlaylistModal from "@/modules/add-playlist-form";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
 
 type Props = {
-  song: Song;
+  songs: Song[];
   closeModal: () => void;
 };
 
-export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
+export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
   const { user } = useAuthContext();
   const { playlists } = useSongContext();
   const { theme } = useThemeContext();
@@ -35,7 +35,7 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
     : playlists.filter((p) => p.owner_email === user.email && !p.is_official);
 
   const handleAddSongToPlaylist = async (playlist: Playlist) => {
-    await addToPlaylist({ playlist, song });
+    await addToPlaylist({ playlist, songs });
 
     closeModal();
   };
@@ -44,7 +44,7 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
     playlist: PlaylistSchema,
     imageFile?: File,
   ) => {
-    playlist.song_ids = [song.id];
+    playlist.song_ids = songs.map((s) => s.id);
 
     await myMusicAddPlaylist(playlist, imageFile);
 
@@ -65,11 +65,8 @@ export default function AddSongToPlaylistModal({ song, closeModal }: Props) {
         >
           {ownPlaylist.length ? (
             ownPlaylist.map((playlist, index) => {
-              const isAdded = playlist.song_ids.includes(song.id);
-
               return (
                 <button
-                  disabled={isAdded}
                   key={index}
                   onClick={() => handleAddSongToPlaylist(playlist)}
                   className={`flex rounded-md p-2 ${theme.content_hover_bg} bg-white/10`}

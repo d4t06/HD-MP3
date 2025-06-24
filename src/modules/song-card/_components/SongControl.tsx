@@ -1,75 +1,76 @@
-import { useImperativeHandle, useRef } from "react";
-import useAudioControl from "../_hooks/useAudioControl";
+import { useImperativeHandle } from "react";
 import {
-	ExclamationCircleIcon,
-	PauseIcon,
-	PlayIcon,
+  ExclamationCircleIcon,
+  PauseIcon,
+  PlayIcon,
 } from "@heroicons/react/20/solid";
 import { usePlayerContext } from "./PlayerContext";
 import { ArrowPathIcon, MusicalNoteIcon } from "@heroicons/react/24/outline";
 import uesAudioEffect from "../_hooks/useAudioEffect";
 import SongItemCta from "./SongItemCta";
+import { useAudioControl } from "@/hooks";
 
 type Props = {
-	audioEle: HTMLAudioElement;
-	song: Song
+  audioEle: HTMLAudioElement;
+  song: Song;
 };
 
-export default function SongControl({ audioEle,song }: Props) {
-	const { status, controlRef } = usePlayerContext();
+export default function SongControl({ audioEle, song }: Props) {
+  const { status, controlRef, setStatus, statusRef } = usePlayerContext();
 
-	const progressLineRef = useRef<HTMLDivElement>(null);
+  uesAudioEffect({ audioEle });
 
-	uesAudioEffect({ audioEle });
-	const { pause, play, handlePlayPause } = useAudioControl({
-		audioEle,
-		progressLineRef,
-	});
+  const { pause, play, handlePlayPause, progressLineRef } = useAudioControl({
+    audioEle,
+    setStatusFromParent: setStatus,
+    statusFromParent: status,
+    statusRefFromParent: statusRef,
+  });
 
-	useImperativeHandle(controlRef, () => ({
-		pause,
-		play,
-		handlePlayPause,
-	}));
+  useImperativeHandle(controlRef, () => ({
+    pause,
+    play,
+    handlePlayPause,
+  }));
 
-	const renderIcon = () => {
-		switch (status) {
-			case "playing":
-				return <PauseIcon />;
-			case "paused":
-				return <PlayIcon />;
-			case "error":
-				return <ExclamationCircleIcon />;
-			case "loading":
-				return <ArrowPathIcon className="animate-spin" />;
+  const renderIcon = () => {
+    switch (status) {
+      case "playing":
+        return <PauseIcon />;
+      case "paused":
+        return <PlayIcon />;
+      case "error":
+        return <ExclamationCircleIcon />;
+      case "loading":
+        return <ArrowPathIcon className="animate-spin" />;
 
-			default:
-				return <MusicalNoteIcon />;
-		}
-	};
+      default:
+        return <MusicalNoteIcon />;
+    }
+  };
 
-	const classes = {
-		before: `before:content-[''] before:w-[100%] before:h-4 before:absolute before:bottom-full before:translate-y-[50%]`,
-	};
+  const classes = {
+    before: `before:content-[''] before:w-[100%] before:h-4 before:absolute before:bottom-full before:translate-y-[50%]`,
+  };
 
-	return (
-		<>
-			<div className="flex">
-				<button onClick={handlePlayPause} className="[&_svg]:w-7">
-					{renderIcon()}
-				</button>
+  return (
+    <>
+      <div className="flex">
+        <button onClick={handlePlayPause} className="[&_svg]:w-7">
+          {renderIcon()}
+        </button>
 
-				<div className="flex space-x-2 ml-auto">
-					<SongItemCta song={song} />
-				</div>
-			</div>
-			<div className="h-2 flex items-center mt-3">
-				<div
-					ref={progressLineRef}
-					style={{ backgroundColor: "rgba(255,255,255,.3)" }}
-					className={`relative h-1 rounded-full w-full ${classes.before} ${status === "idle" ? "hidden" : ""}`}
-				></div>
-			</div>
-		</>
-	);
+        <div className="flex space-x-2 ml-auto">
+          <SongItemCta song={song} />
+        </div>
+      </div>
+      <div className="h-2 flex items-center mt-3">
+        <div
+          ref={progressLineRef}
+          style={{ backgroundColor: "rgba(255,255,255,.3)" }}
+          className={`relative h-1 rounded-full w-full ${classes.before} ${status === "idle" ? "hidden" : ""}`}
+        ></div>
+      </div>
+    </>
+  );
 }

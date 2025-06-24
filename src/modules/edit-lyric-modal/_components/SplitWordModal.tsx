@@ -1,4 +1,4 @@
-import { Button, Title } from "@/components";
+import { Button, ModalContentWrapper, Title } from "@/components";
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import { useThemeContext } from "@/stores";
 import { splitStringByCutPositions } from "@/utils/lyricEditorHelper";
@@ -52,7 +52,7 @@ export default function SplitWordModal({ wordData, wordIndex, closeModal }: Prop
   };
 
   return (
-    <div className="w-[500px] max-w-[90vw]">
+    <ModalContentWrapper className="w-[500px]">
       <Title title="Split word " />
       <div className="flex justify-center space-x-5">
         {localSplitWords.map((w, i) => (
@@ -91,6 +91,6 @@ export default function SplitWordModal({ wordData, wordIndex, closeModal }: Prop
           OK
         </Button>
       </p>
-    </div>
+    </ModalContentWrapper>
   );
 }

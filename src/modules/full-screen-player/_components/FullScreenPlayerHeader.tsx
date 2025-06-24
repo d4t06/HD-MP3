@@ -94,7 +94,6 @@ export default function FullScreenPlayerHeader() {
 							</MyTooltip>
 						</MyPopupTrigger>
 						<MyPopupContent
-							appendTo="parent"
 							className="top-[calc(100%+8px)] right-0 z-[99]"
 							animationClassName="origin-top-right"
 						>

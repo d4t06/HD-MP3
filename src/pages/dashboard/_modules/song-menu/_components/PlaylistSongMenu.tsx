@@ -1,4 +1,3 @@
-import { usePopoverContext } from "@/components/MyPopup";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "@/pages/dashboard/playlist/edit-playlist/_hooks/usePlaylistAction";
@@ -14,7 +13,6 @@ type Props = {
 
 export default function PlaylistMenu({ song }: Props) {
   const { action, isFetching, playlist } = useDashboardPlaylistActions();
-  const { close } = usePopoverContext();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -24,8 +22,6 @@ export default function PlaylistMenu({ song }: Props) {
 
   const openModal = () => {
     modalRef.current?.open();
-
-    close();
   };
 
   const handlePlaylistAction = async (props: PlaylistActionProps) => {
