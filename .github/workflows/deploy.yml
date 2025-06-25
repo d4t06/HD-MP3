@@ -27,8 +27,8 @@ jobs:
           VITE_APIKEY: ${{ secrets.VITE_APIKEY }}
           VITE_API_ENDPOINT: ${{ secrets.VITE_API_ENDPOINT }}
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: dist
+          folder: dist
+          branch: gh-pages
