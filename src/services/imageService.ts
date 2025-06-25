@@ -6,10 +6,13 @@ export const getBlurHashEncode = async (blob: Blob) => {
   if (isDev) console.log(">>> api: get blurHash encode");
   const start = Date.now();
 
-  const res = await request.post("/api/image/encode", blob);
+  const res = await request.post<{ data: { encode: string } }>(
+    "/image/encode",
+    blob,
+  );
   let encode = "";
   if (res) {
-    encode = res.data.encode;
+    encode = res.data.data.encode;
   }
 
   const consuming = (Date.now() - start) / 1000;
@@ -23,7 +26,7 @@ export const optimizeImage = async (imageFile: File) => {
   const start = Date.now();
 
   if (isDev) console.log(">>> api: optimize image");
-  const res = await request.post("/api/image/optimize", fd, {
+  const res = await request.post("/image/optimize", fd, {
     responseType: "blob",
   });
 

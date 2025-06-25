@@ -7,13 +7,14 @@
    "scripts": {
       "start": "vite",
       "build": "tsc && vite build",
-      "surge": "npx surge --domain d4t06-test.surge.sh",
+      "surge": "npx surge --domain test-d4t06.surge.sh",
       "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
       "preview": "vite preview",
       "deploy": "gh-pages -d dist"
    },
    "dependencies": {
       "@heroicons/react": "^2.0.18",
+      "@imagekit/react": "^5.0.1",
       "@reduxjs/toolkit": "^2.6.0",
       "axios": "^1.6.0",
       "class-variance-authority": "^0.7.0",

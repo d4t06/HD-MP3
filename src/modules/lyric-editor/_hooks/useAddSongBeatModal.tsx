@@ -1,4 +1,8 @@
-import { deleteFile, myUpdateDoc, uploadFile } from "@/services/firebaseService";
+import {
+	deleteFile,
+	myUpdateDoc,
+	uploadFile,
+} from "@/services/firebaseService";
 import { ComponentProps, useState } from "react";
 import AddSongBeatModal from "../_components/AddSongBeatModal";
 import { useToastContext } from "@/stores";
@@ -19,15 +23,14 @@ export default function useAddSongBeatModal({
 
 			setIsFetching(true);
 
-			const { filePath, fileURL } = await uploadFile({
+			const { fileId, url } = await uploadFile({
 				file: songFile,
 				folder: "/songs/",
-				namePrefix: "beat",
 			});
 
 			const data: Partial<SongSchema> = {
-				beat_url: fileURL,
-				beat_file_path: filePath,
+				beat_url: url,
+				beat_file_id: fileId,
 			};
 
 			await myUpdateDoc({
@@ -36,9 +39,9 @@ export default function useAddSongBeatModal({
 				data: data,
 			});
 
-			if (song.beat_file_path)
+			if (song.beat_file_id)
 				deleteFile({
-					filePath: song.beat_file_path,
+					fileId: song.beat_file_id,
 				});
 
 			setSong(() => ({ ...song, ...data }));

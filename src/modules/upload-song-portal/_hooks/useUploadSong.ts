@@ -18,10 +18,12 @@ import { optimizeAndGetHashImage } from "@/services/appService";
 // object assign
 export default function useUploadSongs() {
   // stores
+  const { setErrorToast, setSuccessToast } = useToastContext();
   const { user, setUser } = useAuthContext();
   const { isDev } = useThemeContext();
 
-  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } =
+    useSongContext();
   const { setIsUploading, isUploading, setUploadingSongs, resetUploadContext } =
     useUploadContext();
 
@@ -29,9 +31,6 @@ export default function useUploadSongs() {
   const [errorMessage, setErrorMessage] = useState("");
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  // hooks
-  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const finishAndClear = () => {
     const inputEle = inputRef.current as HTMLInputElement;
@@ -120,8 +119,10 @@ export default function useUploadSongs() {
       //end loop create uploading songs
 
       // check limit
-      if (uploadedSongs.length + fileIndexesNeeded.length > 5)
-        return setErrorMessage("You have reach the upload limit");
+      if (uploadedSongs.length + fileIndexesNeeded.length > 20) {
+        setErrorMessage("You have reach the upload limit");
+        throw new Error("Limit");
+      }
 
       // case all song are duplicate
       if (!processSongsList.length) return;
@@ -140,10 +141,9 @@ export default function useUploadSongs() {
 
         const targetSongData = { ...processSongsList[index] };
 
-        const { filePath, fileURL } = await uploadFile({
+        const { fileId, url } = await uploadFile({
           file: fileLists[fileIndex],
           folder: "/songs/",
-          namePrefix: user.email,
           msg: ">>> api: upload song file",
         });
 
@@ -156,8 +156,8 @@ export default function useUploadSongs() {
         }
 
         Object.assign(targetSongData, {
-          song_file_path: filePath,
-          song_url: fileURL,
+          song_file_id: fileId,
+          song_url: url,
         });
 
         const docRef = await myAddDoc({
@@ -192,7 +192,11 @@ export default function useUploadSongs() {
         liked_song_ids: newUserLikedSongIds,
       };
 
-      await myUpdateDoc({ collectionName: "Users", data: newUserData, id: user.email });
+      await myUpdateDoc({
+        collectionName: "Users",
+        data: newUserData,
+        id: user.email,
+      });
 
       setUser({ ...user, ...newUserData });
 
@@ -201,7 +205,8 @@ export default function useUploadSongs() {
       setSuccessToast(`${processSongsList.length} songs uploaded`);
 
       const finish = Date.now();
-      if (isDev) console.log(">>> upload songs finished after", (finish - start) / 1000);
+      if (isDev)
+        console.log(">>> upload songs finished after", (finish - start) / 1000);
     } catch (error) {
       console.log({ message: error });
       setErrorToast(errorMessage);

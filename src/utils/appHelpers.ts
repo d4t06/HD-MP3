@@ -21,9 +21,14 @@ export const convertToEn = (name: string): string => {
 };
 
 export const request = axios.create({
-  baseURL:
-    import.meta.env.VITE_ENDPOINT || "https://express-zingmp3-awx6.vercel.app",
+  baseURL: import.meta.env.DEV
+    ? import.meta.env.VITE_API_ENDPOINT ||
+      "https://express-zingmp3-production.up.railway.app/api"
+    : "https://express-zingmp3-production.up.railway.app/api",
 });
+
+// "https://express-zingmp3.on.shiper.app/api"
+// "https://express-zingmp3-production.up.railway.app/api"
 
 export const getLocalStorage = () =>
   JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") as Record<string, any>;

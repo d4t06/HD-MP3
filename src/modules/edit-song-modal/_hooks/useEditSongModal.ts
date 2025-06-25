@@ -57,8 +57,8 @@ export default function useEditSongModal({ song, modalRef }: Props) {
 
         Object.assign(newSong, imageData);
 
-        if (song.image_file_path) {
-          await deleteFile({ filePath: song.image_file_path });
+        if (song.image_file_id) {
+          await deleteFile({ fileId: song.image_file_id });
         }
       }
 

@@ -22,8 +22,8 @@ export default function DeleteAlbumBtn() {
           collectionName: "Playlists",
           id: album.id,
         }),
-        album.image_file_path
-          ? deleteFile({ filePath: album.image_file_path })
+        album.image_file_id
+          ? deleteFile({ fileId: album.image_file_id })
           : () => {},
       ]);
 

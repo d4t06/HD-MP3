@@ -1,6 +1,6 @@
 import { Query, getDocs } from "firebase/firestore";
 import { nanoid } from "nanoid";
-import { uploadBlob } from "./firebaseService";
+import { uploadFile } from "./firebaseService";
 import { getBlurHashEncode, optimizeImage } from "./imageService";
 
 export async function implementSongQuery(
@@ -84,17 +84,21 @@ export const optimizeAndGetHashImage = async ({
 
   if (!IMAGE_BLOB) throw new Error("File not found");
 
-  const uploadProcess = uploadBlob({
-    blob: IMAGE_BLOB,
+  const myFile = new File([IMAGE_BLOB], "image.jpeg", {
+    type: IMAGE_BLOB.type,
+  });
+
+  const uploadProcess = uploadFile({
+    file: myFile,
     folder: "/images/",
   });
 
   const { encode } = await getBlurHashEncode(IMAGE_BLOB);
-  const { filePath, fileURL } = await uploadProcess;
+  const { fileId, url } = await uploadProcess;
 
   return {
-    image_file_path: filePath,
-    image_url: fileURL,
+    image_file_id: fileId,
+    image_url: url,
     blurhash_encode: encode,
   };
 };

@@ -1,16 +1,15 @@
 import { initializeApp } from "firebase/app";
 import { GoogleAuthProvider, getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { getStorage } from "firebase/storage";
 
 // Initialize Firebase
 const app = initializeApp({
   apiKey: import.meta.env.VITE_APIKEY,
-  appId: import.meta.env.VITE_APPID,
-  projectId: import.meta.env.VITE_PROJECTID,
-  storageBucket: import.meta.env.VITE_STORAGEBUCKET,
-  authDomain: import.meta.env.VITE_AUTHDOMAIN,
-  messagingSenderId: import.meta.env.VITE_MESSAGINGSENDERID,
+  storageBucket: "zingmp3-clone-61799.appspot.com",
+  appId: "1:938280289868:web:e36c48cfbd55e4a8de96e",
+  projectId: "zingmp3-clone-61799",
+  authDomain: "zingmp3-clone-61799.firebaseapp.com",
+  messagingSenderId: "938280289868",
 });
 
 // Initialize Firestore
@@ -20,7 +19,4 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-// Initialize Storage
-const stores = getStorage(app);
-
-export { db, stores, auth, provider };
+export { db, auth, provider };

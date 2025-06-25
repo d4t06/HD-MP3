@@ -1,5 +1,4 @@
-import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { db, stores } from "../firebase";
+import { auth, db } from "../firebase";
 import {
   addDoc,
   collection,
@@ -8,6 +7,8 @@ import {
   getDoc,
   updateDoc,
 } from "firebase/firestore";
+import { convertToEn, request } from "@/utils/appHelpers";
+import { upload } from "@imagekit/react";
 
 type collectionVariant =
   | "Songs"
@@ -19,7 +20,8 @@ type collectionVariant =
   | "Granted_Accounts"
   | "Comments";
 
-const isDev: boolean = import.meta.env.DEV;
+// const isDev = import.meta.env.DEV;
+const isDev = true;
 
 export const songsCollectionRef = collection(db, "Songs");
 export const playlistCollectionRef = collection(db, "Playlists");
@@ -85,92 +87,86 @@ export const myUpdateDoc = async ({
   return await updateDoc(doc(db, collectionName, id), data);
 };
 
+type ImageKitAuthKeys = {
+  signature: string;
+  expire: number;
+  token: string;
+  publicKey: string;
+};
+
 export const uploadFile = async ({
   file,
-  folder,
-  namePrefix,
   msg,
+  folder,
 }: {
   file: File;
   folder: "/images/" | "/songs/";
-  namePrefix: string;
   msg?: string;
 }) => {
   if (isDev) console.log(msg ?? ">>> api: upload file");
   const start = Date.now();
 
-  // define ref
-  const fileName =
-    namePrefix.replace("@gmail.com", "") +
-    "_" +
-    file.name.replaceAll(" ", "").toLowerCase();
-  const fileRef = ref(stores, `${folder + fileName}`);
+  const authToken = await auth.currentUser?.getIdToken(true);
 
-  const fileRes = await uploadBytes(fileRef, file);
-  const fileURL = await getDownloadURL(fileRes.ref);
+  const res = await request.get<{ data: ImageKitAuthKeys }>("/storage/auth", {
+    headers: { Authorization: `Bearer ${authToken}` },
+  });
+
+  const { expire, token, signature, publicKey } = res.data.data;
+
+  const { url, fileId } = await upload({
+    expire,
+    token,
+    signature,
+    publicKey,
+    file,
+    fileName: convertToEn(file.name) + "_" + Date.now(),
+    folder: `/hd-mp3${folder}`,
+  });
+
   const consuming = (Date.now() - start) / 1000;
   if (isDev) console.log(">>> api: upload file finished after", consuming);
 
-  return { fileURL, filePath: fileRes.metadata.fullPath };
-};
-
-export const uploadBlob = async ({
-  blob,
-  folder,
-  msg,
-}: {
-  blob: Blob;
-  folder: "/images/" | "/songs/";
-  msg?: string;
-}) => {
-  if (isDev) console.log(msg ?? ">>> api: Upload blob");
-  const start = Date.now();
-
-  // define ref
-  // try {
-  const fileName = Date.now() + ".jpg";
-  const fileRef = ref(stores, `${folder + fileName}`);
-  const fileRes = await uploadBytes(fileRef, blob);
-  const fileURL = await getDownloadURL(fileRes.ref);
-
-  const consuming = (Date.now() - start) / 1000;
-  if (isDev) console.log(">>> api: Upload blob finished after", consuming);
-
-  return { fileURL, filePath: fileRes.metadata.fullPath };
+  return { url, fileId };
 };
 
 export const deleteFile = async ({
-  filePath,
+  fileId,
   msg,
 }: {
-  filePath: string;
+  fileId: string;
   msg?: string;
 }) => {
-  try {
-    if (isDev) console.log(msg ?? ">>> api: delete file");
-    const fileRef = ref(stores, filePath);
-    await deleteObject(fileRef);
-  } catch (error) {
-    console.log({ error });
-  }
+  if (isDev) console.log(msg ?? ">>> api: delete file");
+
+  // const fileRef = ref(stores, fileId);
+
+  // await deleteObject(fileRef);
+
+  const token = await auth.currentUser?.getIdToken(true);
+  if (!token) return;
+
+  await request.delete<{ data: ImageKitAuthKeys }>(`/storage/${fileId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
 export const deleteSongFiles = async (song: Song) => {
   await deleteFile({
-    filePath: song.song_file_path,
+    fileId: song.song_file_id,
     msg: ">>> api: delete song file",
   });
 
-  if (song.beat_file_path) {
+  if (song.beat_file_id) {
     await deleteFile({
-      filePath: song.beat_file_path,
+      fileId: song.beat_file_id,
       msg: `>>> api: delete song's image file`,
     });
   }
 
-  if (song.image_file_path) {
+  if (song.image_file_id) {
     await deleteFile({
-      filePath: song.image_file_path,
+      fileId: song.image_file_id,
       msg: `>>> api: delete song's image file`,
     });
   }

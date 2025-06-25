@@ -18,11 +18,11 @@ type Song = {
   id: string;
   name: string;
   image_url: string;
-  image_file_path: string;
+  image_file_id: string;
   song_url: string;
-  song_file_path: string;
+  song_file_id: string;
   beat_url: string;
-  beat_file_path: string;
+  beat_file_id: string;
   owner_email: string;
   distributor: string;
   is_official: boolean;
@@ -53,7 +53,7 @@ type Playlist = {
   id: string;
   name: string;
   image_url: string;
-  image_file_path: string;
+  image_file_id: string;
   blurhash_encode: string;
   distributor: string;
   song_ids: string[];
@@ -143,7 +143,7 @@ type Singer = {
   id: string;
   name: string;
   image_url: string;
-  image_file_path: string;
+  image_file_id: string;
   blurhash_encode: string;
   description: string;
   like: number;

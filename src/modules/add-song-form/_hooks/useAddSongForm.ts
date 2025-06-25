@@ -142,9 +142,9 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
           blob: imageBlob,
         });
 
-        if (props.variant === "edit" && song?.image_file_path)
+        if (props.variant === "edit" && song?.image_file_id)
           deleteFile({
-            filePath: song.image_file_path,
+            fileId: song.image_file_id,
             msg: ">>> api: Delete image file",
           });
         Object.assign(newSongData, songImageData);
@@ -154,18 +154,17 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
         case "add": {
           if (!songFile) return;
 
-          const { filePath, fileURL } = await uploadFile({
+          const { fileId, url } = await uploadFile({
             file: songFile,
             folder: "/songs/",
             msg: ">>> api: upload song file",
-            namePrefix: "song",
           });
 
           const data: Partial<SongSchema> = {
             singers,
             genres,
-            song_url: fileURL,
-            song_file_path: filePath,
+            song_url: url,
+            song_file_id: fileId,
             ...getSongMap(),
           };
 

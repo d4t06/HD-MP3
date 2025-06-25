@@ -93,8 +93,8 @@ export default function usePlaylistAction() {
           if (imageFile) {
             const imageData = await optimizeAndGetHashImage({ imageFile });
 
-            if (playlist.image_file_path)
-              await deleteFile({ filePath: playlist.image_file_path });
+            if (playlist.image_file_id)
+              await deleteFile({ fileId: playlist.image_file_id });
 
             Object.assign(newPlaylist, imageData);
           }
@@ -152,8 +152,8 @@ export default function usePlaylistAction() {
 
           await Promise.all([
             batch.commit(),
-            playlist.image_file_path
-              ? deleteFile({ filePath: playlist.image_file_path })
+            playlist.image_file_id
+              ? deleteFile({ fileId: playlist.image_file_id })
               : () => {},
           ]);
 

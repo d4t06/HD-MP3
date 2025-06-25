@@ -113,8 +113,8 @@ export default function useDashboardPlaylistActions() {
 
           await Promise.all([
             batch.commit(),
-            playlist.image_file_path
-              ? deleteFile({ filePath: playlist.image_file_path })
+            playlist.image_file_id
+              ? deleteFile({ fileId: playlist.image_file_id })
               : () => {},
           ]);
 
@@ -162,8 +162,8 @@ export default function useDashboardPlaylistActions() {
               imageFile: props.imageFile,
             });
 
-            if (playlist.image_file_path)
-              await deleteFile({ filePath: playlist.image_file_path });
+            if (playlist.image_file_id)
+              await deleteFile({ fileId: playlist.image_file_id });
 
             Object.assign(newPlaylist, imageData);
           }
@@ -203,12 +203,12 @@ export default function useDashboardPlaylistActions() {
           const imageData: Partial<PlaylistSchema> = {
             image_url: props.song.image_url,
             blurhash_encode: props.song.blurhash_encode,
-            image_file_path: "",
+            image_file_id: "",
           };
 
           //  delete old image file
-          if (playlist.image_file_path)
-            await deleteFile({ filePath: playlist.image_file_path });
+          if (playlist.image_file_id)
+            await deleteFile({ fileId: playlist.image_file_id });
 
           await myUpdateDoc({
             collectionName: "Playlists",
