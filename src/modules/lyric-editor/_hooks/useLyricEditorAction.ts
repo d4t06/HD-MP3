@@ -1,7 +1,11 @@
 import { db } from "@/firebase";
 import { useToastContext } from "@/stores";
-import { setLocalStorage } from "@/utils/appHelpers";
-import { collection, doc, serverTimestamp, writeBatch } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  serverTimestamp,
+  writeBatch,
+} from "firebase/firestore";
 import { useEditLyricContext } from "../_components/EditLyricContext";
 import { initLyricObject } from "@/utils/factory";
 
@@ -35,7 +39,11 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     if (start.current === currentTime) return; // prevent double click
 
     const text = baseLyricArr[lyrics.length];
-    const lyric = initLyricObject({ start: start.current, end: currentTime, text });
+    const lyric = initLyricObject({
+      start: start.current,
+      end: currentTime,
+      text,
+    });
 
     start.current = currentTime; // update start for next lyric
 
@@ -44,7 +52,11 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     // adding the 2 last lyric
     if (baseLyricArr.length === lyrics.length + 2) {
       const text = baseLyricArr[baseLyricArr.length - 1];
-      const lyric = initLyricObject({ start: start.current, end: song.duration, text });
+      const lyric = initLyricObject({
+        start: start.current,
+        end: song.duration,
+        text,
+      });
 
       setLyrics((prev) => [...prev, lyric]);
     }
@@ -66,18 +78,6 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
     }
   };
 
-  const setTempLyric = () => {
-    if (!song) return;
-
-    const tempLyric: TempLyric = {
-      song_id: song.id,
-      base: baseLyric,
-      lyrics: JSON.stringify(lyrics),
-    };
-
-    setLocalStorage("temp-lyric", tempLyric);
-  };
-
   const submit = async () => {
     try {
       setIsFetching(true);
@@ -86,6 +86,9 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
+        duration: song.duration,
+        name: song.name + "-" + song.singers.map((s) => s.name).join(", "),
+        is_official: song.is_official,
         lyrics: JSON.stringify(lyrics),
         base: baseLyric,
       };
@@ -113,13 +116,9 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
 
       setSuccessToast("Edit lyric successful");
       setIsChanged(false);
-
-      setLocalStorage("temp-lyric", "");
     } catch (error: any) {
       console.log({ error });
       setErrorToast();
-
-      setTempLyric();
     } finally {
       setIsFetching(false);
     }

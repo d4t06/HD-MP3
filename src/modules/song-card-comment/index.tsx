@@ -26,7 +26,7 @@ export default function SongCardComment() {
       ></div>
 
       <div
-        className={`transition-[right] max-h-[80vh] max-w-[90vw] duration-[.3s] z-[99] semi-lg:z-[0] absolute rounded-xl  left-1/2 top-1/2 translate-y-[-50%] translate-x-[-50%] semi-lg:left-[unset] semi-lg:top-0 semi-lg:transform-none semi-lg:h-full semi-lg:min-h-[360px] w-[400px] xl:w-[480px] semi-lg:p-4 top-0 ${activeClass}`}
+        className={`transition-[right] max-h-[80vh] sm:max-h-[unset] max-w-[90vw] duration-[.3s] z-[99] semi-lg:z-[0] absolute rounded-xl  left-1/2 top-1/2 translate-y-[-50%] translate-x-[-50%] semi-lg:left-[unset] semi-lg:top-0 semi-lg:transform-none semi-lg:h-full semi-lg:min-h-[360px] w-[400px] xl:w-[480px] semi-lg:p-4 top-0 ${activeClass}`}
       >
         <div
           className={`semi-lg:border text-white h-[400px] bg-[#333] p-5 semi-lg:p-3 semi-lg:h-full w-full rounded-xl flex flex-col ${classes.border}`}

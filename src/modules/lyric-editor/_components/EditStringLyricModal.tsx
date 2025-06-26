@@ -9,7 +9,7 @@ type Props = {
 
 const LINE_HEIGHT = 40;
 
-export default function EditStringLyicModal({ closeModal }: Props) {
+export default function EditStringLyricModal({ closeModal }: Props) {
   const { theme } = useThemeContext();
 
   const { baseLyric, setBaseLyric, baseLyricArr, setIsChanged, lyrics } =
@@ -69,7 +69,9 @@ export default function EditStringLyicModal({ closeModal }: Props) {
     <ModalContentWrapper className="w-[500px]">
       <ModalHeader close={closeModal} title="Edit lyric" />
 
-      <div className={`relative h-[60vh] overflow-hidden rounded-md bg-${theme.alpha} `}>
+      <div
+        className={`relative h-[60vh] overflow-hidden rounded-md ${location.hash.includes("/dashboard") ? 'bg-black/10' : 'bg-white/10'} `}
+      >
         <div
           ref={backRef}
           className="whitespace-break-spaces text-transparent px-2 py-2 absolute leading-[40px] h-full overflow-auto top-0 left-0 w-full"

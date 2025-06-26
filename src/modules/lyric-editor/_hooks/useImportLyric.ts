@@ -14,7 +14,7 @@ export default function useImportLyric() {
 
     const acceptFileExtension = ["json", "srt"];
 
-    const fileExtension = file.name.split(".")[1];
+    const fileExtension = file.name.split(".")[file.name.split(".").length - 1];
     const reader = new FileReader();
 
     reader.onload = (_e) => {

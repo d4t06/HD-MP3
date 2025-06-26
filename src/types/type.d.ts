@@ -11,7 +11,7 @@ type User = {
   recent_playlist_ids: string[];
   liked_comment_ids: string[];
   role: string;
-  last_seen: Timestamp
+  last_seen: Timestamp;
 };
 
 type Song = {
@@ -74,6 +74,9 @@ type PlaylistSchema = Omit<Playlist, "id">;
 
 type SongLyric = {
   id: string;
+  name: string;
+  duration: number;
+  is_official: boolean;
   base: string;
   lyrics: Lyric[];
 };
@@ -92,13 +95,12 @@ type LyricTune = {
   start: number;
 };
 
-type SongLyricSchema = Omit<SongLyric, "lyrics" | "id"> & {
+type RawSongLyric = Omit<SongLyric, "lyrics"> & {
   lyrics: string;
 };
 
-type TempLyric = Omit<SongLyric, "lyrics" | "id"> & {
+type SongLyricSchema = Omit<SongLyric, "lyrics" | "id"> & {
   lyrics: string;
-  song_id: string;
 };
 
 type ThemeKeyType =

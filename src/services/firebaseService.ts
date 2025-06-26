@@ -114,13 +114,17 @@ export const uploadFile = async ({
 
   const { expire, token, signature, publicKey } = res.data.data;
 
+  const parts = file.name.split(".");
+  const extension = parts.pop();
+  const name = parts.join("_");
+
   const { url, fileId } = await upload({
     expire,
     token,
     signature,
     publicKey,
     file,
-    fileName: convertToEn(file.name) + "_" + Date.now(),
+    fileName: convertToEn(name) + "." + extension,
     folder: `/hd-mp3${folder}`,
   });
 

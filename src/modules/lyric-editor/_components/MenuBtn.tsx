@@ -17,6 +17,7 @@ import {
   ArrowDownTrayIcon,
   ArrowTopRightOnSquareIcon,
   Bars3Icon,
+  MagnifyingGlassIcon,
   MusicalNoteIcon,
   PencilIcon,
 } from "@heroicons/react/24/outline";
@@ -24,8 +25,9 @@ import EditStringLyicModal from "./EditStringLyricModal";
 import { useEditLyricContext } from "./EditLyricContext";
 import useImportLyric from "../_hooks/useImportLyric";
 import useExportLyric from "../_hooks/useExportLyric";
+import SearchLyricModal from "./SearchLyricModal";
 
-type Modal = "lyric" | "song-beat" | "export";
+type Modal = "lyric" | "song-beat" | "export" | "search";
 
 type Props = {
   pause: () => void;
@@ -33,7 +35,7 @@ type Props = {
 
 export default function MenuBtn({ pause }: Props) {
   const { theme } = useThemeContext();
-  const { song, lyrics } = useEditLyricContext();
+  const { song, lyrics, setLyrics } = useEditLyricContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -81,6 +83,9 @@ export default function MenuBtn({ pause }: Props) {
             </div>
           </ModalContentWrapper>
         );
+
+      case "search":
+        return <SearchLyricModal closeModal={closeModal} />;
     }
   };
 
@@ -104,12 +109,18 @@ export default function MenuBtn({ pause }: Props) {
         </MyPopupTrigger>
 
         <MyPopupContent origin="top right">
-          <MenuWrapper className="w-[140px]">
+          <MenuWrapper className="w-[160px]">
             <VerticalMenu>
               <button onClick={() => openModal("lyric")}>
                 <PencilIcon />
 
                 <span>Edit lyric</span>
+              </button>
+
+              <button onClick={() => openModal("search")}>
+                <MagnifyingGlassIcon />
+
+                <span>Search lyric</span>
               </button>
 
               <button onClick={() => openModal("song-beat")}>
@@ -127,7 +138,10 @@ export default function MenuBtn({ pause }: Props) {
                 </label>
               </button>
 
-              <button disabled={!lyrics.length} onClick={() => openModal("export")}>
+              <button
+                disabled={!lyrics.length}
+                onClick={() => openModal("export")}
+              >
                 <ArrowTopRightOnSquareIcon />
                 <span>Export</span>
               </button>
