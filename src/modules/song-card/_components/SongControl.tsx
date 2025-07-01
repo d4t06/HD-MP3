@@ -49,9 +49,7 @@ export default function SongControl({ audioEle, song }: Props) {
     }
   };
 
-  const classes = {
-    before: `before:content-[''] before:w-[100%] before:h-4 before:absolute before:bottom-full before:translate-y-[50%]`,
-  };
+
 
   return (
     <>
@@ -68,7 +66,7 @@ export default function SongControl({ audioEle, song }: Props) {
         <div
           ref={progressLineRef}
           style={{ backgroundColor: "rgba(255,255,255,.3)" }}
-          className={`relative h-1 rounded-full w-full ${classes.before} ${status === "idle" ? "hidden" : ""}`}
+          className={`relative h-1 rounded-full w-full progress-line ${status === "idle" ? "hidden" : ""}`}
         ></div>
       </div>
     </>

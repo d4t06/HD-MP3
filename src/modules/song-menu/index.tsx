@@ -21,7 +21,7 @@ import SongItem from "../song-item";
 function SongInfo({ song }: { song: Song }) {
   return (
     <div className="px-2 mb-3">
-      <div className={`p-3 bg-[#fff]/5 rounded-md flex`}>
+      <div className={`p-2 bg-white/10 rounded-md flex`}>
         <div className="w-[50px] h-[50px] rounded overflow-hidden flex-shrink-0">
           <Image
             src={song.image_url}
@@ -29,7 +29,7 @@ function SongInfo({ song }: { song: Song }) {
           />
         </div>
 
-        <div className="ml-1 text-sm">
+        <div className="ml-2 text-sm">
           <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
           <p className="opacity-70 line-clamp-1">
             {song.singers.map((s, i) => s.name + (!!i ? ", " : ""))}

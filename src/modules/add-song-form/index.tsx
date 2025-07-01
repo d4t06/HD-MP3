@@ -1,16 +1,15 @@
-import { ElementRef, useRef } from "react";
 import { CheckIcon } from "@heroicons/react/20/solid";
-import UploadSongBtn from "./_components/UploadSongBtn";
-import { Center, Image, Input, Modal, Title } from "@/components";
+import { Center, Image, Modal } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
 import useAddSongForm from "./_hooks/useAddSongForm";
 import FinishedModal from "./_components/FinishedModal";
-import { Button, Frame } from "@/pages/dashboard/_components";
-import { formatTime } from "@/utils/appHelpers";
-import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { Button, ButtonCtaFrame, Frame } from "@/pages/dashboard/_components";
 import ButtonGroup from "./_components/ButtonGroup";
+import UploadSongBtn from "./_components/UploadSongBtn";
+import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
+import { getClasses } from "@/utils/appHelpers";
 
 type Add = {
   variant: "add";
@@ -29,124 +28,79 @@ export default function AddSongForm(props: Props) {
   const {
     isFetching,
     handleSubmit,
-    updateSongData,
-    songData,
     isValidToSubmit,
-    songFile,
     modalRef,
     handleCloseModalAfterFinished,
   } = useAddSongForm(props);
 
-  const audioRef = useRef<ElementRef<"audio">>(null);
-
-  if (props.variant === "add" && !songFile)
-    return (
-      <Center>
-        <UploadSongBtn />
-      </Center>
-    );
+  const { songFile, songData, audioRef } = useAddSongContext();
 
   return (
-    <div className="w-full md:max-w-[800px] md:mx-auto">
-      <audio
-        ref={audioRef}
-        src={
-          props.variant === "add"
-            ? URL.createObjectURL(songFile as File)
-            : songData?.song_url || ""
-        }
-        className="hidden"
-      />
+    <>
+      {!!songFile && props.variant === "add" && (
+        <Center>
+          <ButtonCtaFrame>
+            <UploadSongBtn title="Upload song file" />
+          </ButtonCtaFrame>
+        </Center>
+      )}
 
-      {songData && (
-        <>
-          <div className="md:flex md:space-x-5">
-            <div className="flex flex-col items-center md:w-1/3 md:block space-y-2.5">
-              <div className="w-[200px] h-[200px] mx-auto bg-black/5 rounded-lg overflow-hidden">
-                <Image
-                  className="object-cover h-full"
-                  blurHashEncode={songData.blurhash_encode}
-                  src={songData.image_url}
-                />
-              </div>
+      <div
+        className={`w-full md:max-w-[800px] md:mx-auto ${songData?.name ? "" : "hidden"}`}
+      >
+        <audio ref={audioRef} className="hidden" />
 
-              {props.variant === "edit" && (
-                <div className="w-full">
-                  <Title title={songData.name} />
-
-                  <Frame className="[&>*]:text-sm ">
-                    <p>Duration: {formatTime(songData.duration)}</p>
-                    <p>Size: {songData.size} kb</p>
-                    <p className="mt-1 font-[500]">
-                      <span className="text-red-500 text-xl">&#10084;</span>{" "}
-                      {abbreviateNumber(songData.like)}
-                    </p>
-                  </Frame>
-                </div>
-              )}
-
-              <div className="w-full">
-                <ButtonGroup isEdit={props.variant === "edit"} />
-              </div>
+        <div
+          className={`md:flex md:space-x-5 ${getClasses(isFetching, "disable")}`}
+        >
+          <div className="flex flex-col items-center md:w-1/3 md:block space-y-2.5">
+            <div className="max-w-[200px] w-full aspect-[1/1] bg-black/5 rounded-lg overflow-hidden">
+              <Image
+                className="object-cover h-full"
+                blurHashEncode={songData?.blurhash_encode}
+                src={songData?.image_url}
+              />
             </div>
 
-            <div className="mt-5 md:mt-0 space-y-3 flex-grow">
-              {audioRef.current && (
-                <AudioPLayer
-                  variant={props.variant}
-                  // size={songData.size}
-                  // duration={songData.duration}
-                  audioEle={audioRef.current}
-                />
-              )}
-
-              {props.variant === "add" && (
-                <Frame>
-                  <span>
-                    Duration: {formatTime(songData.duration)} , Size:{" "}
-                    {songData.size}kb
-                  </span>
-                </Frame>
-              )}
-
-              {props.variant === "add" && (
-                <div className="">
-                  <Title title="Name" />
-                  <Input
-                    value={songData.name}
-                    onChange={(e) => updateSongData({ name: e.target.value })}
-                  />
-                </div>
-              )}
-
-              <SingerSelect />
-              <GenreSelect />
+            <div className="w-full">
+              <ButtonGroup isEdit={props.variant === "edit"} />
             </div>
           </div>
 
-          <p className="text-center mt-5">
-            <Button
-              onClick={handleSubmit}
-              disabled={!isValidToSubmit}
-              loading={isFetching}
-            >
-              <CheckIcon className="w-6" />
-              <span>Ok</span>
-            </Button>
-          </p>
+          <div className="mt-5 md:mt-0 space-y-5 flex-grow">
+            <Frame>
+              <div className="text-lg mb-3">{songData?.name}</div>
 
-          <Modal
-            persisted={props.variant === "add" ? true : false}
-            ref={modalRef}
-            variant="animation"
+              {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
+            </Frame>
+
+            <SingerSelect />
+            <GenreSelect />
+          </div>
+        </div>
+
+        <p className="text-center mt-5">
+          <Button
+            onClick={handleSubmit}
+            disabled={!isValidToSubmit}
+            loading={isFetching}
           >
-            <FinishedModal
-              variant={props.variant}
-              handleCloseModal={handleCloseModalAfterFinished}
-            />
-          </Modal>
-        </>
-      )}
-    </div>
+            <CheckIcon className="w-6" />
+            <span>Ok</span>
+          </Button>
+        </p>
+      </div>
+
+      <Modal
+        persisted={props.variant === "add" ? true : false}
+        ref={modalRef}
+        variant="animation"
+      >
+        <FinishedModal
+          variant={props.variant}
+          handleCloseModal={handleCloseModalAfterFinished}
+        />
+      </Modal>
+    </>
   );
 }

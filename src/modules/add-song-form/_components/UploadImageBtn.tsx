@@ -43,6 +43,7 @@ export default function UploadImageBtn() {
       {imageBlob && (
         <Button onClick={handleRemoveImage} size={"clear"}>
           <XMarkIcon />
+          <span>Discard image</span>
         </Button>
       )}
 

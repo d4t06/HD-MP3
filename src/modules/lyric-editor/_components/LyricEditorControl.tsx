@@ -152,7 +152,7 @@ function LyricEditorControl(
         <div
           ref={progressLineRef}
           style={{ backgroundColor: PROGRESS_LINE_BG }}
-          className={`h-1 rounded-full w-full`}
+          className={`h-1 rounded-full w-full progress-line`}
         ></div>
 
         <div className="text-sm w-[50px] text-right" ref={durationRef}>

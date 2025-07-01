@@ -11,6 +11,8 @@ function useAddSong() {
 
   const variant = useRef<"add" | "edit">("add");
 
+  const audioRef = useRef<HTMLAudioElement>(null);
+
   const selectSinger = (singer: Singer) => {
     const newSingers = [...singers];
     const index = newSingers.findIndex((s) => s.id === singer.id);
@@ -63,6 +65,7 @@ function useAddSong() {
     imageBlob,
     setImageBlob,
     resetAddSongContext,
+    audioRef,
   };
 }
 

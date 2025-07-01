@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { ModalRef, Title } from "@/components";
+import { ModalRef } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
@@ -21,23 +21,14 @@ export default function GenreSelect() {
 
   return (
     <>
-      <div className="">
-        <div className="flex space-x-2 items-center">
-          <Title title="Genre" />
-
-          <Button
-            onClick={() => modalRef.current?.open()}
-            className={`p-1.5`}
-            size={"clear"}
-          >
-            <PlusIcon className="w-6" />
-          </Button>
-        </div>
+      <div className="space-y-2">
+        <div className="text-lg">Genre</div>
 
         <Frame className="mt-1">
-          <div className="flex flex-wrap -ml-2 -mt-2">
-            {genres.length
-              ? genres.map((g, i) => (
+          {genres.length ? (
+            <>
+              <div className="flex flex-wrap -ml-2 -mt-2">
+                {genres.map((g, i) => (
                   <ItemRightCtaFrame key={i}>
                     <span>{g.name}</span>
 
@@ -47,9 +38,20 @@ export default function GenreSelect() {
                       </button>
                     </div>
                   </ItemRightCtaFrame>
-                ))
-              : "..."}
-          </div>
+                ))}
+
+                <Button
+                  onClick={() => modalRef.current?.open()}
+                  className="mt-2 ml-2 w-[37px] justify-center"
+                  size={"clear"}
+                >
+                  <PlusIcon className="w-5" />
+                </Button>
+              </div>
+            </>
+          ) : (
+            "..."
+          )}
         </Frame>
       </div>
 

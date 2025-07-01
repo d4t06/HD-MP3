@@ -8,7 +8,7 @@ import {
 import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { ClipboardDocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function EditSongBtn() {
@@ -17,8 +17,8 @@ export default function EditSongBtn() {
   const { songData, updateSongData, song } = useAddSongContext();
 
   const [localSongData, setLocalSongData] = useState<Partial<Song>>({
-    name: songData?.name,
-    like: songData?.like,
+    name: "",
+    like: 0,
   });
 
   const updateLocalSongData = (data: Partial<Song>) => {
@@ -29,6 +29,12 @@ export default function EditSongBtn() {
     updateSongData(localSongData);
     modalRef.current?.close();
   };
+
+  useEffect(() => {
+    if (songData) {
+      setLocalSongData({ name: songData.name, like: songData.like });
+    }
+  }, [songData]);
 
   return (
     <>

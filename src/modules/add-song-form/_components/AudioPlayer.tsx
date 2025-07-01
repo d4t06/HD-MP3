@@ -5,15 +5,13 @@ import {
   PauseIcon,
   PlayIcon,
 } from "@heroicons/react/24/outline";
-import UploadSongBtn from "./UploadSongBtn";
 import { Button } from "@/pages/dashboard/_components";
 
 type Props = {
   audioEle: HTMLAudioElement;
-  variant: "add" | "edit";
 };
 
-export default function AudioPLayer({ audioEle, variant }: Props) {
+export default function AudioPLayer({ audioEle }: Props) {
   const {
     status,
     handlePlayPause,
@@ -22,7 +20,7 @@ export default function AudioPLayer({ audioEle, variant }: Props) {
     durationRef,
   } = useAudioControl({
     audioEle,
-    baseColor: "rgba(0,0,0,.10)",
+    baseColor: "rgba(0,0,0,.15)",
     color: "#5a9e87",
   });
 
@@ -48,22 +46,20 @@ export default function AudioPLayer({ audioEle, variant }: Props) {
           {renderPlayPausedButton()}
         </Button>
 
-        {variant === "add" && <UploadSongBtn />}
-      </div>
+        <div className="flex flex-grow items-center ml-4">
+          <div className="text-sm w-[50px]" ref={currentTimeRef}>
+            00:00
+          </div>
 
-      <div className="flex items-center mt-3">
-        <div className="text-sm w-[50px]" ref={currentTimeRef}>
-          00:00
-        </div>
+          <div
+            ref={progressLineRef}
+            style={{ backgroundColor: "rgba(0,0,0,.15)" }}
+            className={`h-1 rounded-full w-full progress-line`}
+          ></div>
 
-        <div
-          ref={progressLineRef}
-          style={{ backgroundColor: "rgab(0,0,0,.15)" }}
-          className={`h-1 rounded-full w-full`}
-        ></div>
-
-        <div className="text-sm w-[50px] text-right" ref={durationRef}>
-          00:00
+          <div className="text-sm w-[50px] text-right" ref={durationRef}>
+            00:00
+          </div>
         </div>
       </div>
     </>

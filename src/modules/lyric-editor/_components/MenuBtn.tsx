@@ -35,7 +35,7 @@ type Props = {
 
 export default function MenuBtn({ pause }: Props) {
   const { theme } = useThemeContext();
-  const { song, lyrics, setLyrics } = useEditLyricContext();
+  const { song, lyrics } = useEditLyricContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -116,12 +116,13 @@ export default function MenuBtn({ pause }: Props) {
 
                 <span>Edit lyric</span>
               </button>
+              {!song?.is_official && (
+                <button onClick={() => openModal("search")}>
+                  <MagnifyingGlassIcon />
 
-              <button onClick={() => openModal("search")}>
-                <MagnifyingGlassIcon />
-
-                <span>Search lyric</span>
-              </button>
+                  <span>Search lyric</span>
+                </button>
+              )}
 
               <button onClick={() => openModal("song-beat")}>
                 <MusicalNoteIcon />

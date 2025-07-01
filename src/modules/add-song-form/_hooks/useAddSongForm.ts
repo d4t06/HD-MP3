@@ -13,7 +13,9 @@ import AddSongForm from "..";
 import { initSongObject } from "@/utils/factory";
 import { optimizeAndGetHashImage } from "@/services/appService";
 
-export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>) {
+export default function useAddSongForm(
+  props: ComponentProps<typeof AddSongForm>,
+) {
   const { setErrorToast, setSuccessToast } = useToastContext();
   const {
     songFile,
@@ -31,7 +33,7 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
     setSingers,
     imageBlob,
     setImageBlob,
-    ...rest
+    audioRef,
   } = useAddSongContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -50,8 +52,12 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
 
     if (lengthCheck) return true;
 
-    const isChaneSinger = !singers.find((s) => song.singers.find((_s) => _s.id == s.id));
-    const isChangeGenere = !genres.find((g) => song.genres.find((_g) => _g.id == g.id));
+    const isChaneSinger = !singers.find((s) =>
+      song.singers.find((_s) => _s.id == s.id),
+    );
+    const isChangeGenere = !genres.find((g) =>
+      song.genres.find((_g) => _g.id == g.id),
+    );
 
     return isChaneSinger || isChangeGenere;
   }, [songData, song, singers, genres]);
@@ -62,7 +68,9 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
     const isValidSongData =
       !!songData?.name && !!singers.length && !!genres.length && isChanged;
 
-    return props.variant === "add" ? isValidSongData : isValidSongData || isChangeImage;
+    return props.variant === "add"
+      ? isValidSongData
+      : isValidSongData || isChangeImage;
   }, [isChangeImage, isChanged, singers, genres, songData]);
 
   const initSongData = () => {
@@ -74,6 +82,8 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
           is_official: true,
         });
       case "edit":
+        if (audioRef.current) audioRef.current.src = props.song.song_url;
+
         // keep created_at, update updated_at field
         const { id, updated_at, ...rest } = props.song;
 
@@ -221,7 +231,9 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
   }, []);
 
   useEffect(() => {
-    if (!songFile) return;
+    if (!songFile || !audioRef.current) return;
+
+    audioRef.current.src = URL.createObjectURL(songFile);
 
     handleParseSongFile();
   }, [songFile]);
@@ -237,12 +249,7 @@ export default function useAddSongForm(props: ComponentProps<typeof AddSongForm>
     handleSubmit,
     isFetching,
     updateSongData,
-    songFile,
-    songData,
-    genres,
-    singers,
-    modalRef,
     handleCloseModalAfterFinished,
-    ...rest,
+    modalRef,
   };
 }

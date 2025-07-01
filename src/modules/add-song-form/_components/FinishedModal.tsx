@@ -1,6 +1,6 @@
 import { Image, ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
-import { ArrowLeftIcon, PlusIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   handleCloseModal: () => void;
@@ -24,7 +24,6 @@ export default function FinishedModal({ handleCloseModal, variant }: Props) {
         </Button>
 
         <Button onClick={handleCloseModal}>
-          <PlusIcon className="w-6" />
           <span>{variant === "add" ? "Add more" : "Ok"}</span>
         </Button>
       </div>
