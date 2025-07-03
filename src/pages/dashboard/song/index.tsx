@@ -40,7 +40,7 @@ export default function DashboardSong() {
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
-          <DashboardTable colList={["Name", "Singer", "Like"]}>
+          <DashboardTable colList={["Name", "Singers", "Generes", "Like"]}>
             {uploadedSongs.length ? (
               uploadedSongs.map((s, i) => (
                 <DashboardSongItem variant="songs" key={i} song={s} />

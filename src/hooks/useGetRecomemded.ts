@@ -2,28 +2,37 @@ import { implementSongQuery } from "@/services/appService";
 import { songsCollectionRef } from "@/services/firebaseService";
 import {
 	addSongToQueue,
-	selectSongQueue,
 	setIsFetchingRecommend,
 } from "@/stores/redux/songQueueSlice";
-import { documentId, limit, query, where } from "firebase/firestore";
-import { useDispatch, useSelector } from "react-redux";
+import { and, documentId, limit, or, query, where } from "firebase/firestore";
+import { useDispatch } from "react-redux";
 
 export default function useGetRecommend() {
 	const dispatch = useDispatch();
-	const {} = useSelector(selectSongQueue);
 
 	const getRecommend = async (song: Song) => {
 		try {
 			dispatch(setIsFetchingRecommend(true));
 
-			const wheres = song.genres.map(
-				(g) => where(`genre_map.${g.id}`, "==", true),
-				limit(20),
+			const genres = song.genres.map((g) =>
+				where(`genre_map.${g.id}`, "==", true),
+			);
+
+			const singers = song.singers.map((s) =>
+				where(`singer_map.${s.id}`, "==", true),
 			);
 
 			const exceptQuery = where(documentId(), "!=", song.id);
 
-			const queryGetSongs = query(songsCollectionRef, ...wheres, exceptQuery);
+			/**
+			Matches all songs that contain at least 1 singer_id of target song in singer_map is true 
+			Matches all songs that contain at least 1 genre_id of target song in genre_map is true 
+			and except the current song
+			**/
+
+			const searchQuery = and(exceptQuery, or(...genres, ...singers));
+
+			const queryGetSongs = query(songsCollectionRef, searchQuery, limit(100));
 
 			const result = await implementSongQuery(queryGetSongs);
 

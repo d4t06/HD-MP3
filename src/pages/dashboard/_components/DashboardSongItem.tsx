@@ -8,20 +8,40 @@ type Props = {
   variant: "songs" | "playlist";
 };
 
-export default function DashboardSongItem({ song, className = "", variant }: Props) {
+export default function DashboardSongItem({
+  song,
+  className = "",
+  variant,
+}: Props) {
   return (
     <tr className={className}>
       <td>
-        <Link to={`/dashboard/song/${song.id}/edit`} className="hover:underline">
+        <Link
+          to={`/dashboard/song/${song.id}/edit`}
+          className="hover:underline"
+        >
           {song.name}
         </Link>
       </td>
       <td>
         {song.singers.map((s, i) => (
-          <Link className="hover:underline" to={`/dashboard/singer/${s.id}`} key={i}>
+          <Link
+            className="hover:underline"
+            to={`/dashboard/singer/${s.id}`}
+            key={i}
+          >
             {!!i && ", "}
             {s.name}
           </Link>
+        ))}
+      </td>
+
+      <td>
+        {song.genres.map((genre, i) => (
+          <span key={i}>
+            {!!i && ", "}
+            {genre.name}
+          </span>
         ))}
       </td>
 
