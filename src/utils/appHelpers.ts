@@ -87,3 +87,17 @@ export const scrollIntoView = (
 export const getDisable = (v: boolean) => (v ? "disable" : "");
 export const getHidden = (v: boolean) => (v ? "hidden" : "");
 export const getClasses = (v: boolean, classes?: string) => (v ? classes : "");
+
+
+export const formatSize = (size: number) => {
+   const units = ["Kb", "Mb"];
+   let mb = 0;
+
+   if (size < 1024) return size.toFixed(0) + units[mb];
+   while (size > 1024) {
+      size -= 1024;
+      mb++;
+   }
+
+   return mb + "," + size.toFixed(1) + units[1];
+};

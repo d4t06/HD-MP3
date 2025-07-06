@@ -177,3 +177,34 @@ type UserComment = {
 };
 
 type UserCommentSchema = Omit<UserComment, "id" | "replies">;
+
+type ImageType = {
+  id?: number;
+  image_url: string;
+  file_id: string;
+  name: string;
+  size: number;
+  uploaded_at: Timestamp;
+};
+
+type Playlist_Frequency = {
+  id: string;
+  playlist_id: string;
+  play: string;
+  created_at: Timestamp;
+};
+
+type Song_Frequency = {
+  id: string;
+  song_id: string;
+  play: string;
+  created_at: Timestamp;
+};
+
+type Page_Config = {
+  section: {
+    name: string;
+    image_url: string;
+    playlist_ids: string;
+  };
+};
