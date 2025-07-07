@@ -17,12 +17,14 @@ export default function SingerSongList() {
         {isFetching ? (
           <Skeleton className="h-[100px]" />
         ) : (
-          <DashboardTable colList={["Name", "Singer"]}>
+          <DashboardTable colList={["Name", "Singers", "Genres"]}>
             {songs.length ? (
               songs.map((song, i) => (
                 <tr className="hover:bg-black/10" key={i}>
                   <td>
-                    <Link to={`/dashboard/song/${song.id}/edit`}>{song.name}</Link>
+                    <Link to={`/dashboard/song/${song.id}/edit`}>
+                      {song.name}
+                    </Link>
                   </td>
 
                   <td>
@@ -34,6 +36,15 @@ export default function SingerSongList() {
                       >
                         {(i ? ", " : "") + s.name}
                       </Link>
+                    ))}
+                  </td>
+
+                  <td>
+                    {song.genres.map((genre, i) => (
+                      <span key={i}>
+                        {!!i && ", "}
+                        {genre.name}
+                      </span>
                     ))}
                   </td>
                 </tr>
