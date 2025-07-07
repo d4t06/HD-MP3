@@ -1,13 +1,17 @@
 import { useGetComment } from "@/hooks";
+import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-export default function useSongCartComment() {
-  const { currentSong, isOpenComment } = useSongsContext();
+export default function useGetSongCardComment() {
+  const { currentSong } = useSongsContext();
 
-  const [comments, setComments] = useState<UserComment[]>([]);
+  const { setComments, isOpenComment, setIsFetching, shouldFetchComment } =
+    useCommentContext();
 
-  const { fetchComment, isFetching } = useGetComment();
+  const { fetchComment } = useGetComment({
+    setIsFetchingFromParent: setIsFetching,
+  });
 
   const handleGetComment = async () => {
     const result = await fetchComment({
@@ -21,18 +25,16 @@ export default function useSongCartComment() {
   useEffect(() => {
     if (!isOpenComment || !currentSong) return;
 
-    handleGetComment();
-
-    return () => {
-      if (isOpenComment) {
-        setComments([]);
-      }
-    };
+    if (shouldFetchComment.current) {
+      shouldFetchComment.current = false;
+      handleGetComment();
+    }
   }, [currentSong, isOpenComment]);
 
-  return {
-    comments,
-    setComments,
-    isFetching,
-  };
+  useEffect(() => {
+    return () => {
+      shouldFetchComment.current = true;
+      setComments([]);
+    };
+  }, [currentSong]);
 }

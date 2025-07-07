@@ -9,23 +9,19 @@ export default function useGetPlaylistComment() {
 		useCommentContext();
 	const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
-	const { fetchComment } = useGetComment();
+	const { fetchComment } = useGetComment({
+		setIsFetchingFromParent: setIsFetching,
+	});
 
 	const handleGetPlaylistComment = async () => {
-		try {
-			if (!currentPlaylist) return;
+		if (!currentPlaylist) return;
 
-			const comments = await fetchComment({
-				target_id: currentPlaylist.id,
-			});
+		const comments = await fetchComment({
+			target_id: currentPlaylist.id,
+		});
 
-			if (comments) setComments(comments);
-			else setComments([]);
-		} catch (error) {
-			console.log({ error });
-		} finally {
-			setIsFetching(false);
-		}
+		if (comments) setComments(comments);
+		else setComments([]);
 	};
 
 	useEffect(() => {

@@ -9,8 +9,8 @@ import SongControl from "./_components/SongControl";
 import PlayerProvider, { usePlayerContext } from "./_components/PlayerContext";
 import { Blurhash } from "react-blurhash";
 import SongLyric from "./_components/SongLyric";
-import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 import useSongCardEffect from "./_hooks/useSongCardEffect";
+import { useCommentContext } from "../comment/components/CommentContext";
 
 type Props = {
   song: Song;
@@ -81,7 +81,7 @@ function Content({
 }
 
 function SongCard(props: Props, ref: Ref<HTMLDivElement>) {
-  const { isOpenComment } = useSongsContext();
+  const { isOpenComment } = useCommentContext();
 
   const innerRef = useRef<HTMLDivElement | null>(null);
 

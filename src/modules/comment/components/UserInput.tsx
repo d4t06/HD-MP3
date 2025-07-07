@@ -1,12 +1,13 @@
-import { Button, Image, Input } from "@/components";
+import { Image } from "@/components";
 import useCommentAction from "../hooks/useCommentAction";
-import { useRef } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useCommentContext } from "./CommentContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { useAuthContext, useThemeContext } from "@/stores";
-import { PlayIcon } from "@heroicons/react/20/solid";
+import { PlayIcon, ArrowPathIcon } from "@heroicons/react/20/solid";
+import { inputClasses } from "@/components/ui/Input";
 
 type Props = {
   onSubmited?: () => void;
@@ -27,20 +28,17 @@ export default function UserInput({
   ...props
 }: (SendComment | SendReply) & Props) {
   const { user } = useAuthContext();
-  const { themeClass, theme } = useThemeContext();
+  const { theme } = useThemeContext();
 
   const { target } = useCommentContext();
   const { currentSongData } = useSelector(selectSongQueue);
   const { currentPlaylist } = useSelector(selectCurrentPlaylist);
 
+  const [value, setValue] = useState("");
+
   const { action, isFetching } = useCommentAction();
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const handleAddComment = async () => {
-    if (!inputRef.current) return;
-
-    const value = inputRef.current.value;
     if (!value || !value.trim()) return;
 
     if (
@@ -73,8 +71,7 @@ export default function UserInput({
         break;
     }
 
-    inputRef.current.value = "";
-
+    setValue("");
     onSubmited && onSubmited();
   };
 
@@ -90,20 +87,26 @@ export default function UserInput({
       </div>
 
       <div
-        className={`rounded-lg ml-2 flex-grow  flex items-center ${themeClass("bg-black/10 text-black", "bg-white/10")}`}
+        className={`rounded-lg ml-2 flex-grow  p-1.5 flex items-end bg-white/10`}
       >
-        <Input
-          className="bg-transparent border-none text-white"
+        <textarea
           placeholder={inputPlaceholder}
-          ref={inputRef}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          rows={(value.match(/\n/g) || []).length + 1}
+          className={`${inputClasses} resize-none max-h-[30vh]  w-full bg-transparent border-none text-white`}
         />
-        <Button
+
+        <button
           onClick={handleAddComment}
-          className={theme.content_text}
-          isLoading={isFetching}
+          className={`${theme.content_text} p-1.5 hover:bg-white/10 rounded-full`}
         >
-          <PlayIcon className="w-6" />
-        </Button>
+          {isFetching ? (
+            <ArrowPathIcon className="w-6 animate-spin" />
+          ) : (
+            <PlayIcon className="w-6" />
+          )}
+        </button>
       </div>
     </div>
   );

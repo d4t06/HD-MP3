@@ -1,14 +1,14 @@
-import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 import { ChatBubbleBottomCenterIcon } from "@heroicons/react/20/solid";
 import HeartBtn from "./HeartBtn";
 import { useAuthContext } from "@/stores";
+import { useCommentContext } from "@/modules/comment/components/CommentContext";
 
 type Props = {
   song: Song;
 };
 
 export default function SongItemCta({ song }: Props) {
-  const { setIsOpenComment } = useSongsContext();
+  const { setIsOpenComment } = useCommentContext();
 
   const { user } = useAuthContext();
 

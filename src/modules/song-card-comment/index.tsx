@@ -1,15 +1,17 @@
-import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 import CommentList from "../comment";
-import useGetComment from "./_hooks/useGetComment";
+import useGetSongCardComment from "./_hooks/useGetComment";
 import { Button } from "@/components";
 import { useThemeContext } from "@/stores";
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import { useCommentContext } from "../comment/components/CommentContext";
 
 export default function SongCardComment() {
-  const { isOpenComment, setIsOpenComment } = useSongsContext();
+  const { isOpenComment, setIsOpenComment } = useCommentContext();
   const { themeClass } = useThemeContext();
 
-  const { comments, isFetching } = useGetComment();
+  useGetSongCardComment();
+
+  const { comments, isFetching } = useCommentContext();
 
   const activeClass = isOpenComment
     ? "semi-lg:right-0 block"

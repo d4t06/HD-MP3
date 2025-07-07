@@ -10,15 +10,12 @@ import {
 function useSong() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(999);
-  const [isOpenComment, setIsOpenComment] = useState(false);
 
   const firstTimeSongLoaded = useRef(true);
 
   const currentSong = useMemo(() => songs[currentIndex], [songs, currentIndex]);
 
   return {
-    isOpenComment,
-    setIsOpenComment,
     currentSong,
     songs,
     setSongs,
@@ -32,7 +29,11 @@ type ContextType = ReturnType<typeof useSong>;
 
 const context = createContext<ContextType | null>(null);
 
-export default function SongsContextProvider({ children }: { children: ReactNode }) {
+export default function SongsContextProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return <context.Provider value={useSong()}>{children}</context.Provider>;
 }
 

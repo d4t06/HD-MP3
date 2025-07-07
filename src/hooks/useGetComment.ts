@@ -3,10 +3,18 @@ import { commentCollectionRef } from "@/services/firebaseService";
 import { useState } from "react";
 import { useToastContext } from "@/stores";
 
-export default function useGetComment() {
+type Props = {
+  setIsFetchingFromParent: (v: boolean) => void;
+};
+
+export default function useGetComment(props?: Props) {
+  const { setIsFetchingFromParent } = props || {};
+
   const [isFetching, setIsFetching] = useState(true);
 
   const { setErrorToast } = useToastContext();
+
+  const _setIsFetching = setIsFetchingFromParent || setIsFetching;
 
   const fetchComment = async ({
     target_id,
@@ -16,7 +24,7 @@ export default function useGetComment() {
     comment_id?: string;
   }) => {
     try {
-      setIsFetching(true);
+      _setIsFetching(true);
 
       if (import.meta.env.DEV) console.log("get comment");
 
@@ -55,7 +63,7 @@ export default function useGetComment() {
     } catch (error) {
       setErrorToast();
     } finally {
-      setIsFetching(false);
+      _setIsFetching(false);
     }
   };
 

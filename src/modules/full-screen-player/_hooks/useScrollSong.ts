@@ -1,6 +1,9 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
+import {
+  selectSongQueue,
+  setCurrentQueueId,
+} from "@/stores/redux/songQueueSlice";
 import { usePlayerContext } from "@/stores";
 import {
   PlayStatus,
@@ -14,7 +17,7 @@ const handleTouchPadScroll = () => {
 export function scrollToHorizontalCenter(
   songItemEle: HTMLElement,
   containerEle: HTMLElement,
-  idle: boolean = false
+  idle: boolean = false,
 ) {
   const windowWidth = window.innerWidth;
 
@@ -35,7 +38,11 @@ export function scrollToHorizontalCenter(
   }
 
   // case element not in view
-  if (idle || Math.abs(lefDiff) > windowWidth || Math.abs(rightDiff) > windowWidth) {
+  if (
+    idle ||
+    Math.abs(lefDiff) > windowWidth ||
+    Math.abs(rightDiff) > windowWidth
+  ) {
     containerEle.style.scrollBehavior = "auto";
   } else {
     containerEle.style.scrollBehavior = "smooth";
@@ -102,7 +109,10 @@ export default function useScrollSong() {
       centeredEle.classList.remove("centered");
       newCenteredEle.classList.add("centered");
 
-      scrollToHorizontalCenter(newCenteredEle as HTMLElement, containerRef.current);
+      scrollToHorizontalCenter(
+        newCenteredEle as HTMLElement,
+        containerRef.current,
+      );
     }
   };
 
@@ -132,7 +142,6 @@ export default function useScrollSong() {
     }
 
     if (e.key === "Enter") {
-      e.preventDefault();
       handleActiveSong();
     }
   };
@@ -150,7 +159,9 @@ export default function useScrollSong() {
 
     return () => {
       document.removeEventListener("keydown", handleKeyboardEvent);
-      document.querySelector(".song-thumb.centered")?.classList.remove("centered");
+      document
+        .querySelector(".song-thumb.centered")
+        ?.classList.remove("centered");
     };
   }, [currentQueueId, isOpenFullScreen]);
 
@@ -172,4 +183,3 @@ export default function useScrollSong() {
 
   return { activeSongRef, containerRef };
 }
-
