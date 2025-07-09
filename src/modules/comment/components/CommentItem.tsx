@@ -64,7 +64,7 @@ export default function CommentItem({
 									>
 										{comment.user_name}
 									</Link>
-									<div className="mt-1 break-all">{comment.text}</div>
+									<div className="text-base mt-1 break-all whitespace-break-spaces">{comment.text}</div>
 								</div>
 
 								<div className="flex space-x-2 mt-1">
