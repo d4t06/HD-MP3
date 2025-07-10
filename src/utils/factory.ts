@@ -133,3 +133,7 @@ export const initCommentObject = ({
 
   return singer;
 };
+
+export const initSongDailyObject = ({}) => {
+  
+} 

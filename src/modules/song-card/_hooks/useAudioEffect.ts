@@ -15,6 +15,10 @@ export default function uesAudioEffect({ audioEle }: Props) {
   };
 
   const handleLoaded = () => {
+
+
+    console.log("loaded")
+
     // when the page first load
     if (firstTimeSongLoaded.current) {
       firstTimeSongLoaded.current = false;

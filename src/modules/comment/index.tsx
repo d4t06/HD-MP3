@@ -1,6 +1,4 @@
-import { useAuthContext } from "@/stores";
 import CommentItem from "./components/CommentItem";
-import UserInput from "./components/UserInput";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { ComponentProps } from "react";
 import { Center } from "@/components";
@@ -18,7 +16,6 @@ export default function CommentList({
   className = "",
   variant,
 }: Props) {
-  const { user } = useAuthContext();
 
   return (
     <>
@@ -49,12 +46,6 @@ export default function CommentList({
           </>
         )}
       </div>
-
-      {user && (
-        <div className="pt-1.5">
-          <UserInput variant="comment" />
-        </div>
-      )}
     </>
   );
 }

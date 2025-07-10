@@ -69,16 +69,20 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     }
   };
 
-  const handleLoaded = () => {
-    setStatus("paused");
-  };
+  // const handleLoaded = () => {
+
+
+  //   console.log('loaded')
+
+  //   setStatus("paused");
+  // };
 
   // add events listener
   useEffect(() => {
     if (!audioEle) return;
 
     audioEle.addEventListener("pause", handlePaused);
-    audioEle.addEventListener("loadeddata", handleLoaded);
+    // audioEle.addEventListener("loadeddata", handleLoaded);
     audioEle.addEventListener("playing", handlePlaying);
 
     if (progressLineRef?.current) {
@@ -87,7 +91,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     }
 
     return () => {
-      audioEle.removeEventListener("loadeddata", handleLoaded);
+      // audioEle.removeEventListener("loadeddata", handleLoaded);
 
       audioEle.removeEventListener("pause", handlePaused);
       audioEle.removeEventListener("playing", handlePlaying);

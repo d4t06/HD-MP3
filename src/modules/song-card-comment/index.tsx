@@ -1,13 +1,19 @@
 import CommentList from "../comment";
 import useGetSongCardComment from "./_hooks/useGetComment";
 import { Button } from "@/components";
-import { useThemeContext } from "@/stores";
+import { useAuthContext, useThemeContext } from "@/stores";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useCommentContext } from "../comment/components/CommentContext";
+import UserInput from "../comment/components/UserInput";
+import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 
 export default function SongCardComment() {
-  const { isOpenComment, setIsOpenComment } = useCommentContext();
+
+  const { user } = useAuthContext()
   const { themeClass } = useThemeContext();
+
+  const { currentSong } = useSongsContext()
+  const { isOpenComment, setIsOpenComment } = useCommentContext();
 
   useGetSongCardComment();
 
@@ -51,6 +57,8 @@ export default function SongCardComment() {
             comments={comments}
             className="pr-2"
           />
+
+          {user && currentSong && <UserInput variant="comment" targetId={currentSong.id} />}
         </div>
       </div>
     </>

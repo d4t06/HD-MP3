@@ -130,7 +130,7 @@ export default function CommentItem({
 							<div className="mt-2">
 								<UserInput
 									onSubmited={() => setIsReplying(false)}
-									comment_index={index}
+									commentIndex={index}
 									variant="reply"
 									comment={comment}
 								/>
