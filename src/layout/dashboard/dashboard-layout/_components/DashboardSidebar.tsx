@@ -1,10 +1,12 @@
 import {
+  ArrowUpRightIcon,
   ComputerDesktopIcon,
   FilmIcon,
   HomeIcon,
   MusicalNoteIcon,
   NewspaperIcon,
   RectangleGroupIcon,
+  SquaresPlusIcon,
   UserIcon,
 } from "@heroicons/react/24/outline";
 import { useState } from "react";
@@ -18,6 +20,16 @@ export const routeList = [
     path: "/dashboard",
     title: "Dashboard",
     icon: <ComputerDesktopIcon className="w-5 flex-shrink-0" />,
+  },
+  {
+    path: "/dashboard/homepage",
+    title: "Home Page",
+    icon: <HomeIcon className="w-5 flex-shrink-0" />,
+  },
+  {
+    path: "/dashboard/hubpage",
+    title: "Hub Page",
+    icon: <SquaresPlusIcon className="w-5 flex-shrink-0" />,
   },
   {
     path: "/dashboard/song",
@@ -93,7 +105,7 @@ export default function DashBoardSidebar() {
                ${pathName === "/dashboard" ? classes.itemActive : ""}
                `}
         >
-          <HomeIcon className={classes.icon} />
+          <ArrowUpRightIcon className={classes.icon} />
           {isOpen && <span>Home</span>}
         </Link>
       </div>

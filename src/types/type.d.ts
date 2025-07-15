@@ -201,10 +201,26 @@ type Song_Frequency = {
   created_at: Timestamp;
 };
 
-type Page_Config = {
-  section: {
-    name: string;
-    image_url: string;
+type MainCategoryPage_Config = {
+  banner: { image_url: string, link: string }[]
+  category_sections: {
+    name: string
+    category_ids: string[];
+    show: boolean;
+  }[];
+  playlist_sections: {
+    name: string
+    playlsit_ids: string[];
+    show: boolean;
+  }[];
+};
+
+
+type CategoryPage_Config = {
+  name: string;
+  banner_image_url: string;
+  sections: {
+    name: string
     playlist_ids: string;
-  };
+  }[];
 };

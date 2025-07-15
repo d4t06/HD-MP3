@@ -8,6 +8,7 @@ import {
   EditSongLyric,
   SingerPage,
   UserPage,
+  CategoryPage
 } from "../pages";
 import {
   DashboardAddSongPage,
@@ -21,15 +22,18 @@ import {
   DashboardSongPage,
   DashboardEditSingerPage,
   DashboardAlbumPage,
+  HubPageConfig,
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
 import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
 import ForYouPage from "@/pages/for-you";
+import HomePageConfig from "@/pages/dashboard/homepage-config";
 
 const pubicRouteMap = {
   home: "/",
   discorver: "/discover",
+  catogory: "/category",
   search: "/search",
   playlist: "/playlist/:id",
   login: "/login",
@@ -56,6 +60,9 @@ const privateRouteMap = {
   editSinger: "/dashboard/singer/:id",
   album: "/dashboard/album",
   editAlbum: "/dashboard/album/:id",
+  homepage: "/dashboard/homepage",
+  hubpage: "/dashboard/hubpage",
+  hubpageDetail: "/dashboard/hubpage/:id",
 };
 
 export type PlaylistParamsType = {
@@ -69,6 +76,7 @@ const publicRoutes = [
   { path: pubicRouteMap.unauthorized, component: Unauthorized, layout: "" },
   { path: pubicRouteMap.singer, component: SingerPage, layout: "" },
   { path: pubicRouteMap.user, component: UserPage, layout: "" },
+  { path: pubicRouteMap.catogory, component: CategoryPage, layout: "" },
 ];
 
 const protectedRoutes = [
@@ -137,6 +145,21 @@ const privateRoutes = [
   {
     path: privateRouteMap.songLyric,
     component: DashboardSongLyricPage,
+    layout: "",
+  },
+  {
+    path: privateRouteMap.songLyric,
+    component: DashboardSongLyricPage,
+    layout: "",
+  },
+  {
+    path: privateRouteMap.homepage,
+    component: HomePageConfig,
+    layout: "",
+  },
+  {
+    path: privateRouteMap.hubpage,
+    component: HubPageConfig,
     layout: "",
   },
 ];

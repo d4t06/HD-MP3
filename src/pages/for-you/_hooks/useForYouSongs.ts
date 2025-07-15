@@ -1,33 +1,63 @@
-import { implementSongQuery } from "@/services/appService";
 import { songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { limit, orderBy, query, where } from "firebase/firestore";
+import { getDocs, limit, orderBy, query, QueryDocumentSnapshot, startAfter, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useSongsContext } from "../_stores/SongsContext";
+import { nanoid } from "nanoid";
 
 export default function useGetForYouSongs() {
   const { setSongs } = useSongsContext();
   const { setErrorToast } = useToastContext();
 
+
+
   const [isFetching, setIsFetching] = useState(true);
 
   const ranEffect = useRef(false);
+  const lastVisible = useRef<QueryDocumentSnapshot>()
 
   const getSong = async () => {
     try {
       setIsFetching(true);
 
-      const getSongQuery = query(
+      const getSongQuery = !!lastVisible.current ? query(
         songsCollectionRef,
         where("is_official", "==", true),
         orderBy("updated_at", "desc"),
-        limit(20),
+        startAfter(lastVisible.current
+        ),
+        limit(3),
+      ) : query(
+        songsCollectionRef,
+        where("is_official", "==", true),
+        orderBy("updated_at", "desc"),
+        limit(3),
       );
 
       if (import.meta.env.DEV) console.log("useGetForYouSongs, get song docs");
 
-      const result = await implementSongQuery(getSongQuery);
-      setSongs((prev) => [...prev, ...result]);
+
+      const songsSnap = await getDocs(getSongQuery);
+
+      if (songsSnap.docs) {
+
+        lastVisible.current = songsSnap.docs[songsSnap.docs.length - 1];
+
+        const result = songsSnap.docs.map((doc) => {
+          const song: Song = {
+            ...(doc.data() as SongSchema),
+            id: doc.id,
+            queue_id: nanoid(4),
+          };
+
+          return song;
+        });
+
+        setSongs((prev) => [...prev, ...result]);
+      }
+
+
+
     } catch (error) {
       console.log({ message: error });
       setErrorToast();

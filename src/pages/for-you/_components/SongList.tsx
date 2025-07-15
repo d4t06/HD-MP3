@@ -7,7 +7,7 @@ import { Center, Loading } from "@/components";
 export default function SongList() {
   const { setCurrentIndex, songs } = useSongsContext();
 
-  const { isFetching } = useGetForYouSongs();
+  const { isFetching, getSong } = useGetForYouSongs();
 
   const intObserver = useRef<IntersectionObserver | null>(null);
 
@@ -16,7 +16,7 @@ export default function SongList() {
 
     intObserver.current = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        console.log("get song ");
+        getSong()
       }
     });
 
