@@ -72,7 +72,7 @@ const songQueueSlice = createSlice({
     },
     resetSongQueue: (state: StateType) => {
       setLocalStorage("queue", []);
-      Object.assign(state, initialState);
+      Object.assign(state, {...initialState, queueSongs: []});
     },
   },
 });

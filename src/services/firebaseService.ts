@@ -18,7 +18,9 @@ type collectionVariant =
   | "Singers"
   | "Genres"
   | "Granted_Accounts"
-  | "Comments";
+  | "Comments"
+  | "SongDaily"
+  | "PlaylistDaily"
 
 // const isDev = import.meta.env.DEV;
 const isDev = true;
@@ -29,6 +31,7 @@ export const singerCollectionRef = collection(db, "Singers");
 export const userCollectionRef = collection(db, "Users");
 export const lyricCollectionRef = collection(db, "Lyrics");
 export const commentCollectionRef = collection(db, "Comments");
+export const songDailyColectionRef = collection(db, "SongDaily");
 
 export const myDeleteDoc = async ({
   collectionName,

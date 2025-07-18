@@ -187,40 +187,44 @@ type ImageType = {
   uploaded_at: Timestamp;
 };
 
-type Playlist_Frequency = {
+type PlaylistFrequency = {
   id: string;
   playlist_id: string;
-  play: string;
+  play: number;
   created_at: Timestamp;
 };
 
-type Song_Frequency = {
+type SongFrequency = {
   id: string;
   song_id: string;
-  play: string;
+  play: number;
   created_at: Timestamp;
 };
 
+type SongFrequencySchema = Omit<SongFrequency, "id">;
+
 type MainCategoryPage_Config = {
-  banner: { image_url: string, link: string }[]
+  banner: { image_url: string; link: string }[];
   category_sections: {
-    name: string
+    name: string;
     category_ids: string[];
     show: boolean;
   }[];
   playlist_sections: {
-    name: string
+    name: string;
     playlsit_ids: string[];
     show: boolean;
   }[];
 };
 
-
 type CategoryPage_Config = {
   name: string;
+  iamge_url: string;
   banner_image_url: string;
+  image_file_id: string;
+  banner_file_id: string;
   sections: {
-    name: string
+    name: string;
     playlist_ids: string;
   }[];
 };

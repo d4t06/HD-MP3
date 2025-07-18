@@ -5,11 +5,11 @@ import { getFirestore } from "firebase/firestore";
 // Initialize Firebase
 const app = initializeApp({
   apiKey: import.meta.env.VITE_APIKEY,
-  storageBucket: "zingmp3-clone-61799.appspot.com",
+  // storageBucket: "zingmp3-clone-61799.appspot.com",
   appId: "1:938280289868:web:e36c48cfbd55e4a8de96e",
   projectId: "zingmp3-clone-61799",
   authDomain: "zingmp3-clone-61799.firebaseapp.com",
-  messagingSenderId: "938280289868",
+  // messagingSenderId: "938280289868",
 });
 
 // Initialize Firestore
