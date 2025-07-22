@@ -5,15 +5,10 @@ import {
   ModalRef,
   NotFound,
 } from "@/components";
-import {
-  Button,
-  Frame,
-  DebounceSearchBar,
-  Loading,
-} from "@/pages/dashboard/_components";
+import { Button, Frame, Loading } from "@/pages/dashboard/_components";
 import AddGenreModal from "@/pages/dashboard/genre/_components/AddGenreModal";
 import useGetGenre from "@/pages/dashboard/genre/_hooks/useGetGenre";
-import useSearchGenre from "@/pages/dashboard/genre/_hooks/useSearchGenre";
+import { useGenreContext } from "@/stores/dashboard/GenreContext";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
 
@@ -21,11 +16,11 @@ type Props = {
   closeModal: () => void;
   choose: (g: Genre) => void;
 };
-export default function GenreSearchModal({ closeModal, choose }: Props) {
-  const { subs, ...rest } = useSearchGenre();
+
+export default function MainGenreSelectModal({ closeModal, choose }: Props) {
+  const { mains } = useGenreContext();
 
   const modalRef = useRef<ModalRef>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const closeAddSingerModal = () => modalRef.current?.close();
 
@@ -33,23 +28,27 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
 
   useEffect(() => {
     api();
-    inputRef.current?.focus();
   }, []);
 
   return (
     <>
       <ModalContentWrapper>
         <ModalHeader title="Genre" close={closeModal} />
-        <DebounceSearchBar inputRef={inputRef} {...rest} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">
           {isFetching ? (
             <Loading className="h-full" />
           ) : (
             <>
-              {subs.length ? (
-                subs.map((genre, i) => (
-                  <Frame key={i} onClick={() => choose(genre)}>
+              {mains.length ? (
+                mains.map((genre, i) => (
+                  <Frame
+                    key={i}
+                    onClick={() => {
+                      choose(genre);
+                      closeModal();
+                    }}
+                  >
                     <p className={`text-lg`}>{genre.name}</p>
                   </Frame>
                 ))
@@ -72,8 +71,8 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
       <Modal ref={modalRef} variant="animation">
         <AddGenreModal
           afterSubmit={choose}
-          genreName={rest.value}
           type="add"
+          isMain
           closeModal={closeAddSingerModal}
         />
       </Modal>

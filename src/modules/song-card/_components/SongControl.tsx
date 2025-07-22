@@ -19,6 +19,7 @@ export default function SongControl({ audioEle, song }: Props) {
   const { status, controlRef, setStatus, statusRef } = usePlayerContext();
 
   uesAudioEffect({ audioEle });
+  // usePlayCount({ audioEle })
 
   const { pause, play, handlePlayPause, progressLineRef } = useAudioControl({
     audioEle,
@@ -48,8 +49,6 @@ export default function SongControl({ audioEle, song }: Props) {
         return <MusicalNoteIcon />;
     }
   };
-
-
 
   return (
     <>

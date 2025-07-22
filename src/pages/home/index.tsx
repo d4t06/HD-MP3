@@ -3,12 +3,13 @@ import HomePlaylist from "./_components/HomePlaylist";
 import HomeSongList from "./_components/HomeSongList";
 import RecentPlaylist from "./_components/RecentPlaylist";
 import MobileSetting from "./_components/MobileSetting";
+import TrendingSong from "@/modules/trending-song";
 
 export default function HomePage() {
   return (
     <>
       <div className="space-y-5">
-        {/* <MobileNav /> */}
+        <TrendingSong amount={5} />
 
         <RecentPlaylist />
 
@@ -18,7 +19,6 @@ export default function HomePage() {
 
         <MobileSetting />
       </div>
-
       <Footer />
     </>
   );

@@ -15,17 +15,16 @@ export default function uesAudioEffect({ audioEle }: Props) {
   };
 
   const handleLoaded = () => {
-
-
-    console.log("loaded")
-
     // when the page first load
-    if (firstTimeSongLoaded.current) {
-      firstTimeSongLoaded.current = false;
-      setStatus("paused");
+    // if (firstTimeSongLoaded.current) {
+    //   firstTimeSongLoaded.current = false;
+    //   setStatus("paused");
 
-      return;
-    }
+    //   return;
+    // }
+
+
+    console.log('loaded')
 
     // when song item just active
     if (shouldPlayAfterLoaded.current) {

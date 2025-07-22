@@ -7,16 +7,17 @@ import { useThemeContext } from "@/stores";
 import usePlayCount from "../_hooks/usePlayCount";
 
 type Props = {
-	children: ReactNode;
+  children: ReactNode;
+  audioEle: HTMLAudioElement;
 };
 
-export default function PlayerEffect({ children }: Props) {
-	const { isOnMobile } = useThemeContext();
+export default function PlayerEffect({ children, audioEle }: Props) {
+  const { isOnMobile } = useThemeContext();
 
-	usePlayerEffect();
-	useCountDown();
-	useIdle(appConfig.focusDelay, isOnMobile);
-	usePlayCount();
+  usePlayerEffect();
+  useCountDown();
+  useIdle(appConfig.focusDelay, isOnMobile);
+  usePlayCount({ audioEle });
 
-	return useMemo(() => children, []);
+  return useMemo(() => children, []);
 }

@@ -40,14 +40,14 @@ export default function DashboardSong() {
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
-          <DashboardTable colList={["Name", "Singers", "Generes", "Like"]}>
+          <DashboardTable colList={["Name", "Singers", "Main genre", "Genres", "Like", "Today plays", "Week plays"]}>
             {uploadedSongs.length ? (
               uploadedSongs.map((s, i) => (
-                <DashboardSongItem variant="songs" key={i} song={s} />
+                <DashboardSongItem  variant="songs" key={i} song={s} />
               ))
             ) : (
               <tr>
-                <td colSpan={3} className="text-center">
+                <td colSpan={7} className="text-center">
                   <NotFound />
                 </td>
               </tr>

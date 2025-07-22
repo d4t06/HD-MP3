@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Timestamp } from "firebase/firestore";
 
 const isDev: boolean = import.meta.env.DEV;
 
@@ -88,16 +89,28 @@ export const getDisable = (v: boolean) => (v ? "disable" : "");
 export const getHidden = (v: boolean) => (v ? "hidden" : "");
 export const getClasses = (v: boolean, classes?: string) => (v ? classes : "");
 
-
 export const formatSize = (size: number) => {
-   const units = ["Kb", "Mb"];
-   let mb = 0;
+  const units = ["Kb", "Mb"];
+  let mb = 0;
 
-   if (size < 1024) return size.toFixed(0) + units[mb];
-   while (size > 1024) {
-      size -= 1024;
-      mb++;
-   }
+  if (size < 1024) return size.toFixed(0) + units[mb];
+  while (size > 1024) {
+    size -= 1024;
+    mb++;
+  }
 
-   return mb + "," + size.toFixed(1) + units[1];
+  return mb + "," + size.toFixed(1) + units[1];
+};
+
+export const getToDayTimestamp = (times: number[]) => {
+  const now = new Date();
+
+  const date = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate(),
+    ...times,
+  );
+
+  return Timestamp.fromDate(date);
 };

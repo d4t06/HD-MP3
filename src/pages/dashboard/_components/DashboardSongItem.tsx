@@ -36,6 +36,8 @@ export default function DashboardSongItem({
         ))}
       </td>
 
+      <td>{song.main_genre?.name}</td>
+
       <td>
         {song.genres.map((genre, i) => (
           <span key={i}>
@@ -46,6 +48,9 @@ export default function DashboardSongItem({
       </td>
 
       <td>{abbreviateNumber(song.like)}</td>
+
+      <td>{song.today_play}</td>
+      <td>{song.week_play}</td>
 
       <td>
         <DashboardSongMenu variant={variant} song={song} />

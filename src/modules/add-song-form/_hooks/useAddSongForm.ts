@@ -24,7 +24,7 @@ export default function useAddSongForm(
     setImageFile,
     updateSongData,
     setSongData,
-    resetAddSongContext,
+    // resetAddSongContext,
     songData,
     singers,
     song,
@@ -34,6 +34,9 @@ export default function useAddSongForm(
     imageBlob,
     setImageBlob,
     audioRef,
+    setSongFile,
+    // mainGenre,
+    // setMainGenre,
   } = useAddSongContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -44,22 +47,23 @@ export default function useAddSongForm(
     if (props.variant === "add") return true;
     if (!song || !songData) return false;
 
-    const lengthCheck =
+    const firstCheck =
       songData.name !== song.name ||
       singers.length !== song.singers.length ||
       songData.like !== song.like ||
-      genres.length !== song.genres.length;
+      genres.length !== song.genres.length ||
+      songData.main_genre !== song.main_genre;
 
-    if (lengthCheck) return true;
+    if (firstCheck) return true;
 
-    const isChaneSinger = !singers.find((s) =>
+    const isChangeSinger = !singers.find((s) =>
       song.singers.find((_s) => _s.id == s.id),
     );
-    const isChangeGenere = !genres.find((g) =>
+    const isChangeGenre = !genres.find((g) =>
       song.genres.find((_g) => _g.id == g.id),
     );
 
-    return isChaneSinger || isChangeGenere;
+    return isChangeSinger || isChangeGenre;
   }, [songData, song, singers, genres]);
 
   const isChangeImage = !!imageFile;
@@ -89,6 +93,7 @@ export default function useAddSongForm(
 
         setSingers(rest.singers);
         setGenres(rest.genres);
+        // setMainGenre(main_genre);
 
         return initSongObject(rest);
     }
@@ -98,7 +103,13 @@ export default function useAddSongForm(
     switch (props.variant) {
       case "add":
         modalRef.current?.close();
-        setTimeout(() => resetAddSongContext(initSongData()), 500);
+        setTimeout(() => {
+          setSongFile(undefined);
+          setImageBlob(undefined);
+          setSingers([]);
+          setGenres([]);
+          setSongData(initSongData());
+        }, 500);
         break;
       case "edit":
         modalRef.current?.close();
@@ -129,10 +140,14 @@ export default function useAddSongForm(
   };
 
   const getSongMap = () => {
+    if (!songData?.main_genre) return {};
+
     const genre_map: Song["genre_map"] = {};
     const singer_map: Song["singer_map"] = {};
 
     genres.forEach((g) => (genre_map[g.id] = true));
+    genre_map[songData.main_genre.id] = true;
+
     singers.forEach((s) => (singer_map[s.id] = true));
 
     return { genre_map, singer_map };

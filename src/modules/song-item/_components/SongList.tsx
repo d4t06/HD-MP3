@@ -11,7 +11,8 @@ type Props = {
   getActive?: (song: Song, currentSong: Song) => boolean;
   songVariant?: ComponentProps<typeof SongItem>["variant"];
   isHasCheckBox?: boolean;
-  imageUrl?:string;
+  showIndex?: boolean;
+  imageUrl?: string;
 };
 
 export default function SongList({
@@ -20,6 +21,7 @@ export default function SongList({
   getActive,
   songVariant,
   imageUrl,
+  showIndex,
   isHasCheckBox = true,
 }: Props) {
   const { user } = useAuthContext();
@@ -34,6 +36,7 @@ export default function SongList({
 
     return (
       <SongItem
+        showIndex={showIndex}
         active={
           currentSongData
             ? getActive

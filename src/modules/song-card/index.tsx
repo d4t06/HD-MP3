@@ -89,11 +89,9 @@ function SongCard(props: Props, ref: Ref<HTMLDivElement>) {
 
   return (
     <>
-      <div
-        data-index={props.index}
-        className="h-full flex-shrink-0 p-4 min-h-[360px] snap-center"
-      >
+      <div className="h-full flex-shrink-0 p-4 min-h-[360px] snap-center">
         <div
+          data-index={props.index}
           className={`relative h-full w-full transition-[right] duration-[.3s]  ${isOpenComment ? "semi-lg:right-[calc(400px*0.5)] " : "right-0"}`}
           ref={innerRef}
         >

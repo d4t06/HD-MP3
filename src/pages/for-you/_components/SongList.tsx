@@ -1,27 +1,15 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo } from "react";
 import { useSongsContext } from "../_stores/SongsContext";
 import SongCard from "@/modules/song-card";
 import useGetForYouSongs from "../_hooks/useForYouSongs";
 import { Center, Loading } from "@/components";
+import usePlayCount from "../_hooks/usePlayCount";
 
 export default function SongList() {
   const { setCurrentIndex, songs } = useSongsContext();
 
-  const { isFetching, getSong } = useGetForYouSongs();
-
-  const intObserver = useRef<IntersectionObserver | null>(null);
-
-  const lastElementRef = useCallback((el: HTMLDivElement) => {
-    if (intObserver.current) intObserver.current.disconnect();
-
-    intObserver.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        getSong()
-      }
-    });
-
-    if (el) intObserver.current.observe(el);
-  }, []);
+  const { isFetching, lastElementRef } = useGetForYouSongs();
+  usePlayCount();
 
   const content = useMemo(() => {
     return songs.map((item, index) => {

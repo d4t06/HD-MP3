@@ -4,6 +4,7 @@ import {
   ComputerDesktopIcon,
   GlobeAsiaAustraliaIcon,
   SquaresPlusIcon,
+  ArrowTrendingUpIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components";
@@ -111,6 +112,18 @@ export default function Sidebar() {
               <div>
                 <SquaresPlusIcon />
                 <span>Category</span>
+              </div>
+            </Link>
+
+               <Link
+              className={`
+              ${getActiveClasses(location.pathname === "/trending")}
+            `}
+              to={"/trending"}
+            >
+              <div>
+                <ArrowTrendingUpIcon />
+                <span>Trending</span>
               </div>
             </Link>
 

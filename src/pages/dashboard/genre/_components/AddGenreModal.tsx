@@ -1,8 +1,8 @@
-import { ModalContentWrapper, ModalHeader, Input } from "@/components";
+import { ModalContentWrapper, ModalHeader, Input, Switch } from "@/components";
 import { useToastContext } from "@/stores";
 import { useEffect, useRef, useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import useGenreAction from "../../_hooks/useGenreAction";
+import useGenreAction from "../useGenreAction";
 import { Button } from "../../_components";
 
 type Props = {
@@ -18,6 +18,7 @@ type Edit = {
 type Add = {
   type: "add";
   genreName?: string;
+  isMain?: boolean;
 };
 
 export default function AddGenreModal({
@@ -29,6 +30,10 @@ export default function AddGenreModal({
     props.type === "add" ? props.genreName || "" : props.genre.name,
   );
 
+  const [isMain, setIsMain] = useState(
+    props.type === "add" ? props.isMain || false : props.genre.is_main,
+  );
+
   const { action, isFetching } = useGenreAction();
   const { setErrorToast } = useToastContext();
 
@@ -38,11 +43,18 @@ export default function AddGenreModal({
 
   const handleSubmit = async () => {
     try {
+      if (!name.trim()) return;
+
+      const newGenre: GenreSchema = {
+        is_main: isMain,
+        name: name,
+      };
+
       switch (props.type) {
         case "add":
           const newSinger = await action({
             type: "add",
-            name,
+            genre: newGenre,
           });
 
           if (newSinger && afterSubmit) afterSubmit(newSinger);
@@ -50,7 +62,7 @@ export default function AddGenreModal({
         case "edit":
           await action({
             type: "edit",
-            name,
+            genre: newGenre,
             id: props.genre.id,
           });
           break;
@@ -91,9 +103,18 @@ export default function AddGenreModal({
             className={classes.input}
           />
         </div>
+
+        <div className="flex justify-between items-center">
+          <label className={classes.label}>Main genre</label>
+          <Switch
+            inActiveBg="bg-black/10"
+            active={isMain}
+            cb={() => setIsMain(!isMain)}
+          />
+        </div>
       </div>
 
-      <div className="text-center mt-5">
+      <div className="text-right mt-5">
         <Button
           disabled={!ableToSubmit}
           loading={isFetching}

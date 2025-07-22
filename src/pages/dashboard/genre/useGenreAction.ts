@@ -12,12 +12,12 @@ export default function useGenreAction() {
 
   type Add = {
     type: "add";
-    name: string;
+    genre: GenreSchema;
   };
 
   type Edit = {
     type: "edit";
-    name: string;
+    genre: Partial<GenreSchema>;
     id: string;
   };
 
@@ -31,7 +31,7 @@ export default function useGenreAction() {
       setIsFetching(true);
       switch (props.type) {
         case "add": {
-          const foundedGenre = genres.find((g) => g.name === props.name);
+          const foundedGenre = genres.find((g) => g.name === props.genre.name);
 
           if (foundedGenre) {
             await sleep(100);
@@ -41,10 +41,13 @@ export default function useGenreAction() {
 
           const docRef = await myAddDoc({
             collectionName: "Genres",
-            data: { name: props.name },
+            data: props.genre,
           });
 
-          const newGenre: Genre = { name: props.name, id: docRef.id };
+          const newGenre: Genre = {
+            ...props.genre,
+            id: docRef.id,
+          };
 
           setGenres((prev) => [newGenre, ...prev]);
           setIsFetching(false);
@@ -57,7 +60,7 @@ export default function useGenreAction() {
         case "edit": {
           await myUpdateDoc({
             collectionName: "Genres",
-            data: { name: props.name },
+            data: props.genre,
             id: props.id,
           });
 
@@ -66,7 +69,7 @@ export default function useGenreAction() {
           const index = newGenres.findIndex((g) => g.id === props.id);
 
           const target = { ...genres[index] };
-          Object.assign(target, { name: props.name });
+          Object.assign(target, props.genre);
           newGenres[index] = target;
 
           setGenres(newGenres);

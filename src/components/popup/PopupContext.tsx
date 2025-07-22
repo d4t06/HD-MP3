@@ -64,7 +64,7 @@ export default function Popup({
    return (
       <Context.Provider value={usePopup({ ...rest, appendOnPortal })}>
          {!appendOnPortal ? (
-            <div className={`relative ${className}`}>{children}</div>
+            <div className={`relative z-[9] ${className}`}>{children}</div>
          ) : (
             children
          )}

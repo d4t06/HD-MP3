@@ -37,5 +37,5 @@ export default function useGetGenre() {
     }
   };
 
-  return { api, isFetching, setIsFetching, genres, shouldFetchGenre };
+  return { api, isFetching };
 }

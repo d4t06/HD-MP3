@@ -3,7 +3,7 @@ import { useGenreContext } from "@/stores/dashboard/GenreContext";
 import { useMemo, useState } from "react";
 
 export default function useSearchGenre() {
-  const { genres } = useGenreContext();
+  const { genres, subs, mains } = useGenreContext();
 
   const [value, setValue] = useState("");
 
@@ -11,9 +11,9 @@ export default function useSearchGenre() {
 
   const _genres = useMemo(
     () =>
-      debouncedValue ? genres.filter((g) => g.name.includes(debouncedValue)) : genres,
+      debouncedValue ? genres.filter((g) => g.name.includes(debouncedValue)) : [],
     [debouncedValue, genres]
   );
 
-  return { value, setValue, _genres };
+  return { value, setValue, _genres, mains, subs };
 }

@@ -7,6 +7,8 @@ export async function implementSongQuery(
   query: Query,
   opts?: { getQueueId: (s: Song) => string },
 ) {
+  if (import.meta.env.DEV) console.log("Get songs");
+
   const songsSnap = await getDocs(query);
 
   if (songsSnap.docs) {

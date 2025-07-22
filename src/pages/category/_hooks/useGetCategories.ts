@@ -1,0 +1,55 @@
+import { db } from "@/firebase";
+import {
+  collection,
+  documentId,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+
+type Props = {
+  category_ids: string[];
+};
+
+export default function useGetCategories({ category_ids }: Props) {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
+
+  const ranEffect = useRef(false);
+
+  const getCategories = async () => {
+    try {
+      setIsFetching(true);
+
+      const q = query(
+        collection(db, "Categories"),
+        where(documentId(), "in", category_ids),
+      );
+      const snap = await getDocs(q);
+
+      if (!snap.empty) {
+        const result: Category[] = snap.docs.map((d) => ({
+          ...(d.data() as Category_Schema),
+          id: d.id,
+        }));
+
+        setCategories(result);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+
+      getCategories();
+    }
+  }, []);
+
+  return { categories, isFetching };
+}

@@ -162,7 +162,7 @@ function ModalContentWrapper({
 
   return (
     <div
-      className={`max-h-[80vh] max-w-[90vw] flex flex-col  ${disable ? "disabled" : ""} ${!noStyle ? "p-3 rounded-xl" : ""} ${location.hash.includes("/dashboard") ? "bg-white text-black" : theme.modal_bg + " text-white"} ${className}`}
+      className={`max-h-[80vh] max-w-[90vw] flex flex-col  ${disable ? "disabled" : ""} ${!noStyle ? "p-3 md:p-4s rounded-xl" : ""} ${location.hash.includes("/dashboard") ? "bg-white text-black" : theme.modal_bg + " text-white"} ${className}`}
     >
       {children}
     </div>

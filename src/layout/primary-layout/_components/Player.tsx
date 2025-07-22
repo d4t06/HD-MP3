@@ -43,7 +43,9 @@ export default function Player() {
       <audio ref={audioRef} className="hidden" />
 
       {audioRef.current && (
-        <PlayerEffect>{isOnMobile ? mobileContent : desktopContent}</PlayerEffect>
+        <PlayerEffect audioEle={audioRef.current}>
+          {isOnMobile ? mobileContent : desktopContent}
+        </PlayerEffect>
       )}
     </>
   );

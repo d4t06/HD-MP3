@@ -20,14 +20,24 @@ type Props = {
   index: number;
   // null if user is null
   isLiked: boolean | null;
+  showIndex?: boolean;
   isHasCheckBox: boolean;
   imageUrl?: string;
-  variant: "system-song" | "own-song" | "queue-song" | "recent-song" | "own-playlist";
+  variant:
+    | "system-song"
+    | "own-song"
+    | "queue-song"
+    | "recent-song"
+    | "own-playlist";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-type CheckBoxProps = { onClick: () => void; isChecked: boolean; isSelected: boolean };
+type CheckBoxProps = {
+  onClick: () => void;
+  isChecked: boolean;
+  isSelected: boolean;
+};
 
 function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
   return (
@@ -63,6 +73,7 @@ function SongItem({
   index,
   className = "",
   imageUrl,
+  showIndex,
   ...props
 }: Props) {
   // stores
@@ -155,20 +166,38 @@ function SongItem({
   const leftContent = (
     <>
       {isHasCheckBox && (
-        <CheckBox isChecked={isChecked} isSelected={isSelected} onClick={handleSelect} />
+        <CheckBox
+          isChecked={isChecked}
+          isSelected={isSelected}
+          onClick={handleSelect}
+        />
+      )}
+      {showIndex && (
+        <div
+          className={`song-index font-bold w-[60px] text-center mr-5 text-[32px] ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
+        >
+          {index + 1}
+        </div>
       )}
 
       <div className="flex-grow flex" onClick={handleMobileClick}>
         <div className={`${classes.imageFrame} ${getSongImageSize()}`}>
-          <Image src={imageUrl || song.image_url} blurHashEncode={song.blurhash_encode} />
+          <Image
+            src={imageUrl || song.image_url}
+            blurHashEncode={song.blurhash_encode}
+          />
           {imageOverlay}
         </div>
 
         <div className={`ml-[10px]`}>
-          <h5 className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}>
+          <h5
+            className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}
+          >
             {song.name}
 
-            {import.meta.env.DEV && <span className="text-sm"> ({props.variant})</span>}
+            {import.meta.env.DEV && (
+              <span className="text-sm"> ({props.variant})</span>
+            )}
           </h5>
           <div className={`opacity-[.7] line-clamp-1 ${getSongSingerSize()}`}>
             {song.singers.map((s, i) =>
@@ -196,7 +225,9 @@ function SongItem({
       case "recent-song":
         return leftContent;
       default:
-        return <div className="flex flex-grow overflow-hidden">{leftContent}</div>;
+        return (
+          <div className="flex flex-grow overflow-hidden">{leftContent}</div>
+        );
     }
   };
 
@@ -238,7 +269,9 @@ function SongItem({
         return (
           <div
             className={`${classes.itemContainer} group/main ${
-              active ? `${theme.content_bg} text-white` : `hover:bg-${theme.alpha}`
+              active
+                ? `${theme.content_bg} text-white`
+                : `hover:bg-${theme.alpha}`
             }`}
           >
             {renderLeftContent()}
@@ -249,7 +282,9 @@ function SongItem({
         return (
           <div
             className={`${classes.itemContainer} ${className} group/main ${
-              active || isSelected ? `bg-${theme.alpha}` : `hover:bg-${theme.alpha}`
+              active || isSelected
+                ? `bg-${theme.alpha}`
+                : `hover:bg-${theme.alpha}`
             }`}
           >
             {renderLeftContent()}

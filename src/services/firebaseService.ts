@@ -5,6 +5,8 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  increment,
+  serverTimestamp,
   updateDoc,
 } from "firebase/firestore";
 import { convertToEn, request } from "@/utils/appHelpers";
@@ -19,8 +21,7 @@ type collectionVariant =
   | "Genres"
   | "Granted_Accounts"
   | "Comments"
-  | "SongDaily"
-  | "PlaylistDaily"
+  | "Trending_Metrics";
 
 // const isDev = import.meta.env.DEV;
 const isDev = true;
@@ -31,7 +32,10 @@ export const singerCollectionRef = collection(db, "Singers");
 export const userCollectionRef = collection(db, "Users");
 export const lyricCollectionRef = collection(db, "Lyrics");
 export const commentCollectionRef = collection(db, "Comments");
-export const songDailyColectionRef = collection(db, "SongDaily");
+export const dailySongCollectionRef = collection(db, "DailySong");
+export const weeklySongCollectionRef = collection(db, "DailySong");
+export const genresCollectionRef = collection(db, "Genres");
+export const trendingCollectionRef = collection(db, "Trending_Metrics");
 
 export const myDeleteDoc = async ({
   collectionName,
@@ -176,5 +180,25 @@ export const deleteSongFiles = async (song: Song) => {
       fileId: song.image_file_id,
       msg: `>>> api: delete song's image file`,
     });
+  }
+};
+
+export const increaseSongPlay = (songId: string) => {
+  try {
+    const newSongData = {
+      total_play: increment(1),
+      today_play: increment(1),
+      week_play: increment(1),
+      last_active: serverTimestamp(),
+    };
+
+    myUpdateDoc({
+      id: songId,
+      collectionName: "Songs",
+      data: newSongData,
+      msg: "Increase song play",
+    });
+  } catch (error) {
+    console.log(error);
   }
 };

@@ -8,7 +8,8 @@ import {
   EditSongLyric,
   SingerPage,
   UserPage,
-  CategoryPage
+  CategoryPage,
+  TrendingPage,
 } from "../pages";
 import {
   DashboardAddSongPage,
@@ -40,6 +41,7 @@ const pubicRouteMap = {
   unauthorized: "/unauthorized",
   singer: "/singer/:id",
   user: "/user/:id",
+  trending: "/trending",
 };
 
 const protectedRouteMap = {
@@ -77,6 +79,7 @@ const publicRoutes = [
   { path: pubicRouteMap.singer, component: SingerPage, layout: "" },
   { path: pubicRouteMap.user, component: UserPage, layout: "" },
   { path: pubicRouteMap.catogory, component: CategoryPage, layout: "" },
+  { path: pubicRouteMap.trending, component: TrendingPage, layout: "" },
 ];
 
 const protectedRoutes = [

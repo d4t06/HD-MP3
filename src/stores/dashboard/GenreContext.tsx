@@ -1,12 +1,33 @@
-import { createContext, ReactNode, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 function useGenre() {
   const [genres, setGenres] = useState<Genre[]>([]);
+
+  const { mains, subs } = useMemo(() => {
+    const mains: Genre[] = [];
+    const subs: Genre[] = [];
+
+    genres.forEach((g) => {
+      if (g.is_main) mains.push(g);
+      else subs.push(g);
+    });
+
+    return { mains, subs };
+  }, [genres]);
 
   const shouldFetchGenre = useRef(true);
 
   return {
     genres,
+    mains,
+    subs,
     shouldFetchGenre,
     setGenres,
   };

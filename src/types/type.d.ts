@@ -28,16 +28,25 @@ type Song = {
   is_official: boolean;
   duration: number;
   like: number;
+  comment: number;
+  total_play: number;
   lyric_id: string;
   blurhash_encode: string;
   singers: Singer[];
   singer_map: Record<string, boolean>;
+  main_genre?: Genre;
   genres: Genre[];
   genre_map: Record<string, boolean>;
   size: number;
   queue_id: string;
+  today_play: number;
+  week_play: number;
+  last_week_play: number;
+  last_week_rank: number;
+  last_week_trending_score: number;
   updated_at: Timestamp;
   created_at: Timestamp;
+  last_active: Timestamp;
 };
 
 type SongSchema = Omit<Song, "id" | "queue_id">;
@@ -154,9 +163,15 @@ type Singer = {
 
 type SingerSchema = Omit<Singer, "id">;
 
+type MainGenre = {
+  id: string;
+  name: string;
+};
+
 type Genre = {
   id: string;
   name: string;
+  is_main: boolean;
 };
 
 type GenreSchema = Omit<Genre, "id">;
@@ -187,24 +202,44 @@ type ImageType = {
   uploaded_at: Timestamp;
 };
 
-type PlaylistFrequency = {
-  id: string;
-  playlist_id: string;
-  play: number;
-  created_at: Timestamp;
-};
-
-type SongFrequency = {
+type DailySongMetric = {
   id: string;
   song_id: string;
   play: number;
   created_at: Timestamp;
+  main_genre: MainGenre;
 };
 
-type SongFrequencySchema = Omit<SongFrequency, "id">;
+type DailySongMetricSchema = Omit<DailySongMetric, "id">;
 
-type MainCategoryPage_Config = {
-  banner: { image_url: string; link: string }[];
+type WeeklyTrendingSong = {
+  song_id: string;
+  play_this_week: number;
+  trending_score: number;
+};
+
+type WeeklySongMetric = {
+  id: string; //ww-yyyy
+  trending_songs: Record<string, WeeklyTrendingSong[]>;
+};
+
+type Category = {
+  id: string;
+  name: string;
+  image_url: string;
+  banner_image_url: string;
+  image_file_id: string;
+  banner_file_id: string;
+  sections: {
+    name: string;
+    playlist_ids: string;
+  }[];
+};
+
+type Category_Schema = Omit<Category, 'id'>
+
+type CategoryLobby = {
+  category_ids: string[];
   category_sections: {
     name: string;
     category_ids: string[];
@@ -214,17 +249,5 @@ type MainCategoryPage_Config = {
     name: string;
     playlsit_ids: string[];
     show: boolean;
-  }[];
-};
-
-type CategoryPage_Config = {
-  name: string;
-  iamge_url: string;
-  banner_image_url: string;
-  image_file_id: string;
-  banner_file_id: string;
-  sections: {
-    name: string;
-    playlist_ids: string;
   }[];
 };

@@ -4,6 +4,7 @@ function useAddSong() {
   const [songFile, setSongFile] = useState<File>();
   const [songData, setSongData] = useState<SongSchema>();
   const [singers, setSingers] = useState<Singer[]>([]);
+  const [mainGenre, setMainGenre] = useState<Genre>();
   const [genres, setGenres] = useState<Genre[]>([]);
   const [imageFile, setImageFile] = useState<File>();
   const [song, setSong] = useState<Song>();
@@ -38,9 +39,8 @@ function useAddSong() {
     setSongData({ ...songData, ...data });
   };
 
-  const resetAddSongContext = (song: SongSchema) => {
+  const resetAddSongContext = () => {
     setSongFile(undefined);
-    setSongData(song);
     setSingers([]);
     setGenres([]);
   };
@@ -66,6 +66,8 @@ function useAddSong() {
     setImageBlob,
     resetAddSongContext,
     audioRef,
+    mainGenre,
+    setMainGenre,
   };
 }
 

@@ -1,9 +1,9 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { useRef, useState } from "react";
 import AddGenreModal from "./AddGenreModal";
-import { useGenreAction } from "../../_hooks";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
+import useGenreAction from "../useGenreAction";
 
 type Props = {
   genre: Genre;

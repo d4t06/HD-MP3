@@ -1,7 +1,10 @@
 import { serverTimestamp } from "firebase/firestore";
 
 export const initSongObject = (
-  data: Partial<SongSchema> & { owner_email: string; distributor: string },
+  data: Partial<SongSchema> & {
+    owner_email: string;
+    distributor: string;
+  },
 ) => {
   const song: SongSchema = {
     name: "",
@@ -11,6 +14,7 @@ export const initSongObject = (
     beat_file_id: "",
     duration: 0,
     like: 0,
+    comment: 0,
     lyric_id: "",
     image_file_id: "",
     song_file_id: "",
@@ -19,9 +23,15 @@ export const initSongObject = (
     genre_map: {},
     genres: [],
     singers: [],
-
     is_official: false,
     size: 0,
+    today_play: 0,
+    week_play: 0,
+    last_week_play: 0,
+    last_week_rank: 0,
+    last_week_trending_score: 0,
+    total_play: 0,
+    last_active: serverTimestamp(),
     created_at: serverTimestamp(),
     updated_at: serverTimestamp(),
     ...data,
@@ -134,6 +144,4 @@ export const initCommentObject = ({
   return singer;
 };
 
-export const initSongDailyObject = ({}) => {
-  
-} 
+export const initSongDailyObject = ({}) => {};
