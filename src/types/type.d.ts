@@ -236,18 +236,20 @@ type Category = {
   }[];
 };
 
-type Category_Schema = Omit<Category, 'id'>
+type CategorySchema = Omit<Category, "id">;
 
 type CategoryLobby = {
   category_ids: string[];
   category_sections: {
     name: string;
     category_ids: string[];
+    order: string[];
     show: boolean;
   }[];
   playlist_sections: {
     name: string;
     playlsit_ids: string[];
+    order: string[];
     show: boolean;
   }[];
 };

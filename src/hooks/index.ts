@@ -9,3 +9,4 @@ export { default as useSongQueueAction } from "./useSongQueueAction";
 export { default as useAddPlaylist } from "./useAddPlaylist";
 export { default as useGetComment } from "./useGetComment";
 export { default as useHideBottomPlayer } from "./useHideBottomPlayer";
+export { default as useGetCategory } from "./useGetCategory";
