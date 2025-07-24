@@ -30,6 +30,8 @@ export async function implementSongQuery(
 }
 
 export async function implementPlaylistQuery(query: Query) {
+  if (import.meta.env.DEV) console.log("Get playlists");
+
   const playlistsSnap = await getDocs(query);
 
   if (playlistsSnap.docs.length) {
@@ -46,6 +48,8 @@ export async function implementPlaylistQuery(query: Query) {
 }
 
 export async function implementSingerQuery(query: Query) {
+  if (import.meta.env.DEV) console.log("Get singers");
+
   const singerSnaps = await getDocs(query);
 
   if (singerSnaps.docs.length) {

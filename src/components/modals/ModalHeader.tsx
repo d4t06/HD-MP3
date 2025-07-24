@@ -9,7 +9,7 @@ export default function ModalHeader({
 }) {
   return (
     <div className="flex justify-between items-center mb-3">
-      <div className="text-xl w-[80%] leading-[2.2] font-playwriteCU">{title}</div>
+      <div className="text-xl w-[80%] font-bold text-gray-600">{title}</div>
       <button onClick={close}>
         <XMarkIcon className="w-7" />
       </button>

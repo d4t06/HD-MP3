@@ -1,0 +1,55 @@
+import { Image, ModalContentWrapper, ModalHeader } from "@/components";
+import useCategoryBannerModal from "../_hooks/useCategoryBannerModal";
+import { Button } from "@/pages/dashboard/_components";
+import { PhotoIcon } from "@heroicons/react/24/outline";
+import { ChangeEvent, useRef } from "react";
+
+type Props = {
+  closeModal: () => void;
+};
+
+export default function CategoryBannerModal({ closeModal }: Props) {
+  const { imageUrl, setImageFile, handleSubmit } = useCategoryBannerModal({
+    closeModal,
+  });
+
+  const labelRef = useRef<HTMLLabelElement>(null);
+
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) setImageFile(e.target.files[0]);
+  };
+
+  return (
+    <>
+      <ModalContentWrapper className="w-[500px]">
+        <label ref={labelRef} htmlFor="image-input" className="hidden"></label>
+        <input
+          onChange={handleInputChange}
+          id="image-input"
+          type="file"
+          accept="image"
+          className="hidden"
+        />
+
+        <ModalHeader close={closeModal} title="Change order" />
+        <div className="aspect-[16/5]">
+          <Image className="h-full object-cover rounded-lg" src={imageUrl} />
+        </div>
+
+        <p className="mt-3">
+          <Button
+            className="p-1"
+            size={"clear"}
+            onClick={() => labelRef.current?.click()}
+          >
+            <PhotoIcon className="w-6" />
+          </Button>
+        </p>
+
+        <p className="text-right mt-5">
+          <Button onClick={handleSubmit}>Ok</Button>
+        </p>
+      </ModalContentWrapper>
+    </>
+  );
+}

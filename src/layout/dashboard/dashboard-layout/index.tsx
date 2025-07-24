@@ -8,19 +8,25 @@ import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { dashboardTheme } from "@/constants/themes";
 import { PushBrowserHistory } from "@/stores/global/NavigationContext";
+import { setLocalStorage } from "@/utils/appHelpers";
 
 export default function DashBoardLayout() {
   const { setTheme, isOnMobile, theme } = useThemeContext();
 
   useEffect(() => {
-    setTheme(dashboardTheme);
+    if (theme.id !== dashboardTheme.id) {
+      setTheme(dashboardTheme);
+      setLocalStorage("theme", dashboardTheme.id);
+    }
   }, []);
 
   return (
     <>
       <NavigationProvider>
         <GenreProvider>
-          <div className={`${theme.container} fixed inset-full flex ${theme.text_color}`}>
+          <div
+            className={`${theme.container} fixed inset-full flex ${theme.text_color}`}
+          >
             {isOnMobile ? <DashboardNavigation /> : <DashBoardSidebar />}
 
             <div className="flex flex-col flex-grow">

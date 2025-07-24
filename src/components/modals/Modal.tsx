@@ -41,8 +41,6 @@ function Modal(
 ) {
   const variant = props.variant || "default";
 
-  // const { theme } = useThemeContext();
-
   const [isOpen, setIsOpen] = useState(variant === "default" ? true : false);
   const [isMounted, setIsMounted] = useState(
     variant === "default" ? true : false,

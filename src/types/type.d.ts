@@ -41,6 +41,7 @@ type Song = {
   queue_id: string;
   today_play: number;
   week_play: number;
+  language: string;
   last_week_play: number;
   last_week_rank: number;
   last_week_trending_score: number;
@@ -230,26 +231,25 @@ type Category = {
   banner_image_url: string;
   image_file_id: string;
   banner_file_id: string;
-  sections: {
-    name: string;
-    playlist_ids: string;
-  }[];
+  blurhash_encode: string;
+  banner_blurhash_encode: string;
+  playlist_ids: string;
+  song_ids: string;
+  created_at: Timestamp;
+  updated_at: Timestamp;
 };
 
 type CategorySchema = Omit<Category, "id">;
 
+type CategoryLobbySection = {
+  name: string;
+  target_ids: string;
+  show: boolean;
+};
+
 type CategoryLobby = {
   category_ids: string[];
-  category_sections: {
-    name: string;
-    category_ids: string[];
-    order: string[];
-    show: boolean;
-  }[];
-  playlist_sections: {
-    name: string;
-    playlsit_ids: string[];
-    order: string[];
-    show: boolean;
-  }[];
+  category_sections: CategoryLobbySection[];
+  playlist_sections: CategoryLobbySection[];
+  updated_at: Timestamp;
 };

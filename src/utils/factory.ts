@@ -1,3 +1,4 @@
+import { retry } from "@reduxjs/toolkit/query";
 import { serverTimestamp } from "firebase/firestore";
 
 export const initSongObject = (
@@ -24,6 +25,7 @@ export const initSongObject = (
     genres: [],
     singers: [],
     is_official: false,
+    language: "",
     size: 0,
     today_play: 0,
     week_play: 0,
@@ -144,4 +146,31 @@ export const initCommentObject = ({
   return singer;
 };
 
-export const initSongDailyObject = ({}) => {};
+export const initCategory = (data: Partial<Category>) => {
+  const category: CategorySchema = {
+    banner_file_id: "",
+    banner_image_url: "",
+    image_file_id: "",
+    image_url: "",
+    name: "",
+    banner_blurhash_encode: "",
+    blurhash_encode: "",
+    playlist_ids: "",
+    song_ids: "",
+    created_at: serverTimestamp(),
+    updated_at: serverTimestamp(),
+    ...data,
+  };
+
+  return category;
+};
+
+export const initCategorySection = (name: string = "") => {
+  const data: CategoryLobbySection = {
+    name,
+    show: true,
+    target_ids: "",
+  };
+
+  return data;
+};

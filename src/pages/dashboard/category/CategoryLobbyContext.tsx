@@ -1,6 +1,6 @@
 import { createContext, ReactNode, useContext, useState } from "react";
 
-function useCategoeyLobby() {
+function useCategoryLobby() {
 	const [page, setPage] = useState<CategoryLobby>();
 	const [categories, setCategories] = useState<Category[]>([]);
 
@@ -12,7 +12,7 @@ function useCategoeyLobby() {
 	};
 }
 
-type ContextType = ReturnType<typeof useCategoeyLobby>;
+type ContextType = ReturnType<typeof useCategoryLobby>;
 
 const Context = createContext<ContextType | null>(null);
 
@@ -22,7 +22,7 @@ export default function CategoryLobbyProvider({
 	children: ReactNode;
 }) {
 	return (
-		<Context.Provider value={useCategoeyLobby()}>{children}</Context.Provider>
+		<Context.Provider value={useCategoryLobby()}>{children}</Context.Provider>
 	);
 }
 

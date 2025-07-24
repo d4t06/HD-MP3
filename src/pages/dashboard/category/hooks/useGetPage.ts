@@ -1,12 +1,20 @@
 import { db } from "@/firebase";
-import { useCategoryLobbyContext } from "@/pages/category/CategoryLobbyContext";
+import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { useToastContext } from "@/stores";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+} from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 
 export default function useGetPage() {
   const { setErrorToast } = useToastContext();
-  const { page, setPage } = useCategoryLobbyContext();
+  const { page, setPage, setCategories } = useCategoryLobbyContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -20,18 +28,29 @@ export default function useGetPage() {
         category_ids: [],
         category_sections: [],
         playlist_sections: [],
+        updated_at: serverTimestamp(),
       };
+      let _categories: Category[] = [];
 
       const docRef = doc(db, "Category_Lobby", "page");
 
       const snap = await getDoc(docRef);
+      const categoriesSnap = await getDocs(query(collection(db, "Categories")));
 
-      if (!snap.exists) {
+      if (!snap.exists()) {
         await setDoc(docRef, pageConfig);
       } else {
         pageConfig = snap.data() as CategoryLobby;
       }
 
+      if (!categoriesSnap.empty) {
+        _categories = categoriesSnap.docs.map((d) => ({
+          ...(d.data() as CategorySchema),
+          id: d.id,
+        }));
+      }
+
+      setCategories(_categories);
       setPage(pageConfig);
     } catch (error) {
       console.log(error);

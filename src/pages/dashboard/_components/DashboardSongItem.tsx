@@ -1,17 +1,22 @@
 import { Link } from "react-router-dom";
 import DashboardSongMenu from "../_modules/song-menu";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { ReactNode } from "react";
 
 type Props = {
   song: Song;
   className?: string;
   variant: "songs" | "playlist";
+  hasMenu?: boolean;
+  children?: ReactNode;
 };
 
 export default function DashboardSongItem({
   song,
   className = "",
   variant,
+  hasMenu,
+  children,
 }: Props) {
   return (
     <tr className={className}>
@@ -52,9 +57,13 @@ export default function DashboardSongItem({
       <td>{song.today_play}</td>
       <td>{song.week_play}</td>
 
-      <td>
-        <DashboardSongMenu variant={variant} song={song} />
-      </td>
+      {hasMenu && (
+        <td>
+          <DashboardSongMenu variant={variant} song={song} />
+        </td>
+      )}
+
+      {children}
     </tr>
   );
 }

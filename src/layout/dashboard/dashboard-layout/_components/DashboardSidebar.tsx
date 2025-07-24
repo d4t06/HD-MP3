@@ -27,8 +27,8 @@ export const routeList = [
     icon: <HomeIcon className="w-5 flex-shrink-0" />,
   },
   {
-    path: "/dashboard/hubpage",
-    title: "Hub Page",
+    path: "/dashboard/category",
+    title: "Category",
     icon: <SquaresPlusIcon className="w-5 flex-shrink-0" />,
   },
   {

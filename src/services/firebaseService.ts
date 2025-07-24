@@ -22,7 +22,8 @@ type collectionVariant =
   | "Granted_Accounts"
   | "Comments"
   | "Trending_Metrics"
-  | "Categories";
+  | "Categories"
+  | "Category_Lobby";
 
 // const isDev = import.meta.env.DEV;
 const isDev = true;

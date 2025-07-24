@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useToastContext } from "@/stores";
-import { orderBy, query, where } from "firebase/firestore";
+import { limit, orderBy, query, where } from "firebase/firestore";
 import { singerCollectionRef } from "@/services/firebaseService";
 import { implementSingerQuery } from "@/services/appService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
@@ -42,11 +42,15 @@ export default function useDashboardSinger() {
     }
   };
 
-  const handleGetPlaylist = async () => {
+  const handleGetSingers = async () => {
     try {
       setIsFetching(true);
 
-      const searchQuery = query(singerCollectionRef, orderBy("created_at", "desc"));
+      const searchQuery = query(
+        singerCollectionRef,
+        orderBy("created_at", "desc"),
+        limit(10),
+      );
 
       const result = await implementSingerQuery(searchQuery);
       setSingers(result);
@@ -60,7 +64,7 @@ export default function useDashboardSinger() {
   };
 
   useEffect(() => {
-    if (tab === "All") handleGetPlaylist();
+    if (tab === "All") handleGetSingers();
   }, [tab]);
 
   return {
@@ -71,6 +75,6 @@ export default function useDashboardSinger() {
     singers,
     tab,
     setTab,
-    tabs
+    tabs,
   };
 }

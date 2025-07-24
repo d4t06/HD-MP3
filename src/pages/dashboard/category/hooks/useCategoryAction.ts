@@ -1,21 +1,22 @@
-import { myAddDoc, myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
+import { myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { useGenreContext } from "@/stores/dashboard/GenreContext";
-import { useState } from "react";
+import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+import { RefObject, useState } from "react";
+import { ModalRef } from "@/components";
 
-export default function useCategoryLobbyAction() {
+type Props = {
+  modalRef: RefObject<ModalRef>;
+};
+
+export default function useCategoryAction(mainProps?: Props) {
+  const { categories, setCategories } = useCategoryLobbyContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
-  type Add = {
-    type: "add-category";
-    category: CategorySchema;
-  };
-
   type Edit = {
     type: "edit";
-    category: Partial<CategorySchema>;
+    category: Partial<GenreSchema>;
     id: string;
   };
 
@@ -24,29 +25,10 @@ export default function useCategoryLobbyAction() {
     id: string;
   };
 
-  const action = async (props: Add | Edit | Delete) => {
+  const action = async (props: Edit | Delete) => {
     try {
       setIsFetching(true);
       switch (props.type) {
-        case "add-category": {
-          const docRef = await myAddDoc({
-            collectionName: "Categories",
-            data: props.category,
-          });
-
-          const newCategory: Category = {
-            ...props.category,
-            id: docRef.id,
-          };
-
-          // setGenres((prev) => [newCategory, ...prev]);
-          setIsFetching(false);
-
-          setSuccessToast("Add genre successful");
-
-          return newCategory;
-        }
-
         case "edit": {
           await myUpdateDoc({
             collectionName: "Categories",
@@ -54,15 +36,15 @@ export default function useCategoryLobbyAction() {
             id: props.id,
           });
 
-          // const newGenres = [...genres];
+          const newCategories = [...categories];
 
-          // const index = newGenres.findIndex((g) => g.id === props.id);
+          const index = newCategories.findIndex((g) => g.id === props.id);
 
-          // const target = { ...genres[index] };
-          // Object.assign(target, props.genre);
-          // newGenres[index] = target;
+          const target = { ...categories[index] };
+          Object.assign(target, props.category);
+          newCategories[index] = target;
 
-          // setGenres(newGenres);
+          setCategories(newCategories);
           setSuccessToast("Edit category successful");
 
           break;
@@ -74,13 +56,14 @@ export default function useCategoryLobbyAction() {
             id: props.id,
           });
 
-          // setGenres((prev) => prev.filter((g) => g.id !== props.id));
-
+          setCategories((prev) => prev.filter((g) => g.id !== props.id));
           setSuccessToast("Delete category successful");
 
           break;
         }
       }
+
+      mainProps?.modalRef.current?.close();
     } catch (error) {
       console.log(error);
       setErrorToast();

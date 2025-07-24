@@ -23,7 +23,8 @@ import {
   DashboardSongPage,
   DashboardEditSingerPage,
   DashboardAlbumPage,
-  HubPageConfig,
+  DashboardCategory,
+  DashboardCategoryDetail
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
@@ -63,8 +64,8 @@ const privateRouteMap = {
   album: "/dashboard/album",
   editAlbum: "/dashboard/album/:id",
   homepage: "/dashboard/homepage",
-  hubpage: "/dashboard/hubpage",
-  hubpageDetail: "/dashboard/hubpage/:id",
+  category: "/dashboard/category",
+  categoryDetail: "/dashboard/category/:id",
 };
 
 export type PlaylistParamsType = {
@@ -161,8 +162,13 @@ const privateRoutes = [
     layout: "",
   },
   {
-    path: privateRouteMap.hubpage,
-    component: HubPageConfig,
+    path: privateRouteMap.category,
+    component: DashboardCategory,
+    layout: "",
+  },
+    {
+    path: privateRouteMap.categoryDetail,
+    component: DashboardCategoryDetail,
     layout: "",
   },
 ];

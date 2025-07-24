@@ -4,9 +4,15 @@ import { myGetDoc } from "@/services/firebaseService";
 
 type Props = {
   setCategory: (c: Category) => void;
+  // setPlaylists: (p: Playlist[]) => void;
+  // setSongs: (s: Song[]) => void;
 };
 
-export default function useGetCategory({ setCategory }: Props) {
+export default function useGetCategory({
+  setCategory,
+  // setPlaylist,
+  // setSongs,
+}: Props) {
   const [isFetching, setIsFetching] = useState(false);
   const ranEffect = useRef(false);
 
@@ -19,8 +25,10 @@ export default function useGetCategory({ setCategory }: Props) {
 
       const snap = await myGetDoc({ collectionName: "Categories", id });
 
-      if (!snap.exists) {
-        setCategory({ ...(snap.data() as CategorySchema), id });
+      if (snap.exists()) {
+        const category: Category = { ...(snap.data() as CategorySchema), id };
+
+        setCategory(category);
       }
     } catch (error) {
       console.log(error);

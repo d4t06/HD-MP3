@@ -10,4 +10,5 @@ export { default as DashboardSongLyricPage } from "./edit-song-lyric";
 export { default as DashboardEditSingerPage } from "./singer/edit";
 export { default as DashboardAlbumPage } from "./album";
 export { default as HomepageConfig } from "./homepage-config";
-export { default as HubPageConfig } from "./hubpage-config";
+export { default as DashboardCategory } from "./category";
+export { default as DashboardCategoryDetail } from "./category/category-detail";
