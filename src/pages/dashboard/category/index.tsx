@@ -6,6 +6,7 @@ import CategoryLobbyProvider, {
 import AddSectionBtn from "./_components/AddSectionBtn";
 import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./_components/PlaylistSection";
+import SliderSection from "./_components/SliderSection";
 
 function Content() {
   const { page } = useCategoryLobbyContext();
@@ -23,6 +24,8 @@ function Content() {
 
           <AddSectionBtn />
         </div>
+
+        <SliderSection />
 
         {page.category_sections.map((s, i) => (
           <CategorySection key={i} section={s} index={i} />

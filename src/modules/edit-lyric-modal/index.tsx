@@ -32,7 +32,7 @@ function Content({ closeModal }: Props) {
   return (
     <>
       <ModalContentWrapper className="w-[800px]">
-        <ModalHeader title="Edit lyric" close={closeModal} />
+        <ModalHeader title="Edit lyric" closeModal={closeModal} />
 
         <audio src={song?.song_url} ref={audioRef} />
 

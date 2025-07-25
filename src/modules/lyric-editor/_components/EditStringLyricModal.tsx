@@ -67,7 +67,7 @@ export default function EditStringLyricModal({ closeModal }: Props) {
 
   return (
     <ModalContentWrapper className="w-[500px]">
-      <ModalHeader close={closeModal} title="Edit lyric" />
+      <ModalHeader closeModal={closeModal} title="Edit lyric" />
 
       <div
         className={`relative h-[60vh] overflow-hidden rounded-md ${location.hash.includes("/dashboard") ? 'bg-black/10' : 'bg-white/10'} `}

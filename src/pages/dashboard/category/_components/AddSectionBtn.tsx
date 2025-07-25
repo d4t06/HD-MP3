@@ -16,7 +16,7 @@ import {
   SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
-import useCategoryLobbyAction from "../hooks/useCategoryLobbyAction";
+import useSectionAction from "../hooks/useSectionAction";
 import { initCategorySection } from "@/utils/factory";
 
 type Modal = "category" | "playlist";
@@ -28,7 +28,7 @@ export default function AddSectionBtn() {
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { action, isFetching } = useCategoryLobbyAction({ modalRef });
+  const { action, isFetching } = useSectionAction({ modalRef });
 
   const openModal = (m: Modal) => {
     setModal(m);

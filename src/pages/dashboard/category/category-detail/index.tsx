@@ -1,6 +1,6 @@
 import { useGetCategory } from "@/hooks";
 import CategoryProvider, { useCategoryContext } from "./CategoryContext";
-import { Image, Loading, NotFound, Title } from "@/components";
+import { Image, Loading, NotFound } from "@/components";
 import CategoryCta from "./_components/CategoryCta";
 import PlaylistSection from "./_components/PlaylistSection";
 import SongSection from "./_components/SongSection";

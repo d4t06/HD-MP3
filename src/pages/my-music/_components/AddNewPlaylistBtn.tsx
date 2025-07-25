@@ -34,7 +34,7 @@ export default function AddNewPlaylistBtn() {
       <Modal ref={modalRef} variant="animation">
         <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
-            close={closeModal}
+            closeModal={closeModal}
             isLoading={isFetching}
             variant="add"
             user={user}

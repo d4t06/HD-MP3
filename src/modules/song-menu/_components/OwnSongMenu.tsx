@@ -57,7 +57,7 @@ export default function OwnSongMenu({ song }: Props) {
           <ConfirmModal
             callback={handleDeleteSong}
             loading={loading}
-            close={closeModal}
+            closeModal={closeModal}
             label={`Delete ' ${song.name} ' ?`}
           />
         );

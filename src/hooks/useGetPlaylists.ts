@@ -14,6 +14,8 @@ export default function useGetPlaylists({ setPlaylists, playlistIds }: Props) {
 
   const getPlaylist = async () => {
     try {
+      if (!playlistIds.length) return;
+
       setIsFetching(true);
 
       const q = query(

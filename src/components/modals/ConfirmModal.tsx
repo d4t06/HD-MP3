@@ -7,7 +7,7 @@ type Props = {
   desc?: string;
   loading: boolean;
   className?: string;
-  close: () => void;
+  closeModal: () => void;
   children?: ReactNode;
 };
 
@@ -16,14 +16,14 @@ export default function ConfirmModal({
   callback,
   label,
   children,
-  close,
+  closeModal,
   desc = "This action cannot be undone",
 }: Props) {
   const { theme } = useThemeContext();
 
   return (
     <ModalContentWrapper disable={loading} className={`w-[450px]`}>
-      <ModalHeader close={close} title={label || "Wait a minute"} />
+      <ModalHeader closeModal={closeModal} title={label || "Wait a minute"} />
 
       {desc && <p className="font-semibold text-lg text-red-400">{desc}</p>}
 

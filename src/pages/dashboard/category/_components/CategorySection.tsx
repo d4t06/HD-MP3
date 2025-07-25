@@ -1,12 +1,12 @@
 import { useMemo } from "react";
 import { Frame } from "../../_components";
 import { useCategoryLobbyContext } from "../CategoryLobbyContext";
-import EditSectionBtn from "./EditSectionBtn";
-import AddNewCategoryBtn from "./AddNewCategoryBtn";
+import CategorySectionCta from "./CategorySectionCta";
 import CategoryItem from "./CategoryItem";
+import SectionCta from "./SectionCta";
 
 type Props = {
-  section: CategoryLobbySection;
+  section: LobbySection;
   index: number;
 };
 
@@ -28,10 +28,10 @@ export default function CategorySection({ section, index }: Props) {
 
   return (
     <>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center">
         <h1>{section.name}</h1>
 
-        <EditSectionBtn index={index} name={section.name} variant="category" />
+        <SectionCta section={section} index={index} name={section.name} variant="category" />
       </div>
 
       <Frame>
@@ -42,7 +42,7 @@ export default function CategorySection({ section, index }: Props) {
         </div>
 
         <p className="text-center mt-5">
-          <AddNewCategoryBtn sectionIndex={index} />
+          <CategorySectionCta sectionIndex={index} />
         </p>
       </Frame>
     </>

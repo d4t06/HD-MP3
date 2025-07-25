@@ -66,7 +66,7 @@ export default function EditAlbumModal({ closeModal }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader close={closeModal} title={"Edit album"} />
+        <ModalHeader closeModal={closeModal} title={"Edit album"} />
 
         <div className="flex-grow overflow-auto">
           <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-3">

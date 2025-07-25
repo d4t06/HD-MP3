@@ -33,7 +33,7 @@ export default function AddAlbumBtn() {
             <>
               <ModalHeader
                 title="Add album"
-                close={() => modalRef.current?.close()}
+                closeModal={() => modalRef.current?.close()}
               />
 
               <AddAlbumForm

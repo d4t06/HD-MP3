@@ -59,7 +59,7 @@ export default function CommentItem({
 							<div className="flex-grow ml-2">
 								<div className={`rounded-md ${variant === 'theme-bg' ? themeClass("text-black", "text-white") : 'text-white'}`}>
 									<Link
-										className={`font-medium line-clamp-1 font-[500] ${variant === 'theme-bg' ? themeClass("text-[#333]", "text-[#f1f1f1]") : 'text-[#f1f1f1]'}`}
+										className={`font-medium line-clamp-1 ${variant === 'theme-bg' ? themeClass("text-[#333]", "text-[#f1f1f1]") : 'text-[#f1f1f1]'}`}
 										to={`/user/${comment.user_email}`}
 									>
 										{comment.user_name}
@@ -143,7 +143,7 @@ export default function CommentItem({
 			<Modal variant="animation" ref={modalRef}>
 				<ConfirmModal
 					label="Delete comment"
-					close={() => modalRef.current?.close}
+					closeModal={() => modalRef.current?.close()}
 					loading={isFetching}
 					callback={handleDeleteComment}
 				/>

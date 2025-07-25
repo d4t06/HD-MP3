@@ -21,7 +21,7 @@ export default function AddSongBeatModal({ closeModal }: Props) {
 
   return (
     <ModalContentWrapper className="w-[500px]">
-      <ModalHeader title="Song beat" close={closeModal} />
+      <ModalHeader title="Song beat" closeModal={closeModal} />
       <input
         onChange={handleInputChange}
         type="file"

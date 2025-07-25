@@ -18,6 +18,8 @@ import { getClasses } from "@/utils/appHelpers";
 import useGetGenre from "@/pages/dashboard/genre/_hooks/useGetGenre";
 import { useEffect } from "react";
 import WeekSelect from "../week-select";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import PlayChart from "./_components/PlayChart";
 
 type Add = {
   variant: "add";
@@ -70,12 +72,6 @@ export default function AddSongForm(props: Props) {
       >
         <audio ref={audioRef} className="hidden" />
 
-        <div>
-          <p>Chart go here</p>
-
-          <WeekSelect />
-        </div>
-
         <div
           className={`relative mt-5 md:flex md:space-x-5 ${getClasses(isFetching, "disable")}`}
         >
@@ -88,14 +84,29 @@ export default function AddSongForm(props: Props) {
               />
             </div>
 
+            <Frame className="space-y-2">
+              <p>Total plays: {songData?.today_play}</p>
+              <p>Likes: {songData?.like}</p>
+              <p>Week plays: {songData?.week_play}</p>
+              <p>Today plays: {songData?.today_play}</p>
+              <p>Ranking: {songData?.last_week_rank}</p>
+              <p className="text-sm">
+                {/* Last listen: {dateFromTimestamp(songData?.last_active)} */}
+              </p>
+            </Frame>
+
             <div className="w-full">
               <ButtonGroup isEdit={props.variant === "edit"} />
             </div>
           </div>
 
           <div className="mt-5 md:mt-0 space-y-5 flex-grow">
+            <PlayChart />
+
             <Frame>
-              <div className="text-lg mb-3">{songData?.name}</div>
+              <div className="text-lg mb-3 font-bold text-[#333]">
+                {songData?.name}
+              </div>
 
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
             </Frame>

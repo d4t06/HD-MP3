@@ -1,39 +1,82 @@
 import { useMemo } from "react";
-import { Frame } from "../../_components";
-import EditSectionBtn from "./EditSectionBtn";
+import { Frame, Loading } from "../../_components";
+import PlaylistSectionProvider, {
+  usePlaylistSectionContext,
+} from "../PlaylistSectionContext";
+import PlaylistItem from "./PlaylistItem";
+import PlaylistSectionCta from "./PlaylistSectionCta";
+import { useGetPlaylists } from "@/hooks";
+import SectionCta from "./SectionCta";
+import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 
 type Props = {
-  section: CategoryLobbySection;
+  section: LobbySection;
   index: number;
 };
 
-export default function PlaylistSection({ section, index }: Props) {
+export function Content({ section, index }: Props) {
+  const { page } = useCategoryLobbyContext();
+  const { playlists, setPlaylists } = usePlaylistSectionContext();
 
+  const orderedPlaylists = useMemo(() => {
+    const result: Playlist[] = [];
 
-    const orderedPlalists = useMemo(() => {
-      const result: Category[] = [];
-  
-      const order = section.target_ids ? section.target_ids.split("_") : [];
-  
-      order.forEach((id) => {
-        const founded = categories.find((c) => c.id === id);
-        if (founded) result.push(founded);
-      });
-  
-      return result;
-    }, [section, categories]);
+    const order = section.target_ids ? section.target_ids.split("_") : [];
+
+    order.forEach((id) => {
+      const founded = playlists.find((c) => c.id === id);
+      if (founded) result.push(founded);
+    });
+
+    return result;
+  }, [page, playlists]);
+
+  const { isFetching } = useGetPlaylists({
+    setPlaylists,
+    playlistIds: section.target_ids ? section.target_ids.split("_") : [],
+  });
 
   return (
     <>
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center">
         <h1>{section.name}</h1>
 
-        <EditSectionBtn index={index} name={section.name} variant="playlist" />
+        <SectionCta
+          section={section}
+          index={index}
+          name={section.name}
+          variant="playlist"
+        />
       </div>
 
       <Frame>
-        <p></p>
+        {isFetching && <Loading />}
+
+        {!isFetching && (
+          <>
+            {!!orderedPlaylists.length && (
+              <div className="flex flex-wrap -mt-2 -mx-2">
+                {orderedPlaylists.map((c, i) => (
+                  <PlaylistItem playlist={c} sectionIndex={index} key={i} />
+                ))}
+              </div>
+            )}
+
+            <PlaylistSectionCta
+              sectionIndex={index}
+              orderedPlaylists={orderedPlaylists}
+            />
+          </>
+        )}
       </Frame>
     </>
+  );
+}
+
+export default function PlaylistSection(props: Props) {
+  return (
+    <PlaylistSectionProvider>
+      <Content {...props} />
+    </PlaylistSectionProvider>
   );
 }

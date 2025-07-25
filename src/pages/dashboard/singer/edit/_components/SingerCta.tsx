@@ -65,7 +65,7 @@ export default function SingerCta() {
             label={`Delete singer '${singer.name}'`}
             loading={isFetching}
             callback={() => action({ variant: "delete" })}
-            close={closeModal}
+            closeModal={closeModal}
           />
         )}
       </DashboardModal>

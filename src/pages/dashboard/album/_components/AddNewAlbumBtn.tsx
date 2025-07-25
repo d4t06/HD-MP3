@@ -41,7 +41,7 @@ export default function AddNewAlbumBtn({ setAlbums }: Props) {
       <Modal ref={modalRef} variant="animation">
         <ModalContentWrapper className="w-[800px]">
           <ModalHeader
-            close={() => modalRef.current?.close()}
+            closeModal={() => modalRef.current?.close()}
             title="Add album"
           />
           <AddAlbumForm

@@ -10,7 +10,7 @@ type Props = {
 export default function FinishedModal({ handleCloseModal, variant }: Props) {
   return (
     <ModalContentWrapper>
-      <ModalHeader close={handleCloseModal} title="Finished" />
+      <ModalHeader closeModal={handleCloseModal} title="Finished" />
       <Image
         width="w-[120px]"
         className="mx-auto w-[120px]"

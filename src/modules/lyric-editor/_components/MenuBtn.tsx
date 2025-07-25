@@ -64,7 +64,7 @@ export default function MenuBtn({ pause }: Props) {
       case "export":
         return (
           <ModalContentWrapper>
-            <ModalHeader title="Export" close={closeModal} />
+            <ModalHeader title="Export" closeModal={closeModal} />
 
             <div className="flex ">
               <Button

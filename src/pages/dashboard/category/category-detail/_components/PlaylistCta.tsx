@@ -1,4 +1,5 @@
 import {
+  ArrangeModal,
   MenuWrapper,
   Modal,
   ModalRef,
@@ -16,7 +17,6 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
-import ArrangePlaylistModal from "./ArrangePlaylist";
 import { useCategoryContext } from "../CategoryContext";
 import AddPlaylistsModal from "./AddPlaylistsModal";
 
@@ -55,7 +55,7 @@ export default function PlaylistCta() {
                 <span>Add playlist</span>
               </button>
 
-              <button onClick={() => openModal("arrange")}>
+              <button disabled={orderedPlaylists.length < 2} onClick={() => openModal("arrange")}>
                 <ArrowPathIcon />
                 <span>Arrange</span>
               </button>
@@ -67,17 +67,20 @@ export default function PlaylistCta() {
       <Modal variant="animation" ref={modalRef}>
         {modal === "add" && (
           <AddPlaylistsModal
+            current={orderedPlaylists.map((p) => p.id)}
             closeModal={() => modalRef.current?.close()}
             isLoading={isFetching}
-            submit={(playlists) => action({ variant: "add-playlists", playlists })}
+            submit={(playlists) =>
+              action({ variant: "add-playlists", playlists })
+            }
           />
         )}
 
         {modal === "arrange" && (
-          <ArrangePlaylistModal
+          <ArrangeModal
             closeModal={() => modalRef.current?.close()}
             isLoading={isFetching}
-            playlists={orderedPlaylists}
+            data={orderedPlaylists.map((p) => ({ id: p.id, label: p.name }))}
             submit={(order) =>
               action({
                 variant: "arrange-playlist",

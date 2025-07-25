@@ -25,7 +25,7 @@ export default function useGetPage() {
       setIsFetching(true);
 
       let pageConfig: CategoryLobby = {
-        category_ids: [],
+        category_ids: "",
         category_sections: [],
         playlist_sections: [],
         updated_at: serverTimestamp(),

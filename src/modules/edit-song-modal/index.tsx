@@ -56,7 +56,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
         className="hidden"
       />
 
-      <ModalHeader title="Edit song" close={() => modalRef.current?.close()} />
+      <ModalHeader title="Edit song" closeModal={() => modalRef.current?.close()} />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="space-y-2.5">

@@ -10,7 +10,7 @@ export default function CategoryPage() {
   return (
     <>
       {page?.category_sections.map((c) => (
-        <CategorySection title={c.name} category_ids={c.category_ids} />
+        <CategorySection title={c.name} category_ids={[]} />
       ))}
     </>
   );

@@ -57,7 +57,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader close={closeModal} title={"Playlists"} />
+        <ModalHeader closeModal={closeModal} title={"Playlists"} />
         <div
           className={`flex-grow flex flex-col overflow-auto space-y-2 ${
             isFetching ? "disable" : ""
@@ -95,7 +95,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
       <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
-            close={() => modalRef.current?.close()}
+            closeModal={() => modalRef.current?.close()}
             submit={handleAddSongToNewPlaylist}
             isLoading={isFetching || addPlaylistFetching}
             variant="add"

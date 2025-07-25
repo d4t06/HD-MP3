@@ -90,7 +90,7 @@ export default function AddGenreModal({
 
   return (
     <ModalContentWrapper className="w-[450px]">
-      <ModalHeader close={closeModal} title={title} />
+      <ModalHeader closeModal={closeModal} title={title} />
 
       <div className="space-y-3 overflow-auto">
         <div className={classes.inputGroup}>

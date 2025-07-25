@@ -33,7 +33,7 @@ export default function GenreSelect() {
   return (
     <>
       <div className="space-y-2">
-        <div className="text-lg">Genre</div>
+        <div className="text-lg font-bold text-[#333]">Genre</div>
 
         <Frame className="mt-1">
           <div>Main genre</div>

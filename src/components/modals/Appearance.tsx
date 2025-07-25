@@ -35,7 +35,7 @@ function ThemeItem({ onClick, theme, active }: Props) {
 
 
 
-export default function Appearance({ close }: { close: () => void }) {
+export default function Appearance({ closeModal }: { closeModal: () => void }) {
   const { theme: themeInStore, setTheme } = useThemeContext();
 
   const handleSetTheme = (theme: ThemeType) => {
@@ -73,7 +73,7 @@ export default function Appearance({ close }: { close: () => void }) {
 
   return (
     <ModalContentWrapper className="w-[900px]">
-      <ModalHeader close={close} title="Themes" />
+      <ModalHeader closeModal={closeModal} title="Themes" />
       <div className={classes.themeContainer}>
         <h2 className="text-lg font-semibold mb-[10px] mt-[30px]">Specical</h2>
         <div className={classes.themeList}>{_specialThemes}</div>

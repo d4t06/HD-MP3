@@ -25,7 +25,7 @@ export default function SongTable() {
         {!isFetching && (
           <>
             {songMap && songMap[KEY]?.songs.length ? (
-              <SongList songs={songMap[KEY].songs} setSong={(s) => {}} />
+              <SongList songs={songMap[KEY].songs} setSong={() => {}} />
             ) : (
               <NotFound />
             )}

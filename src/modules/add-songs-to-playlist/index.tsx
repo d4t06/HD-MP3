@@ -39,7 +39,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
   return (
     <>
       <ModalContentWrapper className="w-[600px] h-[400px]">
-        <ModalHeader close={closeModal} title="Add song" />
+        <ModalHeader closeModal={closeModal} title="Add song" />
 
         <div className="flex-grow flex flex-col md:flex-row -mx-2">
           <div className={`${classes.col}`}>

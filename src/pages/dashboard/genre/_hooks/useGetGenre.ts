@@ -5,7 +5,7 @@ import { collection, getDocs, query } from "firebase/firestore";
 import { useState } from "react";
 
 export default function useGetGenre() {
-  const { genres, setGenres, shouldFetchGenre } = useGenreContext();
+  const { setGenres, shouldFetchGenre } = useGenreContext();
 
   const [isFetching, setIsFetching] = useState(true);
 

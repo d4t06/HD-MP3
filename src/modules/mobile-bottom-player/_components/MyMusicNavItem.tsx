@@ -64,7 +64,7 @@ export default function MyMusicNavItem({ ActiveClass }: Props) {
 
       <Modal ref={modalRef} variant="animation">
         <ModalContentWrapper>
-          <ModalHeader close={() => modalRef.current?.close()} title="Login" />
+          <ModalHeader closeModal={() => modalRef.current?.close()} title="Login" />
           <div className="text-center my-5">
             <Button onClick={handleLogIn} color="primary">
               Login with Google

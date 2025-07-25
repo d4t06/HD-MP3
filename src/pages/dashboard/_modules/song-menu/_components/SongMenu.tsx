@@ -49,7 +49,7 @@ export default function SongMenu({ song }: { song: Song }) {
                 song,
               })
             }
-            close={closeModal}
+            closeModal={closeModal}
           />
         );
     }

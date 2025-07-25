@@ -60,7 +60,7 @@ export default function OwnPlaylistMenu() {
               playlist={currentPlaylist}
               submit={handleEditPlaylist}
               variant="edit"
-              close={closeModal}
+              closeModal={closeModal}
             />
           </ModalContentWrapper>
         );
@@ -76,7 +76,7 @@ export default function OwnPlaylistMenu() {
                 playlist: currentPlaylist,
               })
             }
-            close={closeModal}
+            closeModal={closeModal}
           />
         );
     }

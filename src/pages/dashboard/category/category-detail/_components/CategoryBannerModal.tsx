@@ -31,7 +31,7 @@ export default function CategoryBannerModal({ closeModal }: Props) {
           className="hidden"
         />
 
-        <ModalHeader close={closeModal} title="Change order" />
+        <ModalHeader closeModal={closeModal} title="Change order" />
 
         <div className="overflow-auto">
           <div className="aspect-[16/5]">

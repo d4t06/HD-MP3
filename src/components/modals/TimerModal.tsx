@@ -35,7 +35,7 @@ function TimerModal({ closeModal, active }: Props) {
 
   return (
     <ModalContentWrapper>
-      <ModalHeader close={closeModal} title="Sleep timer" />
+      <ModalHeader closeModal={closeModal} title="Sleep timer" />
       <div>
         <div className="flex flex-wrap -mt-2 -ml-2 mb-3">{renderItems}</div>
       </div>

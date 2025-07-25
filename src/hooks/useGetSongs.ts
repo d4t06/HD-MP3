@@ -1,14 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  collection,
-  documentId,
-  getDocs,
-  query,
-  where,
-} from "firebase/firestore";
+import { collection, documentId, query, where } from "firebase/firestore";
 import { db } from "@/firebase";
-import { nanoid } from "nanoid";
 import { implementSongQuery } from "@/services/appService";
 
 type Props = {
@@ -20,11 +12,10 @@ export default function useGetSongs({ setSongs, songIds }: Props) {
   const [isFetching, setIsFetching] = useState(false);
   const ranEffect = useRef(false);
 
-  const { id } = useParams<{ id: string }>();
-
   const getSongs = async () => {
     try {
-      if (!id) return;
+      if (!songIds.length) return;
+
       setIsFetching(true);
 
       const q = query(

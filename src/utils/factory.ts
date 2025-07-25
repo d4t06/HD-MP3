@@ -1,4 +1,3 @@
-import { retry } from "@reduxjs/toolkit/query";
 import { serverTimestamp } from "firebase/firestore";
 
 export const initSongObject = (
@@ -166,7 +165,7 @@ export const initCategory = (data: Partial<Category>) => {
 };
 
 export const initCategorySection = (name: string = "") => {
-  const data: CategoryLobbySection = {
+  const data: LobbySection = {
     name,
     show: true,
     target_ids: "",

@@ -22,7 +22,7 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader title="Singers" close={closeModal} />
+        <ModalHeader title="Singers" closeModal={closeModal} />
         <Searchbar {...rest} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">

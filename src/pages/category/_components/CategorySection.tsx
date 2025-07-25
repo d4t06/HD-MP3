@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function CategorySection({ title, category_ids }: Props) {
-  const { isFetching, categories } = useGetCategories({ category_ids });
+  const { isFetching } = useGetCategories({ category_ids });
 
   const loadingElement = [...Array(3).keys()].map((i) => (
     <Skeleton key={i} className="aspect-[4/3]" />

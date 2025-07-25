@@ -9,6 +9,7 @@ import {
 import Button from "../ui/Button";
 import { useThemeContext } from "@/stores";
 import { ModalContentWrapper, ModalHeader } from ".";
+import { inputClasses } from "../ui/Input";
 
 type Props = {
   closeModal: () => void;
@@ -51,17 +52,17 @@ export default function AddItem({
     inputRef.current?.focus();
   }, []);
 
-  const classes = {
-    input: `rounded-md px-3 py-2 outline-none w-full ${location.hash.includes("/dashboard") ? "bg-black/5" : "bg-white/5 text-white"}`,
-  };
+  // const classes = {
+  //   input: `rounded-md px-3 py-2 outline-none w-full ${location.hash.includes("/dashboard") ? "bg-black/5" : "bg-white/5 text-white"}`,
+  // };
 
   return (
     <ModalContentWrapper>
-      <ModalHeader close={closeModal} title={title} />
+      <ModalHeader closeModal={closeModal} title={title} />
       <form action="" onSubmit={handleSubmit}>
         {variant === "input" && (
           <input
-            className={classes.input}
+            className={inputClasses}
             ref={inputRef}
             placeholder="name..."
             value={value}
@@ -71,7 +72,7 @@ export default function AddItem({
 
         {variant === "text-area" && (
           <textarea
-            className={classes.input}
+            className={inputClasses}
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />

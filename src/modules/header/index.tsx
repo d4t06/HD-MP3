@@ -54,6 +54,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     settingTriggerRef.current?.close();
   };
 
+  const closeModal = () => modalRef.current?.close();
+
   const handleSignOut = async () => {
     try {
       await action("logout");
@@ -88,13 +90,13 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
       case "":
         return <></>;
       case "theme":
-        return <Appearance close={() => modalRef.current?.toggle()} />;
+        return <Appearance closeModal={closeModal} />;
       case "info":
-        return <AppInfo close={() => modalRef.current?.toggle()} />;
+        return <AppInfo closeModal={closeModal} />;
       case "confirm":
         return (
           <ConfirmModal
-            close={() => modalRef.current?.toggle()}
+            closeModal={closeModal}
             callback={handleSignOut}
             loading={false}
             label="Sign out ?"

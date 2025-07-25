@@ -30,7 +30,7 @@ export default function SearchLyricModal({ closeModal }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader close={closeModal} title="Search lyric" />
+        <ModalHeader closeModal={closeModal} title="Search lyric" />
 
         <Searchbar {...rest} />
 

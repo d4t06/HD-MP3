@@ -1,15 +1,15 @@
 import { Button, Title } from "@/components";
-import useGetTrendingSongs from "../_hooks/useGetTrending";
 import { SongItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useThemeContext } from "@/stores";
+import useGetTrendingSongs from "@/modules/trending-song/useGetTrending";
 
 export default function Trending() {
   const { theme } = useThemeContext();
 
-  const { isFetching, songs } = useGetTrendingSongs();
+  const { isFetching, songs } = useGetTrendingSongs({ amount: 5 });
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
@@ -34,7 +34,7 @@ export default function Trending() {
       </SongSelectProvider>
 
       <div className="text-center mt-5 border-none">
-        <Button color={'primary'}>See more</Button>
+        <Button color={"primary"}>See more</Button>
       </div>
     </div>
   );

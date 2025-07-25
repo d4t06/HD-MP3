@@ -20,14 +20,16 @@ type Props = {
   closeModal: () => void;
   submit: (playlists: Playlist[]) => void;
   isLoading: boolean;
+  current: string[];
 };
 
-function Content({ closeModal, submit, isLoading }: Props) {
+function Content({ closeModal, submit, isLoading, current }: Props) {
   const { theme } = useThemeContext();
   const { user } = useAuthContext();
 
-  const { playlists, isFetching, lastSubmit, ...rest } = useSearchPlaylist();
-  const { selectedPlaylists, selectSong } = usePlaylistSelectContext();
+  const { playlists, isFetching, lastSubmit, newPlaylists, ...rest } =
+    useSearchPlaylist();
+  const { selectedPlaylists, selectPlaylist } = usePlaylistSelectContext();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -61,46 +63,64 @@ function Content({ closeModal, submit, isLoading }: Props) {
 
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
-    box: `rounded-lg bg-black/10 p-2`,
-    songItem: `rounded-md w-full p-1 text-left`,
+    box: `rounded-lg bg-black/5 p-2`,
+    boxItem: `rounded-md w-full p-2.5 text-left shadow`,
   };
+
+  const renderPlaylists = (playlists: Playlist[]) =>
+    playlists.map((p, i) => {
+      const isCurrent = current.includes(p.id);
+
+      return (
+        <button
+          key={i}
+          onClick={() => !isCurrent && selectPlaylist(p)}
+          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `${theme.content_bg}` : `bg-white text-black`} `}
+        >
+          {p.name}
+        </button>
+      );
+    });
 
   return (
     <>
-      <ModalContentWrapper className="w-[600px] h-[400px]">
-        <ModalHeader close={closeModal} title="Add Playlist" />
+      <ModalContentWrapper className="w-[600px] h-[500px]">
+        <ModalHeader closeModal={closeModal} title="Add Playlist" />
 
-        <div className="flex-grow flex flex-col md:flex-row -mx-2">
+        <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden">
           <div className={`${classes.col}`}>
             <SearchBar {...rest} />
 
-            <div className={`${classes.box} relative flex-grow mt-3`}>
-              <div className={`h-full  overflow-auto pace-y-2`}>
-                {!isFetching ? (
-                  otherPlaylists.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => selectSong(s)}
-                      className={`${classes.songItem} bg-black/10 ${theme.content_hover_bg}`}
-                    >
-                      <h5 className="">{s.name}</h5>
-                    </button>
-                  ))
-                ) : (
-                  <Loading className="h-full" />
-                )}
-
-                {!isFetching &&
-                  lastSubmit &&
-                  rest.value == lastSubmit &&
-                  !otherPlaylists.length && (
-                    <Center>
-                      <Button onClick={() => modalRef.current?.open()}>
-                        Add playlist
-                      </Button>
-                    </Center>
+            <div
+              className={`${classes.box} relative flex-grow overflow-auto mt-3 space-y-2`}
+            >
+              {/* <div className={`h-full overflow-auto space-y-2`}> */}
+              {!isFetching ? (
+                <>
+                  {rest.value ? (
+                    renderPlaylists(otherPlaylists)
+                  ) : (
+                    <>
+                      <div className="font-bold text-[#333]">New playlist</div>
+                      {renderPlaylists(newPlaylists)}
+                    </>
                   )}
-              </div>
+                </>
+              ) : (
+                <Loading className="h-full" />
+              )}
+
+              {!isFetching &&
+                lastSubmit &&
+                rest.value == lastSubmit &&
+                !otherPlaylists.length && (
+                  <Center>
+                    <Button onClick={() => modalRef.current?.open()}>
+                      Add playlist
+                    </Button>
+                  </Center>
+                )}
+              {/* </div> */}
             </div>
           </div>
           <div className={`${classes.col} mt-3 md:mt-0`}>
@@ -109,15 +129,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
             <div
               className={`${classes.box} flex-grow overflow-auto space-y-2 `}
             >
-              {selectedPlaylists.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => selectSong(s)}
-                  className={`${classes.songItem} ${theme.content_bg} hover:bg-black/10 hover:text-black`}
-                >
-                  <h5 className="">{s.name}</h5>
-                </button>
-              ))}
+              {renderPlaylists(selectedPlaylists)}
             </div>
           </div>
         </div>

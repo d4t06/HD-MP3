@@ -241,15 +241,15 @@ type Category = {
 
 type CategorySchema = Omit<Category, "id">;
 
-type CategoryLobbySection = {
+type LobbySection = {
   name: string;
   target_ids: string;
   show: boolean;
 };
 
 type CategoryLobby = {
-  category_ids: string[];
-  category_sections: CategoryLobbySection[];
-  playlist_sections: CategoryLobbySection[];
+  category_ids: string;
+  category_sections: LobbySection[];
+  playlist_sections: LobbySection[];
   updated_at: Timestamp;
 };

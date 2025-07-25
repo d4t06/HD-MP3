@@ -1,7 +1,7 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../_components";
 import { useRef } from "react";
-import useCategoryLobbyAction from "../hooks/useCategoryLobbyAction";
+import useSectionAction from "../hooks/useSectionAction";
 import { Modal, ModalRef } from "@/components";
 import AddCategoryModal from "./AddCategoryModal";
 
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function AddNewCategoryBtn({ sectionIndex }: Props) {
-  const { action, isFetching } = useCategoryLobbyAction();
+  const { action, isFetching } = useSectionAction();
 
   const modalRef = useRef<ModalRef>(null);
 

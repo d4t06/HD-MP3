@@ -52,7 +52,7 @@ export default function PlaylistSection() {
                       callback={() =>
                         action({ variant: "remove-playlist", playlist:p, index: i })
                       }
-                      close={() => modalRef.current?.close()}
+                      closeModal={() => modalRef.current?.close()}
                       loading={actionFetching}
                       label={`Remove playlist '${p.name}'`}
                     />

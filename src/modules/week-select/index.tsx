@@ -6,8 +6,7 @@ import {
   MyPopupContent,
   MyPopupTrigger,
 } from "@/components";
-import DismisPopupWrapper from "@/components/popup/DismisPopupWrapper";
-import VertialMenu from "@/components/popup/VerticalMenu";
+import VerticalMenu from "@/components/popup/VerticalMenu";
 import WeekList from "./WeekList";
 
 type Props = {
@@ -32,18 +31,16 @@ export default function WeekSelect(props: Props) {
 
       <MyPopupContent position="right-bottom" origin="top left">
         <MenuWrapper>
-          <DismisPopupWrapper className="w-[160px] h-[30vh] overflow-auto">
-            <VertialMenu>
-              <WeekList
-                weekOptions={weekOptions}
-                currentIndex={currentIndex}
-                submit={(i) => {
-                  setCurrentIndex(i);
-                  props.submit(weekOptions[i].value);
-                }}
-              />
-            </VertialMenu>
-          </DismisPopupWrapper>
+          <VerticalMenu className="w-[160px] h-[30vh] overflow-auto">
+            <WeekList
+              weekOptions={weekOptions}
+              currentIndex={currentIndex}
+              submit={(i) => {
+                setCurrentIndex(i);
+                props.submit(weekOptions[i].value);
+              }}
+            />
+          </VerticalMenu>
         </MenuWrapper>
       </MyPopupContent>
     </MyPopup>

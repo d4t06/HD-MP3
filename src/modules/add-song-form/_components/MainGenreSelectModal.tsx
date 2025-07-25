@@ -33,7 +33,7 @@ export default function MainGenreSelectModal({ closeModal, choose }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader title="Genre" close={closeModal} />
+        <ModalHeader title="Genre" closeModal={closeModal} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">
           {isFetching ? (

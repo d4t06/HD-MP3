@@ -2,16 +2,18 @@ import { ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { useEffect, useMemo, useState } from "react";
 
+type Data = { id: string; label: string }[];
+
 type Props = {
   closeModal: () => void;
-  playlists: Playlist[];
+  data: Data;
   isLoading: boolean;
   submit: (order: string[]) => void;
 };
 
-export default function ArrangePlaylistModal({
+export default function ArrangeModal({
   closeModal,
-  playlists,
+  data,
   submit,
   isLoading,
 }: Props) {
@@ -19,10 +21,10 @@ export default function ArrangePlaylistModal({
   const [currentIndex, setCurrentIndex] = useState<number>();
 
   const orderedPlaylists = useMemo(() => {
-    const bucket: Playlist[] = [];
+    const bucket: Data = [];
 
     localOrder.forEach((id) => {
-      const founded = playlists.find((p) => p.id === id);
+      const founded = data.find((p) => p.id === id);
 
       if (founded) bucket.push(founded);
     });
@@ -47,13 +49,13 @@ export default function ArrangePlaylistModal({
   };
 
   useEffect(() => {
-    setLocalOrder(playlists.map((p) => p.id));
+    setLocalOrder(data.map((d) => d.id));
   }, []);
 
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader close={closeModal} title="Change order" />
+        <ModalHeader closeModal={closeModal} title="Change order" />
 
         <div className="flex flex-col flex-grow overflow-auto space-y-2">
           {orderedPlaylists.map((p, index) => (
@@ -63,7 +65,7 @@ export default function ArrangePlaylistModal({
               data-id={p.id}
               className={`attribute-item p-1.5 ${currentIndex === index ? "bg-red-300" : "hover:bg-red-300 bg-[#f1f1f1]"}  border-[2px] border-[#ccc] rounded-md`}
             >
-              {p.name}
+              {p.label}
             </button>
           ))}
         </div>

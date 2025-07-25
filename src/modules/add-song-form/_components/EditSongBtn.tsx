@@ -54,7 +54,7 @@ export default function EditSongBtn() {
         <ModalContentWrapper>
           <ModalHeader
             title="Edit song"
-            close={() => modalRef.current?.close()}
+            closeModal={() => modalRef.current?.close()}
           />
 
           <div className="space-y-2.5">

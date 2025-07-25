@@ -30,7 +30,7 @@ export default function useGetCategories({ category_ids }: Props) {
 
       if (!snap.empty) {
         const result: Category[] = snap.docs.map((d) => ({
-          ...(d.data() as Category_Schema),
+          ...(d.data() as CategorySchema),
           id: d.id,
         }));
 

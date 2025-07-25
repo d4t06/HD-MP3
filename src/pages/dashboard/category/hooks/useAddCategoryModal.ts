@@ -8,7 +8,7 @@ export default function useAddCategoryModal(props: AddCategoryModalProps) {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const updatePlaylistData = (data?: Partial<PlaylistSchema>) => {
+  const updateData = (data?: Partial<CategorySchema>) => {
     if (!categoryData) return;
     setCategoryData({ ...categoryData, ...data });
   };
@@ -50,14 +50,14 @@ export default function useAddCategoryModal(props: AddCategoryModalProps) {
   useEffect(() => {
     if (!imageFile) return;
 
-    updatePlaylistData({ image_url: URL.createObjectURL(imageFile) });
+    updateData({ image_url: URL.createObjectURL(imageFile) });
   }, [imageFile]);
 
   return {
     categoryData,
     imageFile,
     setImageFile,
-    updatePlaylistData,
+    updateData,
     setCategoryData,
     inputRef,
     isValidToSubmit,

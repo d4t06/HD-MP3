@@ -2,14 +2,7 @@ import { implementSongQuery } from "@/services/appService";
 import { songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { getToDayTimestamp } from "@/utils/appHelpers";
-import {
-  documentId,
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
+import { limit, orderBy, query, where } from "firebase/firestore";
 import { ComponentProps, useEffect, useRef, useState } from "react";
 import TrendingSongs from ".";
 

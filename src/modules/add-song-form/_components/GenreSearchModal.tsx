@@ -39,7 +39,7 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
   return (
     <>
       <ModalContentWrapper>
-        <ModalHeader title="Genre" close={closeModal} />
+        <ModalHeader title="Genre" closeModal={closeModal} />
         <DebounceSearchBar inputRef={inputRef} {...rest} />
 
         <div className="h-[40vh] mt-3 space-y-1.5 overflow-auto">

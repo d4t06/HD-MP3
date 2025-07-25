@@ -1,23 +1,24 @@
-import { myAddDoc, myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
+import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
 import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { ModalRef } from "@/components";
+import { doc, writeBatch } from "firebase/firestore";
+import { db } from "@/firebase";
 
 type Props = {
-  modalRef: RefObject<ModalRef>
-}
+  modalRef: RefObject<ModalRef>;
+};
 
-export default function useCategoryLobbyAction(mainProps?:Props) {
-  const { page, setPage, categories, setCategories } =
-    useCategoryLobbyContext();
+export default function useSectionAction(mainProps?: Props) {
+  const { page, setPage, setCategories } = useCategoryLobbyContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
   type Add = {
     type: "add-section";
-    section: CategoryLobbySection;
+    section: LobbySection;
     variant: "category" | "playlist";
   };
 
@@ -30,7 +31,7 @@ export default function useCategoryLobbyAction(mainProps?:Props) {
   type Edit = {
     type: "edit-section";
     variant: "category" | "playlist";
-    section: Partial<CategoryLobbySection>;
+    section: Partial<LobbySection>;
     index: number;
   };
 
@@ -99,10 +100,22 @@ export default function useCategoryLobbyAction(mainProps?:Props) {
         }
 
         case "delete": {
+          const batch = writeBatch(db);
+
           const newPage = { ...page };
 
           switch (props.variant) {
             case "category":
+              const targetIds =
+                newPage.category_sections[props.index].target_ids;
+
+              // delete categories
+              if (targetIds) {
+                targetIds
+                  .split("_")
+                  .forEach((id) => batch.delete(doc(db, "Categories", id)));
+              }
+
               newPage.category_sections.splice(props.index, 1);
               break;
             case "playlist":
@@ -110,11 +123,9 @@ export default function useCategoryLobbyAction(mainProps?:Props) {
               break;
           }
 
-          await myUpdateDoc({
-            collectionName: "Category_Lobby",
-            data: newPage,
-            id: "page",
-          });
+          batch.update(doc(db, "Category_Lobby", "page"), newPage);
+
+          await batch.commit();
 
           setSuccessToast("Delete section successful");
           break;
@@ -150,8 +161,7 @@ export default function useCategoryLobbyAction(mainProps?:Props) {
         }
       }
 
-
-      mainProps?.modalRef.current?.close()
+      mainProps?.modalRef.current?.close();
     } catch (error) {
       console.log(error);
       setErrorToast();

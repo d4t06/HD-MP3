@@ -41,7 +41,7 @@ export default function DeleteAlbumBtn() {
       <Modal variant="animation" ref={modalRef}>
         <ConfirmModal
           label={`Delete album ' ${album?.name} '`}
-          close={() => modalRef.current?.close()}
+          closeModal={() => modalRef.current?.close()}
           callback={handleDeleteAlbum}
           loading={false}
         />

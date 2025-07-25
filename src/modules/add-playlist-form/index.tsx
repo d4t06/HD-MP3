@@ -59,7 +59,7 @@ export default function AddPlaylistModal({
   return (
     <>
       <ModalHeader
-        close={closeModal}
+        closeModal={closeModal}
         title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
       />
 

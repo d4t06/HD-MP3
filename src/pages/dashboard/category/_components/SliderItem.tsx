@@ -1,6 +1,6 @@
-import { ConfirmModal, Modal, ModalRef } from "@/components";
+import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
 import { useRef, useState } from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
 import AddCategoryModal from "./AddCategoryModal";
 import useCategoryAction from "../hooks/useCategoryAction";
@@ -12,7 +12,7 @@ type Props = {
 
 type Modal = "edit" | "delete";
 
-export default function CategoryItem({ category }: Props) {
+export default function SliderItem({ category }: Props) {
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
@@ -29,23 +29,29 @@ export default function CategoryItem({ category }: Props) {
 
   return (
     <>
-      <ItemRightCtaFrame>
-        <Link
-          to={`/dashboard/category/${category.id}`}
-          className="hover:underline"
-        >
-          {category.name}
-        </Link>
-
-        <div>
-          <button className="" onClick={() => openModal("edit")}>
-            <PencilIcon className="w-5" />
-          </button>
-          <button onClick={() => openModal("delete")}>
-            <TrashIcon className="w-5" />
-          </button>
+      <div>
+        <div className="aspect-[16/5]">
+          <Image
+            src={category.banner_image_url}
+            blurHashEncode={category.banner_blurhash_encode}
+            className="rounded-md h-full object-cover"
+          />
         </div>
-      </ItemRightCtaFrame>
+        <ItemRightCtaFrame margin={false} className="w-fit mx-auto mt-2">
+          <Link
+            to={`/dashboard/category/${category.id}`}
+            className="hover:underline"
+          >
+            {category.name}
+          </Link>
+
+          <div>
+            <button onClick={() => openModal("delete")}>
+              <TrashIcon className="w-5" />
+            </button>
+          </div>
+        </ItemRightCtaFrame>
+      </div>
 
       <Modal variant="animation" ref={modalRef}>
         {modal === "edit" && (

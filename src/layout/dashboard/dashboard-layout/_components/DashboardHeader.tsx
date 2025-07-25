@@ -46,9 +46,9 @@ export default function DashboardHeader() {
       case "":
         return <></>;
       case "theme":
-        return <Appearance close={closeModal} />;
+        return <Appearance closeModal={closeModal} />;
       case "info":
-        return <AppInfo close={closeModal} />;
+        return <AppInfo closeModal={closeModal} />;
     }
   };
 

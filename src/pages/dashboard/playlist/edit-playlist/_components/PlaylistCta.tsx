@@ -58,7 +58,7 @@ export default function DashboardPlaylistCta() {
                 variant="edit"
                 isLoading={isFetching}
                 playlist={playlist}
-                close={closeModal}
+                closeModal={closeModal}
               />
             </ModalContentWrapper>
           </>
@@ -72,7 +72,7 @@ export default function DashboardPlaylistCta() {
             callback={() =>
               handlePlaylistAction({ variant: "delete-playlist" })
             }
-            close={closeModal}
+            closeModal={closeModal}
           />
         );
 

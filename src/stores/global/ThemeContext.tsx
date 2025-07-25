@@ -1,13 +1,21 @@
-import { specialThemes, themes } from "@/constants/themes";
+import { dashboardTheme, specialThemes, themes } from "@/constants/themes";
 import { getLocalStorage } from "@/utils/appHelpers";
-import { ReactNode, createContext, useCallback, useContext, useReducer } from "react";
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useContext,
+  useReducer,
+} from "react";
 
 let initTheme = themes[3];
 
 const storage = getLocalStorage();
 const localStorageThemeId = storage["theme"] as ThemeKeyType | null;
 
-if (localStorageThemeId) {
+if (location.hash.includes("dashboard")) {
+  initTheme = dashboardTheme;
+} else if (localStorageThemeId) {
   [...themes, ...specialThemes].forEach((theme) => {
     if (theme.id === localStorageThemeId) {
       initTheme = theme;
@@ -21,7 +29,7 @@ const initialState = {
     alpha: initTheme.type === "light" ? "[#000]/5" : "[#fff]/5",
     text_color: initTheme.type === "light" ? "text-[#333]" : "text-[#fff]",
   },
-  isOnMobile: window.innerWidth < 768, //md breakpont
+  isOnMobile: window.innerWidth < 768, //md breakpoint
   isDev: import.meta.env.DEV,
 };
 

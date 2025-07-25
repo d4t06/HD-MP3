@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Image, Input, ModalContentWrapper, ModalHeader } from "@/components";
 import useAddCategoryModal from "../hooks/useAddCategoryModal";
@@ -28,13 +27,11 @@ export default function AddCategoryModal({
   submit,
   ...props
 }: BaseProps & AddCategoryModalProps) {
-  const { theme } = useThemeContext();
-
   const {
     imageFile,
     setImageFile,
     categoryData,
-    updatePlaylistData,
+    updateData,
     isChanged,
     isChangeImage,
     inputRef,
@@ -59,7 +56,7 @@ export default function AddCategoryModal({
     <>
       <ModalContentWrapper className="w-[500px]">
         <ModalHeader
-          close={closeModal}
+          closeModal={closeModal}
           title={props.variant === "add" ? "Add category" : "Edit category"}
         />
 
@@ -105,7 +102,7 @@ export default function AddCategoryModal({
                 type="text"
                 placeholder="name..."
                 value={categoryData.name}
-                onChange={(e) => updatePlaylistData({ name: e.target.value })}
+                onChange={(e) => updateData({ name: e.target.value })}
               />
             </div>
           </div>

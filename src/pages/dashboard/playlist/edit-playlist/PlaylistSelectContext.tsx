@@ -5,7 +5,7 @@ const useSelectPlaylist = () => {
   const [isSelectAll, setIsSelectAll] = useState(false);
   const [selectedPlaylists, setSelectedPlaylists] = useState<Playlist[]>([]);
 
-  const selectSong = (playlist: Playlist) => {
+  const selectPlaylist = (playlist: Playlist) => {
     const newSongs = [...selectedPlaylists];
     const index = newSongs.findIndex((s) => s.id === playlist.id);
 
@@ -36,7 +36,7 @@ const useSelectPlaylist = () => {
     setSelectedPlaylists,
     selectedPlaylists,
     selectAllPlaylist,
-    selectSong,
+    selectPlaylist,
     resetSelect,
   };
 };

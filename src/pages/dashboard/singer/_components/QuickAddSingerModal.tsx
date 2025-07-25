@@ -48,7 +48,7 @@ export default function QuickAddSingerModal({
 
   return (
     <ModalContentWrapper className="w-[450px]">
-      <ModalHeader close={closeModal} title={"Add singer"} />
+      <ModalHeader closeModal={closeModal} title={"Add singer"} />
 
       <div className="space-y-3 overflow-auto">
         <div className={classes.inputGroup}>

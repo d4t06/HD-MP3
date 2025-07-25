@@ -3,28 +3,34 @@ import { myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
 import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+import { usePlaylistSectionContext } from "../PlaylistSectionContext";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function UsePlaylistSectionAction(mainProps?: Props) {
-  const { setErrorToast, setSuccessToast } = useToastContext();
   const { page, setPage } = useCategoryLobbyContext();
-
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const { setErrorToast, setSuccessToast } = useToastContext();
+  const { playlists, setPlaylists } = usePlaylistSectionContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
   type Edit = {
-    type: "add-playlist";
+    variant: "add-playlist";
     playlists: Playlist[];
     sectionIndex: number;
   };
 
   type Remove = {
-    type: "remove-playlist";
+    variant: "remove-playlist";
     id: string;
+    sectionIndex: number;
+  };
+
+  type ArrangePlaylists = {
+    variant: "arrange-playlist";
+    section: Partial<LobbySection>;
     sectionIndex: number;
   };
 
@@ -33,7 +39,7 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
 
     const newPage = { ...page };
 
-    const newSectionData: Partial<CategoryLobbySection> = {
+    const newSectionData: Partial<LobbySection> = {
       target_ids: playlists.map((p) => p.id).join("_"),
     };
 
@@ -49,11 +55,11 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
     setPage(newPage);
   };
 
-  const action = async (props: Edit | Remove) => {
+  const action = async (props: Edit | Remove | ArrangePlaylists) => {
     try {
       if (!page) return;
       setIsFetching(true);
-      switch (props.type) {
+      switch (props.variant) {
         case "add-playlist": {
           const newPlaylists = [...playlists, ...props.playlists];
 
@@ -69,6 +75,25 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
           updatePageDoc(newPlaylists, props.sectionIndex);
 
           setSuccessToast("Remove playlist successful");
+
+          break;
+        }
+
+        case "arrange-playlist": {
+          const newPage = { ...page };
+
+          Object.assign(
+            newPage.playlist_sections[props.sectionIndex],
+            props.section,
+          );
+
+          await myUpdateDoc({
+            collectionName: "Category_Lobby",
+            data: newPage,
+            id: "page",
+          });
+
+          setPage(newPage);
 
           break;
         }

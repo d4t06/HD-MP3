@@ -43,13 +43,13 @@ export default function MobileSetting() {
   const renderModal = useMemo(() => {
     switch (modal) {
       case "theme":
-        return <Appearance close={closeModal} />;
+        return <Appearance closeModal={closeModal} />;
       case "info":
-        return <AppInfo close={closeModal} />;
+        return <AppInfo closeModal={closeModal} />;
       case "logout":
         return (
           <ConfirmModal
-            close={closeModal}
+            closeModal={closeModal}
             callback={handleSignOut}
             loading={false}
             label="Log out ?"

@@ -5,20 +5,10 @@ import DashboardNavigation from "./_components/DashboardNavigation";
 import ToastPortal from "@/modules/toast-portal";
 import GenreProvider from "@/stores/dashboard/GenreContext";
 import { Outlet } from "react-router-dom";
-import { useEffect } from "react";
-import { dashboardTheme } from "@/constants/themes";
 import { PushBrowserHistory } from "@/stores/global/NavigationContext";
-import { setLocalStorage } from "@/utils/appHelpers";
 
 export default function DashBoardLayout() {
-  const { setTheme, isOnMobile, theme } = useThemeContext();
-
-  useEffect(() => {
-    if (theme.id !== dashboardTheme.id) {
-      setTheme(dashboardTheme);
-      setLocalStorage("theme", dashboardTheme.id);
-    }
-  }, []);
+  const { isOnMobile, theme } = useThemeContext();
 
   return (
     <>

@@ -28,7 +28,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   return (
     <ModalContentWrapper className="w-[700px] md:block">
       <ModalHeader
-        close={props.closeModal}
+        closeModal={props.closeModal}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}
       />
 

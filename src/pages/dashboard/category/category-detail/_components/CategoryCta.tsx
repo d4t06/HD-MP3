@@ -50,7 +50,7 @@ export default function CategoryCta() {
             loading={false}
             label={"Delete playlist ?"}
             callback={() => {}}
-            close={closeModal}
+            closeModal={closeModal}
           />
         );
     }

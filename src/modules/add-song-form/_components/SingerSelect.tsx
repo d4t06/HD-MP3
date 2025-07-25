@@ -23,7 +23,7 @@ export default function SingerSelect() {
   return (
     <>
       <div className="space-y-2">
-        <div className="text-lg">Singer</div>
+        <div className="text-lg font-bold text-[#333]">Singer</div>
 
         <Frame className=" mt-1">
           <div className="flex flex-wrap -ml-2 -mt-2">
