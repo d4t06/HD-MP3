@@ -1,22 +1,28 @@
-import { Loading } from "@/pages/dashboard/_components";
+import { Button, Loading } from "@/pages/dashboard/_components";
 import { useCategoryContext } from "../CategoryContext";
 import { useGetPlaylists } from "@/hooks";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
 import { Link } from "react-router-dom";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
-import { NotFound } from "@/components";
+import { ConfirmModal, Modal, ModalRef, NotFound } from "@/components";
 import PlaylistCta from "./PlaylistCta";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
+import { useRef } from "react";
 
 export default function PlaylistSection() {
-  const { setPlaylists, orderedPlaylists, playlistIds } =
-    useCategoryContext();
+  const { setPlaylists, orderedPlaylists, playlistIds } = useCategoryContext();
 
   const { isFetching } = useGetPlaylists({ setPlaylists, playlistIds });
+
+  const modalRef = useRef<ModalRef>(null);
+
+  const { action, isFetching: actionFetching } = useCategoryDetailAction();
 
   return (
     <>
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-600">Playlists</h1>
+        <h1 className="text-lg font-bold text-[#333]">Playlists</h1>
 
         <PlaylistCta />
       </div>
@@ -36,7 +42,22 @@ export default function PlaylistSection() {
                   </Link>
                 </td>
                 <td>{abbreviateNumber(p.like)}</td>
-                <td>-</td>
+                <td className="text-right">
+                  <Button onClick={() => modalRef.current?.open()} size={"clear"} className="p-1">
+                    <TrashIcon className="w-5" />
+                  </Button>
+
+                  <Modal variant="animation" ref={modalRef}>
+                    <ConfirmModal
+                      callback={() =>
+                        action({ variant: "remove-playlist", playlist:p, index: i })
+                      }
+                      close={() => modalRef.current?.close()}
+                      loading={actionFetching}
+                      label={`Remove playlist '${p.name}'`}
+                    />
+                  </Modal>
+                </td>
               </tr>
             ))
           ) : (

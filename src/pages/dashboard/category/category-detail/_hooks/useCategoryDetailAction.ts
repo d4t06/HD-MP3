@@ -3,14 +3,22 @@ import { useCategoryContext } from "../CategoryContext";
 import { useToastContext } from "@/stores";
 import { myUpdateDoc } from "@/services/firebaseService";
 import { ModalRef } from "@/components";
+import { serverTimestamp } from "firebase/firestore";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function useCategoryDetailAction(mainProps?: Props) {
-  const { songs, setSongs, playlists, setPlaylists, category, setCategory } =
-    useCategoryContext();
+  const {
+    songs,
+    setSongs,
+    playlists,
+    setPlaylists,
+    orderedPlaylists,
+    category,
+    setCategory,
+  } = useCategoryContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -30,7 +38,26 @@ export default function useCategoryDetailAction(mainProps?: Props) {
     category: Partial<Category>;
   };
 
-  const action = async (props: AddSongs | AddPlaylists | ArrangePlaylists) => {
+  type RemoveSong = {
+    variant: "remove-song";
+    song: Song;
+    index: number;
+  };
+
+  type RemovePlaylist = {
+    variant: "remove-playlist";
+    playlist: Playlist;
+    index: number;
+  };
+
+  const action = async (
+    props:
+      | AddSongs
+      | AddPlaylists
+      | ArrangePlaylists
+      | RemoveSong
+      | RemovePlaylist,
+  ) => {
     try {
       if (!category) return;
 
@@ -44,6 +71,7 @@ export default function useCategoryDetailAction(mainProps?: Props) {
 
           const newCategoryData: Partial<Category> = {
             song_ids: songIsList.join("_"),
+            updated_at: serverTimestamp(),
           };
 
           await myUpdateDoc({
@@ -68,6 +96,7 @@ export default function useCategoryDetailAction(mainProps?: Props) {
 
           const newCategoryData: Partial<Category> = {
             playlist_ids: playlistIdList.join("_"),
+            updated_at: serverTimestamp(),
           };
 
           await myUpdateDoc({
@@ -88,14 +117,83 @@ export default function useCategoryDetailAction(mainProps?: Props) {
         case "arrange-playlist": {
           const newCategory = { ...category };
 
+          const newCategoryData: Partial<Category> = {
+            ...props.category,
+            updated_at: serverTimestamp(),
+          };
+
           await myUpdateDoc({
             collectionName: "Categories",
-            data: props.category,
+            data: newCategoryData,
             id: category.id,
           });
 
           Object.assign(newCategory, props.category);
           setCategory(newCategory);
+
+          setSuccessToast("Category updated");
+
+          break;
+        }
+
+        case "remove-song": {
+          const newCategory = { ...category };
+
+          const newSongs = [...songs];
+
+          newSongs.splice(props.index, 1);
+          const newSongIds = newSongs.map((s) => s.id).join("_");
+
+          const newCategoryData: Partial<Category> = {
+            song_ids: newSongIds,
+            updated_at: serverTimestamp(),
+          };
+
+          await myUpdateDoc({
+            collectionName: "Categories",
+            data: newCategoryData,
+            id: category.id,
+          });
+
+          Object.assign(newCategory, newCategoryData);
+
+          setCategory(newCategory);
+          setSongs(newSongs);
+
+          setSuccessToast("Category updated");
+
+          break;
+        }
+
+        case "remove-playlist": {
+          const newCategory = { ...category };
+
+          const newOrderedPlaylists = [...orderedPlaylists];
+          newOrderedPlaylists.splice(props.index, 1);
+          
+          const newPlaylistsIds = newOrderedPlaylists
+            .map((s) => s.id)
+            .join("_");
+
+          const newCategoryData: Partial<Category> = {
+            playlist_ids: newPlaylistsIds,
+            updated_at: serverTimestamp(),
+          };
+
+          await myUpdateDoc({
+            collectionName: "Categories",
+            data: newCategoryData,
+            id: category.id,
+          });
+
+          Object.assign(newCategory, newCategoryData);
+
+          setCategory(newCategory);
+          setPlaylists(newOrderedPlaylists);
+
+          setSuccessToast("Category updated");
+
+          break;
         }
       }
 

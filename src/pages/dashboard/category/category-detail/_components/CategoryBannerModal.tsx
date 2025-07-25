@@ -32,23 +32,26 @@ export default function CategoryBannerModal({ closeModal }: Props) {
         />
 
         <ModalHeader close={closeModal} title="Change order" />
-        <div className="aspect-[16/5]">
-          <Image className="h-full object-cover rounded-lg" src={imageUrl} />
+
+        <div className="overflow-auto">
+          <div className="aspect-[16/5]">
+            <Image className="h-full object-cover rounded-lg" src={imageUrl} />
+          </div>
+
+          <p className="mt-3">
+            <Button
+              className="p-1"
+              size={"clear"}
+              onClick={() => labelRef.current?.click()}
+            >
+              <PhotoIcon className="w-6" />
+            </Button>
+          </p>
+
+          <p className="text-right mt-5">
+            <Button onClick={handleSubmit}>Ok</Button>
+          </p>
         </div>
-
-        <p className="mt-3">
-          <Button
-            className="p-1"
-            size={"clear"}
-            onClick={() => labelRef.current?.click()}
-          >
-            <PhotoIcon className="w-6" />
-          </Button>
-        </p>
-
-        <p className="text-right mt-5">
-          <Button onClick={handleSubmit}>Ok</Button>
-        </p>
       </ModalContentWrapper>
     </>
   );

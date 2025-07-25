@@ -1,9 +1,14 @@
 import { myAddDoc, myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+import { ModalRef } from "@/components";
 
-export default function useCategoryLobbyAction() {
+type Props = {
+  modalRef: RefObject<ModalRef>
+}
+
+export default function useCategoryLobbyAction(mainProps?:Props) {
   const { page, setPage, categories, setCategories } =
     useCategoryLobbyContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
@@ -144,6 +149,9 @@ export default function useCategoryLobbyAction() {
           setSuccessToast("Add new category successful");
         }
       }
+
+
+      mainProps?.modalRef.current?.close()
     } catch (error) {
       console.log(error);
       setErrorToast();

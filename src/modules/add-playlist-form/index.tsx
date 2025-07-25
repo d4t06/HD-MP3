@@ -5,7 +5,7 @@ import { Button, Image, Input, ModalHeader, Switch } from "@/components";
 import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
 
 type BaseProps = {
-  close: () => void;
+  closeModal: () => void;
   submit: (p: PlaylistSchema, imageFile?: File) => void;
   isLoading: boolean;
 };
@@ -13,6 +13,7 @@ type BaseProps = {
 type Add = {
   variant: "add";
   user: User;
+  name?: string;
 };
 
 type Edit = {
@@ -23,7 +24,7 @@ type Edit = {
 export type PlaylistModalVariantProps = Add | Edit;
 
 export default function AddPlaylistModal({
-  close,
+  closeModal,
   isLoading,
   submit,
   ...props
@@ -58,7 +59,7 @@ export default function AddPlaylistModal({
   return (
     <>
       <ModalHeader
-        close={close}
+        close={closeModal}
         title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
       />
 
@@ -98,7 +99,6 @@ export default function AddPlaylistModal({
             <label htmlFor="name">Name</label>
 
             <Input
-              className="bg-white/10"
               id="name"
               ref={inputRef}
               type="text"

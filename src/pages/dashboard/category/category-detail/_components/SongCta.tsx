@@ -34,13 +34,13 @@ export default function SongCta() {
     <>
       <MyPopup>
         <MyPopupTrigger>
-          <Button size={"clear"} className={`${theme.content_bg} p-1.5`}>
+          <Button size={"clear"} className={`${theme.content_bg} p-1`}>
             <Bars3Icon className="w-6" />
             <span className="hidden md:block">Menu</span>
           </Button>
         </MyPopupTrigger>
 
-        <MyPopupContent className="top-[calc(100%+8px)]">
+        <MyPopupContent className="top-[calc(100%+8px)] right-0">
           <MenuWrapper className="w-[140px]">
             <VerticalMenu>
               <button onClick={() => openModal("add")}>

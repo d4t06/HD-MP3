@@ -65,7 +65,7 @@ export default function AddItem({
             ref={inputRef}
             placeholder="name..."
             value={value}
-            onChange={(e) => setValue(e.target.value.trim())}
+            onChange={(e) => setValue(e.target.value)}
           />
         )}
 

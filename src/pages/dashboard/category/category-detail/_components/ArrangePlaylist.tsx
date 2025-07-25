@@ -1,4 +1,5 @@
 import { ModalContentWrapper, ModalHeader } from "@/components";
+import { Button } from "@/pages/dashboard/_components";
 import { useEffect, useMemo, useState } from "react";
 
 type Props = {
@@ -8,7 +9,12 @@ type Props = {
   submit: (order: string[]) => void;
 };
 
-export default function ArrangePlaylistModal({ closeModal, playlists }: Props) {
+export default function ArrangePlaylistModal({
+  closeModal,
+  playlists,
+  submit,
+  isLoading,
+}: Props) {
   const [localOrder, setLocalOrder] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState<number>();
 
@@ -61,6 +67,12 @@ export default function ArrangePlaylistModal({ closeModal, playlists }: Props) {
             </button>
           ))}
         </div>
+
+        <p className="text-right mt-3">
+          <Button onClick={() => submit(localOrder)} loading={isLoading}>
+            Ok
+          </Button>
+        </p>
       </ModalContentWrapper>
     </>
   );

@@ -4,6 +4,8 @@ import { Image, Loading, NotFound, Title } from "@/components";
 import CategoryCta from "./_components/CategoryCta";
 import PlaylistSection from "./_components/PlaylistSection";
 import SongSection from "./_components/SongSection";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import { useMemo } from "react";
 
 export function Content() {
   const { category, setCategory } = useCategoryContext();
@@ -11,6 +13,11 @@ export function Content() {
   const { isFetching } = useGetCategory({
     setCategory,
   });
+
+  const lastUpdate = useMemo(
+    () => (category ? category.updated_at : ""),
+    [isFetching],
+  );
 
   if (isFetching) {
     return <Loading />;
@@ -30,7 +37,7 @@ export function Content() {
 
         <div className="md:flex md:-mx-3 mt-5">
           <div className="space-y-2.5 md:px-3">
-            <div className="w-[200px] h-[200px] mx-auto">
+            <div className="w-[200px] h-[200px]">
               <Image
                 className="object-cover h-full rounded-lg"
                 blurHashEncode={category.blurhash_encode}
@@ -38,12 +45,18 @@ export function Content() {
               />
             </div>
 
-            <Title title={category.name} />
+            <div className="text-2xl font-bold text-[#333]">
+              {category.name}
+            </div>
 
             <CategoryCta />
+
+            <p className="text-sm">
+              Last updated: {dateFromTimestamp(lastUpdate)}
+            </p>
           </div>
 
-          <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3 space-y-3">
+          <div className="w-full mt-3 md:mt-0 md:px-3 space-y-3">
             <SongSection />
             <PlaylistSection />
           </div>

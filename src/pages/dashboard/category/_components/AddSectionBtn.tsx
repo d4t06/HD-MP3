@@ -28,7 +28,7 @@ export default function AddSectionBtn() {
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { action, isFetching } = useCategoryLobbyAction();
+  const { action, isFetching } = useCategoryLobbyAction({ modalRef });
 
   const openModal = (m: Modal) => {
     setModal(m);
@@ -66,6 +66,7 @@ export default function AddSectionBtn() {
       <Modal variant="animation" ref={modalRef}>
         {modal && (
           <AddItem
+            loading={isFetching}
             cbWhenSubmit={(v) =>
               action({
                 type: "add-section",

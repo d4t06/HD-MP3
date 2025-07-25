@@ -17,7 +17,7 @@ function Content() {
 
   return (
     <>
-      <div className="space-y-5">
+      <div className="space-y-5 [&_h1]:text-lg [&_h1]:font-bold [&_h1]:text-[#333] ">
         <div className="flex items-center justify-between">
           <Title title="Category" />
 

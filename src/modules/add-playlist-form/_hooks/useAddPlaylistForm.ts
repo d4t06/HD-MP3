@@ -40,6 +40,7 @@ export default function useAddPlaylistForm(props: PlaylistModalVariantProps) {
         return initPlaylistObject({
           distributor: props.user.display_name,
           owner_email: props.user.email,
+          name: props.name
         });
       case "edit":
         // keep created_at, update updated_at field

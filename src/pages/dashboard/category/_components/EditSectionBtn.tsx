@@ -1,8 +1,8 @@
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { Button } from "../../_components";
 import { AddItem, Modal, ModalRef } from "@/components";
-import useCategoryLobbyAction from "../hooks/useCategoryAction";
 import { useRef } from "react";
+import useCategoryLobbyAction from "../hooks/useCategoryLobbyAction";
 
 type Props = {
   variant: "category" | "playlist";
@@ -17,7 +17,11 @@ export default function EditSectionBtn({ name, index, variant }: Props) {
 
   return (
     <>
-      <Button  onClick={() => modalRef.current?.open()} className="p-1.5" size={"clear"}>
+      <Button
+        onClick={() => modalRef.current?.open()}
+        className="p-1"
+        size={"clear"}
+      >
         <PencilIcon className="w-6" />
       </Button>
 
@@ -28,8 +32,8 @@ export default function EditSectionBtn({ name, index, variant }: Props) {
           cbWhenSubmit={(v) =>
             action({
               type: "edit-section",
-              index,
               section: { name: v },
+              index,
               variant,
             })
           }

@@ -8,6 +8,7 @@ export default function useSearchPlaylist() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const [value, setValue] = useState("");
+  const [lastSubmit, setLastSubmit] = useState("");
   const [isFetching, setIsFetching] = useState(false);
 
   const { setErrorToast } = useToastContext();
@@ -28,6 +29,7 @@ export default function useSearchPlaylist() {
       const result = await implementPlaylistQuery(searchQuery);
 
       setPlaylists(result);
+      setLastSubmit(value);
     } catch (err) {
       console.log({ message: err });
       setErrorToast();
@@ -36,5 +38,5 @@ export default function useSearchPlaylist() {
     }
   };
 
-  return { isFetching, value, playlists, setValue, handleSubmit };
+  return { isFetching, value, playlists, setValue, lastSubmit, handleSubmit };
 }

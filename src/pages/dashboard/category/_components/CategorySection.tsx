@@ -28,8 +28,8 @@ export default function CategorySection({ section, index }: Props) {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <h1 className="text-lg font-semibold">{section.name}</h1>
+      <div className="flex items-center space-x-2">
+        <h1>{section.name}</h1>
 
         <EditSectionBtn index={index} name={section.name} variant="category" />
       </div>

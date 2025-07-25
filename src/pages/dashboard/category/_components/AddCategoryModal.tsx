@@ -1,14 +1,9 @@
 import { ChangeEvent } from "react";
 import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import {
-  Button,
-  Image,
-  Input,
-  ModalContentWrapper,
-  ModalHeader,
-} from "@/components";
+import { Image, Input, ModalContentWrapper, ModalHeader } from "@/components";
 import useAddCategoryModal from "../hooks/useAddCategoryModal";
+import { Button } from "../../_components";
 
 type BaseProps = {
   closeModal: () => void;
@@ -88,7 +83,7 @@ export default function AddCategoryModal({
             />
 
             <div className="space-x-2 flex">
-              <Button className={`${theme.content_bg}`} size={"clear"}>
+              <Button size={"clear"}>
                 <label
                   htmlFor="image_upload"
                   className={`px-5 py-1 cursor-pointer `}
@@ -100,10 +95,11 @@ export default function AddCategoryModal({
           </div>
 
           <div className="mt-3 md:mt-0 flex-grow flex flex-col space-y-2.5">
-            <div>
-              <label htmlFor="name">Name</label>
+            <div className="space-y-1.5">
+              <label className="font-semibold text-[#333]" htmlFor="name">
+                Name
+              </label>
               <Input
-                className="bg-white/10"
                 id="name"
                 ref={inputRef}
                 type="text"
@@ -116,11 +112,9 @@ export default function AddCategoryModal({
         </div>
         <p className="text-right mt-5 md:mt-0">
           <Button
-            isLoading={isLoading}
-            color="primary"
+            loading={isLoading}
             onClick={handleAddPlaylist}
             disabled={!isValidToSubmit}
-            className={`font-playwriteCU rounded-full`}
           >
             Save
           </Button>
