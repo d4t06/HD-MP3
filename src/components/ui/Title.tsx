@@ -3,10 +3,10 @@ import { cva, VariantProps } from "class-variance-authority";
 const TitleVariant = cva("", {
   variants: {
     variant: {
-      h1: "text-2xl font-bold text-[#1f1f1f]",
-      h2: "text-xl font-bold text-[#1f1f1f]",
-      h3: "text-lg font-semibold text-[#333]",
-    },
+      h1: "text-2xl font-semibold",
+      h2: "text-xl font-semibold",
+      h3: "text-lg font-medium",
+    }
   },
   defaultVariants: {
     variant: "h1",

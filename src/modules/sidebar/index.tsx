@@ -47,12 +47,12 @@ export default function Sidebar() {
       }
       [&_div]:py-3
       [&_div]:leading-[2.2] 
-      [&_div]:font-playwriteCU 
       [&_div]:flex 
       [&_div]:flex-col 
       [&_div]:items-center
       [&_div]:space-y-1 
-      [&_span]:text-[10px]
+      [&_span]:hidden
+      [&_span]:font-semibold
 
       lg:[&_div]:space-y-0 
       lg:[&_div]:space-x-2 
@@ -60,9 +60,9 @@ export default function Sidebar() {
       lg:[&_div]:flex-row 
       lg:[&_div]:items-center
       [&_svg]:w-7
-      lg:[&_a]:border-l-[4px]
       [&_a]:w-full
       lg:[&_span]:text-[14px]
+      lg:[&_span]:inline-block
       `,
   };
 

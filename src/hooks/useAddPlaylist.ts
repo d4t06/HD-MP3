@@ -10,7 +10,7 @@ type Props = {
 
 export default function useAddPlaylist(props?: Props) {
   const { setPlaylists } = useSongContext();
-  const { setErrorToast, setSuccessToast } = useToastContext();
+  const { setErrorToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 

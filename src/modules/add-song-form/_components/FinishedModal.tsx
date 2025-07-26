@@ -1,6 +1,6 @@
 import { Image, ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, CheckIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   handleCloseModal: () => void;
@@ -10,7 +10,7 @@ type Props = {
 export default function FinishedModal({ handleCloseModal, variant }: Props) {
   return (
     <ModalContentWrapper>
-      <ModalHeader closeModal={handleCloseModal} title="Finished" />
+      <ModalHeader closeModal={handleCloseModal} title="Successful" />
       <Image
         width="w-[120px]"
         className="mx-auto w-[120px]"
@@ -24,6 +24,7 @@ export default function FinishedModal({ handleCloseModal, variant }: Props) {
         </Button>
 
         <Button onClick={handleCloseModal}>
+          <CheckIcon className="w-6" />
           <span>{variant === "add" ? "Add more" : "Ok"}</span>
         </Button>
       </div>

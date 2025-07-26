@@ -10,7 +10,7 @@ export default function SingerPlaylist() {
 
   return (
     <>
-      <Title title="Playlists" />
+      <Title variant={'h2'} title="Playlists" />
 
       {isFetching && <Skeleton className="h-[100px]" />}
 

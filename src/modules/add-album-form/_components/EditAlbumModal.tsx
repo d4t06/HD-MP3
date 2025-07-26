@@ -2,6 +2,7 @@ import { useMemo, useRef, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import {
   Input,
+  Label,
   ModalContentWrapper,
   ModalHeader,
   ModalRef,
@@ -68,66 +69,51 @@ export default function EditAlbumModal({ closeModal }: Props) {
       <ModalContentWrapper>
         <ModalHeader closeModal={closeModal} title={"Edit album"} />
 
-        <div className="flex-grow overflow-auto">
-          <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-3">
-            <div className="space-y-1">
-              <label htmlFor="name" className="opacity-[.8]">
-                Album name:
-              </label>
-              <Input
-                type="text"
-                id="name"
-                placeholder=""
-                className="bg-[#f1f1f1]"
-                value={localAlbumData.name}
-                onChange={(e) => updateLocalAlbumData({ name: e.target.value })}
-              />
+        <div className="flex-grow overflow-auto space-y-3">
+          <div className="space-y-1">
+            <Label htmlFor="name">Album name:</Label>
+            <Input
+              type="text"
+              id="name"
+              placeholder=""
+              className="bg-[#f1f1f1]"
+              value={localAlbumData.name}
+              onChange={(e) => updateLocalAlbumData({ name: e.target.value })}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="description">Singer:</Label>
+
+            <div className="-mt-2 -ml-2">
+              <ItemRightCtaFrame className="mt-0 w-fit">
+                <span>{localSinger.name}</span>
+
+                <div>
+                  <button onClick={() => modalRef.current?.open()}>
+                    <ArrowPathIcon className="w-5" />
+                  </button>
+                </div>
+              </ItemRightCtaFrame>
             </div>
+          </div>
 
-            <div className="space-y-1">
-              <label htmlFor="description" className="opacity-[.8]">
-                Singer:
-              </label>
+          <div className="space-y-1">
+            <Label htmlFor="like">Like:</Label>
 
-              <div className="-mt-2 -ml-2">
-                <ItemRightCtaFrame className="mt-0 w-fit">
-                  <span>{localSinger.name}</span>
-
-                  <div>
-                    <button onClick={() => modalRef.current?.open()}>
-                      <ArrowPathIcon className="w-5" />
-                    </button>
-                  </div>
-                </ItemRightCtaFrame>
-              </div>
-            </div>
-
-            <div className="space-y-1">
-              <label htmlFor="like" className="opacity-[.8]">
-                Like:
-              </label>
-
-              <Input
-                id="like"
-                className={`bg-[#f1f1f1]`}
-                type="number"
-                value={localAlbumData.like + ""}
-                onChange={(e) =>
-                  updateLocalAlbumData({ like: +e.target.value })
-                }
-              />
-            </div>
+            <Input
+              id="like"
+              className={`bg-[#f1f1f1]`}
+              type="number"
+              value={localAlbumData.like + ""}
+              onChange={(e) => updateLocalAlbumData({ like: +e.target.value })}
+            />
           </div>
         </div>
 
-        <p className="text-right mt-3">
-          <Button
-            color="primary"
-            onClick={handleSubmit}
-            disabled={!isValidToSubmit}
-            className={`font-playwriteCU rounded-full`}
-          >
-            Save
+        <p className="text-right mt-5">
+          <Button onClick={handleSubmit} disabled={!isValidToSubmit}>
+            Ok
           </Button>
         </p>
       </ModalContentWrapper>

@@ -11,7 +11,7 @@ export default function DashboardTable({
     <Frame>
       <div className={`rounded-md overflow-hidden`}>
         <Table
-          className={`[&_td]:text-sm hover:[&_tr]:bg-black/5 [&_tbody_tr]:border-t [&_tr]:border-black/5 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2 [&_th]:font-medium ${className}`}
+          className={`[&_td]:text-sm hover:[&_tr:not(.no-hover)]:bg-black/5 [&_tbody_tr:not(.no-hover)]:border-t [&_tr]:border-black/5 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2 [&_th]:font-medium ${className}`}
           {...props}
         >
           {children}

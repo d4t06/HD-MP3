@@ -42,7 +42,7 @@ export default function AddSectionBtn() {
           <Button size={"clear"} className={`${theme.content_bg} p-1.5`}>
             <PlusIcon className="w-6" />
 
-            <span className="hidden md:block">Add new section</span>
+            <span>Add new section</span>
           </Button>
         </MyPopupTrigger>
 

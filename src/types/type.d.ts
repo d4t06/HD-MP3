@@ -75,6 +75,7 @@ type Playlist = {
   is_official: boolean;
   is_public: boolean;
   like: number;
+  comment: number;
   is_album: boolean;
   updated_at: Timestamp;
   created_at: Timestamp;

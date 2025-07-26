@@ -20,7 +20,7 @@ export default function PlaylistList({ className = "", playlists, loading }: Pro
       const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
-        <div key={index} className="p-2 w-1/2 sm:w-1/3 md:w-1/4">
+        <div key={index} className="p-3 w-1/2 sm:w-1/3 md:w-1/4">
           <PlaylistItem active={active} data={playlist} />
         </div>
       );
@@ -29,7 +29,7 @@ export default function PlaylistList({ className = "", playlists, loading }: Pro
 
   return (
     <>
-      <div className={`flex flex-row flex-wrap -mx-[8px] ${className}`}>
+      <div className={`flex flex-row flex-wrap -mx-3 ${className}`}>
         {loading && PlaylistSkeleton}
         {!loading && render()}
       </div>

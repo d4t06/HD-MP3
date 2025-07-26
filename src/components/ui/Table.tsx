@@ -14,7 +14,7 @@ function Table({ colList, children, className = "" }: Props) {
   return (
     <table className={`${classes.table} ${className}`}>
       <thead>
-        <tr>
+        <tr className="no-hover">
           {colList.map((item, index) => (
             <th key={index}>{item}</th>
           ))}

@@ -2,7 +2,7 @@ import { Button, Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
 import { useAuthContext } from "@/stores";
-import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddPlaylistModal from "@/modules/add-playlist-modal";
 import useMyMusicAddPlaylist from "../_hooks/useAddPlaylist";
 
 export default function AddNewPlaylistBtn() {

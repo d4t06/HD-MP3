@@ -10,11 +10,13 @@ import PlaylistLike from "./_components/PlaylistLike";
 import { Link } from "react-router-dom";
 import DashboardSongMenu from "../../_modules/song-menu";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import DetailFrame from "../../_components/ui/DetailFrame";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
 
-  const lastUpdate = useMemo(() => playlist?.updated_at, []);
+  const lastUpdate = useMemo(() => playlist?.updated_at, [playlist?.id]);
 
   if (isFetching)
     return (
@@ -44,7 +46,7 @@ export default function DashboardPlaylistDetail() {
           <div>
             <Title variant={"h2"} title={playlist.name} />
 
-            <Frame className="text-sm mt-3 space-y-1 [&_span]:font-semibold [&_span]:text-[#666] [&_span]:mr-1">
+            <DetailFrame>
               <p>
                 <span>Public:</span>
                 {playlist.is_public ? "Public" : "Private"}
@@ -54,13 +56,18 @@ export default function DashboardPlaylistDetail() {
                 {songs.length} songs
               </p>
 
-              <PlaylistLike variant="edit" playlist={playlist} />
+              <p>
+                <span>Comments:</span>
+                {abbreviateNumber(playlist.comment)}
+              </p>
+
+              <PlaylistLike />
 
               <p>
                 <span>Last update:</span>
                 {dateFromTimestamp(lastUpdate)}
               </p>
-            </Frame>
+            </DetailFrame>
           </div>
 
           <DashboardPlaylistCta />
@@ -124,7 +131,7 @@ export default function DashboardPlaylistDetail() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={3}>
+                    <td colSpan={4}>
                       <NotFound />
                     </td>
                   </tr>

@@ -10,6 +10,7 @@ import {
   UserPage,
   CategoryPage,
   TrendingPage,
+  CategoryDetailPage
 } from "../pages";
 import {
   DashboardAddSongPage,
@@ -24,7 +25,7 @@ import {
   DashboardEditSingerPage,
   DashboardAlbumPage,
   DashboardCategory,
-  DashboardCategoryDetail
+  DashboardCategoryDetail,
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import PlaylistLayout from "@/layout/dashboard/playlist-layout";
@@ -43,6 +44,7 @@ const pubicRouteMap = {
   singer: "/singer/:id",
   user: "/user/:id",
   trending: "/trending",
+  catogoryDetail: "/category/:id",
 };
 
 const protectedRouteMap = {
@@ -81,6 +83,7 @@ const publicRoutes = [
   { path: pubicRouteMap.user, component: UserPage, layout: "" },
   { path: pubicRouteMap.catogory, component: CategoryPage, layout: "" },
   { path: pubicRouteMap.trending, component: TrendingPage, layout: "" },
+  { path: pubicRouteMap.catogoryDetail, component: CategoryDetailPage, layout: "" },
 ];
 
 const protectedRoutes = [
@@ -166,7 +169,7 @@ const privateRoutes = [
     component: DashboardCategory,
     layout: "",
   },
-    {
+  {
     path: privateRouteMap.categoryDetail,
     component: DashboardCategoryDetail,
     layout: "",

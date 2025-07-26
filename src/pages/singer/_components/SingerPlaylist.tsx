@@ -7,7 +7,7 @@ export default function SingerPlaylist() {
   return (
     <>
       <div>
-        <Title title="Popular Playlists" />
+        <Title variant={'h2'} title="Popular Playlists" />
         <PlaylistList playlists={playlists} loading={isFetching} />
       </div>
     </>

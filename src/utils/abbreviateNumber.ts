@@ -1,4 +1,5 @@
 export function abbreviateNumber(val: number) {
+  if (!val) return "0";
   const SI_SYMBOL = ["", "K", "M", "B"];
 
   // Determine the tier

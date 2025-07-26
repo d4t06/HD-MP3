@@ -1,7 +1,7 @@
 import { ChangeEvent } from "react";
 import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { Button, Image, Input, ModalHeader, Switch } from "@/components";
+import { Button, Image, Input, Label, ModalHeader, Switch } from "@/components";
 import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
 
 type BaseProps = {
@@ -63,7 +63,7 @@ export default function AddPlaylistModal({
         title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
       />
 
-      <div className="md:flex md:space-x-3">
+      <div className="md:flex md:space-x-3 overflow-auto">
         <div className="space-y-2.5">
           <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
             <Image
@@ -95,8 +95,8 @@ export default function AddPlaylistModal({
         </div>
 
         <div className="mt-3 md:mt-0 flex-grow flex flex-col space-y-2.5">
-          <div>
-            <label htmlFor="name">Name</label>
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
 
             <Input
               id="name"
@@ -109,7 +109,7 @@ export default function AddPlaylistModal({
           </div>
 
           <div className="flex items-center justify-between">
-            <span>Public</span>
+            <Label>Public</Label>
 
             <Switch
               inActiveBg="bg-black/10"

@@ -1,21 +1,38 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useSongContext, useToastContext } from "@/stores";
-import { collection, orderBy, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import { implementSongQuery } from "@/services/appService";
+
+const pageSize = 1;
 
 const tabs = ["All", "Result"] as const;
 
 type Tab = (typeof tabs)[number];
 
 export default function useDashboardSong() {
-  const { uploadedSongs, setUploadedSongs } = useSongContext();
+  const {
+    setUploadedSongs,
+    lastDoc,
+    shouldFetchUserSongs,
+    setHasMore,
+    // setPage,
+  } = useSongContext();
+  const { setErrorToast } = useToastContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
 
-  const { setErrorToast } = useToastContext();
+  const [searchResult, setSearchResult] = useState<Song[]>([]);
 
   const handleSubmit = async (e: FormEvent) => {
     try {
@@ -34,7 +51,8 @@ export default function useDashboardSong() {
 
       const result = await implementSongQuery(searchQuery);
 
-      setUploadedSongs(result);
+      setSearchResult(result);
+
       setTab("Result");
     } catch (err) {
       console.log({ message: err });
@@ -44,20 +62,48 @@ export default function useDashboardSong() {
     }
   };
 
-  const handleGetSong = async () => {
+  const getSong = async () => {
     try {
       setIsFetching(true);
 
       const songsCollectionRef = collection(db, "Songs");
 
-      const searchQuery = query(
-        songsCollectionRef,
-        where("is_official", "==", true),
-        orderBy("updated_at", "desc"),
-      );
+      const searchQuery = lastDoc.current
+        ? query(
+            songsCollectionRef,
+            where("is_official", "==", true),
+            orderBy("updated_at", "desc"),
+            startAfter(lastDoc.current),
+            limit(pageSize),
+          )
+        : query(
+            songsCollectionRef,
+            where("is_official", "==", true),
+            orderBy("updated_at", "desc"),
+            limit(pageSize),
+          );
 
-      const result = await implementSongQuery(searchQuery);
-      setUploadedSongs(result);
+      if (import.meta.env.DEV) console.log("Get songs");
+
+      const songsSnap = await getDocs(searchQuery);
+
+      const result = songsSnap.docs.map((doc) => {
+        const song: Song = {
+          ...(doc.data() as SongSchema),
+          id: doc.id,
+          queue_id: "",
+        };
+
+        return song;
+      });
+
+      if (result.length < pageSize) setHasMore(false);
+      else {
+        lastDoc.current = songsSnap.docs[pageSize - 1];
+        setUploadedSongs((prev) => [...prev, ...result]);
+      }
+
+      // setPage(page);
     } catch (err) {
       console.log({ message: err });
       setErrorToast();
@@ -67,19 +113,24 @@ export default function useDashboardSong() {
   };
 
   useEffect(() => {
-    if (tab !== "All") return;
+    if (shouldFetchUserSongs.current) {
+      shouldFetchUserSongs.current = false;
 
-    handleGetSong();
-  }, [tab]);
+      getSong();
+    } else {
+      setIsFetching(false);
+    }
+  }, []);
 
   return {
     isFetching,
     value,
     setValue,
     handleSubmit,
-    uploadedSongs,
     tab,
     setTab,
     tabs,
+    getSong,
+    searchResult,
   };
 }

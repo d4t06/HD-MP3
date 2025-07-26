@@ -1,4 +1,4 @@
-import { Input, ModalContentWrapper, ModalHeader } from "@/components";
+import { Input, Label, ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { useEffect, useState } from "react";
@@ -10,29 +10,32 @@ type Props = {
 export default function EditSongModal({ closeModal }: Props) {
   const { songData, updateSongData } = useAddSongContext();
 
-  const [localSongData, setLocalSongData] = useState<Partial<Song>>({
+  const [localSongData, setLocalSongData] = useState({
     name: "",
-    like: 0,
+    like: "",
   });
 
-  const updateLocalSongData = (data: Partial<Song>) => {
+  const updateLocalSongData = (data: Partial<typeof localSongData>) => {
     setLocalSongData((prev) => ({ ...prev, ...data }));
   };
 
   const _updateSongData = () => {
-    updateSongData(localSongData);
+    if (
+      !localSongData.name ||
+      !localSongData.like ||
+      isNaN(+localSongData.like)
+    )
+      return;
+
+    updateSongData({ name: localSongData.name, like: +localSongData.like });
     closeModal();
   };
 
   useEffect(() => {
     if (songData) {
-      setLocalSongData({ name: songData.name, like: songData.like });
+      setLocalSongData({ name: songData.name, like: songData.like + "" });
     }
   }, [songData]);
-
-  const classes = {
-    label: "font-semibold text-[#666]",
-  };
 
   return (
     <ModalContentWrapper>
@@ -40,24 +43,19 @@ export default function EditSongModal({ closeModal }: Props) {
 
       <div className="space-y-3">
         <div className="space-y-1">
-          <label className={classes.label}>Name:</label>
+          <Label>Name</Label>
           <Input
-            className="bg-black/10"
             value={localSongData?.name}
             onChange={(e) => updateLocalSongData({ name: e.target.value })}
           />
         </div>
 
         <div className="space-y-1">
-          <label className={classes.label}>Like:</label>
+          <Label>Like</Label>
           <Input
-            className="bg-black/10"
-            value={localSongData?.like}
-            onChange={(e) =>
-              !isNaN(+e.target.value)
-                ? updateLocalSongData({ like: +e.target.value })
-                : {}
-            }
+            type="number"
+            value={+localSongData.like ? +localSongData.like : ""}
+            onChange={(e) => updateLocalSongData({ like: e.target.value })}
           />
         </div>
       </div>

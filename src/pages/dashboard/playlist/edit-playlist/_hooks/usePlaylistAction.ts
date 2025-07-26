@@ -23,7 +23,7 @@ type AddSongs = {
 
 type EditPlaylist = {
   variant: "edit-playlist";
-  playlist: PlaylistSchema;
+  playlist: Partial<PlaylistSchema>;
   imageFile?: File;
 };
 

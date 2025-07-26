@@ -35,7 +35,7 @@ export default function SingerInfo() {
           ) : (
             singer && (
               <>
-                <p className="text-3xl leading-[2] font-playwriteCU">{singer.name}</p>
+                <p className="text-3xl font-semibold">{singer.name}</p>
 
                 <p>
                   <span className="text-red-500 text-xl">&#10084;</span>{" "}

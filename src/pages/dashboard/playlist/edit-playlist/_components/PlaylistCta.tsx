@@ -11,7 +11,7 @@ import { Button, ButtonCtaFrame } from "@/pages/dashboard/_components";
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "../_hooks/usePlaylistAction";
-import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddPlaylistModal from "@/modules/add-playlist-modal";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";

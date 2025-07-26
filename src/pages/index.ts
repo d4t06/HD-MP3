@@ -10,3 +10,4 @@ export { default as SingerPage } from "./singer";
 export { default as UserPage } from "./user";
 export { default as CategoryPage } from "./category";
 export { default as TrendingPage } from "./trending";
+export { default as CategoryDetailPage } from "./category/category-detail";

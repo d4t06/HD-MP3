@@ -1,6 +1,6 @@
 import { useGetCategory } from "@/hooks";
 import CategoryProvider, { useCategoryContext } from "./CategoryContext";
-import { Image, Loading, NotFound } from "@/components";
+import { Image, Loading, NotFound, Title } from "@/components";
 import CategoryCta from "./_components/CategoryCta";
 import PlaylistSection from "./_components/PlaylistSection";
 import SongSection from "./_components/SongSection";
@@ -14,10 +14,7 @@ export function Content() {
     setCategory,
   });
 
-  const lastUpdate = useMemo(
-    () => (category ? category.updated_at : ""),
-    [isFetching],
-  );
+  const lastUpdate = useMemo(() => category?.updated_at, [category?.id]);
 
   if (isFetching) {
     return <Loading />;
@@ -28,7 +25,9 @@ export function Content() {
   return (
     <>
       <div className="pb-[46px]">
-        <div className="aspect-[16/4]">
+        <Title title="Category Detail" />
+
+        <div className="aspect-[16/4] mt-5">
           <Image
             className="h-full object-cover rounded-lg"
             src={category.banner_image_url}

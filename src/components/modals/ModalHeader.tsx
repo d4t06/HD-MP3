@@ -1,4 +1,5 @@
 import { XMarkIcon } from "@heroicons/react/20/solid";
+import Title from "../ui/Title";
 
 export default function ModalHeader({
   closeModal,
@@ -9,7 +10,7 @@ export default function ModalHeader({
 }) {
   return (
     <div className="flex justify-between items-center mb-3">
-      <div className="text-xl w-[80%] font-bold text-[#333]">{title}</div>
+      <Title title={title} />
       <button onClick={closeModal}>
         <XMarkIcon className="w-7" />
       </button>

@@ -5,7 +5,7 @@ import { useAuthContext, useToastContext } from "@/stores";
 export default function useMyMusicAddPlaylist() {
   const { user } = useAuthContext();
 
-  const { setErrorToast } = useToastContext();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const { addPlaylist, isFetching } = useAddPlaylist();
   const { action, isFetching: actionFetching } = usePlaylistAction();
@@ -26,7 +26,10 @@ export default function useMyMusicAddPlaylist() {
         },
         { push: false },
       );
-      if (newPlaylist) await action({ variant: "like", playlist: newPlaylist });
+      if (newPlaylist) await action({ variant: "like", playlist: playlist as Playlist });
+
+
+      setSuccessToast("New playlist created")
     } catch (error) {
       console.log({ error });
       setErrorToast();

@@ -53,6 +53,7 @@ export const initPlaylistObject = (
     genres: [],
     is_album: false,
     like: 0,
+    comment: 0,
     blurhash_encode: "",
     is_public: true,
     is_official: false,

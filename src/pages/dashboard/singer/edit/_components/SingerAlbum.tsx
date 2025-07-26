@@ -9,12 +9,10 @@ export default function SingerAlbum() {
   const { albums } = useSingerContext();
   const { isFetching } = useGetSingerContext();
 
-
-
   return (
     <>
       <div className="flex justify-between items-center">
-        <Title title="Albums" />
+        <Title variant={"h2"} title="Albums" />
         <AddAlbumBtn />
       </div>
 

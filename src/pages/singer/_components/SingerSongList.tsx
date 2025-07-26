@@ -12,12 +12,15 @@ export default function SingerSongList() {
   return (
     <>
       <div>
-        <Title title="Popular Songs" />
+        <Title variant={"h2"} title="Popular Songs" />
         <SongSelectProvider>
           {isFetching ? (
             SongItemSkeleton
           ) : (
-            <SongList songs={songs} setSong={(s) => handleSetSong(s.queue_id, [s])} />
+            <SongList
+              songs={songs}
+              setSong={(s) => handleSetSong(s.queue_id, [s])}
+            />
           )}
         </SongSelectProvider>
       </div>

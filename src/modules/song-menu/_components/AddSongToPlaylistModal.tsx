@@ -10,7 +10,7 @@ import {
   NotFound,
 } from "@/components";
 import useAddSongToPlaylist from "../_hooks/useAddSongToPlaylist";
-import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddPlaylistModal from "@/modules/add-playlist-modal";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
 
 type Props = {

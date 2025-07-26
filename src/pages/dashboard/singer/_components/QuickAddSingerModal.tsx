@@ -1,4 +1,4 @@
-import { ModalHeader, Input, ModalContentWrapper } from "@/components";
+import { ModalHeader, Input, ModalContentWrapper, Label } from "@/components";
 import { initSingerObject } from "@/utils/factory";
 import { useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
@@ -27,7 +27,7 @@ export default function QuickAddSingerModal({
   const ableToSubmit = singer.name;
 
   const handleInput = (field: keyof typeof singer, value: string) => {
-    setSinger({ ...singer, [field]: value.trim() });
+    setSinger({ ...singer, [field]: value });
   };
 
   const handleSubmit = async () => {
@@ -40,24 +40,18 @@ export default function QuickAddSingerModal({
     closeModal();
   };
 
-  const classes = {
-    inputGroup: "gap-1",
-    input: "p-2 bg-[#f1f1f1] border border-black/20 rounded-lg",
-    label: "text-[#3f3f3f] text-lg",
-  };
-
   return (
     <ModalContentWrapper className="w-[450px]">
       <ModalHeader closeModal={closeModal} title={"Add singer"} />
 
       <div className="space-y-3 overflow-auto">
-        <div className={classes.inputGroup}>
-          <label className={classes.label}>Customer name:</label>
+        <div className="space-y-1">
+          <Label htmlFor="name">Singer name</Label>
           <Input
+            id="name"
             value={singer.name}
             onChange={(e) => handleInput("name", e.target.value)}
-            placeholder="Enter name..."
-            className={classes.input}
+            placeholder="name..."
           />
         </div>
       </div>

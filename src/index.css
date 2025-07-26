@@ -131,10 +131,3 @@ button[disabled] {
 .song-index.is-top-3 {
   -webkit-text-stroke: 1px #e35050;
 }
-
-.label {
-  font-weight: 600;
-  color: #666;
-  margin-bottom: 6px;
-  font-size: 1rem;
-}

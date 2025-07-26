@@ -10,7 +10,7 @@ import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import usePlaylistAction from "../_hooks/usePlaylistAction";
-import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddPlaylistModal from "@/modules/add-playlist-modal";
 import { PlaylistMenuPopupContent } from "./PlaylistMenuBtn";
 
 type Modal = "edit" | "delete";

@@ -6,7 +6,7 @@ export default function SingerAlbum() {
 
   return (
     <>
-      <Title title="Albums" />
+      <Title variant={'h2'} title="Albums" />
       <PlaylistList playlists={albums} loading={isFetching} />
     </>
   );

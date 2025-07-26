@@ -12,7 +12,7 @@ export default function SingerSongList() {
 
   return (
     <>
-      <Title title="Songs" />
+      <Title variant={'h2'}  title="Songs" />
       <SongSelectProvider>
         {isFetching ? (
           <Skeleton className="h-[100px]" />
@@ -51,7 +51,7 @@ export default function SingerSongList() {
               ))
             ) : (
               <tr>
-                <td colSpan={2}>
+                <td colSpan={4}>
                   <NotFound />
                 </td>
               </tr>

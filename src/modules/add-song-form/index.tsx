@@ -16,10 +16,11 @@ import UploadSongBtn from "./_components/UploadSongBtn";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { getClasses } from "@/utils/appHelpers";
 import useGetGenre from "@/pages/dashboard/genre/_hooks/useGetGenre";
-import { useEffect } from "react";
-import WeekSelect from "../week-select";
+import { useEffect, useMemo } from "react";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import PlayChart from "./_components/PlayChart";
+import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 type Add = {
   variant: "add";
@@ -43,9 +44,11 @@ export default function AddSongForm(props: Props) {
     handleCloseModalAfterFinished,
   } = useAddSongForm(props);
 
-  const { songFile, songData, audioRef } = useAddSongContext();
+  const { songFile, songData, song, audioRef } = useAddSongContext();
 
   const { api, isFetching: getGenreLoading } = useGetGenre();
+
+  const lastUpdate = useMemo(() => (song ? song.updated_at : ""), [song?.id]);
 
   useEffect(() => {
     api();
@@ -89,36 +92,42 @@ export default function AddSongForm(props: Props) {
             </div>
 
             <div className="flex md:block mt-5">
-              <Frame className="text-sm space-y-1  [&_span]:font-semibold [&_span]:text-[#666] [&_span]:mr-1">
-                <p>
-                  <span>Total plays:</span>
-                  {songData?.today_play}
-                </p>
-                <p>
-                  <span>Week plays:</span>
-                  {songData?.week_play}
-                </p>
-                <p>
-                  <span>Today plays:</span>
-                  {songData?.today_play}
-                </p>
-                <p>
-                  <span>Ranking:</span>
-                  {songData?.last_week_rank}
-                </p>
-                <p>
-                  <span>Likes:</span>
-                  {songData?.like}
-                </p>
-                <p>
-                  <span>Comment:</span>
-                  {songData?.comment}
-                </p>
-                <p>
-                  <span>Last listen:</span>
-                  {dateFromTimestamp(songData?.last_active)}
-                </p>
-              </Frame>
+              {props.variant === "edit" && (
+                <DetailFrame>
+                  <p>
+                    <span>Total plays:</span>
+                    {songData?.today_play}
+                  </p>
+                  <p>
+                    <span>Week plays:</span>
+                    {songData?.week_play}
+                  </p>
+                  <p>
+                    <span>Today plays:</span>
+                    {songData?.today_play}
+                  </p>
+                  <p>
+                    <span>Ranking:</span>
+                    {songData?.last_week_rank}
+                  </p>
+                  <p>
+                    <span>Likes:</span>
+                    {abbreviateNumber(songData?.like || 0)}
+                  </p>
+                  <p>
+                    <span>Comments:</span>
+                    {abbreviateNumber(songData?.comment || 0)}
+                  </p>
+                  <p>
+                    <span>Last listen:</span>
+                    {dateFromTimestamp(songData?.last_active)}
+                  </p>
+                  <p>
+                    <span>Last update:</span>
+                    {dateFromTimestamp(lastUpdate)}
+                  </p>
+                </DetailFrame>
+              )}
 
               <div className="ml-3 md:ml-0 md:mt-3">
                 <ButtonGroup isEdit={props.variant === "edit"} />
@@ -127,7 +136,7 @@ export default function AddSongForm(props: Props) {
           </div>
 
           <div className="mt-5 md:mt-0 space-y-5 flex-grow">
-            <PlayChart />
+            {props.variant === "edit" && <PlayChart />}
 
             <Frame>
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}

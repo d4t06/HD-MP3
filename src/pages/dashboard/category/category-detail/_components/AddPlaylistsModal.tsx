@@ -13,7 +13,7 @@ import PlaylistSelectProvider, {
   usePlaylistSelectContext,
 } from "@/pages/dashboard/playlist/edit-playlist/PlaylistSelectContext";
 import useSearchPlaylist from "../_hooks/useSearchPlaylist";
-import AddPlaylistModal from "@/modules/add-playlist-form";
+import AddPlaylistModal from "@/modules/add-playlist-modal";
 import { useAddPlaylist } from "@/hooks";
 
 type Props = {

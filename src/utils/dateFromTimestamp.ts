@@ -7,7 +7,7 @@ export const dateFromTimestamp = (
 ) => {
   if (!timeStamp) return "";
   if (opts?.type === "date")
-    return new Date(timeStamp.toDate()).toLocaleDateString("en-GB");
+    return new Date(timeStamp?.toDate()).toLocaleDateString("en-GB");
 
-  return new Date(timeStamp.toDate()).toLocaleString();
+  return new Date(timeStamp?.toDate()).toLocaleString();
 };

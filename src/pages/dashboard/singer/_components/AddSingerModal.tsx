@@ -1,13 +1,23 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useRef } from "react";
 import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { Image, Input, ModalContentWrapper, ModalHeader } from "@/components";
-import useAddSingerModal, { UseAddSingerModalProps } from "../_hooks/useAddSingerModal";
+import {
+  Image,
+  Input,
+  Label,
+  ModalContentWrapper,
+  ModalHeader,
+} from "@/components";
+import useAddSingerModal, {
+  UseAddSingerModalProps,
+} from "../_hooks/useAddSingerModal";
 import { inputClasses } from "@/components/ui/Input";
 import { Button } from "../../_components";
 
 export default function AddSingerModal(props: UseAddSingerModalProps) {
   const { theme } = useThemeContext();
+
+  const labelRef = useRef<HTMLLabelElement>(null);
 
   const {
     setImageFile,
@@ -34,13 +44,19 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
 
       <div className="flex-grow overflow-auto md:flex md:flex-[unset] md:overflow-hidden">
         <div className="space-y-2.5">
-          <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
+          <div className="w-[200px] h-[200px] rounded-lg border overflow-hidden">
             <Image
               className="object-cover object-center h-full"
               blurHashEncode={singerData.blurhash_encode}
               src={singerData.image_url}
             />
           </div>
+          <label
+            ref={labelRef}
+            htmlFor="image_upload"
+            className="hidden"
+          ></label>
+
           <input
             onChange={handleInputChange}
             type="file"
@@ -50,20 +66,17 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
             className="hidden"
           />
 
-          <div className="space-x-2 flex">
-            <Button className={`${theme.content_bg}`} size={"clear"}>
-              <label htmlFor="image_upload" className={`px-5 py-1 cursor-pointer `}>
-                <PhotoIcon className="w-5" />
-              </label>
-            </Button>
-          </div>
+          <Button
+            className={`${theme.content_bg}`}
+            onClick={() => labelRef.current?.click()}
+          >
+            <PhotoIcon className="w-5" />
+          </Button>
         </div>
 
-        <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-3">
+        <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-5">
           <div className="space-y-1">
-            <label htmlFor="name" className="opacity-[.8]">
-              Name:
-            </label>
+            <Label htmlFor="name">Name:</Label>
             <Input
               ref={inputRef}
               type="text"
@@ -76,16 +89,16 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
           </div>
 
           <div className="space-y-1">
-            <label htmlFor="description" className="opacity-[.8]">
-              Description:
-            </label>
+            <Label htmlFor="description">Description:</Label>
 
             <textarea
               placeholder="..."
               id="description"
               className={`${inputClasses} w-full bg-[#f1f1f1] rounded-md min-h-[100px]`}
               value={singerData.description}
-              onChange={(e) => updateSingerData({ description: e.target.value })}
+              onChange={(e) =>
+                updateSingerData({ description: e.target.value })
+              }
             />
           </div>
 
@@ -99,7 +112,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
                 id="like"
                 className={`bg-[#f1f1f1]`}
                 type="number"
-                value={singerData.like + ""}
+                value={singerData.like ? singerData.like + "" : ""}
                 onChange={(e) => updateSingerData({ like: +e.target.value })}
               />
             </div>
