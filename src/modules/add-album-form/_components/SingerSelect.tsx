@@ -19,9 +19,9 @@ export default function AlbumSingerSelect() {
 
 	return (
 		<>
-			<Frame className="space-y-2.5">
+			{/* <Frame className="space-y-2.5"> */}
 				<div>
-					<label className="text-lg" htmlFor="name">
+					<label className="label" htmlFor="name">
 						Name
 					</label>
 					<Input
@@ -35,7 +35,7 @@ export default function AlbumSingerSelect() {
 				</div>
 
 				<div className="flex items-center space-x-1.5">
-					<p className="text-lg">Singer</p>
+					<p className="label">Singer</p>
 
 					{singer ? (
 						<ItemRightCtaFrame className="mt-0">
@@ -57,7 +57,7 @@ export default function AlbumSingerSelect() {
 						</Button>
 					)}
 				</div>
-			</Frame>
+			{/* </Frame> */}
 
 			<Modal variant="animation" ref={modalRef}>
 				<SingerSearchModal

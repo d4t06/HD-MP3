@@ -1,21 +1,20 @@
 import Table from "@/components/ui/Table";
 import { Center, Image, NotFound, Square, Title } from "@/components";
-import { DashboardSongItem, Frame, Loading } from "../../_components";
+import { Frame, Loading } from "../../_components";
 import DashboardPlaylistCta from "./_components/PlaylistCta";
 import useGetPlaylist from "./_hooks/useGetPlaylist";
 import { useMemo } from "react";
-import { formatTime } from "@/utils/appHelpers";
 import SingerItem from "./_components/SingerItem";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
 import PlaylistLike from "./_components/PlaylistLike";
+import { Link } from "react-router-dom";
+import DashboardSongMenu from "../../_modules/song-menu";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
 
-  const playlistDuration = useMemo(
-    () => songs.reduce((prev, c) => prev + c.duration, 0),
-    [songs],
-  );
+  const lastUpdate = useMemo(() => playlist?.updated_at, []);
 
   if (isFetching)
     return (
@@ -43,15 +42,24 @@ export default function DashboardPlaylistDetail() {
           </div>
 
           <div>
-            <Title title={playlist.name} />
+            <Title variant={"h2"} title={playlist.name} />
 
-            <Frame className="mt-1">
-              <p>{playlist.is_public ? "Public" : "Private"}</p>
+            <Frame className="text-sm mt-3 space-y-1 [&_span]:font-semibold [&_span]:text-[#666] [&_span]:mr-1">
               <p>
-                {songs.length} songs - {formatTime(playlistDuration)}
+                <span>Public:</span>
+                {playlist.is_public ? "Public" : "Private"}
+              </p>
+              <p>
+                <span>Songs:</span>
+                {songs.length} songs
               </p>
 
-              <PlaylistLike  variant="edit" playlist={playlist} />
+              <PlaylistLike variant="edit" playlist={playlist} />
+
+              <p>
+                <span>Last update:</span>
+                {dateFromTimestamp(lastUpdate)}
+              </p>
             </Frame>
           </div>
 
@@ -59,7 +67,7 @@ export default function DashboardPlaylistDetail() {
         </div>
 
         <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3">
-          <Title title={"Singers"} />
+          <Title variant={"h3"} title={"Singers"} />
 
           <Frame className="mt-1">
             {playlist.singers.length ? (
@@ -75,17 +83,44 @@ export default function DashboardPlaylistDetail() {
             )}
           </Frame>
 
-          <Title title={"Songs"} className="mt-3" />
+          <Title title={"Songs"} variant={"h3"} className="mt-3" />
 
           <Frame className="mt-1">
             <div className={`overflow-hidden`}>
               <Table
                 className="[&_td]:text-sm [&_tbody>tr]:border-t [&_tr]:border-black/10 [&_th]:text-sm [&_th]:text-left [&_td]:p-2 [&_th]:p-2 hover:[&_tr:not(div.absolute)]:bg-black/5"
-                colList={["Name", "Singer", "Like", ""]}
+                colList={["Name", "Singer", "Genre", ""]}
               >
                 {songs.length ? (
                   songs.map((s, i) => (
-                    <DashboardSongItem variant="playlist" key={i} song={s} />
+                    <tr key={i}>
+                      <td>
+                        <Link
+                          to={`/dashboard/song/${s.id}/edit`}
+                          className="hover:underline"
+                        >
+                          {s.name}
+                        </Link>
+                      </td>
+                      <td>
+                        {s.singers.map((s, i) => (
+                          <Link
+                            className="hover:underline"
+                            to={`/dashboard/singer/${s.id}`}
+                            key={i}
+                          >
+                            {!!i && ", "}
+                            {s.name}
+                          </Link>
+                        ))}
+                      </td>
+
+                      <td>{s.main_genre?.name}</td>
+
+                      <td>
+                        <DashboardSongMenu variant={"playlist"} song={s} />
+                      </td>
+                    </tr>
                   ))
                 ) : (
                   <tr>

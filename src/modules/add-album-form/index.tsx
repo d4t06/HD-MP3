@@ -1,7 +1,9 @@
 import { Image, Title } from "@/components";
-import AddAlbumProvider, { useAddAlbumContext } from "./_components/AddAlbumContext";
+import AddAlbumProvider, {
+  useAddAlbumContext,
+} from "./_components/AddAlbumContext";
 import useAddAlbum from "./_hooks/useAddAlbum";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useMemo } from "react";
 import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button, Frame, ButtonCtaFrame } from "@/pages/dashboard/_components";
@@ -10,6 +12,8 @@ import AlbumSongSelect from "./_components/SongSelect";
 import DeleteAlbumBtn from "./_components/DeleteAlbumBtn";
 import EditAlbumBtn from "./_components/EditAlbumBtn";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 
 type BaseProps = {
   className?: string;
@@ -35,30 +39,42 @@ function Content({ className = "", ...props }: Props) {
   const { albumData, singer, setImageFile } = useAddAlbumContext();
   const { submit, isFetching, isValidToSubmit } = useAddAlbum(props);
 
+  const lastUpdate = useMemo(() => albumData?.updated_at, [albumData]);
+
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) setImageFile(e.target.files[0]);
   };
 
   const buttonList = (
-    <ButtonCtaFrame>
-      <Button className={`${theme.content_bg} !p-0`} size={"clear"}>
-        <label
-          htmlFor="image_upload"
-          className={`md:px-3 p-1.5 inline-flex space-x-1 cursor-pointer `}
-        >
-          <PhotoIcon className="w-6" />
+    <>
+      <ButtonCtaFrame>
+        <Button className={`${theme.content_bg} !p-0`} size={"clear"}>
+          <label
+            htmlFor="image_upload"
+            className={`md:px-3 p-1.5 inline-flex space-x-1 cursor-pointer `}
+          >
+            <PhotoIcon className="w-6" />
 
-          <span>Change image</span>
-        </label>
+            <span>Change image</span>
+          </label>
+        </Button>
+
+        {props.variant === "edit" && (
+          <>
+            <EditAlbumBtn />
+            <DeleteAlbumBtn />
+          </>
+        )}
+      </ButtonCtaFrame>
+
+      <Button
+        loading={isFetching}
+        onClick={submit}
+        disabled={!isValidToSubmit}
+      >
+        Save
       </Button>
-
-      {props.variant === "edit" && (
-        <>
-          <EditAlbumBtn />
-          <DeleteAlbumBtn />
-        </>
-      )}
-    </ButtonCtaFrame>
+    </>
   );
 
   if (!albumData) return <></>;
@@ -66,7 +82,7 @@ function Content({ className = "", ...props }: Props) {
   return (
     <>
       <div className={`md:flex ${className}`}>
-        <div className="space-y-2.5">
+        <div className="space-y-3">
           <div className="w-[200px] mx-auto h-[200px] rounded-lg overflow-hidden">
             <Image
               className="object-cover object-center h-full"
@@ -87,47 +103,46 @@ function Content({ className = "", ...props }: Props) {
 
           {props.variant === "edit" && (
             <>
-              <div>
-                <Title title={albumData.name} />
+              <Title variant={"h2"} title={albumData.name} />
 
-                <Frame className="text-[#333]">
-                  <p className="text-xl">{singer?.name}</p>
-                  <p>{albumData.song_ids.length} songs</p>
-                  <p className="mt-1 font-[500]">
-                    <span className="text-red-500 text-xl">&#10084;</span>{" "}
-                    {abbreviateNumber(albumData.like)}
-                  </p>
-                </Frame>
+              <DetailFrame>
+                <p>
+                  <span>Singer:</span>
+                  {singer?.name}
+                </p>
+                <p>
+                  <span>Songs:</span>
+                  {albumData.song_ids.length} songs
+                </p>
+                <p className="mt-1 font-[500]">
+                  <span>Likes:</span>
+                  {abbreviateNumber(albumData.like)}
+                </p>
 
-                <div className="mt-3">{buttonList}</div>
-              </div>
+                <p>
+                  <span>Last update:</span>
+                  {dateFromTimestamp(lastUpdate)}
+                </p>
+              </DetailFrame>
+
+              {buttonList}
             </>
           )}
         </div>
 
-        <div className="mt-3 md:w-3/4 md:mt-0 md:ml-3 flex-grow flex flex-col space-y-2.5">
+        <div className="md:w-3/4 mt-5 md:mt-0 md:ml-3 flex-grow flex flex-col space-y-3">
           {props.variant === "add" && <AlbumSingerSelect />}
 
           <div>
-            {props.variant === "add" && <p className="text-lg mb-1">Songs</p>}
-            {props.variant === "edit" && <Title title="Songs" />}
+            {props.variant === "add" && <p className="label mb-3">Songs</p>}
+            {props.variant === "edit" && (
+              <Title variant={"h3"} className="mb-3" title="Songs" />
+            )}
 
             <AlbumSongSelect />
           </div>
         </div>
       </div>
-
-      <p className="text-right mt-5">
-        <Button
-          loading={isFetching}
-          color="primary"
-          onClick={submit}
-          disabled={!isValidToSubmit}
-          className={`font-playwriteCU rounded-full`}
-        >
-          Save
-        </Button>
-      </p>
     </>
   );
 }

@@ -24,7 +24,7 @@ export default function useSectionAction(mainProps?: Props) {
 
   type AddCategory = {
     type: "add-category";
-    category: CategorySchema;
+    category: Category;
     sectionIndex: number;
   };
 
@@ -133,19 +133,13 @@ export default function useSectionAction(mainProps?: Props) {
 
         case "add-category": {
           const { category, sectionIndex } = props;
-          const res = await myAddDoc({
-            collectionName: "Categories",
-            data: category,
-          });
-
-          const newCategory: Category = { ...category, id: res.id };
 
           const newPage = { ...page };
           const target = { ...newPage.category_sections[sectionIndex] };
 
           (target.target_ids = target.target_ids
-            ? target.target_ids + `_${newCategory.id}`
-            : newCategory.id),
+            ? target.target_ids + `_${category.id}`
+            : category.id),
             Object.assign(newPage.category_sections[sectionIndex], target);
 
           await myUpdateDoc({
@@ -154,7 +148,7 @@ export default function useSectionAction(mainProps?: Props) {
             id: "page",
           });
 
-          setCategories((prev) => [...prev, newCategory]);
+          setCategories((prev) => [...prev, category]);
           setPage(newPage);
 
           setSuccessToast("Add new category successful");

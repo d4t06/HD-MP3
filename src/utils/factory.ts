@@ -24,7 +24,6 @@ export const initSongObject = (
     genres: [],
     singers: [],
     is_official: false,
-    language: "",
     size: 0,
     today_play: 0,
     week_play: 0,

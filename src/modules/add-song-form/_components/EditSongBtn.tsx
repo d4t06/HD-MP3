@@ -1,44 +1,35 @@
-import {
-  Input,
-  Modal,
-  ModalContentWrapper,
-  ModalHeader,
-  ModalRef,
-} from "@/components";
+import { Modal, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
-import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { ClipboardDocumentIcon, PencilIcon } from "@heroicons/react/24/outline";
-import { useEffect, useRef, useState } from "react";
+import {
+  ArrowPathIcon,
+  ClipboardDocumentIcon,
+  PencilIcon,
+} from "@heroicons/react/24/outline";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import EditSongModal from "./EditSongModal";
+import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
+import ChangeSongFileModal from "./ChangeSongFileModal";
+
+type Modal = "edit" | "change-file";
 
 export default function EditSongBtn() {
+  const { song } = useAddSongContext();
+
+  const [modal, setModal] = useState<Modal | "">("");
+
   const modalRef = useRef<ModalRef>(null);
 
-  const { songData, updateSongData, song } = useAddSongContext();
-
-  const [localSongData, setLocalSongData] = useState<Partial<Song>>({
-    name: "",
-    like: 0,
-  });
-
-  const updateLocalSongData = (data: Partial<Song>) => {
-    setLocalSongData((prev) => ({ ...prev, ...data }));
+  const openModal = (m: Modal) => {
+    setModal(m);
+    modalRef.current?.open();
   };
 
-  const _updateSongData = () => {
-    updateSongData(localSongData);
-    modalRef.current?.close();
-  };
-
-  useEffect(() => {
-    if (songData) {
-      setLocalSongData({ name: songData.name, like: songData.like });
-    }
-  }, [songData]);
+  const closeModal = () => modalRef.current?.close();
 
   return (
     <>
-      <Button onClick={() => modalRef.current?.open()} size={"clear"}>
+      <Button onClick={() => openModal("edit")} size={"clear"}>
         <PencilIcon />
         <span>Edit</span>
       </Button>
@@ -50,41 +41,16 @@ export default function EditSongBtn() {
         </Button>
       </Link>
 
+      <Button onClick={() => openModal("change-file")} size={"clear"}>
+        <ArrowPathIcon />
+        <span>Change song file</span>
+      </Button>
+
       <Modal variant="animation" ref={modalRef}>
-        <ModalContentWrapper>
-          <ModalHeader
-            title="Edit song"
-            closeModal={() => modalRef.current?.close()}
-          />
-
-          <div className="space-y-2.5">
-            <div>
-              <p>Name:</p>
-              <Input
-                className="bg-black/10"
-                value={localSongData?.name}
-                onChange={(e) => updateLocalSongData({ name: e.target.value })}
-              />
-            </div>
-
-            <div className="t">
-              <p>Like:</p>
-              <Input
-                className="bg-black/10"
-                value={localSongData?.like}
-                onChange={(e) =>
-                  !isNaN(+e.target.value)
-                    ? updateLocalSongData({ like: +e.target.value })
-                    : {}
-                }
-              />
-            </div>
-          </div>
-
-          <p className="mt-6 text-right">
-            <Button onClick={_updateSongData}>Ok</Button>
-          </p>
-        </ModalContentWrapper>
+        {modal === "edit" && <EditSongModal closeModal={closeModal} />}
+        {modal === "change-file" && (
+          <ChangeSongFileModal closeModal={closeModal} />
+        )}
       </Modal>
     </>
   );

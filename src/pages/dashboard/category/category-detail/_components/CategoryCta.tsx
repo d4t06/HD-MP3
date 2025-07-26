@@ -5,13 +5,16 @@ import { useRef, useState } from "react";
 import { useCategoryContext } from "../CategoryContext";
 import AddCategoryModal from "../../_components/AddCategoryModal";
 import CategoryBannerModal from "./CategoryBannerModal";
+import useAddCategory from "../../hooks/useAddCategory";
 
 type Modal = "edit" | "delete" | "banner";
 
 export default function CategoryCta() {
-  const { category } = useCategoryContext();
+  const { category, setCategory } = useCategoryContext();
 
   const [modal, setModal] = useState<Modal | "">("");
+
+  const { addCategory, isFetching } = useAddCategory();
 
   const openModal = (m: Modal) => {
     setModal(m);
@@ -21,6 +24,28 @@ export default function CategoryCta() {
   const closeModal = () => modalRef.current?.close();
 
   const modalRef = useRef<ModalRef>(null);
+
+  const handleUpdateCategory = async (
+    payload: Partial<CategorySchema>,
+    imageFile?: File,
+  ) => {
+    if (!category) return;
+
+    const success = await addCategory({
+      variant: "edit",
+      category: payload,
+      id: category.id,
+      imageFile,
+    });
+
+    if (success) {
+      const newCategory = { ...category };
+
+      Object.assign(newCategory, payload);
+
+      setCategory(newCategory);
+    }
+  };
 
   const renderModal = () => {
     switch (modal) {
@@ -35,9 +60,9 @@ export default function CategoryCta() {
         return (
           <>
             <AddCategoryModal
-              submit={() => {}}
+              submit={handleUpdateCategory}
               variant="edit"
-              isLoading={false}
+              isLoading={isFetching}
               category={category}
               closeModal={closeModal}
             />

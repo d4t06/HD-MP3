@@ -33,8 +33,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { handleAddPlaylist, isFetching: addPlaylistFetching } =
-    useAddPlaylist();
+  const { addPlaylist, isFetching: addPlaylistFetching } = useAddPlaylist();
 
   const handleSubmit = async () => {
     if (!selectedPlaylists.length) return;
@@ -46,7 +45,14 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
     // important !!!
     p.is_official = true;
 
-    const playlist = await handleAddPlaylist(p, imageFile);
+    const playlist = await addPlaylist(
+      {
+        variant: "add",
+        playlist: p,
+        imageFile,
+      },
+      { push: false },
+    );
 
     if (playlist) submit([playlist]);
 

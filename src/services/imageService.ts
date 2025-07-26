@@ -20,7 +20,10 @@ export const getBlurHashEncode = async (blob: Blob) => {
   return { encode };
 };
 
-export const optimizeImage = async (imageFile: File) => {
+export const optimizeImage = async (
+  imageFile: File,
+  props?: { height?: number; width?: number },
+) => {
   const fd = new FormData();
   fd.append("file", imageFile);
   const start = Date.now();
@@ -28,6 +31,7 @@ export const optimizeImage = async (imageFile: File) => {
   if (isDev) console.log(">>> api: optimize image");
   const res = await request.post("/image/optimize", fd, {
     responseType: "blob",
+    params: props,
   });
 
   let imageBlob;

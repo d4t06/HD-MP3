@@ -7,9 +7,10 @@ import {
 } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
-import { optimizeAndGetHashImage } from "@/services/appService";
+// import { optimizeAndGetHashImage } from "@/services/appService";
 import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
+import { useAddPlaylist } from "@/hooks";
 
 type DeletePlaylist = {
   variant: "delete-playlist";
@@ -59,13 +60,15 @@ export default function useDashboardPlaylistActions() {
   // stores
   const { user } = useAuthContext();
   //   const { setPlaylists } = useSongContext();
-  const { playlist, songs, setSongs, updatePlaylistData } = usePlaylistContext();
+  const { playlist, songs, setSongs, updatePlaylistData } =
+    usePlaylistContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
 
   // hooks
   const navigate = useNavigate();
+  const { addPlaylist } = useAddPlaylist({ setIsFetching });
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const updatePlaylistSinger = async (singers: Singer[], id: string) => {
@@ -118,6 +121,8 @@ export default function useDashboardPlaylistActions() {
               : () => {},
           ]);
 
+          setSuccessToast("Delete playlsit sucessful");
+
           navigate("/dashboard/playlist");
 
           break;
@@ -155,28 +160,19 @@ export default function useDashboardPlaylistActions() {
           break;
         }
         case "edit-playlist": {
-          const newPlaylist = { ...playlist, ...props.playlist };
-
-          if (props.imageFile) {
-            const imageData = await optimizeAndGetHashImage({
-              imageFile: props.imageFile,
-            });
-
-            if (playlist.image_file_id)
-              await deleteFile({ fileId: playlist.image_file_id });
-
-            Object.assign(newPlaylist, imageData);
-          }
-
-          await myUpdateDoc({
-            collectionName: "Playlists",
-            data: newPlaylist,
+          const success = await addPlaylist({
+            variant: "edit",
             id: playlist.id,
-            msg: ">>> api: set playlist doc",
+            playlist: props.playlist,
+            imageFile: props.imageFile,
           });
 
-          updatePlaylistData(newPlaylist);
-          setSuccessToast(`Playlist edited`);
+          if (success) {
+            const newPlaylist = { ...playlist, ...props.playlist };
+
+            updatePlaylistData(newPlaylist);
+            setSuccessToast(`Playlist edited`);
+          }
 
           break;
         }
@@ -237,7 +233,9 @@ export default function useDashboardPlaylistActions() {
         case "add-singer": {
           const newPlaylistSingers = [...playlist.singers];
 
-          const founded = newPlaylistSingers.find((s) => s.id === props.singer.id);
+          const founded = newPlaylistSingers.find(
+            (s) => s.id === props.singer.id,
+          );
           if (founded) return;
 
           newPlaylistSingers.push(props.singer);

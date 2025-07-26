@@ -8,7 +8,7 @@ import { Button } from "../../_components";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();
-  const { handleAddPlaylist, isFetching } = useAddPlaylist();
+  const { addPlaylist, isFetching } = useAddPlaylist();
   const modalRef = useRef<ModalRef>(null);
 
   const closeModal = () => modalRef.current?.close();
@@ -17,7 +17,7 @@ export default function AddNewPlaylistBtn() {
     // important !!!
     p.is_official = true;
 
-    await handleAddPlaylist(p, imageFile);
+    await addPlaylist({ variant: "add", playlist: p, imageFile });
     closeModal();
   };
 

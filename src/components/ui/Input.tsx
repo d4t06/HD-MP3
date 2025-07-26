@@ -3,6 +3,9 @@ import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
 export const inputClasses = `border w-full placeholder:[#666] rounded-md outline-none py-1.5 px-2 ${location.hash.includes("dashboard") ? "bg-black/5 border-black/10" : "bg-white/10 border-white/10"} "`;
 
+
+console.log(location.hash)
+
 const inputVariants = cva("w-full", {
   variants: {
     variant: {

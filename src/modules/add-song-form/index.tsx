@@ -75,8 +75,8 @@ export default function AddSongForm(props: Props) {
         <div
           className={`relative mt-5 md:flex md:space-x-5 ${getClasses(isFetching, "disable")}`}
         >
-          <div className="flex flex-col items-center md:w-1/3 md:block space-y-2.5">
-            <div className="max-w-[200px] w-full aspect-[1/1] bg-black/5 rounded-lg overflow-hidden">
+          <div className="flex flex-col items-center md:w-1/3 md:block space-y-3">
+            <div className="max-w-[200px] w-full aspect-[1/1]  rounded-lg overflow-hidden">
               <Image
                 className="object-cover h-full"
                 blurHashEncode={songData?.blurhash_encode}
@@ -84,19 +84,45 @@ export default function AddSongForm(props: Props) {
               />
             </div>
 
-            <Frame className="space-y-2">
-              <p>Total plays: {songData?.today_play}</p>
-              <p>Likes: {songData?.like}</p>
-              <p>Week plays: {songData?.week_play}</p>
-              <p>Today plays: {songData?.today_play}</p>
-              <p>Ranking: {songData?.last_week_rank}</p>
-              <p className="text-sm">
-                {/* Last listen: {dateFromTimestamp(songData?.last_active)} */}
-              </p>
-            </Frame>
+            <div className="text-xl font-bold text-[#333]">
+              {songData?.name}
+            </div>
 
-            <div className="w-full">
-              <ButtonGroup isEdit={props.variant === "edit"} />
+            <div className="flex md:block mt-5">
+              <Frame className="text-sm space-y-1  [&_span]:font-semibold [&_span]:text-[#666] [&_span]:mr-1">
+                <p>
+                  <span>Total plays:</span>
+                  {songData?.today_play}
+                </p>
+                <p>
+                  <span>Week plays:</span>
+                  {songData?.week_play}
+                </p>
+                <p>
+                  <span>Today plays:</span>
+                  {songData?.today_play}
+                </p>
+                <p>
+                  <span>Ranking:</span>
+                  {songData?.last_week_rank}
+                </p>
+                <p>
+                  <span>Likes:</span>
+                  {songData?.like}
+                </p>
+                <p>
+                  <span>Comment:</span>
+                  {songData?.comment}
+                </p>
+                <p>
+                  <span>Last listen:</span>
+                  {dateFromTimestamp(songData?.last_active)}
+                </p>
+              </Frame>
+
+              <div className="ml-3 md:ml-0 md:mt-3">
+                <ButtonGroup isEdit={props.variant === "edit"} />
+              </div>
             </div>
           </div>
 
@@ -104,10 +130,6 @@ export default function AddSongForm(props: Props) {
             <PlayChart />
 
             <Frame>
-              <div className="text-lg mb-3 font-bold text-[#333]">
-                {songData?.name}
-              </div>
-
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
             </Frame>
 

@@ -1,4 +1,4 @@
-export { default as DashboardPage } from "./Dashboard";
+export { default as DashboardPage } from "./lobby";
 export { default as DashboardSongPage } from "./song";
 export { default as DashboardAddSongPage } from "./song/add-song";
 export { default as DashboardEditSongPage } from "./song/edit-song";

@@ -4,6 +4,7 @@ import { useRef } from "react";
 import useSectionAction from "../hooks/useSectionAction";
 import { Modal, ModalRef } from "@/components";
 import AddCategoryModal from "./AddCategoryModal";
+import useAddCategory from "../hooks/useAddCategory";
 
 type Props = {
   sectionIndex: number;
@@ -12,10 +13,20 @@ type Props = {
 export default function AddNewCategoryBtn({ sectionIndex }: Props) {
   const { action, isFetching } = useSectionAction();
 
+  const { isFetching: addCategoryFetching, addCategory } = useAddCategory();
+
   const modalRef = useRef<ModalRef>(null);
 
-  const handleSubmit = async (payload: CategorySchema) => {
-    await action({ type: "add-category", category: payload, sectionIndex });
+  const handleSubmit = async (payload: CategorySchema, imageFile?: File) => {
+    const newCategory = await addCategory({
+      variant: "add",
+      category: payload,
+      imageFile,
+    });
+
+    if (newCategory)
+      action({ type: "add-category", category: newCategory, sectionIndex });
+
     modalRef.current?.close();
   };
 
@@ -33,7 +44,7 @@ export default function AddNewCategoryBtn({ sectionIndex }: Props) {
       <Modal variant="animation" ref={modalRef}>
         <AddCategoryModal
           closeModal={() => modalRef.current?.close()}
-          isLoading={isFetching}
+          isLoading={isFetching || addCategoryFetching}
           variant="add"
           submit={handleSubmit}
         />

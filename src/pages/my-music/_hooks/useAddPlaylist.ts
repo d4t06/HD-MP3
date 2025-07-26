@@ -7,15 +7,25 @@ export default function useMyMusicAddPlaylist() {
 
   const { setErrorToast } = useToastContext();
 
-  const { handleAddPlaylist, isFetching } = useAddPlaylist();
+  const { addPlaylist, isFetching } = useAddPlaylist();
   const { action, isFetching: actionFetching } = usePlaylistAction();
 
   const IS_FETCHING = isFetching || actionFetching;
 
-  const myMusicAddPlaylist = async (playlist: PlaylistSchema, imageFile?: File) => {
+  const myMusicAddPlaylist = async (
+    playlist: PlaylistSchema,
+    imageFile?: File,
+  ) => {
     try {
       if (!user) return;
-      const newPlaylist = await handleAddPlaylist(playlist, imageFile, { push: false });
+      const newPlaylist = await addPlaylist(
+        {
+          variant: "add",
+          playlist,
+          imageFile,
+        },
+        { push: false },
+      );
       if (newPlaylist) await action({ variant: "like", playlist: newPlaylist });
     } catch (error) {
       console.log({ error });

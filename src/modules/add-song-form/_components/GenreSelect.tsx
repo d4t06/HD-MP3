@@ -42,7 +42,6 @@ export default function GenreSelect() {
             {songData?.main_genre && (
               <ItemRightCtaFrame className="w-fit">
                 <span>{songData.main_genre.name}</span>
-
                 <div>
                   <button
                     onClick={() => updateSongData({ main_genre: undefined })}

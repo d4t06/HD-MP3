@@ -22,7 +22,7 @@ export default function Chart({
   }, [data]);
 
   return (
-    <div className={`flex justify-center gap-2 items-end ${className}`}>
+    <div className={`flex justify-center border border-black/10 p-4 gap-2 items-end ${className}`}>
       {data.map((d, i) => (
         <div
           key={i}

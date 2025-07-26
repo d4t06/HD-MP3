@@ -35,12 +35,11 @@ export default function PlaylistLike(props: PlaylistModalVariantProps) {
   return (
     <>
       <div className="flex items-center space-x-2">
-        <p className="mt-1 font-[500]">
-          <span className="text-red-500 text-xl">&#10084;</span>{" "}
-          {abbreviateNumber(playlist.like)}
+        <p>
+          <span>Likes: </span> {abbreviateNumber(playlist.like)}
         </p>
 
-        <button className="" onClick={() => modalRef.current?.open()}>
+        <button onClick={() => modalRef.current?.open()}>
           <PencilIcon className="w-5" />
         </button>
       </div>

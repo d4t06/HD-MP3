@@ -7,7 +7,6 @@ type Props = {
   song: Song;
   className?: string;
   variant: "songs" | "playlist";
-  hasMenu?: boolean;
   children?: ReactNode;
 };
 
@@ -15,7 +14,6 @@ export default function DashboardSongItem({
   song,
   className = "",
   variant,
-  hasMenu,
   children,
 }: Props) {
   return (
@@ -57,11 +55,9 @@ export default function DashboardSongItem({
       <td>{song.today_play}</td>
       <td>{song.week_play}</td>
 
-      {hasMenu && (
-        <td>
-          <DashboardSongMenu variant={variant} song={song} />
-        </td>
-      )}
+      <td>
+        <DashboardSongMenu variant={variant} song={song} />
+      </td>
 
       {children}
     </tr>

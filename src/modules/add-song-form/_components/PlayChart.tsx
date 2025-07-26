@@ -8,7 +8,7 @@ export default function PlayChart() {
   return (
     <>
       <Chart
-      className="h-[200px]"
+      className="h-[200px] rounded-lg"
         data={[
           { label: "asd", value: 10 },
           { label: "aasd", value: 20 },

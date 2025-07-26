@@ -1,11 +1,8 @@
-import {
-  deleteFile,
-  myUpdateDoc,
-  uploadFile,
-} from "@/services/firebaseService";
+import { deleteFile, myUpdateDoc } from "@/services/firebaseService";
 import { useMemo, useState } from "react";
 import { useToastContext } from "@/stores";
 import { useCategoryContext } from "../CategoryContext";
+import { optimizeAndGetHashImage } from "@/services/appService";
 
 export default function useCategoryBannerModal({
   closeModal,
@@ -24,14 +21,13 @@ export default function useCategoryBannerModal({
 
       setIsFetching(true);
 
-      const { fileId, url } = await uploadFile({
-        file: imageFile,
-        folder: "/songs/",
-      });
+      const { image_url, image_file_id, blurhash_encode } =
+        await optimizeAndGetHashImage({ imageFile, height: 400, width: 1600 });
 
       const data: Partial<Category> = {
-        banner_image_url: url,
-        banner_file_id: fileId,
+        banner_image_url: image_url,
+        banner_file_id: image_file_id,
+        banner_blurhash_encode: blurhash_encode,
       };
 
       await myUpdateDoc({

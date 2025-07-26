@@ -245,6 +245,7 @@ export default function useAddSongForm(
     setSongData(initSongData());
   }, []);
 
+  // update audio src when change song file
   useEffect(() => {
     if (!songFile || !audioRef.current) return;
 
@@ -253,6 +254,14 @@ export default function useAddSongForm(
     handleParseSongFile();
   }, [songFile]);
 
+  // update audio src when change song file
+  useEffect(() => {
+    if (!songData || !audioRef.current) return;
+
+    audioRef.current.src = songData.song_url;
+  }, [songData?.song_url]);
+
+  // update song data when chane image file
   useEffect(() => {
     if (!imageFile) return;
 

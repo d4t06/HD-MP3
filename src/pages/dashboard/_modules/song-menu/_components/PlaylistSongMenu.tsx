@@ -47,8 +47,6 @@ export default function PlaylistMenu({ song }: Props) {
         modalRef.current?.close();
       }
     }
-
-    close();
   };
 
   return (
