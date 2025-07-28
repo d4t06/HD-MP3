@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { useThemeContext, useUploadContext } from "@/stores";
-import { NotFound, Skeleton } from "@/components";
+import { useAuthContext, useSongContext, useUploadContext } from "@/stores";
+import { Button, NotFound, Skeleton } from "@/components";
 import { SongItemSkeleton } from "@/components/skeleton";
 import UploadingSongItem from "./UploadingSongItem";
 import CheckedBar from "@/modules/check-bar";
@@ -11,13 +11,16 @@ import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import SongList from "@/modules/song-item/_components/SongList";
 
 export default function UploadedSongList() {
-  //   stores
-  const { theme } = useThemeContext();
+  const { uploadedSongs } = useSongContext();
+  const { user } = useAuthContext();
+  const labelRef = useRef<HTMLLabelElement>(null);
 
   // hooks
   const { uploadingSongs, isUploading } = useUploadContext();
   const { handleSetSong } = useSetSong({ variant: "songs" });
-  const { uploadedSongs, isFetching, user } = useGetMyMusicSong({ tab: "uploaded" });
+  const { isFetching, getSongs } = useGetMyMusicSong({
+    tab: "uploaded",
+  });
 
   const _handleSetSong = (queueId: string) => {
     handleSetSong(queueId, uploadedSongs);
@@ -28,10 +31,15 @@ export default function UploadedSongList() {
     return uploadingSongs.length + uploadedSongs.length;
   }, [uploadingSongs, uploadedSongs, isFetching]);
 
+  useEffect(() => {
+    getSongs();
+  }, []);
+
   if (!user) return <></>;
 
   return (
     <SongSelectProvider>
+      <label htmlFor="song_upload" className="hidden" ref={labelRef}></label>
       <CheckedBar variant="uploaded-song">
         {isFetching ? (
           <>
@@ -43,15 +51,14 @@ export default function UploadedSongList() {
           <div className="flex justify-between items-center w-full">
             <p className="font-[500] opacity-[.5]">{songCount} Songs</p>
 
-            <button disabled={isUploading}>
-              <label
-                className={`${theme.content_bg} items-center space-x-1 hover:opacity-80 py-1 rounded-full flex px-4 cursor-pointer`}
-                htmlFor="song_upload"
-              >
-                <ArrowUpTrayIcon className="w-5" />
-                <span className="">Upload</span>
-              </label>
-            </button>
+            <Button
+              onClick={() => labelRef.current?.click()}
+              color="primary"
+              disabled={isUploading}
+            >
+              <ArrowUpTrayIcon className="w-5" />
+              <span className="">Upload</span>
+            </Button>
           </div>
         )}
       </CheckedBar>

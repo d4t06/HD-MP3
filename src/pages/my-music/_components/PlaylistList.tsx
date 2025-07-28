@@ -2,9 +2,11 @@ import { PlaylistList, Title } from "@/components";
 import useMyMusicPlaylist from "../_hooks/useGetMyMusicPlaylist";
 import AddNewPlaylistBtn from "./AddNewPlaylistBtn";
 import { useEffect } from "react";
+import { useSongContext } from "@/stores";
 
 export default function MyMusicPlaylistList() {
-  const { isFetching, playlists, getPlaylist } = useMyMusicPlaylist();
+  const { playlists } = useSongContext();
+  const { isFetching, getPlaylist } = useMyMusicPlaylist();
 
   useEffect(() => {
     getPlaylist();
@@ -13,7 +15,7 @@ export default function MyMusicPlaylistList() {
   return (
     <>
       <div>
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-2">
           <Title title="Playlist" />
 
           <AddNewPlaylistBtn />

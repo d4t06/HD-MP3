@@ -31,7 +31,11 @@ export default function useGetMyMusicSinger() {
         const result = await implementSingerQuery(queryGetSingers);
 
         setSingers(result);
-      } else await sleep(100);
+        return result;
+      } else {
+        await sleep(100);
+        return singers;
+      }
     } catch (error) {
       console.log({ message: error });
       setErrorToast();

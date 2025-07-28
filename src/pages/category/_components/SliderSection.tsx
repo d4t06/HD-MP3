@@ -32,6 +32,7 @@ export default function SliderSection({ categoryIds }: Props) {
       images={orderedCategories.map((c) => ({
         imageUrl: c.banner_image_url,
         link: `/category/${c.id}`,
+        hash: c.banner_blurhash_encode,
       }))}
     />
   );

@@ -1,10 +1,10 @@
 import {
 	commentCollectionRef,
 	myAddDoc,
-myUpdateDoc,
+	myUpdateDoc,
 } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useCommentContext } from "../components/CommentContext";
 import {
 	doc,
@@ -16,15 +16,18 @@ import {
 	writeBatch,
 } from "firebase/firestore";
 import { initCommentObject } from "@/utils/factory";
-import { setLocalStorage } from "@/utils/appHelpers";
+import { request, setLocalStorage } from "@/utils/appHelpers";
 import { db } from "@/firebase";
+import { ModalRef } from "@/components";
 
 export default function useCommentAction() {
 	const { user, updateUserData } = useAuthContext();
 
-	const { setComments, comments } = useCommentContext();
+	const { setComments, comments, target } = useCommentContext();
 
 	const [isFetching, setIsFetching] = useState(false);
+
+	const modalRef = useRef<ModalRef>(null);
 
 	type Add = {
 		type: "add";
@@ -49,6 +52,29 @@ export default function useCommentAction() {
 		comment: UserComment;
 	};
 
+	const checkToxic = async (comment: string) => {
+		const res = await request.post<{ predicted_label: "toxic" | "non-toxic" }>(
+			import.meta.env.VITE_COMMENT_CHECK_ENDPOINT,
+			{ comment },
+		);
+
+		if (import.meta.env.DEV) console.log(res.data);
+
+		return res.data.predicted_label === "toxic";
+	};
+
+	const increaseComment = (targetId: string, number?: number) => {
+		const newTargetData = {
+			comment: increment(number || 1),
+		};
+
+		myUpdateDoc({
+			collectionName: target === "song" ? "Songs" : "Playlists",
+			data: newTargetData,
+			id: targetId,
+		});
+	};
+
 	const action = async (props: Add | Like | Delete | Reply) => {
 		try {
 			if (!user) return;
@@ -57,11 +83,20 @@ export default function useCommentAction() {
 
 			switch (props.type) {
 				case "add": {
+					const isToxic = await checkToxic(props.text);
+
+					if (isToxic) {
+						modalRef.current?.open();
+						return;
+					}
+
 					const comment = initCommentObject({
 						user,
 						target_id: props.target_id,
 						text: props.text,
 					});
+
+					increaseComment(props.target_id);
 
 					const docRef = await myAddDoc({
 						collectionName: "Comments",
@@ -87,12 +122,20 @@ export default function useCommentAction() {
 				case "reply": {
 					const { comment, comment_index, text } = props;
 
+					const isToxic = await checkToxic(props.text);
+
+					if (isToxic) {
+						return;
+					}
+
 					const newCommentPayload = initCommentObject({
 						user,
 						target_id: comment.target_id,
 						text: text,
 						comment_id: comment.id,
 					});
+
+					increaseComment(props.comment.target_id);
 
 					const newCommentDocRef = await myAddDoc({
 						collectionName: "Comments",
@@ -134,7 +177,9 @@ export default function useCommentAction() {
 
 				case "like": {
 					const newLikedCommentIds = [...user.liked_comment_ids];
-					const foundedIndex = newLikedCommentIds.findIndex((id) => id === props.id);
+					const foundedIndex = newLikedCommentIds.findIndex(
+						(id) => id === props.id,
+					);
 
 					const isLike = foundedIndex === -1;
 
@@ -188,6 +233,8 @@ export default function useCommentAction() {
 						// await Promise.all(commitBatchPromises);
 					}
 
+					increaseComment(props.comment.target_id, -1);
+
 					await batch.commit();
 
 					const newLikedCommentIds = [...user.liked_comment_ids];
@@ -211,5 +258,5 @@ export default function useCommentAction() {
 			setIsFetching(false);
 		}
 	};
-	return { isFetching, action };
+	return { isFetching, action, modalRef };
 }

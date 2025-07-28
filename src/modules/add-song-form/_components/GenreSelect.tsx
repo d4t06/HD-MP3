@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef, useState } from "react";
-import { ModalRef } from "@/components";
+import { ModalRef, Title } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
@@ -33,7 +33,7 @@ export default function GenreSelect() {
   return (
     <>
       <div className="space-y-2">
-        <div className="text-lg font-bold text-[#333]">Genre</div>
+        <Title title="Genre" variant={"h3"} />
 
         <Frame className="mt-1">
           <div>Main genre</div>

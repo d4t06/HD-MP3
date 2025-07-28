@@ -15,6 +15,7 @@ import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
   ArrowDownTrayIcon,
+  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -26,8 +27,9 @@ import { useEditLyricContext } from "./EditLyricContext";
 import useImportLyric from "../_hooks/useImportLyric";
 import useExportLyric from "../_hooks/useExportLyric";
 import SearchLyricModal from "./SearchLyricModal";
+import SyncLyricModal from "./SyncLyricModal";
 
-type Modal = "lyric" | "song-beat" | "export" | "search";
+type Modal = "lyric" | "song-beat" | "export" | "search" | "sync";
 
 type Props = {
   pause: () => void;
@@ -78,7 +80,7 @@ export default function MenuBtn({ pause }: Props) {
                 onClick={() => exportLyric({ type: "srt" })}
                 className="ml-2"
               >
-                JRC
+                SRT
               </Button>
             </div>
           </ModalContentWrapper>
@@ -86,6 +88,8 @@ export default function MenuBtn({ pause }: Props) {
 
       case "search":
         return <SearchLyricModal closeModal={closeModal} />;
+      case "sync":
+        return <SyncLyricModal closeModal={closeModal} />;
     }
   };
 
@@ -109,8 +113,16 @@ export default function MenuBtn({ pause }: Props) {
         </MyPopupTrigger>
 
         <MyPopupContent origin="top right">
-          <MenuWrapper className="w-[160px]">
+          <MenuWrapper className="w-[220px]">
             <VerticalMenu>
+              <button
+                disabled={!lyrics.length}
+                onClick={() => openModal("sync")}
+              >
+                <ArrowPathIcon />
+
+                <span>Sync lyric</span>
+              </button>
               <button onClick={() => openModal("lyric")}>
                 <PencilIcon />
 
@@ -135,7 +147,7 @@ export default function MenuBtn({ pause }: Props) {
                   htmlFor="import_lyric"
                 >
                   <ArrowDownTrayIcon />
-                  <span>Import</span>
+                  <span>Import (JSON or SRT)</span>
                 </label>
               </button>
 

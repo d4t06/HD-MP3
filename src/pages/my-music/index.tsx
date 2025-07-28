@@ -1,20 +1,21 @@
 import Footer from "@/layout/primary-layout/_components/Footer";
-import { Title, Tab } from "@/components";
+import { Title, Tab, Loading, Center } from "@/components";
 import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
 import MyMusicPlaylistList from "./_components/PlaylistList";
 import SingerList from "./_components/SingerList";
+import useMySongPage from "./_hooks/useMySongPage";
 
 const tabs = ["Favorite", "Uploaded"] as const;
 type TabType = (typeof tabs)[number];
 
-export default function MyMusicPage() {
+function Content() {
   const [tab, setTab] = useState<TabType>("Favorite");
 
   return (
     <>
-      <div className="space-y-5">
+      <div className="space-y-10 mt-10">
         <MyMusicPlaylistList />
 
         <SingerList />
@@ -37,4 +38,17 @@ export default function MyMusicPage() {
       <Footer />
     </>
   );
+}
+
+export default function MyMusicPage() {
+  const { isFetching } = useMySongPage();
+
+  if (isFetching)
+    return (
+      <Center>
+        <Loading />
+      </Center>
+    );
+
+  return <Content />;
 }

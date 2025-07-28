@@ -1,6 +1,10 @@
 import { Button } from "@/components";
 import { useLyricEditorContext } from "./LyricEditorContext";
-import { BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
+import {
+	ArrowLeftIcon,
+	ArrowRightIcon,
+	CheckIcon,
+} from "@heroicons/react/24/outline";
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import useEditLyricModalAction from "../_hooks/useEditLyricModalAction";
 
@@ -8,7 +12,8 @@ type Props = {
 	closeModal: () => void;
 };
 export default function BottomCta({ closeModal }: Props) {
-	const { setSelectLyricIndex, selectLyricIndex, lyrics } = useEditLyricContext();
+	const { setSelectLyricIndex, selectLyricIndex, lyrics } =
+		useEditLyricContext();
 
 	const { isChangedRef, playerRef } = useLyricEditorContext();
 
@@ -49,27 +54,26 @@ export default function BottomCta({ closeModal }: Props) {
 				color="primary"
 				disabled={selectLyricIndex === 0}
 				onClick={() => handleNavigate("prev")}
-				className={`font-playwriteCU`}
 			>
-				<BackwardIcon className="w-6" />
+				<ArrowLeftIcon className="w-6" />
 				<span>Previous</span>
 			</Button>
 			<Button
 				color="primary"
 				disabled={selectLyricIndex === lyrics.length - 1}
 				onClick={() => handleNavigate("next")}
-				className={`font-playwriteCU`}
 			>
 				<span>Next</span>
-				<ForwardIcon className="w-6" />
+				<ArrowRightIcon className="w-6" />
 			</Button>
 			<Button
 				disabled={!isChangedRef.current}
 				color="primary"
 				onClick={handleUpdateLyricTune}
-				className={`font-playwriteCU`}
 			>
-				Ok
+				<CheckIcon className="w-6" />
+
+				<span>Ok</span>
 			</Button>
 		</div>
 	);

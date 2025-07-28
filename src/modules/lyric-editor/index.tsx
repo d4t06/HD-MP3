@@ -80,8 +80,8 @@ function Content({ children }: Props) {
             )}
 
             <Button
-              className={`${theme.content_bg} font-playwriteCU self-end md:self-start rounded-full mt-5 `}
-              variant={"primary"}
+              className={`self-end md:self-start rounded-full mt-5 `}
+              color="primary"
               disabled={!isChanged}
               isLoading={isSubmitting}
               onClick={handleSubmit}

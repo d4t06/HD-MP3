@@ -12,7 +12,7 @@ export default function SingerSongList() {
   return (
     <>
       <div>
-        <Title variant={"h2"} title="Popular Songs" />
+        <Title variant={"h2"} className="mb-3" title="Popular Songs" />
         <SongSelectProvider>
           {isFetching ? (
             SongItemSkeleton

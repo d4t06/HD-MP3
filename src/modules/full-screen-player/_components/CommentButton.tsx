@@ -2,15 +2,16 @@ import { MyTooltip } from "@/components";
 import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import DesktopComment from "@/modules/comment/components/DesktopComment";
 import SongComment from "@/modules/comment/components/SongComment";
+import UserInput from "@/modules/comment/components/UserInput";
 import { useThemeContext } from "@/stores";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { createPortal } from "react-dom";
 
 type Props = {
-	show: boolean;
+	song: Song;
 };
 
-export default function CommentButton({ show }: Props) {
+export default function CommentButton({ song }: Props) {
 	const { theme } = useThemeContext();
 	const { setIsOpenComment } = useCommentContext();
 
@@ -20,20 +21,20 @@ export default function CommentButton({ show }: Props) {
 
 	return (
 		<>
-			{show && (
-				<MyTooltip position="top-[calc(100%+8px)]" content="Comment">
-					<button
-						onClick={() => setIsOpenComment(true)}
-						className={`p-2 ${classes.button}`}
-					>
-						<ChatBubbleLeftRightIcon />
-					</button>
-				</MyTooltip>
-			)}
+			<MyTooltip position="top-[calc(100%+8px)]" content="Comment">
+				<button
+					onClick={() => setIsOpenComment(true)}
+					className={`p-2 ${classes.button}`}
+				>
+					<ChatBubbleLeftRightIcon />
+				</button>
+			</MyTooltip>
 
 			{createPortal(
 				<DesktopComment themeType="dark">
 					<SongComment />
+
+					<UserInput variant="comment" targetId={song.id} />
 				</DesktopComment>,
 				document.getElementById("portals")!,
 			)}

@@ -1,5 +1,5 @@
 import { ButtonCtaFrame } from "@/pages/dashboard/_components";
-import EditSongBtn from "./EditSongBtn";
+import SongCta from "./SongCta";
 import UploadImageBtn from "./UploadImageBtn";
 import UploadSongBtn from "./UploadSongBtn";
 
@@ -12,7 +12,7 @@ export default function EditSongButtons({ isEdit }: Props) {
 		<>
 			<ButtonCtaFrame className="[&_span]:text-sm">
 				<UploadImageBtn />
-				{isEdit && <EditSongBtn />}
+				{isEdit && <SongCta />}
 				{!isEdit && <UploadSongBtn title="Change song file" />}
 			</ButtonCtaFrame>
 		</>

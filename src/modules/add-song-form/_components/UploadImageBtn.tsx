@@ -47,12 +47,12 @@ export default function UploadImageBtn() {
         </Button>
       )}
 
-      {songData?.image_url && (
+   {/*   {songData?.image_url && (
         <Button onClick={() => modalRef.current?.open()} size={"clear"}>
           <QuestionMarkCircleIcon />
           <span>Image info</span>
         </Button>
-      )}
+      )}*/}
       <input
         ref={inputRef}
         onChange={handleInputChange}
@@ -63,14 +63,14 @@ export default function UploadImageBtn() {
         className="hidden"
       />
 
-      {songData?.image_url && (
+    {/*  {songData?.image_url && (
         <Modal variant="animation" ref={modalRef}>
           <ModalContentWrapper>
             <p>Url: {songData?.image_url}</p>
             <p>Hash: {songData?.blurhash_encode}</p>
           </ModalContentWrapper>
         </Modal>
-      )}
+      )}*/}
     </>
   );
 }

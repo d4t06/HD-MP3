@@ -59,9 +59,17 @@ export type PlaylistActionProps =
 export default function useDashboardPlaylistActions() {
   // stores
   const { user } = useAuthContext();
+  const { setErrorToast, setSuccessToast } = useToastContext();
+
   //   const { setPlaylists } = useSongContext();
-  const { playlist, songs, setSongs, updatePlaylistData } =
-    usePlaylistContext();
+  const {
+    playlist,
+    shouldGetPlaylists,
+    lastDoc,
+    songs,
+    setSongs,
+    updatePlaylistData,
+  } = usePlaylistContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -69,7 +77,6 @@ export default function useDashboardPlaylistActions() {
   // hooks
   const navigate = useNavigate();
   const { addPlaylist } = useAddPlaylist({ setIsFetching });
-  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const updatePlaylistSinger = async (singers: Singer[], id: string) => {
     const newSingerMap: Playlist["singer_map"] = {};
@@ -120,6 +127,9 @@ export default function useDashboardPlaylistActions() {
               ? deleteFile({ fileId: playlist.image_file_id })
               : () => {},
           ]);
+
+          shouldGetPlaylists.current = true;
+          lastDoc.current = undefined;
 
           setSuccessToast("Delete playlsit sucessful");
 
@@ -202,9 +212,8 @@ export default function useDashboardPlaylistActions() {
             image_file_id: "",
           };
 
-          //  delete old image file
           if (playlist.image_file_id)
-            await deleteFile({ fileId: playlist.image_file_id });
+            deleteFile({ fileId: playlist.image_file_id });
 
           await myUpdateDoc({
             collectionName: "Playlists",
@@ -215,7 +224,7 @@ export default function useDashboardPlaylistActions() {
 
           updatePlaylistData(imageData);
 
-          setSuccessToast(`Playlist edited;`);
+          setSuccessToast(`Playlist edited`);
 
           break;
         }

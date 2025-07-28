@@ -1,5 +1,5 @@
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useAuthContext, useSongContext, useThemeContext } from "@/stores";
 import {
   Button,
@@ -12,6 +12,7 @@ import {
 import useAddSongToPlaylist from "../_hooks/useAddSongToPlaylist";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
+import useGetMyMusicPlaylist from "@/pages/my-music/_hooks/useGetMyMusicPlaylist";
 
 type Props = {
   songs: Song[];
@@ -24,6 +25,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
   const { theme } = useThemeContext();
 
   const { addToPlaylist, isFetching } = useAddSongToPlaylist();
+  const { getPlaylist } = useGetMyMusicPlaylist();
 
   const { myMusicAddPlaylist, isFetching: addPlaylistFetching } =
     useMyMusicAddPlaylist();
@@ -51,6 +53,10 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
     modalRef.current?.close();
     closeModal();
   };
+
+  useEffect(() => {
+    getPlaylist();
+  }, []);
 
   if (!user) return;
 

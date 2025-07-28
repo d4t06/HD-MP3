@@ -94,7 +94,7 @@ function SongItem({
   const classes = {
     button: `${theme.content_hover_bg} p-[8px] rounded-full`,
     checkboxButton: `mr-3 text-[inherit]`,
-    itemContainer: `w-full sm:group/container flex flex-row rounded-md justify-between p-[10px] last:border-none`,
+    itemContainer: `w-full sm:group/container flex flex-row rounded-md justify-between py-2 px-3 last:border-none`,
     imageFrame: ` relative rounded overflow-hidden flex-shrink-0`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
     ctaWrapper: "flex items-center justify-end flex-shrink-0",

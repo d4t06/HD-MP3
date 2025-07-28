@@ -97,10 +97,12 @@ export default function useDashboardSong() {
         return song;
       });
 
+      if (lastDoc.current) setUploadedSongs((prev) => [...prev, ...result]);
+      else setUploadedSongs(result);
+
       if (result.length < pageSize) setHasMore(false);
       else {
         lastDoc.current = songsSnap.docs[pageSize - 1];
-        setUploadedSongs((prev) => [...prev, ...result]);
       }
 
       // setPage(page);

@@ -1,6 +1,12 @@
 import { ChangeEvent } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { Image, Input, ModalContentWrapper, ModalHeader } from "@/components";
+import {
+  Image,
+  Input,
+  Label,
+  ModalContentWrapper,
+  ModalHeader,
+} from "@/components";
 import useAddCategoryModal from "../hooks/useAddCategoryModal";
 import { Button } from "../../_components";
 
@@ -79,23 +85,19 @@ export default function AddCategoryModal({
               className="hidden"
             />
 
-            <div className="space-x-2 flex">
-              <Button size={"clear"}>
-                <label
-                  htmlFor="image_upload"
-                  className={`px-5 py-1 cursor-pointer `}
-                >
-                  <PhotoIcon className="w-5" />
-                </label>
-              </Button>
-            </div>
+            <Button size={"clear"}>
+              <label
+                htmlFor="image_upload"
+                className={`px-5 py-1 cursor-pointer `}
+              >
+                <PhotoIcon className="w-5" />
+              </label>
+            </Button>
           </div>
 
           <div className="mt-3 md:mt-0 flex-grow flex flex-col space-y-2.5">
             <div className="space-y-1.5">
-              <label className="font-semibold text-[#333]" htmlFor="name">
-                Name
-              </label>
+              <Label htmlFor="name">Name</Label>
               <Input
                 id="name"
                 ref={inputRef}

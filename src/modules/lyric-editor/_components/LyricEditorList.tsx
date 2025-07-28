@@ -2,7 +2,11 @@ import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
 import { useThemeContext } from "@/stores";
 import { LyricStatus } from "../";
-import { getClasses, scrollIntoView } from "@/utils/appHelpers";
+import {
+  getClasses,
+  scrollIntoView,
+  setLocalStorage,
+} from "@/utils/appHelpers";
 import AddLyricItem from "./AddLyricItem";
 import LyricItem from "@/modules/lyric/LyricItem";
 import { useEditLyricContext } from "./EditLyricContext";
@@ -68,6 +72,11 @@ export default function LyricEditorList({
 
     openEditModal();
   };
+
+  // for sync lyrix function
+  useEffect(() => {
+    setLocalStorage("edit_current-lyric-index", currentIndex);
+  }, [currentIndex]);
 
   return (
     <>

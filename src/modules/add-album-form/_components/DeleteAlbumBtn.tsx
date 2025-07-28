@@ -4,10 +4,15 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { useAddAlbumContext } from "./AddAlbumContext";
 import { deleteFile, myDeleteDoc } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import { useToastContext } from "@/stores";
 
 export default function DeleteAlbumBtn() {
   const { album } = useAddAlbumContext();
+
+  const { setErrorToast, setSuccessToast } = useToastContext();
+
+  const [isFetching, setIsFetching] = useState(false);
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -17,18 +22,22 @@ export default function DeleteAlbumBtn() {
     try {
       if (!album) return;
 
-      await Promise.all([
-        myDeleteDoc({
-          collectionName: "Playlists",
-          id: album.id,
-        }),
-        album.image_file_id
-          ? deleteFile({ fileId: album.image_file_id })
-          : () => {},
-      ]);
+      setIsFetching(true);
 
+      deleteFile({ fileId: album.image_file_id });
+      await myDeleteDoc({
+        collectionName: "Playlists",
+        id: album.id,
+      });
+
+      setSuccessToast("Delete Album successful");
       navigator("/dashboard/album");
-    } catch {}
+    } catch (error) {
+      console.log(error);
+      setErrorToast();
+    } finally {
+      setIsFetching(false);
+    }
   };
 
   return (
@@ -43,7 +52,7 @@ export default function DeleteAlbumBtn() {
           label={`Delete album ' ${album?.name} '`}
           closeModal={() => modalRef.current?.close()}
           callback={handleDeleteAlbum}
-          loading={false}
+          loading={isFetching}
         />
       </Modal>
     </>

@@ -29,10 +29,10 @@ export default function DashboardPlaylistDetail() {
 
   return (
     <div className="pb-[46px]">
-      <Title title="Edit playlist" className="mb-3" />
+      <Title title="Edit playlist" className="mb-8" />
 
       <div className="md:flex md:-mx-3">
-        <div className="space-y-2.5 md:px-3">
+        <div className="space-y-3 md:px-3">
           <div className="w-[200px] h-[200px] mx-auto">
             <Square>
               <Image
@@ -43,32 +43,30 @@ export default function DashboardPlaylistDetail() {
             </Square>
           </div>
 
-          <div>
-            <Title variant={"h2"} title={playlist.name} />
+          <Title variant={"h2"} title={playlist.name} />
 
-            <DetailFrame>
-              <p>
-                <span>Public:</span>
-                {playlist.is_public ? "Public" : "Private"}
-              </p>
-              <p>
-                <span>Songs:</span>
-                {songs.length} songs
-              </p>
+          <DetailFrame>
+            <p>
+              <span>Public:</span>
+              {playlist.is_public ? "Public" : "Private"}
+            </p>
+            <p>
+              <span>Songs:</span>
+              {songs.length} songs
+            </p>
 
-              <p>
-                <span>Comments:</span>
-                {abbreviateNumber(playlist.comment)}
-              </p>
+            <p>
+              <span>Comments:</span>
+              {abbreviateNumber(playlist.comment)}
+            </p>
 
-              <PlaylistLike />
+            <PlaylistLike />
 
-              <p>
-                <span>Last update:</span>
-                {dateFromTimestamp(lastUpdate)}
-              </p>
-            </DetailFrame>
-          </div>
+            <p>
+              <span>Last update:</span>
+              {dateFromTimestamp(lastUpdate)}
+            </p>
+          </DetailFrame>
 
           <DashboardPlaylistCta />
         </div>

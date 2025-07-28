@@ -5,6 +5,7 @@ import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useThemeContext } from "@/stores";
+import { Link } from "react-router-dom";
 
 type Props = {
   amount: number;
@@ -38,7 +39,9 @@ export default function TrendingSong(props: Props) {
       </SongSelectProvider>
 
       <div className="text-center mt-5 border-none">
-        <Button color={"primary"}>See more</Button>
+        <Link to={'/trending'}>
+          <Button color={"primary"}>See more</Button>
+        </Link>
       </div>
     </div>
   );

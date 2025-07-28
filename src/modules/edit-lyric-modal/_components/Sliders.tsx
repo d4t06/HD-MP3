@@ -1,9 +1,11 @@
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import useSlider from "../_hooks/useSlider";
+import { Label } from "@/components";
 
 export default function Sliders() {
-	const { setStartPoint, setEndPoint, endTimeRangeProps, handleGrowWord } = useSlider();
+	const { setStartPoint, setEndPoint, endTimeRangeProps, handleGrowWord } =
+		useSlider();
 
 	const { currentLyric } = useEditLyricContext();
 	const { wordIndex, growList, eleRefs } = useLyricEditorContext();
@@ -11,12 +13,12 @@ export default function Sliders() {
 	if (!currentLyric) return <></>;
 
 	return (
-		<div>
-			<div className="flex items-center mt-5 space-x-2">
-				<label htmlFor="start" className="flex-shrink-0 w-[150px]">
+		<div className="[&>div]:flex [&>div]:space-x-2 space-y-3 [&_label]:w-[150px] [&_label]:flex-shrink-0">
+			<div>
+				<Label htmlFor="start">
 					Start:&nbsp;
 					<span ref={eleRefs.startRefText}></span>
-				</label>
+				</Label>
 
 				<input
 					ref={eleRefs.startTimeRangeRef}
@@ -30,11 +32,11 @@ export default function Sliders() {
 				/>
 			</div>
 
-			<div className="flex items-center mt-3 space-x-2">
-				<label htmlFor="end" className="flex-shrink-0 w-[150px]">
+			<div>
+				<Label htmlFor="end">
 					End:&nbsp;
 					<span ref={eleRefs.endRefText}></span>
-				</label>
+				</Label>
 
 				<input
 					id="end"
@@ -48,10 +50,8 @@ export default function Sliders() {
 				/>
 			</div>
 
-			<div className="flex items-center mt-3">
-				<label htmlFor="grow" className="flex-shrink-0 w-[150px] mr-2 leading-[1]">
-					Grow: {growList[wordIndex]}
-				</label>
+			<div>
+				<Label htmlFor="grow">Grow: {growList[wordIndex]}</Label>
 				<input
 					ref={eleRefs.growInputRef}
 					type="range"

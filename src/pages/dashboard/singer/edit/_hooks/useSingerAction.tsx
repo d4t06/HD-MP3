@@ -35,7 +35,7 @@ export default function useDashboardSingerAction() {
           });
 
           if (singer.image_file_id)
-            await deleteFile({ fileId: singer.image_file_id });
+            deleteFile({ fileId: singer.image_file_id });
 
           setIsFetching(false);
           navigate("/dashboard/singer");

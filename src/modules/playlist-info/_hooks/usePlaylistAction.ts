@@ -9,7 +9,14 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { updateCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { doc, getDocs, increment, query, where, writeBatch } from "firebase/firestore";
+import {
+  doc,
+  getDocs,
+  increment,
+  query,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default function usePlaylistAction() {
@@ -42,7 +49,9 @@ export default function usePlaylistAction() {
     playlist: Playlist;
   };
 
-  const action = async (props: LikePlaylist | EditPlaylist | DeletePlaylist) => {
+  const action = async (
+    props: LikePlaylist | EditPlaylist | DeletePlaylist,
+  ) => {
     try {
       if (!user) throw new Error("user not found");
 
@@ -57,7 +66,9 @@ export default function usePlaylistAction() {
           if (!user) throw Error();
 
           const newLikedPlaylistIds = [...user.liked_playlist_ids];
-          const index = newLikedPlaylistIds.findIndex((id) => id === props.playlist.id);
+          const index = newLikedPlaylistIds.findIndex(
+            (id) => id === props.playlist.id,
+          );
 
           const isLike = index === -1;
 
@@ -79,7 +90,10 @@ export default function usePlaylistAction() {
 
           // should fetch new data or update data local ?
           if (isLike) setPlaylists((prev) => [props.playlist, ...prev]);
-          else setPlaylists((prev) => prev.filter((p) => p.id !== props.playlist.id));
+          else
+            setPlaylists((prev) =>
+              prev.filter((p) => p.id !== props.playlist.id),
+            );
 
           updateUserData(newUserData);
 
@@ -94,7 +108,7 @@ export default function usePlaylistAction() {
             const imageData = await optimizeAndGetHashImage({ imageFile });
 
             if (playlist.image_file_id)
-              await deleteFile({ fileId: playlist.image_file_id });
+              deleteFile({ fileId: playlist.image_file_id });
 
             Object.assign(newPlaylist, imageData);
           }
@@ -140,7 +154,7 @@ export default function usePlaylistAction() {
 
           // delete playlist doc
           batch.delete(playlistRef);
-          
+
           // update user doc
           batch.update(userRef, newUserData);
 

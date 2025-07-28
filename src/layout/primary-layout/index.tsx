@@ -18,7 +18,7 @@ export default function PrimaryLayout() {
 
   const classes = {
     page: `md:flex md:h-screen  ${theme.container} ${theme.text_color}`,
-    container: `md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[10px] md:pt-[60px] md:overflow-auto`,
+    container: `md:min-h-[calc(100vh-60px -40px-120px)] md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[10px] md:pt-[60px] md:overflow-auto`,
   };
 
   useEffect(() => {

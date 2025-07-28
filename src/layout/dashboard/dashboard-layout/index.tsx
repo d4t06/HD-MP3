@@ -6,31 +6,48 @@ import ToastPortal from "@/modules/toast-portal";
 import GenreProvider from "@/stores/dashboard/GenreContext";
 import { Outlet } from "react-router-dom";
 import { PushBrowserHistory } from "@/stores/global/NavigationContext";
+import SingerProvider from "@/stores/dashboard/SingerContext";
+import PlaylistProvider from "@/stores/dashboard/PlaylistContext";
+import { useEffect } from "react";
+import { dashboardTheme } from "@/constants/themes";
 
 export default function DashBoardLayout() {
-  const { isOnMobile, theme } = useThemeContext();
+  const { isOnMobile, theme, setTheme } = useThemeContext();
+
+  useEffect(() => {
+    if (theme.id !== dashboardTheme.id) {
+      setTheme(dashboardTheme);
+    }
+
+
+    document.title = 'Dashboard'
+  }, []);
 
   return (
     <>
       <NavigationProvider>
-        <GenreProvider>
-          <div
-            className={`${theme.container} fixed inset-full flex ${theme.text_color}`}
-          >
-            {isOnMobile ? <DashboardNavigation /> : <DashBoardSidebar />}
+        <SingerProvider>
+          <PlaylistProvider>
+            <GenreProvider>
+              <div
+                className={`${theme.container} fixed inset-full flex ${theme.text_color}`}
+              >
+                {isOnMobile ? <DashboardNavigation /> : <DashBoardSidebar />}
 
-            <div className="flex flex-col flex-grow">
-              <DashboardHeader />
+                <div className="flex flex-col flex-grow">
+                  <DashboardHeader />
 
-              <div className="main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0">
-                <Outlet />
+                  <div className="main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0">
+                    <Outlet />
+                  </div>
+                </div>
+
+                <ToastPortal className="left-[50%] translate-x-[-50%] top-[10px] md:top-[unset] md:bottom-[60px] md:left-[20px] md:translate-x-0" />
+                <PushBrowserHistory />
               </div>
-            </div>
-
-            <ToastPortal className="left-[50%] translate-x-[-50%] top-[10px] md:top-[unset] md:bottom-[60px] md:left-[20px] md:translate-x-0" />
-            <PushBrowserHistory />
-          </div>
-        </GenreProvider>
+            </GenreProvider>
+          </PlaylistProvider>
+        </SingerProvider>
       </NavigationProvider>
     </>
   );

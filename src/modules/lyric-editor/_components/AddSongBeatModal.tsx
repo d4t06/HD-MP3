@@ -1,15 +1,15 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useRef } from "react";
 import useAddSongBeatModal from "../_hooks/useAddSongBeatModal";
 import { Button, ModalContentWrapper, ModalHeader } from "@/components";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import { useThemeContext } from "@/stores";
 
 type Props = {
   closeModal: () => void;
 };
 
 export default function AddSongBeatModal({ closeModal }: Props) {
-  const { theme } = useThemeContext();
+  const labelRef = useRef<HTMLLabelElement>(null);
+
   const { songFile, setSongFile, isFetching, handleSubmit, song } =
     useAddSongBeatModal({
       closeModal,
@@ -22,13 +22,15 @@ export default function AddSongBeatModal({ closeModal }: Props) {
   return (
     <ModalContentWrapper className="w-[500px]">
       <ModalHeader title="Song beat" closeModal={closeModal} />
+
+      <label ref={labelRef} className="hidden" htmlFor="song_upload"></label>
+
       <input
         onChange={handleInputChange}
         type="file"
         multiple
         accept="audio"
         id="song_upload"
-        className="hidden"
       />
 
       {song && (songFile || song?.beat_url) && (
@@ -38,13 +40,8 @@ export default function AddSongBeatModal({ closeModal }: Props) {
         />
       )}
 
-      <Button size={"clear"}>
-        <label
-          htmlFor="song_upload"
-          className={`${theme.content_bg} seld-start rounded-full px-5 py-1.5 cursor-pointer mt-2`}
-        >
-          <ArrowUpTrayIcon className="w-5" />
-        </label>
+      <Button onClick={() => labelRef.current?.click()} size={"clear"}>
+        <ArrowUpTrayIcon className="w-5" />
       </Button>
 
       <Button

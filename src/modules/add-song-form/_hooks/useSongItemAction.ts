@@ -1,8 +1,12 @@
 import { db } from "@/firebase";
-import { commentCollectionRef, deleteSongFiles } from "@/services/firebaseService";
+import {
+  commentCollectionRef,
+  deleteSongFiles,
+} from "@/services/firebaseService";
 import { useSongContext, useToastContext } from "@/stores";
 import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type DeleteSong = {
   variant: "delete";
@@ -12,11 +16,13 @@ type DeleteSong = {
 export type SongItemActionProps = DeleteSong;
 
 export default function useDashboardSongItemAction() {
-  const { setUploadedSongs, uploadedSongs } = useSongContext();
+  const { shouldFetchUserSongs, lastDoc } = useSongContext();
+  const { setSuccessToast, setErrorToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const { setSuccessToast, setErrorToast } = useToastContext();
+  const navigator = useNavigate()
+
 
   const actions = async (props: SongItemActionProps) => {
     try {
@@ -31,8 +37,6 @@ export default function useDashboardSongItemAction() {
 
       switch (props.variant) {
         case "delete": {
-          const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
-
           // delete song doc
           batch.delete(songRef);
 
@@ -43,15 +47,19 @@ export default function useDashboardSongItemAction() {
           }
 
           // delete comments
-           if (!commentSnap.empty) {
+          if (!commentSnap.empty) {
             console.log(`Delete ${commentSnap.docs.length} comments`);
             commentSnap.forEach((snap) => batch.delete(snap.ref));
           }
 
           await Promise.all([batch.commit(), deleteSongFiles(props.song)]);
 
-          setUploadedSongs(newSongs);
+          shouldFetchUserSongs.current = true;
+          lastDoc.current = undefined;
+
           setSuccessToast(`'${props.song.name}' deleted`);
+
+          navigator("/dashboard/song")
 
           break;
         }

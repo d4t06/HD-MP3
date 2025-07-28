@@ -4,16 +4,11 @@ import { myGetDoc } from "@/services/firebaseService";
 
 type Props = {
   setCategory: (c: Category) => void;
-  // setPlaylists: (p: Playlist[]) => void;
-  // setSongs: (s: Song[]) => void;
+  initIsFetching?: boolean;
 };
 
-export default function useGetCategory({
-  setCategory,
-  // setPlaylist,
-  // setSongs,
-}: Props) {
-  const [isFetching, setIsFetching] = useState(false);
+export default function useGetCategory({ setCategory }: Props) {
+  const [isFetching, setIsFetching] = useState(true);
   const ranEffect = useRef(false);
 
   const { id } = useParams<{ id: string }>();

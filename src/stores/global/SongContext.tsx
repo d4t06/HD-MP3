@@ -1,4 +1,4 @@
-import { DocumentReference, QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore";
+import { QueryDocumentSnapshot } from "firebase/firestore";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
 function useSong() {
@@ -6,12 +6,12 @@ function useSong() {
     songs: Song[];
     playlists: Playlist[];
   }>({ songs: [], playlists: [] });
+  const [genres, setGenres] = useState<Genre[]>([]);
 
   const [uploadedSongs, setUploadedSongs] = useState<Song[]>([]);
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [singers, setSingers] = useState<Singer[]>([]);
-  const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
   //   const ranGetSong = useRef(false);
@@ -20,6 +20,7 @@ function useSong() {
   const shouldFetchUserPlaylists = useRef(true);
   const shouldFetchUserSingers = useRef(true);
   const lastDoc = useRef<QueryDocumentSnapshot>();
+  const checkEntireUser = useRef(false); // for useMySongPage
 
   const updateSong = (props: { song: Partial<Song>; id: string }) => {
     const newSongs = [...uploadedSongs];
@@ -50,11 +51,12 @@ function useSong() {
     singers,
     setSingers,
     shouldFetchUserSingers,
-    page,
-    setPage,
     lastDoc,
     hasMore,
     setHasMore,
+    checkEntireUser,
+    genres,
+    setGenres,
   };
 }
 

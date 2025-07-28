@@ -5,9 +5,9 @@ export default function SingerAlbum() {
   const { albums, isFetching } = useSingerContext();
 
   return (
-    <>
-      <Title variant={'h2'} title="Albums" />
+    <div>
+      <Title variant={"h2"} title="Albums" />
       <PlaylistList playlists={albums} loading={isFetching} />
-    </>
+    </div>
   );
 }

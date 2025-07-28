@@ -20,7 +20,7 @@ export default function useGetCategories({ category_ids }: Props) {
 
   const getCategories = async () => {
     try {
-      if (!category_ids) return;
+      if (!category_ids.length) return;
 
       if (import.meta.env.DEV) console.log("Get categories");
 
@@ -37,8 +37,6 @@ export default function useGetCategories({ category_ids }: Props) {
           ...(d.data() as CategorySchema),
           id: d.id,
         }));
-
-        console.log(result)
 
         setCategories(result);
       }

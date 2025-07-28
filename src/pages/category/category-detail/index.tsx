@@ -1,4 +1,4 @@
-import { Image, Loading, NotFound } from "@/components";
+import { Center, Image, Loading, NotFound } from "@/components";
 import { useGetCategory } from "@/hooks";
 import { useMemo, useState } from "react";
 import PlaylistSection from "./_components/PlaylistSection";
@@ -18,20 +18,35 @@ export default function CategoryDetail() {
     [category],
   );
 
-  if (isFetching) return <Loading />;
+  if (isFetching)
+    return (
+      <Center>
+        <Loading />
+      </Center>
+    );
 
-  if (!category) return <NotFound />;
+  if (!category)
+    return (
+      <Center>
+        <NotFound variant="with-home-button" />
+      </Center>
+    );
 
   return (
     <>
-      <div className="relative aspect-[16/4]">
-        <Image src={category.banner_image_url} className="rounded-lg object-cover h-full" />
+      <div className="mt-10 space-y-10">
+        <div className="relative rounded-lg overflow-hidden aspect-[16/4]">
+          <Image
+            src={category.banner_image_url}
+            blurHashEncode={category.banner_blurhash_encode}
+            className="object-cover h-full"
+          />
+        </div>
+
+        <SongSection songIds={songIds} />
+
+        <PlaylistSection playlistIds={playlistIds} />
       </div>
-
-      <SongSection songIds={songIds} />
-
-      <PlaylistSection playlistIds={playlistIds} />
-
       <Footer />
     </>
   );

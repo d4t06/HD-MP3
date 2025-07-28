@@ -52,15 +52,21 @@ export default function FullScreenPlayerHeader() {
 
 	return (
 		<>
-			<div className={`${classes.headerWrapper} ${idle ? "pointer-events-none" : ""}`}>
+			<div
+				className={`${classes.headerWrapper} ${idle ? "pointer-events-none" : ""}`}
+			>
 				{/* left */}
 				{idle && currentSongData && (
 					<div className={`absolute left-4`}>
 						{activeTab !== "Songs" && (
 							<>
-								<p className={`font-playwriteCU text-sm`}>{currentSongData.song.name}</p>
+								<p className={`font-playwriteCU text-sm`}>
+									{currentSongData.song.name}
+								</p>
 								<p className="opacity-70 text-sm">
-									{currentSongData.song.singers.map((s, i) => (i ? ", " : "") + s.name)}
+									{currentSongData.song.singers.map(
+										(s, i) => (i ? ", " : "") + s.name,
+									)}
 								</p>
 							</>
 						)}
@@ -74,12 +80,17 @@ export default function FullScreenPlayerHeader() {
 					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
 				>
 					<CommentProvider target="song">
-						<CommnentButton show={!!currentSongData?.song.is_official} />
+						{currentSongData?.song && (
+							<CommnentButton song={currentSongData.song} />
+						)}
 					</CommentProvider>
 
 					{isOwnSong && activeTab === "Lyric" && (
 						<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">
-							<button onClick={() => handleEdit()} className={`p-2 ${classes.button}`}>
+							<button
+								onClick={() => handleEdit()}
+								className={`p-2 ${classes.button}`}
+							>
 								<DocumentTextIcon />
 							</button>
 						</MyTooltip>

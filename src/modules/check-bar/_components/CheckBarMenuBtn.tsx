@@ -1,4 +1,4 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
+import { Bars3Icon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 import {
   MyPopupContent,
@@ -7,7 +7,7 @@ import {
   VerticalMenu,
   MenuWrapper,
 } from "@/components";
-import SystemSongCheckMenu from "./SystemSongCheckMenu";
+// import SystemSongCheckMenu from "./SystemSongCheckMenu";
 
 export function CheckBarMenuContent({ children }: { children: ReactNode }) {
   return (
@@ -28,7 +28,8 @@ export default function CheckBarMenuBtn({ variant }: Props) {
   const renderMenu = () => {
     switch (variant) {
       default:
-        return <SystemSongCheckMenu />;
+        return <></>
+        // return <SystemSongCheckMenu />;
     }
   };
 
@@ -36,7 +37,7 @@ export default function CheckBarMenuBtn({ variant }: Props) {
     <>
       <MyPopup appendOnPortal>
         <MyPopupTrigger>
-          <button className="!p-1.5" type="button">
+          <button>
             <Bars3Icon className="w-5" />
           </button>
         </MyPopupTrigger>

@@ -1,4 +1,4 @@
-import { Input, Modal, ModalContentWrapper, ModalRef } from "@/components";
+import { Input, Label, Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { PencilIcon } from "@heroicons/react/24/outline";
@@ -49,7 +49,7 @@ export default function PlaylistLike() {
       <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper>
           <div>
-            <label htmlFor="like">Like</label>
+            <Label htmlFor="like">Like</Label>
             <Input
               value={+value ? +value : ""}
               id="like"

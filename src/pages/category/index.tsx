@@ -1,4 +1,4 @@
-import { Loading } from "@/components";
+import { Center, Loading } from "@/components";
 import useGetPage from "./useGetPage";
 import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./category-detail/_components/PlaylistSection";
@@ -8,11 +8,16 @@ import SliderSection from "./_components/SliderSection";
 export default function CategoryPage() {
   const { page, isFetching } = useGetPage();
 
-  if (isFetching) return <Loading />;
+  if (isFetching)
+    return (
+      <Center>
+        <Loading />
+      </Center>
+    );
 
   return (
     <>
-      <div className="space-y-10">
+      <div className="space-y-10 mt-10">
         <SliderSection
           categoryIds={page?.category_ids ? page?.category_ids.split("_") : []}
         />

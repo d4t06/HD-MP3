@@ -1,5 +1,5 @@
 import { Button } from "@/components";
-import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { useLyricEditorContext } from "./LyricEditorContext";
 
 export default function PlayBtn() {

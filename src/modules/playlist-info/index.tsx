@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 // import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { PlaylistItem, Skeleton } from "@/components";
+import { PlaylistItem, Skeleton, Title } from "@/components";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
@@ -75,13 +75,17 @@ export default function PLaylistInfo({
         return (
           <>
             <p>
-              <span className="text-red-500 text-base">&#10084; </span>
+              <span className="text-base">❤️ </span>
               {abbreviateNumber(playlist.like)}
             </p>
             {!!playlist.singers.length && (
               <p className={classes.smallText}>
                 {playlist.singers.map((s, i) => (
-                  <Link key={i} className={`${classes.link}`} to={`/singer/${s.id}`}>
+                  <Link
+                    key={i}
+                    className={`${classes.link}`}
+                    to={`/singer/${s.id}`}
+                  >
                     {(!!i ? ", " : "") + s.name}
                   </Link>
                 ))}
@@ -91,7 +95,10 @@ export default function PLaylistInfo({
             {!playlist.is_official && (
               <p className={classes.smallText}>
                 Provided by{" "}
-                <Link className={classes.link} to={`/user/${playlist.owner_email}`}>
+                <Link
+                  className={classes.link}
+                  to={`/user/${playlist.owner_email}`}
+                >
                   {playlist.distributor}
                 </Link>
               </p>
@@ -115,7 +122,11 @@ export default function PLaylistInfo({
             <Skeleton className="pt-[100%] rounded-lg" />
           ) : (
             playlist && (
-              <PlaylistItem data={playlist} active={isActivePlaylist} variant="image" />
+              <PlaylistItem
+                data={playlist}
+                active={isActivePlaylist}
+                variant="image"
+              />
             )
           )}
         </div>
@@ -133,7 +144,7 @@ export default function PLaylistInfo({
           ) : (
             playlist && (
               <>
-                <p className="text-xl font-[600] leading-[1.2]">{playlist.name}</p>
+                <Title variant={"h1"} title={playlist.name} />
                 <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-[13px]">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
@@ -152,7 +163,7 @@ export default function PLaylistInfo({
                 )}
 
                 <CommentProvider target="playlist">
-                  <ChatBtn />
+                  <ChatBtn playlist={playlist} />
                 </CommentProvider>
               </div>
             </div>

@@ -18,7 +18,7 @@ import { getClasses } from "@/utils/appHelpers";
 import useGetGenre from "@/pages/dashboard/genre/_hooks/useGetGenre";
 import { useEffect, useMemo } from "react";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
-import PlayChart from "./_components/PlayChart";
+// import PlayChart from "./_components/PlayChart";
 import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
@@ -136,7 +136,7 @@ export default function AddSongForm(props: Props) {
           </div>
 
           <div className="mt-5 md:mt-0 space-y-5 flex-grow">
-            {props.variant === "edit" && <PlayChart />}
+            {/*{props.variant === "edit" && <PlayChart />}*/}
 
             <Frame>
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
@@ -154,7 +154,7 @@ export default function AddSongForm(props: Props) {
             loading={isFetching}
           >
             <CheckIcon className="w-6" />
-            <span>Ok</span>
+            <span>Save</span>
           </Button>
         </p>
       </div>

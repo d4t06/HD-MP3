@@ -4,7 +4,7 @@ import {
   myGetDoc,
   songsCollectionRef,
 } from "@/services/firebaseService";
-import { useToastContext } from "@/stores";
+import { useSongContext, useToastContext } from "@/stores";
 import { convertToEn, sleep } from "@/utils/appHelpers";
 import { documentId, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -25,8 +25,8 @@ type TrendingMap = Record<string, TrendingSong[]>;
 
 export default function useSongTable() {
   const { setErrorToast } = useToastContext();
+  const { genres, setGenres } = useSongContext();
 
-  const [genres, setGenres] = useState<Genre[]>([]);
   const [songMap, setSongMap] = useState<SongMap>();
   const [trendingMap, setTrendingMap] = useState<TrendingMap>();
 
@@ -147,7 +147,6 @@ export default function useSongTable() {
 
         setSongMap(newSongMap);
         setTrendingMap(newTrendingMap);
-        
       } else await sleep(100);
     } catch (error) {
       console.log({ message: error });
@@ -161,7 +160,10 @@ export default function useSongTable() {
     if (!ranEffect.current) {
       ranEffect.current = true;
 
-      getGenres();
+      if (!genres.length) getGenres();
+      else {
+        setTab(tabs[0]);
+      }
     }
   }, []);
 

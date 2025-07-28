@@ -17,7 +17,9 @@ export default function MyMusicSingerList() {
     return (
       <>
         <Skeleton className="h-[48px] w-[160px]" />
-        <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>{singerSkeleton}</div>
+        <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
+          {singerSkeleton}
+        </div>
       </>
     );
 
@@ -26,9 +28,9 @@ export default function MyMusicSingerList() {
   return (
     <>
       <div>
-        <Title title="Singers" />
+        <Title className="mb-2" title="Singers" />
 
-        <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
+        <div className={`flex flex-row flex-wrap -mx-3`}>
           {singers.map((s, i) => (
             <SingerItem variant="singer-item" singer={s} key={i} />
           ))}

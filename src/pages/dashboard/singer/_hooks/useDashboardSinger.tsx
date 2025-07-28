@@ -1,20 +1,30 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useToastContext } from "@/stores";
-import { limit, orderBy, query, where } from "firebase/firestore";
+import {
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import { singerCollectionRef } from "@/services/firebaseService";
 import { implementSingerQuery } from "@/services/appService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 
-const tabs = ["All", "Result"] as const;
+const pageSize = 6;
 
+const tabs = ["All", "Result"] as const;
 type Tab = (typeof tabs)[number];
 
 export default function useDashboardSinger() {
-  const { setSingers, singers } = useSingerContext();
+  const { setSingers, singers, setHasMore, shouldGetSingers, lastDoc } =
+    useSingerContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
+  const [searchResult, setSearchResult] = useState<Singer[]>([]);
 
   const { setErrorToast } = useToastContext();
 
@@ -29,9 +39,8 @@ export default function useDashboardSinger() {
         where("name", ">=", value),
         where("name", "<=", value + "\uf8ff"),
       );
-
       const result = await implementSingerQuery(searchQuery);
-      setSingers(result);
+      setSearchResult(result);
 
       setTab("Result");
     } catch (err) {
@@ -42,18 +51,41 @@ export default function useDashboardSinger() {
     }
   };
 
-  const handleGetSingers = async () => {
+  const getSingers = async () => {
     try {
       setIsFetching(true);
 
-      const searchQuery = query(
-        singerCollectionRef,
-        orderBy("created_at", "desc"),
-        limit(10),
-      );
+      const searchQuery = lastDoc.current
+        ? query(
+            singerCollectionRef,
+            orderBy("created_at", "desc"),
+            startAfter(lastDoc.current),
+            limit(pageSize),
+          )
+        : query(
+            singerCollectionRef,
+            orderBy("created_at", "desc"),
+            limit(pageSize),
+          );
 
-      const result = await implementSingerQuery(searchQuery);
-      setSingers(result);
+      if (import.meta.env.DEV) console.log("Get singers");
+
+      const songsSnap = await getDocs(searchQuery);
+
+      const result = songsSnap.docs.map((doc) => {
+        const song: Singer = {
+          ...(doc.data() as SingerSchema),
+          id: doc.id,
+        };
+
+        return song;
+      });
+
+      if (result.length < pageSize) setHasMore(false);
+      else {
+        lastDoc.current = songsSnap.docs[pageSize - 1];
+      }
+      setSingers((prev) => [...prev, ...result]);
     } catch (err) {
       console.log({ message: err });
 
@@ -64,8 +96,14 @@ export default function useDashboardSinger() {
   };
 
   useEffect(() => {
-    if (tab === "All") handleGetSingers();
-  }, [tab]);
+    if (shouldGetSingers.current) {
+      shouldGetSingers.current = false;
+
+      getSingers();
+    } else {
+      setIsFetching(false);
+    }
+  }, []);
 
   return {
     isFetching,
@@ -74,7 +112,9 @@ export default function useDashboardSinger() {
     handleSubmit,
     singers,
     tab,
+    getSingers,
     setTab,
+    searchResult,
     tabs,
   };
 }

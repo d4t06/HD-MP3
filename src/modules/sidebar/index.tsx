@@ -41,9 +41,10 @@ export default function Sidebar() {
   const classes = {
     container: `w-[80px] lg:w-[180px]  relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
     linkList: `
-      ${theme.type === "light"
-        ? "hover:[&_div]:bg-black/10"
-        : "hover:[&_div]:bg-white/10"
+      ${
+        theme.type === "light"
+          ? "hover:[&_div]:bg-black/10"
+          : "hover:[&_div]:bg-white/10"
       }
       [&_div]:py-3
       [&_div]:leading-[2.2] 
@@ -93,7 +94,7 @@ export default function Sidebar() {
 
             <Link
               className={`
-              ${getActiveClasses(location.pathname === "/discover")}
+              ${getActiveClasses(location.pathname.includes("/discover"))}
             `}
               to={"/discover"}
             >
@@ -105,7 +106,7 @@ export default function Sidebar() {
 
             <Link
               className={`
-              ${getActiveClasses(location.pathname === "/category")}
+              ${getActiveClasses(location.pathname.includes("/category"))}
             `}
               to={"/category"}
             >
@@ -115,9 +116,9 @@ export default function Sidebar() {
               </div>
             </Link>
 
-               <Link
+            <Link
               className={`
-              ${getActiveClasses(location.pathname === "/trending")}
+              ${getActiveClasses(location.pathname.includes("/trending"))}
             `}
               to={"/trending"}
             >
@@ -131,7 +132,7 @@ export default function Sidebar() {
               <>
                 <Link
                   className={`
-                  ${getActiveClasses(location.pathname === "/my-music")}`}
+                  ${getActiveClasses(location.pathname.includes("/my-music"))}`}
                   to={"/my-music"}
                 >
                   <div>

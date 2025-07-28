@@ -1,5 +1,4 @@
 import { auth, db } from "@/firebase";
-import useGetMyMusicPlaylist from "@/pages/my-music/_hooks/useGetMyMusicPlaylist";
 import { myGetDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
 import { getLocalStorage } from "@/utils/appHelpers";
@@ -8,8 +7,6 @@ import { useEffect, useRef } from "react";
 
 export default function usePersistAuth() {
   const { setUser, setLoading, loading, user } = useAuthContext();
-
-  const { getPlaylist } = useGetMyMusicPlaylist();
 
   const ranEffect = useRef(false);
 
@@ -42,15 +39,12 @@ export default function usePersistAuth() {
         if (!docRef.exists()) await setDoc(doc(db, "Users", user.email), user);
         //  get user liked playlists
         else
-          await Promise.all([
-            getPlaylist(user),
-            myUpdateDoc({
-              collectionName: "Users",
-              id: user.email,
-              data: { last_seen: serverTimestamp() },
-              msg: "usePersistAuth, update user doc",
-            }),
-          ]);
+          myUpdateDoc({
+            collectionName: "Users",
+            id: user.email,
+            data: { last_seen: serverTimestamp() },
+            msg: "usePersistAuth, update user doc",
+          });
 
         setUser(user);
       } else setUser(null);

@@ -25,8 +25,9 @@ export default function useEditSongModal({ song, modalRef }: Props) {
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const isChanged = useMemo(
-    () => song.name !== songData.name || song.singers[0].name !== songData.singer,
-    [songData]
+    () =>
+      song.name !== songData.name || song.singers[0].name !== songData.singer,
+    [songData],
   );
 
   const isValidToSubmit =
@@ -53,12 +54,12 @@ export default function useEditSongModal({ song, modalRef }: Props) {
       }
 
       if (imageFile) {
-        const imageData = await optimizeAndGetHashImage({imageFile});
+        const imageData = await optimizeAndGetHashImage({ imageFile });
 
         Object.assign(newSong, imageData);
 
         if (song.image_file_id) {
-          await deleteFile({ fileId: song.image_file_id });
+          deleteFile({ fileId: song.image_file_id });
         }
       }
 

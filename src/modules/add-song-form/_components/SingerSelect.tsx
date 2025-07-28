@@ -1,6 +1,6 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { ModalRef } from "@/components";
+import { ModalRef, Title } from "@/components";
 import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { Button, Frame } from "@/pages/dashboard/_components";
@@ -23,7 +23,7 @@ export default function SingerSelect() {
   return (
     <>
       <div className="space-y-2">
-        <div className="text-lg font-bold text-[#333]">Singer</div>
+        <Title title="Singer" variant={"h3"} />
 
         <Frame className=" mt-1">
           <div className="flex flex-wrap -ml-2 -mt-2">

@@ -1,19 +1,31 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useSongContext, useToastContext } from "@/stores";
-import { orderBy, query, where } from "firebase/firestore";
+import { useToastContext } from "@/stores";
+import {
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  startAfter,
+  where,
+} from "firebase/firestore";
 import { playlistCollectionRef } from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
+import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
+
+const pageSize = 6;
 
 const tabs = ["All", "Result"] as const;
 
-type Tab = typeof tabs[number]
+type Tab = (typeof tabs)[number];
 
 export default function useDashboardPlaylist() {
-  const { setPlaylists, playlists } = useSongContext();
+  const { setPlaylists, lastDoc, setHasMore, shouldGetPlaylists } =
+    usePlaylistContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
+  const [searchResult, setSearchResult] = useState<Playlist[]>([]);
 
   const { setErrorToast } = useToastContext();
 
@@ -32,7 +44,7 @@ export default function useDashboardPlaylist() {
       );
 
       const result = await implementPlaylistQuery(searchQuery);
-      setPlaylists(result);
+      setSearchResult(result);
 
       setTab("Result");
     } catch (err) {
@@ -43,19 +55,47 @@ export default function useDashboardPlaylist() {
     }
   };
 
-  const handleGetPlaylist = async () => {
+  const getPlaylists = async () => {
     try {
       setIsFetching(true);
 
-      const searchQuery = query(
-        playlistCollectionRef,
-        where("is_official", "==", true),
-        where("is_album", "==", false),
-        orderBy("updated_at", "desc"),
-      );
+      const searchQuery = lastDoc.current
+        ? query(
+            playlistCollectionRef,
+            where("is_official", "==", true),
+            where("is_album", "==", false),
+            orderBy("updated_at", "desc"),
+            startAfter(lastDoc.current),
+            limit(pageSize),
+          )
+        : query(
+            playlistCollectionRef,
+            where("is_official", "==", true),
+            where("is_album", "==", false),
+            orderBy("updated_at", "desc"),
+            limit(pageSize),
+          );
 
-      const result = await implementPlaylistQuery(searchQuery);
-      setPlaylists(result);
+      if (import.meta.env.DEV) console.log("Get playlists");
+
+      const snap = await getDocs(searchQuery);
+
+      const result = snap.docs.map((doc) => {
+        const playlist: Playlist = {
+          ...(doc.data() as PlaylistSchema),
+          id: doc.id,
+        };
+
+        return playlist;
+      });
+
+      if (lastDoc.current) setPlaylists((prev) => [...prev, ...result]);
+      else setPlaylists(result);
+
+      if (result.length < pageSize) setHasMore(false);
+      else {
+        lastDoc.current = snap.docs[pageSize - 1];
+      }
     } catch (err) {
       console.log({ message: err });
 
@@ -66,7 +106,13 @@ export default function useDashboardPlaylist() {
   };
 
   useEffect(() => {
-    if (tab === "All") handleGetPlaylist();
+    if (shouldGetPlaylists.current) {
+      shouldGetPlaylists.current = false;
+
+      getPlaylists();
+    } else {
+      setIsFetching(false);
+    }
   }, [tab]);
 
   return {
@@ -74,9 +120,10 @@ export default function useDashboardPlaylist() {
     value,
     setValue,
     handleSubmit,
-    playlists,
+    getPlaylists,
     tab,
+    searchResult,
     setTab,
-    tabs
+    tabs,
   };
 }

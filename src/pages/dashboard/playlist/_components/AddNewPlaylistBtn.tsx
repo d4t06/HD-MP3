@@ -5,9 +5,11 @@ import { useAuthContext } from "@/stores";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import { useAddPlaylist } from "@/hooks";
 import { Button } from "../../_components";
+import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();
+  const { setPlaylists } = usePlaylistContext();
   const { addPlaylist, isFetching } = useAddPlaylist();
   const modalRef = useRef<ModalRef>(null);
 
@@ -17,7 +19,16 @@ export default function AddNewPlaylistBtn() {
     // important !!!
     p.is_official = true;
 
-    await addPlaylist({ variant: "add", playlist: p, imageFile });
+    const newPlaylist = await addPlaylist({
+      variant: "add",
+      playlist: p,
+      imageFile,
+    });
+
+    if (newPlaylist) {
+      setPlaylists((prev) => [newPlaylist as Playlist, ...prev]);
+    }
+
     closeModal();
   };
 

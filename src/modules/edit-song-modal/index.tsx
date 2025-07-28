@@ -1,9 +1,16 @@
 import { ChangeEvent, MouseEventHandler, RefObject, useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 
-import { Image, Button, ModalHeader, ModalRef, Input, ModalContentWrapper } from "@/components";
+import {
+  Image,
+  Button,
+  ModalHeader,
+  ModalRef,
+  Input,
+  ModalContentWrapper,
+  Label,
+} from "@/components";
 import { useThemeContext } from "@/stores";
-import { getDisable } from "@/utils/appHelpers";
 import useEditSongModal from "./_hooks/useEditSongModal";
 
 type Props = {
@@ -13,8 +20,9 @@ type Props = {
 
 export default function EditSongModal({ song, modalRef }: Props) {
   const { theme } = useThemeContext();
-  const inputFileRef = useRef<HTMLInputElement>(null);
 
+  const inputFileRef = useRef<HTMLInputElement>(null);
+  const labelRef = useRef<HTMLLabelElement>(null);
   // use hooks
   const {
     isValidToSubmit,
@@ -42,21 +50,22 @@ export default function EditSongModal({ song, modalRef }: Props) {
   };
 
   return (
-    <ModalContentWrapper
-      className={`${getDisable(
-        isFetching
-      )} w-[500px]`}
-    >
+    <ModalContentWrapper className={`w-[500px]`}>
+      <label ref={labelRef} className="hidden" htmlFor="image"></label>
+
       <input
         ref={inputFileRef}
-        id="image-input"
+        id="image"
         type="file"
         accept="image/*"
         onChange={handleImageFile}
         className="hidden"
       />
 
-      <ModalHeader title="Edit song" closeModal={() => modalRef.current?.close()} />
+      <ModalHeader
+        title="Edit song"
+        closeModal={() => modalRef.current?.close()}
+      />
 
       <div className="flex flex-col flex-grow overflow-auto md:overflow-hidden md:flex-row mt-5">
         <div className="space-y-2.5">
@@ -64,19 +73,14 @@ export default function EditSongModal({ song, modalRef }: Props) {
             <Image className="object-cover h-full" src={songData.image_url} />
           </div>
 
-          <label
-            htmlFor="image-input"
-            className={`inline-block cursor-pointer hover:brightness-90 px-[20px] py-[5px] ${theme.content_bg} rounded-full text-[14px]`}
-          >
+          <Button onClick={() => labelRef.current?.click()} color="primary">
             <PhotoIcon className="w-5" />
-          </label>
+          </Button>
         </div>
 
         <div className="pt-5 md:pt-0 md:pl-5 md:flex-grow space-y-3">
           <div className="space-y-1.5">
-            <label htmlFor="name" className="">
-              Name
-            </label>
+            <Label htmlFor="name">Name</Label>
             <Input
               value={songData.name}
               type="text"
@@ -87,9 +91,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="singer" className="">
-              Singer
-            </label>
+            <Label htmlFor="singer">Singer</Label>
             <Input
               value={songData.singer}
               onChange={(e) => handleInput("singer", e.target.value)}
@@ -101,10 +103,7 @@ export default function EditSongModal({ song, modalRef }: Props) {
         </div>
       </div>
       <div className="flex mt-5 space-x-2 justify-end">
-        <Button
-          onClick={handleCloseEditForm}
-          className={`rounded-full`}
-        >
+        <Button onClick={handleCloseEditForm} className={`rounded-full`}>
           Close
         </Button>
 

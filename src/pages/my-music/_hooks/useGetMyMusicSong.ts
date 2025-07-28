@@ -3,7 +3,7 @@ import { songsCollectionRef } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { sleep } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type Props = {
   tab: "favorite" | "uploaded";
@@ -12,12 +12,11 @@ type Props = {
 export default function useGetMyMusicSong({ tab }: Props) {
   const { user } = useAuthContext();
   const {
+    favoriteSongs,
     setUploadedSongs,
     setFavoriteSongs,
     shouldFetchUserSongs,
     shouldFetchFavoriteSongs,
-    favoriteSongs,
-    uploadedSongs,
   } = useSongContext();
 
   const { setErrorToast } = useToastContext();
@@ -33,22 +32,37 @@ export default function useGetMyMusicSong({ tab }: Props) {
           if (shouldFetchFavoriteSongs.current) {
             shouldFetchFavoriteSongs.current = false;
             if (user.liked_song_ids.length) {
-              const queryGetFavoriteSongs = query(
-                songsCollectionRef,
-                where(documentId(), "in", user.liked_song_ids)
-              );
+              const chunkSize = 30;
+              const chunks = [];
+              for (let i = 0; i < user.liked_song_ids.length; i += chunkSize) {
+                chunks.push(user.liked_song_ids.slice(i, i + chunkSize));
+              }
 
-              const result = await implementSongQuery(queryGetFavoriteSongs);
-              const sortedSongs: Song[] = [];
+              const favoriteSongs: Song[] = [];
 
-              user.liked_song_ids.forEach((id) => {
-                const song = result.find((s) => s.id === id);
-                if (song) sortedSongs.push(song);
-              });
+              if (import.meta.env.DEV) console.log(chunks.length, "chunks");
 
-              setFavoriteSongs(sortedSongs);
+              for (const chunk of chunks) {
+                if (chunk.length > 0) {
+                  const q = query(
+                    songsCollectionRef,
+                    where(documentId(), "in", chunk),
+                  );
+
+                  const result = await implementSongQuery(q);
+
+                  favoriteSongs.push(...result);
+                }
+              }
+
+              setFavoriteSongs(favoriteSongs);
+
+              return favoriteSongs;
             }
-          } else await sleep(100);
+          } else {
+            await sleep(100);
+            return favoriteSongs;
+          }
 
           break;
         }
@@ -59,7 +73,7 @@ export default function useGetMyMusicSong({ tab }: Props) {
             const queryGetSongs = query(
               songsCollectionRef,
               where("owner_email", "==", user.email),
-              where("is_official", "==", false)
+              where("is_official", "==", false),
             );
 
             const result = await implementSongQuery(queryGetSongs);
@@ -76,9 +90,9 @@ export default function useGetMyMusicSong({ tab }: Props) {
     }
   };
 
-  useEffect(() => {
-    getSongs();
-  }, []);
+  // useEffect(() => {
+  //   getSongs();
+  // }, []);
 
-  return { isFetching, uploadedSongs, favoriteSongs, user };
+  return { isFetching, getSongs };
 }

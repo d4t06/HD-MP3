@@ -229,8 +229,8 @@ export default function useAddSongForm(
             data: newSongData,
           });
 
-          setSuccessToast();
-          modalRef.current?.open();
+          setSuccessToast("Song updated");
+          // modalRef.current?.open();
         }
       }
     } catch (error) {

@@ -6,7 +6,7 @@ import { Button } from "@/pages/dashboard/_components";
 export default function UploadSongBtn({ title }: { title: string }) {
   const { setSongFile } = useAddSongContext();
 
-  const inputRef = useRef<HTMLLabelElement>(null);
+  const labelRef = useRef<HTMLLabelElement>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) setSongFile(e.target.files[0]);
@@ -14,15 +14,10 @@ export default function UploadSongBtn({ title }: { title: string }) {
 
   return (
     <>
-      <label
-        ref={inputRef}
-        htmlFor="song_upload"
-        className={`hidden inline-flex p-1.5 cursor-pointer`}
-      >
+      <label ref={labelRef} htmlFor="song_upload" className={`hidden`}>
         <ArrowUpTrayIcon className="w-6" />
       </label>
       <input
-        // ref={inputRef}
         onChange={handleInputChange}
         type="file"
         multiple
@@ -32,9 +27,7 @@ export default function UploadSongBtn({ title }: { title: string }) {
       />
 
       <Button
-        onClick={() => inputRef.current?.click()}
-        className=""
-        size={"clear"}
+        onClick={() => labelRef.current?.click()}
       >
         <DocumentTextIcon />
         <span>{title}</span>

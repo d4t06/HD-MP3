@@ -1,4 +1,10 @@
-import { ModalContentWrapper, ModalHeader, Input, Switch } from "@/components";
+import {
+  ModalContentWrapper,
+  ModalHeader,
+  Input,
+  Switch,
+  Label,
+} from "@/components";
 import { useToastContext } from "@/stores";
 import { useEffect, useRef, useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
@@ -76,9 +82,7 @@ export default function AddGenreModal({
   };
 
   const classes = {
-    inputGroup: "gap-1",
-    input: "p-2 bg-[#f1f1f1] border border-black/20 rounded-lg",
-    label: "text-[#3f3f3f] text-lg",
+    inputGroup: "space-y-1",
   };
 
   useEffect(() => {
@@ -94,18 +98,17 @@ export default function AddGenreModal({
 
       <div className="space-y-3 overflow-auto">
         <div className={classes.inputGroup}>
-          <label className={classes.label}>Genre name:</label>
+          <Label>Name</Label>
           <Input
             ref={inputRef}
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Enter name..."
-            className={classes.input}
+            placeholder="name..."
           />
         </div>
 
         <div className="flex justify-between items-center">
-          <label className={classes.label}>Main genre</label>
+          <Label>Main</Label>
           <Switch
             inActiveBg="bg-black/10"
             active={isMain}

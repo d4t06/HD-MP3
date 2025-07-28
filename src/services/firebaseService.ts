@@ -151,38 +151,42 @@ export const deleteFile = async ({
   fileId: string;
   msg?: string;
 }) => {
-  if (isDev) console.log(msg ?? ">>> api: delete file");
+  try {
+    if (isDev) console.log(msg ?? ">>> api: delete file");
 
-  // const fileRef = ref(stores, fileId);
+    const token = await auth.currentUser?.getIdToken(true);
+    if (!token) return;
 
-  // await deleteObject(fileRef);
-
-  const token = await auth.currentUser?.getIdToken(true);
-  if (!token) return;
-
-  await request.delete<{ data: ImageKitAuthKeys }>(`/storage/${fileId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+    await request.delete<{ data: ImageKitAuthKeys }>(`/storage/${fileId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const deleteSongFiles = async (song: Song) => {
-  await deleteFile({
-    fileId: song.song_file_id,
-    msg: ">>> api: delete song file",
-  });
-
-  if (song.beat_file_id) {
-    await deleteFile({
-      fileId: song.beat_file_id,
-      msg: `>>> api: delete song's image file`,
+  try {
+    deleteFile({
+      fileId: song.song_file_id,
+      msg: ">>> api: delete song file",
     });
-  }
 
-  if (song.image_file_id) {
-    await deleteFile({
-      fileId: song.image_file_id,
-      msg: `>>> api: delete song's image file`,
-    });
+    if (song.beat_file_id) {
+      deleteFile({
+        fileId: song.beat_file_id,
+        msg: `>>> api: delete song's image file`,
+      });
+    }
+
+    if (song.image_file_id) {
+      deleteFile({
+        fileId: song.image_file_id,
+        msg: `>>> api: delete song's image file`,
+      });
+    }
+  } catch (error) {
+    console.log(error);
   }
 };
 

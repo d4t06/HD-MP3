@@ -6,7 +6,11 @@ import { useThemeContext } from "@/stores";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 
-export default function ChatBtn() {
+type Props = {
+  playlist: Playlist;
+};
+
+export default function ChatBtn({ playlist }: Props) {
   const { theme, isOnMobile } = useThemeContext();
   const { setIsOpenComment } = useCommentContext();
   const modalRef = useRef<ModalRef>(null);
@@ -34,7 +38,7 @@ export default function ChatBtn() {
           ref={modalRef}
         >
           <ModalContentWrapper className="h-[400px] w-[500px]">
-            <PlaylistComment />
+            <PlaylistComment targetId={playlist.id} />
           </ModalContentWrapper>
         </Modal>
       )}
@@ -42,7 +46,7 @@ export default function ChatBtn() {
       {isOnMobile && (
         <SlideModal ref={modalRef} onClose={() => setIsOpenComment(false)}>
           <MobileComment>
-            <PlaylistComment />
+            <PlaylistComment targetId={playlist.id} />
           </MobileComment>
         </SlideModal>
       )}

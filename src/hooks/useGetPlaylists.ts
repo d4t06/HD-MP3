@@ -9,7 +9,7 @@ type Props = {
 };
 
 export default function useGetPlaylists({ setPlaylists, playlistIds }: Props) {
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const ranEffect = useRef(false);
 
   const getPlaylist = async () => {

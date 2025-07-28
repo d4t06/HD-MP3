@@ -6,7 +6,7 @@ import { useAuthContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import PlaylistSongList from "./_components/PlaylistSongList";
 import PLaylistInfo from "@/modules/playlist-info";
-import BackBtn from "@/components/BackBtn";
+// import BackBtn from "@/components/BackBtn";
 
 export default function PlaylistDetail() {
   // us stores
@@ -37,11 +37,11 @@ export default function PlaylistDetail() {
 
   return (
     <>
-      <div className="mb-5">
+      {/*<div className="mb-5">
         <BackBtn />
-      </div>
+      </div>*/}
 
-      <div className="lg:flex lg:-mx-3">
+      <div className="lg:flex lg:-mx-3 mt-10">
         <div className="w-full lg:w-1/4 lg:px-3">
           <PLaylistInfo
             showSkeleton={isFetching}

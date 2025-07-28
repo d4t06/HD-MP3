@@ -22,6 +22,8 @@ export default function SongSection({ songIds }: Props) {
   const { isFetching } = useGetSongs({ setSongs, songIds });
   if (isFetching) return SongItemSkeleton;
 
+  if (!songs.length) return <></>;
+
   return (
     <SongSelectProvider>
       <div className="mt-5">

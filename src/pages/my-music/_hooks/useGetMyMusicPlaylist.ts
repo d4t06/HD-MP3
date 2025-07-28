@@ -8,7 +8,8 @@ import { useState } from "react";
 // this hook not in useEffect
 export default function useGetMyMusicPlaylist() {
   const { user } = useAuthContext();
-  const { setPlaylists, shouldFetchUserPlaylists, playlists } = useSongContext();
+  const { setPlaylists, shouldFetchUserPlaylists, playlists } =
+    useSongContext();
 
   const { setErrorToast } = useToastContext();
 
@@ -16,8 +17,7 @@ export default function useGetMyMusicPlaylist() {
 
   const getPlaylist = async (userProp?: User) => {
     try {
-
-      const _user = userProp || user
+      const _user = userProp || user;
 
       if (!_user) return;
 
@@ -28,16 +28,17 @@ export default function useGetMyMusicPlaylist() {
 
         const queryGetUserPlaylist = query(
           playlistCollectionRef,
-          where(documentId(), "in", _user.liked_playlist_ids)
+          where(documentId(), "in", _user.liked_playlist_ids),
         );
 
-
-        if (import.meta.env.DEV) console.log('useGetMyMusicPlaylist, get user playlists')
+        if (import.meta.env.DEV)
+          console.log("useGetMyMusicPlaylist, get user playlists");
 
         const result = await implementPlaylistQuery(queryGetUserPlaylist);
 
         const showAblePlaylist = result.filter((p) => {
-          const isOwnerOfPlaylist = !p.is_official && p.owner_email === _user.email;
+          const isOwnerOfPlaylist =
+            !p.is_official && p.owner_email === _user.email;
 
           if (isOwnerOfPlaylist) return true;
           else if (p.is_public) return true;
@@ -45,7 +46,12 @@ export default function useGetMyMusicPlaylist() {
         });
 
         setPlaylists(showAblePlaylist);
-      } else await sleep(100);
+
+        return showAblePlaylist;
+      } else {
+        await sleep(100);
+        return playlists;
+      }
     } catch (error) {
       console.log({ message: error });
       setErrorToast();
@@ -54,5 +60,5 @@ export default function useGetMyMusicPlaylist() {
     }
   };
 
-  return { isFetching, playlists, user, setIsFetching, getPlaylist };
+  return { isFetching, getPlaylist };
 }

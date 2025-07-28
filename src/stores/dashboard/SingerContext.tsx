@@ -1,4 +1,5 @@
-import { createContext, ReactNode, useContext, useState } from "react";
+import { QueryDocumentSnapshot } from "firebase/firestore";
+import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
 function useSinger() {
   const [singers, setSingers] = useState<Singer[]>([]);
@@ -7,6 +8,11 @@ function useSinger() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
   const [albums, setAlbums] = useState<Playlist[]>([]);
+
+  const [hasMore, setHasMore] = useState(true);
+
+  const lastDoc = useRef<QueryDocumentSnapshot>();
+  const shouldGetSingers = useRef(true);
 
   return {
     singer,
@@ -19,6 +25,10 @@ function useSinger() {
     setPlaylists,
     albums,
     setAlbums,
+    hasMore,
+    setHasMore,
+    lastDoc,
+    shouldGetSingers,
   };
 }
 

@@ -12,7 +12,6 @@ import Record from "./_components/Record";
 import Sliders from "./_components/Sliders";
 import Preview from "./_components/Preview";
 import WordList from "./_components/WordList";
-import PlayBtn from "./_components/PlayBtn";
 import useControlEvent from "./_hooks/useControlEvent";
 
 type Props = {
@@ -31,7 +30,7 @@ function Content({ closeModal }: Props) {
 
   return (
     <>
-      <ModalContentWrapper className="w-[800px]">
+      <ModalContentWrapper className="w-[800px] overflow-auto">
         <ModalHeader title="Edit lyric" closeModal={closeModal} />
 
         <audio src={song?.song_url} ref={audioRef} />
@@ -59,10 +58,8 @@ function Content({ closeModal }: Props) {
             </div>
           )}
           <div className={`${tabProps.tab === "Edit" ? "block" : "hidden"}`}>
-            <PlayBtn />
             <Sliders />
             <Preview />
-
             <WordList />
           </div>
         </div>

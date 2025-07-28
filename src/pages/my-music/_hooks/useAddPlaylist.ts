@@ -1,9 +1,11 @@
 import { useAddPlaylist } from "@/hooks";
 import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
-import { useAuthContext, useToastContext } from "@/stores";
+import { myUpdateDoc } from "@/services/firebaseService";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 
 export default function useMyMusicAddPlaylist() {
   const { user } = useAuthContext();
+  const { playlists, setPlaylists } = useSongContext();
 
   const { setErrorToast, setSuccessToast } = useToastContext();
 
@@ -26,10 +28,23 @@ export default function useMyMusicAddPlaylist() {
         },
         { push: false },
       );
-      if (newPlaylist) await action({ variant: "like", playlist: playlist as Playlist });
+      if (newPlaylist) {
+        const newPlaylists = [...playlists, newPlaylist as Playlist];
 
+        const newUserData: Partial<User> = {
+          liked_playlist_ids: newPlaylists.map((s) => s.id),
+        };
 
-      setSuccessToast("New playlist created")
+        await myUpdateDoc({
+          collectionName: "Users",
+          data: newUserData,
+          id: user.email,
+        });
+
+        setPlaylists(newPlaylists);
+
+        setSuccessToast("New playlist created");
+      }
     } catch (error) {
       console.log({ error });
       setErrorToast();

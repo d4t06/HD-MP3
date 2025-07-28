@@ -53,7 +53,7 @@ export default function SingerInfo() {
                 <p className="text-3xl font-bold">{singer.name}</p>
 
                 <p>
-                  <span className="text-red-500">&#10084; </span>
+                  <span className="text-base">❤️ </span>
                   {abbreviateNumber(singer.like)}
                 </p>
 

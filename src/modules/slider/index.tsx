@@ -4,7 +4,7 @@ import { Image } from "@/components";
 import { Link } from "react-router-dom";
 
 interface ImageSliderProps {
-  images: { imageUrl: string; link?: string }[];
+  images: { imageUrl: string; link?: string, hash?: string }[];
   className?: string;
   autoPlay?: boolean;
 }
@@ -36,7 +36,7 @@ export default function ImageSlider({
               key={index}
               className="w-full h-full flex-shrink-0"
             >
-              <Image src={data.imageUrl} className="h-full object-cover" />
+              <Image src={data.imageUrl} blurHashEncode={data.hash} className="h-full object-cover" />
             </Link>
           ))}
         </div>
@@ -46,17 +46,17 @@ export default function ImageSlider({
           <>
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
               <button
-                className="p-1.5"
+                className="p-1.5 rounded-full bg-black/50"
                 onClick={previous}
                 aria-label="Previous image"
               >
-                <ChevronLeftIcon className="w-4" />
+                <ChevronLeftIcon className="w-6 text-white" />
               </button>
             </div>
 
-            <div className="!absolute right-4 top-1/2 transform -translate-y-1/2">
-              <button className="p-1.5" onClick={next} aria-label="Next image">
-                <ChevronRightIcon className="w-4" />
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
+              <button className="p-1.5 rounded-full bg-black/50" onClick={next} aria-label="Next image">
+                <ChevronRightIcon className="w-6 text-white" />
               </button>
             </div>
           </>
@@ -64,7 +64,7 @@ export default function ImageSlider({
       </div>
 
       {/* Image counter */}
-      <div className="absolute top-4 right-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+      <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
         {currentIndex + 1} / {images.length}
       </div>
     </div>

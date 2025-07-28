@@ -1,20 +1,23 @@
 import { ComponentProps, ReactNode } from "react";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
 import { useAuthContext, useThemeContext } from "@/stores";
-import { CheckIcon, StopIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import AddToQueueCheckBarItem from "./_components/AddToQueueCheckBarItem";
+import { CheckIcon, StopIcon } from "@heroicons/react/24/outline";
+import AddToQueueBtn from "./_components/AddToQueueBtn";
 import CheckBarMenuBtn from "./_components/CheckBarMenuBtn";
+import { XMarkIcon } from "@heroicons/react/20/solid";
+import AddToPlaylistBtn from "./_components/AddToPlaylistBtn";
 
 type Props = {
   children?: ReactNode;
   selectAll?: () => void;
-  variant: ComponentProps<typeof CheckBarMenuBtn>["variant"];
+  variant?: ComponentProps<typeof CheckBarMenuBtn>["variant"];
 };
 
-export default function CheckedBar({ children, variant, selectAll }: Props) {
+export default function CheckedBar({ children, selectAll }: Props) {
   const { theme } = useThemeContext();
   const { user } = useAuthContext();
-  const { isSelectAll, isChecked, resetSelect, selectedSongs } = useSongSelectContext();
+  const { isSelectAll, isChecked, resetSelect, selectedSongs } =
+    useSongSelectContext();
 
   const content = (
     <>
@@ -27,24 +30,23 @@ export default function CheckedBar({ children, variant, selectAll }: Props) {
           )}
         </button>
       )}
-
-      <p className="font-playwriteCU mr-1">{selectedSongs.length}</p>
-
+      <span className="font-semibold opacity-[.5]">{selectedSongs.length}</span>
       <div
-        className={`flex space-x-2 items-center ${theme.type === "light" ? "[&>button]:bg-black/5" : "[&>button]:bg-white/5"}  [&>button]:inline-flex [&>button]:space-x-1 [&>button]:py-1 [&>button]:px-2 [&>button]:rounded-full hover:[&>button]:brightness-95`}
+        className={`flex space-x-2 items-center ${theme.type === "light" ? "[&>button]:bg-black/5" : "[&>button]:bg-white/5"}  [&>button]:inline-flex [&>button]:space-x-1.5 [&_span]:text-sm [&_span]:font-medium [&>button]:py-1 [&>button]:px-3 [&>button]:rounded-full`}
       >
-        <AddToQueueCheckBarItem />
-        {user && <CheckBarMenuBtn variant={variant} />}
+        <AddToQueueBtn />
+
+        {user && <AddToPlaylistBtn />}
       </div>
 
-      <button onClick={resetSelect} className={`p-1 flex-shrink-0`}>
-        <XMarkIcon className="w-[20px]" />
+      <button onClick={resetSelect} className={`flex-shrink-0`}>
+        <XMarkIcon className="w-5" />
       </button>
     </>
   );
 
   return (
-    <div className="flex items-center space-x-2 h-[44px] mb-3">
+    <div className="flex items-center space-x-2 h-[44px]">
       {isChecked ? content : children}
     </div>
   );

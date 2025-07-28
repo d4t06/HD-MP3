@@ -1,20 +1,24 @@
-import { Modal, ModalRef } from "@/components";
+import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import {
-  ArrowPathIcon,
   ClipboardDocumentIcon,
+  MusicalNoteIcon,
   PencilIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import EditSongModal from "./EditSongModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import ChangeSongFileModal from "./ChangeSongFileModal";
+import useDashboardSongItemAction from "../_hooks/useSongItemAction";
 
-type Modal = "edit" | "change-file";
+type Modal = "edit" | "change-file" | "delete";
 
 export default function EditSongBtn() {
   const { song } = useAddSongContext();
+
+  const { actions, isFetching } = useDashboardSongItemAction();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -42,14 +46,34 @@ export default function EditSongBtn() {
       </Link>
 
       <Button onClick={() => openModal("change-file")} size={"clear"}>
-        <ArrowPathIcon />
+        <MusicalNoteIcon />
         <span>Change song file</span>
+      </Button>
+
+      <Button onClick={() => openModal("delete")} size={"clear"}>
+        <TrashIcon />
+        <span>Delete</span>
       </Button>
 
       <Modal variant="animation" ref={modalRef}>
         {modal === "edit" && <EditSongModal closeModal={closeModal} />}
         {modal === "change-file" && (
           <ChangeSongFileModal closeModal={closeModal} />
+        )}
+
+        {modal === "delete" && song && (
+          <ConfirmModal
+            loading={isFetching}
+            label={`Delete '${song.name}' ?`}
+            desc={"This action cannot be undone"}
+            callback={() =>
+              actions({
+                variant: "delete",
+                song,
+              })
+            }
+            closeModal={closeModal}
+          />
         )}
       </Modal>
     </>

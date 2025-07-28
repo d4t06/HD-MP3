@@ -1,4 +1,4 @@
-import SingerLayout from "@/layout/dashboard/singer-layout";
+// import SingerLayout from "@/layout/dashboard/singer-layout";
 import {
   Home,
   Search,
@@ -10,7 +10,7 @@ import {
   UserPage,
   CategoryPage,
   TrendingPage,
-  CategoryDetailPage
+  CategoryDetailPage,
 } from "../pages";
 import {
   DashboardAddSongPage,
@@ -28,7 +28,7 @@ import {
   DashboardCategoryDetail,
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
-import PlaylistLayout from "@/layout/dashboard/playlist-layout";
+// import PlaylistLayout from "@/layout/dashboard/playlist-layout";
 import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
 import ForYouPage from "@/pages/for-you";
 import HomePageConfig from "@/pages/dashboard/homepage-config";
@@ -83,7 +83,11 @@ const publicRoutes = [
   { path: pubicRouteMap.user, component: UserPage, layout: "" },
   { path: pubicRouteMap.catogory, component: CategoryPage, layout: "" },
   { path: pubicRouteMap.trending, component: TrendingPage, layout: "" },
-  { path: pubicRouteMap.catogoryDetail, component: CategoryDetailPage, layout: "" },
+  {
+    path: pubicRouteMap.catogoryDetail,
+    component: CategoryDetailPage,
+    layout: "",
+  },
 ];
 
 const protectedRoutes = [
@@ -111,17 +115,17 @@ const privateRoutes = [
   {
     path: privateRouteMap.singer,
     component: DashboardSingerPage,
-    layout: SingerLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.editSinger,
     component: DashboardEditSingerPage,
-    layout: SingerLayout,
+    layout: "",
   },
   {
     path: privateRouteMap.playlistDetail,
     component: DashboardEditPlaylistPage,
-    layout: PlaylistLayout,
+    layout: '',
   },
   {
     path: privateRouteMap.album,

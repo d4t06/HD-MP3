@@ -16,6 +16,10 @@ export default function PlaylistSection({ playlistIds, title }: Props) {
 
   const { isFetching } = useGetPlaylists({ setPlaylists, playlistIds });
 
+  
+
+  if (!playlists.length) return <></>;
+
   return (
     <>
       <div>

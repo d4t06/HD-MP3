@@ -22,7 +22,7 @@ export default function ConfirmModal({
   const { theme } = useThemeContext();
 
   return (
-    <ModalContentWrapper disable={loading} className={`w-[450px]`}>
+    <ModalContentWrapper className={`w-[450px]`}>
       <ModalHeader closeModal={closeModal} title={label || "Wait a minute"} />
 
       {desc && <p className="font-semibold text-lg text-red-400">{desc}</p>}
@@ -31,7 +31,7 @@ export default function ConfirmModal({
         {children || (
           <>
             <Button
-              onClick={close}
+              onClick={closeModal}
               className={`bg-white/10 border border-white/10 rounded-full px-3 py-0.5`}
               variant={"primary"}
               size={"clear"}

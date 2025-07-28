@@ -248,7 +248,7 @@ type LobbySection = {
   show: boolean;
 };
 
-type CategoryLobby = {
+type PageConfig = {
   category_ids: string;
   category_sections: LobbySection[];
   playlist_sections: LobbySection[];

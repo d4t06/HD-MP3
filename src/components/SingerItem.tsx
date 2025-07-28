@@ -12,7 +12,7 @@ type Props = {
 
 export default function SingerItem(props: SkeletonProps | Props) {
 	return (
-		<div className="w-1/3 md:w-1/5 px-2">
+		<div className="w-1/3 md:w-1/5 p-3">
 			{props.variant === "skeleton" && (
 				<>
 					<Skeleton className="pt-[100%] rounded-full" />
@@ -31,7 +31,7 @@ export default function SingerItem(props: SkeletonProps | Props) {
 							/>
 						</Square>
 					</Link>
-					<p className="mt-1 text-center text-lg">{props.singer.name}</p>
+					<p className="mt-1 font-medium text-center">{props.singer.name}</p>
 				</>
 			)}
 		</div>

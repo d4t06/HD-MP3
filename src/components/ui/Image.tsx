@@ -22,7 +22,9 @@ export default function Image({
   const imageRef = useRef<HTMLImageElement>(null);
 
   const handleLoadImage = () => {
-    setImageLoaded(true);
+    if (import.meta.env.DEV) {
+      setTimeout(() => setImageLoaded(true), 300);
+    } else setImageLoaded(true);
 
     if (!src) return;
     if (src?.includes("blob")) {
@@ -48,7 +50,7 @@ export default function Image({
           {blurHashEncode ? (
             <Blurhash hash={blurHashEncode} height={"100%"} width={"100%"} />
           ) : (
-            <Skeleton className="w-full h-0" />
+            <Skeleton className="w-full" />
           )}
         </>
       )}

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function useGetPage() {
   const [page, setPage] = useState<CategoryLobby>();
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
   const ranEffect = useRef(false);
 
@@ -30,6 +30,8 @@ export default function useGetPage() {
       ranEffect.current = true;
 
       getPage();
+    } else {
+      setTimeout(() => setIsFetching(false), 300);
     }
   }, []);
 
