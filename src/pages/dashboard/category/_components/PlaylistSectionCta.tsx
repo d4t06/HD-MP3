@@ -30,16 +30,14 @@ export default function PlaylistSectionCta({
   return (
     <>
       <div className="flex space-x-2 justify-center mt-3">
-        <Button onClick={() => openModal("add")} className="p-1" size={"clear"}>
+        <Button onClick={() => openModal("add")}>
           <PlusIcon className="w-6" />
           <span>Add playlist </span>
         </Button>
 
         <Button
           onClick={() => openModal("arrange")}
-          className="p-1"
           disabled={orderedPlaylists.length < 2}
-          size={"clear"}
         >
           <ArrowPathIcon className="w-6" />
           <span>Arrange</span>

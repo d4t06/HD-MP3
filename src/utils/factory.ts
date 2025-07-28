@@ -164,8 +164,8 @@ export const initCategory = (data: Partial<Category>) => {
   return category;
 };
 
-export const initCategorySection = (name: string = "") => {
-  const data: LobbySection = {
+export const initPageSection = (name: string = "") => {
+  const data: PageSection = {
     name,
     show: true,
     target_ids: "",

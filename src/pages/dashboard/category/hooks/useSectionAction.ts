@@ -1,24 +1,34 @@
-import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
+import { myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { ModalRef } from "@/components";
 import { doc, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
+import { usePageContext } from "@/stores";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function useSectionAction(mainProps?: Props) {
-  const { page, setPage, setCategories } = useCategoryLobbyContext();
+  const {
+    categoryPage,
+    homePage,
+    setHomePage,
+    setCategoryPage,
+    setCategories,
+  } = usePageContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
+  const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
+  const page = TARGET_PAGE === "home" ? homePage : categoryPage;
+  const setPage = TARGET_PAGE === "home" ? setHomePage : setCategoryPage;
+
   type Add = {
     type: "add-section";
-    section: LobbySection;
+    section: PageSection;
     variant: "category" | "playlist";
   };
 
@@ -31,7 +41,7 @@ export default function useSectionAction(mainProps?: Props) {
   type Edit = {
     type: "edit-section";
     variant: "category" | "playlist";
-    section: Partial<LobbySection>;
+    section: Partial<PageSection>;
     index: number;
   };
 
@@ -60,9 +70,9 @@ export default function useSectionAction(mainProps?: Props) {
           }
 
           await myUpdateDoc({
-            collectionName: "Category_Lobby",
+            collectionName: "Page_Config",
             data: newPage,
-            id: "page",
+            id: TARGET_PAGE,
           });
 
           setIsFetching(false);
@@ -87,9 +97,9 @@ export default function useSectionAction(mainProps?: Props) {
           }
 
           await myUpdateDoc({
-            collectionName: "Category_Lobby",
+            collectionName: "Page_Config",
             data: newPage,
-            id: "page",
+            id: TARGET_PAGE,
           });
 
           setIsFetching(false);
@@ -123,7 +133,7 @@ export default function useSectionAction(mainProps?: Props) {
               break;
           }
 
-          batch.update(doc(db, "Category_Lobby", "page"), newPage);
+          batch.update(doc(db, "Page_Config", TARGET_PAGE), newPage);
 
           await batch.commit();
 
@@ -143,9 +153,9 @@ export default function useSectionAction(mainProps?: Props) {
             Object.assign(newPage.category_sections[sectionIndex], target);
 
           await myUpdateDoc({
-            collectionName: "Category_Lobby",
+            collectionName: "Page_Config",
             data: newPage,
-            id: "page",
+            id: TARGET_PAGE,
           });
 
           setCategories((prev) => [...prev, category]);

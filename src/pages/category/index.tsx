@@ -4,9 +4,11 @@ import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./category-detail/_components/PlaylistSection";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import SliderSection from "./_components/SliderSection";
+import { usePageContext } from "@/stores";
 
 export default function CategoryPage() {
-  const { page, isFetching } = useGetPage();
+  const {categoryPage} = usePageContext()
+  const { isFetching } = useGetPage();
 
   if (isFetching)
     return (
@@ -19,10 +21,10 @@ export default function CategoryPage() {
     <>
       <div className="space-y-10 mt-10">
         <SliderSection
-          categoryIds={page?.category_ids ? page?.category_ids.split("_") : []}
+          categoryIds={categoryPage?.category_ids ? categoryPage?.category_ids.split("_") : []}
         />
 
-        {page?.category_sections.map((c, i) => (
+        {categoryPage?.category_sections.map((c, i) => (
           <CategorySection
             key={i}
             title={c.name}
@@ -30,7 +32,7 @@ export default function CategoryPage() {
           />
         ))}
 
-        {page?.playlist_sections.map((c, i) => (
+        {categoryPage?.playlist_sections.map((c, i) => (
           <PlaylistSection
             key={i}
             title={c.name}

@@ -2,22 +2,22 @@ import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
 import { useRef, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
-import AddCategoryModal from "./AddCategoryModal";
-import useCategoryAction from "../hooks/useCategoryAction";
+// import useCategoryAction from "../hooks/useCategoryAction";
 import { Link } from "react-router-dom";
+import useSliderSectionAction from "../hooks/useSliderSectionAction";
 
 type Props = {
   category: Category;
 };
 
-type Modal = "edit" | "delete";
+type Modal = "delete";
 
 export default function SliderItem({ category }: Props) {
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
 
-  const { action, isFetching } = useCategoryAction({ modalRef });
+  const { action, isFetching } = useSliderSectionAction({ modalRef });
 
   const openModal = (m: Modal) => {
     setModal(m);
@@ -54,24 +54,14 @@ export default function SliderItem({ category }: Props) {
       </div>
 
       <Modal variant="animation" ref={modalRef}>
-        {modal === "edit" && (
-          <AddCategoryModal
-            variant="edit"
-            category={category}
-            closeModal={closeModal}
-            isLoading={isFetching}
-            submit={(c) =>
-              action({ type: "edit", category: c, id: category.id })
-            }
-          />
-        )}
-
         {modal === "delete" && (
           <ConfirmModal
-            callback={() => action({ type: "delete", id: category.id })}
+            callback={() =>
+              action({ variant: "remove-category", id: category.id })
+            }
             closeModal={closeModal}
             loading={isFetching}
-            label={`Delete category '${category.name}'`}
+            label={`Remove category '${category.name}'`}
           />
         )}
       </Modal>

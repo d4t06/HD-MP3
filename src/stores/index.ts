@@ -2,6 +2,7 @@ export { default as AuthProvider, useAuthContext } from "./global/AuthContext";
 export { default as SongProvider, useSongContext } from "./global/SongContext";
 export { default as ThemeProvider, useThemeContext } from "./global/ThemeContext";
 export { default as ToastProvider, useToastContext } from "./global/ToastContext";
+export { default as PageProvider, usePageContext } from "./global/PageContext";
 export {
   default as NavigationProvider,
   useNavigationContext,

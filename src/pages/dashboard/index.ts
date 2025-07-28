@@ -9,6 +9,6 @@ export { default as DashboardGenrePage } from "./genre";
 export { default as DashboardSongLyricPage } from "./edit-song-lyric";
 export { default as DashboardEditSingerPage } from "./singer/edit";
 export { default as DashboardAlbumPage } from "./album";
-export { default as HomepageConfig } from "./homepage-config";
+export { default as DashboardHomePage } from "./homepage";
 export { default as DashboardCategory } from "./category";
 export { default as DashboardCategoryDetail } from "./category/category-detail";

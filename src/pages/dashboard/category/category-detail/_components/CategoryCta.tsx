@@ -6,15 +6,19 @@ import { useCategoryContext } from "../CategoryContext";
 import AddCategoryModal from "../../_components/AddCategoryModal";
 import CategoryBannerModal from "./CategoryBannerModal";
 import useAddCategory from "../../hooks/useAddCategory";
+import { useToastContext } from "@/stores";
+import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
 
 type Modal = "edit" | "delete" | "banner";
 
 export default function CategoryCta() {
+  const { setSuccessToast } = useToastContext();
   const { category, setCategory } = useCategoryContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
   const { addCategory, isFetching } = useAddCategory();
+  const { action, isFetching: isDeleting } = useCategoryDetailAction();
 
   const openModal = (m: Modal) => {
     setModal(m);
@@ -44,6 +48,9 @@ export default function CategoryCta() {
       Object.assign(newCategory, payload);
 
       setCategory(newCategory);
+
+      setSuccessToast("Category updated");
+      closeModal();
     }
   };
 
@@ -72,9 +79,9 @@ export default function CategoryCta() {
       case "delete":
         return (
           <ConfirmModal
-            loading={false}
+            loading={isDeleting}
             label={"Delete playlist ?"}
-            callback={() => {}}
+            callback={() => action({ variant: "delete" })}
             closeModal={closeModal}
           />
         );

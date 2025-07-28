@@ -8,7 +8,7 @@ type Props = {
   variant: "category" | "playlist";
   name: string;
   index: number;
-  section: LobbySection;
+  section: PageSection;
 };
 
 type Modal = "edit" | "delete";

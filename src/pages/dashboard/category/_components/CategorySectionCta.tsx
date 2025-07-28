@@ -25,7 +25,7 @@ export default function AddNewCategoryBtn({ sectionIndex }: Props) {
     });
 
     if (newCategory)
-      action({ type: "add-category", category: newCategory, sectionIndex });
+      action({ type: "add-category", category: newCategory as Category, sectionIndex });
 
     modalRef.current?.close();
   };
@@ -34,8 +34,6 @@ export default function AddNewCategoryBtn({ sectionIndex }: Props) {
     <>
       <Button
         onClick={() => modalRef.current?.open()}
-        className="p-1"
-        size={"clear"}
       >
         <PlusIcon className="w-6" />
         <span>Add new category</span>

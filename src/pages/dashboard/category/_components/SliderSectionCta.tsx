@@ -28,16 +28,14 @@ export default function SliderSectionCta({ orderedCategories }: Props) {
   return (
     <>
       <div className="flex space-x-2 justify-center mt-3">
-        <Button onClick={() => openModal("add")} className="p-1" size={"clear"}>
+        <Button onClick={() => openModal("add")}>
           <PlusIcon className="w-6" />
           <span>Add</span>
         </Button>
 
         <Button
           onClick={() => openModal("arrange")}
-          className="p-1"
           disabled={orderedCategories.length < 2}
-          size={"clear"}
         >
           <ArrowPathIcon className="w-6" />
           <span>Arrange</span>

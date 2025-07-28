@@ -17,11 +17,13 @@ import {
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import useSectionAction from "../hooks/useSectionAction";
-import { initCategorySection } from "@/utils/factory";
+import { initPageSection } from "@/utils/factory";
 
 type Modal = "category" | "playlist";
 
 export default function AddSectionBtn() {
+  const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
+
   const { theme } = useThemeContext();
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -49,10 +51,12 @@ export default function AddSectionBtn() {
         <MyPopupContent className="top-[calc(100%+8px)]">
           <MenuWrapper className="w-[140px]">
             <VerticalMenu>
-              <button onClick={() => openModal("category")}>
-                <SquaresPlusIcon />
-                <span>Category</span>
-              </button>
+              {TARGET_PAGE === "category" && (
+                <button onClick={() => openModal("category")}>
+                  <SquaresPlusIcon />
+                  <span>Category</span>
+                </button>
+              )}
 
               <button onClick={() => openModal("playlist")}>
                 <FilmIcon />
@@ -71,7 +75,7 @@ export default function AddSectionBtn() {
               action({
                 type: "add-section",
                 variant: modal,
-                section: initCategorySection(v),
+                section: initPageSection(v),
               })
             }
             closeModal={() => modalRef.current?.close()}

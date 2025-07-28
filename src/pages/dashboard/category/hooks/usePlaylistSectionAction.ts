@@ -2,19 +2,24 @@ import { ModalRef } from "@/components";
 import { myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { RefObject, useState } from "react";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { usePlaylistSectionContext } from "../PlaylistSectionContext";
+import { usePageContext } from "@/stores";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function UsePlaylistSectionAction(mainProps?: Props) {
-  const { page, setPage } = useCategoryLobbyContext();
+  const { categoryPage, setCategoryPage, homePage, setHomePage } =
+    usePageContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
   const { playlists, setPlaylists } = usePlaylistSectionContext();
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
+  const page = TARGET_PAGE === "home" ? homePage : categoryPage;
+  const setPage = TARGET_PAGE === "home" ? setHomePage : setCategoryPage;
 
   type Edit = {
     variant: "add-playlist";
@@ -30,7 +35,7 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
 
   type ArrangePlaylists = {
     variant: "arrange-playlist";
-    section: Partial<LobbySection>;
+    section: Partial<PageSection>;
     sectionIndex: number;
   };
 
@@ -39,16 +44,16 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
 
     const newPage = { ...page };
 
-    const newSectionData: Partial<LobbySection> = {
+    const newSectionData: Partial<PageSection> = {
       target_ids: playlists.map((p) => p.id).join("_"),
     };
 
     Object.assign(newPage.playlist_sections[sectionIndex], newSectionData);
 
     await myUpdateDoc({
-      collectionName: "Category_Lobby",
+      collectionName: "Page_Config",
       data: newPage,
-      id: "page",
+      id: TARGET_PAGE,
     });
 
     setPlaylists(playlists);
@@ -88,9 +93,9 @@ export default function UsePlaylistSectionAction(mainProps?: Props) {
           );
 
           await myUpdateDoc({
-            collectionName: "Category_Lobby",
+            collectionName: "Page_Config",
             data: newPage,
-            id: "page",
+            id: TARGET_PAGE,
           });
 
           setPage(newPage);

@@ -1,9 +1,18 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-function useCategoryLobby() {
+function usePage() {
   const [categoryPage, setCategoryPage] = useState<PageConfig>();
-  const [HomePage, setHomePage] = useState<PageConfig>();
+  const [homePage, setHomePage] = useState<PageConfig>();
   const [categories, setCategories] = useState<Category[]>([]);
+
+  const shouldFetch = useRef(true);
 
   const categorySliders = useMemo(() => {
     const result: Category[] = [];
@@ -23,8 +32,8 @@ function useCategoryLobby() {
   const homeSliders = useMemo(() => {
     const result: Category[] = [];
 
-    const order = HomePage?.category_ids
-      ? HomePage.category_ids.split("_")
+    const order = homePage?.category_ids
+      ? homePage.category_ids.split("_")
       : [];
 
     order.forEach((id) => {
@@ -33,38 +42,33 @@ function useCategoryLobby() {
     });
 
     return result;
-  }, [HomePage, categories]);
+  }, [homePage, categories]);
 
   return {
     categoryPage,
     setCategoryPage,
-    HomePage,
+    homePage,
     setHomePage,
     categories,
     setCategories,
     categorySliders,
     homeSliders,
+    shouldFetch,
   };
 }
 
-type ContextType = ReturnType<typeof useCategoryLobby>;
+type ContextType = ReturnType<typeof usePage>;
 
 const Context = createContext<ContextType | null>(null);
 
-export default function CategoryLobbyProvider({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return (
-    <Context.Provider value={useCategoryLobby()}>{children}</Context.Provider>
-  );
+export default function PageProvider({ children }: { children: ReactNode }) {
+  return <Context.Provider value={usePage()}>{children}</Context.Provider>;
 }
 
-// export const useCategoryLobbyContext = () => {
-//   const ct = useContext(Context);
+export const usePageContext = () => {
+  const ct = useContext(Context);
 
-//   if (!ct) throw new Error("CategoryLobbyProvider is not provided");
+  if (!ct) throw new Error("PageProvider is not provided");
 
-//   return ct;
-// };
+  return ct;
+};

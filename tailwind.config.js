@@ -20,7 +20,7 @@ export default {
       },
       colors: {},
       fontFamily: {
-        sans: ["Inter", "system-ui"],
+        sans: ["Rubik", "system-ui"],
         playwriteCU: ["Playwrite CU", "system-ui"],
       },
       screens: {

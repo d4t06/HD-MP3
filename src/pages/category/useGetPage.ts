@@ -1,23 +1,41 @@
-import { db } from "@/firebase";
-import { collection, getDocs, query } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { myGetDoc } from "@/services/firebaseService";
+import { usePageContext } from "@/stores";
+import { useEffect, useState } from "react";
 
 export default function useGetPage() {
-  const [page, setPage] = useState<CategoryLobby>();
+  const { setCategoryPage, setHomePage, shouldFetch } = usePageContext();
   const [isFetching, setIsFetching] = useState(true);
-
-  const ranEffect = useRef(false);
 
   const getPage = async () => {
     try {
       setIsFetching(true);
 
-      const q = query(collection(db, "Category_Lobby"));
-      const snap = await getDocs(q);
+      const initPage: PageConfig = {
+        category_ids: "",
+        category_sections: [],
+        playlist_sections: [],
+        updated_at: "",
+      };
 
-      if (!snap.empty) {
-        setPage(snap.docs[0].data() as CategoryLobby);
-      }
+      const [categorySnap, homeSnap] = await Promise.all([
+        myGetDoc({
+          collectionName: "Page_Config",
+          id: "category",
+          msg: "Get category config",
+        }),
+        myGetDoc({
+          collectionName: "Page_Config",
+          id: "home",
+          msg: "Get home config",
+        }),
+      ]);
+
+      setCategoryPage(
+        categorySnap.exists() ? (categorySnap.data() as PageConfig) : initPage,
+      );
+      setHomePage(
+        homeSnap.exists() ? (homeSnap.data() as PageConfig) : initPage,
+      );
     } catch (error) {
       console.log(error);
     } finally {
@@ -26,8 +44,8 @@ export default function useGetPage() {
   };
 
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
+    if (shouldFetch.current) {
+      shouldFetch.current = false;
 
       getPage();
     } else {
@@ -35,5 +53,5 @@ export default function useGetPage() {
     }
   }, []);
 
-  return { page, isFetching };
+  return { isFetching };
 }

@@ -1,40 +1,30 @@
-import { useMemo } from "react";
+// import { useMemo } from "react";
 import { Frame } from "../../_components";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import SliderSectionCta from "./SliderSectionCta";
 import SliderItem from "./SliderItem";
+import { usePageContext } from "@/stores";
+import { Title } from "@/components";
 
 export default function SliderSection() {
-  const { page, categories } = useCategoryLobbyContext();
+  const { categorySliders, homeSliders } = usePageContext();
 
-  const orderedCategories = useMemo(() => {
-    const result: Category[] = [];
+  const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
 
-    const order = page?.category_ids ? page.category_ids.split("_") : [];
-
-    order.forEach((id) => {
-      const founded = categories.find((c) => c.id === id);
-      if (founded) result.push(founded);
-    });
-
-    return result;
-  }, [page, categories]);
+  const sliders = TARGET_PAGE === "home" ? homeSliders : categorySliders;
 
   return (
     <>
-      <h1>Slider</h1>
+      <Title title="Slider" variant={"h2"} className="mb-3" />
 
       <Frame>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {orderedCategories.length
-            ? orderedCategories.map((c, i) => (
-                <SliderItem category={c} key={i} />
-              ))
+          {sliders.length
+            ? sliders.map((c, i) => <SliderItem category={c} key={i} />)
             : ""}
         </div>
 
         <div className="mt-3">
-          <SliderSectionCta orderedCategories={orderedCategories} />
+          <SliderSectionCta orderedCategories={sliders} />
         </div>
       </Frame>
     </>

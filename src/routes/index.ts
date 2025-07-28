@@ -26,12 +26,12 @@ import {
   DashboardAlbumPage,
   DashboardCategory,
   DashboardCategoryDetail,
+  DashboardHomePage
 } from "../pages/dashboard";
 import AddSongLayout from "@/layout/dashboard/add-song-layout";
 // import PlaylistLayout from "@/layout/dashboard/playlist-layout";
 import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
 import ForYouPage from "@/pages/for-you";
-import HomePageConfig from "@/pages/dashboard/homepage-config";
 
 const pubicRouteMap = {
   home: "/",
@@ -165,7 +165,7 @@ const privateRoutes = [
   },
   {
     path: privateRouteMap.homepage,
-    component: HomePageConfig,
+    component: DashboardHomePage,
     layout: "",
   },
   {

@@ -19,13 +19,13 @@ export default function DashBoardLayout() {
       setTheme(dashboardTheme);
     }
 
-
-    document.title = 'Dashboard'
+    document.title = "Dashboard";
   }, []);
 
   return (
     <>
       <NavigationProvider>
+        {/*<PageProvider>*/}
         <SingerProvider>
           <PlaylistProvider>
             <GenreProvider>
@@ -48,6 +48,7 @@ export default function DashBoardLayout() {
             </GenreProvider>
           </PlaylistProvider>
         </SingerProvider>
+        {/*</PageProvider>*/}
       </NavigationProvider>
     </>
   );

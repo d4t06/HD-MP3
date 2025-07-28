@@ -1,17 +1,18 @@
 import { useMemo } from "react";
 import { Frame } from "../../_components";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+// import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import CategorySectionCta from "./CategorySectionCta";
 import CategoryItem from "./CategoryItem";
 import SectionCta from "./SectionCta";
+import { usePageContext } from "@/stores";
 
 type Props = {
-  section: LobbySection;
+  section: PageSection;
   index: number;
 };
 
 export default function CategorySection({ section, index }: Props) {
-  const { categories } = useCategoryLobbyContext();
+  const { categories } = usePageContext();
 
   const orderedCategories = useMemo(() => {
     const result: Category[] = [];

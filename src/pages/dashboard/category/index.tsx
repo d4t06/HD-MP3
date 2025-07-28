@@ -1,20 +1,19 @@
-import { Loading, Title } from "@/components";
-import useGetPage from "./hooks/useGetPage";
-import CategoryLobbyProvider, {
-  useCategoryLobbyContext,
-} from "./CategoryLobbyContext";
 import AddSectionBtn from "./_components/AddSectionBtn";
 import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./_components/PlaylistSection";
 import SliderSection from "./_components/SliderSection";
+import { usePageContext } from "@/stores";
+import useGetPage from "../_hooks/useGetPage";
+import { Loading } from "../_components";
+import { Title } from "@/components";
 
 function Content() {
-  const { page } = useCategoryLobbyContext();
+  const { categoryPage } = usePageContext();
   const { isFetching } = useGetPage();
 
   if (isFetching) return <Loading />;
 
-  if (!page) return <></>;
+  if (!categoryPage) return <></>;
 
   return (
     <>
@@ -27,11 +26,11 @@ function Content() {
 
         <SliderSection />
 
-        {page.category_sections.map((s, i) => (
+        {categoryPage.category_sections.map((s, i) => (
           <CategorySection key={i} section={s} index={i} />
         ))}
 
-        {page.playlist_sections.map((s, i) => (
+        {categoryPage.playlist_sections.map((s, i) => (
           <PlaylistSection key={i} section={s} index={i} />
         ))}
       </div>
@@ -42,9 +41,9 @@ function Content() {
 export default function CategoryPage() {
   return (
     <>
-      <CategoryLobbyProvider>
+      {/*<CategoryLobbyProvider>*/}
         <Content />
-      </CategoryLobbyProvider>
+      {/*</CategoryLobbyProvider>*/}
     </>
   );
 }

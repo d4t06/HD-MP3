@@ -1,18 +1,30 @@
 import { ModalRef } from "@/components";
 import { myUpdateDoc } from "@/services/firebaseService";
-import { useToastContext } from "@/stores";
+import { useToastContext, usePageContext } from "@/stores";
 import { RefObject, useState } from "react";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function useSliderSectionAction(mainProps?: Props) {
-  const { page, setPage, orderedSliders } = useCategoryLobbyContext();
+  const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
+
+  const {
+    categoryPage,
+    homePage,
+    setCategoryPage,
+    setHomePage,
+    categorySliders,
+    homeSliders,
+  } = usePageContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const page = TARGET_PAGE === "home" ? homePage : categoryPage;
+  const setPage = TARGET_PAGE === "home" ? setHomePage : setCategoryPage;
+  const sliders = TARGET_PAGE === "home" ? homeSliders : categorySliders;
 
   type Edit = {
     variant: "add-category";
@@ -37,9 +49,9 @@ export default function useSliderSectionAction(mainProps?: Props) {
     newPage.category_ids = categories.map((p) => p.id).join("_");
 
     await myUpdateDoc({
-      collectionName: "Category_Lobby",
+      collectionName: "Page_Config",
       data: newPage,
-      id: "page",
+      id: TARGET_PAGE,
     });
 
     setPage(newPage);
@@ -48,10 +60,15 @@ export default function useSliderSectionAction(mainProps?: Props) {
   const action = async (props: Edit | Remove | ArrangePlaylists) => {
     try {
       if (!page) return;
+
+      console.log(TARGET_PAGE);
+
+      // return;
+
       setIsFetching(true);
       switch (props.variant) {
         case "add-category": {
-          const newPlaylists = [...orderedSliders, ...props.categories];
+          const newPlaylists = [...sliders, ...props.categories];
 
           updatePageDoc(newPlaylists);
           setSuccessToast("Add category successful");
@@ -60,7 +77,7 @@ export default function useSliderSectionAction(mainProps?: Props) {
         }
 
         case "remove-category": {
-          const newPlaylists = orderedSliders.filter((p) => p.id !== props.id);
+          const newPlaylists = sliders.filter((p) => p.id !== props.id);
 
           updatePageDoc(newPlaylists);
 
@@ -75,9 +92,9 @@ export default function useSliderSectionAction(mainProps?: Props) {
           newPage.category_ids = props.order.join("_");
 
           await myUpdateDoc({
-            collectionName: "Category_Lobby",
+            collectionName: "Page_Config",
             data: newPage,
-            id: "page",
+            id: TARGET_PAGE,
           });
 
           setPage(newPage);

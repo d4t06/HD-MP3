@@ -1,15 +1,16 @@
 import { myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+// import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { RefObject, useState } from "react";
 import { ModalRef } from "@/components";
+import { usePageContext } from "@/stores";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
 };
 
 export default function useCategoryAction(mainProps?: Props) {
-  const { categories, setCategories } = useCategoryLobbyContext();
+  const { categories, setCategories } = usePageContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);

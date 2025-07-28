@@ -1,14 +1,15 @@
 import { ModalContentWrapper, ModalHeader, NotFound } from "@/components";
 import { Frame } from "@/pages/dashboard/_components";
+import { usePageContext } from "@/stores";
 
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+// import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 
 type Props = {
   closeModal: () => void;
   choose: (category: Category) => void;
 };
 export default function CategorySelectModal({ closeModal, choose }: Props) {
-  const { categories } = useCategoryLobbyContext();
+  const { categories } = usePageContext();
 
   return (
     <>

@@ -24,7 +24,7 @@ export default function DashboardGenrePage() {
         <AddNewGenreButton value={rest.value} />
       </div>
 
-      <div className="mt-3">
+      <div className="mt-5 space-y-5">
         {isFetching && <Skeleton className="h-[200px] rounded-xl" />}
 
         {!isFetching && (
@@ -37,33 +37,37 @@ export default function DashboardGenrePage() {
               </div>
             ) : (
               <>
-                <div className="text-lg">Main genres</div>
+                <div>
+                  <Title variant={"h2"} className="mb-1" title="Main genres" />
 
-                <Frame className="mt-1">
-                  {mains.length ? (
-                    <div className="flex flex-wrap -mt-2  -mx-2">
-                      {mains.map((g) => (
-                        <GenreItem genre={g} key={g.id} />
-                      ))}
-                    </div>
-                  ) : (
-                    <NotFound />
-                  )}
-                </Frame>
+                  <Frame className="mt-1">
+                    {mains.length ? (
+                      <div className="flex flex-wrap -mt-2  -mx-2">
+                        {mains.map((g) => (
+                          <GenreItem genre={g} key={g.id} />
+                        ))}
+                      </div>
+                    ) : (
+                      <NotFound />
+                    )}
+                  </Frame>
+                </div>
 
-                <div className="mt-5 text-lg">Sub genres</div>
+                <div>
+                  <Title variant={"h2"} className="mb-1" title="Sub genres" />
 
-                <Frame className="mt-1">
-                  {subs.length ? (
-                    <div className="flex flex-wrap -mt-2 -mx-2">
-                      {subs.map((g) => (
-                        <GenreItem genre={g} key={g.id} />
-                      ))}
-                    </div>
-                  ) : (
-                    <NotFound />
-                  )}
-                </Frame>
+                  <Frame className="mt-1">
+                    {subs.length ? (
+                      <div className="flex flex-wrap -mt-2 -mx-2">
+                        {subs.map((g) => (
+                          <GenreItem genre={g} key={g.id} />
+                        ))}
+                      </div>
+                    ) : (
+                      <NotFound />
+                    )}
+                  </Frame>
+                </div>
               </>
             )}
           </>

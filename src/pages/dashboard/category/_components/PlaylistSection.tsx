@@ -7,15 +7,16 @@ import PlaylistItem from "./PlaylistItem";
 import PlaylistSectionCta from "./PlaylistSectionCta";
 import { useGetPlaylists } from "@/hooks";
 import SectionCta from "./SectionCta";
-import { useCategoryLobbyContext } from "../CategoryLobbyContext";
+import { usePageContext } from "@/stores";
+import { Title } from "@/components";
 
 type Props = {
-  section: LobbySection;
+  section: PageSection;
   index: number;
 };
 
 export function Content({ section, index }: Props) {
-  const { page } = useCategoryLobbyContext();
+  const { categoryPage } = usePageContext();
   const { playlists, setPlaylists } = usePlaylistSectionContext();
 
   const orderedPlaylists = useMemo(() => {
@@ -29,7 +30,7 @@ export function Content({ section, index }: Props) {
     });
 
     return result;
-  }, [page, playlists]);
+  }, [categoryPage, playlists]);
 
   const { isFetching } = useGetPlaylists({
     setPlaylists,
@@ -39,7 +40,7 @@ export function Content({ section, index }: Props) {
   return (
     <>
       <div className="flex items-center">
-        <h1>{section.name}</h1>
+        <Title variant={"h2"} title={section.name} />
 
         <SectionCta
           section={section}

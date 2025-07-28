@@ -9,9 +9,10 @@ type Props = {
 };
 
 export default function CategoryBannerModal({ closeModal }: Props) {
-  const { imageUrl, setImageFile, handleSubmit } = useCategoryBannerModal({
-    closeModal,
-  });
+  const { imageUrl, setImageFile, handleSubmit, isFetching } =
+    useCategoryBannerModal({
+      closeModal,
+    });
 
   const labelRef = useRef<HTMLLabelElement>(null);
 
@@ -34,7 +35,7 @@ export default function CategoryBannerModal({ closeModal }: Props) {
         <ModalHeader closeModal={closeModal} title="Change order" />
 
         <div className="overflow-auto">
-          <div className="aspect-[16/5]">
+          <div className="aspect-[16/4]">
             <Image className="h-full object-cover rounded-lg" src={imageUrl} />
           </div>
 
@@ -49,7 +50,9 @@ export default function CategoryBannerModal({ closeModal }: Props) {
           </p>
 
           <p className="text-right mt-5">
-            <Button onClick={handleSubmit}>Ok</Button>
+            <Button loading={isFetching} onClick={handleSubmit}>
+              Ok
+            </Button>
           </p>
         </div>
       </ModalContentWrapper>

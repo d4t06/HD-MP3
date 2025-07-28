@@ -242,7 +242,7 @@ type Category = {
 
 type CategorySchema = Omit<Category, "id">;
 
-type LobbySection = {
+type PageSection = {
   name: string;
   target_ids: string;
   show: boolean;
@@ -250,7 +250,7 @@ type LobbySection = {
 
 type PageConfig = {
   category_ids: string;
-  category_sections: LobbySection[];
-  playlist_sections: LobbySection[];
+  category_sections: PageSection[];
+  playlist_sections: PageSection[];
   updated_at: Timestamp;
 };

@@ -145,7 +145,7 @@ export default function PLaylistInfo({
             playlist && (
               <>
                 <Title variant={"h1"} title={playlist.name} />
-                <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-[13px]">
+                <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-sm">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
               </>

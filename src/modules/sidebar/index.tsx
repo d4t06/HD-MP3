@@ -23,9 +23,9 @@ export default function Sidebar() {
   };
 
   // define skeleton
-  const menuItemSkeletons = [...Array(2).keys()].map((index) => {
+  const menuItemSkeletons = [...Array(4).keys()].map((index) => {
     return (
-      <div key={index} className="h-[78px] lg:h-[51px] w-full">
+      <div key={index} className="h-[55px] lg:h-[55px] w-full ske">
         <Skeleton className="lg:ml-1 w-[28px] h-[28px] flex-shrink-0" />
         <Skeleton className="w-[60px] h-[22px] lg:h-[28px] lg:w-[100px]" />
       </div>
@@ -43,8 +43,8 @@ export default function Sidebar() {
     linkList: `
       ${
         theme.type === "light"
-          ? "hover:[&_div]:bg-black/10"
-          : "hover:[&_div]:bg-white/10"
+          ? "hover:[&_div:not(.ske)]:bg-black/10"
+          : "hover:[&_div:not(.ske)]:bg-white/10"
       }
       [&_div]:py-3
       [&_div]:leading-[2.2] 
@@ -53,14 +53,14 @@ export default function Sidebar() {
       [&_div]:items-center
       [&_div]:space-y-1 
       [&_span]:hidden
-      [&_span]:font-semibold
+      [&_span]:font-medium
 
       lg:[&_div]:space-y-0 
       lg:[&_div]:space-x-2 
       lg:[&_div]:px-3
       lg:[&_div]:flex-row 
       lg:[&_div]:items-center
-      [&_svg]:w-7
+      [&_svg]:w-6
       [&_a]:w-full
       lg:[&_span]:text-[14px]
       lg:[&_span]:inline-block

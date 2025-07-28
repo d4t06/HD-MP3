@@ -1,9 +1,14 @@
 import { RefObject, useState } from "react";
 import { useCategoryContext } from "../CategoryContext";
 import { useToastContext } from "@/stores";
-import { myUpdateDoc } from "@/services/firebaseService";
+import {
+  deleteFile,
+  myDeleteDoc,
+  myUpdateDoc,
+} from "@/services/firebaseService";
 import { ModalRef } from "@/components";
 import { serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
@@ -22,6 +27,8 @@ export default function useCategoryDetailAction(mainProps?: Props) {
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const navigator = useNavigate();
 
   type AddSongs = {
     variant: "add-songs";
@@ -50,13 +57,18 @@ export default function useCategoryDetailAction(mainProps?: Props) {
     index: number;
   };
 
+  type Delete = {
+    variant: "delete";
+  };
+
   const action = async (
     props:
       | AddSongs
       | AddPlaylists
       | ArrangePlaylists
       | RemoveSong
-      | RemovePlaylist,
+      | RemovePlaylist
+      | Delete,
   ) => {
     try {
       if (!category) return;
@@ -170,7 +182,7 @@ export default function useCategoryDetailAction(mainProps?: Props) {
 
           const newOrderedPlaylists = [...orderedPlaylists];
           newOrderedPlaylists.splice(props.index, 1);
-          
+
           const newPlaylistsIds = newOrderedPlaylists
             .map((s) => s.id)
             .join("_");
@@ -192,6 +204,32 @@ export default function useCategoryDetailAction(mainProps?: Props) {
           setPlaylists(newOrderedPlaylists);
 
           setSuccessToast("Category updated");
+
+          break;
+        }
+        case "delete": {
+          if (!category) return;
+
+          if (category.banner_file_id) {
+            deleteFile({
+              fileId: category.banner_file_id,
+            });
+          }
+
+          if (category.image_file_id) {
+            deleteFile({
+              fileId: category.image_file_id,
+            });
+          }
+
+          await myDeleteDoc({
+            collectionName: "Categories",
+            id: category.id,
+          });
+
+          setSuccessToast("Category deleted");
+
+          navigator("/dashboard/category");
 
           break;
         }

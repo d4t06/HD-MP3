@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import reduxStore from "./stores/redux/index.ts";
 import {
   AuthProvider,
+  PageProvider,
   SongProvider,
   ThemeProvider,
   ToastProvider,
@@ -21,11 +22,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <SongProvider>
             <ToastProvider>
               <UploadSongProvider>
-
-                <PersistAuth>
-                  <App />
-                </PersistAuth>
-
+                <PageProvider>
+                  <PersistAuth>
+                    <App />
+                  </PersistAuth>
+                </PageProvider>
               </UploadSongProvider>
             </ToastProvider>
           </SongProvider>
