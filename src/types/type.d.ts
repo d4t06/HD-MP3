@@ -36,7 +36,8 @@ type Song = {
   singer_map: Record<string, boolean>;
   main_genre?: Genre;
   genres: Genre[];
-  genre_map: Record<string, boolean>;
+  genre_ids: string[];
+  // genre_map: Record<string, boolean>;
   size: number;
   queue_id: string;
   today_play: number;

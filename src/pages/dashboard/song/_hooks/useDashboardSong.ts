@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useSongContext, useToastContext } from "@/stores";
 import {
   collection,
@@ -12,7 +12,7 @@ import {
 import { db } from "@/firebase";
 import { implementSongQuery } from "@/services/appService";
 
-const pageSize = 1;
+const pageSize = 6;
 
 const tabs = ["All", "Result"] as const;
 

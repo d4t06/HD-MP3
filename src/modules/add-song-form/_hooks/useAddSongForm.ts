@@ -5,7 +5,7 @@ import {
   myUpdateDoc,
   uploadFile,
 } from "@/services/firebaseService";
-import { useToastContext } from "@/stores";
+import { useSongContext, useToastContext } from "@/stores";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { parserSong } from "@/utils/parseSong";
 import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
@@ -16,6 +16,7 @@ import { optimizeAndGetHashImage } from "@/services/appService";
 export default function useAddSongForm(
   props: ComponentProps<typeof AddSongForm>,
 ) {
+  const { resetPage } = useSongContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
   const {
     songFile,
@@ -64,7 +65,7 @@ export default function useAddSongForm(
       song.genres.find((_g) => _g.id == g.id),
     );
 
-    return isChangeSinger || isChangeGenre;
+    return true || isChangeSinger || isChangeGenre;
   }, [songData, song, singers, genres]);
 
   const isChangeImage = !!imageFile;
@@ -145,17 +146,12 @@ export default function useAddSongForm(
   };
 
   const getSongMap = () => {
-    if (!songData?.main_genre) return {};
-
-    const genre_map: Song["genre_map"] = {};
     const singer_map: Song["singer_map"] = {};
 
-    genres.forEach((g) => (genre_map[g.id] = true));
-    genre_map[songData.main_genre.id] = true;
-
     singers.forEach((s) => (singer_map[s.id] = true));
+    const genre_ids = genres.map((g) => g.id);
 
-    return { genre_map, singer_map };
+    return { singer_map, genre_ids };
   };
 
   const handleSubmit = async () => {
@@ -235,9 +231,10 @@ export default function useAddSongForm(
           });
 
           setSuccessToast("Song updated");
-          // modalRef.current?.open();
         }
       }
+
+      resetPage();
     } catch (error) {
       console.log(error);
       setErrorToast();

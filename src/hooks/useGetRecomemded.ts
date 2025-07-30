@@ -4,7 +4,7 @@ import {
 	addSongToQueue,
 	setIsFetchingRecommend,
 } from "@/stores/redux/songQueueSlice";
-import { and, documentId, limit, or, query, where } from "firebase/firestore";
+import { query, where } from "firebase/firestore";
 import { useDispatch } from "react-redux";
 
 export default function useGetRecommend() {
@@ -12,53 +12,35 @@ export default function useGetRecommend() {
 
 	const getRecommend = async (song: Song) => {
 		try {
+			if (import.meta.env.DEV) console.log("getRecommend");
+
+			const relativeSongs: Song[] = [];
+
 			dispatch(setIsFetchingRecommend(true));
-			const singers = song.singers.map((s) =>
-				where(`singer_map.${s.id}`, "==", true),
-			);
 
-			const singerSongs = await implementSongQuery(
-				query(songsCollectionRef, ...singers),
-			);
-
-			const exceptSongIds = singerSongs.map((s) => s.id);
-
-			const exceptCondition = where(documentId(), "not-in", [
-				song.id,
-				...exceptSongIds,
-			]);
-
-			const genreConditions = song.genres.map((g) =>
-				where(`genre_map.${g.id}`, "==", true),
-			);
-
-			/**
-			Matches all songs that contain at least 1 singer_id of target song in singer_map is true 
-			Matches all songs that contain at least 1 genre_id of target song in genre_map is true 
-			and except the current song
-			**/
-
-			const otherSongQuery = query(
+			const q = query(
 				songsCollectionRef,
-				and(
-					exceptCondition,
-					or(...genreConditions),
-					where("release_year", ">=", song.release_year - 2),
-					where("release_year", "<=", song.release_year + 2),
-				),
-				limit(100),
+				where("main_genre.id", "==", song.main_genre?.id),
+				where("genre_ids", "array-contains-any", song.genre_ids),
+				where("release_year", ">=", song.release_year - 1),
+				where("release_year", "<=", song.release_year + 1),
 			);
 
-			const result = await implementSongQuery(otherSongQuery);
+			const result = await implementSongQuery(q);
 
-			dispatch(
-				addSongToQueue({
-					songs: result,
-				}),
-			);
+			relativeSongs.push(...result);
 
-			dispatch(setIsFetchingRecommend(false));
-		} catch (error) {}
+			const songs = relativeSongs.filter((s) => s.id !== song.id);
+
+			if (relativeSongs.length)
+				dispatch(
+					addSongToQueue({
+						songs,
+					}),
+				);
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return { getRecommend };

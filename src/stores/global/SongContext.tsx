@@ -35,6 +35,12 @@ function useSong() {
     }
   };
 
+  const resetPage = () => {
+    shouldFetchUserSongs.current = true;
+    lastDoc.current = undefined;
+    setHasMore(true);
+  };
+
   return {
     uploadedSongs,
     setUploadedSongs,
@@ -57,6 +63,7 @@ function useSong() {
     checkEntireUser,
     genres,
     setGenres,
+    resetPage,
   };
 }
 

@@ -7,8 +7,8 @@ import {
   useState,
 } from "react";
 
-const useEditLyric = (p: { song?: SongSchema }) => {
-  const [song, setSong] = useState<SongSchema | undefined>(p.song);
+const useEditLyric = () => {
+  const [song, setSong] = useState<Song>();
   const [baseLyric, setBaseLyric] = useState<string>("");
   const [baseLyricArr, setBaseLyricArr] = useState<string[]>([]);
   const [lyrics, setLyrics] = useState<Lyric[]>([]);
@@ -62,20 +62,10 @@ const Context = createContext<ContextType | null>(null);
 
 export default function EditLyricProvider({
   children,
-  song,
 }: {
   children: ReactNode;
-  song?: SongSchema;
 }) {
-  return (
-    <Context.Provider
-      value={useEditLyric({
-        song,
-      })}
-    >
-      {children}
-    </Context.Provider>
-  );
+  return <Context.Provider value={useEditLyric()}>{children}</Context.Provider>;
 }
 
 export const useEditLyricContext = () => {

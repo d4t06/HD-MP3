@@ -20,7 +20,7 @@ export const initSongObject = (
     song_file_id: "",
     blurhash_encode: "",
     singer_map: {},
-    genre_map: {},
+    genre_ids: [],
     genres: [],
     singers: [],
     is_official: false,

@@ -26,8 +26,8 @@ export default function Sidebar() {
   const menuItemSkeletons = [...Array(4).keys()].map((index) => {
     return (
       <div key={index} className="h-[55px] lg:h-[55px] w-full ske">
-        <Skeleton className="lg:ml-1 w-[28px] h-[28px] flex-shrink-0" />
-        <Skeleton className="w-[60px] h-[22px] lg:h-[28px] lg:w-[100px]" />
+        <Skeleton className="w-6 h-6 flex-shrink-0" />
+        <Skeleton className="w-[60px] h-[22px] md:h-[14px] md:mt-[2px] lg:h-[16px] lg:w-[70px]" />
       </div>
     );
   });
@@ -46,16 +46,14 @@ export default function Sidebar() {
           ? "hover:[&_div:not(.ske)]:bg-black/10"
           : "hover:[&_div:not(.ske)]:bg-white/10"
       }
-      [&_div]:py-3
+      [&_div]:py-2
       [&_div]:leading-[2.2] 
       [&_div]:flex 
       [&_div]:flex-col 
       [&_div]:items-center
-      [&_div]:space-y-1 
-      [&_span]:hidden
+      [&_span]:text-xs
       [&_span]:font-medium
 
-      lg:[&_div]:space-y-0 
       lg:[&_div]:space-x-2 
       lg:[&_div]:px-3
       lg:[&_div]:flex-row 

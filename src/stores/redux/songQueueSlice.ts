@@ -48,7 +48,10 @@ const songQueueSlice = createSlice({
       // update in use control
       // setLocalStorage("current_queue_id", id);
     },
-    removeSongFromQueue(state: StateType, action: PayloadAction<{ index: number }>) {
+    removeSongFromQueue(
+      state: StateType,
+      action: PayloadAction<{ index: number }>,
+    ) {
       const { index } = action.payload;
 
       state.queueSongs.splice(index, 1);
@@ -64,20 +67,26 @@ const songQueueSlice = createSlice({
       state.isFetching = action.payload;
     },
 
-    addSongToQueue: (state: StateType, action: PayloadAction<{ songs: Song[] }>) => {
+    addSongToQueue: (
+      state: StateType,
+      action: PayloadAction<{ songs: Song[] }>,
+    ) => {
       const _songs = action.payload.songs;
 
       state.queueSongs.push(..._songs);
+      state.isFetching = false;
+
       setLocalStorage("queue", state.queueSongs);
     },
     resetSongQueue: (state: StateType) => {
       setLocalStorage("queue", []);
-      Object.assign(state, {...initialState, queueSongs: []});
+      Object.assign(state, { ...initialState, queueSongs: [] });
     },
   },
 });
 
-export const selectSongQueue = (state: { songQueue: StateType }) => state.songQueue;
+export const selectSongQueue = (state: { songQueue: StateType }) =>
+  state.songQueue;
 
 export const {
   addSongToQueue,

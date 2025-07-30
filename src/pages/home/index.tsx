@@ -8,7 +8,8 @@ import SliderSection from "../category/_components/SliderSection";
 import { usePageContext } from "@/stores";
 import PlaylistSection from "../category/category-detail/_components/PlaylistSection";
 import useGetPage from "../category/useGetPage";
-import { Center, Loading } from "@/components";
+import { Center, Loading, NotFound } from "@/components";
+import NewSong from "@/modules/new-song";
 
 export default function HomePage() {
   const { homePage } = usePageContext();
@@ -22,6 +23,9 @@ export default function HomePage() {
       </Center>
     );
 
+  if (!homePage) return <NotFound />;
+
+  
   return (
     <>
       <div className="space-y-10 mt-10">
@@ -30,6 +34,8 @@ export default function HomePage() {
             homePage?.category_ids ? homePage?.category_ids.split("_") : []
           }
         />
+
+        <RecentPlaylist />
 
         {homePage?.playlist_sections.map((s, i) => (
           <PlaylistSection
@@ -40,11 +46,12 @@ export default function HomePage() {
 
         <TrendingSong amount={3} />
 
-        <RecentPlaylist />
         {/*<HomePlaylist />
 
         <HomeSongList />
 */}
+
+        <NewSong amount={5} />
 
         <MobileSetting />
       </div>

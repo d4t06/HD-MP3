@@ -15,7 +15,7 @@ export default function useGetSong() {
 
   const getSong = async (id: string) => {
     try {
-      const docRef = await myGetDoc({ collectionName: "Songs", id });
+      const docRef = await myGetDoc({ collectionName: "Songs", id, msg: "useGetSong, Get song doc" });
       if (!docRef.exists()) return navigator("/dashboard/song")
 
       const song: Song = {

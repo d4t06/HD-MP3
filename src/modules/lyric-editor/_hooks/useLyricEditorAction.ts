@@ -12,16 +12,16 @@ import { initLyricObject } from "@/utils/factory";
 type Props = {
   audioEle: HTMLAudioElement;
   isClickPlay: boolean;
-  song?: Song;
 };
 
-export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
+export function useLyricEditorAction({ audioEle, isClickPlay }: Props) {
   const {
     start,
     baseLyricArr,
     lyrics,
     setLyrics,
     setIsChanged,
+    song,
     setIsFetching,
     baseLyric,
   } = useEditLyricContext();
@@ -33,7 +33,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
   const isEnableAddBtn = isClickPlay && !!baseLyricArr.length && !isFinish;
 
   const addLyric = () => {
-    if (!audioEle || !baseLyricArr.length || isFinish || !song) return;
+    if (!audioEle || !baseLyricArr.length || !song || isFinish) return;
 
     const currentTime = +audioEle.currentTime.toFixed(1);
     if (start.current === currentTime) return; // prevent double click
@@ -83,12 +83,10 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       setIsFetching(true);
       if (!song) return;
 
+      console.log(song);
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
-        // duration: song.duration,
-        // name: song.name + "-" + song.singers.map((s) => s.name).join(", "),
-        // is_official: song.is_official,
         lyrics: JSON.stringify(lyrics),
         base: baseLyric,
       };

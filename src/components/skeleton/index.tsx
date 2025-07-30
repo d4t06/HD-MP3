@@ -8,7 +8,7 @@ export default function Skeleton({ className }: Props) {
   const { theme } = useThemeContext();
   return (
     <div
-      className={`animate-pulse rounded-[4px] ${theme.type === "light" ? "bg-gray-300" : "bg-gray-600"}  ${className}`}
+      className={`animate-pulse rounded-[4px] ${theme.type === "light" ? "bg-gray-400" : "bg-gray-300"}  ${className}`}
     ></div>
   );
 }

@@ -5,7 +5,7 @@ import LyricEditorControl, {
 } from "./_components/LyricEditorControl";
 import LyricEditorList from "./_components/LyricEditorList";
 // import { useThemeContext } from "@/stores";
-import { Center, Title, Modal, ModalRef, Button } from "@/components";
+import { Center, Modal, ModalRef, Button } from "@/components";
 import useLyricEditor from "./_hooks/useLyricEditor";
 import EditLyricModal from "../edit-lyric-modal";
 import EditLyricProvider from "./_components/EditLyricContext";
@@ -97,13 +97,12 @@ function Content({ children }: Props) {
 }
 
 type Props = {
-  song?: SongSchema;
   children?: ReactNode;
 };
 
 export default function LyricEditor(props: Props) {
   return (
-    <EditLyricProvider song={props.song}>
+    <EditLyricProvider>
       <Content {...props} />
     </EditLyricProvider>
   );

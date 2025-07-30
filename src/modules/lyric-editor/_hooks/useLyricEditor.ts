@@ -54,8 +54,10 @@ export default function useLyricEditor({ audioRef }: Props) {
 
       if (!songSnapshot.exists()) throw new Error("");
 
-      const song = {
+      const song: Song = {
         ...(songSnapshot.data() as SongSchema),
+        id: songSnapshot.id,
+        queue_id: "",
       };
 
       if (song.lyric_id) {

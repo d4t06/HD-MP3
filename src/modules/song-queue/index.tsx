@@ -45,7 +45,7 @@ function SongQueue() {
   }, []);
 
   const skeleton = [...Array(5).keys()].map((i) => (
-    <Skeleton key={i} className="h-[56px] mt-1" />
+    <Skeleton key={i} className="h-[56px] mt-1 rounded-md" />
   ));
 
   const classes = {

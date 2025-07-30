@@ -22,7 +22,7 @@ import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import OtherInput from "./_components/OtherInput";
-import LyricEditor from "../lyric-editor";
+// import LyricEditor from "../lyric-editor";
 
 type Add = {
   variant: "add";
@@ -73,7 +73,7 @@ export default function AddSongForm(props: Props) {
       )}
 
       <div
-        className={`w-full md:max-w-[800px] md:mx-auto ${songData?.name ? "" : "hidden"}`}
+        className={`w-full md:max-w-[800px] md:mx-auto ${props.variant === "add" && (songFile ? "" : "hidden")}`}
       >
         <audio ref={audioRef} className="hidden" />
 
@@ -155,14 +155,14 @@ export default function AddSongForm(props: Props) {
             </div>
           </div>
         </div>
-
+        {/*
         {songData && (
           <div>
             <Title variant={"h2"} title="Lyric" />
 
             <LyricEditor song={songData} />
           </div>
-        )}
+        )}*/}
 
         <p className="text-center mt-5">
           <Button
