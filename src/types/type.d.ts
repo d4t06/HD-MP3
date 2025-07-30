@@ -45,6 +45,7 @@ type Song = {
   last_week_play: number;
   last_week_rank: number;
   last_week_trending_score: number;
+  release_year: number;
   updated_at: Timestamp;
   created_at: Timestamp;
   last_active: Timestamp;
@@ -85,9 +86,6 @@ type PlaylistSchema = Omit<Playlist, "id">;
 
 type SongLyric = {
   id: string;
-  name: string;
-  duration: number;
-  is_official: boolean;
   base: string;
   lyrics: Lyric[];
 };

@@ -31,6 +31,7 @@ export const initSongObject = (
     last_week_rank: 0,
     last_week_trending_score: 0,
     total_play: 0,
+    release_year: new Date().getFullYear(),
     last_active: serverTimestamp(),
     created_at: serverTimestamp(),
     updated_at: serverTimestamp(),

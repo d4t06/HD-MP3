@@ -32,13 +32,11 @@ export default function GenreSelect() {
 
   return (
     <>
-      <div className="space-y-2">
-        <Title title="Genre" variant={"h3"} />
-
-        <Frame className="mt-1">
+      <div className="flex w-full">
+        <div className="w-1/2">
           <div>Main genre</div>
 
-          <div className="-ml-2">
+          <div className="-ml-2 flex flex-wrap">
             {songData?.main_genre && (
               <ItemRightCtaFrame className="w-fit">
                 <span>{songData.main_genre.name}</span>
@@ -62,8 +60,10 @@ export default function GenreSelect() {
               </Button>
             )}
           </div>
+        </div>
 
-          <div className="mt-6">Sub genres</div>
+        <div className="flex-grow">
+          <div>Sub genres</div>
 
           <div className="flex flex-wrap -ml-2">
             {genres.map((g, i) => (
@@ -86,7 +86,7 @@ export default function GenreSelect() {
               <PlusIcon className="w-5" />
             </Button>
           </div>
-        </Frame>
+        </div>
       </div>
 
       <DashBoardModal ref={modalRef}>

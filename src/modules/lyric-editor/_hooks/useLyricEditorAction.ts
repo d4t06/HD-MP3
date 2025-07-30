@@ -86,9 +86,9 @@ export function useLyricEditorAction({ audioEle, isClickPlay, song }: Props) {
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
-        duration: song.duration,
-        name: song.name + "-" + song.singers.map((s) => s.name).join(", "),
-        is_official: song.is_official,
+        // duration: song.duration,
+        // name: song.name + "-" + song.singers.map((s) => s.name).join(", "),
+        // is_official: song.is_official,
         lyrics: JSON.stringify(lyrics),
         base: baseLyric,
       };

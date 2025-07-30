@@ -13,16 +13,24 @@ export default function useGetRecommend() {
 	const getRecommend = async (song: Song) => {
 		try {
 			dispatch(setIsFetchingRecommend(true));
-
-			const genres = song.genres.map((g) =>
-				where(`genre_map.${g.id}`, "==", true),
-			);
-
 			const singers = song.singers.map((s) =>
 				where(`singer_map.${s.id}`, "==", true),
 			);
 
-			const exceptQuery = where(documentId(), "!=", song.id);
+			const singerSongs = await implementSongQuery(
+				query(songsCollectionRef, ...singers),
+			);
+
+			const exceptSongIds = singerSongs.map((s) => s.id);
+
+			const exceptCondition = where(documentId(), "not-in", [
+				song.id,
+				...exceptSongIds,
+			]);
+
+			const genreConditions = song.genres.map((g) =>
+				where(`genre_map.${g.id}`, "==", true),
+			);
 
 			/**
 			Matches all songs that contain at least 1 singer_id of target song in singer_map is true 
@@ -30,11 +38,18 @@ export default function useGetRecommend() {
 			and except the current song
 			**/
 
-			const searchQuery = and(exceptQuery, or(...genres, ...singers));
+			const otherSongQuery = query(
+				songsCollectionRef,
+				and(
+					exceptCondition,
+					or(...genreConditions),
+					where("release_year", ">=", song.release_year - 2),
+					where("release_year", "<=", song.release_year + 2),
+				),
+				limit(100),
+			);
 
-			const queryGetSongs = query(songsCollectionRef, searchQuery, limit(100));
-
-			const result = await implementSongQuery(queryGetSongs);
+			const result = await implementSongQuery(otherSongQuery);
 
 			dispatch(
 				addSongToQueue({

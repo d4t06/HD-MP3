@@ -1,5 +1,5 @@
 import { myGetDoc } from "@/services/firebaseService";
-import { useAuthContext } from "@/stores";
+// import { useAuthContext } from "@/stores";
 // import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function useLyricEditor({ audioRef }: Props) {
-  const { user } = useAuthContext();
+  // const { user } = useAuthContext();
 
   const {
     baseLyric,
@@ -43,18 +43,6 @@ export default function useLyricEditor({ audioRef }: Props) {
     }
   };
 
-  // const setTempLyric = () => {
-  //   if (!song) return;
-
-  //   const tempLyric: TempLyric = {
-  //     song_id: song.id,
-  //     base: baseLyric,
-  //     lyrics: JSON.stringify(lyrics),
-  //   };
-
-  //   setLocalStorage("temp-lyric", tempLyric);
-  // };
-
   const getSong = async () => {
     try {
       if (!params.id) throw new Error("");
@@ -66,10 +54,8 @@ export default function useLyricEditor({ audioRef }: Props) {
 
       if (!songSnapshot.exists()) throw new Error("");
 
-      const song: Song = {
+      const song = {
         ...(songSnapshot.data() as SongSchema),
-        id: songSnapshot.id,
-        queue_id: "",
       };
 
       if (song.lyric_id) {
@@ -100,9 +86,13 @@ export default function useLyricEditor({ audioRef }: Props) {
   useEffect(() => {
     if (!ranUseEffect.current) {
       ranUseEffect.current = true;
-      getSong();
+
+      if (!song) getSong();
+      else {
+        setIsFetching(false);
+      }
     }
-  }, [user]);
+  }, []);
 
   // update base lyric array
   useEffect(() => {

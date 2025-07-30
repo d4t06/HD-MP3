@@ -1,5 +1,5 @@
 import { CheckIcon } from "@heroicons/react/20/solid";
-import { Center, Image, Modal } from "@/components";
+import { Center, Image, Modal, Title } from "@/components";
 import SingerSelect from "./_components/SingerSelect";
 import AudioPLayer from "./_components/AudioPlayer";
 import GenreSelect from "./_components/GenreSelect";
@@ -21,6 +21,8 @@ import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 // import PlayChart from "./_components/PlayChart";
 import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import OtherInput from "./_components/OtherInput";
+import LyricEditor from "../lyric-editor";
 
 type Add = {
   variant: "add";
@@ -86,10 +88,11 @@ export default function AddSongForm(props: Props) {
                 src={songData?.image_url}
               />
             </div>
-
-            <div className="text-xl font-bold text-[#333]">
-              {songData?.name}
-            </div>
+            {props.variant === "edit" && (
+              <div className="text-xl font-bold text-[#333]">
+                {songData?.name}
+              </div>
+            )}
 
             <div className="flex md:block mt-5">
               {props.variant === "edit" && (
@@ -142,10 +145,24 @@ export default function AddSongForm(props: Props) {
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
             </Frame>
 
-            <SingerSelect />
-            <GenreSelect />
+            <div>
+              <Title variant={"h2"} className="mb-3" title="Info" />
+              <Frame className="space-y-5">
+                <OtherInput />
+                <SingerSelect />
+                <GenreSelect />
+              </Frame>
+            </div>
           </div>
         </div>
+
+        {songData && (
+          <div>
+            <Title variant={"h2"} title="Lyric" />
+
+            <LyricEditor song={songData} />
+          </div>
+        )}
 
         <p className="text-center mt-5">
           <Button

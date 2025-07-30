@@ -4,22 +4,18 @@ import LyricEditorControl, {
   LyricEditorControlRef,
 } from "./_components/LyricEditorControl";
 import LyricEditorList from "./_components/LyricEditorList";
-import { useThemeContext } from "@/stores";
+// import { useThemeContext } from "@/stores";
 import { Center, Title, Modal, ModalRef, Button } from "@/components";
 import useLyricEditor from "./_hooks/useLyricEditor";
 import EditLyricModal from "../edit-lyric-modal";
 import EditLyricProvider from "./_components/EditLyricContext";
-
-type Props = {
-  children?: ReactNode;
-};
 
 type Modal = "edit-lyric";
 
 export type LyricStatus = "active" | "done" | "coming";
 
 function Content({ children }: Props) {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -27,7 +23,7 @@ function Content({ children }: Props) {
   const audioRef = useRef<ElementRef<"audio">>(null);
   const modalRef = useRef<ModalRef>(null);
 
-  const { isFetching, song, isChanged, isSubmitting } = useLyricEditor({
+  const { isFetching, isChanged, song, isSubmitting } = useLyricEditor({
     audioRef,
   });
 
@@ -55,15 +51,20 @@ function Content({ children }: Props) {
           <div className="flex-grow flex flex-col overflow-hidden">
             {children}
 
-            <Title title={` Edit lyric - ${song?.name}`} />
+            {/*<Title title={` Edit lyric - ${song?.name}`} />*/}
 
             <div className="mt-3">
               {audioRef.current && (
                 <>
-                  <LyricEditorControl audioEle={audioRef.current} ref={controlRef} />
+                  <LyricEditorControl
+                    audioEle={audioRef.current}
+                    ref={controlRef}
+                  />
 
                   <Modal persisted variant="animation" ref={modalRef}>
-                    {modal === "edit-lyric" && <EditLyricModal closeModal={closeModal} />}
+                    {modal === "edit-lyric" && (
+                      <EditLyricModal closeModal={closeModal} />
+                    )}
                   </Modal>
                 </>
               )}
@@ -95,10 +96,15 @@ function Content({ children }: Props) {
   );
 }
 
-export default function LyricEditor() {
+type Props = {
+  song?: SongSchema;
+  children?: ReactNode;
+};
+
+export default function LyricEditor(props: Props) {
   return (
-    <EditLyricProvider>
-      <Content />
+    <EditLyricProvider song={props.song}>
+      <Content {...props} />
     </EditLyricProvider>
   );
 }

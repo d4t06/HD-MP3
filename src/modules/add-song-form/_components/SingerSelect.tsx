@@ -22,32 +22,30 @@ export default function SingerSelect() {
 
   return (
     <>
-      <div className="space-y-2">
-        <Title title="Singer" variant={"h3"} />
+      <div>
+        <div>Singer</div>
 
-        <Frame className=" mt-1">
-          <div className="flex flex-wrap -ml-2 -mt-2">
-            {singers.map((s, i) => (
-              <ItemRightCtaFrame key={i}>
-                <span>{s.name}</span>
+        <div className="-ml-2 flex flex-wrap">
+          {singers.map((s, i) => (
+            <ItemRightCtaFrame key={i}>
+              <span>{s.name}</span>
 
-                <div className="flex">
-                  <button onClick={() => selectSinger(s)}>
-                    <TrashIcon className="w-5" />
-                  </button>
-                </div>
-              </ItemRightCtaFrame>
-            ))}
+              <div className="flex">
+                <button onClick={() => selectSinger(s)}>
+                  <TrashIcon className="w-5" />
+                </button>
+              </div>
+            </ItemRightCtaFrame>
+          ))}
 
-            <Button
-              onClick={() => modalRef.current?.open()}
-              className="mt-2 ml-2 h-[38px] w-[38px] justify-center"
-              size={"clear"}
-            >
-              <PlusIcon className="w-5" />
-            </Button>
-          </div>
-        </Frame>
+          <Button
+            onClick={() => modalRef.current?.open()}
+            className="mt-2 ml-2 h-[38px] w-[38px] justify-center"
+            size={"clear"}
+          >
+            <PlusIcon className="w-5" />
+          </Button>
+        </div>
       </div>
 
       <DashBoardModal ref={modalRef}>

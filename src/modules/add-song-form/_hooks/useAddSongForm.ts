@@ -52,6 +52,7 @@ export default function useAddSongForm(
       singers.length !== song.singers.length ||
       songData.like !== song.like ||
       genres.length !== song.genres.length ||
+      songData.release_year !== song.release_year ||
       songData.main_genre !== song.main_genre;
 
     if (firstCheck) return true;
@@ -70,7 +71,11 @@ export default function useAddSongForm(
 
   const isValidToSubmit = useMemo(() => {
     const isValidSongData =
-      !!songData?.name && !!singers.length && !!genres.length && isChanged;
+      !!songData?.name &&
+      !!singers.length &&
+      !!genres.length &&
+      !!songData.release_year &&
+      isChanged;
 
     return props.variant === "add"
       ? isValidSongData
@@ -267,6 +272,20 @@ export default function useAddSongForm(
 
     updateSongData({ image_url: URL.createObjectURL(imageFile) });
   }, [imageFile]);
+
+  //  warn user when reload page without save change
+  useEffect(() => {
+    if (!isChanged) return;
+    const handleBeforeRefresh = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeRefresh);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeRefresh);
+    };
+  }, [isChanged]);
 
   return {
     isValidToSubmit,
