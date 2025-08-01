@@ -38,7 +38,7 @@ export default function DashboardGenrePage() {
             ) : (
               <>
                 <div>
-                  <Title variant={"h2"} className="mb-1" title="Main genres" />
+                  <Title variant={"h3"} className="mb-1" title="Main genres" />
 
                   <Frame className="mt-1">
                     {mains.length ? (
@@ -54,7 +54,7 @@ export default function DashboardGenrePage() {
                 </div>
 
                 <div>
-                  <Title variant={"h2"} className="mb-1" title="Sub genres" />
+                  <Title variant={"h3"} className="mb-1" title="Sub genres" />
 
                   <Frame className="mt-1">
                     {subs.length ? (

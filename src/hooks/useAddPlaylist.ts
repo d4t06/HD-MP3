@@ -1,6 +1,7 @@
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { deleteFile, myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useSongContext, useToastContext } from "@/stores";
+import { convertToEn } from "@/utils/appHelpers";
 import { getDoc } from "firebase/firestore";
 import { useState } from "react";
 
@@ -47,9 +48,15 @@ export default function useAddPlaylist(props?: Props) {
 
       switch (props.variant) {
         case "add":
+          const newPlaylistData: PlaylistSchema = {
+            ...props.playlist,
+            name: props.playlist.name.trim(),
+            meta: convertToEn(props.playlist.name.trim()).split(" "),
+          };
+
           const docRef = await myAddDoc({
             collectionName: "Playlists",
-            data: props.playlist,
+            data: newPlaylistData,
             msg: ">>> Add playlist doc",
           });
 
@@ -68,15 +75,22 @@ export default function useAddPlaylist(props?: Props) {
 
           return newPlaylist;
 
-        case "edit":
+        case "edit": {
+          const newPlaylistData: Partial<PlaylistSchema> = {
+            ...props.playlist,
+            name: props.playlist.name?.trim(),
+            meta: convertToEn(props.playlist.name?.trim() || "").split(" "),
+          };
+
           await myUpdateDoc({
             collectionName: "Playlists",
-            data: props.playlist,
+            data: newPlaylistData,
             id: props.id,
             msg: ">>> Update playlist doc",
           });
 
           return true;
+        }
       }
 
       // const { push = true } = opts || {};

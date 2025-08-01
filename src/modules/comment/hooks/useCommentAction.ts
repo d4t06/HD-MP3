@@ -3,7 +3,7 @@ import {
 	myAddDoc,
 	myUpdateDoc,
 } from "@/services/firebaseService";
-import { useAuthContext } from "@/stores";
+import { useAuthContext, useToastContext } from "@/stores";
 import { useRef, useState } from "react";
 import { useCommentContext } from "../components/CommentContext";
 import {
@@ -21,6 +21,7 @@ import { db } from "@/firebase";
 import { ModalRef } from "@/components";
 
 export default function useCommentAction() {
+	const { setErrorToast } = useToastContext();
 	const { user, updateUserData } = useAuthContext();
 
 	const { setComments, comments, target } = useCommentContext();
@@ -254,6 +255,7 @@ export default function useCommentAction() {
 			}
 		} catch (error) {
 			console.log({ error });
+			setErrorToast();
 		} finally {
 			setIsFetching(false);
 		}

@@ -23,7 +23,8 @@ type collectionVariant =
   | "Comments"
   | "Trending_Metrics"
   | "Categories"
-  | "Page_Config";
+  | "Page_Config"
+  | "Search_Logs";
 
 // const isDev = import.meta.env.DEV;
 const isDev = true;

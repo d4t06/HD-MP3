@@ -25,7 +25,6 @@ export default function HomePage() {
 
   if (!homePage) return <NotFound />;
 
-  
   return (
     <>
       <div className="space-y-10 mt-10">
@@ -35,8 +34,6 @@ export default function HomePage() {
           }
         />
 
-        <RecentPlaylist />
-
         {homePage?.playlist_sections.map((s, i) => (
           <PlaylistSection
             playlistIds={s.target_ids ? s.target_ids.split("_") : []}
@@ -44,14 +41,16 @@ export default function HomePage() {
           />
         ))}
 
-        <TrendingSong amount={3} />
+        <RecentPlaylist />
+
+        {/*<TrendingSong amount={3} />*/}
 
         {/*<HomePlaylist />
 
         <HomeSongList />
 */}
 
-        <NewSong amount={5} />
+        {/*<NewSong amount={5} />*/}
 
         <MobileSetting />
       </div>

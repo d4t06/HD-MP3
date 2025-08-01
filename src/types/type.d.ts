@@ -16,6 +16,7 @@ type User = {
 
 type Song = {
   id: string;
+  meta: string[];
   name: string;
   image_url: string;
   image_file_id: string;
@@ -63,14 +64,13 @@ type ParserSong = {
 
 type Playlist = {
   id: string;
+  meta: string[];
   name: string;
   image_url: string;
   image_file_id: string;
   blurhash_encode: string;
   distributor: string;
   song_ids: string[];
-  genres: Genre[];
-  genre_map: Record<string, boolean>;
   owner_email: string;
   singer_map: Record<string, boolean>;
   singers: Singer[];
@@ -153,6 +153,7 @@ type ModalName = "confirm" | "edit" | "setting";
 
 type Singer = {
   id: string;
+  meta: string[];
   name: string;
   image_url: string;
   image_file_id: string;

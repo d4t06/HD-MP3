@@ -15,10 +15,10 @@ export default function useGetRecentPlaylist() {
   const getRecentPlaylist = async () => {
     try {
       if (user) {
-        if (user.recent_song_ids.length) {
+        if (user.recent_playlist_ids.length) {
           const queryGetRecentPlaylists = query(
             playlistCollectionRef,
-            where(documentId(), "in", user.recent_song_ids),
+            where(documentId(), "in", user.recent_playlist_ids),
           );
 
           const result = await implementPlaylistQuery(queryGetRecentPlaylists);
@@ -26,7 +26,8 @@ export default function useGetRecentPlaylist() {
           setRecentPlaylists(result);
         }
       } else {
-        const playlists: Playlist[] = getLocalStorage()["recent-playlists"] || [];
+        const playlists: Playlist[] =
+          getLocalStorage()["recent-playlists"] || [];
         setRecentPlaylists(playlists);
       }
     } catch (error) {

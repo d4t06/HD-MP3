@@ -12,6 +12,7 @@ import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import AddSongForm from "..";
 import { initSongObject } from "@/utils/factory";
 import { optimizeAndGetHashImage } from "@/services/appService";
+import { convertToEn } from "@/utils/appHelpers";
 
 export default function useAddSongForm(
   props: ComponentProps<typeof AddSongForm>,
@@ -54,18 +55,18 @@ export default function useAddSongForm(
       songData.like !== song.like ||
       genres.length !== song.genres.length ||
       songData.release_year !== song.release_year ||
-      songData.main_genre !== song.main_genre;
+      songData.main_genre?.id !== song.main_genre?.id;
 
     if (firstCheck) return true;
 
-    const isChangeSinger = !singers.find((s) =>
-      song.singers.find((_s) => _s.id == s.id),
+    const isChangeSinger = singers.find((s) =>
+      song.singers.find((_s) => _s.id !== s.id),
     );
-    const isChangeGenre = !genres.find((g) =>
-      song.genres.find((_g) => _g.id == g.id),
+    const isChangeGenre = genres.find((g) =>
+      song.genres.find((_g) => _g.id !== g.id),
     );
 
-    return true || isChangeSinger || isChangeGenre;
+    return isChangeSinger || isChangeGenre;
   }, [songData, song, singers, genres]);
 
   const isChangeImage = !!imageFile;
@@ -145,7 +146,19 @@ export default function useAddSongForm(
     }
   };
 
-  const getSongMap = () => {
+  const getSongMeta = () => {
+    if (!songData) return [];
+    const meta: string[] = [];
+
+    convertToEn;
+
+    meta.push(...convertToEn(songData.name).split(" "));
+    singers.forEach((s) => meta.push(...convertToEn(s.name).split(" ")));
+
+    return meta;
+  };
+
+  const getSongGenreAndSinger = () => {
     const singer_map: Song["singer_map"] = {};
 
     singers.forEach((s) => (singer_map[s.id] = true));
@@ -191,7 +204,8 @@ export default function useAddSongForm(
             genres,
             song_url: url,
             song_file_id: fileId,
-            ...getSongMap(),
+            ...getSongGenreAndSinger(),
+            meta: getSongMeta(),
           };
 
           Object.assign(newSongData, data);
@@ -214,7 +228,8 @@ export default function useAddSongForm(
             const data: Partial<SongSchema> = {
               singers,
               genres,
-              ...getSongMap(),
+              ...getSongGenreAndSinger(),
+              meta: getSongMeta(),
             };
 
             Object.assign(newSongData, data);

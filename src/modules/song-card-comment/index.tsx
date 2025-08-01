@@ -1,6 +1,6 @@
 import CommentList from "../comment";
 import useGetSongCardComment from "./_hooks/useGetComment";
-import { Button } from "@/components";
+import { Button, Title } from "@/components";
 import { useAuthContext, useThemeContext } from "@/stores";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useCommentContext } from "../comment/components/CommentContext";
@@ -40,7 +40,8 @@ export default function SongCardComment() {
           className={`semi-lg:border text-white h-[400px] bg-[#333] p-5 semi-lg:p-3 semi-lg:h-full w-full rounded-xl flex flex-col ${classes.border}`}
         >
           <div className={`flex items-center justify-between`}>
-            <div className="font-playwriteCU text-xl">Comments</div>
+
+          <Title variant={'h2'} title="Comments" />
 
             <Button
               onClick={() => setIsOpenComment(false)}

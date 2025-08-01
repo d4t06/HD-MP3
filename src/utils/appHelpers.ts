@@ -18,7 +18,7 @@ export const convertToEn = (name: string): string => {
       .replace(/đ/g, "d");
     return newString;
   };
-  return convert(name).replace(/[\W_]/g, "-");
+  return convert(name);
 };
 
 export const request = axios.create({

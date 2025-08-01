@@ -2,6 +2,7 @@ import { optimizeAndGetHashImage } from "@/services/appService";
 import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
+import { convertToEn } from "@/utils/appHelpers";
 import { initSingerObject } from "@/utils/factory";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -58,7 +59,11 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
 
       setIsFetching(true);
 
-      const newSingerData = { ...singerData };
+      const newSingerData: SingerSchema = {
+        ...singerData,
+        name: singerData.name.trim(),
+        meta: convertToEn(singerData.name.trim()).split(" "),
+      };
 
       if (imageFile) {
         const imageData = await optimizeAndGetHashImage({

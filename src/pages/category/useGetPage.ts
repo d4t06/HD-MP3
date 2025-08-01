@@ -1,10 +1,12 @@
 import { myGetDoc } from "@/services/firebaseService";
 import { usePageContext } from "@/stores";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function useGetPage() {
   const { setCategoryPage, setHomePage, shouldFetch } = usePageContext();
   const [isFetching, setIsFetching] = useState(true);
+
+  const ranEffect = useRef(false);
 
   const getPage = async () => {
     try {
@@ -44,12 +46,16 @@ export default function useGetPage() {
   };
 
   useEffect(() => {
-    if (shouldFetch.current) {
-      shouldFetch.current = false;
+    if (!ranEffect.current) {
+      ranEffect.current = true;
 
-      getPage();
-    } else {
-      setTimeout(() => setIsFetching(false), 300);
+      if (shouldFetch.current) {
+        shouldFetch.current = false;
+
+        getPage();
+      } else {
+        setTimeout(() => setIsFetching(false), 100);
+      }
     }
   }, []);
 

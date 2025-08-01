@@ -2,19 +2,23 @@ import {
   implementPlaylistQuery,
   implementSingerQuery,
   implementSongQuery,
-  implementUserQuery,
 } from "@/services/appService";
 import {
   playlistCollectionRef,
   singerCollectionRef,
   songsCollectionRef,
-  userCollectionRef,
 } from "@/services/firebaseService";
-import { query, where } from "firebase/firestore";
+import { convertToEn } from "@/utils/appHelpers";
+import {
+  CollectionReference,
+  QueryConstraint,
+  query,
+  where,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = ["Song", "Playlist", "Singer", "User"] as const;
+const tabs = ["Song", "Playlist", "Singer"] as const;
 
 type Tab = (typeof tabs)[number];
 
@@ -37,6 +41,35 @@ export default function useGetSearchResult() {
     setResult((prev) => ({ ...prev, ...data }));
   };
 
+  const getQuery = (
+    collectionRef: CollectionReference,
+    contraints: QueryConstraint[],
+  ) => {
+    const key = searchParams[0].get("q");
+
+    const lowValue = convertToEn(key?.trim() || "");
+    const capitalizedString =
+      lowValue.charAt(0).toUpperCase() + lowValue.slice(1);
+
+    const searchQuery =
+      lowValue.split(" ").length > 1
+        ? query(
+            collectionRef,
+
+            ...contraints,
+            where("meta", "array-contains-any", lowValue.split(" ")),
+          )
+        : query(
+            collectionRef,
+            ...contraints,
+
+            where("name", ">=", capitalizedString),
+            where("name", "<=", capitalizedString + "\uf8ff"),
+          );
+
+    return searchQuery;
+  };
+
   const getResult = async () => {
     try {
       const key = searchParams[0].get("q");
@@ -45,58 +78,30 @@ export default function useGetSearchResult() {
 
       switch (tab) {
         case "Song": {
-          const searchQuery = query(
-            songsCollectionRef,
+          const q = getQuery(songsCollectionRef, [
             where("is_official", "==", true),
-            where("name", ">=", key),
-            where("name", "<=", key + "\uf8ff"),
-          );
-
-          const result = await implementSongQuery(searchQuery);
+          ]);
+          const result = await implementSongQuery(q);
 
           updateResult({ songs: result });
 
           break;
         }
         case "Playlist": {
-          const searchQuery = query(
-            playlistCollectionRef,
-            where("is_public", "==", true),
-            where("name", ">=", key),
-            where("name", "<=", key + "\uf8ff"),
-          );
+          const q = getQuery(playlistCollectionRef, []);
 
-          const result = await implementPlaylistQuery(searchQuery);
+          const result = await implementPlaylistQuery(q);
 
           updateResult({ playlists: result });
 
           break;
         }
         case "Singer": {
-          const searchQuery = query(
-            singerCollectionRef,
-            where("name", ">=", key),
-            where("name", "<=", key + "\uf8ff"),
-          );
+          const q = getQuery(singerCollectionRef, []);
 
-          const result = await implementSingerQuery(searchQuery);
+          const result = await implementSingerQuery(q);
 
           updateResult({ singers: result });
-
-          break;
-        }
-        case "User": {
-          const searchQuery = query(
-            userCollectionRef,
-            where("display_name", ">=", key),
-            where("display_name", "<=", key + "\uf8ff"),
-          );
-
-          const result = await implementUserQuery(searchQuery);
-
-          console.log(result)
-
-          updateResult({ users: result });
 
           break;
         }

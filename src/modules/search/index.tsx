@@ -1,15 +1,21 @@
-import useSearch from "./_hooks/useSearch";
+import useSearch, { RecentSearch } from "./_hooks/useSearch";
 import { useThemeContext } from "@/stores";
-import { getDisable, getHidden } from "@/utils/appHelpers";
+import {
+  convertToEn,
+  getDisable,
+  getHidden,
+  getLocalStorage,
+} from "@/utils/appHelpers";
 import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { FormEvent } from "react";
+import { FormEvent, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import SearchbarSongList from "./_components/SearchbarSongList";
 import RecentSearchList from "./_components/RecentSearchList";
+import { myAddDoc } from "@/services/firebaseService";
 
 export default function Search() {
   const { theme } = useThemeContext();
@@ -26,18 +32,30 @@ export default function Search() {
     setIsFocus,
     isFocus,
     setValue,
+    trendingKeywords,
   } = useSearch();
+
+  const recentSearchs = useMemo(
+    () => getLocalStorage()["recent-search"] || ([] as RecentSearch[]),
+    [isFocus],
+  );
 
   const classes = {
     container: `relative h-[40px] flex px-3 w-full md:w-[300px] ${theme.text_color} shadow-md`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
     focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
     input: `bg-transparent outline-none  w-full ${theme.type === "light" ? "placeholder:text-black" : "placeholder:text-white"}`,
-    searchResultContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] overflow-hidden flex flex-col`,
+    searchResultContainer: `overflow-auto ${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] flex flex-col`,
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    myAddDoc({
+      collectionName: "Search_Logs",
+      data: { keyword: convertToEn(value) },
+      msg: "Add search log",
+    });
 
     navigator(`/search?q=${value}`);
     setIsFocus(false);
@@ -59,8 +77,8 @@ export default function Search() {
           ref={inputRef}
           value={value}
           onFocus={() => setIsFocus(true)}
-          onChange={(e) => setValue(e.target.value.trim())}
-          placeholder="Nhac tet..."
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="..."
           className={classes.input}
           type="text"
         />
@@ -82,7 +100,10 @@ export default function Search() {
           className={`${getHidden(!isFocus)} ${classes.searchResultContainer}`}
         >
           {!searchResult.length ? (
-            <RecentSearchList />
+            <RecentSearchList
+              recentSearchs={recentSearchs}
+              words={trendingKeywords}
+            />
           ) : (
             <>
               <div className="text-sm font-[500] mb-2">Suggestion results</div>

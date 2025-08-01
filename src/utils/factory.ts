@@ -8,6 +8,7 @@ export const initSongObject = (
 ) => {
   const song: SongSchema = {
     name: "",
+    meta: [],
     image_url: "",
     song_url: "",
     beat_url: "",
@@ -46,12 +47,11 @@ export const initPlaylistObject = (
 ) => {
   const playlist: PlaylistSchema = {
     name: "",
+    meta: [],
     song_ids: [],
     image_url: "",
     singers: [],
     singer_map: {},
-    genre_map: {},
-    genres: [],
     is_album: false,
     like: 0,
     comment: 0,
@@ -88,6 +88,7 @@ export const initAlbumObject = ({
 export const initSingerObject = (data: Partial<SingerSchema>) => {
   const singer: SingerSchema = {
     name: "",
+    meta: [],
     description: "",
     image_file_id: "",
     image_url: "",

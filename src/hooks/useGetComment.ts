@@ -28,39 +28,34 @@ export default function useGetComment(props?: Props) {
 
       if (import.meta.env.DEV) console.log("get comment");
 
-      let searchQuery = query(commentCollectionRef);
-
-      if (target_id) {
-        searchQuery = query(
-          searchQuery,
-          where("target_id", "==", target_id),
-          where("comment_id", "==", ""),
-          orderBy("updated_at", "desc"),
-        );
-      }
-
-      if (comment_id)
-        searchQuery = query(
-          searchQuery,
-          where("comment_id", "==", comment_id),
-          orderBy("created_at", "asc"),
-        );
+      const searchQuery = target_id
+        ? query(
+            commentCollectionRef,
+            where("target_id", "==", target_id),
+            orderBy("created_at", "desc"),
+          )
+        : query(
+            commentCollectionRef,
+            where("comment_id", "==", comment_id),
+            orderBy("created_at", "desc"),
+          );
 
       const commentSnaps = await getDocs(searchQuery);
 
       if (!!commentSnaps.docs.length) {
         const result = commentSnaps.docs.map((doc) => {
-          const singer: UserComment = {
+          const comments: UserComment = {
             ...(doc.data() as UserCommentSchema),
             id: doc.id,
             replies: [],
           };
-          return singer;
+          return comments;
         });
 
         return result;
       }
     } catch (error) {
+      console.log(error);
       setErrorToast();
     } finally {
       _setIsFetching(false);

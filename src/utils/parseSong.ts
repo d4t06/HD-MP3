@@ -1,7 +1,5 @@
 import { parseBlob } from "music-metadata";
 
-
-
 export const parserSong = async (songFile: File) => {
   if (!songFile) return;
   const result = await parseBlob(songFile);

@@ -1,9 +1,35 @@
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useDebounce } from "@/hooks";
-import { query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  limit,
+  orderBy,
+  query,
+  where,
+} from "firebase/firestore";
 import { songsCollectionRef } from "@/services/firebaseService";
 import { implementSongQuery } from "@/services/appService";
+import { convertToEn } from "@/utils/appHelpers";
+import { db } from "@/firebase";
+
+type SongItem = {
+  variant: "song";
+  item: Song;
+};
+
+type PlaylistItem = {
+  variant: "playlist";
+  item: Playlist;
+};
+
+type SingerItem = {
+  variant: "singer";
+  item: Singer;
+};
+
+export type RecentSearch = SongItem | PlaylistItem | SingerItem;
 
 export default function useSearch() {
   const [value, setValue] = useState("");
@@ -11,12 +37,14 @@ export default function useSearch() {
   const [isFocus, setIsFocus] = useState(false);
 
   const [searchResult, SetSearchResult] = useState<Song[]>([]);
+  const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
 
   const formRef = useRef<ElementRef<"form">>(null); // for handle click outside
   const searchResultRef = useRef<ElementRef<"div">>(null); // for handle click outside
   const inputRef = useRef<ElementRef<"input">>(null); // for focus input
 
   const shouldFetchSong = useRef(true);
+  const shouldFetchTredingKeywords = useRef(true);
 
   const params = useSearchParams();
   const searchKey = useDebounce(value, 700);
@@ -49,6 +77,35 @@ export default function useSearch() {
     setIsFocus(false);
   };
 
+  const getTrendingKeyword = async () => {
+    try {
+      const q = query(
+        collection(db, "Trending_Keywords"),
+        orderBy("week_count", "desc"),
+        limit(5),
+      );
+
+      if (import.meta.env.DEV) console.log("useSearch, Get trendingKeywords");
+      const snap = await getDocs(q);
+
+      if (snap.empty) return;
+
+      const keyWords = snap.docs.map((doc) => doc.id);
+
+      setTrendingKeywords(keyWords);
+    } catch (error) {
+      console.log("error");
+    }
+  };
+
+  useEffect(() => {
+    if (shouldFetchTredingKeywords.current) {
+      shouldFetchTredingKeywords.current = false;
+
+      getTrendingKeyword();
+    }
+  }, []);
+
   // do search
   useEffect(() => {
     if (!searchKey.trim()) {
@@ -61,12 +118,23 @@ export default function useSearch() {
       try {
         setIsFetching(true);
 
-        const searchQuery = query(
-          songsCollectionRef,
-          where("is_official", "==", true),
-          where("name", ">=", value),
-          where("name", "<=", value + "\uf8ff"),
-        );
+        const lowValue = convertToEn(value.trim());
+        const capitalizedString =
+          lowValue.charAt(0).toUpperCase() + lowValue.slice(1);
+
+        const searchQuery =
+          lowValue.split(" ").length > 1
+            ? query(
+                songsCollectionRef,
+                where("is_official", "==", true),
+                where("meta", "array-contains-any", lowValue.split(" ")),
+              )
+            : query(
+                songsCollectionRef,
+                where("is_official", "==", true),
+                where("name", ">=", capitalizedString),
+                where("name", "<=", capitalizedString + "\uf8ff"),
+              );
 
         const result = await implementSongQuery(searchQuery);
 
@@ -112,7 +180,8 @@ export default function useSearch() {
 
   // Allow to call seach api when value change
   useEffect(() => {
-    if (params[0].get("q") !== value) if (isFocus) shouldFetchSong.current = true;
+    if (params[0].get("q") !== value)
+      if (isFocus) shouldFetchSong.current = true;
   }, [value, isFocus]);
 
   return {
@@ -125,5 +194,7 @@ export default function useSearch() {
     formRef,
     searchResultRef,
     inputRef,
+
+    trendingKeywords,
   };
 }
