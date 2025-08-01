@@ -1,7 +1,7 @@
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { NotFound, Skeleton } from "@/components";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";
 import SongList from "@/modules/song-item/_components/SongList";
@@ -39,7 +39,7 @@ export default function FavoriteSongList() {
       </CheckedBar>
 
       {/* song list */}
-      {isFetching && SongItemSkeleton}
+      {isFetching && songItemSkeleton}
 
       {!isFetching && (
         <>

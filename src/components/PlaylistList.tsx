@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { NotFound, PlaylistItem } from ".";
-import { PlaylistSkeleton } from "./skeleton";
 
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 
@@ -8,29 +7,44 @@ type Props = {
   className?: string;
   loading: boolean;
   playlists: Playlist[];
+  skeNumber?: number;
 };
 
-export default function PlaylistList({ className = "", playlists, loading }: Props) {
+export default function PlaylistList({
+  className = "",
+  playlists,
+  loading,
+  skeNumber = 2,
+}: Props) {
   const { currentSongData } = useSelector(selectSongQueue);
 
   const render = () => {
-    if (!playlists.length) return <NotFound className="mx-auto" />;
+    if (!playlists.length)
+      return <NotFound variant="less" className="mx-auto" />;
 
     return playlists.map((playlist, index) => {
       const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
-        <div key={index} className="p-3 w-1/2 sm:w-1/3 md:w-1/4">
-          <PlaylistItem active={active} data={playlist} />
-        </div>
+        <PlaylistItem
+          variant="link"
+          key={index}
+          active={active}
+          data={playlist}
+        />
       );
     });
   };
 
   return (
     <>
-      <div className={`flex flex-row flex-wrap -mx-3 ${className}`}>
-        {loading && PlaylistSkeleton}
+      <div
+        className={`${!loading && !playlists.length ? "" : "flex flex-row flex-wrap -mx-3"} ${className}`}
+      >
+        {loading &&
+          [...Array(skeNumber).keys()].map((index) => (
+            <PlaylistItem key={index} variant="skeleton" />
+          ))}
         {!loading && render()}
       </div>
     </>

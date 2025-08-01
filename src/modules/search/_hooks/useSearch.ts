@@ -44,7 +44,7 @@ export default function useSearch() {
   const inputRef = useRef<ElementRef<"input">>(null); // for focus input
 
   const shouldFetchSong = useRef(true);
-  const shouldFetchTredingKeywords = useRef(true);
+  const shouldFetchTrendingKeywords = useRef(true);
 
   const params = useSearchParams();
   const searchKey = useDebounce(value, 700);
@@ -99,9 +99,10 @@ export default function useSearch() {
   };
 
   useEffect(() => {
-    if (shouldFetchTredingKeywords.current) {
-      shouldFetchTredingKeywords.current = false;
+      console.log(shouldFetchTrendingKeywords.current)
 
+    if (shouldFetchTrendingKeywords.current) {
+      shouldFetchTrendingKeywords.current = false;
       getTrendingKeyword();
     }
   }, []);

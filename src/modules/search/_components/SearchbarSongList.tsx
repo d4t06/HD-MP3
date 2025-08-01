@@ -33,7 +33,7 @@ export default function SearchbarSongList({ songs }: Props) {
     <SongSelectProvider>
       {!!songs.length ? (
         <SongList
-          songVariant="queue-song"
+          songVariant="recent-song"
           isHasCheckBox={false}
           setSong={_handleSetSong}
           songs={songs}

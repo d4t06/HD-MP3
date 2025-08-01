@@ -12,7 +12,7 @@ import NavigationProvider, {
 import PlayerProvider from "@/stores/PlayerContext";
 
 export default function PrimaryLayout() {
-  const { theme } = useThemeContext();
+  const { theme, isOnMobile } = useThemeContext();
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -35,10 +35,10 @@ export default function PrimaryLayout() {
         <NavigationProvider>
           <div className={`${classes.page}`}>
             {/* hidden in mobile */}
-            <Sidebar />
+            {!isOnMobile && <Sidebar />}
             <div ref={containerRef} className={classes.container}>
               {/* hide in mobile */}
-              <Header contentRef={containerRef} />
+              {!isOnMobile && <Header contentRef={containerRef} />}
               <Outlet />
             </div>
             <Player />
@@ -48,7 +48,7 @@ export default function PrimaryLayout() {
 
           <UploadSongPortal />
 
-          <PushBrowserHistory />
+          {!isOnMobile && <PushBrowserHistory />}
         </NavigationProvider>
       </PlayerProvider>
     </>

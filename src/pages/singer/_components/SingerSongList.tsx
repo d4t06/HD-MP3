@@ -3,7 +3,7 @@ import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useSingerContext } from "./SingerContext";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 
 export default function SingerSongList() {
   const { handleSetSong } = useSetSong({ variant: "songs" });
@@ -15,7 +15,7 @@ export default function SingerSongList() {
         <Title variant={"h2"} className="mb-3" title="Popular Songs" />
         <SongSelectProvider>
           {isFetching ? (
-            SongItemSkeleton
+            songItemSkeleton
           ) : (
             <SongList
               songs={songs}

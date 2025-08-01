@@ -62,8 +62,8 @@ export default function RecentSearchItem({ item }: Props) {
 					<SongItem
 						isHasCheckBox={false}
 						isLiked={user?.liked_song_ids.includes(item.item.id) || false}
-						variant="queue-song"
-						index={99}
+						variant="recent-song"
+						index={0}
 						active={item.item.id === currentSongData?.song.id}
 						onClick={() => _handleSetSong(item.item)}
 						song={item.item}

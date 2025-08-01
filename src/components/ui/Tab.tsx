@@ -3,7 +3,7 @@ import { Button } from "..";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 
 type Props<T> = {
-  setTab: Dispatch<SetStateAction<T>>;
+  setTab: (v:T) => void;
   tab: T;
   tabs: readonly T[];
   disable?: boolean;

@@ -1,5 +1,5 @@
 import { Button, Tab, Title } from "@/components";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -34,7 +34,7 @@ export default function NewSong(props: Props) {
 			</div>
 
 			<SongSelectProvider>
-				{isFetching && SongItemSkeleton}
+				{isFetching && songItemSkeleton}
 				{!isFetching && (
 					<SongList
 						isHasCheckBox={false}

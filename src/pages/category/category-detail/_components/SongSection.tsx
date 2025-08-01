@@ -1,5 +1,5 @@
 import { PlaylistList, Skeleton, Title } from "@/components";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 import { useGetPlaylists, useGetSongs, useSetSong } from "@/hooks";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
@@ -20,7 +20,7 @@ export default function SongSection({ songIds }: Props) {
   // ));
 
   const { isFetching } = useGetSongs({ setSongs, songIds });
-  if (isFetching) return SongItemSkeleton;
+  if (isFetching) return songItemSkeleton;
 
   if (!songs.length) return <></>;
 

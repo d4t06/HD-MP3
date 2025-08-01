@@ -3,7 +3,7 @@ import SongSelectProvider from "@/stores/SongSelectContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import useSetSong from "@/hooks/useSetSong";
 import { Skeleton } from "@/components";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
@@ -19,7 +19,7 @@ const playlistSongSkeleton = (
       <Skeleton className="h-[20px] w-[90px]" />
     </div>
 
-    {SongItemSkeleton}
+    {songItemSkeleton}
   </>
 );
 

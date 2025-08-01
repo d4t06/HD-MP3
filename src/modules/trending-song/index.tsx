@@ -1,6 +1,6 @@
 import { Button, Title } from "@/components";
 import useGetTrendingSongs from "./useGetTrending";
-import { SongItemSkeleton } from "@/components/skeleton";
+import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -27,7 +27,7 @@ export default function TrendingSong(props: Props) {
       <Title title="Trending" className="mb-3" />
 
       <SongSelectProvider>
-        {isFetching && SongItemSkeleton}
+        {isFetching && songItemSkeleton}
         {!isFetching && (
           <SongList
             showIndex

@@ -123,7 +123,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`hidden md:block h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
+        className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
       >
         <div
           className={`${scroll ? "" : "hidden "} absolute inset-0 ${

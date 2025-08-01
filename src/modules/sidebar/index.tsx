@@ -66,12 +66,12 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`hidden md:block ${classes.container} ${theme.text_color}`}>
+    <div className={`${classes.container} ${theme.text_color}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
-        <div className="text-xl hidden lg:block font-[500]">
+        <Link to={'/'} className="text-xl hidden lg:block font-[500]">
           HD
           <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
-        </div>
+        </Link>
       </div>
       <div className={`flex flex-col items-start ${classes.linkList}`}>
         {userLoading && menuItemSkeletons}

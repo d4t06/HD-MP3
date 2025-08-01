@@ -156,8 +156,6 @@ function SongItem({
 
     const node = e.target as HTMLElement;
 
-    console.log(node.tagName);
-
     if (node.tagName === "A") return;
 
     onClick();
@@ -265,7 +263,6 @@ function SongItem({
   const renderContent = () => {
     switch (props.variant) {
       case "queue-song":
-      case "recent-song":
         return (
           <div
             className={`${classes.itemContainer} group/main ${

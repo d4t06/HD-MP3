@@ -1,5 +1,5 @@
 import { PlaylistItem, Title } from "@/components";
-import { PlaylistSkeleton } from "@/components/skeleton";
+import { playlistSkeleton } from "@/components/skeleton";
 import useGetRecentPlaylist from "@/hooks/useGetRecentPlaylist";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useEffect, useRef } from "react";
@@ -36,7 +36,7 @@ export default function RecentPlaylist() {
   };
 
   if (isFetching)
-    return <div className={`flex flex-row flex-wrap -mx-[8px] `}>{PlaylistSkeleton}</div>;
+    return <div className={`flex flex-row flex-wrap -mx-[8px] `}>{playlistSkeleton}</div>;
 
   if (!recentPlaylists.length) return <></>;
 

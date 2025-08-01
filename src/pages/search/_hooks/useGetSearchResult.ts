@@ -8,17 +8,18 @@ import {
   singerCollectionRef,
   songsCollectionRef,
 } from "@/services/firebaseService";
-import { convertToEn } from "@/utils/appHelpers";
+import { convertToEn, sleep } from "@/utils/appHelpers";
 import {
   CollectionReference,
   QueryConstraint,
+  limit,
   query,
   where,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
-const tabs = ["Song", "Playlist", "Singer"] as const;
+const tabs = ["All", "Song", "Playlist", "Singer"] as const;
 
 type Tab = (typeof tabs)[number];
 
@@ -26,7 +27,6 @@ const initResult = {
   songs: [] as Song[],
   playlists: [] as Playlist[],
   singers: [] as Singer[],
-  users: [] as User[],
 };
 
 export default function useGetSearchResult() {
@@ -36,6 +36,14 @@ export default function useGetSearchResult() {
   const searchParams = useSearchParams();
 
   const [result, setResult] = useState<typeof initResult>(initResult);
+
+  const shouldGetAll = useRef(true);
+
+  const shoudlGetSongs = useRef(true);
+
+  const shoudlGetPlaylists = useRef(true);
+
+  const shoudlGetSingers = useRef(true);
 
   const updateResult = (data: Partial<typeof initResult>) => {
     setResult((prev) => ({ ...prev, ...data }));
@@ -76,32 +84,63 @@ export default function useGetSearchResult() {
 
       if (!key) return;
 
+      await sleep(300);
+
       switch (tab) {
+        case "All": {
+          if (!shouldGetAll.current) return;
+          shouldGetAll.current = false;
+
+          const [songs, playlists, singers] = await Promise.all([
+            implementSongQuery(
+              getQuery(songsCollectionRef, [
+                where("is_official", "==", true),
+                limit(6),
+              ]),
+            ),
+            implementPlaylistQuery(getQuery(playlistCollectionRef, [limit(3)])),
+            implementSingerQuery(getQuery(singerCollectionRef, [limit(3)])),
+          ]);
+
+          updateResult({ playlists, songs, singers });
+
+          break;
+        }
+
         case "Song": {
+          if (!shoudlGetSongs.current) return;
+          shoudlGetSongs.current = false;
+
           const q = getQuery(songsCollectionRef, [
             where("is_official", "==", true),
           ]);
-          const result = await implementSongQuery(q);
+          const songs = await implementSongQuery(q);
 
-          updateResult({ songs: result });
+          updateResult({ songs });
 
           break;
         }
         case "Playlist": {
+          if (!shoudlGetPlaylists.current) return;
+          shoudlGetPlaylists.current = false;
+
           const q = getQuery(playlistCollectionRef, []);
 
-          const result = await implementPlaylistQuery(q);
+          const playlists = await implementPlaylistQuery(q);
 
-          updateResult({ playlists: result });
+          updateResult({ playlists });
 
           break;
         }
         case "Singer": {
+          if (!shoudlGetSingers.current) return;
+          shoudlGetSingers.current = false;
+
           const q = getQuery(singerCollectionRef, []);
 
-          const result = await implementSingerQuery(q);
+          const singers = await implementSingerQuery(q);
 
-          updateResult({ singers: result });
+          updateResult({ singers });
 
           break;
         }
@@ -117,16 +156,17 @@ export default function useGetSearchResult() {
   // run get result
   useEffect(() => {
     getResult();
-
-    return () => {
-      setIsFetching(true);
-    };
   }, [searchParams[0].get("q"), tab]);
 
   // reset tab
   useEffect(() => {
     return () => {
-      setTab("Song");
+      setTab("All");
+
+      shouldGetAll.current = true;
+      shoudlGetSongs.current = true;
+      shoudlGetPlaylists.current = true;
+      shoudlGetSingers.current = true;
     };
   }, [searchParams[0].get("q")]);
 

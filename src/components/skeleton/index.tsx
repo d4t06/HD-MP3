@@ -13,7 +13,7 @@ export default function Skeleton({ className }: Props) {
   );
 }
 
-export const SongItemSkeleton = [...Array(4).keys()].map((index) => {
+export const songItemSkeleton = [...Array(4).keys()].map((index) => {
   return (
     <div
       key={index}
@@ -38,7 +38,7 @@ export const MobileLinkSkeleton = () => {
   );
 };
 
-export const PlaylistSkeleton = [...Array(2).keys()].map((index) => {
+export const playlistSkeleton = [...Array(2).keys()].map((index) => {
   return (
     <div key={index} className="p-2 w-1/2 md:w-1/4">
       <Skeleton className="pt-[100%] rounded-lg" />

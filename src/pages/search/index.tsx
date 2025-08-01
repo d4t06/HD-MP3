@@ -6,18 +6,21 @@ import {
   Tab,
   Title,
 } from "@/components";
-import { PlaylistSkeleton, SongItemSkeleton } from "@/components/skeleton";
+import { playlistSkeleton, songItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
 import SongList from "@/modules/song-item/_components/SongList";
 import useGetRecommend from "@/hooks/useGetRecomemded";
-import { Link } from "react-router-dom";
 import Search from "@/modules/search";
-// import BackBtn from "@/components/BackBtn";
+import { useThemeContext } from "@/stores";
+import Footer from "@/layout/primary-layout/_components/Footer";
+import SingerList from "@/components/ui/SingerList";
 
 export default function SearchResultPage() {
-  const { isFetching, result, tab, setTab, tabs } = useGetSearchResult();
+  const { isOnMobile } = useThemeContext();
+  const { isFetching, setIsFetching, result, tab, setTab, tabs } =
+    useGetSearchResult();
 
   const { handleSetSong } = useSetSong({ variant: "search-bar" });
   const { getRecommend } = useGetRecommend();
@@ -30,14 +33,23 @@ export default function SearchResultPage() {
   const renderSkeleton = () => {
     switch (tab) {
       case "Song":
-        return SongItemSkeleton;
+        return songItemSkeleton;
       case "Playlist":
-        return <div className="flex">{PlaylistSkeleton}</div>;
+        return <div className="flex">{playlistSkeleton}</div>;
     }
   };
 
   const renderResult = () => {
     switch (tab) {
+      case "All":
+        return (
+          <>
+            <div>
+              <Title title="Songs" />
+              {result.songs.length}
+            </div>
+          </>
+        );
       case "Song":
         if (result.songs.length)
           return <SongList setSong={_handleSetSong} songs={result.songs} />;
@@ -58,51 +70,77 @@ export default function SearchResultPage() {
             </div>
           );
         else return <NotFound className="mx-auto" />;
-      case "User":
-        if (result.users.length)
-          return (
-            <div>
-              {result.users.map((u) => (
-                <div key={u.email} className="flex items-start">
-                  <div className="w-[46px] h-[46px] rounded-full overflow-hidden">
-                    <Image src={u.photo_url} />
-                  </div>
-
-                  <Link
-                    to={`/user/${u.email}`}
-                    className="font-semibold mt-3 md:mt-0 md:ml-3"
-                  >
-                    {u.display_name}
-                  </Link>
-                </div>
-              ))}
-            </div>
-          );
-        else return <NotFound className="mx-auto" />;
     }
   };
 
   return (
     <>
-      <div className="md:hidden">
-        <Search />
-      </div>
+      {isOnMobile && <Search />}
 
-      <Title title="Result" className="mt-1 md:mt-0" />
-      <Tab
-        className="w-fit [&_button]:text-sm md:[&_button]:text-base"
-        tabs={tabs}
-        render={(t) => t}
-        tab={tab}
-        setTab={setTab}
-      />
+      <div className="md:flex items-center mt-3">
+        <Title title="Result" className="mt-1 md:mt-0" />
+        <Tab
+          className="w-fit [&_button]:text-sm mt-3 md:[&_button]:text-base md:mt-0 md:ml-4"
+          tabs={tabs}
+          render={(t) => t}
+          tab={tab}
+          setTab={(t) => {
+            setTab(t);
+            setIsFetching(true);
+          }}
+        />
+      </div>
 
       <SongSelectProvider>
         <div className="mt-5">
-          {isFetching && renderSkeleton()}
-          {!isFetching && renderResult()}
+          <div className="space-y-5">
+            <div
+              className={tab === "Playlist" || tab === "Singer" ? "hidden" : ""}
+            >
+              <Title
+                variant={"h3"}
+                className={tab !== "All" ? "hidden" : ""}
+                title="Songs"
+              />
+
+              {isFetching && songItemSkeleton}
+
+              {!isFetching && result.songs.length ? (
+                <SongList setSong={_handleSetSong} songs={result.songs} />
+              ) : (
+                <NotFound className="mx-auto" variant="less" />
+              )}
+            </div>
+
+            <div className={tab === "Song" || tab === "Singer" ? "hidden" : ""}>
+              <Title
+                variant={"h3"}
+                className={tab !== "All" ? "hidden" : ""}
+                title="Playlist"
+              />
+              <PlaylistList loading={isFetching} playlists={result.playlists} />
+            </div>
+
+            <div
+              className={tab === "Song" || tab === "Playlist" ? "hidden" : ""}
+            >
+              <Title
+                variant={"h3"}
+                className={tab !== "All" ? "hidden" : "mb-3"}
+                title="Singers"
+              />
+
+              <SingerList
+                singers={result.singers}
+                loading={isFetching}
+                skeNumber={2}
+              />
+            </div>
+          </div>
         </div>
       </SongSelectProvider>
+
+      <Footer />
     </>
   );
 }

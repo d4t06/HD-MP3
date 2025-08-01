@@ -12,7 +12,7 @@ type Props = {
 
 export default function SingerItem(props: SkeletonProps | Props) {
 	return (
-		<div className="w-1/3 md:w-1/5 p-3">
+		<div className="p-3">
 			{props.variant === "skeleton" && (
 				<>
 					<Skeleton className="pt-[100%] rounded-full" />
@@ -23,13 +23,13 @@ export default function SingerItem(props: SkeletonProps | Props) {
 			{props.variant === "singer-item" && (
 				<>
 					<Link to={`/singer/${props.singer.id}`}>
-						<Square className="!rounded-full">
+						<div className="aspect-[1/1] rounded-full">
 							<Image
 								blurHashEncode={props.singer.blurhash_encode}
 								src={props.singer.image_url}
 								className="hover:scale-[1.05] transition-transform"
 							/>
-						</Square>
+						</div>
 					</Link>
 					<p className="mt-1 font-medium text-center">{props.singer.name}</p>
 				</>
