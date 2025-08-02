@@ -1,11 +1,11 @@
 import { cva, VariantProps } from "class-variance-authority";
 
-const TitleVariant = cva("font-medium", {
+const TitleVariant = cva("", {
   variants: {
     variant: {
-      h1: "text-2xl",
-      h2: "text-xl",
-      h3: "text-lg",
+      h1: "text-2xl font-bold",
+      h2: "text-xl font-semibold",
+      h3: "text-lg font-semibold",
     },
   },
   defaultVariants: {

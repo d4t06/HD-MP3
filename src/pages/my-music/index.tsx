@@ -4,7 +4,7 @@ import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
 import MyMusicPlaylistList from "./_components/PlaylistList";
-import SingerList from "./_components/SingerList";
+import SingerSection from "./_components/SingerSection";
 import useMySongPage from "./_hooks/useMySongPage";
 
 const tabs = ["Favorite", "Uploaded"] as const;
@@ -18,7 +18,7 @@ function Content() {
       <div className="space-y-10 mt-10">
         <MyMusicPlaylistList />
 
-        <SingerList />
+        <SingerSection />
 
         <div>
           <Title title="Songs" />

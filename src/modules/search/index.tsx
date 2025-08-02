@@ -44,7 +44,7 @@ export default function Search() {
     container: `relative h-[40px] flex px-3 w-full md:w-[300px] ${theme.text_color} shadow-md`,
     unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
     focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
-    input: `bg-transparent outline-none  w-full ${theme.type === "light" ? "placeholder:text-black" : "placeholder:text-white"}`,
+    input: `bg-transparent outline-none placeholder:[#666] w-full`,
     searchResultContainer: `overflow-auto ${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] flex flex-col`,
   };
 

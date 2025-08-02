@@ -52,7 +52,7 @@ export default function PLaylistInfo({
           {playlist.singers[0].name}
         </Link>
         <p className="text-sm">
-          <span className="text-red-500">&#10084; </span>
+          <span>❤️ </span>
           {abbreviateNumber(playlist.like)}
         </p>
       </>
@@ -117,19 +117,17 @@ export default function PLaylistInfo({
   return (
     <>
       <div className={classes.container}>
-        <div className="w-full flex-shrink-0 px-10 md:w-1/3 md:px-0 lg:w-full">
-          {showSkeleton ? (
-            <Skeleton className="pt-[100%] rounded-lg" />
-          ) : (
-            playlist && (
-              <PlaylistItem
-                data={playlist}
-                active={isActivePlaylist}
-                variant="image"
-              />
-            )
-          )}
-        </div>
+        {showSkeleton ? (
+          <Skeleton className="pt-[100%] rounded-lg" />
+        ) : (
+          playlist && (
+            <PlaylistItem
+              data={playlist}
+              active={isActivePlaylist}
+              variant="image"
+            />
+          )
+        )}
 
         <div
           className={`flex flex-col items-center mt-3 md:items-start md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:items-center`}
@@ -144,7 +142,7 @@ export default function PLaylistInfo({
           ) : (
             playlist && (
               <>
-                <Title variant={"h1"} title={playlist.name} />
+                <Title className="text-center" variant={"h1"} title={playlist.name} />
                 <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-sm">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>

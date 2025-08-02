@@ -23,7 +23,7 @@ export default function SingerItem(props: SkeletonProps | Props) {
 			{props.variant === "singer-item" && (
 				<>
 					<Link to={`/singer/${props.singer.id}`}>
-						<div className="aspect-[1/1] rounded-full">
+						<div className="aspect-[1/1] rounded-full overflow-hidden">
 							<Image
 								blurHashEncode={props.singer.blurhash_encode}
 								src={props.singer.image_url}

@@ -20,8 +20,7 @@ export default {
       },
       colors: {},
       fontFamily: {
-        sans: ["Rubik", "system-ui"],
-        playwriteCU: ["Playwrite CU", "system-ui"],
+        sans: ["Comfortaa", "system-ui"],
       },
       screens: {
         'semi-lg': '896px'

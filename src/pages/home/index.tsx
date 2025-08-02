@@ -50,7 +50,7 @@ export default function HomePage() {
         <HomeSongList />
 */}
 
-        {/*<NewSong amount={5} />*/}
+        <NewSong amount={5} />
 
         <MobileSetting />
       </div>

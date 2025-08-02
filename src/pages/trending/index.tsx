@@ -5,7 +5,7 @@ import TrendingSong from "@/modules/trending-song";
 export default function Trending() {
   return (
     <>
-      <div className="space-y-5 mt-10">
+      <div className="space-y-10 mt-10">
         <TrendingSong amount={10} />
         <SongTable />
       </div>

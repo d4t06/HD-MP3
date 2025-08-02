@@ -57,7 +57,7 @@ export const themes: ThemeType[] = [
     name: "White",
     id: "white",
     type: "light",
-    bottom_player_bg: "bg-[#fff]",
+    bottom_player_bg: "bg-[#c0d8d8]",
     side_bar_bg: "bg-[#f2f2f2]",
     content_text: "text-[#198585]",
     content_hover_text: "hover:text-[#198585]",

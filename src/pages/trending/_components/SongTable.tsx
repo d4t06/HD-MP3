@@ -1,5 +1,5 @@
 import { NotFound, Tab, Title } from "@/components";
-import { useThemeContext } from "@/stores";
+// import { useThemeContext } from "@/stores";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useSongTable from "../useSongTable";
 import { songItemSkeleton } from "@/components/skeleton";
@@ -7,12 +7,12 @@ import SongList from "@/modules/song-item/_components/SongList";
 import WeekSelect from "@/modules/week-select";
 
 export default function SongTable() {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const { isFetching, songMap, setWeek, KEY, ...rest } = useSongTable();
 
   return (
-    <div className={`${theme.bottom_player_bg} rounded-xl p-5`}>
+    <div className={`shadow-lg border border-black/5 rounded-xl p-5`}>
       <Title title="Week Table" className="mb-3" />
 
       <div className="mb-5 space-y-3">

@@ -4,7 +4,7 @@ import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { useThemeContext } from "@/stores";
+// import { useThemeContext } from "@/stores";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function TrendingSong(props: Props) {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const { isFetching, songs } = useGetTrendingSongs(props);
 
@@ -23,7 +23,7 @@ export default function TrendingSong(props: Props) {
   };
 
   return (
-    <div className={`${theme.bottom_player_bg} rounded-xl p-5`}>
+    <div className={`shadow-lg border border-black/5 rounded-xl p-5`}>
       <Title title="Trending" className="mb-3" />
 
       <SongSelectProvider>

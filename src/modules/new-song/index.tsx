@@ -3,7 +3,7 @@ import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { useThemeContext } from "@/stores";
+// import { useThemeContext } from "@/stores";
 import { Link } from "react-router-dom";
 import useGetNewSongs from "./useGetNewSong";
 import useGetRecommend from "@/hooks/useGetRecomemded";
@@ -13,7 +13,7 @@ type Props = {
 };
 
 export default function NewSong(props: Props) {
-	const { theme } = useThemeContext();
+	// const { theme } = useThemeContext();
 
 	const { isFetching, currentSongs, ...rest } = useGetNewSongs(props);
 	const { getRecommend } = useGetRecommend();
@@ -26,7 +26,7 @@ export default function NewSong(props: Props) {
 	};
 
 	return (
-		<div className={`${theme.bottom_player_bg} rounded-xl p-5`}>
+		<div className={`shadow-lg border rounded-xl p-5`}>
 			<Title title="New song" className="mb-3" />
 
 			<div className="mb-5 space-y-3">
