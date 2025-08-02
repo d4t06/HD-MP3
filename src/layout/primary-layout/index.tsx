@@ -17,16 +17,20 @@ export default function PrimaryLayout() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const classes = {
-    page: `md:flex md:h-screen  ${theme.container} ${theme.text_color}`,
-    container: `md:min-h-[calc(100vh-60px -40px-120px)] md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[10px] md:pt-[60px] md:overflow-auto`,
+    page: `md:flex md:h-screen bg-[--layout-cl] text-[--text-cl] transition-[color]`,
+    container: `md:min-h-[calc(100vh-60px-40px-120px )] md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] pt-[10px] md:pt-[60px] md:overflow-auto `,
   };
 
   useEffect(() => {
     const meta = document.querySelector(".my-tag");
     const body = document.querySelector("body");
 
-    body!.style.backgroundColor = theme.container_code;
-    if (meta) meta.setAttribute("content", theme.container_code);
+    if (body) {
+      body.setAttribute("data-theme", theme.id);
+      if (theme.type === "dark") body.classList.add("dark");
+      else body.classList.remove("dark");
+    }
+    if (meta) meta.setAttribute("content", theme.container);
   }, [theme]);
 
   return (

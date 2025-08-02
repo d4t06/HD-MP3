@@ -1,5 +1,5 @@
 import Table from "@/components/ui/Table";
-import { Center, Image, NotFound, Square, Title } from "@/components";
+import { Center, Image, NotFound, Title } from "@/components";
 import { Frame, Loading } from "../../_components";
 import DashboardPlaylistCta from "./_components/PlaylistCta";
 import useGetPlaylist from "./_hooks/useGetPlaylist";
@@ -34,13 +34,11 @@ export default function DashboardPlaylistDetail() {
       <div className="md:flex md:-mx-3">
         <div className="space-y-3 md:px-3">
           <div className="w-[200px] h-[200px] mx-auto">
-            <Square>
-              <Image
-                className="object-cover h-full"
-                blurHashEncode={playlist.blurhash_encode}
-                src={playlist.image_url}
-              />
-            </Square>
+            <Image
+              className="object-cover h-full"
+              blurHashEncode={playlist.blurhash_encode}
+              src={playlist.image_url}
+            />
           </div>
 
           <Title variant={"h2"} title={playlist.name} />

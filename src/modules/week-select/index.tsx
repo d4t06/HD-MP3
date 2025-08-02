@@ -1,7 +1,6 @@
-import { useThemeContext } from "@/stores";
 import useWeekSelect from "./useWeekSelect";
 import {
-  MenuWrapper,
+  PopupWrapper,
   MyPopup,
   MyPopupContent,
   MyPopupTrigger,
@@ -14,8 +13,6 @@ type Props = {
 };
 
 export default function WeekSelect(props: Props) {
-  const { theme } = useThemeContext();
-
   const { weekOptions, currentIndex, currentWeekData, setCurrentIndex } =
     useWeekSelect(props);
 
@@ -23,14 +20,14 @@ export default function WeekSelect(props: Props) {
     <MyPopup appendOnPortal>
       <MyPopupTrigger>
         <button
-          className={`py-2 text-sm font-semibold px-4 rounded-full bg-${theme.alpha}`}
+          className={`py-2 text-sm font-semibold px-4 rounded-full bg-[--a-5-cl]`}
         >
           {currentWeekData?.label}
         </button>
       </MyPopupTrigger>
 
       <MyPopupContent position="right-bottom" origin="top left">
-        <MenuWrapper>
+        <PopupWrapper>
           <VerticalMenu className="w-[160px] h-[30vh] overflow-auto">
             <WeekList
               weekOptions={weekOptions}
@@ -41,7 +38,7 @@ export default function WeekSelect(props: Props) {
               }}
             />
           </VerticalMenu>
-        </MenuWrapper>
+        </PopupWrapper>
       </MyPopupContent>
     </MyPopup>
   );

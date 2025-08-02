@@ -8,10 +8,10 @@ import SingerSection from "./_components/SingerSection";
 import useMySongPage from "./_hooks/useMySongPage";
 
 const tabs = ["Favorite", "Uploaded"] as const;
-type TabType = (typeof tabs)[number];
+type Tab = (typeof tabs)[number];
 
 function Content() {
-  const [tab, setTab] = useState<TabType>("Favorite");
+  const [tab, setTab] = useState<Tab>("Favorite");
 
   return (
     <>
@@ -28,7 +28,7 @@ function Content() {
               render={(t) => t}
               setTab={setTab}
               tab={tab}
-              tabs={["Favorite", "Uploaded"]}
+              tabs={tabs}
             />
           </div>
 

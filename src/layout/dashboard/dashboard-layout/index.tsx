@@ -9,14 +9,15 @@ import { PushBrowserHistory } from "@/stores/global/NavigationContext";
 import SingerProvider from "@/stores/dashboard/SingerContext";
 import PlaylistProvider from "@/stores/dashboard/PlaylistContext";
 import { useEffect } from "react";
-import { dashboardTheme } from "@/constants/themes";
 
 export default function DashBoardLayout() {
-  const { isOnMobile, theme, setTheme } = useThemeContext();
+  const { isOnMobile } = useThemeContext();
 
   useEffect(() => {
-    if (theme.id !== dashboardTheme.id) {
-      setTheme(dashboardTheme);
+    const body = document.querySelector("body");
+
+    if (body) {
+      body.setAttribute("data-theme", "white");
     }
 
     document.title = "Dashboard";
@@ -30,7 +31,7 @@ export default function DashBoardLayout() {
           <PlaylistProvider>
             <GenreProvider>
               <div
-                className={`${theme.container} fixed inset-full flex ${theme.text_color}`}
+                className={`bg-[--layout-cl] text-[--text-cl] fixed inset-full flex `}
               >
                 {isOnMobile ? <DashboardNavigation /> : <DashBoardSidebar />}
 

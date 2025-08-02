@@ -1,12 +1,5 @@
-import {
-  Image,
-  NotFound,
-  PlaylistList,
-  SingerItem,
-  Tab,
-  Title,
-} from "@/components";
-import { playlistSkeleton, songItemSkeleton } from "@/components/skeleton";
+import { NotFound, PlaylistList, Tab, Title } from "@/components";
+import { songItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
@@ -28,49 +21,6 @@ export default function SearchResultPage() {
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
     getRecommend(song);
-  };
-
-  const renderSkeleton = () => {
-    switch (tab) {
-      case "Song":
-        return songItemSkeleton;
-      case "Playlist":
-        return <div className="flex">{playlistSkeleton}</div>;
-    }
-  };
-
-  const renderResult = () => {
-    switch (tab) {
-      case "All":
-        return (
-          <>
-            <div>
-              <Title title="Songs" />
-              {result.songs.length}
-            </div>
-          </>
-        );
-      case "Song":
-        if (result.songs.length)
-          return <SongList setSong={_handleSetSong} songs={result.songs} />;
-        else return <NotFound className="mx-auto" />;
-
-      case "Playlist":
-        if (result.playlists.length)
-          return <PlaylistList loading={false} playlists={result.playlists} />;
-        else return <NotFound className="mx-auto" />;
-
-      case "Singer":
-        if (result.singers.length)
-          return (
-            <div className={`flex flex-row flex-wrap -mx-2 mt-3`}>
-              {result.singers.map((s, i) => (
-                <SingerItem variant="singer-item" singer={s} key={i} />
-              ))}
-            </div>
-          );
-        else return <NotFound className="mx-auto" />;
-    }
   };
 
   return (

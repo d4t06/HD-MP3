@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { CheckIcon, XMarkIcon } from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 
@@ -9,13 +8,11 @@ type Props = {
 };
 
 export default function ToastItem({ className = "", toast, onClick }: Props) {
-  const { theme } = useThemeContext();
-
   const [isOpen, setIsOpen] = useState(false);
 
   const classes = {
     icon: `w-6`,
-    container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center ${theme.modal_bg}`,
+    container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center bg-[--popup-cl]`,
     text: `font-[500] text-sm`,
     open: "opacity-[1] translate-x-0",
     init: "opacity-0 translate-x-10",
@@ -24,7 +21,7 @@ export default function ToastItem({ className = "", toast, onClick }: Props) {
   const renderIcon = () => {
     switch (toast.variant) {
       case "success":
-        return <CheckIcon  className={`${classes.icon} text-emerald-500`} />;
+        return <CheckIcon className={`${classes.icon} text-emerald-500`} />;
       case "error":
         return <XMarkIcon className={`${classes.icon} text-red-500`} />;
     }

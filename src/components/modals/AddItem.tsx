@@ -7,7 +7,6 @@ import {
   useMemo,
 } from "react";
 import Button from "../ui/Button";
-import { useThemeContext } from "@/stores";
 import { ModalContentWrapper, ModalHeader } from ".";
 import { inputClasses } from "../ui/Input";
 
@@ -30,7 +29,6 @@ export default function AddItem({
   variant = "input",
   children,
 }: Props) {
-  const { theme } = useThemeContext();
 
   const [value, setValue] = useState(initValue || "");
   const inputRef = useRef<HTMLInputElement>(null);
@@ -85,7 +83,8 @@ export default function AddItem({
             type="submit"
             variant={"primary"}
             isLoading={loading}
-            className={`${theme.content_bg} rounded-full self-end mt-[15px] ${
+            color="primary"
+            className={`rounded-full self-end mt-[15px] ${
               isAbleToSubmit ? "" : "disable"
             }`}
           >

@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { Ref, forwardRef, useImperativeHandle } from "react";
 import {
   ArrowPathIcon,
@@ -31,10 +30,13 @@ function LyricEditorControl(
   { audioEle }: Props,
   ref: Ref<LyricEditorControlRef>,
 ) {
-  const { theme, themeClass } = useThemeContext();
-  const { song, lyrics, isPreview, setIsPreview } = useEditLyricContext();
+  // const { theme, themeClass } = useThemeContext();
+  const { lyrics, isPreview, setIsPreview } = useEditLyricContext();
 
-  const PROGRESS_LINE_BG = themeClass("rgba(0,0,0,.15)", "rgba(255,255,255,.15)")
+  // const PROGRESS_LINE_BG = themeClass(
+  //   "rgba(0,0,0,.15)",
+  //   "rgba(255,255,255,.15)",
+  // );
 
   const {
     backward,
@@ -47,13 +49,12 @@ function LyricEditorControl(
     seek,
     status,
     isClickPlay,
-  } = useAudioControl({ audioEle, baseColor: PROGRESS_LINE_BG });
+  } = useAudioControl({ audioEle });
 
   const { addLyric, removeLyric, isEnableAddBtn, submit } =
     useLyricEditorAction({
       audioEle,
       isClickPlay,
-      song,
     });
 
   useImperativeHandle(ref, () => ({ seek, pause, submit }));
@@ -69,7 +70,7 @@ function LyricEditorControl(
   };
 
   const classes = {
-    button: `mt-2 ml-2 space-x-1 ${theme.content_bg} rounded-full`,
+    button: `mt-2 ml-2 space-x-1 rounded-full`,
     icon: "w-6",
     arrow: `before:content-[''] before:absolute before:-translate-x-1/2 before:left-[27px]  before:bottom-[calc(100%-1px)] before:z-[-1] before:border-8 before:border-transparent before:border-b-amber-800`,
   };
@@ -98,13 +99,18 @@ function LyricEditorControl(
           postLocalStorageKey="edit_lyric"
         />
 
-        <Button className={classes.button} onClick={_handlePlayPaused}>
+        <Button
+          className={classes.button}
+          color="primary"
+          onClick={_handlePlayPaused}
+        >
           {renderPlayPausedButton()}
         </Button>
         <Button
           disabled={!isEnableAddBtn || isPreview}
           onClick={addLyric}
           className={classes.button}
+          color="primary"
         >
           <PlusIcon className="w-6" />
           <span>Add</span>
@@ -113,27 +119,37 @@ function LyricEditorControl(
           disabled={!lyrics.length || isPreview}
           onClick={removeLyric}
           className={classes.button}
+          color="primary"
         >
           <MinusIcon className="w-6" />
           <span>Remove</span>
         </Button>
 
-        <Button onClick={() => backward(2)} className={classes.button}>
+        <Button
+          onClick={() => backward(2)}
+          className={classes.button}
+          color="primary"
+        >
           <BackwardIcon className="w-6" />
           <span>2s</span>
         </Button>
-        <Button onClick={() => forward(2)} className={classes.button}>
+        <Button
+          onClick={() => forward(2)}
+          className={classes.button}
+          color="primary"
+        >
           <span>2s</span>
           <ForwardIcon className="w-6" />
         </Button>
 
         <Button
-        disabled={!lyrics.length}
+          disabled={!lyrics.length}
           onClick={() => {
             setIsPreview(!isPreview);
             pause();
           }}
           className={classes.button}
+          color="primary"
         >
           <EyeIcon className="w-6" />
           <span>{!isPreview ? "Preview" : "Edit"}</span>
@@ -151,7 +167,7 @@ function LyricEditorControl(
 
         <div
           ref={progressLineRef}
-          style={{ backgroundColor: PROGRESS_LINE_BG }}
+          style={{ backgroundColor: "var(--a-5-cl)" }}
           className={`h-1 rounded-full w-full progress-line`}
         ></div>
 

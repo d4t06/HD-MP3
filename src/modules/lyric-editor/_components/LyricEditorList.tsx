@@ -1,6 +1,5 @@
 import { ElementRef, RefObject, useEffect, useRef } from "react";
 import { LyricEditorControlRef } from "./LyricEditorControl";
-import { useThemeContext } from "@/stores";
 import { LyricStatus } from "../";
 import {
   getClasses,
@@ -47,7 +46,7 @@ export default function LyricEditorList({
   audioEle,
   openEditModal,
 }: Props) {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
   const { baseLyricArr, lyrics, setSelectLyricIndex, song, isPreview } =
     useEditLyricContext();
 
@@ -81,7 +80,7 @@ export default function LyricEditorList({
   return (
     <>
       <div
-        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 ${theme.side_bar_bg} ${getClasses(isPreview, "justify-center")}`}
+        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--a-10-cl] ${getClasses(isPreview, "justify-center")}`}
       >
         <div className={`w-1/2 ${getClasses(isPreview, "hidden")}`}>
           {!!baseLyricArr.length ? (
@@ -100,9 +99,6 @@ export default function LyricEditorList({
                 return (
                   <LyricItem
                     ref={status === "active" ? activeLyricRef : null}
-                    activeColor={
-                      theme.type === "light" ? theme.content_text : ""
-                    }
                     className="pt-[38px] mr-[24px]"
                     key={index}
                     status={status}
@@ -135,7 +131,7 @@ export default function LyricEditorList({
                   isPreview={isPreview}
                   lyric={lyric}
                   status={status}
-                  activeColor={theme.type === "light" ? theme.content_text : ""}
+                  activeColor={"text-[#ffed00]"}
                   isLast={
                     index === lyrics.length - 1 &&
                     index !== baseLyricArr.length - 1

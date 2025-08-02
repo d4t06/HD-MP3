@@ -1,7 +1,6 @@
 import { AudioSetting, Tab } from "@/components";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import EditLyricModalPlayer from "./Player";
-import { useThemeContext } from "@/stores";
 import PlayBtn from "./PlayBtn";
 
 type Props = {
@@ -10,8 +9,6 @@ type Props = {
 
 export default function Header({ audioEle }: Props) {
   const { tabProps } = useLyricEditorContext();
-
-  const { theme } = useThemeContext();
 
   return (
     <>
@@ -25,7 +22,6 @@ export default function Header({ audioEle }: Props) {
 
           <AudioSetting
             positions="left"
-            bg={theme.content_bg}
             audioEle={audioEle}
             postLocalStorageKey="edit_lyric_tune"
           />

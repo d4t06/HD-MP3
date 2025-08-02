@@ -25,7 +25,6 @@ export default function DashboardNavigation() {
   return (
     <>
       <Frame
-        colors={"third"}
         className={`absolute z-[99] duration-[.25] flex flex-col
         transition-[left,opacity] bottom-[80px] 
         ${

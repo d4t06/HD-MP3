@@ -13,7 +13,6 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/solid";
 import { Button } from "@/pages/dashboard/_components";
-import { useThemeContext } from "@/stores";
 
 export const routeList = [
   {
@@ -59,8 +58,6 @@ export const routeList = [
 ];
 
 export default function DashBoardSidebar() {
-  const { theme } = useThemeContext();
-
   const [isOpen, setIsOpen] = useState(false);
 
   const location = useLocation();
@@ -78,7 +75,9 @@ export default function DashBoardSidebar() {
   };
 
   return (
-    <div className={`${classes.container} ${isOpen ? "w-[150px]" : "w-[70px]"}`}>
+    <div
+      className={`${classes.container} ${isOpen ? "w-[150px]" : "w-[70px]"}`}
+    >
       <div className="md:mt-[60px]">
         {routeList.map((r, i) => {
           const active = location.pathname === r.path;
@@ -87,7 +86,7 @@ export default function DashBoardSidebar() {
             <Link
               key={i}
               className={`
-              ${active ? theme.content_bg : "hover:bg-black/10"}
+              ${active ? "text-[--primary-cl]" : "hover:bg-[--a-5-cl]"}
               ${classes.item} ${isOpen ? "!justify-start" : ""}
               ${pathName === r.path ? classes.itemActive : ""}`}
               to={r.path}

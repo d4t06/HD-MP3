@@ -1,9 +1,9 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef } from "react";
-import { ModalRef, Title } from "@/components";
+import { ModalRef } from "@/components";
 import SingerSearchModal from "./SingerSearchModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { Button, Frame } from "@/pages/dashboard/_components";
+import { Button } from "@/pages/dashboard/_components";
 import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import DashBoardModal from "@/pages/dashboard/_components/ui/Modal";

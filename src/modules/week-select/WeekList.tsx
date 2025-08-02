@@ -1,5 +1,4 @@
 import { usePopoverContext } from "@/components";
-import { useThemeContext } from "@/stores";
 import { useEffect, useRef } from "react";
 
 type Props = {
@@ -12,7 +11,6 @@ export default function WeekList({ weekOptions, submit, currentIndex }: Props) {
   const {
     state: { isOpen },
   } = usePopoverContext();
-  const { theme } = useThemeContext();
 
   const activeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -36,7 +34,7 @@ export default function WeekList({ weekOptions, submit, currentIndex }: Props) {
           <button
             key={i}
             ref={active ? activeButtonRef : undefined}
-            className={`${active ? `${theme.content_text} font-bold` : ""}`}
+            className={`${active ? `text-[--primary-cl] font-bold` : ""}`}
             onClick={() => submit(i)}
           >
             {option.label}

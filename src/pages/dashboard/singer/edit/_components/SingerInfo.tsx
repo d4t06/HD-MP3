@@ -1,4 +1,4 @@
-import { Image, Skeleton, Square } from "@/components";
+import { Image, Skeleton } from "@/components";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import SingerCta from "./SingerCta";
 import { useGetSingerContext } from "./GetSingerContext";
@@ -17,12 +17,11 @@ export default function SingerInfo() {
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (
-            <Square>
-              <Image
-                src={singer?.image_url}
-                blurHashEncode={singer?.blurhash_encode || ""}
-              />
-            </Square>
+            <Image
+              className="object-cover"
+              src={singer?.image_url}
+              blurHashEncode={singer?.blurhash_encode || ""}
+            />
           )}
         </div>
         <div className="flex-grow flex flex-col mt-5 space-y-2.5  md:mt-0 md:ml-5">

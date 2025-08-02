@@ -2,13 +2,13 @@ function Footer() {
   const classes = {
     container: `pt-[30px] pb-[calc(127px+30px)] md:mt-auto md:pb-[120px] md:flex md:justify-between md:items-center`,
     icon: "w-6 hover:scale-[1.1] transition linear ",
-    copyRightText: "text-sm",
+    copyRightText: "text-sm font-medium",
   };
 
   return (
     <div className={`${classes.container}`}>
       <p className={classes.copyRightText}>
-        Make with  <span className="text-red-500">&#10084;</span>  by d4t06 <br /> © All rights no reserve ¯\_(ツ)_/¯
+        Make with  <span>❤️ </span>by d4t06 <br /> © All rights no reserve ¯\_(ツ)_/¯
       </p>
 
       <div className="flex items-center mt-[20px] md:mt-0 space-x-[10px]">

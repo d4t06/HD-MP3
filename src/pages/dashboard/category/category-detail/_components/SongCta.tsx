@@ -1,5 +1,5 @@
 import {
-  MenuWrapper,
+  PopupWrapper,
   Modal,
   ModalRef,
   MyPopup,
@@ -9,7 +9,6 @@ import {
 } from "@/components";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 import { Button } from "@/pages/dashboard/_components";
-import { useThemeContext } from "@/stores";
 import { Bars3Icon, PlusIcon } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
 import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
@@ -17,8 +16,6 @@ import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
 type Modal = "add" | "arrange";
 
 export default function SongCta() {
-  const { theme } = useThemeContext();
-
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
@@ -34,14 +31,14 @@ export default function SongCta() {
     <>
       <MyPopup>
         <MyPopupTrigger>
-          <Button size={"clear"} className={`${theme.content_bg} p-1`}>
+          <Button size={"clear"} className={`p-1`}>
             <Bars3Icon className="w-6" />
             <span className="hidden md:block">Menu</span>
           </Button>
         </MyPopupTrigger>
 
         <MyPopupContent className="top-[calc(100%+8px)] right-0">
-          <MenuWrapper className="w-[140px]">
+          <PopupWrapper className="w-[140px]">
             <VerticalMenu>
               <button onClick={() => openModal("add")}>
                 <PlusIcon />
@@ -53,7 +50,7 @@ export default function SongCta() {
                 <span>Arrange</span>
               </button> */}
             </VerticalMenu>
-          </MenuWrapper>
+          </PopupWrapper>
         </MyPopupContent>
       </MyPopup>
 

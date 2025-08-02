@@ -10,7 +10,8 @@ export default function RecentPlaylist() {
 
   const ranEffect = useRef(false);
 
-  const { isFetching, getRecentPlaylist, recentPlaylists } = useGetRecentPlaylist();
+  const { isFetching, getRecentPlaylist, recentPlaylists } =
+    useGetRecentPlaylist();
 
   useEffect(() => {
     if (!ranEffect.current) {
@@ -29,14 +30,18 @@ export default function RecentPlaylist() {
 
       return (
         <div key={index} className={classes.playlistItem}>
-          <PlaylistItem active={active} data={playlist} />
+          <PlaylistItem variant="link" active={active} data={playlist} />
         </div>
       );
     });
   };
 
   if (isFetching)
-    return <div className={`flex flex-row flex-wrap -mx-[8px] `}>{playlistSkeleton}</div>;
+    return (
+      <div className={`flex flex-row flex-wrap -mx-[8px] `}>
+        {playlistSkeleton}
+      </div>
+    );
 
   if (!recentPlaylists.length) return <></>;
 
@@ -44,7 +49,9 @@ export default function RecentPlaylist() {
     <>
       <div>
         <Title title="Recent listening" />
-        <div className={`flex flex-row flex-wrap -mx-[8px] `}>{renderPlaylists()}</div>
+        <div className={`flex flex-row flex-wrap -mx-[8px] `}>
+          {renderPlaylists()}
+        </div>
       </div>
     </>
   );

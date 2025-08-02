@@ -1,6 +1,6 @@
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef } from "react";
-import { useAuthContext, useSongContext, useThemeContext } from "@/stores";
+import { useAuthContext, useSongContext } from "@/stores";
 import {
   Button,
   Modal,
@@ -22,7 +22,6 @@ type Props = {
 export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
   const { user } = useAuthContext();
   const { playlists } = useSongContext();
-  const { theme } = useThemeContext();
 
   const { addToPlaylist, isFetching } = useAddSongToPlaylist();
   const { getPlaylist } = useGetMyMusicPlaylist();
@@ -75,7 +74,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
                 <button
                   key={index}
                   onClick={() => handleAddSongToPlaylist(playlist)}
-                  className={`flex rounded-md p-2 ${theme.content_hover_bg} bg-white/10`}
+                  className={`flex rounded-md p-2 hover:bg-[--a-5-cl]`}
                 >
                   <MusicalNoteIcon className={`w-5 mr-2`} />
                   <span>{playlist.name}</span>
@@ -89,7 +88,8 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
 
         <p className="text-center">
           <Button
-            className={`${theme.content_bg} mt-5 rounded-full justify-center`}
+            color="primary"
+            className={`mt-5 rounded-full justify-center`}
             onClick={() => modalRef.current?.open()}
           >
             <PlusIcon className="w-5" />

@@ -41,7 +41,7 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
     const progress = +((_time / audioEle.duration) * 100).toFixed(1);
 
     if (progressLineRef?.current)
-      progressLineRef.current.style.background = getLinearBg("#fff", progress);
+      progressLineRef.current.style.background = getLinearBg(progress);
   };
 
   const handleTimeUpdate = () => {
@@ -70,7 +70,6 @@ export default function useAudioControl({ audioEle, progressLineRef }: Props) {
   };
 
   // const handleLoaded = () => {
-
 
   //   console.log('loaded')
 

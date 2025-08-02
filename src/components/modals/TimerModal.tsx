@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { ModalContentWrapper, ModalHeader } from ".";
 
 type Props = {
@@ -9,10 +8,9 @@ type Props = {
 const COUNT_LIST = [3, 5, 7, 10];
 
 function TimerModal({ closeModal, active }: Props) {
-  const { theme } = useThemeContext();
 
   const classes = {
-    button: `bg-[#fff]/5 ${theme.content_hover_bg} ml-2 mt-2 px-3  py-1 rounded-[99px]`,
+    button: `bg-[--a-5-cl] hover:bg-[--primary-cl] ml-2 mt-2 px-3  py-1 rounded-[99px]`,
   };
 
   const handleSetTimer = (songCount: number) => {

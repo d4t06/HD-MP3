@@ -1,7 +1,7 @@
 import useDashboardPlaylistActions, {
   PlaylistActionProps,
 } from "@/pages/dashboard/playlist/edit-playlist/_hooks/usePlaylistAction";
-import { DashboardSongMenuWrapper } from "..";
+import { DashboardSongPopupWrapper } from "..";
 import { PhotoIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { ModalContentWrapper, ModalRef, Title } from "@/components";
@@ -51,7 +51,7 @@ export default function PlaylistMenu({ song }: Props) {
 
   return (
     <>
-      <DashboardSongMenuWrapper song={song}>
+      <DashboardSongPopupWrapper song={song}>
         <button
           onClick={() =>
             handlePlaylistAction({
@@ -91,7 +91,7 @@ export default function PlaylistMenu({ song }: Props) {
             ></div>
           </div>
         )}
-      </DashboardSongMenuWrapper>
+      </DashboardSongPopupWrapper>
 
       <DashboardModal ref={modalRef}>
         <ModalContentWrapper>

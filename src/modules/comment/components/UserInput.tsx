@@ -1,7 +1,7 @@
 import {
   Button,
   Image,
-  MenuWrapper,
+  PopupWrapper,
   Modal,
   ModalContentWrapper,
   MyPopupContent,
@@ -9,7 +9,7 @@ import {
   Title,
 } from "@/components";
 import useCommentAction from "../hooks/useCommentAction";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 import {
   PlayIcon,
   ArrowPathIcon,
@@ -39,7 +39,7 @@ export default function UserInput({
   ...props
 }: (SendComment | SendReply) & Props) {
   const { user } = useAuthContext();
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const { action, isFetching, modalRef } = useCommentAction();
   const { EMOJIS, textareaRef, addEmoji, value, setValue } = useCommentInput();
@@ -103,7 +103,7 @@ export default function UserInput({
             </MyPopupTrigger>
 
             <MyPopupContent>
-              <MenuWrapper className="w-[270px]">
+              <PopupWrapper className="w-[270px]">
                 <div className="p-1.5 grid grid-cols-5 justify-items-center max-h-60 overflow-y-auto pr-2">
                   {EMOJIS.map((emoji, index) => (
                     <button
@@ -116,13 +116,13 @@ export default function UserInput({
                     </button>
                   ))}
                 </div>
-              </MenuWrapper>
+              </PopupWrapper>
             </MyPopupContent>
           </Popup>
 
           <button
             onClick={handleAddComment}
-            className={`${theme.content_text} p-1.5 hover:bg-white/10 rounded-full`}
+            className={`text-[--primary-cl] p-1.5 hover:bg-white/10 rounded-full`}
           >
             {isFetching ? (
               <ArrowPathIcon className="w-6 animate-spin" />

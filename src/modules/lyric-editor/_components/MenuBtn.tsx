@@ -1,6 +1,6 @@
 import {
   Button,
-  MenuWrapper,
+  PopupWrapper,
   Modal,
   ModalContentWrapper,
   ModalHeader,
@@ -10,7 +10,6 @@ import {
   MyPopupTrigger,
   VerticalMenu,
 } from "@/components";
-import { useThemeContext } from "@/stores";
 import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
@@ -26,7 +25,6 @@ import EditStringLyicModal from "./EditStringLyricModal";
 import { useEditLyricContext } from "./EditLyricContext";
 import useImportLyric from "../_hooks/useImportLyric";
 import useExportLyric from "../_hooks/useExportLyric";
-import SearchLyricModal from "./SearchLyricModal";
 import SyncLyricModal from "./SyncLyricModal";
 
 type Modal = "lyric" | "song-beat" | "export" | "search" | "sync";
@@ -36,7 +34,6 @@ type Props = {
 };
 
 export default function MenuBtn({ pause }: Props) {
-  const { theme } = useThemeContext();
   const { song, lyrics } = useEditLyricContext();
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -86,8 +83,6 @@ export default function MenuBtn({ pause }: Props) {
           </ModalContentWrapper>
         );
 
-      case "search":
-        return <SearchLyricModal closeModal={closeModal} />;
       case "sync":
         return <SyncLyricModal closeModal={closeModal} />;
     }
@@ -106,14 +101,15 @@ export default function MenuBtn({ pause }: Props) {
         <MyPopupTrigger>
           <Button
             size={"clear"}
-            className={`${theme.content_bg} h-[36px] w-[36px] justify-center rounded-full mt-2`}
+            color="primary"
+            className={`h-[36px] w-[36px] justify-center rounded-full mt-2`}
           >
             <Bars3Icon className="w-6" />
           </Button>
         </MyPopupTrigger>
 
         <MyPopupContent origin="top right">
-          <MenuWrapper className="w-[220px]">
+          <PopupWrapper className="w-[220px]">
             <VerticalMenu>
               <button
                 disabled={!lyrics.length}
@@ -159,7 +155,7 @@ export default function MenuBtn({ pause }: Props) {
                 <span>Export</span>
               </button>
             </VerticalMenu>
-          </MenuWrapper>
+          </PopupWrapper>
         </MyPopupContent>
       </MyPopup>
 

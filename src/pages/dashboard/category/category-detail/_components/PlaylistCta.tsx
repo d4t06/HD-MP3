@@ -1,6 +1,6 @@
 import {
   ArrangeModal,
-  MenuWrapper,
+  PopupWrapper,
   Modal,
   ModalRef,
   MyPopup,
@@ -9,7 +9,6 @@ import {
   VerticalMenu,
 } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
-import { useThemeContext } from "@/stores";
 import {
   ArrowPathIcon,
   Bars3Icon,
@@ -24,7 +23,6 @@ type Modal = "add" | "arrange";
 
 export default function PlaylistCta() {
   const { orderedPlaylists } = useCategoryContext();
-  const { theme } = useThemeContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -41,26 +39,29 @@ export default function PlaylistCta() {
     <>
       <MyPopup>
         <MyPopupTrigger>
-          <Button size={"clear"} className={`${theme.content_bg} p-1`}>
+          <Button size={"clear"} className={`p-1`}>
             <Bars3Icon className="w-6" />
             <span className="hidden md:block">Menu</span>
           </Button>
         </MyPopupTrigger>
 
         <MyPopupContent className="top-[calc(100%+8px)] right-0">
-          <MenuWrapper className="w-[140px]">
+          <PopupWrapper className="w-[140px]">
             <VerticalMenu>
               <button onClick={() => openModal("add")}>
                 <PlusIcon />
                 <span>Add playlist</span>
               </button>
 
-              <button disabled={orderedPlaylists.length < 2} onClick={() => openModal("arrange")}>
+              <button
+                disabled={orderedPlaylists.length < 2}
+                onClick={() => openModal("arrange")}
+              >
                 <ArrowPathIcon />
                 <span>Arrange</span>
               </button>
             </VerticalMenu>
-          </MenuWrapper>
+          </PopupWrapper>
         </MyPopupContent>
       </MyPopup>
 

@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext, useMemo, useState } from "react";
+import { createContext, ReactNode, useMemo, useState } from "react";
 
 function useCategoryLobby() {
   const [categoryPage, setCategoryPage] = useState<PageConfig>();

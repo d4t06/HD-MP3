@@ -3,19 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "../components";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
-import { useThemeContext } from "@/stores";
 import useAuthAction from "@/hooks/useAuthActiont";
 
 function Login() {
   const [loggedInUser] = useAuthState(auth);
-  const { theme } = useThemeContext();
   const { action } = useAuthAction();
 
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const from = location?.state?.from || "/dashboard";
-
-  // const ranRedirect = useRef(false);
 
   const handleLogIn = async () => {
     try {
@@ -34,12 +28,12 @@ function Login() {
 
   return (
     <div
-      className={`min-h-screen flex flex-col items-center justify-center ${theme.container} ${theme.text_color}`}
+      className={`min-h-screen flex flex-col items-center justify-center bg-[--layout-cl]`}
     >
       <Button
         onClick={handleLogIn}
         variant={"default"}
-        className={`${theme.content_bg} font-bold text-[#fff] text-[30px] rounded-full`}
+        className={`bg-[--primary-cl] font-bold text-[#fff] text-[30px] rounded-full`}
       >
         Login with google
       </Button>{" "}

@@ -1,7 +1,7 @@
-import { useThemeContext } from "@/stores";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
 import usePlaylistAction from "../_hooks/usePlaylistAction";
+import { Button } from "@/components";
 
 type Props = {
   className?: string;
@@ -9,31 +9,30 @@ type Props = {
   playlist: Playlist;
 };
 
-export default function HearBtn({ isLiked, playlist, className = "p-1.5" }: Props) {
-  const { theme } = useThemeContext();
+export default function HearBtn({
+  isLiked,
+  playlist,
+  className = "",
+}: Props) {
   const { action, isFetching } = usePlaylistAction();
 
-  // define style
-  const classes = {
-    button: `bg-${theme.alpha} hover:brightness-90 rounded-full w-[40px] flex items-center justify-center`,
-  };
-
   return (
-    <button
+    <Button
+      size={"clear"}
       onClick={() => action({ variant: "like", playlist })}
-      className={` ${classes.button} ${className}`}
+      className={`${className}`}
     >
       {isFetching ? (
         <ArrowPathIcon className="w-5 animate-spin" />
       ) : (
         <>
           {isLiked ? (
-            <HeartIconSolid className={`w-5 ${theme.content_text}`} />
+            <HeartIconSolid className={`w-5 text-[--primary-cl]`} />
           ) : (
             <HeartIcon className="w-5" />
           )}
         </>
       )}
-    </button>
+    </Button>
   );
 }

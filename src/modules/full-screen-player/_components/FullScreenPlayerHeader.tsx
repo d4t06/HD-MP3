@@ -1,4 +1,4 @@
-import { useAuthContext, usePlayerContext, useThemeContext } from "@/stores";
+import { useAuthContext, usePlayerContext } from "@/stores";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
 import {
@@ -20,7 +20,6 @@ import CommentProvider from "@/modules/comment/components/CommentContext";
 
 export default function FullScreenPlayerHeader() {
 	const { user } = useAuthContext();
-	const { theme } = useThemeContext();
 	const { activeTab, idle, setIsOpenFullScreen } = usePlayerContext();
 
 	const { currentSongData } = useSelector(selectSongQueue);
@@ -45,8 +44,10 @@ export default function FullScreenPlayerHeader() {
 	};
 
 	const classes = {
-		button: `w-[38px] h-[38px] bg-white/10 rounded-[99px] transition-transform ${theme.content_hover_bg}`,
-		headerWrapper: `relative flex py-[25px] px-[40px] w-full items-center`,
+		rightCta:
+			"[&_button.btn]:h-[38px] [&_button.btn]:w-[38px] [&_button.btn]:bg-white/5 [&_button.btn]:p-2 [&_button.btn]:rounded-full  hover:[&_button]:bg-[--primary-cl]",
+		button: `btn`,
+		headerWrapper: `relative z-[90] flex py-[25px] px-[40px] w-full items-center`,
 		fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
 	};
 
@@ -77,7 +78,7 @@ export default function FullScreenPlayerHeader() {
 
 				{/* right */}
 				<div
-					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition}`}
+					className={`absolute flex right-4 space-x-3 ${idle && classes.fadeTransition} ${classes.rightCta}`}
 				>
 					<CommentProvider target="song">
 						{currentSongData?.song && (
@@ -86,10 +87,14 @@ export default function FullScreenPlayerHeader() {
 					</CommentProvider>
 
 					{isOwnSong && activeTab === "Lyric" && (
-						<MyTooltip position="top-[calc(100%+8px)]" content="Edit lyric">
+						<MyTooltip
+							colorClasses="bg-[#333] text-white"
+							position="top-[calc(100%+8px)]"
+							content="Edit lyric"
+						>
 							<button
 								onClick={() => handleEdit()}
-								className={`p-2 ${classes.button}`}
+								className={` ${classes.button}`}
 							>
 								<DocumentTextIcon />
 							</button>
@@ -98,21 +103,30 @@ export default function FullScreenPlayerHeader() {
 
 					<MyPopup>
 						<MyPopupTrigger>
-							<MyTooltip position="top-[calc(100%+8px)]" content="Setting">
-								<button className={`${classes.button} p-2`}>
+							<MyTooltip
+								colorClasses="bg-[#333] text-white"
+								isWrapped={true}
+								position="top-[calc(100%+8px)]"
+								content="Setting"
+							>
+								<button className={`${classes.button} `}>
 									<Cog6ToothIcon />
 								</button>
 							</MyTooltip>
 						</MyPopupTrigger>
 						<MyPopupContent
-							className="top-[calc(100%+8px)] right-0 z-[99]"
+							className="top-[calc(100%+8px)] right-0"
 							animationClassName="origin-top-right"
 						>
 							<FullScreenPlayerSetting />
 						</MyPopupContent>
 					</MyPopup>
 
-					<MyTooltip position="top-[calc(100%+8px)]" content="Close">
+					<MyTooltip
+						colorClasses="bg-[#333] text-white"
+						position="top-[calc(100%+8px)]"
+						content="Close"
+					>
 						<button
 							onClick={() => setIsOpenFullScreen(false)}
 							className={`p-2 ${classes.button}`}

@@ -1,7 +1,13 @@
-import { useThemeContext } from "@/stores";
 import { formatTime } from "@/utils/appHelpers";
 import { getLinearBg } from "@/utils/getLinearBg";
-import { Dispatch, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 export type Status =
   | "playing"
@@ -17,7 +23,7 @@ type Props = {
   color?: string;
   statusFromParent?: Status;
   setStatusFromParent?: Dispatch<SetStateAction<Status>>;
-  statusRefFromParent?: MutableRefObject<Status>
+  statusRefFromParent?: MutableRefObject<Status>;
 };
 
 export default function useAudioControl({
@@ -26,23 +32,21 @@ export default function useAudioControl({
   color,
   setStatusFromParent,
   statusFromParent,
-  statusRefFromParent
+  statusRefFromParent,
 }: Props) {
-  const { theme } = useThemeContext();
   const [localStatus, setLocalStatus] = useState<Status>("paused");
   const [isClickPlay, setIsClickPlay] = useState(false);
 
   const status = statusFromParent || localStatus;
   const setStatus = setStatusFromParent || setLocalStatus;
 
-  const themeCode = useRef("");
   const statusRef = useRef<Status>(status);
 
   const progressLineRef = useRef<HTMLDivElement>(null);
   const currentTimeRef = useRef<HTMLDivElement>(null);
   const durationRef = useRef<HTMLDivElement>(null);
 
-  const _statusRef = statusRefFromParent || statusRef
+  const _statusRef = statusRefFromParent || statusRef;
 
   const play = () => {
     try {
@@ -87,11 +91,7 @@ export default function useAudioControl({
       currentTimeRef.current.innerText = formatTime(audioEle.currentTime);
 
     if (progressLineRef?.current)
-      progressLineRef.current.style.background = getLinearBg(
-        color || themeCode.current,
-        _progress,
-        baseColor,
-      );
+      progressLineRef.current.style.background = getLinearBg(_progress, {color, baseColor});
   };
 
   const handleTimeUpdate = () => {
@@ -162,13 +162,6 @@ export default function useAudioControl({
       }
     };
   }, [audioEle]);
-
-  // update time line background color
-  useEffect(() => {
-    themeCode.current = theme.content_code;
-
-    if (status !== "playing") updateProgress();
-  }, [theme]);
 
   useEffect(() => {
     _statusRef.current = status;

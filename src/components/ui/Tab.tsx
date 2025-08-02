@@ -1,6 +1,5 @@
-import { useThemeContext } from "@/stores";
 import { Button } from "..";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import { ReactNode } from "react";
 
 type Props<T> = {
   setTab: (v:T) => void;
@@ -19,16 +18,15 @@ export default function Tab<T>({
   tabs,
   className = "",
 }: Props<T>) {
-  const { theme } = useThemeContext();
 
   const classes = {
-    inActiveTab: ` hover:bg-${theme.alpha}`,
-    activeTab: `${theme.content_bg}`,
+    inActiveTab: ` hover:bg-[--a-5-cl]`,
+    activeTab: `bg-[--primary-cl] text-white`,
   };
 
   return (
     <div
-      className={`bg-${theme.alpha} ${disable ? "disable" : ""} p-1.5 space-x-1 rounded-full ${className}`}
+      className={`bg-[--a-5-cl] ${disable ? "disable" : ""} p-1.5 space-x-1 rounded-full ${className}`}
     >
       {tabs.map((t, i) => (
         <Button

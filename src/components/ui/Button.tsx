@@ -8,7 +8,6 @@ import {
 } from "react";
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
-import { useThemeContext } from "@/stores";
 
 const buttonVariant = cva("inline-flex space-x-1 font-[500] items-center ", {
   variants: {
@@ -20,7 +19,7 @@ const buttonVariant = cva("inline-flex space-x-1 font-[500] items-center ", {
       primary: "",
     },
     color: {
-      primary: "primary",
+      primary: "bg-[--primary-cl] text-white",
       clear: "",
     },
     size: {
@@ -73,7 +72,7 @@ function Button(
   }: Props,
   ref: Ref<ElementRef<"button">>,
 ) {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   return (
     <button
@@ -81,7 +80,7 @@ function Button(
       type="button"
       onClick={(e) => (onClick ? onClick(e) : "")}
       {...props}
-      className={`${color === "primary" ? theme.content_bg : ""}  ${buttonVariant({ variant, size, hover, rounded, className })}`}
+      className={`${buttonVariant({ color, variant, size, hover, rounded, className })}`}
       disabled={isLoading || disabled}
     >
       {isLoading ? <ArrowPathIcon className="w-6 animate-spin" /> : null}

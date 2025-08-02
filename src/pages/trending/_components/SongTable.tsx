@@ -12,9 +12,8 @@ export default function SongTable() {
   const { isFetching, songMap, setWeek, KEY, ...rest } = useSongTable();
 
   return (
-    <div className={`shadow-lg border border-black/5 rounded-xl p-5`}>
+    <div>
       <Title title="Week Table" className="mb-3" />
-
       <div className="mb-5 space-y-3">
         <Tab className="w-fit" render={(t) => t} {...rest} />
         <WeekSelect submit={(value) => setWeek(value)} />

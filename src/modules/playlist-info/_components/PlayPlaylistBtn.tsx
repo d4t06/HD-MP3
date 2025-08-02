@@ -2,7 +2,6 @@ import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
-import { useThemeContext } from "@/stores";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
@@ -17,7 +16,6 @@ type PlayBtnProps = {
 };
 
 function PlayBtn({ onClick, children, text }: PlayBtnProps) {
-  const { theme } = useThemeContext();
   const { playlistSongs } = useSelector(selectCurrentPlaylist);
 
   return (
@@ -25,7 +23,8 @@ function PlayBtn({ onClick, children, text }: PlayBtnProps) {
       onClick={onClick}
       disabled={!playlistSongs.length}
       size={"clear"}
-      className={`rounded-full px-5 py-1 ${theme.content_bg}`}
+      color="primary"
+      className={`rounded-full px-5 py-1`}
     >
       {children}
       <span className="font-playwriteCU leading-[2.2]">{text}</span>

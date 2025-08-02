@@ -1,13 +1,13 @@
 import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useThemeContext } from "@/stores";
 import { useRef } from "react";
 import { Modal, TimerModal, ModalRef, MyTooltip } from "@/components";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import {
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "@/stores/redux/PlayStatusSlice";
 
 export default function SleepTimerButton() {
-  const { theme } = useThemeContext();
-
   const dispatch = useDispatch();
   const { countDown } = useSelector(selectAllPlayStatusStore);
 
@@ -20,7 +20,7 @@ export default function SleepTimerButton() {
 
   const classes = {
     container: "w-[54px] sm:w-[50px] flex justify-center",
-    button: `rounded-[99px]  hover:bg-${theme.alpha} p-[5px]`,
+    button: `rounded-[99px] p-[5px] hover:bg-[--a-5-cl]`,
     itemContainer: "flex justify-between items-center min-h-[30px]",
     text: "text-base text-[#ccc]",
   };
@@ -30,7 +30,10 @@ export default function SleepTimerButton() {
       <div className={classes.container}>
         {!!countDown ? (
           <MyTooltip content="Clear timer">
-            <button className="group flex items-center" onClick={handleTriggerClick}>
+            <button
+              className="group flex items-center"
+              onClick={handleTriggerClick}
+            >
               <span className="text-base opacity-70 sm:text-sm group-hover:hidden">
                 {countDown.toString().padStart(2, "0")}
               </span>

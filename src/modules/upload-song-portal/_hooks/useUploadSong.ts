@@ -2,7 +2,6 @@ import { ChangeEvent, useRef, useEffect, useState } from "react";
 import {
   useAuthContext,
   useSongContext,
-  useThemeContext,
   useToastContext,
   useUploadContext,
 } from "@/stores";
@@ -20,7 +19,6 @@ export default function useUploadSongs() {
   // stores
   const { setErrorToast, setSuccessToast } = useToastContext();
   const { user, setUser } = useAuthContext();
-  const { isDev } = useThemeContext();
 
   const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } =
     useSongContext();
@@ -205,7 +203,7 @@ export default function useUploadSongs() {
       setSuccessToast(`${processSongsList.length} songs uploaded`);
 
       const finish = Date.now();
-      if (isDev)
+      if (import.meta.env.DEV)
         console.log(">>> upload songs finished after", (finish - start) / 1000);
     } catch (error) {
       console.log({ message: error });

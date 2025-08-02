@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     container: {
@@ -23,20 +24,8 @@ export default {
         sans: ["Comfortaa", "system-ui"],
       },
       screens: {
-        'semi-lg': '896px'
-      }
+        "semi-lg": "896px",
+      },
     },
-    
   },
-  safelist: [
-    "bg-[#000]/5",
-    "bg-[#fff]/5",
-    "text-[#000]/5",
-    "text-[#fff]/5",
-    "hover:bg-[#000]/5",
-    "hover:bg-[#fff]/5",
-    "border-[#fff]/5",
-    "border-[#000]/5",
-  ],
-  plugins: [],
 };

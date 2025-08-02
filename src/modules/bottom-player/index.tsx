@@ -38,7 +38,7 @@ export default function BottomPlayer() {
   };
 
   const classes = {
-    wrapper: `bottom-player hidden md:block border-${theme.alpha} fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
+    wrapper: `bottom-player hidden md:block border-[--a-5-cl] fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
 
     controlWrapper: `flex max-w-[420px] flex-grow ${
@@ -47,7 +47,7 @@ export default function BottomPlayer() {
         : "flex-col justify-center"
     }`,
     right: `w-1/4 flex items-center justify-end`,
-    blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 ${theme.bottom_player_bg}`,
+    blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 bg-[--player-cl]`,
   };
 
   return (
@@ -57,7 +57,7 @@ export default function BottomPlayer() {
         isOpenFullScreen
           ? "border-transparent"
           : theme.image
-            ? theme.bottom_player_bg
+            ? 'bg-[--player-cl]'
             : ""
       } ${shouldHide && "translate-y-[100%] "} `}
     >
@@ -89,7 +89,7 @@ export default function BottomPlayer() {
             <MyTooltip content="Fullscreen mode">
               <button
                 onClick={handleOpenFullScreen}
-                className={`rounded-[99px]  hover:bg-${theme.alpha}  p-[5px]`}
+                className={`rounded-[99px]  hover:bg-[--a-5-cl]  p-[5px]`}
               >
                 <ChevronUpIcon className="w-6" />
               </button>
@@ -98,13 +98,13 @@ export default function BottomPlayer() {
             <MyTooltip content="Queue">
               <button
                 onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                className={`ml-1 hover:bg-${theme.alpha} rounded-md p-[5px]`}
+                className={`ml-1 hover:bg-[--a-5-cl] rounded-md p-[5px]`}
               >
                 <QueueListIcon className="w-6" />
               </button>
             </MyTooltip>
 
-            <div className={`w-[2px] h-[26px] ml-2 bg-${theme.alpha}`}></div>
+            <div className={`w-[2px] h-[26px] ml-2 bg-[--a-5-cl]`}></div>
 
             <SleepTimerButton />
           </div>

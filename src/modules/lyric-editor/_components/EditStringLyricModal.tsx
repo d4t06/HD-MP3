@@ -1,5 +1,4 @@
 import { Button, ModalContentWrapper, ModalHeader } from "@/components";
-import { useThemeContext } from "@/stores";
 import { ElementRef, useEffect, useRef, useState } from "react";
 import { useEditLyricContext } from "./EditLyricContext";
 
@@ -10,8 +9,6 @@ type Props = {
 const LINE_HEIGHT = 40;
 
 export default function EditStringLyricModal({ closeModal }: Props) {
-  const { theme } = useThemeContext();
-
   const { baseLyric, setBaseLyric, baseLyricArr, setIsChanged, lyrics } =
     useEditLyricContext();
   const [value, setValue] = useState(baseLyric);
@@ -35,7 +32,7 @@ export default function EditStringLyricModal({ closeModal }: Props) {
     const newArray = [...baseLyricArr];
 
     newArray[index] =
-      `<div style="color: transparent; border-radius: 4px; background-color: ${theme.content_code}">${newArray[index]}</div>`;
+      `<div style="color: transparent; border-radius: 4px; background-color: var(--a-10-cl);">${newArray[index]}</div>`;
 
     return newArray.join("\r\n");
   }
@@ -70,7 +67,7 @@ export default function EditStringLyricModal({ closeModal }: Props) {
       <ModalHeader closeModal={closeModal} title="Edit lyric" />
 
       <div
-        className={`relative h-[60vh] overflow-hidden rounded-md ${location.hash.includes("/dashboard") ? 'bg-black/10' : 'bg-white/10'} `}
+        className={`relative h-[60vh] overflow-hidden rounded-md ${location.hash.includes("/dashboard") ? "bg-black/10" : "bg-white/10"} `}
       >
         <div
           ref={backRef}

@@ -1,5 +1,5 @@
 import useFunctionDebounce from "@/hooks/useFunctionDebounce";
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { usePlayerContext } from "@/stores";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import LyricContextProvider from "@/stores/LyricContext";
 import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
@@ -16,7 +16,6 @@ export default function FullScreenPlayerContent() {
 
   const { activeTab, isOpenFullScreen, idle } = usePlayerContext();
 
-  const { theme } = useThemeContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
   const { queueSongs, currentQueueId } = useSelector(selectSongQueue);
@@ -47,7 +46,7 @@ export default function FullScreenPlayerContent() {
 
   const classes = {
     songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-350px/2)]`,
-    absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-white/30 rounded-full ${theme.content_hover_bg}`,
+    absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-white/5 rounded-full`,
     lyricTabContainer:
       "px-[40px] min-[1536px]:container  min-[1536px]:px-[200px] h-full flex items-center justify-center flex-row",
     fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
@@ -104,7 +103,7 @@ export default function FullScreenPlayerContent() {
             onClick={() => handleClickPrevious()}
             className={`${classes.absoluteButton} left-[20px]`}
           >
-            <ChevronLeftIcon className="w-[30px]" />
+            <ChevronLeftIcon className="w-6" />
           </Button>
 
           <Button
@@ -113,7 +112,7 @@ export default function FullScreenPlayerContent() {
             onClick={() => handleClickNext()}
             className={`${classes.absoluteButton} right-[20px]`}
           >
-            <ChevronRightIcon className="w-[30px]" />
+            <ChevronRightIcon className="w-6" />
           </Button>
         </>
       )}

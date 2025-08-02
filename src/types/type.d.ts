@@ -115,7 +115,7 @@ type SongLyricSchema = Omit<SongLyric, "lyrics" | "id"> & {
 
 type ThemeKeyType =
   | "red"
-  | "green_light"
+  | "light_green"
   | "deep_blue"
   | "gray"
   | "white"
@@ -127,19 +127,8 @@ type ThemeType = {
   name: string;
   id: ThemeKeyType;
   type: "light" | "dark";
-  bottom_player_bg: string;
-  side_bar_bg: string;
   container: string;
-  content_text: string;
-  content_hover_text: string;
-  content_border: string;
-  content_hover_border: string;
-  content_bg: string;
-  content_code: string;
-  container_code: string;
-  content_hover_bg: string;
-  text_color: string;
-  modal_bg: string;
+  border: string;
   image?: string;
 };
 

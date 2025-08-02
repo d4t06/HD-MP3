@@ -21,7 +21,7 @@ export default function FullScreenPlayerTab({ variant = "desktop" }: Props) {
   const tabs = variant === "desktop" ? desktopTabs : mobileTabs;
 
   const classes = {
-    item: "px-3 md:px-8 leading-[30px] font-[600] cursor-pointer  rounded-full",
+    item: "px-3 md:px-8 leading-[30px] font-bold cursor-pointer  rounded-full",
     fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
   };
 

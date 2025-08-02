@@ -1,5 +1,3 @@
-import { useThemeContext } from "@/stores";
-
 type Props = {
   cb: () => void;
   active: boolean;
@@ -7,9 +5,12 @@ type Props = {
   inActiveBg?: string;
 };
 
-export default function Switch({ cb, active, inActiveBg = "bg-white/10", size = "default" }: Props) {
-  const { theme } = useThemeContext();
-
+export default function Switch({
+  cb,
+  active,
+  inActiveBg = "bg-[--a-5-cl]",
+  size = "default",
+}: Props) {
   const classes = {
     circle: `${
       size === "default" ? "w-[20px] h-[20px]" : "w-[16px] h-[16px]"
@@ -24,8 +25,7 @@ export default function Switch({ cb, active, inActiveBg = "bg-white/10", size = 
       className={`relative  cursor-pointer ${
         size === "default" ? "h-[24px]" : "h-[20px]"
       } rounded-[99px] w-[40px] 
-         ${active ? theme.content_bg : inActiveBg} `}
-
+         ${active ? "bg-[--primary-cl]" : inActiveBg} `}
     >
       <div
         className={`${classes.circle} ${active ? classes.active : classes.inActive}`}

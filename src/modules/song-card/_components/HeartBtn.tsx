@@ -1,5 +1,4 @@
 import useSongItemAction from "@/modules/song-item/_hooks/useSongItemAction";
-import { useThemeContext } from "@/stores";
 import { HeartIcon } from "@heroicons/react/20/solid";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
@@ -9,7 +8,6 @@ type Props = {
 };
 
 export default function HeartBtn({ isLiked, song }: Props) {
-  const { theme } = useThemeContext();
   const { action, loading } = useSongItemAction();
 
   return (
@@ -17,7 +15,7 @@ export default function HeartBtn({ isLiked, song }: Props) {
       {loading ? (
         <ArrowPathIcon className=" animate-spin" />
       ) : (
-        <HeartIcon className={isLiked ? theme.content_text : ""} />
+        <HeartIcon className={isLiked ? "text-[--primary-cl]" : ""} />
       )}
     </button>
   );

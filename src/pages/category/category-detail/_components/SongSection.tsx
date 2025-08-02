@@ -1,6 +1,6 @@
-import { PlaylistList, Skeleton, Title } from "@/components";
+import { Title } from "@/components";
 import { songItemSkeleton } from "@/components/skeleton";
-import { useGetPlaylists, useGetSongs, useSetSong } from "@/hooks";
+import { useGetSongs, useSetSong } from "@/hooks";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
 import SongSelectProvider from "@/stores/SongSelectContext";

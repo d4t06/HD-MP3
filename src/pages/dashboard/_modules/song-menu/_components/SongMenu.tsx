@@ -1,6 +1,6 @@
 // import useDashboardSongItemAction, {
 // } from "@/pages/dashboard/_hooks/useSongItemAction";
-import { DashboardSongMenuWrapper } from "..";
+import { DashboardSongPopupWrapper } from "..";
 import { Link } from "react-router-dom";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 
@@ -52,7 +52,7 @@ export default function SongMenu({ song }: { song: Song }) {
 
   return (
     <>
-      <DashboardSongMenuWrapper song={song}>
+      <DashboardSongPopupWrapper song={song}>
         <Link to={`/dashboard/lyric/${song.id}`}>
           <DocumentTextIcon className={`w-5`} />
 
@@ -63,7 +63,7 @@ export default function SongMenu({ song }: { song: Song }) {
 
           <span>Delete</span>
         </button>*/}
-      </DashboardSongMenuWrapper>
+      </DashboardSongPopupWrapper>
 
      {/* <Modal ref={modalRef} variant="animation">
         {renderModal()}

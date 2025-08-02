@@ -1,5 +1,5 @@
 import { useAddPlaylist } from "@/hooks";
-import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
+// import usePlaylistAction from "@/modules/playlist-info/_hooks/usePlaylistAction";
 import { myUpdateDoc } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 
@@ -10,9 +10,9 @@ export default function useMyMusicAddPlaylist() {
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const { addPlaylist, isFetching } = useAddPlaylist();
-  const { action, isFetching: actionFetching } = usePlaylistAction();
+  // const { action, isFetching: actionFetching } = usePlaylistAction();
 
-  const IS_FETCHING = isFetching || actionFetching;
+  // const IS_FETCHING = isFetching || actionFetching;
 
   const myMusicAddPlaylist = async (
     playlist: PlaylistSchema,
@@ -51,5 +51,5 @@ export default function useMyMusicAddPlaylist() {
     }
   };
 
-  return { isFetching: IS_FETCHING, myMusicAddPlaylist };
+  return { isFetching, myMusicAddPlaylist };
 }

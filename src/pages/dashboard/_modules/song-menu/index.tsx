@@ -4,7 +4,7 @@ import {
   MyPopupContent,
   MyPopupTrigger,
   VerticalMenu,
-  MenuWrapper,
+  PopupWrapper,
 } from "@/components";
 
 import { Bars3Icon } from "@heroicons/react/24/outline";
@@ -38,18 +38,18 @@ type SongsMenuProps = {
   children: ReactNode;
 };
 
-export function DashboardSongMenuWrapper({ song, children }: SongsMenuProps) {
+export function DashboardSongPopupWrapper({ song, children }: SongsMenuProps) {
   return (
     <>
       <MyPopupContent className="w-[260px]">
-        <MenuWrapper>
+        <PopupWrapper>
           <SongInfo song={song} />
           <VerticalMenu>{children}</VerticalMenu>
 
           {/* <p className="text-sm text-center opacity-70 mt-3">
             Provided by {song.distributor}
           </p> */}
-        </MenuWrapper>
+        </PopupWrapper>
       </MyPopupContent>
     </>
   );

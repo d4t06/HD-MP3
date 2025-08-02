@@ -1,7 +1,7 @@
 import CommentList from "../comment";
 import useGetSongCardComment from "./_hooks/useGetComment";
 import { Button, Title } from "@/components";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 import { XMarkIcon } from "@heroicons/react/20/solid";
 import { useCommentContext } from "../comment/components/CommentContext";
 import UserInput from "../comment/components/UserInput";
@@ -10,7 +10,6 @@ import { useSongsContext } from "@/pages/for-you/_stores/SongsContext";
 export default function SongCardComment() {
 
   const { user } = useAuthContext()
-  const { themeClass } = useThemeContext();
 
   const { currentSong } = useSongsContext()
   const { isOpenComment, setIsOpenComment } = useCommentContext();
@@ -24,7 +23,7 @@ export default function SongCardComment() {
     : "semi-lg:right-[-100%] hidden semi-lg:block";
 
   const classes = {
-    border: `${themeClass("border-black/20", "border-white/20")}`,
+    border: "border-black/20 dark:border-white/20",
   };
 
   return (

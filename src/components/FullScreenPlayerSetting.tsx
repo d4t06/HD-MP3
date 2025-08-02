@@ -1,11 +1,12 @@
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { usePlayerContext } from "@/stores";
 import { setLocalStorage } from "@/utils/appHelpers";
-import { Button, PopupWrapper, Switch } from ".";
+import { PopupWrapper, Switch } from ".";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import VertialMenu from "./popup/VerticalMenu";
 
 export default function FullScreenPlayerSetting() {
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
 
   const {
     playerConig: { isCrossFade, isEnableBeat, lyricSize, songBackground },
@@ -37,56 +38,52 @@ export default function FullScreenPlayerSetting() {
 
     // audioRef.current.currentTime = currentTime // fix scroll top lyric list
 
-
     updatePlayerConfig({ isEnableBeat: newValue });
+  };
+
+  const getActiveSize = (size: typeof lyricSize) => {
+    if (size === lyricSize) return "bg-[--primary-cl]";
+    return "bg-[--a-5-cl]";
   };
 
   const classes = {
     disableBtn: "bg-white/10 bg-opacity-20",
-    lyricSizeBtn: `group/text justify-center !hover:brightness-100 font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative ${theme.content_hover_bg}`,
-    itemContainer: `flex justify-between  px-3 py-2 items-center min-h-[30px] hover:bg-[#fff]/5`,
+    lyricSizeBtn: `justify-center rounded-full hover:bg-[--a-10-cl]  font-[600] h-[30px] w-[30px] sm:h-[26px] sm:w-[26px] relative`,
+    itemContainer: `justify-between min-h-[30px]`,
     text: "text-sm",
   };
 
   return (
     <>
-      <div className="w-[240px] sm:w-[220px]">
-        <PopupWrapper p={"clear"} className="text-white py-3" theme={theme}>
+      <PopupWrapper
+        colorClasses="bg-[#333] text-white"
+        className="w-[240px] sm:w-[290px]"
+      >
+        <VertialMenu dismiss={false}>
           <div className={`${classes.itemContainer}`}>
             <p className={classes.text}>Lyric size</p>
             <div className="flex space-x-[8px]">
-              <Button
+              <button
                 onClick={() => handleChangeLyricSize("small")}
-                variant={"circle"}
-                size={"clear"}
-                className={`${
-                  lyricSize === "small" ? theme.content_bg : classes.disableBtn
-                } ${classes.lyricSizeBtn}`}
+                className={`${getActiveSize("small")} ${classes.lyricSizeBtn}`}
               >
                 <span className="leading-[1] text-[11px]">A</span>
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => handleChangeLyricSize("medium")}
-                variant={"circle"}
-                size={"clear"}
-                className={`${
-                  lyricSize === "medium" ? theme.content_bg : classes.disableBtn
-                } ${classes.lyricSizeBtn}`}
+                className={`${getActiveSize("medium")} ${classes.lyricSizeBtn}`}
               >
                 <span className="leading-[1] text-[13px]">A</span>
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={() => handleChangeLyricSize("large")}
-                variant={"circle"}
-                size={"clear"}
-                className={`${
-                  lyricSize === "large" ? theme.content_bg : classes.disableBtn
-                } ${classes.lyricSizeBtn}`}
+                className={`${getActiveSize("large")} ${classes.lyricSizeBtn}`}
               >
                 <span className="leading-[1] text-[15px]">A</span>
-              </Button>
+              </button>
             </div>
           </div>
+
           <div className={`${classes.itemContainer}`}>
             <p className={classes.text}>Song background</p>
             <Switch
@@ -102,6 +99,7 @@ export default function FullScreenPlayerSetting() {
               <Switch size="thin" active={isEnableBeat} cb={handleToggleBeat} />
             </div>
           )}
+
           <div className={`${classes.itemContainer}`}>
             <p className={classes.text}>Cross fade</p>
             <Switch
@@ -110,8 +108,8 @@ export default function FullScreenPlayerSetting() {
               cb={() => updatePlayerConfig({ isCrossFade: !isCrossFade })}
             />
           </div>
-        </PopupWrapper>
-      </div>
+        </VertialMenu>
+      </PopupWrapper>
     </>
   );
 }

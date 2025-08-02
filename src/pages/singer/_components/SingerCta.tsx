@@ -6,18 +6,16 @@ import {
   MyPopup,
   MyPopupContent,
   MyPopupTrigger,
-  MenuWrapper,
+  PopupWrapper,
   VerticalMenu,
 } from "@/components";
 import { useRef, useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import PlaySingerSongBtn from "./PlayBtn";
 import { useSingerContext } from "./SingerContext";
-import { useThemeContext } from "@/stores";
 import HearBtn from "./HearBtn";
 
 export default function SingerCta() {
-  const { theme } = useThemeContext();
   const [modal, setModal] = useState<"edit" | "delete" | "more" | "">("");
   const modalRef = useRef<ModalRef>(null);
 
@@ -38,28 +36,28 @@ export default function SingerCta() {
       </button>
 
       <div className="!mt-auto">
-        <div className="space-x-2 flex items-end">
+        <div className="flex items-end">
           <PlaySingerSongBtn />
 
-          <HearBtn />
+          <div className="flex space-x-2 ml-3 [&_button]:p-2 [&_svg]:w-6 hover:[&_button]:bg-[--a-5-cl] [&_button]:rounded-full">
+            <HearBtn />
 
-          <MyPopup>
-            <MyPopupTrigger>
-              <button
-                className={`p-2 bg-${theme.alpha} hover:brightness-95 rounded-full`}
-              >
-                <Bars3Icon className="w-5" />
-              </button>
-            </MyPopupTrigger>
+            <MyPopup appendOnPortal>
+              <MyPopupTrigger>
+                <button>
+                  <Bars3Icon />
+                </button>
+              </MyPopupTrigger>
 
-            <MyPopupContent>
-              <MenuWrapper className="w-[140px]">
-                <VerticalMenu>
-                  <CopyLinkMenuItem />
-                </VerticalMenu>
-              </MenuWrapper>
-            </MyPopupContent>
-          </MyPopup>
+              <MyPopupContent position="right-bottom" origin="top left">
+                <PopupWrapper className="w-[140px]">
+                  <VerticalMenu>
+                    <CopyLinkMenuItem />
+                  </VerticalMenu>
+                </PopupWrapper>
+              </MyPopupContent>
+            </MyPopup>
+          </div>
         </div>
       </div>
 

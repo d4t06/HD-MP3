@@ -4,8 +4,15 @@ import {
   InformationCircleIcon,
   PaintBrushIcon,
 } from "@heroicons/react/24/outline";
-import { AppInfo, Appearance, Avatar, ConfirmModal, Modal, ModalRef } from "@/components";
-import { useAuthContext, useThemeContext } from "@/stores";
+import {
+  AppInfo,
+  Appearance,
+  Avatar,
+  ConfirmModal,
+  Modal,
+  ModalRef,
+} from "@/components";
+import { useAuthContext } from "@/stores";
 import { useMemo, useRef, useState } from "react";
 import useAuthAction from "@/hooks/useAuthActiont";
 import { MobileLinkSkeleton } from "@/components/skeleton";
@@ -14,7 +21,6 @@ import { Link } from "react-router-dom";
 type Modal = "theme" | "info" | "logout";
 
 export default function MobileSetting() {
-  const { theme } = useThemeContext();
   const { loading: userLoading, user } = useAuthContext();
   const modalRef = useRef<ModalRef>(null);
 
@@ -60,7 +66,7 @@ export default function MobileSetting() {
 
   // define styles
   const classes = {
-    linkItem: `py-3 text-lg w-full border-b border-${theme.alpha} space-x-2 last:border-none flex items-center`,
+    linkItem: `py-3 text-lg w-full border-b border-[--a-5-cl] space-x-2 last:border-none flex items-center`,
     icon: `w-7`,
   };
 
@@ -69,7 +75,7 @@ export default function MobileSetting() {
       <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>
 
       {user && (
-        <div className={`bg-${theme.alpha} p-3 rounded-md flex mb-3`}>
+        <div className={`bg-[--a-5-cl] p-3 rounded-md flex mb-3`}>
           <Avatar className="h-[65px] w-[65px]" />
           <div className="ml-3">
             <p className="text-lg font-[500]">{user.display_name}</p>
@@ -82,25 +88,34 @@ export default function MobileSetting() {
         [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
       ) : (
         <div className="">
-          <button className={classes.linkItem} onClick={() => openModal("theme")}>
+          <button
+            className={classes.linkItem}
+            onClick={() => openModal("theme")}
+          >
             <PaintBrushIcon className={classes.icon} />
             <span>Theme</span>
           </button>
 
-          <button className={classes.linkItem} onClick={() => openModal("info")}>
+          <button
+            className={classes.linkItem}
+            onClick={() => openModal("info")}
+          >
             <InformationCircleIcon className={classes.icon} />
             <span>Info</span>
           </button>
 
           {user?.role === "ADMIN" && (
-            <Link to={'/dashboard'} className={classes.linkItem}>
+            <Link to={"/dashboard"} className={classes.linkItem}>
               <ComputerDesktopIcon className={classes.icon} />
               <span>Dashboard</span>
             </Link>
           )}
 
           {user && (
-            <button className={classes.linkItem} onClick={() => openModal("logout")}>
+            <button
+              className={classes.linkItem}
+              onClick={() => openModal("logout")}
+            >
               <ArrowRightOnRectangleIcon className={classes.icon} />
               <span>Logout</span>
             </button>

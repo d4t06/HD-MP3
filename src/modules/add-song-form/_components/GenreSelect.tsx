@@ -1,8 +1,8 @@
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { useRef, useState } from "react";
-import { ModalRef, Title } from "@/components";
+import { ModalRef } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import { Button, Frame } from "@/pages/dashboard/_components";
+import { Button} from "@/pages/dashboard/_components";
 import GenreSearchModal from "./GenreSearchModal";
 import ItemRightCtaFrame from "@/pages/dashboard/_components/ui/ItemRightCtaFrame";
 import { TrashIcon } from "@heroicons/react/24/outline";

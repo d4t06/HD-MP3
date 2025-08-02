@@ -2,14 +2,12 @@ import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { RecentSearch } from "../_hooks/useSearch";
 import RecentSearchItem from "./RecentSearchItem";
-import { useThemeContext } from "@/stores";
 type Props = {
 	words: string[];
 	recentSearchs: RecentSearch[];
 };
 
 export default function RecentSearchList({ words, recentSearchs }: Props) {
-	const { theme } = useThemeContext();
 
 	const classes = {
 		listWrapper:
@@ -18,17 +16,17 @@ export default function RecentSearchList({ words, recentSearchs }: Props) {
 
 	return (
 		<>
-			<div className="text-sm font-[500] mb-2">Suggestion keyword</div>
-			<div className={`${classes.listWrapper} ${theme.type === 'light' ? 'hover:[&>*]:bg-black/5' : 'hover:[&>*]:bg-white/5'}`}>
+			<div className="text-sm font-semibold mb-2">Suggestion keyword</div>
+			<div className={`${classes.listWrapper} hover:[&>*]:bg-[--a-5-cl]`}>
 				{words.map((w, i) => (
 					<Link key={i} to={`/search?q=${w}`}>
 						<ArrowTrendingUpIcon className="w-5" />
-						<span>{w}</span>
+						<span className="text-sm">{w}</span>
 					</Link>
 				))}
 			</div>
 
-			<div className="text-sm font-[500] my-2">Recent search</div>
+			<div className="text-sm font-semibold my-2">Recent search</div>
 			<div className={classes.listWrapper}>
 				{recentSearchs.map((item, i) => (
 					<RecentSearchItem item={item} key={i} />

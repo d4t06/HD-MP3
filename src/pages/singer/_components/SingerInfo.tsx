@@ -1,28 +1,24 @@
-import { Image, Skeleton, Square } from "@/components";
+import { Image, Skeleton } from "@/components";
 import { useSingerContext } from "./SingerContext";
 import SingerCta from "./SingerCta";
-import { useThemeContext } from "@/stores";
 
 import simonCat from "@/assets/simon_empty.png";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function SingerInfo() {
-  const { theme } = useThemeContext();
   const { isFetching, singer } = useSingerContext();
 
   if (!isFetching && !singer) return <></>;
 
   return (
     <>
-      <div
-        className={`md:flex bg-transparent relative z-0 pb-5 md:p-10 ${theme.text_color} `}
-      >
+      <div className={`md:flex bg-transparent relative z-0 pb-5 md:p-10 `}>
         <div
           className={`absolute overflow-hidden -left-10 -top-[100px] -right-10 inset-0`}
         >
           <div className="relative h-full w-full">
             <div
-              className={`absolute z-[-5] inset-0 ${theme.type === "light" ? "bg-white/50" : "bg-black/50"}  `}
+              className={`absolute z-[-5] inset-0 bg-white/50 dark:bg-black/50  `}
             ></div>
             <img
               src={singer?.image_url || simonCat}
@@ -35,9 +31,11 @@ export default function SingerInfo() {
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (
-            <Square>
-              <Image src={singer?.image_url} blurHashEncode={singer?.blurhash_encode} />
-            </Square>
+            <Image
+              src={singer?.image_url}
+              blurHashEncode={singer?.blurhash_encode}
+              className="object-cover"
+            />
           )}
         </div>
         <div className="flex-grow z-0 relative flex flex-col mt-5 space-y-2.5  md:mt-0 md:ml-5">

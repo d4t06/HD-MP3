@@ -5,13 +5,12 @@ import {
   HeartIcon,
   MusicalNoteIcon,
 } from "@heroicons/react/24/outline";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 import useAuthAction from "@/hooks/useAuthActiont";
 import { MobileLinkSkeleton } from "@/components/skeleton";
 import { Button, LinkItem, Title } from "@/components";
 
 export default function MobileNav() {
-  const { theme } = useThemeContext();
   const { loading: userLoading, user } = useAuthContext();
   const { action } = useAuthAction();
 
@@ -27,13 +26,12 @@ export default function MobileNav() {
   // define styles
   const classes = {
     icon: `w-7 mr-2 inline`,
-    linkItem: `py-3 border-b text-lg border-${theme.alpha} last:border-none`,
-    button: `${theme.content_bg} rounded-full`,
+    linkItem: `py-3 border-b text-lg border-[--a-5-cl] last:border-none`,
   };
 
   return (
     <div className="block md:hidden">
-    <Title title="Library" className="mb-1" />
+      <Title title="Library" className="mb-1" />
       {userLoading ? (
         [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
       ) : (
@@ -43,7 +41,7 @@ export default function MobileNav() {
               <LinkItem
                 to="/my-music"
                 className={classes.linkItem}
-                icon={<MusicalNoteIcon className={classes.icon + theme.content_text} />}
+                icon={<MusicalNoteIcon className={classes.icon} />}
                 label="All songs"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
@@ -51,7 +49,7 @@ export default function MobileNav() {
               <LinkItem
                 to="/my-music"
                 className={classes.linkItem}
-                icon={<HeartIcon className={classes.icon + theme.content_text} />}
+                icon={<HeartIcon className={classes.icon} />}
                 label="Favorite"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
@@ -59,15 +57,16 @@ export default function MobileNav() {
               <LinkItem
                 to="/my-music"
                 className={classes.linkItem}
-                icon={<ClockIcon className={classes.icon + theme.content_text} />}
+                icon={<ClockIcon className={classes.icon} />}
                 label="Recent"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
             </>
           ) : (
             <Button
+              color="primary"
               onClick={handleLogIn}
-              className={`${theme.content_bg} rounded-md`}
+              className={`rounded-md`}
             >
               <ArrowRightOnRectangleIcon className="w-7" />
               <span className="font-playwriteCU leading-[2.2]">Login</span>

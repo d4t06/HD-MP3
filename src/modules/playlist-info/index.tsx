@@ -6,7 +6,6 @@ import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
 import { Link } from "react-router-dom";
-import { useThemeContext } from "@/stores";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
 import CommentProvider from "../comment/components/CommentContext";
@@ -26,7 +25,6 @@ export default function PLaylistInfo({
   variant,
 }: Props) {
   // stores
-  const { theme } = useThemeContext();
   const { currentSongData } = useSelector(selectSongQueue);
   // const { playStatus } = useSelector(selectAllPlayStatusStore);
 
@@ -37,7 +35,7 @@ export default function PLaylistInfo({
   const classes = {
     container: "flex flex-col md:flex-row lg:flex-col",
     smallText: "",
-    link: `${theme.content_hover_text} hover:underline`,
+    link: `hover:text-[--primary-cl] hover:underline`,
   };
 
   const renderAlbumInfo = () => {
@@ -46,8 +44,8 @@ export default function PLaylistInfo({
     return (
       <>
         <Link
-          className={`block hover:underline ${theme.content_hover_text} ${classes.smallText}`}
-          to={`/singer/${playlist.singers[0].id}}`}
+          className={`block hover:underline hover:text-[--primary-cl] ${classes.smallText}`}
+          to={`/singer/${playlist.singers[0].id}`}
         >
           {playlist.singers[0].name}
         </Link>
@@ -117,17 +115,19 @@ export default function PLaylistInfo({
   return (
     <>
       <div className={classes.container}>
-        {showSkeleton ? (
-          <Skeleton className="pt-[100%] rounded-lg" />
-        ) : (
-          playlist && (
-            <PlaylistItem
-              data={playlist}
-              active={isActivePlaylist}
-              variant="image"
-            />
-          )
-        )}
+        <div className="md:w-[200px] lg:w-full">
+          {showSkeleton ? (
+            <Skeleton className="pt-[100%] rounded-lg" />
+          ) : (
+            playlist && (
+              <PlaylistItem
+                data={playlist}
+                active={isActivePlaylist}
+                variant="image"
+              />
+            )
+          )}
+        </div>
 
         <div
           className={`flex flex-col items-center mt-3 md:items-start md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:items-center`}
@@ -142,7 +142,11 @@ export default function PLaylistInfo({
           ) : (
             playlist && (
               <>
-                <Title className="text-center" variant={"h1"} title={playlist.name} />
+                <Title
+                  className="text-center"
+                  variant={"h2"}
+                  title={playlist.name}
+                />
                 <div className="mt-2.5 text-[#666] text-center md:text-left lg:text-center text-sm">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
@@ -153,7 +157,7 @@ export default function PLaylistInfo({
           {playlist && (
             <div className="flex flex-col items-center mt-3 md:flex-row md:mt-auto lg:flex-col lg:mt-3">
               <PlayPlaylistBtn />
-              <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0">
+              <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0 hover:[&_button]:bg-[--a-5-cl] [&_button]:p-2">
                 <PlaylistMenuBtn variant={variant} />
 
                 {variant !== "my-playlist" && isLiked !== null && (

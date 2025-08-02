@@ -1,5 +1,4 @@
 import useSearch, { RecentSearch } from "./_hooks/useSearch";
-import { useThemeContext } from "@/stores";
 import {
   convertToEn,
   getDisable,
@@ -18,7 +17,6 @@ import RecentSearchList from "./_components/RecentSearchList";
 import { myAddDoc } from "@/services/firebaseService";
 
 export default function Search() {
-  const { theme } = useThemeContext();
 
   const navigator = useNavigate();
 
@@ -41,11 +39,11 @@ export default function Search() {
   );
 
   const classes = {
-    container: `relative h-[40px] flex px-3 w-full md:w-[300px] ${theme.text_color} shadow-md`,
-    unFocusContainer: `bg-${theme.alpha} rounded-[20px]`,
-    focusedContainer: `${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} rounded-[20px_20px_0_0]`,
+    container: `relative h-[40px] flex px-3 w-full md:w-[300px] shadow-md`,
+    unFocusContainer: `bg-[--sidebar-cl] rounded-[20px]`,
+    focusedContainer: `bg-[--popup-cl] rounded-[20px_20px_0_0]`,
     input: `bg-transparent outline-none placeholder:[#666] w-full`,
-    searchResultContainer: `overflow-auto ${theme.type === "dark" ? theme.modal_bg : theme.side_bar_bg} shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] flex flex-col`,
+    searchResultContainer: `overflow-auto bg-[--popup-cl] shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] flex flex-col`,
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -106,7 +104,7 @@ export default function Search() {
             />
           ) : (
             <>
-              <div className="text-sm font-[500] mb-2">Suggestion results</div>
+              <div className="text-sm font-semibold mb-2">Suggestion results</div>
 
               <div className={`overflow-auto no-scrollbar`}>
                 <SearchbarSongList songs={searchResult} />

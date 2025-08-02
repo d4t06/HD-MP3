@@ -3,9 +3,7 @@ export * from "./popup";
 
 export { default as Button } from "./ui/Button";
 export { default as Image } from "./ui/Image";
-export { default as Square } from "./ui/Square";
 export { default as Input } from "./ui/Input";
-export { default as PopupWrapper } from "./ui/PopupWrapper";
 export { default as LinkItem } from "./ui/LinkItem";
 export { default as NotFound } from "./ui/NotFound";
 export { default as Center } from "./ui/Center";
@@ -20,6 +18,7 @@ export { default as SlideModal } from "./ui/SlideModal";
 export { default as Loading } from "./ui/Loading";
 export { default as Label } from "./ui/Label";
 export { default as LoadingOverlay } from "./ui/LoadingOverlay";
+export { default as ProgressBar } from "./ui/ProgressBar";
 export { default as PlaylistItem } from "./PlaylistItem";
 export { default as SettingMenu } from "./SettingMenu";
 export { default as SongThumbnail } from "./SongThumbnail";

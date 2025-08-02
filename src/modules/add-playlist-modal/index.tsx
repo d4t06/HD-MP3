@@ -1,5 +1,4 @@
 import { ChangeEvent } from "react";
-import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button, Image, Input, Label, ModalHeader, Switch } from "@/components";
 import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
@@ -29,8 +28,6 @@ export default function AddPlaylistModal({
   submit,
   ...props
 }: BaseProps & PlaylistModalVariantProps) {
-  const { theme } = useThemeContext();
-
   const {
     imageFile,
     setImageFile,
@@ -83,7 +80,7 @@ export default function AddPlaylistModal({
           />
 
           <div className="space-x-2 flex">
-            <Button className={`${theme.content_bg}`} size={"clear"}>
+            <Button color="primary" size={"clear"}>
               <label
                 htmlFor="image_upload"
                 className={`px-5 py-1 cursor-pointer `}

@@ -3,12 +3,9 @@ import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { useThemeContext } from "@/stores";
 import useGetTrendingSongs from "@/modules/trending-song/useGetTrending";
 
 export default function Trending() {
-  const { theme } = useThemeContext();
-
   const { isFetching, songs } = useGetTrendingSongs({ amount: 5 });
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
@@ -18,7 +15,7 @@ export default function Trending() {
   };
 
   return (
-    <div className={`${theme.bottom_player_bg} rounded-xl p-5`}>
+    <div className={`rounded-xl p-5`}>
       <Title title="Trending" />
 
       <SongSelectProvider>

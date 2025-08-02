@@ -2,14 +2,13 @@ import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ComponentProps, ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 
-import { useThemeContext } from "@/stores";
 import {
   Image,
   MyPopup,
   MyPopupContent,
   MyPopupTrigger,
   VerticalMenu,
-  MenuWrapper,
+  PopupWrapper,
 } from "@/components";
 
 import QueueSongMenu from "./_components/QueueSongMenu";
@@ -49,14 +48,14 @@ export function SongMenuContent({
 }) {
   return (
     <MyPopupContent className="w-[240px]">
-      <MenuWrapper>
+      <PopupWrapper>
         <SongInfo song={song} />
         <VerticalMenu>{children}</VerticalMenu>
 
         <p className="text-xs text-center opacity-70 mt-3">
           By {song.distributor}
         </p>
-      </MenuWrapper>
+      </PopupWrapper>
     </MyPopupContent>
   );
 }
@@ -68,9 +67,6 @@ type Props = {
 };
 
 function SongMenu({ song, index, variant }: Props) {
-  // stores
-  const { theme } = useThemeContext();
-
   const [isOpenPopup, _setIsOpenPopup] = useState(false);
 
   const renderMenu = () => {
@@ -105,11 +101,11 @@ function SongMenu({ song, index, variant }: Props) {
   };
 
   const classes = {
-    button: `hover:bg-${theme.alpha} p-2 rounded-full`,
+    button: `hover:bg-[--a-5-cl] p-2 rounded-full`,
   };
 
   const getTriggerClass = () => {
-    if (isOpenPopup) return `${theme.content_bg}`;
+    if (isOpenPopup) return `bg-[--primary-cl]`;
     else return "block md:hidden";
   };
 

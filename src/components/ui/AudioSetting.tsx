@@ -1,7 +1,6 @@
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { Button, PopupWrapper } from "..";
 import { MyPopup, MyPopupContent, MyPopupTrigger } from "@/components";
-import { useThemeContext } from "@/stores";
 import usePersistState from "@/hooks/usePersistState";
 import { useEffect } from "react";
 
@@ -10,6 +9,7 @@ type Props = {
   postLocalStorageKey: string;
   className?: string;
   positions?: "left" | "right";
+  menuColor?: string;
   bg?: string;
 };
 
@@ -39,17 +39,16 @@ function useAudioSetting({ audioEle, postLocalStorageKey }: Props) {
 export default function AudioSetting({
   className = "",
   positions = "right",
-  bg = "",
+  bg = "bg-[--primary-cl] text-white",
+  menuColor = "bg-[--popup-cl]",
   ...props
 }: Props) {
-  const { theme } = useThemeContext();
-
   const { speed, volume, setVolume, setSpeed } = useAudioSetting(props);
 
   return (
     <MyPopup appendOnPortal>
       <MyPopupTrigger>
-        <Button className={`${theme.content_bg} rounded-full ${className}`}>
+        <Button className={`rounded-full ${bg} ${className}`}>
           <Cog6ToothIcon className="w-6" />
         </Button>
       </MyPopupTrigger>
@@ -59,11 +58,7 @@ export default function AudioSetting({
           ? { position: "right-bottom", origin: "top left" }
           : { position: "left-bottom", origin: "top right" })}
       >
-        <PopupWrapper
-          bg="clear"
-          className={`w-[240px] ${bg ? bg : theme.modal_bg} `}
-          theme={theme}
-        >
+        <PopupWrapper colorClasses={menuColor} className={`w-[240px] px-2`}>
           <div className="space-y-[6px]">
             <div className={`flex space-x-1`}>
               <div className="w-[110px] flex-shrink-0">Speed {speed}x</div>

@@ -2,22 +2,27 @@ import { ReactNode } from "react";
 import DismisPopupWrapper from "./DismisPopupWrapper";
 
 type Props = {
-   className?: string;
-   children: ReactNode;
+  className?: string;
+  children: ReactNode;
+  dismiss?: boolean;
 };
 
 export default function VertialMenu({
-   children,
-   className = "",
+  children,
+  dismiss = true,
+  className = "",
 }: Props) {
-   const classes = {
-      container:
-         "hover:[&>*:not(div.absolute)]:bg-white/5 [&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center [&_svg]:w-6  [&_svg]:flex-shrink-0 [&>*]:items-center [&_span]:font-medium",
-   };
+  const classes = {
+    container:
+      "hover:[&>*:not(div.absolute)]:bg-[--a-5-cl] [&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center [&_svg]:w-6  [&_svg]:flex-shrink-0 [&>*]:items-center [&_span]:font-semibold",
+  };
 
-   return (
+  if (dismiss)
+    return (
       <DismisPopupWrapper className={`${classes.container} ${className}`}>
-         {children}
+        {children}
       </DismisPopupWrapper>
-   );
+    );
+
+  return <div className={classes.container}>{children}</div>;
 }

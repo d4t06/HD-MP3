@@ -1,11 +1,9 @@
-// import { useSelector } from "react-redux";
 import { ElementRef, useRef } from "react";
 import { getHidden } from "@/utils/appHelpers";
 import useVinyl from "../_hooks/useVinyl";
 import { Image } from "@/components";
 import ScrollText from "@/modules/scroll-text";
 import { Link } from "react-router-dom";
-import { useThemeContext } from "@/stores";
 
 type Props = {
   isOpenFullScreen: boolean;
@@ -14,7 +12,6 @@ type Props = {
 
 export default function SongInfo({ isOpenFullScreen, song }: Props) {
   const vinylRef = useRef<ElementRef<"div">>(null);
-  const { theme } = useThemeContext();
 
   // hook
   useVinyl({ vinylRef });
@@ -46,7 +43,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
                 s.id ? (
                   <Link
                     to={`/singer/${s.id}`}
-                    className={`${theme.content_hover_text}  hover:underline`}
+                    className={`hover:text-[--primary-cl] hover:underline`}
                     key={i}
                   >
                     {(i ? ", " : "") + s.name}

@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { usePlayerContext } from "@/stores";
 import { Image } from "@/components";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import useHideMobileBottomPlayer from "./_hooks/useHideMobileBottomPlayer";
@@ -24,7 +24,7 @@ export default function MobileBottomPlayer() {
 
   if (!audioRef.current) return <></>;
 
-  const { theme } = useThemeContext();
+  // const { theme } = useThemeContext();
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
 
@@ -50,13 +50,13 @@ export default function MobileBottomPlayer() {
   }, [playStatus]);
 
   const getActiveClasses = (condition: boolean) => {
-    if (condition) return `${theme.content_text}`;
+    if (condition) return `text-[--primary-cl]`;
     return "";
   };
 
   const classes = {
-    wrapper: `block md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-${theme.alpha} z-[9]`,
-    container: `absolute inset-0 ${theme.bottom_player_bg} bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
+    wrapper: `block md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
+    container: `absolute inset-0 bg-[--player-cl] bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
     cta: `ml-2 flex-shrink-0`,
@@ -126,7 +126,7 @@ export default function MobileBottomPlayer() {
       [&_div]:items-center
       [&_svg]:w-6
       [&_span]:text-[10px]
-      ${!shouldHidePlayer ? "border-t border-" + theme.alpha : ""}
+      ${!shouldHidePlayer ? "border-t border-[--a-5-cl]" : ""}
       `}
       >
         <Link

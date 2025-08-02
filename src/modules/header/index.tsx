@@ -1,5 +1,4 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
-import { useThemeContext } from "@/stores";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/firebase";
 import {
@@ -10,12 +9,13 @@ import {
   Skeleton,
   Modal,
   SettingMenu,
-  PopupWrapper,
   ModalRef,
   MyPopup,
   MyPopupContent,
   MyPopupTrigger,
   TriggerRef,
+  PopupWrapper,
+  VerticalMenu,
 } from "@/components";
 import {
   AdjustmentsHorizontalIcon,
@@ -31,8 +31,6 @@ import Search from "../search";
 export type HeaderModal = "theme" | "info" | "confirm";
 
 function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
-  const { theme } = useThemeContext();
-
   //  state
   const [scroll, setScroll] = useState(0);
   const [loggedInUser, loading] = useAuthState(auth);
@@ -114,10 +112,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
-    button: `h-[40px] w-[40px] rounded-full`,
-    menuItem: `hover:bg-white/5 rounded-[4px] w-full text-sm px-[10px] h-[44px] inline-flex items-center font-[500]`,
+    button: `h-[40px] w-[40px] rounded-full hover:bg-[--a-5-cl]`,
     icon: "w-5 mr-1",
-    divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-${theme.alpha}`,
+    divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-[--a-5-cl]`,
   };
 
   return (
@@ -126,9 +123,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
         className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
       >
         <div
-          className={`${scroll ? "" : "hidden "} absolute inset-0 ${
-            theme.container
-          } bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
+          className={`${scroll ? "" : "hidden "} absolute inset-0 bg-[--layout-cl] bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
         ></div>
 
         <div className="px-[40px] items-center flex h-full">
@@ -146,7 +141,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                   content="Settings"
                 >
                   <button
-                    className={`flex px-[6px] items-center ${classes.button} bg-${theme.alpha} ${theme.content_hover_bg}`}
+                    className={`flex px-[6px] items-center ${classes.button} `}
                   >
                     <AdjustmentsHorizontalIcon className="w-full" />
                   </button>
@@ -178,41 +173,38 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
-                <PopupWrapper theme={theme}>
-                  <div className="w-[250px] max-h-[50vh]">
-                    {loggedInUser && (
-                      <>
-                        <div className="flex items-center p-[10px] pb-0">
-                          <Avatar className="login-trigger w-[46px] h-[46px]" />
+                <PopupWrapper className="w-[250px] px-3">
+                  {loggedInUser && (
+                    <>
+                      <div className="flex items-center p-[10px] pb-0">
+                        <Avatar className="login-trigger w-[46px] h-[46px]" />
 
-                          <div className="ml-[12px]">
-                            <h5 className="font-semibold line-clamp-1">
-                              {loggedInUser?.displayName}
-                            </h5>
-                          </div>
+                        <div className="ml-[12px]">
+                          <h5 className="font-semibold line-clamp-1">
+                            {loggedInUser?.displayName}
+                          </h5>
                         </div>
+                      </div>
 
-                        <div className={classes.divide}></div>
-                        <button
-                          className={`${classes.menuItem}`}
-                          onClick={() => openModal("confirm")}
-                        >
-                          <ArrowRightOnRectangleIcon className={classes.icon} />
-                          Log out
-                        </button>
-                      </>
+                      <div className={classes.divide}></div>
+                    </>
+                  )}
+
+                  <VerticalMenu className="[&_button]:rounded-md">
+                    {loggedInUser && (
+                      <button onClick={() => openModal("confirm")}>
+                        <ArrowRightOnRectangleIcon className={classes.icon} />
+                        Log out
+                      </button>
                     )}
 
                     {!loggedInUser && (
-                      <button
-                        className={`${classes.menuItem}`}
-                        onClick={handleLogIn}
-                      >
+                      <button onClick={handleLogIn}>
                         <ArrowLeftOnRectangleIcon className={classes.icon} />
                         Log in
                       </button>
                     )}
-                  </div>
+                  </VerticalMenu>
                 </PopupWrapper>
               </MyPopupContent>
             </MyPopup>

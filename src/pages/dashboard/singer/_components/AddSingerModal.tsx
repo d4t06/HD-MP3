@@ -1,5 +1,4 @@
 import { ChangeEvent, useRef } from "react";
-import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
   Image,
@@ -15,8 +14,6 @@ import { inputClasses } from "@/components/ui/Input";
 import { Button } from "../../_components";
 
 export default function AddSingerModal(props: UseAddSingerModalProps) {
-  const { theme } = useThemeContext();
-
   const labelRef = useRef<HTMLLabelElement>(null);
 
   const {
@@ -66,10 +63,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
             className="hidden"
           />
 
-          <Button
-            className={`${theme.content_bg}`}
-            onClick={() => labelRef.current?.click()}
-          >
+          <Button onClick={() => labelRef.current?.click()}>
             <PhotoIcon className="w-5" />
           </Button>
         </div>

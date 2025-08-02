@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   useAuthContext,
   usePlayerContext,
-  useThemeContext,
   useToastContext,
 } from "@/stores";
 
@@ -25,7 +24,6 @@ import usePlayerAction from "./usePlayerAction";
 
 export default function usePlayerEffect() {
   const {
-    isOpenFullScreen,
     playerConig: { repeat, isShuffle, isCrossFade, isEnableBeat },
     audioRef,
     firstTimeSongLoaded,
@@ -33,7 +31,6 @@ export default function usePlayerEffect() {
     isPlayingNewSong,
     timelineEleRef,
     currentTimeEleRef,
-    themeCodeRef,
     shouldSyncSongDuration,
   } = usePlayerContext();
   if (!audioRef.current)
@@ -41,7 +38,6 @@ export default function usePlayerEffect() {
 
   // use stores
   const dispatch = useDispatch();
-  const { theme } = useThemeContext();
   const { user, updateUserData } = useAuthContext();
   const { queueSongs, currentSongData, currentQueueId } =
     useSelector(selectSongQueue);
@@ -380,15 +376,15 @@ export default function usePlayerEffect() {
     };
   }, [isCrossFade]);
 
-  // update time line background color
-  useEffect(() => {
-    if (isOpenFullScreen) themeCodeRef.current = "#fff";
-    else themeCodeRef.current = theme.content_code;
-    // if user no click play yet
-    updateProgressElement(
-      firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0,
-    );
-  }, [theme, isOpenFullScreen]);
+  // // update time line background color
+  // useEffect(() => {
+  //   if (isOpenFullScreen) themeCodeRef.current = "#fff";
+  //   else themeCodeRef.current = theme.content_code;
+  //   // if user no click play yet
+  //   updateProgressElement(
+  //     firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0,
+  //   );
+  // }, [theme, isOpenFullScreen]);
 
   // prevent song autoplay after edit finish
   useEffect(() => {

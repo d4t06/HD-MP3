@@ -1,5 +1,3 @@
-import { useThemeContext } from "@/stores";
-
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 
@@ -19,7 +17,6 @@ import NavigationButton from "@/modules/navigation-button";
 type Modal = "theme" | "info";
 
 export default function DashboardHeader() {
-  const { theme } = useThemeContext();
 
   const [scroll, setScroll] = useState(0);
   const [modal, setModal] = useState<Modal | "">("");
@@ -70,7 +67,7 @@ export default function DashboardHeader() {
         <div className="flex">
           <Link to={"/dashboard"} className="text-xl font-[500]">
             HD
-            <span className={`${theme.content_text} ml-[4px] uppercase`}>
+            <span className={`text-[--primary-cl] ml-[4px] uppercase`}>
               Dashboard
             </span>
           </Link>
@@ -82,7 +79,7 @@ export default function DashboardHeader() {
           <MyPopup>
             <MyPopupTrigger ref={triggerRef}>
               <button
-                className={`flex p-2 items-center rounded-full bg-${theme.alpha} ${theme.content_hover_bg}`}
+                className={`flex p-2 items-center rounded-full hover:bg-[--a-5-cl]`}
               >
                 <AdjustmentsHorizontalIcon className="w-6" />
               </button>

@@ -63,7 +63,7 @@ export default function useVolume({ audioEle, volumeLineRef }: Props) {
     if (volumeLineRef.current && audioEle) {
       const ratio = volume * 100;
 
-      volumeLineRef.current.style.background = getLinearBg(theme.content_code, ratio);
+      volumeLineRef.current.style.background = getLinearBg(ratio);
       audioEle.volume = volume;
 
       if (volume === 0) setIsMute(true);

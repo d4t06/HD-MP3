@@ -1,4 +1,4 @@
-import { useSongSelectContext, useThemeContext } from "@/stores";
+import { useSongSelectContext } from "@/stores";
 import { useMemo } from "react";
 import { ModalContentWrapper, ModalHeader } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
@@ -13,7 +13,6 @@ type Props = {
 };
 
 function Content({ closeModal, submit, isLoading }: Props) {
-  const { theme } = useThemeContext();
 
   const { songs, isFetching, ...rest } = useSearchSong();
   const { selectedSongs, selectSong } = useSongSelectContext();
@@ -52,7 +51,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
                     <button
                       key={i}
                       onClick={() => selectSong(s)}
-                      className={`${classes.songItem} bg-black/10 ${theme.content_hover_bg}`}
+                      className={`${classes.songItem} hover:bg-[--a-5-cl]`}
                     >
                       <h5 className="">{s.name}</h5>
                     </button>
@@ -73,7 +72,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
                 <button
                   key={i}
                   onClick={() => selectSong(s)}
-                  className={`${classes.songItem} ${theme.content_bg} hover:bg-black/10 hover:text-black`}
+                  className={`${classes.songItem} hover:bg-[--a-5-cl]`}
                 >
                   <h5 className="">{s.name}</h5>
                 </button>

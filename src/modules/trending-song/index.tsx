@@ -4,7 +4,6 @@ import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
-// import { useThemeContext } from "@/stores";
 import { Link } from "react-router-dom";
 
 type Props = {
@@ -12,8 +11,6 @@ type Props = {
 };
 
 export default function TrendingSong(props: Props) {
-  // const { theme } = useThemeContext();
-
   const { isFetching, songs } = useGetTrendingSongs(props);
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
@@ -23,26 +20,27 @@ export default function TrendingSong(props: Props) {
   };
 
   return (
-    <div className={`shadow-lg border border-black/5 rounded-xl p-5`}>
-      <Title title="Trending" className="mb-3" />
+    <>
+      <div>
+        <Title title="Trending" className="mb-3" />
+        <SongSelectProvider>
+          {isFetching && songItemSkeleton}
+          {!isFetching && (
+            <SongList
+              showIndex
+              isHasCheckBox={false}
+              songs={songs}
+              setSong={(s) => _handleSetSong(s)}
+            />
+          )}
+        </SongSelectProvider>
 
-      <SongSelectProvider>
-        {isFetching && songItemSkeleton}
-        {!isFetching && (
-          <SongList
-            showIndex
-            isHasCheckBox={false}
-            songs={songs}
-            setSong={(s) => _handleSetSong(s)}
-          />
-        )}
-      </SongSelectProvider>
-
-      <div className="text-center mt-5 border-none">
-        <Link to={'/trending'}>
-          <Button color={"primary"}>See more</Button>
-        </Link>
+        <div className="text-center mt-5 border-none">
+          <Link to={"/trending"}>
+            <Button color={"primary"}>See more</Button>
+          </Link>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

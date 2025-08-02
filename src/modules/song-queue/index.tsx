@@ -8,7 +8,7 @@ import {
 } from "@/stores/redux/songQueueSlice";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { Button, Skeleton, Tab } from "@/components";
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { usePlayerContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
 import RecentSong from "./_components/RecentSong";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
@@ -20,9 +20,9 @@ export type QueueTab = (typeof tabs)[number];
 function SongQueue() {
   // stores
   const dispatch = useDispatch();
-  const { theme } = useThemeContext();
   const { isOpenSongQueue, setIsOpenSongQueue } = usePlayerContext();
-  const { queueSongs, currentQueueId, isFetching } = useSelector(selectSongQueue);
+  const { queueSongs, currentQueueId, isFetching } =
+    useSelector(selectSongQueue);
 
   const { resetForNewSong } = usePlayerAction();
 
@@ -49,7 +49,7 @@ function SongQueue() {
   ));
 
   const classes = {
-    mainContainer: `hidden fixed w-[300px] md:flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 ${theme.container} border-l-[1px] border-${theme.alpha} transition-[transform] duration-[.5s] linear delay-100`,
+    mainContainer: `hidden fixed w-[300px] md:flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 bg-[--layout-cl] border-l-[1px] border-[--a-5-cl] transition-[transform] duration-[.5s] linear delay-100`,
     songListContainer:
       "flex-grow overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar mt-3",
   };
@@ -57,7 +57,7 @@ function SongQueue() {
   return (
     <SongSelectProvider>
       <div
-        className={`${theme.text_color} ${classes.mainContainer} ${
+        className={`${classes.mainContainer} ${
           isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
         }     `}
       >
@@ -87,10 +87,13 @@ function SongQueue() {
                   <Button
                     onClick={clearSongQueue}
                     size={"clear"}
-                    className={`${theme.content_bg} rounded-full my-5 px-3 py-1 space-x-1`}
+                    color="primary"
+                    className={`rounded-full my-5 px-3 py-1 space-x-1`}
                   >
                     <TrashIcon className="w-6" />
-                    <span className="font-playwriteCU leading-[2.2]">Clear</span>
+                    <span className="font-playwriteCU leading-[2.2]">
+                      Clear
+                    </span>
                   </Button>
                 )}
               </div>

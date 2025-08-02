@@ -8,10 +8,9 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 export default function Sidebar() {
   // stores
-  const { theme } = useThemeContext();
   const { user, loading: userLoading } = useAuthContext();
 
   // hooks
@@ -33,27 +32,25 @@ export default function Sidebar() {
   });
 
   const getActiveClasses = (condition: boolean) => {
-    if (condition) return `${theme.content_text}`;
+    if (condition) return `text-[--primary-cl]`;
     return "";
   };
 
   //  define styles
   const classes = {
-    container: `w-[80px] lg:w-[180px]  relative  flex-shrink-0 border-r-[1px] h-screen ${theme.side_bar_bg} border-${theme.alpha}`,
+    container: `w-[80px] lg:w-[180px] relative flex-shrink-0 h-screen bg-[--sidebar-collapse-cl] lg:bg-[--sidebar-cl] `,
     linkList: `
-      ${
-        theme.type === "light"
-          ? "hover:[&_div:not(.ske)]:bg-black/10"
-          : "hover:[&_div:not(.ske)]:bg-white/10"
-      }
+      hover:[&_div:not(.ske)]:bg-[--a-5-cl]
       [&_div]:py-2
       [&_div]:leading-[2.2] 
       [&_div]:flex 
       [&_div]:flex-col 
       [&_div]:items-center
       [&_span]:text-xs
-      [&_span]:font-medium
+      [&_span]:mt-[2px]
+      [&_span]:font-semibold
 
+      lg:[&_span]:mt-0
       lg:[&_div]:space-x-2 
       lg:[&_div]:px-3
       lg:[&_div]:flex-row 
@@ -66,11 +63,11 @@ export default function Sidebar() {
   };
 
   return (
-    <div className={`${classes.container} ${theme.text_color}`}>
+    <div className={`${classes.container}`}>
       <div className="px-[10px] h-[60px] flex items-center justify-center">
-        <Link to={'/'} className="text-xl hidden lg:block font-[500]">
+        <Link to={"/"} className="text-xl hidden lg:block font-[500]">
           HD
-          <span className={`${theme.content_text} ml-[4px]`}>MP3</span>
+          <span className={`text-[--primary-cl] ml-[4px]`}>MP3</span>
         </Link>
       </div>
       <div className={`flex flex-col items-start ${classes.linkList}`}>

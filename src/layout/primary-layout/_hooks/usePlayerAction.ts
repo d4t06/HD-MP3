@@ -24,7 +24,6 @@ export default function usePlayerAction() {
     timelineEleRef,
     currentTimeEleRef,
     isPlayingNewSong,
-    themeCodeRef,
     shouldSyncSongDuration,
   } = usePlayerContext();
   const { currentSongData, queueSongs } = useSelector(selectSongQueue);
@@ -39,7 +38,7 @@ export default function usePlayerAction() {
   const resetForNewSong = () => {
     if (timelineEleRef.current && currentTimeEleRef.current) {
       currentTimeEleRef.current.innerText = "0:00";
-      timelineEleRef.current.style.background = "rgba(255, 255, 255, 0.15)";
+      timelineEleRef.current.style.background = "var-(--a-5-cl)";
     }
   };
 
@@ -79,10 +78,7 @@ export default function usePlayerAction() {
 
     if (audioRef.current!.duration && timeLine) {
       const ratio = currentTime / (audioRef.current!.duration / 100);
-      timeLine.style.background = getLinearBg(
-        themeCodeRef.current,
-        +ratio.toFixed(1),
-      );
+      timeLine.style.background = getLinearBg(+ratio.toFixed(1));
     }
 
     if (currentTimeEle)

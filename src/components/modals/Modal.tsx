@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import {
   forwardRef,
   MouseEventHandler,
@@ -156,11 +155,9 @@ function ModalContentWrapper({
   className?: string;
   noStyle?: boolean;
 }) {
-  const { theme } = useThemeContext();
-
   return (
     <div
-      className={`relative overflow-hidden max-h-[80vh] max-w-[90vw] flex flex-col  ${disable ? "disabled" : ""} ${!noStyle ? "p-3 md:p-4s rounded-xl" : ""} ${location.hash.includes("/dashboard") ? "bg-white text-black" : theme.modal_bg + " text-white"} ${className}`}
+      className={`relative text-[--text-cl] transition-[color] overflow-hidden max-h-[80vh] max-w-[90vw] flex flex-col  ${disable ? "disabled" : ""} ${!noStyle ? "p-3 md:p-4s rounded-xl" : ""}  ${location.hash.includes("/dashboard") ? "bg-white text-black" : "bg-[--popup-cl]"} ${className}`}
     >
       {children}
     </div>

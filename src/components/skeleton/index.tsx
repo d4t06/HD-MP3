@@ -1,14 +1,11 @@
-import { useThemeContext } from "@/stores";
-
 type Props = {
   className: string;
 };
 
 export default function Skeleton({ className }: Props) {
-  const { theme } = useThemeContext();
   return (
     <div
-      className={`animate-pulse rounded-[4px] ${theme.type === "light" ? "bg-gray-400" : "bg-gray-300"}  ${className}`}
+      className={`animate-pulse rounded-[4px] bg-gray-400 dark:bg-gray-300  ${className}`}
     ></div>
   );
 }

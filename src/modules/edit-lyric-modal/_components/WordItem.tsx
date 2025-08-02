@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import { Button } from "@/components";
 import { ScissorsIcon } from "@heroicons/react/24/outline";
@@ -11,7 +10,6 @@ type Props = {
 };
 
 export function WordItem({ text, openModal, isShowScissor, index }: Props) {
-  const { theme } = useThemeContext();
   const { growList, setWordIndex, wordIndex, eventRefs, eleRefs } =
     useLyricEditorContext();
 
@@ -31,9 +29,8 @@ export function WordItem({ text, openModal, isShowScissor, index }: Props) {
       ref={(el) => (active ? (eleRefs.currentWordRef.current = el) : {})}
       style={{ flexGrow: growList[index] !== 0 ? growList[index] : 0.05 }}
       onClick={handleSelectWord}
-      className={`word-item cursor-pointer relative rounded-full flex items-center justify-center border ${
-        theme.content_border
-      } ${active ? theme.content_bg : "bg-" + theme.alpha}`}
+      className={`word-item cursor-pointer relative rounded-full flex items-center justify-center 
+      ${active ? "bg-[--primary-cl] text-white" : "bg-[--a-5-cl]"}`}
     >
       <span>{text}</span>
 

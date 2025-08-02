@@ -1,4 +1,4 @@
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 import { useMemo, useRef } from "react";
 import {
   Center,
@@ -24,7 +24,6 @@ type Props = {
 };
 
 function Content({ closeModal, submit, isLoading, current }: Props) {
-  const { theme } = useThemeContext();
   const { user } = useAuthContext();
 
   const { playlists, isFetching, lastSubmit, newPlaylists, ...rest } =
@@ -54,7 +53,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
       { push: false },
     );
 
-    if (playlist) submit([playlist]);
+    if (playlist) submit([playlist as Playlist]);
 
     modalRef.current?.close();
 
@@ -81,7 +80,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
         <button
           key={i}
           onClick={() => !isCurrent && selectPlaylist(p)}
-          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `${theme.content_bg}` : `bg-white text-black`} `}
+          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `bg-[--a-5-cl]` : `bg-white text-black`} `}
         >
           {p.name}
         </button>

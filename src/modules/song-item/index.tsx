@@ -77,7 +77,7 @@ function SongItem({
   ...props
 }: Props) {
   // stores
-  const { theme, isOnMobile } = useThemeContext();
+  const { isOnMobile } = useThemeContext();
   const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
 
   const isSelected = useMemo(() => {
@@ -92,12 +92,9 @@ function SongItem({
 
   // define style
   const classes = {
-    button: `${theme.content_hover_bg} p-[8px] rounded-full`,
-    checkboxButton: `mr-3 text-[inherit]`,
     itemContainer: `w-full sm:group/container flex flex-row rounded-md justify-between py-2 px-3 last:border-none`,
     imageFrame: ` relative rounded overflow-hidden flex-shrink-0`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
-    ctaWrapper: "flex items-center justify-end flex-shrink-0",
   };
 
   const imageOverlay = useMemo(() => {
@@ -125,9 +122,9 @@ function SongItem({
     switch (props.variant) {
       case "queue-song":
       case "recent-song":
-        return "text-sm";
+        return "text-xs";
       default:
-        return "";
+        return "text-sm";
     }
   };
 
@@ -147,7 +144,7 @@ function SongItem({
       case "recent-song":
         return "text-xs";
       default:
-        return "text-sm";
+        return "text-xs";
     }
   };
 
@@ -189,7 +186,7 @@ function SongItem({
 
         <div className={`ml-[10px]`}>
           <h5
-            className={`line-clamp-1 font-medium overflow-hidden ${getSongNameSize()}`}
+            className={`line-clamp-1 font-semibold overflow-hidden ${getSongNameSize()}`}
           >
             {song.name}
 
@@ -197,12 +194,14 @@ function SongItem({
               <span className="text-sm"> ({props.variant})</span>
             )}
           </h5>
-          <div className={`opacity-[.7] line-clamp-1 ${getSongSingerSize()}`}>
+          <div
+            className={`opacity-[.7] font-medium line-clamp-1 ${getSongSingerSize()}`}
+          >
             {song.singers.map((s, i) =>
               s.id ? (
                 <Link
                   to={`/singer/${s.id}`}
-                  className={`${theme.content_hover_text}  hover:underline`}
+                  className={`hover:text-[--primary-cl]  hover:underline`}
                   key={i}
                 >
                   {(i ? ", " : "") + s.name}
@@ -266,9 +265,7 @@ function SongItem({
         return (
           <div
             className={`${classes.itemContainer} group/main ${
-              active
-                ? `${theme.content_bg} text-white`
-                : `hover:bg-${theme.alpha}`
+              active ? `bg-[--primary-cl] text-white` : `hover:bg-[--a-5-cl]`
             }`}
           >
             {renderLeftContent()}
@@ -279,9 +276,7 @@ function SongItem({
         return (
           <div
             className={`${classes.itemContainer} ${className} group/main ${
-              active || isSelected
-                ? `bg-${theme.alpha}`
-                : `hover:bg-${theme.alpha}`
+              active || isSelected ? `bg-[--a-5-cl]` : `hover:bg-[--a-5-cl]`
             }`}
           >
             {renderLeftContent()}

@@ -10,7 +10,6 @@ import {
   ModalContentWrapper,
   Label,
 } from "@/components";
-import { useThemeContext } from "@/stores";
 import useEditSongModal from "./_hooks/useEditSongModal";
 
 type Props = {
@@ -19,8 +18,6 @@ type Props = {
 };
 
 export default function EditSongModal({ song, modalRef }: Props) {
-  const { theme } = useThemeContext();
-
   const inputFileRef = useRef<HTMLInputElement>(null);
   const labelRef = useRef<HTMLLabelElement>(null);
   // use hooks
@@ -111,8 +108,9 @@ export default function EditSongModal({ song, modalRef }: Props) {
           isLoading={isFetching}
           onClick={handleSubmit}
           disabled={!isValidToSubmit}
-          className={`${theme.content_bg} rounded-full`}
+          className={` rounded-full`}
           variant={"primary"}
+          color="primary"
         >
           Save
         </Button>

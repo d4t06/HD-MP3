@@ -43,12 +43,7 @@ export default function HomePage() {
 
         <RecentPlaylist />
 
-        {/*<TrendingSong amount={3} />*/}
-
-        {/*<HomePlaylist />
-
-        <HomeSongList />
-*/}
+        <TrendingSong amount={3} />
 
         <NewSong amount={5} />
 

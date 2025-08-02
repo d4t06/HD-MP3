@@ -1,4 +1,4 @@
-import { Image, Skeleton, Square } from "@/components";
+import { Image, Skeleton } from "@/components";
 import { Link } from "react-router-dom";
 
 type SkeletonProps = {

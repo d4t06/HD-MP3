@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from "react";
 import { useSongSelectContext } from "@/stores/SongSelectContext";
-import { useAuthContext, useThemeContext } from "@/stores";
+import { useAuthContext } from "@/stores";
 import { CheckIcon, StopIcon } from "@heroicons/react/24/outline";
 import AddToQueueBtn from "./_components/AddToQueueBtn";
 import CheckBarMenuBtn from "./_components/CheckBarMenuBtn";
@@ -14,7 +14,6 @@ type Props = {
 };
 
 export default function CheckedBar({ children, selectAll }: Props) {
-  const { theme } = useThemeContext();
   const { user } = useAuthContext();
   const { isSelectAll, isChecked, resetSelect, selectedSongs } =
     useSongSelectContext();
@@ -32,7 +31,7 @@ export default function CheckedBar({ children, selectAll }: Props) {
       )}
       <span className="font-semibold opacity-[.5]">{selectedSongs.length}</span>
       <div
-        className={`flex space-x-2 items-center ${theme.type === "light" ? "[&>button]:bg-black/5" : "[&>button]:bg-white/5"}  [&>button]:inline-flex [&>button]:space-x-1.5 [&_span]:text-sm [&_span]:font-medium [&>button]:py-1 [&>button]:px-3 [&>button]:rounded-full`}
+        className={`flex space-x-2 items-center [&>button]:bg-[--a-5-cl]  [&>button]:inline-flex [&>button]:space-x-1.5 [&_span]:text-sm [&_span]:font-medium [&>button]:py-1 [&>button]:px-3 [&>button]:rounded-full`}
       >
         <AddToQueueBtn />
 

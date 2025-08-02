@@ -1,11 +1,6 @@
-import { Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
-import {
-  PhotoIcon,
-  QuestionMarkCircleIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef } from "react";
 
 export default function UploadImageBtn() {
@@ -13,7 +8,6 @@ export default function UploadImageBtn() {
     useAddSongContext();
 
   const inputRef = useRef<HTMLInputElement>(null);
-  const modalRef = useRef<ModalRef>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) setImageFile(e.target.files[0]);
@@ -47,7 +41,7 @@ export default function UploadImageBtn() {
         </Button>
       )}
 
-   {/*   {songData?.image_url && (
+      {/*   {songData?.image_url && (
         <Button onClick={() => modalRef.current?.open()} size={"clear"}>
           <QuestionMarkCircleIcon />
           <span>Image info</span>
@@ -63,7 +57,7 @@ export default function UploadImageBtn() {
         className="hidden"
       />
 
-    {/*  {songData?.image_url && (
+      {/*  {songData?.image_url && (
         <Modal variant="animation" ref={modalRef}>
           <ModalContentWrapper>
             <p>Url: {songData?.image_url}</p>

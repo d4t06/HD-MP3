@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import {
   cloneElement,
   ElementRef,
@@ -23,6 +22,7 @@ type Props = {
   position?: string;
   isWrapped?: boolean;
   content: string;
+  colorClasses?: string;
 };
 
 function MyToolTip(
@@ -31,14 +31,13 @@ function MyToolTip(
     className = "px-2 py-1 text-sm font-[500]",
     position = "bottom-[calc(100%+8px)]",
     content,
+    colorClasses = 'bg-[--popup-cl] text-[--text-cl]',
     isWrapped,
     ...rest
   }: Props,
   _ref: Ref<ElementRef<"button">>,
 ) {
   const [open, setOpen] = useState(false);
-
-  const { theme } = useThemeContext();
 
   const { setTriggerRef, state } = usePopoverContext();
   const { onClick } = rest as PropsFromPopup;
@@ -80,7 +79,7 @@ function MyToolTip(
   }, []);
 
   const classes = {
-    container: `${theme.modal_bg} text-white`,
+    container: ` shadow-[0_0_6px_0_rgba(0,0,0,.15)] font-semibold absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md z-[999]`,
   };
 
   const jsxContent = (
@@ -97,9 +96,7 @@ function MyToolTip(
               } as HTMLProps<HTMLButtonElement>)}
 
           {!state?.isOpen && open && (
-            <div
-              className={`${classes.container} absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md z-[999] ${position} ${className}`}
-            >
+            <div className={`${classes.container} ${colorClasses} ${position} ${className}`}>
               {content}
             </div>
           )}
@@ -109,7 +106,11 @@ function MyToolTip(
   );
 
   if (isValidElement(children))
-    return <>{isWrapped ? jsxContent : <div className="relative">{jsxContent}</div>}</>;
+    return (
+      <>
+        {isWrapped ? jsxContent : <div className="relative">{jsxContent}</div>}
+      </>
+    );
 }
 
 export default forwardRef(MyToolTip);

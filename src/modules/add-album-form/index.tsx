@@ -4,7 +4,6 @@ import AddAlbumProvider, {
 } from "./_components/AddAlbumContext";
 import useAddAlbum from "./_hooks/useAddAlbum";
 import { ChangeEvent, useMemo, useRef } from "react";
-import { useThemeContext } from "@/stores";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button, ButtonCtaFrame, Frame } from "@/pages/dashboard/_components";
 import AlbumSingerSelect from "./_components/SingerSelect";
@@ -35,8 +34,6 @@ type Edit = {
 type Props = (Add | Edit) & BaseProps;
 
 function Content({ className = "", ...props }: Props) {
-  const { theme } = useThemeContext();
-
   const { albumData, album, singer, setImageFile, updateAlbumData } =
     useAddAlbumContext();
   const { submit, isFetching, isValidToSubmit } = useAddAlbum(props);
@@ -111,7 +108,7 @@ function Content({ className = "", ...props }: Props) {
           />
 
           {props.variant === "add" && (
-            <Button className={`${theme.content_bg} !p-0`} size={"clear"}>
+            <Button color={"primary"} size={"clear"}>
               <label
                 htmlFor="image_upload"
                 className={`md:px-3 p-1.5 inline-flex space-x-1 cursor-pointer `}

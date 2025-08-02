@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { Button, ModalContentWrapper, ModalHeader } from "..";
 import { ReactNode } from "react";
 type Props = {
@@ -19,8 +18,6 @@ export default function ConfirmModal({
   closeModal,
   desc = "This action cannot be undone",
 }: Props) {
-  const { theme } = useThemeContext();
-
   return (
     <ModalContentWrapper className={`w-[450px]`}>
       <ModalHeader closeModal={closeModal} title={label || "Wait a minute"} />
@@ -32,7 +29,7 @@ export default function ConfirmModal({
           <>
             <Button
               onClick={closeModal}
-              className={`bg-white/10 border border-white/10 rounded-full px-3 py-0.5`}
+              className={`hover:bg-[--a-5-cl] rounded-full px-3 py-1`}
               variant={"primary"}
               size={"clear"}
             >
@@ -40,7 +37,8 @@ export default function ConfirmModal({
             </Button>
             <Button
               isLoading={loading}
-              className={`${theme.content_bg} rounded-full px-3`}
+              color="primary"
+              className={`rounded-full px-3`}
               variant={"primary"}
               size={"clear"}
               onClick={callback}

@@ -1,6 +1,6 @@
 import {
   AddItem,
-  MenuWrapper,
+  PopupWrapper,
   Modal,
   ModalRef,
   MyPopup,
@@ -9,7 +9,6 @@ import {
   VerticalMenu,
 } from "@/components";
 import { Button } from "../../_components";
-import { useThemeContext } from "@/stores";
 import {
   FilmIcon,
   PlusIcon,
@@ -23,8 +22,6 @@ type Modal = "category" | "playlist";
 
 export default function AddSectionBtn() {
   const TARGET_PAGE = location.hash.includes("homepage") ? "home" : "category";
-
-  const { theme } = useThemeContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -41,7 +38,7 @@ export default function AddSectionBtn() {
     <>
       <MyPopup>
         <MyPopupTrigger>
-          <Button size={"clear"} className={`${theme.content_bg} p-1.5`}>
+          <Button size={"clear"} className={`p-1.5`}>
             <PlusIcon className="w-6" />
 
             <span>Add new section</span>
@@ -49,7 +46,7 @@ export default function AddSectionBtn() {
         </MyPopupTrigger>
 
         <MyPopupContent className="top-[calc(100%+8px)]">
-          <MenuWrapper className="w-[140px]">
+          <PopupWrapper className="w-[140px]">
             <VerticalMenu>
               {TARGET_PAGE === "category" && (
                 <button onClick={() => openModal("category")}>
@@ -63,7 +60,7 @@ export default function AddSectionBtn() {
                 <span>Playlist</span>
               </button>
             </VerticalMenu>
-          </MenuWrapper>
+          </PopupWrapper>
         </MyPopupContent>
       </MyPopup>
 

@@ -1,6 +1,5 @@
 import { Button, ModalContentWrapper, Title } from "@/components";
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
-import { useThemeContext } from "@/stores";
 import { splitStringByCutPositions } from "@/utils/lyricEditorHelper";
 import { ScissorsIcon } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
@@ -12,8 +11,11 @@ type Props = {
   closeModal: () => void;
 };
 
-export default function SplitWordModal({ wordData, wordIndex, closeModal }: Props) {
-  const { theme } = useThemeContext();
+export default function SplitWordModal({
+  wordData,
+  wordIndex,
+  closeModal,
+}: Props) {
   const { currentLyric, selectLyricIndex } = useEditLyricContext();
   const { setCut, cut } = useLyricEditorContext();
 
@@ -21,7 +23,7 @@ export default function SplitWordModal({ wordData, wordIndex, closeModal }: Prop
 
   const localSplitWords = useMemo(
     () => splitStringByCutPositions(wordData.text, localCut).filter((w) => w),
-    [localCut]
+    [localCut],
   );
 
   const characters = useMemo(() => wordData.text.split(""), []);
@@ -72,7 +74,7 @@ export default function SplitWordModal({ wordData, wordIndex, closeModal }: Prop
                 <button
                   onClick={() => splitWord(i)}
                   className={` p-1 rounded-full ${
-                    isSplited ? theme.content_bg : "hover:bg-black/10"
+                    isSplited ? "bg-[--primary-cl]" : "hover:bg-black/10"
                   }`}
                 >
                   <ScissorsIcon className="w-5" />

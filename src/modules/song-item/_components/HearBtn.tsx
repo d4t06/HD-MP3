@@ -1,4 +1,3 @@
-import { useThemeContext } from "@/stores";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
 import useSongItemAction from "../_hooks/useSongItemAction";
@@ -20,7 +19,6 @@ export default function HearBtn({
   songVariant,
   className = "p-1.5",
 }: Props) {
-  const { theme } = useThemeContext();
   const { action, loading } = useSongItemAction();
 
   const getMainClass = () => {
@@ -49,15 +47,15 @@ export default function HearBtn({
     switch (songVariant) {
       case "queue-song":
       case "recent-song":
-        return isSongActive ? "text-white" : theme.content_text;
+        return isSongActive ? "text-white" : "text-[--primary-cl]";
       default:
-        return theme.content_text;
+        return "text-[--primary-cl]";
     }
   };
 
   // define style
   const classes = {
-    button: `hover:bg-${theme.alpha} rounded-full`,
+    button: `hover:bg-[--a-5-cl] rounded-full`,
   };
 
   return (

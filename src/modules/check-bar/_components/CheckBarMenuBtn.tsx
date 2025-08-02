@@ -5,16 +5,16 @@ import {
   MyPopup,
   MyPopupTrigger,
   VerticalMenu,
-  MenuWrapper,
+  PopupWrapper,
 } from "@/components";
 // import SystemSongCheckMenu from "./SystemSongCheckMenu";
 
 export function CheckBarMenuContent({ children }: { children: ReactNode }) {
   return (
     <MyPopupContent>
-      <MenuWrapper>
+      <PopupWrapper>
         <VerticalMenu>{children}</VerticalMenu>
-      </MenuWrapper>
+      </PopupWrapper>
     </MyPopupContent>
   );
 }
