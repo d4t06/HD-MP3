@@ -33,7 +33,7 @@ export default function DashboardPlaylistDetail() {
 
       <div className="md:flex md:-mx-3">
         <div className="space-y-3 md:px-3">
-          <div className="w-[200px] h-[200px] mx-auto">
+          <div className="w-[200px] h-[200px] mx-auto rounded-md overflow-hidden">
             <Image
               className="object-cover h-full"
               blurHashEncode={playlist.blurhash_encode}

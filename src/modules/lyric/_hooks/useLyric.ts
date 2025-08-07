@@ -64,7 +64,8 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
       if (!!lyricRefs.current[nextIndex])
         scrollIntoView(lyricRefs.current[nextIndex], scrollBehavior.current);
 
-      if (scrollBehavior.current === "instant") scrollBehavior.current = "smooth";
+      if (scrollBehavior.current === "instant")
+        scrollBehavior.current = "smooth";
     }
   };
 

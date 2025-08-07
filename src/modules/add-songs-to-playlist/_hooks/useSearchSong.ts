@@ -1,7 +1,7 @@
 import { implementSongQuery } from "@/services/appService";
-import { songsCollectionRef } from "@/services/firebaseService";
+import { getSearchQuery, songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { query, where } from "firebase/firestore";
+import { where } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 
 export default function useSearchSong() {
@@ -18,14 +18,13 @@ export default function useSearchSong() {
 
 			setIsFetching(true);
 
-			const searchQuery = query(
+			const q = getSearchQuery(
 				songsCollectionRef,
-				where("name", ">=", value),
-				where("name", "<=", value + "\uf8ff"),
-				where("is_official", "==", true),
+				[where("is_official", "==", true)],
+				value,
 			);
 
-			const result = await implementSongQuery(searchQuery);
+			const result = await implementSongQuery(q);
 
 			setSongs(result);
 		} catch (err) {

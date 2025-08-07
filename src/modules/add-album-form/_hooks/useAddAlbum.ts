@@ -19,6 +19,7 @@ import {
   optimizeAndGetHashImage,
 } from "@/services/appService";
 import { useToastContext } from "@/stores";
+import { convertToEn } from "@/utils/appHelpers";
 
 export default function useAddAlbum(
   props: ComponentProps<typeof AddAlbumModal>,
@@ -81,6 +82,9 @@ export default function useAddAlbum(
       albumData.singers = [singer];
       albumData.singer_map = { [singer.id]: true };
       albumData.song_ids = songs.map((s) => s.id);
+
+      albumData.name = albumData.name.trim();
+      albumData.meta = convertToEn(albumData.name).split(" ");
 
       switch (props.variant) {
         case "add": {

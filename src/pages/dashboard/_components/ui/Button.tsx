@@ -12,7 +12,7 @@ const ButtonVariant = cva("inline-flex relative hover:brightness-95 space-x-1 it
     },
     color: {
       primary:
-        "before:border-[#4a826f] text-[#fff] bg-[#5a9e87] before:shadow-[0_2px_0_#4a826f]",
+        "before:border-[#4a826f] text-[#fff] bg-[--primary-cl] before:shadow-[0_2px_0_#4a826f]",
       second:
         "before:border-[#ccc] text-[#333] bg-[#f6f6f6] before:shadow-[0_2px_0_#ccc]",
       clear: "",

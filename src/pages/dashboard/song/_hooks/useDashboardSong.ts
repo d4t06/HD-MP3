@@ -11,6 +11,7 @@ import {
 } from "firebase/firestore";
 import { db } from "@/firebase";
 import { implementSongQuery } from "@/services/appService";
+import { getSearchQuery, songsCollectionRef } from "@/services/firebaseService";
 
 const pageSize = 6;
 
@@ -37,19 +38,17 @@ export default function useDashboardSong() {
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
+      if (isFetching) return;
 
       setIsFetching(true);
 
-      const songsCollectionRef = collection(db, "Songs");
-
-      const searchQuery = query(
+      const q = getSearchQuery(
         songsCollectionRef,
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
-        where("is_official", "==", true),
+        [where("is_official", "==", true)],
+        value,
       );
 
-      const result = await implementSongQuery(searchQuery);
+      const result = await implementSongQuery(q);
 
       setSearchResult(result);
 

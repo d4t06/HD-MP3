@@ -1,4 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,700&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -75,7 +77,7 @@ button[disabled] {
 }
 
 .song-index {
-  -webkit-text-stroke: 1.5px white;
+  -webkit-text-stroke: 1.5px #666;
   color: transparent;
 }
 

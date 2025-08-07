@@ -9,9 +9,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { songsCollectionRef } from "@/services/firebaseService";
+import { getSearchQuery, songsCollectionRef } from "@/services/firebaseService";
 import { implementSongQuery } from "@/services/appService";
-import { convertToEn } from "@/utils/appHelpers";
 import { db } from "@/firebase";
 
 type SongItem = {
@@ -99,7 +98,7 @@ export default function useSearch() {
   };
 
   useEffect(() => {
-      console.log(shouldFetchTrendingKeywords.current)
+    console.log(shouldFetchTrendingKeywords.current);
 
     if (shouldFetchTrendingKeywords.current) {
       shouldFetchTrendingKeywords.current = false;
@@ -119,25 +118,13 @@ export default function useSearch() {
       try {
         setIsFetching(true);
 
-        const lowValue = convertToEn(value.trim());
-        const capitalizedString =
-          lowValue.charAt(0).toUpperCase() + lowValue.slice(1);
+        const q = getSearchQuery(
+          songsCollectionRef,
+          [where("is_official", "==", true)],
+          value,
+        );
 
-        const searchQuery =
-          lowValue.split(" ").length > 1
-            ? query(
-                songsCollectionRef,
-                where("is_official", "==", true),
-                where("meta", "array-contains-any", lowValue.split(" ")),
-              )
-            : query(
-                songsCollectionRef,
-                where("is_official", "==", true),
-                where("name", ">=", capitalizedString),
-                where("name", "<=", capitalizedString + "\uf8ff"),
-              );
-
-        const result = await implementSongQuery(searchQuery);
+        const result = await implementSongQuery(q);
 
         SetSearchResult(result);
       } catch (error) {

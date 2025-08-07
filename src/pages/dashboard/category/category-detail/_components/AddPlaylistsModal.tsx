@@ -69,7 +69,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
     box: `rounded-lg bg-black/5 p-2`,
-    boxItem: `rounded-md w-full p-2.5 text-left shadow`,
+    boxItem: `w-full p-2.5 text-left hover:bg-[--a-5-cl] rounded-md text-sm`,
   };
 
   const renderPlaylists = (playlists: Playlist[]) =>
@@ -80,7 +80,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
         <button
           key={i}
           onClick={() => !isCurrent && selectPlaylist(p)}
-          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `bg-[--a-5-cl]` : `bg-white text-black`} `}
+          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `text-[--primary-cl]` : ``} `}
         >
           {p.name}
         </button>
@@ -90,14 +90,14 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   return (
     <>
       <ModalContentWrapper className="w-[600px] h-[500px]">
-        <ModalHeader closeModal={closeModal} title="Add Playlist" />
+        <ModalHeader closeModal={closeModal} title="Add playlists" />
 
         <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden">
           <div className={`${classes.col}`}>
             <SearchBar {...rest} />
 
             <div
-              className={`${classes.box} relative flex-grow overflow-auto mt-3 space-y-2`}
+              className={`${classes.box} relative flex-grow overflow-auto mt-3`}
             >
               {/* <div className={`h-full overflow-auto space-y-2`}> */}
               {!isFetching ? (
@@ -106,7 +106,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
                     renderPlaylists(otherPlaylists)
                   ) : (
                     <>
-                      <div className="font-bold text-[#333]">New playlist</div>
+                      <div className="font-bold text-[#333] my-1">New playlists</div>
                       {renderPlaylists(newPlaylists)}
                     </>
                   )}
@@ -132,7 +132,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
             <div className="font-[500] mb-3">Selected:</div>
 
             <div
-              className={`${classes.box} flex-grow overflow-auto space-y-2 `}
+              className={`${classes.box} flex-grow overflow-auto`}
             >
               {renderPlaylists(selectedPlaylists)}
             </div>

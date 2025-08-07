@@ -16,61 +16,55 @@ import { Button } from "@/pages/dashboard/_components";
 
 export const routeList = [
   {
-    path: "/dashboard",
-    title: "Dashboard",
-    icon: <ComputerDesktopIcon className="w-5 flex-shrink-0" />,
-  },
-  {
     path: "/dashboard/homepage",
     title: "Home Page",
-    icon: <HomeIcon className="w-5 flex-shrink-0" />,
+    icon: <HomeIcon />,
   },
   {
     path: "/dashboard/category",
     title: "Category",
-    icon: <SquaresPlusIcon className="w-5 flex-shrink-0" />,
+    icon: <SquaresPlusIcon />,
   },
   {
     path: "/dashboard/song",
     title: "Songs",
-    icon: <MusicalNoteIcon className="w-5 flex-shrink-0" />,
+    icon: <MusicalNoteIcon />,
   },
   {
     path: "/dashboard/playlist",
     title: "Playlists",
-    icon: <NewspaperIcon className="w-5 flex-shrink-0" />,
+    icon: <NewspaperIcon />,
   },
   {
     path: "/dashboard/album",
     title: "Albums",
-    icon: <FilmIcon className="w-5 flex-shrink-0" />,
+    icon: <FilmIcon />,
   },
   {
     path: "/dashboard/singer",
     title: "Singers",
-    icon: <UserIcon className="w-5 flex-shrink-0" />,
+    icon: <UserIcon />,
   },
   {
     path: "/dashboard/genre",
     title: "Genres",
-    icon: <RectangleGroupIcon className="w-5 flex-shrink-0" />,
+    icon: <RectangleGroupIcon />,
   },
 ];
 
 export default function DashBoardSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const location = useLocation();
+  const locationr = useLocation();
 
-  const pathName: string = "";
+  console.log(locationr, location);
 
   const classes = {
     container: `hidden md:block bg-[#f1f1f1] text-[#333] border-r border-black/10 transition-[width] relative flex-shrink-0`,
     head: "h-[60px] flex items-center justify-center",
     logoText: "text-[22px] font-[500] whitespace-nowrap tracking-[-1px]",
     logoImage: "max-w-[50px] p-[4px]",
-    item: `flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 `,
-    itemActive: "text-[#cd1818] bg-[#f1f1f1]",
+    item: `hover:bg-[--a-5-cl] flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 text-sm`,
     icon: "w-[24px] flex-shrink-0",
   };
 
@@ -78,17 +72,24 @@ export default function DashBoardSidebar() {
     <div
       className={`${classes.container} ${isOpen ? "w-[150px]" : "w-[70px]"}`}
     >
-      <div className="md:mt-[60px]">
-        {routeList.map((r, i) => {
-          const active = location.pathname === r.path;
+      <div className="md:mt-[60px] [&_svg]:w-5 [&_svg]:flex-shrink-0">
+        <Link
+          className={`
+              ${classes.item} ${isOpen ? "!justify-start" : ""}
+              ${location.hash === "#/dashboard" ? "text-[--primary-cl]" : ""}`}
+          to="/dashboard"
+        >
+          <ComputerDesktopIcon />
+          {isOpen && <span>Dashboard</span>}
+        </Link>
 
+        {routeList.map((r, i) => {
           return (
             <Link
               key={i}
               className={`
-              ${active ? "text-[--primary-cl]" : "hover:bg-[--a-5-cl]"}
               ${classes.item} ${isOpen ? "!justify-start" : ""}
-              ${pathName === r.path ? classes.itemActive : ""}`}
+              ${location.hash.includes(r.path) ? "text-[--primary-cl]" : ""}`}
               to={r.path}
             >
               {r.icon}
@@ -101,7 +102,7 @@ export default function DashBoardSidebar() {
           to="/"
           target="_blank"
           className={`${classes.item} ${isOpen ? "!justify-start" : ""}
-               ${pathName === "/dashboard" ? classes.itemActive : ""}
+               ${location.pathname === "/dashboard" ? "text-[--primary-cl]" : ""}
                `}
         >
           <ArrowUpRightIcon className={classes.icon} />

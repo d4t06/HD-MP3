@@ -1,13 +1,17 @@
 import { auth, db } from "../firebase";
 import {
+  CollectionReference,
+  QueryConstraint,
   addDoc,
   collection,
   deleteDoc,
   doc,
   getDoc,
   increment,
+  query,
   serverTimestamp,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { convertToEn, request } from "@/utils/appHelpers";
 import { upload } from "@imagekit/react";
@@ -210,3 +214,31 @@ export const increaseSongPlay = (songId: string) => {
     console.log(error);
   }
 };
+
+export function getSearchQuery(
+  collectionRef: CollectionReference,
+  contraints: QueryConstraint[],
+  keyword: string,
+) {
+  const lowValue = convertToEn(keyword?.trim() || "");
+  const capitalizedString =
+    lowValue.charAt(0).toUpperCase() + lowValue.slice(1);
+
+  const searchQuery =
+    lowValue.split(" ").length > 1
+      ? query(
+          collectionRef,
+
+          ...contraints,
+          where("meta", "array-contains-any", lowValue.split(" ")),
+        )
+      : query(
+          collectionRef,
+          ...contraints,
+
+          where("name", ">=", capitalizedString),
+          where("name", "<=", capitalizedString + "\uf8ff"),
+        );
+
+  return searchQuery;
+}

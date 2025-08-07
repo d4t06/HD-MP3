@@ -7,7 +7,7 @@ type Props = {
 };
 
 export default function Label({ children, className = "", htmlFor }: Props) {
-  const classes = `${location.hash.includes("dashboard") ? "text-gray-600" : "text-gray-300"} font-semibold ${className}`;
+  const classes = `text-gray-600 dark:text-gray-300 font-bold ${className}`;
 
   if (htmlFor)
     return (

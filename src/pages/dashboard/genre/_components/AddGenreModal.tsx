@@ -4,6 +4,7 @@ import {
   Input,
   Switch,
   Label,
+  LoadingOverlay,
 } from "@/components";
 import { useToastContext } from "@/stores";
 import { useEffect, useRef, useState } from "react";
@@ -96,7 +97,7 @@ export default function AddGenreModal({
     <ModalContentWrapper className="w-[450px]">
       <ModalHeader closeModal={closeModal} title={title} />
 
-      <div className="space-y-3 overflow-auto">
+      <div className="space-y-3 overflow-auto mt-5">
         <div className={classes.inputGroup}>
           <Label>Name</Label>
           <Input
@@ -117,7 +118,7 @@ export default function AddGenreModal({
         </div>
       </div>
 
-      <div className="text-right mt-5">
+      <div className="text-right mt-10">
         <Button
           disabled={!ableToSubmit}
           loading={isFetching}
@@ -127,6 +128,8 @@ export default function AddGenreModal({
           <p className="text-white">Ok</p>
         </Button>
       </div>
+
+      {isFetching && <LoadingOverlay />}
     </ModalContentWrapper>
   );
 }

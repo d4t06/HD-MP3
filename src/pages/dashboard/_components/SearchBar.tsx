@@ -1,5 +1,9 @@
 import { Dispatch, FormEventHandler, RefObject, SetStateAction } from "react";
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  MagnifyingGlassIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { Button, Frame } from "./ui";
 import { Input } from "@/components";
 
@@ -9,12 +13,14 @@ type Props = {
   setValue: Dispatch<SetStateAction<string>>;
   className?: string;
   inputRef?: RefObject<HTMLInputElement>;
+  loading?: boolean;
 };
 export default function Searchbar({
   handleSubmit,
   setValue,
   value,
   className = "",
+  loading,
   inputRef,
 }: Props) {
   const submit: FormEventHandler = (e) => {
@@ -24,7 +30,10 @@ export default function Searchbar({
 
   return (
     <Frame className={className}>
-      <form onSubmit={submit} className="flex gap-2 justify-between items-center">
+      <form
+        onSubmit={submit}
+        className="flex gap-2 justify-between items-center"
+      >
         <div className="relative flex-grow flex items-center text-[#333]">
           <Input
             type="text"
@@ -38,11 +47,15 @@ export default function Searchbar({
             <button
               type="button"
               onClick={() => {
-                setValue("");
+                !loading && setValue("");
               }}
               className="absolute right-3"
             >
-              <XMarkIcon className="w-6" />
+              {loading ? (
+                <ArrowPathIcon className="w-6 animate-spin" />
+              ) : (
+                <XMarkIcon className="w-6" />
+              )}
             </button>
           )}
         </div>

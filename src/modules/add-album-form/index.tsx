@@ -84,7 +84,7 @@ function Content({ className = "", ...props }: Props) {
 
   return (
     <>
-      <div className={`md:flex ${className}`}>
+      <div className={`md:flex ${className} overflow-auto`}>
         <div className="space-y-3">
           <Frame
             p={"clear"}

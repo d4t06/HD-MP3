@@ -6,6 +6,7 @@ import {
   PlayIcon,
 } from "@heroicons/react/24/outline";
 import { Button } from "@/pages/dashboard/_components";
+import { ProgressBar } from "@/components";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -20,8 +21,6 @@ export default function AudioPLayer({ audioEle }: Props) {
     durationRef,
   } = useAudioControl({
     audioEle,
-    baseColor: "rgba(0,0,0,.15)",
-    color: "#5a9e87",
   });
 
   const renderPlayPausedButton = () => {
@@ -51,11 +50,7 @@ export default function AudioPLayer({ audioEle }: Props) {
             00:00
           </div>
 
-          <div
-            ref={progressLineRef}
-            style={{ backgroundColor: "rgba(0,0,0,.15)" }}
-            className={`h-1 rounded-full w-full progress-line`}
-          ></div>
+          <ProgressBar elelRef={progressLineRef} className={`h-1`} />
 
           <div className="text-sm w-[50px] text-right" ref={durationRef}>
             00:00

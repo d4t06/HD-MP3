@@ -25,7 +25,7 @@ export default function DashboardSong() {
       <Title title="Songs" />
 
       <div className="flex justify-between items-start mt-3">
-        <Searchbar {...rest} />
+        <Searchbar loading={tab === "Result" && isFetching} {...rest} />
         <Button
           href="/dashboard/song/add-song"
           className={`p-1.5 ml-5`}
@@ -47,24 +47,14 @@ export default function DashboardSong() {
       </div>
 
       <div className="mt-3">
-        <DashboardTable
-          colList={[
-            "Name",
-            "Singers",
-            "Main genre",
-            "Genres",
-            "Like",
-            "Today plays",
-            "Week plays",
-          ]}
-        >
+        <DashboardTable colList={["Name", "Singers", "Genre", ""]}>
           {songsSource.length ? (
             <>
               {songsSource.map((s, i) => (
                 <DashboardSongItem variant="songs" key={i} song={s} />
               ))}
 
-              {isFetching && (
+              {tab === "All" && isFetching && (
                 <tr className="no-hover border-none">
                   <td colSpan={9}>
                     <ArrowPathIcon className="animate-spin w-7 mx-auto" />

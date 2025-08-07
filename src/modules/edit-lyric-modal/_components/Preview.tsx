@@ -48,7 +48,7 @@ export default function Preview() {
   }, [isEditText]);
 
   return (
-    <div className="mt-3 relative pt-5">
+    <div className="mt-3 relative pt-5 font-[Inter,system-ui]">
       <div className="absolute top-0 right-0 flex justify-end w space-x-2 hover:[&>button]:bg-black/10 [&>button]:rounded-full [&>button]:p-1">
         {!isEditText ? (
           <button onClick={() => setIsEditText(true)}>

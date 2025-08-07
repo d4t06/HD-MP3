@@ -1,14 +1,20 @@
-import { Loading } from "@/pages/dashboard/_components";
+import { Button, Loading } from "@/pages/dashboard/_components";
 import { useGetSongs } from "@/hooks";
 import { useCategoryContext } from "../CategoryContext";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import SongCta from "./SongCta";
 import DashboardTable from "@/pages/dashboard/_components/ui/Table";
-import { NotFound } from "@/components";
+import { ConfirmModal, Modal, ModalRef, NotFound } from "@/components";
 import { Link } from "react-router-dom";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
 
 export default function SongSection() {
   const { setSongs, category, songs } = useCategoryContext();
+
+  const modalRef = useRef<ModalRef>(null);
+
+  const { action, isFetching: actionFetching } = useCategoryDetailAction();
 
   const songIds = useMemo(
     () => (category?.song_ids ? category.song_ids.split("_") : []),
@@ -22,7 +28,7 @@ export default function SongSection() {
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold text-[#333]">Songs</h1>
 
-        <SongCta />
+        <SongCta songs={songs} />
       </div>
       {/* <Frame> */}
       {isFetching && <Loading />}
@@ -50,6 +56,30 @@ export default function SongSection() {
                       {s.name}
                     </Link>
                   ))}
+                </td>
+                <td className="text-right">
+                  <Button
+                    onClick={() => modalRef.current?.open()}
+                    size={"clear"}
+                    className="p-1"
+                  >
+                    <TrashIcon className="w-5" />
+                  </Button>
+
+                  <Modal variant="animation" ref={modalRef}>
+                    <ConfirmModal
+                      callback={() =>
+                        action({
+                          variant: "remove-song",
+                          song: s,
+                          index: i,
+                        })
+                      }
+                      closeModal={() => modalRef.current?.close()}
+                      loading={actionFetching}
+                      label={`Remove song '${s.name}'`}
+                    />
+                  </Modal>
                 </td>
               </tr>
             ))

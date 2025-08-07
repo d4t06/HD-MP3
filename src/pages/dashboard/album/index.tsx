@@ -16,7 +16,7 @@ export default function DashboardAlbum() {
       <Title title="Albums" />
 
       <div className="flex justify-between mt-3">
-        <SearchBar {...rest} />
+        <SearchBar loading={tab === "Result" && isFetching} {...rest} />
         <AddNewAlbumBtn setAlbums={setAlbums} />
       </div>
 

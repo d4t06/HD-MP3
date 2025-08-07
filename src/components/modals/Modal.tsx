@@ -101,11 +101,20 @@ function Modal(
   useEffect(() => {
     if (variant === "default") return;
 
+    const handleClose = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+
     if (isOpen) {
       setTimeout(() => {
         setIsMounted(true);
       }, 100);
+      window.addEventListener("keyup", handleClose);
     }
+
+    return () => {
+      window.removeEventListener("keyup", handleClose);
+    };
   }, [isOpen]);
 
   const classes = {

@@ -19,8 +19,13 @@ export default function useEditLyricModalSideEffect() {
     currentWords,
   } = useLyricEditorContext();
 
-  const { tempWordRef, endTimeRangeRef, startTimeRangeRef, startRefText, endRefText } =
-    eleRefs;
+  const {
+    tempWordRef,
+    endTimeRangeRef,
+    startTimeRangeRef,
+    startRefText,
+    endRefText,
+  } = eleRefs;
 
   // change when lyirc text change
   useEffect(() => {

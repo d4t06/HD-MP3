@@ -15,7 +15,11 @@ import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
 
 type Modal = "add" | "arrange";
 
-export default function SongCta() {
+type Props = {
+  songs: Song[];
+};
+
+export default function SongCta({ songs }: Props) {
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
@@ -60,6 +64,7 @@ export default function SongCta() {
             closeModal={() => modalRef.current?.close()}
             isLoading={isFetching}
             submit={(songs) => action({ variant: "add-songs", songs })}
+            current={songs.map((s) => s.id)}
           />
         )}
       </Modal>

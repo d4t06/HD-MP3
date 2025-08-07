@@ -4,18 +4,12 @@ import {
   implementSongQuery,
 } from "@/services/appService";
 import {
+  getSearchQuery,
   playlistCollectionRef,
   singerCollectionRef,
   songsCollectionRef,
 } from "@/services/firebaseService";
-import { convertToEn, sleep } from "@/utils/appHelpers";
-import {
-  CollectionReference,
-  QueryConstraint,
-  limit,
-  query,
-  where,
-} from "firebase/firestore";
+import { limit, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
@@ -49,42 +43,13 @@ export default function useGetSearchResult() {
     setResult((prev) => ({ ...prev, ...data }));
   };
 
-  const getQuery = (
-    collectionRef: CollectionReference,
-    contraints: QueryConstraint[],
-  ) => {
-    const key = searchParams[0].get("q");
-
-    const lowValue = convertToEn(key?.trim() || "");
-    const capitalizedString =
-      lowValue.charAt(0).toUpperCase() + lowValue.slice(1);
-
-    const searchQuery =
-      lowValue.split(" ").length > 1
-        ? query(
-            collectionRef,
-
-            ...contraints,
-            where("meta", "array-contains-any", lowValue.split(" ")),
-          )
-        : query(
-            collectionRef,
-            ...contraints,
-
-            where("name", ">=", capitalizedString),
-            where("name", "<=", capitalizedString + "\uf8ff"),
-          );
-
-    return searchQuery;
-  };
-
   const getResult = async () => {
     try {
       const key = searchParams[0].get("q");
 
       if (!key) return;
 
-      await sleep(300);
+      setIsFetching(true);
 
       switch (tab) {
         case "All": {
@@ -93,13 +58,18 @@ export default function useGetSearchResult() {
 
           const [songs, playlists, singers] = await Promise.all([
             implementSongQuery(
-              getQuery(songsCollectionRef, [
-                where("is_official", "==", true),
-                limit(6),
-              ]),
+              getSearchQuery(
+                songsCollectionRef,
+                [where("is_official", "==", true), limit(6)],
+                key,
+              ),
             ),
-            implementPlaylistQuery(getQuery(playlistCollectionRef, [limit(3)])),
-            implementSingerQuery(getQuery(singerCollectionRef, [limit(3)])),
+            implementPlaylistQuery(
+              getSearchQuery(playlistCollectionRef, [limit(3)], key),
+            ),
+            implementSingerQuery(
+              getSearchQuery(singerCollectionRef, [limit(3)], key),
+            ),
           ]);
 
           updateResult({ playlists, songs, singers });
@@ -111,9 +81,11 @@ export default function useGetSearchResult() {
           if (!shoudlGetSongs.current) return;
           shoudlGetSongs.current = false;
 
-          const q = getQuery(songsCollectionRef, [
-            where("is_official", "==", true),
-          ]);
+          const q = getSearchQuery(
+            songsCollectionRef,
+            [where("is_official", "==", true)],
+            key,
+          );
           const songs = await implementSongQuery(q);
 
           updateResult({ songs });
@@ -124,7 +96,11 @@ export default function useGetSearchResult() {
           if (!shoudlGetPlaylists.current) return;
           shoudlGetPlaylists.current = false;
 
-          const q = getQuery(playlistCollectionRef, []);
+          const q = getSearchQuery(
+            playlistCollectionRef,
+            [where("is_public", "==", true)],
+            key,
+          );
 
           const playlists = await implementPlaylistQuery(q);
 
@@ -136,7 +112,7 @@ export default function useGetSearchResult() {
           if (!shoudlGetSingers.current) return;
           shoudlGetSingers.current = false;
 
-          const q = getQuery(singerCollectionRef, []);
+          const q = getSearchQuery(singerCollectionRef, [], key);
 
           const singers = await implementSingerQuery(q);
 
@@ -149,7 +125,6 @@ export default function useGetSearchResult() {
       console.log({ message: error });
     } finally {
       setIsFetching(false);
-      // else shouldUpdateResult.current = true;
     }
   };
 

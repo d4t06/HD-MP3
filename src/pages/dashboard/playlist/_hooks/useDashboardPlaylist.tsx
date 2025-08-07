@@ -8,7 +8,10 @@ import {
   startAfter,
   where,
 } from "firebase/firestore";
-import { playlistCollectionRef } from "@/services/firebaseService";
+import {
+  getSearchQuery,
+  playlistCollectionRef,
+} from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
 import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 
@@ -32,18 +35,17 @@ export default function useDashboardPlaylist() {
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
+      if (isFetching) return;
 
       setIsFetching(true);
 
-      const searchQuery = query(
+      const q = getSearchQuery(
         playlistCollectionRef,
-        where("is_official", "==", true),
-        where("is_album", "==", false),
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
+        [where("is_official", "==", true)],
+        value,
       );
 
-      const result = await implementPlaylistQuery(searchQuery);
+      const result = await implementPlaylistQuery(q);
       setSearchResult(result);
 
       setTab("Result");

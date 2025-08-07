@@ -7,7 +7,7 @@ export default function ForYouPage() {
   return (
     <SongsContextProvider>
       <CommentProvider target="song">
-        <div className="fixed top-0 left-0 right-0 bottom-[47px] md:inset-0 sm:relative overflow-hidden flex-grow">
+        <div className="fixed bg-[--layout-cl] md:bg-transparent top-0 left-0 right-0 bottom-[47px] md:inset-0 sm:relative overflow-hidden flex-grow">
           <SongList />
 
           <SongCardComment />

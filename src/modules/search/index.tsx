@@ -39,7 +39,7 @@ export default function Search() {
   );
 
   const classes = {
-    container: `relative h-[40px] flex px-3 w-full md:w-[300px] shadow-md`,
+    container: `relative z-[9] h-[40px] flex px-3 w-full md:w-[300px] shadow-md`,
     unFocusContainer: `bg-[--sidebar-cl] rounded-[20px]`,
     focusedContainer: `bg-[--popup-cl] rounded-[20px_20px_0_0]`,
     input: `bg-transparent outline-none placeholder:[#666] w-full`,

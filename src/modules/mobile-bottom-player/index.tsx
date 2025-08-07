@@ -55,7 +55,7 @@ export default function MobileBottomPlayer() {
   };
 
   const classes = {
-    wrapper: `block md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
+    wrapper: `block  bg-transparent md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
     container: `absolute inset-0 bg-[--player-cl] bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
@@ -67,7 +67,7 @@ export default function MobileBottomPlayer() {
       className={`${classes.wrapper} ${shouldHideAll ? "translate-y-[100%]" : ""}`}
     >
       <div
-        className={`${classes.container} ${shouldHidePlayer ? "hidden" : ""} ${
+        className={`${classes.container} ${
           isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""
         }`}
       ></div>

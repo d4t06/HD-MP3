@@ -46,7 +46,7 @@ export default function PlaylistCta() {
         </MyPopupTrigger>
 
         <MyPopupContent className="top-[calc(100%+8px)] right-0">
-          <PopupWrapper className="w-[140px]">
+          <PopupWrapper className="w-[160px]">
             <VerticalMenu>
               <button onClick={() => openModal("add")}>
                 <PlusIcon />

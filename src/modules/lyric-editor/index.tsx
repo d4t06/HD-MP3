@@ -48,10 +48,8 @@ function Content({ children }: Props) {
         </Center>
       ) : (
         song && (
-          <div className="flex-grow flex flex-col overflow-hidden">
+          <>
             {children}
-
-            {/*<Title title={` Edit lyric - ${song?.name}`} />*/}
 
             <div className="mt-3">
               {audioRef.current && (
@@ -89,7 +87,8 @@ function Content({ children }: Props) {
             >
               Save
             </Button>
-          </div>
+            {/*</div>*/}
+          </>
         )
       )}
     </>

@@ -48,7 +48,7 @@ export default function Image({
       {!imageLoaded && (
         <>
           {blurHashEncode ? (
-            <Blurhash hash={blurHashEncode} height={"100%"} width={"100%"} />
+            <Blurhash hash={blurHashEncode} className="rounded-md overflow-hidden" height={"100%"} width={"100%"} />
           ) : (
             <Skeleton className="w-full" />
           )}

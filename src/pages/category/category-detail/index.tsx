@@ -1,4 +1,4 @@
-import { Center, Image, Loading, NotFound } from "@/components";
+import { Center, Image, Loading, NotFound, Title } from "@/components";
 import { useGetCategory } from "@/hooks";
 import { useMemo, useState } from "react";
 import PlaylistSection from "./_components/PlaylistSection";
@@ -35,12 +35,16 @@ export default function CategoryDetail() {
   return (
     <>
       <div className="mt-10 space-y-10">
-        <div className="relative rounded-lg overflow-hidden aspect-[16/4]">
-          <Image
-            src={category.banner_image_url}
-            blurHashEncode={category.banner_blurhash_encode}
-            className="object-cover h-full"
-          />
+        <div>
+          <Title title={category.name} />
+
+          <div className="relative rounded-lg overflow-hidden aspect-[16/4] mt-5">
+            <Image
+              src={category.banner_image_url}
+              blurHashEncode={category.banner_blurhash_encode}
+              className="object-cover h-full"
+            />
+          </div>
         </div>
 
         <SongSection songIds={songIds} />

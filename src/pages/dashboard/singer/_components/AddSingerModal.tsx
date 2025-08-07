@@ -33,13 +33,13 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   if (!singerData) return;
 
   return (
-    <ModalContentWrapper className="w-[700px] md:block">
+    <ModalContentWrapper className="w-[700px]">
       <ModalHeader
         closeModal={props.closeModal}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}
       />
 
-      <div className="flex-grow overflow-auto md:flex md:flex-[unset] md:overflow-hidden">
+      <div className="flex-grow overflow-auto md:flex md:flex-[unset]">
         <div className="space-y-2.5">
           <div className="w-[200px] h-[200px] rounded-lg border overflow-hidden">
             <Image
@@ -68,27 +68,26 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
           </Button>
         </div>
 
-        <div className="flex-grow flex flex-col mt-3  space-y-2.5 md:mt-0 md:ml-5">
+        <div className="flex-grow flex flex-col mt-3  space-y-3 md:mt-0 md:ml-5">
           <div className="space-y-1">
-            <Label htmlFor="name">Name:</Label>
+            <Label htmlFor="name">Name</Label>
             <Input
               ref={inputRef}
               type="text"
               id="name"
               placeholder=""
-              className="bg-[#f1f1f1]"
               value={singerData.name}
               onChange={(e) => updateSingerData({ name: e.target.value })}
             />
           </div>
 
           <div className="space-y-1">
-            <Label htmlFor="description">Description:</Label>
+            <Label htmlFor="description">Description</Label>
 
             <textarea
               placeholder="..."
               id="description"
-              className={`${inputClasses} w-full bg-[#f1f1f1] rounded-md min-h-[100px]`}
+              className={`${inputClasses} rounded-md min-h-[100px]`}
               value={singerData.description}
               onChange={(e) =>
                 updateSingerData({ description: e.target.value })
@@ -98,22 +97,22 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
 
           {props.variant === "edit" && (
             <div className="space-y-1">
-              <label htmlFor="like" className="opacity-[.8]">
-                Like:
-              </label>
+              <Label htmlFor="like">Like</Label>
 
               <Input
                 id="like"
-                className={`bg-[#f1f1f1]`}
                 type="number"
-                value={singerData.like ? singerData.like + "" : ""}
-                onChange={(e) => updateSingerData({ like: +e.target.value })}
+                value={singerData.like ? singerData.like + "" : "0"}
+                onChange={(e) =>
+                  updateSingerData({
+                    like: isNaN(+e.target.value) ? 1 : +e.target.value,
+                  })
+                }
               />
             </div>
           )}
         </div>
       </div>
-
       <p className="text-right mt-3">
         <Button
           loading={isFetching}

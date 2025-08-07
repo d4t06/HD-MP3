@@ -28,7 +28,7 @@ export default function SongSection({ songIds }: Props) {
     <SongSelectProvider>
       <div className="mt-5">
         <CheckedBar variant="system-song">
-          <Title title="Hot songs" />
+          <Title variant={'h2'} title="Hot songs" />
         </CheckedBar>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 mt-3">

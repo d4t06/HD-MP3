@@ -12,7 +12,7 @@ export default function ToastItem({ className = "", toast, onClick }: Props) {
 
   const classes = {
     icon: `w-6`,
-    container: `transition-[transform,opacity] text-white px-3 py-1 space-x-1 rounded-md flex items-center bg-[--popup-cl]`,
+    container: `transition-[transform,opacity] shadow-[0_0_6px_0_rgba(0,0,0,0.3)] px-3 py-2 space-x-2 rounded-md flex items-center bg-[--popup-cl] text-[--text-cl]`,
     text: `font-[500] text-sm`,
     open: "opacity-[1] translate-x-0",
     init: "opacity-0 translate-x-10",

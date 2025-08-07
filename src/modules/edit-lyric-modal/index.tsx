@@ -41,10 +41,7 @@ function Content({ closeModal }: Props) {
           className="absolute inline-block opacity-0"
         >
           {currentWords.map((w, i) => (
-            <span key={i}>
-              {w}
-              <span>&nbsp;</span>
-            </span>
+            <span key={i}>{w}</span>
           ))}
         </div>
 

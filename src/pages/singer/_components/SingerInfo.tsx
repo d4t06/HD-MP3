@@ -12,7 +12,9 @@ export default function SingerInfo() {
 
   return (
     <>
-      <div className={`md:flex bg-transparent relative z-0 pb-5 md:p-10 `}>
+      <div
+        className={`md:flex bg-transparent relative z-0 pb-5 md:p-10 items-start`}
+      >
         <div
           className={`absolute overflow-hidden -left-10 -top-[100px] -right-10 inset-0`}
         >
@@ -27,14 +29,14 @@ export default function SingerInfo() {
           </div>
         </div>
 
-        <div className="w-[70%] z-0 relative mx-auto md:w-1/4 md:flex-shrink-0 md:m-unset">
+        <div className="w-[70%] aspect-[1/1] rounded-full overflow-hidden z-0 relative mx-auto md:w-1/4 md:flex-shrink-0 md:m-unset">
           {isFetching ? (
             <Skeleton className="pt-[100%] " />
           ) : (
             <Image
               src={singer?.image_url}
               blurHashEncode={singer?.blurhash_encode}
-              className="object-cover"
+              className="object-cover h-full"
             />
           )}
         </div>
@@ -48,12 +50,11 @@ export default function SingerInfo() {
           ) : (
             singer && (
               <>
-                <p className="text-3xl font-bold">{singer.name}</p>
+                <div>
+                  <span className="text-3xl font-bold">{singer.name}</span>
 
-                <p>
-                  <span className="text-base">❤️ </span>
-                  {abbreviateNumber(singer.like)}
-                </p>
+                  <span className="ml-4">❤️ {abbreviateNumber(singer.like)}</span>
+                </div>
 
                 <p className="line-clamp-2">{singer.description}</p>
 

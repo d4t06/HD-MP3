@@ -27,12 +27,12 @@ export default function useRecord({ audioEle }: Props) {
   const isPressedDown = useRef(false);
 
   const addRecord = () => {
-    const grow = +((Date.now() - startRef.current) / 1000).toFixed(1);
+    const grow = +(audioEle.currentTime - startRef.current).toFixed(2);
     setLocalGrowList((prev) => [...prev, grow]);
   };
 
   const handleHold = () => {
-    startRef.current = Date.now();
+    startRef.current = audioEle.currentTime;
 
     if (!isCallPlay.current) {
       isCallPlay.current = true;

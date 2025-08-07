@@ -74,7 +74,7 @@ export default function SplitWordModal({
                 <button
                   onClick={() => splitWord(i)}
                   className={` p-1 rounded-full ${
-                    isSplited ? "bg-[--primary-cl]" : "hover:bg-black/10"
+                    isSplited ? "bg-[--primary-cl] text-white" : "hover:bg-black/10"
                   }`}
                 >
                   <ScissorsIcon className="w-5" />

@@ -15,7 +15,7 @@ export default function Header({ audioEle }: Props) {
       <EditLyricModalPlayer audioEle={audioEle} />
 
       <div className="flex items-center justify-between">
-        <Tab className="bg-white/10" {...tabProps} render={(t) => t} />
+        <Tab {...tabProps} render={(t) => t} />
 
         <div className="flex space-x-2">
           <PlayBtn />

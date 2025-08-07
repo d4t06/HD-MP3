@@ -169,7 +169,7 @@ function SongItem({
       )}
       {showIndex && (
         <div
-          className={`song-index font-bold w-[60px] text-center mr-5 text-[32px] ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
+          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 md:w-[60px] text-center text-[32px] ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
         >
           {index + 1}
         </div>

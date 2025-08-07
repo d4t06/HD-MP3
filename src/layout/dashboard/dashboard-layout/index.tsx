@@ -8,19 +8,26 @@ import { Outlet } from "react-router-dom";
 import { PushBrowserHistory } from "@/stores/global/NavigationContext";
 import SingerProvider from "@/stores/dashboard/SingerContext";
 import PlaylistProvider from "@/stores/dashboard/PlaylistContext";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 export default function DashBoardLayout() {
   const { isOnMobile } = useThemeContext();
 
+  const ranEffect = useRef(false);
+
   useEffect(() => {
-    const body = document.querySelector("body");
+    if (!ranEffect.current) {
+      ranEffect.current = true;
 
-    if (body) {
-      body.setAttribute("data-theme", "white");
+      const body = document.querySelector("body");
+
+      if (body) {
+        body.setAttribute("data-theme", "white");
+        body.classList.remove("dark");
+      }
+
+      document.title = "Dashboard";
     }
-
-    document.title = "Dashboard";
   }, []);
 
   return (

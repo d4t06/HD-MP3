@@ -46,7 +46,7 @@ export default function WordList() {
 
   return (
     <>
-      <div className="flex h-[44px] mt-5">
+      <div className="flex justify-center h-[44px] mt-5">
         {currentSplitWords.map((w, i) => {
           const parentWordIndex = wordIndexBySplitWordIndex[i];
           const parentWord = currentWords[parentWordIndex];

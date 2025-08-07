@@ -29,22 +29,27 @@ export default function AddItem({
   variant = "input",
   children,
 }: Props) {
-
   const [value, setValue] = useState(initValue || "");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-
-    if (!isAbleToSubmit || loading) return;
-
-    cbWhenSubmit(value);
-  };
+  const submited = useRef(false);
 
   const isAbleToSubmit = useMemo(
     () => value.trim() && value !== initValue,
     [value],
   );
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!isAbleToSubmit) return;
+
+    if (!submited.current) {
+      submited.current = true;
+
+      cbWhenSubmit(value);
+    }
+  };
 
   useEffect(() => {
     inputRef.current?.focus();

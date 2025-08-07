@@ -75,6 +75,7 @@ export default function AlbumSongSelect() {
           submit={handleSetSongs}
           closeModal={() => modalRef.current?.close()}
           isLoading={false}
+          current={songs.map((s) => s.id)}
         />
       </Modal>
     </>

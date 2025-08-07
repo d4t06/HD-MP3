@@ -23,10 +23,10 @@ export default function DashboardSingerPage() {
 
   return (
     <div className="pb-[46px]">
-      <Title title="Singer" />
+      <Title title="Singers" />
 
       <div className="flex justify-between mt-3">
-        <SearchBar {...rest} />
+        <SearchBar loading={tab === 'Result' && isFetching} {...rest} />
         <AddSingerBtn />
       </div>
 

@@ -13,10 +13,12 @@ import useDashboardPlaylistActions, {
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
+import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
 export default function DashboardPlaylistCta() {
+  const { songs } = usePlaylistContext();
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
@@ -87,6 +89,7 @@ export default function DashboardPlaylistCta() {
               })
             }
             closeModal={closeModal}
+            current={songs.map((s) => id)}
           />
         );
     }

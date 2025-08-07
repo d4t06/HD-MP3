@@ -80,7 +80,7 @@ export default function LyricEditorList({
   return (
     <>
       <div
-        className={`flex-grow  overflow-auto flex  no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--a-10-cl] ${getClasses(isPreview, "justify-center")}`}
+        className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] shadow-[0_0_6px_0_rgba(0,0,0,0.15)] ${getClasses(isPreview, "justify-center")}`}
       >
         <div className={`w-1/2 ${getClasses(isPreview, "hidden")}`}>
           {!!baseLyricArr.length ? (

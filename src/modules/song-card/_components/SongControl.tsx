@@ -9,6 +9,7 @@ import { ArrowPathIcon, MusicalNoteIcon } from "@heroicons/react/24/outline";
 import uesAudioEffect from "../_hooks/useAudioEffect";
 import SongItemCta from "./SongItemCta";
 import { useAudioControl } from "@/hooks";
+import { ProgressBar } from "@/components";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -26,6 +27,7 @@ export default function SongControl({ audioEle, song }: Props) {
     setStatusFromParent: setStatus,
     statusFromParent: status,
     statusRefFromParent: statusRef,
+    baseColor: "rgba(255,255,255,0.1)",
   });
 
   useImperativeHandle(controlRef, () => ({
@@ -62,11 +64,11 @@ export default function SongControl({ audioEle, song }: Props) {
         </div>
       </div>
       <div className="h-2 flex items-center mt-3">
-        <div
-          ref={progressLineRef}
-          style={{ backgroundColor: "rgba(255,255,255,.3)" }}
-          className={`relative h-1 rounded-full w-full progress-line ${status === "idle" ? "hidden" : ""}`}
-        ></div>
+        <ProgressBar
+          bg="rgba(255,255,255,0.1)"
+          elelRef={progressLineRef}
+          className={`h-1 ${status === "idle" ? "hidden" : ""}`}
+        />
       </div>
     </>
   );

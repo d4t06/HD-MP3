@@ -10,10 +10,10 @@ type Props = {
   closeModal: () => void;
   submit: (songs: Song[]) => void;
   isLoading: boolean;
+  current: string[];
 };
 
-function Content({ closeModal, submit, isLoading }: Props) {
-
+function Content({ closeModal, submit, isLoading, current }: Props) {
   const { songs, isFetching, ...rest } = useSearchSong();
   const { selectedSongs, selectSong } = useSongSelectContext();
 
@@ -23,39 +23,40 @@ function Content({ closeModal, submit, isLoading }: Props) {
     closeModal();
   };
 
-  const otherSongs = useMemo(() => {
-    const selectedSongsId = selectedSongs.map((s) => s.id);
-
-    return songs.filter((s) => !selectedSongsId.includes(s.id));
-  }, [songs, selectedSongs]);
-
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
-    box: `rounded-lg bg-black/10 p-2`,
-    songItem: `rounded-md w-full p-1 text-left`,
+    box: `rounded-lg bg-[--a-5-cl] p-2`,
+    songItem: `rounded-md w-full p-1 text-left text-sm hover:bg-[--a-5-cl]`,
   };
+
+  const renderSongs = (s: Song[]) =>
+    s.map((p, i) => {
+      const isCurrent = current.includes(p.id);
+
+      return (
+        <button
+          key={i}
+          onClick={() => !isCurrent && selectSong(p)}
+          className={`${classes.songItem} ${isCurrent || selectedSongs.includes(p) ? `text-[--primary-cl]` : ``} `}
+        >
+          {p.name}
+        </button>
+      );
+    });
 
   return (
     <>
       <ModalContentWrapper className="w-[600px] h-[400px]">
-        <ModalHeader closeModal={closeModal} title="Add song" />
+        <ModalHeader closeModal={closeModal} title="Add songs" />
 
         <div className="flex-grow flex flex-col md:flex-row -mx-2">
           <div className={`${classes.col}`}>
             <SearchBar {...rest} />
 
             <div className={`${classes.box} flex-grow mt-3`}>
-              <div className={`h-full overflow-auto pace-y-2`}>
+              <div className={`h-full overflow-auto`}>
                 {!isFetching ? (
-                  otherSongs.map((s, i) => (
-                    <button
-                      key={i}
-                      onClick={() => selectSong(s)}
-                      className={`${classes.songItem} hover:bg-[--a-5-cl]`}
-                    >
-                      <h5 className="">{s.name}</h5>
-                    </button>
-                  ))
+                  renderSongs(songs)
                 ) : (
                   <Loading className="h-full" />
                 )}
@@ -68,15 +69,7 @@ function Content({ closeModal, submit, isLoading }: Props) {
             <div
               className={`${classes.box} flex-grow overflow-auto space-y-2 `}
             >
-              {selectedSongs.map((s, i) => (
-                <button
-                  key={i}
-                  onClick={() => selectSong(s)}
-                  className={`${classes.songItem} hover:bg-[--a-5-cl]`}
-                >
-                  <h5 className="">{s.name}</h5>
-                </button>
-              ))}
+              {renderSongs(selectedSongs)}
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { Link } from "react-router-dom";
+import useGetRecommend from "@/hooks/useGetRecomemded";
 
 type Props = {
   amount: number;
@@ -14,9 +15,11 @@ export default function TrendingSong(props: Props) {
   const { isFetching, songs } = useGetTrendingSongs(props);
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
+  const { getRecommend } = useGetRecommend();
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, songs);
+    getRecommend(song);
   };
 
   return (

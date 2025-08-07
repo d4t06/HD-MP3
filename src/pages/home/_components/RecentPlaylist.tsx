@@ -20,18 +20,16 @@ export default function RecentPlaylist() {
     }
   }, []);
 
-  const classes = {
-    playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
-  };
+  // const classes = {
+  //   playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
+  // };
 
   const renderPlaylists = () => {
     return recentPlaylists.map((playlist, index) => {
       const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
-        <div key={index} className={classes.playlistItem}>
-          <PlaylistItem variant="link" active={active} data={playlist} />
-        </div>
+        <PlaylistItem key={index} variant="link" active={active} data={playlist} />
       );
     });
   };

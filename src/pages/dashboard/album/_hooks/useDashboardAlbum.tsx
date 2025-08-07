@@ -1,7 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useToastContext } from "@/stores";
 import { orderBy, query, where } from "firebase/firestore";
-import { playlistCollectionRef } from "@/services/firebaseService";
+import {
+  getSearchQuery,
+  playlistCollectionRef,
+} from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
 
 const tabs = ["All", "Result"] as const;
@@ -20,17 +23,17 @@ export default function useDashboardAlbum() {
   const handleSubmit = async (e: FormEvent) => {
     try {
       e.preventDefault();
+      if (isFetching) return;
 
       setIsFetching(true);
 
-      const searchQuery = query(
+      const q = getSearchQuery(
         playlistCollectionRef,
-        where("is_album", "==", true),
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff")
+        [where("is_album", "==", true)],
+        value,
       );
 
-      const result = await implementPlaylistQuery(searchQuery);
+      const result = await implementPlaylistQuery(q);
       setAlbums(result);
 
       setTab("Result");
@@ -49,7 +52,7 @@ export default function useDashboardAlbum() {
       const searchQuery = query(
         playlistCollectionRef,
         where("is_album", "==", true),
-        orderBy("created_at", "desc")
+        orderBy("created_at", "desc"),
       );
 
       const result = await implementPlaylistQuery(searchQuery);
@@ -76,6 +79,6 @@ export default function useDashboardAlbum() {
     tab,
     setTab,
     tabs,
-    setAlbums
+    setAlbums,
   };
 }

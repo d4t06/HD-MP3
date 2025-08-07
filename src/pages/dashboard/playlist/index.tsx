@@ -26,7 +26,7 @@ export default function DashboardPlaylist() {
       <Title title="Playlists" />
 
       <div className="flex justify-between mt-3">
-        <SearchBar {...rest} />
+        <SearchBar loading={tab === "Result" && isFetching} {...rest} />
         <AddNewPlaylistBtn />
       </div>
 
@@ -59,7 +59,7 @@ export default function DashboardPlaylist() {
                 </tr>
               ))}
 
-              {isFetching && (
+              {tab === "All" && isFetching && (
                 <tr className="no-hover border-none">
                   <td colSpan={9}>
                     <ArrowPathIcon className="animate-spin w-7 mx-auto" />

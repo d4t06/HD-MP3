@@ -1,6 +1,9 @@
 import { db } from "@/firebase";
 import { implementPlaylistQuery } from "@/services/appService";
-import { playlistCollectionRef } from "@/services/firebaseService";
+import {
+  getSearchQuery,
+  playlistCollectionRef,
+} from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { collection, limit, orderBy, query, where } from "firebase/firestore";
 import { FormEvent, useEffect, useRef, useState } from "react";
@@ -20,11 +23,7 @@ export default function useSearchPlaylist() {
     try {
       setIsFetching(true);
 
-      const q = query(
-        collection(db, "Playlists"),
-        orderBy("created_at", "desc"),
-        limit(5),
-      );
+      const q = query(playlistCollectionRef);
 
       const result = await implementPlaylistQuery(q);
       setNewPlaylists(result);
@@ -41,14 +40,13 @@ export default function useSearchPlaylist() {
 
       setIsFetching(true);
 
-      const searchQuery = query(
+      const q = getSearchQuery(
         playlistCollectionRef,
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
-        where("is_official", "==", true),
+        [where("is_public", "==", true)],
+        value,
       );
 
-      const result = await implementPlaylistQuery(searchQuery);
+      const result = await implementPlaylistQuery(q);
 
       setPlaylists(result);
       setLastSubmit(value);

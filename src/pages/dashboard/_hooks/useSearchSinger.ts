@@ -1,6 +1,9 @@
-import { db } from "@/firebase";
+import { implementSingerQuery } from "@/services/appService";
+import {
+  getSearchQuery,
+  singerCollectionRef,
+} from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { FormEvent, useState } from "react";
 
 type Props = {
@@ -20,27 +23,18 @@ export default function useSearchSinger({ afterSearched = () => {} }: Props) {
     try {
       e.preventDefault();
       e.stopPropagation();
+
+      if (isFetching) return;
+
       setIsFetching(true);
       setIsShowResult(true);
 
-      const singerCollectionRef = collection(db, "Singers");
+      const q = getSearchQuery(singerCollectionRef, [], value);
 
-      const searchQuery = query(
-        singerCollectionRef,
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
-      );
+      const singers = await implementSingerQuery(q);
 
-      const docSnaps = await getDocs(searchQuery);
-
-      if (docSnaps.docs) {
-        const result = docSnaps.docs.map(
-          (doc) => ({ ...doc.data(), id: doc.id }) as Singer,
-        );
-
-        setResult(result);
-        afterSearched();
-      }
+      setResult(singers);
+      afterSearched();
     } catch (err) {
       console.log({ message: err });
       setErrorToast();

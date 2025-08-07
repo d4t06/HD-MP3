@@ -66,7 +66,7 @@ export default function AudioSetting({
                 className="w-full"
                 type="range"
                 step={0.1}
-                min={1}
+                min={0.6}
                 max={1.5}
                 value={speed}
                 onChange={(e) => setSpeed(+e.target.value)}

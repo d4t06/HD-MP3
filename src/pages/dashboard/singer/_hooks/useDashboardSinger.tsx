@@ -1,14 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useToastContext } from "@/stores";
+import { getDocs, limit, orderBy, query, startAfter } from "firebase/firestore";
 import {
-  getDocs,
-  limit,
-  orderBy,
-  query,
-  startAfter,
-  where,
-} from "firebase/firestore";
-import { singerCollectionRef } from "@/services/firebaseService";
+  getSearchQuery,
+  singerCollectionRef,
+} from "@/services/firebaseService";
 import { implementSingerQuery } from "@/services/appService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 
@@ -34,12 +30,9 @@ export default function useDashboardSinger() {
 
       setIsFetching(true);
 
-      const searchQuery = query(
-        singerCollectionRef,
-        where("name", ">=", value),
-        where("name", "<=", value + "\uf8ff"),
-      );
-      const result = await implementSingerQuery(searchQuery);
+      const q = getSearchQuery(singerCollectionRef, [], value);
+
+      const result = await implementSingerQuery(q);
       setSearchResult(result);
 
       setTab("Result");

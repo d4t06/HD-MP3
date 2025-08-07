@@ -133,7 +133,7 @@ export default function FullScreenPlayerContent() {
           </div>
 
           <div
-            className={`absolute inset-0 z-20 flex flex-col items-center justify-center ${
+            className={`absolute font-[Inter,system-ui] inset-0 z-20 flex flex-col items-center justify-center ${
               activeTab === "Karaoke" ? "" : "hidden"
             }`}
           >

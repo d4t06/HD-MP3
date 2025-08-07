@@ -6,6 +6,7 @@ export default function createKeyFrame(
 ) {
   const name = `lyric_${nanoid(4)}`;
 
+
   const style = document.querySelector(
     "style.keyframe",
   ) as HTMLStyleElement | null;
