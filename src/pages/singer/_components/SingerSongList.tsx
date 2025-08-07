@@ -4,6 +4,7 @@ import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useSingerContext } from "./SingerContext";
 import { songItemSkeleton } from "@/components/skeleton";
+import { getHidden } from "@/utils/appHelpers";
 
 export default function SingerSongList() {
   const { handleSetSong } = useSetSong({ variant: "songs" });
@@ -12,12 +13,13 @@ export default function SingerSongList() {
   return (
     <>
       <div>
-        <Title variant={"h2"} className="mb-3" title="Popular Songs" />
+        <Title variant={"h2"} className={`mb-3 ${getHidden(!songs.length)}`} title="Popular Songs" />
         <SongSelectProvider>
           {isFetching ? (
             songItemSkeleton
           ) : (
             <SongList
+              whenEmpty={<></>}
               songs={songs}
               setSong={(s) => handleSetSong(s.queue_id, [s])}
             />

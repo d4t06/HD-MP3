@@ -89,7 +89,7 @@ export default function DashboardPlaylistCta() {
               })
             }
             closeModal={closeModal}
-            current={songs.map((s) => id)}
+            current={songs.map((s) => s.id)}
           />
         );
     }

@@ -8,7 +8,9 @@ export default function AddSongPage() {
   if (!user) return;
 
   return (
-    <div className="pb-[46px]">
+    <>
+      {/* <DashboardPageWrapper> */}
+
       <Title className="mb-5" title="Add Song" />
 
       <AddSongForm
@@ -16,6 +18,7 @@ export default function AddSongPage() {
         ownerEmail={user.email}
         variant="add"
       />
-    </div>
+      {/* </DashboardPageWrapper> */}
+    </>
   );
 }

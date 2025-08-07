@@ -115,7 +115,7 @@ export default function PLaylistInfo({
   return (
     <>
       <div className={classes.container}>
-        <div className="md:w-[200px] lg:w-full">
+        <div className="w-[250px] md:w-[200px] mx-auto lg:w-full">
           {showSkeleton ? (
             <Skeleton className="pt-[100%] rounded-lg" />
           ) : (

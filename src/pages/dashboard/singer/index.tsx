@@ -22,11 +22,12 @@ export default function DashboardSingerPage() {
   );
 
   return (
-    <div className="pb-[46px]">
+    <>
+      {/* <DashboardPageWrapper> */}
       <Title title="Singers" />
 
       <div className="flex justify-between mt-3">
-        <SearchBar loading={tab === 'Result' && isFetching} {...rest} />
+        <SearchBar loading={tab === "Result" && isFetching} {...rest} />
         <AddSingerBtn />
       </div>
 
@@ -86,6 +87,7 @@ export default function DashboardSingerPage() {
           )}
         </DashboardTable>
       </div>
-    </div>
+      {/* </DashboardPageWrapper> */}
+    </>
   );
 }

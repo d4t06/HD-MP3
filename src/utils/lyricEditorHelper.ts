@@ -7,12 +7,12 @@ export function splitStringByCutPositions(text: string, cut: number[]) {
   // Ensure cutPositions are sorted in ascending order
   cut.sort((a, b) => a - b);
 
-  for (const positon of cut) {
-    if (positon > text.length || positon < 0) {
+  for (const position of cut) {
+    if (position > text.length || position < 0) {
       continue; // Skip invalid cut positions
     }
-    parts.push(text.substring(start, positon));
-    start = positon;
+    parts.push(text.substring(start, position));
+    start = position;
   }
 
   parts.push(text.substring(start)); // Add the last part

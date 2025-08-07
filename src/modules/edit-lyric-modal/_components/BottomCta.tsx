@@ -56,14 +56,14 @@ export default function BottomCta({ closeModal }: Props) {
 				onClick={() => handleNavigate("prev")}
 			>
 				<ArrowLeftIcon className="w-6" />
-				<span>Previous</span>
+				<span className="hidden md:block">Previous</span>
 			</Button>
 			<Button
 				color="primary"
 				disabled={selectLyricIndex === lyrics.length - 1}
 				onClick={() => handleNavigate("next")}
 			>
-				<span>Next</span>
+				<span className="hidden md:block">Next</span>
 				<ArrowRightIcon className="w-6" />
 			</Button>
 			<Button

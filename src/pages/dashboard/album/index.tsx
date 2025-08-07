@@ -12,7 +12,7 @@ export default function DashboardAlbum() {
     useDashboardAlbum();
 
   return (
-    <div className="pb-[46px]">
+    <>
       <Title title="Albums" />
 
       <div className="flex justify-between mt-3">
@@ -64,6 +64,6 @@ export default function DashboardAlbum() {
           </DashboardTable>
         )}
       </div>
-    </div>
+    </>
   );
 }

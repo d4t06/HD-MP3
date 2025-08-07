@@ -5,7 +5,7 @@ type Props = {
 export default function Skeleton({ className }: Props) {
   return (
     <div
-      className={`animate-pulse rounded-[4px] bg-gray-400 dark:bg-gray-300  ${className}`}
+      className={`animate-pulse rounded-[4px] bg-gray-400 dark:bg-gray-600  ${className}`}
     ></div>
   );
 }
@@ -14,7 +14,7 @@ export const songItemSkeleton = [...Array(4).keys()].map((index) => {
   return (
     <div
       key={index}
-      className="flex items-center p-[10px] border-b-[1px] border-transparent"
+      className="flex p-[10px] border-b-[1px] border-transparent"
     >
       <Skeleton className="h-[18px] w-[18px]" />
 

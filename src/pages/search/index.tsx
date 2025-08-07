@@ -1,4 +1,4 @@
-import { NotFound, PlaylistList, Tab, Title } from "@/components";
+import { NotFound, PageWrapper, PlaylistList, Tab, Title } from "@/components";
 import { songItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
@@ -25,31 +25,35 @@ export default function SearchResultPage() {
 
   return (
     <>
-      {isOnMobile && <Search />}
+      <PageWrapper className="space-y-8">
+        {isOnMobile && <Search />}
 
-      <div className="md:flex items-center mt-3">
-        <Title title="Result" className="mt-1 md:mt-0" />
-        <Tab
-          className="w-fit [&_button]:text-sm mt-3 md:[&_button]:text-base md:mt-0 md:ml-4"
-          tabs={tabs}
-          render={(t) => t}
-          tab={tab}
-          setTab={(t) => {
-            setTab(t);
-            setIsFetching(true);
-          }}
-        />
-      </div>
+        <div className="md:flex items-center">
+          <Title title="Result" className="mt-1 md:mt-0" />
+          <Tab
+            className="w-fit [&_button]:text-sm mt-3 md:[&_button]:text-base md:mt-0 md:ml-4"
+            tabs={tabs}
+            render={(t) => t}
+            tab={tab}
+            setTab={(t) => {
+              setTab(t);
+              setIsFetching(true);
+            }}
+          />
+        </div>
 
-      <SongSelectProvider>
-        <div className="mt-5">
+        <SongSelectProvider>
           <div className="space-y-5">
             <div
               className={tab === "Playlist" || tab === "Singer" ? "hidden" : ""}
             >
               <Title
                 variant={"h3"}
-                className={tab !== "All" ? "hidden" : ""}
+                className={
+                  tab !== "All" || (tab === "All" && !result.songs.length)
+                    ? "hidden"
+                    : "mb-3"
+                }
                 title="Songs"
               />
 
@@ -58,17 +62,25 @@ export default function SearchResultPage() {
               {!isFetching && result.songs.length ? (
                 <SongList setSong={_handleSetSong} songs={result.songs} />
               ) : (
-                <NotFound className="mx-auto" variant="less" />
+                tab !== "All" && <NotFound className="mx-auto" variant="less" />
               )}
             </div>
 
             <div className={tab === "Song" || tab === "Singer" ? "hidden" : ""}>
               <Title
                 variant={"h3"}
-                className={tab !== "All" ? "hidden" : ""}
+                className={
+                  tab !== "All" || (tab === "All" && !result.playlists.length)
+                    ? "hidden"
+                    : "mb-3"
+                }
                 title="Playlist"
               />
-              <PlaylistList loading={isFetching} playlists={result.playlists} />
+              <PlaylistList
+                whenEmpty={tab === "All" ? <></> : undefined}
+                loading={isFetching}
+                playlists={result.playlists}
+              />
             </div>
 
             <div
@@ -76,7 +88,11 @@ export default function SearchResultPage() {
             >
               <Title
                 variant={"h3"}
-                className={tab !== "All" ? "hidden" : "mb-3"}
+                className={
+                  tab !== "All" || (tab === "All" && !result.singers.length)
+                    ? "hidden"
+                    : "mb-3"
+                }
                 title="Singers"
               />
 
@@ -84,11 +100,12 @@ export default function SearchResultPage() {
                 singers={result.singers}
                 loading={isFetching}
                 skeNumber={2}
+                whenEmpty={tab === "All" ? <></> : undefined}
               />
             </div>
           </div>
-        </div>
-      </SongSelectProvider>
+        </SongSelectProvider>
+      </PageWrapper>
 
       <Footer />
     </>

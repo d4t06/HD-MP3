@@ -7,12 +7,14 @@ import SingerAlbum from "./_components/SingerAlbum";
 function Content() {
   return (
     <>
-      <div className="pb-[46px] space-y-5">
+      {/* <DashboardPageWrapper> */}
+      <div className="space-y-5">
         <SingerInfo />
         <SingerAlbum />
         <SingerSongList />
         <SingerPlaylist />
       </div>
+      {/* </DashboardPageWrapper> */}
     </>
   );
 }

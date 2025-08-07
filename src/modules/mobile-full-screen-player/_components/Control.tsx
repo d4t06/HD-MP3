@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import CommentProvider from "@/modules/comment/components/CommentContext";
+import { ProgressBar } from "@/components";
 
 // export type ControlRef = {
 // 	handlePlayPause: () => void;
@@ -18,56 +19,51 @@ import CommentProvider from "@/modules/comment/components/CommentContext";
 // };
 
 export default function MobileFullScreenControl() {
-	const { timelineEleRef, currentTimeEleRef } = usePlayerContext();
+  const { timelineEleRef, currentTimeEleRef } = usePlayerContext();
 
-	const { playStatus } = useSelector(selectAllPlayStatusStore);
-	const { currentSongData } = useSelector(selectSongQueue);
+  const { playStatus } = useSelector(selectAllPlayStatusStore);
+  const { currentSongData } = useSelector(selectSongQueue);
 
-	const { handleSeek, handlePlayPause } = usePlayerAction();
+  const { handleSeek, handlePlayPause } = usePlayerAction();
 
-	const classes = {
-		buttonsContainer: `w-full flex items-center justify-between space-x-2 mt-2`,
-		progressContainer: `flex w-full flex-row items-center `,
-		processLineBase: `h-1 flex-grow relative rounded-[99px] shadow-[2px_2px_10px_rgba(0,0,0,.15)] `,
-		before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
-	};
+  const classes = {
+    buttonsContainer: `w-full flex items-center justify-between space-x-2 mt-2`,
+    progressContainer: `flex w-full flex-row items-center `,
+  };
 
-	return (
-		<>
-			{/* process */}
-			<div
-				className={`${classes.progressContainer}  ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
-			>
-				<div className="w-[44px] sm:w-9">
-					<span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
-						0:00
-					</span>
-				</div>
-				<div
-					ref={timelineEleRef}
-					style={{ background: "rgba(255, 255, 255, 0.3)" }}
-					onClick={(e) => handleSeek(e)}
-					className={`${classes.processLineBase} ${false ? "disable" : ""} ${
-						classes.before
-					}`}
-				></div>
-				<div className="w-[44px] sm:w-9 text-right">
-					<span className={"text-lg sm:text-sm"}>
-						{currentSongData?.song ? formatTime(currentSongData.song?.duration) : "0:00"}
-					</span>
-				</div>
-			</div>
+  return (
+    <>
+      {/* process */}
+      <div
+        className={`${classes.progressContainer}  ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
+      >
+        <div className="w-[44px] flex-shrink-0 sm:w-9">
+          <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
+            0:00
+          </span>
+        </div>
 
-			{/* buttons */}
-			<div className={`${classes.buttonsContainer}`}>
-				<PlayBtn playStatus={playStatus} handlePlayPause={handlePlayPause} />
+        <ProgressBar onClick={handleSeek} elelRef={timelineEleRef} className="h-1.5" />
 
-				<CommentProvider target="song">
-					<MenuButton />
-				</CommentProvider>
-			</div>
-		</>
-	);
+        <div className="w-[44px] flex-shrink-0 sm:w-9 text-right">
+          <span className={"text-lg sm:text-sm"}>
+            {currentSongData?.song
+              ? formatTime(currentSongData.song?.duration)
+              : "0:00"}
+          </span>
+        </div>
+      </div>
+
+      {/* buttons */}
+      <div className={`${classes.buttonsContainer}`}>
+        <PlayBtn playStatus={playStatus} handlePlayPause={handlePlayPause} />
+
+        <CommentProvider target="song">
+          <MenuButton />
+        </CommentProvider>
+      </div>
+    </>
+  );
 }
 
 // export default forwardRef(MobileFullScreenControl);

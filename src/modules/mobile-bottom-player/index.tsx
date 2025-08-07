@@ -5,8 +5,6 @@ import {
   GlobeAsiaAustraliaIcon,
   HomeIcon,
   MagnifyingGlassIcon,
-  PauseCircleIcon,
-  PlayCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -17,6 +15,7 @@ import { Image } from "@/components";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import useHideMobileBottomPlayer from "./_hooks/useHideMobileBottomPlayer";
 import MyMusicNavItem from "./_components/MyMusicNavItem";
+import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 
 export default function MobileBottomPlayer() {
   const { isOpenFullScreen, setIsOpenFullScreen, audioRef } =
@@ -38,14 +37,14 @@ export default function MobileBottomPlayer() {
   const renderIcon = useMemo(() => {
     switch (playStatus) {
       case "playing":
-        return <PauseCircleIcon className="w-10" />;
+        return <PauseIcon className="" />;
       case "error":
-        return <ExclamationCircleIcon className="w-10" />;
+        return <ExclamationCircleIcon className="" />;
       case "loading":
       case "waiting":
-        return <ArrowPathIcon className="w-10 animate-spin" />;
+        return <ArrowPathIcon className=" animate-spin" />;
       case "paused":
-        return <PlayCircleIcon className="w-10" />;
+        return <PlayIcon className="" />;
     }
   }, [playStatus]);
 
@@ -55,7 +54,7 @@ export default function MobileBottomPlayer() {
   };
 
   const classes = {
-    wrapper: `block  bg-transparent md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
+    wrapper: `block  ${shouldHidePlayer ? 'bg-[--layout-cl]' : 'bg-transparent'}  md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
     container: `absolute inset-0 bg-[--player-cl] bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
@@ -111,12 +110,9 @@ export default function MobileBottomPlayer() {
         <div
           className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}
         >
-          <button className={`p-[4px]`} onClick={handlePlayPause}>
+          <button className={`p-1.5 [&_svg]:w-9 text-[--primary-cl]`} onClick={handlePlayPause}>
             {renderIcon}
           </button>
-          {/*    <button onClick={() => controlRef.current?.handleNext()} className={`p-[4px]`}>
-            <ForwardIcon className="w-10" />
-          </button>*/}
         </div>
       </div>
 

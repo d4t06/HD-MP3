@@ -11,7 +11,7 @@ function Footer() {
         Make with  <span>❤️ </span>by d4t06 <br /> © All rights no reserve ¯\_(ツ)_/¯
       </p>
 
-      <div className="flex items-center mt-[20px] md:mt-0 space-x-[10px]">
+      <div className="flex items-center mt-5 md:mt-0 space-x-[10px] h-[30px]">
         <a href="mailto:datnh0708@gmail.com">
           <svg
             className={classes.icon}

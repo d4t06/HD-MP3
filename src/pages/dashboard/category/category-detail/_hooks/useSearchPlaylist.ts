@@ -23,7 +23,7 @@ export default function useSearchPlaylist() {
     try {
       setIsFetching(true);
 
-      const q = query(playlistCollectionRef);
+      const q = query(playlistCollectionRef, where("is_official", "==", true));
 
       const result = await implementPlaylistQuery(q);
       setNewPlaylists(result);
@@ -42,7 +42,7 @@ export default function useSearchPlaylist() {
 
       const q = getSearchQuery(
         playlistCollectionRef,
-        [where("is_public", "==", true)],
+        [where("is_official", "==", true)],
         value,
       );
 

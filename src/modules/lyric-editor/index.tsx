@@ -78,15 +78,18 @@ function Content({ children }: Props) {
               />
             )}
 
-            <Button
-              className={`self-end md:self-start rounded-full mt-5 `}
-              color="primary"
-              disabled={!isChanged}
-              isLoading={isSubmitting}
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+            <p className="mt-5 text-right">
+              <Button
+                className={`rounded-full `}
+                color="primary"
+                disabled={!isChanged}
+                isLoading={isSubmitting}
+                onClick={handleSubmit}
+              >
+                Save
+              </Button>
+            </p>
+
             {/*</div>*/}
           </>
         )

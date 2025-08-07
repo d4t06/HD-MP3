@@ -4,3 +4,4 @@ export { default as Loading } from "./Loading";
 export { default as ItemRightCtaFrame } from "./ItemRightCtaFrame";
 export { default as DashboardModal } from "./Modal";
 export { default as ButtonCtaFrame } from "./ButtonCtaFrame";
+export { default as DashboardPageWrapper } from "./DashboardPageWrapper";

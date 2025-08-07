@@ -16,7 +16,8 @@ export default function DashboardGenrePage() {
   }, []);
 
   return (
-    <div className="pb-[46px]">
+    <>
+      {/* <DashboardPageWrapper> */}
       <Title title="Genres" />
 
       <div className="flex justify-between items-start mt-3">
@@ -73,6 +74,7 @@ export default function DashboardGenrePage() {
           </>
         )}
       </div>
-    </div>
+      {/* </DashboardPageWrapper> */}
+    </>
   );
 }

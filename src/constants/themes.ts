@@ -36,7 +36,7 @@ export const themes: ThemeType[] = [
   },
   {
     name: "Brown",
-    id: "gray",
+    id: "brown",
     type: "light",
     border: "border-[#644646]",
     container: "bg-white",

@@ -24,7 +24,7 @@ export function Content() {
 
   return (
     <>
-      <div className="pb-[46px]">
+      {/* <DashboardPageWrapper> */}
         <Title title="Category Detail" />
 
         <div className="aspect-[16/4] mt-5">
@@ -60,7 +60,7 @@ export function Content() {
             <PlaylistSection />
           </div>
         </div>
-      </div>
+      {/* </DashboardPageWrapper> */}
     </>
   );
 }

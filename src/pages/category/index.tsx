@@ -1,4 +1,4 @@
-import { Center, Loading } from "@/components";
+import { Center, Loading, PageWrapper } from "@/components";
 import useGetPage from "./useGetPage";
 import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./category-detail/_components/PlaylistSection";
@@ -7,7 +7,7 @@ import SliderSection from "./_components/SliderSection";
 import { usePageContext } from "@/stores";
 
 export default function CategoryPage() {
-  const {categoryPage} = usePageContext()
+  const { categoryPage } = usePageContext();
   const { isFetching } = useGetPage();
 
   if (isFetching)
@@ -19,9 +19,13 @@ export default function CategoryPage() {
 
   return (
     <>
-      <div className="space-y-10 mt-10">
+      <PageWrapper>
         <SliderSection
-          categoryIds={categoryPage?.category_ids ? categoryPage?.category_ids.split("_") : []}
+          categoryIds={
+            categoryPage?.category_ids
+              ? categoryPage?.category_ids.split("_")
+              : []
+          }
         />
 
         {categoryPage?.category_sections.map((c, i) => (
@@ -39,7 +43,7 @@ export default function CategoryPage() {
             playlistIds={c.target_ids ? c.target_ids.split("_") : []}
           />
         ))}
-      </div>
+      </PageWrapper>
 
       <Footer />
     </>

@@ -57,13 +57,13 @@ export default function ArrangeModal({
       <ModalContentWrapper>
         <ModalHeader closeModal={closeModal} title="Change order" />
 
-        <div className="flex flex-col flex-grow overflow-auto space-y-2">
+        <div className="flex flex-col flex-grow overflow-auto space-y-2 py-2">
           {orderedPlaylists.map((p, index) => (
             <button
               key={index}
               onClick={() => handleChangeOrder(index)}
               data-id={p.id}
-              className={`attribute-item p-1.5 ${currentIndex === index ? "bg-red-300" : "hover:bg-red-300 bg-[#f1f1f1]"}  border-[2px] border-[#ccc] rounded-md`}
+              className={`attribute-item p-1.5 ${currentIndex === index ? "bg-[--primary-cl] text-white" : "hover:bg-[--a-5-cl] bg-[#f1f1f1]"}  border-[2px] border-[#ccc] rounded-md`}
             >
               {p.label}
             </button>

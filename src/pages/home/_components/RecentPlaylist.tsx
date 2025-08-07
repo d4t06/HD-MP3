@@ -36,7 +36,7 @@ export default function RecentPlaylist() {
 
   if (isFetching)
     return (
-      <div className={`flex flex-row flex-wrap -mx-[8px] `}>
+      <div className={`flex flex-row flex-wrap -mx-3 `}>
         {playlistSkeleton}
       </div>
     );
@@ -47,7 +47,7 @@ export default function RecentPlaylist() {
     <>
       <div>
         <Title title="Recent listening" />
-        <div className={`flex flex-row flex-wrap -mx-[8px] `}>
+        <div className={`flex flex-row flex-wrap -mx-3 `}>
           {renderPlaylists()}
         </div>
       </div>

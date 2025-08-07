@@ -1,6 +1,5 @@
 import { useSongSelectContext } from "@/stores";
-import { useMemo } from "react";
-import { ModalContentWrapper, ModalHeader } from "@/components";
+import { ModalContentWrapper, ModalHeader, Title } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
 import { CheckIcon } from "@heroicons/react/24/outline";
 import useSearchSong from "./_hooks/useSearchSong";
@@ -46,25 +45,22 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
 
   return (
     <>
-      <ModalContentWrapper className="w-[600px] h-[400px]">
+      <ModalContentWrapper className="w-[600px]">
         <ModalHeader closeModal={closeModal} title="Add songs" />
 
-        <div className="flex-grow flex flex-col md:flex-row -mx-2">
+        <SearchBar {...rest} />
+        <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden mt-3">
           <div className={`${classes.col}`}>
-            <SearchBar {...rest} />
-
-            <div className={`${classes.box} flex-grow mt-3`}>
-              <div className={`h-full overflow-auto`}>
-                {!isFetching ? (
-                  renderSongs(songs)
-                ) : (
-                  <Loading className="h-full" />
-                )}
-              </div>
+            <div className={`${classes.box} flex-grow overflow-auto`}>
+              {!isFetching ? (
+                renderSongs(songs)
+              ) : (
+                <Loading className="h-full" />
+              )}
             </div>
           </div>
           <div className={`${classes.col} mt-3 md:mt-0`}>
-            <div className="font-[500] mb-3">Selected:</div>
+            <Title title="Selected" variant={'h3'} className="mb-1" />
 
             <div
               className={`${classes.box} flex-grow overflow-auto space-y-2 `}

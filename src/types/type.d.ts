@@ -117,7 +117,7 @@ type ThemeKeyType =
   | "red"
   | "light_green"
   | "deep_blue"
-  | "gray"
+  | "brown"
   | "white"
   | "black"
   | "tet"

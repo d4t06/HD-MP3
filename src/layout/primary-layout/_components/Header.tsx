@@ -25,8 +25,8 @@ import {
 
 import MyTooltip from "@/components/MyTooltip";
 import useAuthAction from "@/hooks/useAuthActiont";
-import NavigationButton from "../navigation-button";
-import Search from "../search";
+import NavigationButton from "@/modules/navigation-button";
+import Search from "@/modules/search";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -120,10 +120,10 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20]  ${scroll ? "shadow-lg" : "bg-transparent"}`}
+        className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20] bg-transparent  ${scroll ? "shadow-lg" : ""}`}
       >
         <div
-          className={`${scroll ? "" : "hidden "} absolute inset-0 bg-[--layout-cl] bg-opacity-[0.9] backdrop-blur-[15px] z-[-1] `}
+          className={`${scroll ? "" : "hidden "} absolute inset-0 bg-[--player-cl] bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] `}
         ></div>
 
         <div className="px-[40px] items-center flex h-full">

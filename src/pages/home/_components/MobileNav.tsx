@@ -1,9 +1,11 @@
 import {
   ArrowRightOnRectangleIcon,
+  ArrowTrendingUpIcon,
   ChevronRightIcon,
   ClockIcon,
   HeartIcon,
   MusicalNoteIcon,
+  SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthContext } from "@/stores";
 import useAuthAction from "@/hooks/useAuthActiont";
@@ -39,26 +41,18 @@ export default function MobileNav() {
           {user ? (
             <>
               <LinkItem
-                to="/my-music"
+                to="/trending"
                 className={classes.linkItem}
-                icon={<MusicalNoteIcon className={classes.icon} />}
-                label="All songs"
+                icon={<ArrowTrendingUpIcon className={classes.icon} />}
+                label="Trending"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
 
               <LinkItem
-                to="/my-music"
+                to="/category"
                 className={classes.linkItem}
-                icon={<HeartIcon className={classes.icon} />}
-                label="Favorite"
-                arrowIcon={<ChevronRightIcon className="w-6" />}
-              />
-
-              <LinkItem
-                to="/my-music"
-                className={classes.linkItem}
-                icon={<ClockIcon className={classes.icon} />}
-                label="Recent"
+                icon={<SquaresPlusIcon className={classes.icon} />}
+                label="Category"
                 arrowIcon={<ChevronRightIcon className="w-6" />}
               />
             </>

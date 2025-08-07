@@ -2,7 +2,7 @@ import { useAuthContext } from "@/stores";
 import SongItem from "..";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { ComponentProps } from "react";
+import { ComponentProps, ReactNode } from "react";
 import { NotFound } from "@/components";
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
   isHasCheckBox?: boolean;
   showIndex?: boolean;
   imageUrl?: string;
+  whenEmpty?: ReactNode;
 };
 
 export default function SongList({
@@ -23,11 +24,12 @@ export default function SongList({
   imageUrl,
   showIndex,
   isHasCheckBox = true,
+  whenEmpty,
 }: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
-  if (!songs.length) return <NotFound variant="less" />;
+  if (!songs.length) return whenEmpty || <NotFound variant="less" />;
 
   return songs.map((song, index) => {
     const isOwnSong = user

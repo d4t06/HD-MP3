@@ -43,9 +43,11 @@ export default function EditSongPage() {
     );
 
   return (
-    <div className="pb-[46px]">
+    <>
+      {/* <DashboardPageWrapper> */}
       <Title className="mb-5" title="Song Detail" />
       <AddSongForm song={song} variant="edit" />
-    </div>
+      {/* </DashboardPageWrapper> */}
+    </>
   );
 }

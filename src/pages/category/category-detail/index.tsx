@@ -1,4 +1,11 @@
-import { Center, Image, Loading, NotFound, Title } from "@/components";
+import {
+  Center,
+  Image,
+  Loading,
+  NotFound,
+  PageWrapper,
+  Title,
+} from "@/components";
 import { useGetCategory } from "@/hooks";
 import { useMemo, useState } from "react";
 import PlaylistSection from "./_components/PlaylistSection";
@@ -34,7 +41,7 @@ export default function CategoryDetail() {
 
   return (
     <>
-      <div className="mt-10 space-y-10">
+      <PageWrapper>
         <div>
           <Title title={category.name} />
 
@@ -50,7 +57,7 @@ export default function CategoryDetail() {
         <SongSection songIds={songIds} />
 
         <PlaylistSection playlistIds={playlistIds} />
-      </div>
+      </PageWrapper>
       <Footer />
     </>
   );

@@ -28,7 +28,9 @@ export default function DashboardPlaylistDetail() {
   if (!playlist) return <></>;
 
   return (
-    <div className="pb-[46px]">
+    <>
+      {/* <DashboardPageWrapper> */}
+
       <Title title="Edit playlist" className="mb-8" />
 
       <div className="md:flex md:-mx-3">
@@ -137,6 +139,7 @@ export default function DashboardPlaylistDetail() {
           </Frame>
         </div>
       </div>
-    </div>
+      {/* </DashboardPageWrapper> */}
+    </>
   );
 }

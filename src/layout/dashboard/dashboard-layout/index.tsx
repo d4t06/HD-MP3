@@ -9,6 +9,7 @@ import { PushBrowserHistory } from "@/stores/global/NavigationContext";
 import SingerProvider from "@/stores/dashboard/SingerContext";
 import PlaylistProvider from "@/stores/dashboard/PlaylistContext";
 import { useEffect, useRef } from "react";
+import PageWrapper from "./_components/PageWrapper";
 
 export default function DashBoardLayout() {
   const { isOnMobile } = useThemeContext();
@@ -45,8 +46,12 @@ export default function DashBoardLayout() {
                 <div className="flex flex-col flex-grow">
                   <DashboardHeader />
 
-                  <div className="main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0">
-                    <Outlet />
+                  <div
+                    className={`main-container flex flex-col flex-grow overflow-auto p-[10px] md:px-[40px] md:pt-0`}
+                  >
+                    <PageWrapper>
+                      <Outlet />
+                    </PageWrapper>
                   </div>
                 </div>
 

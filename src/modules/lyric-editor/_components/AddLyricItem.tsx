@@ -20,7 +20,7 @@ function AddLyricItem(
   const getClass = () => {
     switch (status) {
       case "active":
-        return `${activeColor || "text-[#ffed00]"} active-lyric`;
+        return `${"text-[--primary-cl] dark:text-[#ffed00]"} active-lyric`;
       default:
         return "";
     }
@@ -30,7 +30,7 @@ function AddLyricItem(
     <>
       <div className="pt-[10px] last:mb-[30vh]">
         <button
-          className={`text-[18px] hover:underline`}
+          className={`hover:underline mb-[3px] text-gray-500`}
           onClick={() => seek(lyric.start)}
         >
           {formatTime(+lyric.start)}

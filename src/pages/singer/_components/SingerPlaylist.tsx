@@ -1,5 +1,6 @@
 import { PlaylistList, Title } from "@/components";
 import { useSingerContext } from "./SingerContext";
+import { getHidden } from "@/utils/appHelpers";
 
 export default function SingerPlaylist() {
   const { isFetching, playlists } = useSingerContext();
@@ -7,8 +8,8 @@ export default function SingerPlaylist() {
   return (
     <>
       <div>
-        <Title variant={'h2'} title="Popular Playlists" />
-        <PlaylistList playlists={playlists} loading={isFetching} />
+        <Title variant={'h2'} title="Popular Playlists" className={getHidden(!playlists.length)}/>
+        <PlaylistList whenEmpty={<></>} playlists={playlists} loading={isFetching} />
       </div>
     </>
   );

@@ -1,3 +1,4 @@
+import TrendingKeyword from "./TrendingKeyword";
 import TrendingSong from "./TrendingSong";
 
 export default function DashBoardPage() {
@@ -5,6 +6,8 @@ export default function DashBoardPage() {
     <>
       <div className={`space-y-5`}>
         <TrendingSong />
+
+        <TrendingKeyword />
       </div>
     </>
   );

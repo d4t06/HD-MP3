@@ -54,7 +54,7 @@ export default function Lyric({ className }: Props) {
           key={index}
           text={l.text}
           activeColor="scale-[1.3]"
-          className={`leading-[1.3] mb-3 w-[70%] md:mb-5 last:mb-[50vh]`}
+          className={`leading-[1.3] mb-5 w-[70%] last:mb-[50vh]`}
         />
       );
     });

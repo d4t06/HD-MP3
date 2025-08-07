@@ -8,8 +8,9 @@ import SliderSection from "../category/_components/SliderSection";
 import { usePageContext } from "@/stores";
 import PlaylistSection from "../category/category-detail/_components/PlaylistSection";
 import useGetPage from "../category/useGetPage";
-import { Center, Loading, NotFound } from "@/components";
+import { Center, Loading, NotFound, PageWrapper } from "@/components";
 import NewSong from "@/modules/new-song";
+import MobileNav from "./_components/MobileNav";
 
 export default function HomePage() {
   const { homePage } = usePageContext();
@@ -27,12 +28,14 @@ export default function HomePage() {
 
   return (
     <>
-      <div className="space-y-10 mt-10">
+      <PageWrapper>
         <SliderSection
           categoryIds={
             homePage?.category_ids ? homePage?.category_ids.split("_") : []
           }
         />
+
+        <MobileNav />
 
         {homePage?.playlist_sections.map((s, i) => (
           <PlaylistSection
@@ -48,7 +51,7 @@ export default function HomePage() {
         <NewSong amount={5} />
 
         <MobileSetting />
-      </div>
+      </PageWrapper>
       <Footer />
     </>
   );

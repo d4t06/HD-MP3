@@ -5,7 +5,7 @@ type Props = {
   setLoadingFromParent?: (v: boolean) => void;
 };
 
-export default function useGetLyric({
+export default function useGetSongLyric({
   setLoadingFromParent,
 }: Props) {
   const [loading, setLoading] = useState(false);
@@ -14,6 +14,7 @@ export default function useGetLyric({
 
   const getLyric = async (song: Song) => {
     try {
+      if (!song.id) return;
       _setLoading(true);
 
       const lyricSnap = await myGetDoc({

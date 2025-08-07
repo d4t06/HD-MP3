@@ -2,6 +2,7 @@ import { useGetSongLyric } from "@/hooks";
 import { useLyricContext } from "@/stores";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import { sleep } from "@/utils/appHelpers";
 import { ReactNode, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 
@@ -20,10 +21,13 @@ export default function GetSongLyric({ isOpenLyricTabs, children }: Props) {
 
   const { getLyric } = useGetSongLyric({ setLoadingFromParent: setLoading });
 
-  const handleGetLyric = async () => {
-    if (currentSongData?.song) {
-      const lyric = await getLyric(currentSongData.song);
+  const handleGetLyric = async (song: Song) => {
+    if (song.lyric_id) {
+      const lyric = await getLyric(song);
       if (lyric) setSongLyrics(JSON.parse(lyric?.lyrics));
+    } else {
+      await sleep(300);
+      setLoading(false);
     }
   };
 
@@ -36,7 +40,7 @@ export default function GetSongLyric({ isOpenLyricTabs, children }: Props) {
   };
 
   useEffect(() => {
-    if (isOpenLyricTabs) {
+    if (isOpenLyricTabs && currentSongData?.song) {
       if (shouldGetLyric.current) {
         shouldGetLyric.current = false;
 
@@ -45,7 +49,10 @@ export default function GetSongLyric({ isOpenLyricTabs, children }: Props) {
           return;
         }
 
-        timerId.current = setTimeout(handleGetLyric, 500);
+        timerId.current = setTimeout(
+          () => handleGetLyric(currentSongData.song),
+          500,
+        );
       }
     }
   }, [isOpenLyricTabs, currentSongData?.song.id, playStatus]);

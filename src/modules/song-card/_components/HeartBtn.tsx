@@ -11,7 +11,7 @@ export default function HeartBtn({ isLiked, song }: Props) {
   const { action, loading } = useSongItemAction();
 
   return (
-    <button onClick={() => action({ variant: "like", song })}>
+    <button className=" " onClick={() => action({ variant: "like", song })}>
       {loading ? (
         <ArrowPathIcon className=" animate-spin" />
       ) : (

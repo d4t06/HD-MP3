@@ -87,7 +87,7 @@ export default function usePlayerEffect() {
   const resetForNewSong = () => {
     if (timelineEleRef.current && currentTimeEleRef.current) {
       currentTimeEleRef.current.innerText = "0:00";
-      timelineEleRef.current.style.background = "rgba(255, 255, 255, 0.15)";
+      timelineEleRef.current.style.background = "var-(--a-10-cl)";
     }
   };
 
