@@ -2,7 +2,7 @@ import { optimizeAndGetHashImage } from "@/services/appService";
 import { deleteFile, myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useSongContext, useToastContext } from "@/stores";
 import { convertToEn } from "@/utils/appHelpers";
-import { getDoc } from "firebase/firestore";
+import { getDoc, serverTimestamp } from "firebase/firestore";
 import { useState } from "react";
 
 type Props = {
@@ -10,7 +10,7 @@ type Props = {
 };
 
 export default function useAddPlaylist(props?: Props) {
-  const { setPlaylists } = useSongContext();
+  const { setOwnPlaylists } = useSongContext();
   const { setErrorToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -25,7 +25,7 @@ export default function useAddPlaylist(props?: Props) {
 
   type Edit = {
     variant: "edit";
-    playlist: Partial<PlaylistSchema>;
+    playlist: PlaylistSchema;
     imageFile?: File;
     id: string;
   };
@@ -70,16 +70,19 @@ export default function useAddPlaylist(props?: Props) {
           const { push = true } = opts || {};
 
           if (push) {
-            setPlaylists((prev) => [...prev, newPlaylist]);
+            setOwnPlaylists((prev) => [...prev, newPlaylist]);
           }
 
           return newPlaylist;
 
         case "edit": {
+          console.log(props.playlist);
+
           const newPlaylistData: Partial<PlaylistSchema> = {
             ...props.playlist,
             name: props.playlist.name?.trim(),
             meta: convertToEn(props.playlist.name?.trim() || "").split(" "),
+            updated_at: serverTimestamp(),
           };
 
           await myUpdateDoc({

@@ -9,6 +9,7 @@ import {
   Input,
   ModalContentWrapper,
   Label,
+  LoadingOverlay,
 } from "@/components";
 import useEditSongModal from "./_hooks/useEditSongModal";
 
@@ -115,6 +116,8 @@ export default function EditSongModal({ song, modalRef }: Props) {
           Save
         </Button>
       </div>
+
+      {isFetching && <LoadingOverlay />}
     </ModalContentWrapper>
   );
 }

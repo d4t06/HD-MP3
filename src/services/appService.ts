@@ -29,8 +29,8 @@ export async function implementSongQuery(
   } else return [];
 }
 
-export async function implementPlaylistQuery(query: Query) {
-  if (import.meta.env.DEV) console.log("Get playlists");
+export async function implementPlaylistQuery(query: Query, msg?: string) {
+  if (import.meta.env.DEV) console.log(msg || "Get playlists");
 
   const playlistsSnap = await getDocs(query);
 

@@ -9,7 +9,8 @@ export default function useSongItemAction() {
   // stores
   const { user, updateUserData } = useAuthContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
-  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } = useSongContext();
+  const { uploadedSongs, setUploadedSongs, shouldFetchFavoriteSongs } =
+    useSongContext();
 
   // state
   const [loading, setLoading] = useState(false);
@@ -38,7 +39,9 @@ export default function useSongItemAction() {
           const newSongs = uploadedSongs.filter((s) => s.id !== props.song.id);
 
           const newUserData: Partial<User> = {
-            liked_song_ids: user.liked_song_ids.filter((id) => id !== props.song.id),
+            liked_song_ids: user.liked_song_ids.filter(
+              (id) => id !== props.song.id,
+            ),
           };
 
           // update user data
@@ -55,6 +58,9 @@ export default function useSongItemAction() {
 
           setUploadedSongs(newSongs);
           setSuccessToast(`'${props.song.name}' deleted`);
+
+          if (user.liked_song_ids.includes(props.song.id))
+            shouldFetchFavoriteSongs.current = true;
 
           break;
         }

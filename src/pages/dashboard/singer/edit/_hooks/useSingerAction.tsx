@@ -13,7 +13,7 @@ export type SingerActionProps = Delete;
 export default function useDashboardSingerAction() {
   // stores
   const { setErrorToast } = useToastContext();
-  const { singer, setSinger } = useSingerContext();
+  const { singer, setSinger, shouldGetSingers, lastDoc } = useSingerContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -38,6 +38,10 @@ export default function useDashboardSingerAction() {
             deleteFile({ fileId: singer.image_file_id });
 
           setIsFetching(false);
+
+          shouldGetSingers.current = true;
+          lastDoc.current = undefined;
+          
           navigate("/dashboard/singer");
 
           break;

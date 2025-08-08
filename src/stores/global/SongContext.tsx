@@ -10,14 +10,16 @@ function useSong() {
 
   const [uploadedSongs, setUploadedSongs] = useState<Song[]>([]);
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [ownPlaylists, setOwnPlaylists] = useState<Playlist[]>([]);
+  const [favoritePlaylists, setFavoritePlaylists] = useState<Playlist[]>([]);
   const [singers, setSingers] = useState<Singer[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
   //   const ranGetSong = useRef(false);
   const shouldFetchUserSongs = useRef(true);
   const shouldFetchFavoriteSongs = useRef(true);
-  const shouldFetchUserPlaylists = useRef(true);
+  const shouldFetchOwnPlaylists = useRef(true);
+  const shouldFetchFavoritePlaylists = useRef(true);
   const shouldFetchUserSingers = useRef(true);
   const lastDoc = useRef<QueryDocumentSnapshot>();
   const checkEntireUser = useRef(false); // for useMySongPage
@@ -44,15 +46,18 @@ function useSong() {
   return {
     uploadedSongs,
     setUploadedSongs,
-    playlists,
-    setPlaylists,
+    ownPlaylists,
+    setOwnPlaylists,
+    favoritePlaylists,
+    setFavoritePlaylists,
     favoriteSongs,
     setFavoriteSongs,
     sysSongPlaylist,
     setSysSongPlaylist,
     shouldFetchUserSongs,
-    shouldFetchUserPlaylists,
     shouldFetchFavoriteSongs,
+    shouldFetchOwnPlaylists,
+    shouldFetchFavoritePlaylists,
     updateSong,
     singers,
     setSingers,

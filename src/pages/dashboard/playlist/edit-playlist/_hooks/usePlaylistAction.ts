@@ -169,20 +169,19 @@ export default function useDashboardPlaylistActions() {
 
           break;
         }
+        // like on ly
         case "edit-playlist": {
-          const success = await addPlaylist({
-            variant: "edit",
+          await myUpdateDoc({
+            collectionName: "Playlists",
             id: playlist.id,
-            playlist: props.playlist,
-            imageFile: props.imageFile,
+            data: props.playlist,
+            msg: ">>> api: update playlist doc",
           });
 
-          if (success) {
-            const newPlaylist = { ...playlist, ...props.playlist };
+          const newPlaylist = { ...playlist, ...props.playlist };
 
-            updatePlaylistData(newPlaylist);
-            setSuccessToast(`Playlist edited`);
-          }
+          updatePlaylistData(newPlaylist);
+          setSuccessToast(`Playlist edited`);
 
           break;
         }

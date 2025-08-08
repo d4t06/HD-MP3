@@ -3,9 +3,9 @@ import { Title, Tab, Loading, Center, PageWrapper } from "@/components";
 import { useState } from "react";
 import FavoriteSongList from "./_components/FavoriteSong";
 import UploadedSongList from "./_components/UploadedSong";
-import MyMusicPlaylistList from "./_components/PlaylistList";
 import SingerSection from "./_components/SingerSection";
 import useMySongPage from "./_hooks/useMySongPage";
+import MyMusicPlaylistSection from "./_components/PlaylistSection";
 
 const tabs = ["Favorite", "Uploaded"] as const;
 type Tab = (typeof tabs)[number];
@@ -16,7 +16,7 @@ function Content() {
   return (
     <>
       <PageWrapper>
-        <MyMusicPlaylistList />
+        <MyMusicPlaylistSection />
 
         <SingerSection />
 

@@ -19,11 +19,14 @@ export default function AddNewPlaylistBtn() {
     // important !!!
     p.is_official = true;
 
-    const newPlaylist = await addPlaylist({
-      variant: "add",
-      playlist: p,
-      imageFile,
-    });
+    const newPlaylist = await addPlaylist(
+      {
+        variant: "add",
+        playlist: p,
+        imageFile,
+      },
+      { push: false },
+    );
 
     if (newPlaylist) {
       setPlaylists((prev) => [newPlaylist as Playlist, ...prev]);

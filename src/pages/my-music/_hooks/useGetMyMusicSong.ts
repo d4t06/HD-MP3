@@ -90,9 +90,6 @@ export default function useGetMyMusicSong({ tab }: Props) {
     }
   };
 
-  // useEffect(() => {
-  //   getSongs();
-  // }, []);
 
   return { isFetching, getSongs };
 }

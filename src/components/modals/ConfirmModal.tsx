@@ -29,6 +29,7 @@ export default function ConfirmModal({
           <>
             <Button
               onClick={closeModal}
+              disabled={!loading}
               className={`hover:bg-[--a-5-cl] rounded-full px-3 py-1`}
               variant={"primary"}
               size={"clear"}

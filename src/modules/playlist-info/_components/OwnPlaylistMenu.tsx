@@ -69,7 +69,7 @@ export default function OwnPlaylistMenu() {
         return (
           <ConfirmModal
             loading={isFetching}
-            label={`Delete playist ' ${currentPlaylist.name} ' ?`}
+            label={`Delete playlist ' ${currentPlaylist.name} ' ?`}
             callback={() =>
               action({
                 variant: "delete",

@@ -23,6 +23,13 @@ export default function SearchResultPage() {
     getRecommend(song);
   };
 
+  const getShowWhen = (t: typeof tab) => {
+    return tab === "All" || tab === t ? "" : "hidden";
+  };
+
+  const titleClass = (isHasResult: boolean) =>
+    tab !== "All" || (tab === "All" && !isHasResult) ? "hidden" : "mb-3";
+
   return (
     <>
       <PageWrapper className="space-y-8">
@@ -44,55 +51,45 @@ export default function SearchResultPage() {
 
         <SongSelectProvider>
           <div className="space-y-5">
-            <div
-              className={tab === "Playlist" || tab === "Singer" ? "hidden" : ""}
-            >
+            <div className={getShowWhen("Song")}>
               <Title
                 variant={"h3"}
-                className={
-                  tab !== "All" || (tab === "All" && !result.songs.length)
-                    ? "hidden"
-                    : "mb-3"
-                }
+                className={titleClass(!!result.songs.length)}
                 title="Songs"
               />
 
               {isFetching && songItemSkeleton}
 
-              {!isFetching && result.songs.length ? (
-                <SongList setSong={_handleSetSong} songs={result.songs} />
-              ) : (
-                tab !== "All" && <NotFound className="mx-auto" variant="less" />
+              {!isFetching && (
+                <>
+                  {result.songs.length ? (
+                    <SongList setSong={_handleSetSong} songs={result.songs} />
+                  ) : (
+                    tab === "Song" && (
+                      <NotFound variant="less" className="mx-auto" />
+                    )
+                  )}
+                </>
               )}
             </div>
 
-            <div className={tab === "Song" || tab === "Singer" ? "hidden" : ""}>
+            <div className={getShowWhen("Playlist")}>
               <Title
                 variant={"h3"}
-                className={
-                  tab !== "All" || (tab === "All" && !result.playlists.length)
-                    ? "hidden"
-                    : "mb-3"
-                }
+                className={titleClass(!!result.playlists.length)}
                 title="Playlist"
               />
               <PlaylistList
-                whenEmpty={tab === "All" ? <></> : undefined}
+                whenEmpty={tab !== "Playlist" ? <></> : undefined}
                 loading={isFetching}
                 playlists={result.playlists}
               />
             </div>
 
-            <div
-              className={tab === "Song" || tab === "Playlist" ? "hidden" : ""}
-            >
+            <div className={getShowWhen("Singer")}>
               <Title
                 variant={"h3"}
-                className={
-                  tab !== "All" || (tab === "All" && !result.singers.length)
-                    ? "hidden"
-                    : "mb-3"
-                }
+                className={titleClass(!!result.singers.length)}
                 title="Singers"
               />
 

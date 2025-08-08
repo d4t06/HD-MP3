@@ -23,7 +23,13 @@ export default function usePlaylistAction() {
   // stores
   const dispatch = useDispatch();
   const { user, updateUserData } = useAuthContext();
-  const { setPlaylists, playlists } = useSongContext();
+  const {
+    setFavoritePlaylists,
+    ownPlaylists,
+    favoritePlaylists,
+    setOwnPlaylists,
+    shouldFetchFavoritePlaylists,
+  } = useSongContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
@@ -61,6 +67,8 @@ export default function usePlaylistAction() {
       const userRef = doc(db, "Users", user.email);
       const playlistRef = doc(db, "Playlists", props.playlist.id);
 
+      const isInLikeList = user.liked_playlist_ids.includes(props.playlist.id);
+
       switch (props.variant) {
         case "like": {
           if (!user) throw Error();
@@ -89,11 +97,14 @@ export default function usePlaylistAction() {
           await batch.commit();
 
           // should fetch new data or update data local ?
-          if (isLike) setPlaylists((prev) => [props.playlist, ...prev]);
+          if (isLike) setFavoritePlaylists((prev) => [props.playlist, ...prev]);
           else
-            setPlaylists((prev) =>
+            setFavoritePlaylists((prev) =>
               prev.filter((p) => p.id !== props.playlist.id),
             );
+
+          if (isLike) setSuccessToast("Liked");
+          else setSuccessToast("Disliked");
 
           updateUserData(newUserData);
 
@@ -120,12 +131,24 @@ export default function usePlaylistAction() {
             msg: ">>> api: update playlist doc",
           });
 
-          const newPlaylists = [...playlists];
+          const newPlaylists = [...ownPlaylists];
           const index = newPlaylists.findIndex((p) => p.id === playlist.id);
 
           if (index !== -1) {
             newPlaylists[index] = newPlaylist;
-            setPlaylists(newPlaylists);
+            setOwnPlaylists(newPlaylists);
+
+            if (isInLikeList) {
+              shouldFetchFavoritePlaylists.current = true;
+
+              // const newFavoritePlaylists = [...favoritePlaylists];
+              // const index = newFavoritePlaylists.findIndex(
+              //   (p) => p.id === playlist.id,
+              // );
+
+              // newFavoritePlaylists[index] = newPlaylist;
+              // setFavoritePlaylists(newFavoritePlaylists);
+            }
           }
 
           // eliminate updated_at field otherwise cause error
@@ -141,6 +164,9 @@ export default function usePlaylistAction() {
 
         case "delete": {
           const { playlist } = props;
+
+          if (playlist.image_file_id)
+            deleteFile({ fileId: playlist.image_file_id });
 
           const commentSnap = await getDocs(
             query(commentCollectionRef, where("target_id", "==", playlist.id)),
@@ -164,16 +190,19 @@ export default function usePlaylistAction() {
             commentSnap.forEach((snap) => batch.delete(snap.ref));
           }
 
-          await Promise.all([
-            batch.commit(),
-            playlist.image_file_id
-              ? deleteFile({ fileId: playlist.image_file_id })
-              : () => {},
-          ]);
+          await batch.commit();
 
-          const newPlaylists = playlists.filter((p) => p.id !== playlist.id);
-          setPlaylists(newPlaylists);
+          const newPlaylists = ownPlaylists.filter((p) => p.id !== playlist.id);
+          setOwnPlaylists(newPlaylists);
 
+          if (isInLikeList) {
+            const newFavoritePlaylists = favoritePlaylists.filter(
+              (p) => p.id !== playlist.id,
+            );
+            setFavoritePlaylists(newFavoritePlaylists);
+          }
+
+          setSuccessToast(`Playlist '${playlist.name}' deleted`);
           updateUserData(newUserData);
 
           navigate("/my-music");
@@ -188,41 +217,6 @@ export default function usePlaylistAction() {
       setIsFetching(false);
     }
   };
-
-  //   const removeSelectSongs = async (
-  //     selectedSongs: Song[],
-  //     _setIsFetching?: (v: boolean) => void
-  //   ) => {
-  //     try {
-  //       if (!currentPlaylist || !playlistSongs.length) return;
-
-  //       _setIsFetching ? _setIsFetching(true) : setIsFetching(true);
-
-  //       const selectedSongIds = selectedSongs.map((s) => s.id);
-  //       const newPlaylistSongs = [...playlistSongs].filter(
-  //         (s) => !selectedSongIds.includes(s.id)
-  //       );
-  //       const newSongIds = newPlaylistSongs.map((s) => s.id);
-
-  //       await myAddDoc({
-  //         collectionName: "Playlists",
-  //         data: { song_ids: newSongIds } as Partial<Playlist>,
-  //         msg: ">>> api: update playlist doc",
-  //       });
-
-  //       dispatch(setPlaylistSong(newPlaylistSongs));
-
-  //       setIsFetching(false);
-  //       setSuccessToast(`${selectedSongs.length} songs removed`);
-
-  //       return newPlaylistSongs;
-  //     } catch (error) {
-  //       setErrorToast();
-  //       console.log({ message: error });
-  //     } finally {
-  //       _setIsFetching ? _setIsFetching(false) : setIsFetching(false);
-  //     }
-  //   };
 
   return {
     isFetching,

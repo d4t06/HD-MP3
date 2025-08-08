@@ -9,6 +9,7 @@ import {
   singerCollectionRef,
   songsCollectionRef,
 } from "@/services/firebaseService";
+import { sleep } from "@/utils/appHelpers";
 import { limit, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
@@ -33,11 +34,11 @@ export default function useGetSearchResult() {
 
   const shouldGetAll = useRef(true);
 
-  const shoudlGetSongs = useRef(true);
+  const shouldGetSongs = useRef(true);
 
-  const shoudlGetPlaylists = useRef(true);
+  const shouldGetPlaylists = useRef(true);
 
-  const shoudlGetSingers = useRef(true);
+  const shouldGetSingers = useRef(true);
 
   const updateResult = (data: Partial<typeof initResult>) => {
     setResult((prev) => ({ ...prev, ...data }));
@@ -50,6 +51,9 @@ export default function useGetSearchResult() {
       if (!key) return;
 
       setIsFetching(true);
+
+
+      await sleep(500)
 
       switch (tab) {
         case "All": {
@@ -78,8 +82,8 @@ export default function useGetSearchResult() {
         }
 
         case "Song": {
-          if (!shoudlGetSongs.current) return;
-          shoudlGetSongs.current = false;
+          if (!shouldGetSongs.current) return;
+          shouldGetSongs.current = false;
 
           const q = getSearchQuery(
             songsCollectionRef,
@@ -93,8 +97,8 @@ export default function useGetSearchResult() {
           break;
         }
         case "Playlist": {
-          if (!shoudlGetPlaylists.current) return;
-          shoudlGetPlaylists.current = false;
+          if (!shouldGetPlaylists.current) return;
+          shouldGetPlaylists.current = false;
 
           const q = getSearchQuery(
             playlistCollectionRef,
@@ -109,8 +113,8 @@ export default function useGetSearchResult() {
           break;
         }
         case "Singer": {
-          if (!shoudlGetSingers.current) return;
-          shoudlGetSingers.current = false;
+          if (!shouldGetSingers.current) return;
+          shouldGetSingers.current = false;
 
           const q = getSearchQuery(singerCollectionRef, [], key);
 
@@ -139,9 +143,9 @@ export default function useGetSearchResult() {
       setTab("All");
 
       shouldGetAll.current = true;
-      shoudlGetSongs.current = true;
-      shoudlGetPlaylists.current = true;
-      shoudlGetSingers.current = true;
+      shouldGetSongs.current = true;
+      shouldGetPlaylists.current = true;
+      shouldGetSingers.current = true;
     };
   }, [searchParams[0].get("q")]);
 

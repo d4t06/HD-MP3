@@ -24,69 +24,69 @@ export default function DashboardPlaylist() {
   return (
     <>
       {/* <DashboardPageWrapper> */}
-        <Title title="Playlists" />
+      <Title title="Playlists" />
 
-        <div className="flex justify-between mt-3">
-          <SearchBar loading={tab === "Result" && isFetching} {...rest} />
-          <AddNewPlaylistBtn />
-        </div>
+      <div className="flex justify-between mt-3">
+        <SearchBar loading={tab === "Result" && isFetching} {...rest} />
+        <AddNewPlaylistBtn />
+      </div>
 
-        <div className={`mt-5 w-fit self-start`}>
-          <Tab
-            disable={tab === "All"}
-            tabs={tabs}
-            render={(t) => t}
-            tab={tab}
-            setTab={setTab}
-          />
-        </div>
+      <div className={`mt-5 w-fit self-start`}>
+        <Tab
+          disable={tab === "All"}
+          tabs={tabs}
+          render={(t) => t}
+          tab={tab}
+          setTab={setTab}
+        />
+      </div>
 
-        <div className="mt-3">
-          <DashboardTable colList={["Name", "Like", ""]}>
-            {playlistsSource.length ? (
-              <>
-                {playlistsSource.map((p, i) => (
-                  <tr key={i}>
-                    <td>
-                      <Link
-                        className="hover:underline"
-                        to={`/dashboard/playlist/${p.id}`}
-                      >
-                        {p.name}
-                      </Link>
-                    </td>
-                    <td>{abbreviateNumber(p.like)}</td>
-                    <td>-</td>
-                  </tr>
-                ))}
+      <div className="mt-3">
+        <DashboardTable colList={["Name", "Like", ""]}>
+          {playlistsSource.length ? (
+            <>
+              {playlistsSource.map((p, i) => (
+                <tr key={i}>
+                  <td>
+                    <Link
+                      className="hover:underline"
+                      to={`/dashboard/playlist/${p.id}`}
+                    >
+                      {p.name}
+                    </Link>
+                  </td>
+                  <td>{abbreviateNumber(p.like)}</td>
+                  <td>-</td>
+                </tr>
+              ))}
 
-                {tab === "All" && isFetching && (
-                  <tr className="no-hover border-none">
-                    <td colSpan={9}>
-                      <ArrowPathIcon className="animate-spin w-7 mx-auto" />
-                    </td>
-                  </tr>
-                )}
+              {tab === "All" && isFetching && (
+                <tr className="no-hover border-none">
+                  <td colSpan={9}>
+                    <ArrowPathIcon className="animate-spin w-7 mx-auto" />
+                  </td>
+                </tr>
+              )}
 
-                {tab === "All" && (
-                  <tr className="no-hover">
-                    <td colSpan={9} className="text-center hover:bg-none">
-                      <Button disabled={!hasMore} onClick={getPlaylists}>
-                        Get more
-                      </Button>
-                    </td>
-                  </tr>
-                )}
-              </>
-            ) : (
-              <tr>
-                <td colSpan={4}>
-                  <NotFound />
-                </td>
-              </tr>
-            )}
-          </DashboardTable>
-        </div>
+              {tab === "All" && (
+                <tr className="no-hover">
+                  <td colSpan={9} className="text-center hover:bg-none">
+                    <Button disabled={!hasMore} onClick={getPlaylists}>
+                      Get more
+                    </Button>
+                  </td>
+                </tr>
+              )}
+            </>
+          ) : (
+            <tr>
+              <td colSpan={4}>
+                <NotFound />
+              </td>
+            </tr>
+          )}
+        </DashboardTable>
+      </div>
       {/* </DashboardPageWrapper> */}
     </>
   );

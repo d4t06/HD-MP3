@@ -9,6 +9,7 @@ import {
   Button,
   ButtonCtaFrame,
   Frame,
+  LikeBtn,
   Loading,
 } from "@/pages/dashboard/_components";
 import ButtonGroup from "./_components/ButtonGroup";
@@ -22,6 +23,7 @@ import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import OtherInput from "./_components/OtherInput";
+import { PencilIcon } from "@heroicons/react/24/outline";
 // import LyricEditor from "../lyric-editor";
 
 type Add = {
@@ -44,6 +46,7 @@ export default function AddSongForm(props: Props) {
     isValidToSubmit,
     modalRef,
     handleCloseModalAfterFinished,
+    updateSongData,
   } = useAddSongForm(props);
 
   const { songFile, songData, song, audioRef } = useAddSongContext();
@@ -88,11 +91,6 @@ export default function AddSongForm(props: Props) {
                 src={songData?.image_url}
               />
             </div>
-            {props.variant === "edit" && (
-              <div className="text-xl font-bold text-[#333]">
-                {songData?.name}
-              </div>
-            )}
 
             <div className="flex md:block mt-5">
               {props.variant === "edit" && (
@@ -113,10 +111,12 @@ export default function AddSongForm(props: Props) {
                     <span>Ranking:</span>
                     {songData?.last_week_rank}
                   </p>
-                  <p>
-                    <span>Likes:</span>
-                    {abbreviateNumber(songData?.like || 0)}
-                  </p>
+
+                  <LikeBtn
+                    init={songData?.like || 0}
+                    loading={false}
+                    submit={(l) => updateSongData({ like: l })}
+                  />
                   <p>
                     <span>Comments:</span>
                     {abbreviateNumber(songData?.comment || 0)}
@@ -139,8 +139,6 @@ export default function AddSongForm(props: Props) {
           </div>
 
           <div className="mt-5 md:mt-0 space-y-5 flex-grow">
-            {/*{props.variant === "edit" && <PlayChart />}*/}
-
             <Frame>
               {audioRef.current && <AudioPLayer audioEle={audioRef.current} />}
             </Frame>
@@ -155,14 +153,6 @@ export default function AddSongForm(props: Props) {
             </div>
           </div>
         </div>
-        {/*
-        {songData && (
-          <div>
-            <Title variant={"h2"} title="Lyric" />
-
-            <LyricEditor song={songData} />
-          </div>
-        )}*/}
 
         <p className="text-center mt-5">
           <Button

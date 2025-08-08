@@ -9,7 +9,7 @@ export default function UploadSongBtn({ title }: { title: string }) {
   const labelRef = useRef<HTMLLabelElement>(null);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) setSongFile(e.target.files[0]);
+    if (e.target?.files?.length) setSongFile(e.target?.files[0]);
   };
 
   return (
@@ -26,9 +26,7 @@ export default function UploadSongBtn({ title }: { title: string }) {
         className="hidden"
       />
 
-      <Button
-        onClick={() => labelRef.current?.click()}
-      >
+      <Button onClick={() => labelRef.current?.click()}>
         <DocumentTextIcon />
         <span>{title}</span>
       </Button>

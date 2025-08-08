@@ -1,5 +1,5 @@
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useEffect, useRef } from "react";
+import {  useRef } from "react";
 import { useAuthContext, useSongContext } from "@/stores";
 import {
   Button,
@@ -12,7 +12,6 @@ import {
 import useAddSongToPlaylist from "../_hooks/useAddSongToPlaylist";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import useMyMusicAddPlaylist from "@/pages/my-music/_hooks/useAddPlaylist";
-import useGetMyMusicPlaylist from "@/pages/my-music/_hooks/useGetMyMusicPlaylist";
 
 type Props = {
   songs: Song[];
@@ -21,19 +20,14 @@ type Props = {
 
 export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
   const { user } = useAuthContext();
-  const { playlists } = useSongContext();
+  const { ownPlaylists } = useSongContext();
 
   const { addToPlaylist, isFetching } = useAddSongToPlaylist();
-  const { getPlaylist } = useGetMyMusicPlaylist();
 
   const { myMusicAddPlaylist, isFetching: addPlaylistFetching } =
     useMyMusicAddPlaylist();
 
   const modalRef = useRef<ModalRef>(null);
-
-  const ownPlaylist = !user
-    ? []
-    : playlists.filter((p) => p.owner_email === user.email && !p.is_official);
 
   const handleAddSongToPlaylist = async (playlist: Playlist) => {
     await addToPlaylist({ playlist, songs });
@@ -53,10 +47,6 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
     closeModal();
   };
 
-  useEffect(() => {
-    getPlaylist();
-  }, []);
-
   if (!user) return;
 
   return (
@@ -68,8 +58,8 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
             isFetching ? "disable" : ""
           }`}
         >
-          {ownPlaylist.length ? (
-            ownPlaylist.map((playlist, index) => {
+          {ownPlaylists.length ? (
+            ownPlaylists.map((playlist, index) => {
               return (
                 <button
                   key={index}

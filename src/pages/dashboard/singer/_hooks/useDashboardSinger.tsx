@@ -8,7 +8,7 @@ import {
 import { implementSingerQuery } from "@/services/appService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 
-const pageSize = 6;
+const pageSize = 2;
 
 const tabs = ["All", "Result"] as const;
 type Tab = (typeof tabs)[number];
@@ -74,11 +74,13 @@ export default function useDashboardSinger() {
         return song;
       });
 
+      if (lastDoc.current) setSingers((prev) => [...prev, ...result]);
+      else setSingers(result);
+
       if (result.length < pageSize) setHasMore(false);
       else {
         lastDoc.current = songsSnap.docs[pageSize - 1];
       }
-      setSingers((prev) => [...prev, ...result]);
     } catch (err) {
       console.log({ message: err });
 

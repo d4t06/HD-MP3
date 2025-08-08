@@ -10,9 +10,9 @@ type Props = {
 export default function EditSongModal({ closeModal }: Props) {
   const { songData, updateSongData } = useAddSongContext();
 
-  const [localSongData, setLocalSongData] = useState({
+  const [localSongData, setLocalSongData] = useState<Partial<Song>>({
     name: "",
-    like: "",
+    release_year: 0,
   });
 
   const updateLocalSongData = (data: Partial<typeof localSongData>) => {
@@ -20,22 +20,25 @@ export default function EditSongModal({ closeModal }: Props) {
   };
 
   const _updateSongData = () => {
-    if (
-      !localSongData.name ||
-      !localSongData.like ||
-      isNaN(+localSongData.like)
-    )
-      return;
+    if (!localSongData.name || !localSongData.release_year) return;
 
-    updateSongData({ name: localSongData.name, like: +localSongData.like });
+    updateSongData({
+      name: localSongData.name,
+      release_year: localSongData.release_year,
+    });
     closeModal();
   };
 
   useEffect(() => {
     if (songData) {
-      setLocalSongData({ name: songData.name, like: songData.like + "" });
+      setLocalSongData({
+        name: songData.name,
+        release_year: songData.release_year,
+      });
     }
   }, [songData]);
+
+  console.log(localSongData);
 
   return (
     <ModalContentWrapper>
@@ -51,11 +54,15 @@ export default function EditSongModal({ closeModal }: Props) {
         </div>
 
         <div className="space-y-1">
-          <Label>Like</Label>
+          <Label>Release year</Label>
           <Input
             type="number"
-            value={+localSongData.like ? +localSongData.like : ""}
-            onChange={(e) => updateLocalSongData({ like: e.target.value })}
+            value={localSongData.release_year + "" || "0"}
+            onChange={(e) =>
+              updateLocalSongData({
+                release_year: +e.target.value || 0,
+              })
+            }
           />
         </div>
       </div>

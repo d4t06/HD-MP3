@@ -3,8 +3,6 @@ import { forwardRef, InputHTMLAttributes, Ref } from "react";
 
 export const inputClasses = `border w-full placeholder:[#666] rounded-md outline-none py-1.5 px-2 bg-[--a-5-cl] border-[--a-5-cl] "`;
 
-
-
 const inputVariants = cva("w-full", {
   variants: {
     variant: {
@@ -36,6 +34,7 @@ function Input(
       ref={ref}
       className={` ${inputVariants({ variant, className })}`}
       {...rest}
+      value={rest.value || ""}
     />
   );
 }

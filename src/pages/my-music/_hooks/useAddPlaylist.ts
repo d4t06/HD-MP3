@@ -4,8 +4,13 @@ import { myUpdateDoc } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 
 export default function useMyMusicAddPlaylist() {
-  const { user } = useAuthContext();
-  const { playlists, setPlaylists } = useSongContext();
+  const { user, updateUserData } = useAuthContext();
+  const {
+    ownPlaylists,
+    setOwnPlaylists,
+    favoritePlaylists,
+    setFavoritePlaylists,
+  } = useSongContext();
 
   const { setErrorToast, setSuccessToast } = useToastContext();
 
@@ -29,19 +34,26 @@ export default function useMyMusicAddPlaylist() {
         { push: false },
       );
       if (newPlaylist) {
-        const newPlaylists = [...playlists, newPlaylist as Playlist];
+        const newPlaylists = [...ownPlaylists, newPlaylist as Playlist];
+        const newFavoritePlaylists = [
+          ...favoritePlaylists,
+          newPlaylist as Playlist,
+        ];
 
         const newUserData: Partial<User> = {
-          liked_playlist_ids: newPlaylists.map((s) => s.id),
+          liked_playlist_ids: newFavoritePlaylists.map((s) => s.id),
         };
 
-        await myUpdateDoc({
+        myUpdateDoc({
           collectionName: "Users",
           data: newUserData,
           id: user.email,
         });
 
-        setPlaylists(newPlaylists);
+        updateUserData(newUserData);
+
+        setOwnPlaylists(newPlaylists);
+        setFavoritePlaylists(newFavoritePlaylists);
 
         setSuccessToast("New playlist created");
       }

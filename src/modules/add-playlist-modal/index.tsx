@@ -1,6 +1,14 @@
 import { ChangeEvent } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { Button, Image, Input, Label, ModalHeader, Switch } from "@/components";
+import {
+  Button,
+  Image,
+  Input,
+  Label,
+  LoadingOverlay,
+  ModalHeader,
+  Switch,
+} from "@/components";
 import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
 
 type BaseProps = {
@@ -51,7 +59,7 @@ export default function AddPlaylistModal({
     if (e.target.files?.length) setImageFile(e.target.files[0]);
   };
 
-  if (!playlistData) return;
+  if (!playlistData) return <></>;
 
   return (
     <>
@@ -73,6 +81,7 @@ export default function AddPlaylistModal({
             ref={inputRef}
             onChange={handleInputChange}
             type="file"
+            value={""}
             multiple
             accept="image/png, image/jpeg"
             id="image_upload"
@@ -120,15 +129,16 @@ export default function AddPlaylistModal({
       </div>
       <p className="text-right mt-5 md:mt-0">
         <Button
-          isLoading={isLoading}
           color="primary"
           onClick={handleAddPlaylist}
-          disabled={!isValidToSubmit}
+          disabled={!isValidToSubmit || isLoading}
           className={`font-playwriteCU rounded-full`}
         >
           Save
         </Button>
       </p>
+
+      {isLoading && <LoadingOverlay />}
     </>
   );
 }

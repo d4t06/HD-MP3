@@ -1,56 +1,87 @@
 import { implementPlaylistQuery } from "@/services/appService";
 import { playlistCollectionRef } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { sleep } from "@/utils/appHelpers";
+import { getLocalStorage, sleep } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// this hook not in useEffect
+const tabs = ["Favorite", "Own"] as const;
+type Tab = (typeof tabs)[number];
+
 export default function useGetMyMusicPlaylist() {
   const { user } = useAuthContext();
-  const { setPlaylists, shouldFetchUserPlaylists, playlists } =
-    useSongContext();
+  const {
+    setOwnPlaylists,
+    shouldFetchOwnPlaylists,
+    setFavoritePlaylists,
+    shouldFetchFavoritePlaylists,
+  } = useSongContext();
+
+  const [tab, setTab] = useState<Tab | "">("");
 
   const { setErrorToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(true);
 
-  const getPlaylist = async (userProp?: User) => {
-    try {
-      const _user = userProp || user;
+  const ranEffect = useRef(false);
 
-      if (!_user) return;
+  const getPlaylist = async (t?: Tab) => {
+    try {
+      if (!user) return;
+
+      const _tab = t || tab;
 
       setIsFetching(true);
 
-      if (shouldFetchUserPlaylists.current) {
-        shouldFetchUserPlaylists.current = false;
+      switch (_tab) {
+        case "Favorite": {
+          if (shouldFetchFavoritePlaylists.current) {
+            shouldFetchFavoritePlaylists.current = false;
 
-        const queryGetUserPlaylist = query(
-          playlistCollectionRef,
-          where(documentId(), "in", _user.liked_playlist_ids),
-        );
+            if (!user.liked_playlist_ids.length) return;
 
-        if (import.meta.env.DEV)
-          console.log("useGetMyMusicPlaylist, get user playlists");
+            const queryGetUserPlaylist = query(
+              playlistCollectionRef,
+              where(documentId(), "in", user.liked_playlist_ids),
+            );
 
-        const result = await implementPlaylistQuery(queryGetUserPlaylist);
+            const result = await implementPlaylistQuery(
+              queryGetUserPlaylist,
+              "useGetMyMusicPlaylist, get user favorite playlists",
+            );
 
-        const showAblePlaylist = result.filter((p) => {
-          const isOwnerOfPlaylist =
-            !p.is_official && p.owner_email === _user.email;
+            const showAblePlaylist = result.filter((p) => {
+              const isOwnerOfPlaylist =
+                !p.is_official && p.owner_email === user.email;
 
-          if (isOwnerOfPlaylist) return true;
-          else if (p.is_public) return true;
-          else return false;
-        });
+              if (isOwnerOfPlaylist) return true;
+              else if (p.is_public) return true;
+              else return false;
+            });
 
-        setPlaylists(showAblePlaylist);
+            setFavoritePlaylists(showAblePlaylist);
+          } else await sleep(100);
 
-        return showAblePlaylist;
-      } else {
-        await sleep(100);
-        return playlists;
+          break;
+        }
+        case "Own": {
+          if (shouldFetchOwnPlaylists.current) {
+            shouldFetchOwnPlaylists.current = false;
+            const queryGetUserPlaylist = query(
+              playlistCollectionRef,
+              where("owner_email", "==", user.email),
+              where("is_official", "==", false),
+            );
+            const result = await implementPlaylistQuery(
+              queryGetUserPlaylist,
+              "useGetMyMusicPlaylist, get user own playlists",
+            );
+
+            setOwnPlaylists(result);
+          } else await sleep(100);
+
+          break;
+        }
       }
     } catch (error) {
       console.log({ message: error });
@@ -60,5 +91,25 @@ export default function useGetMyMusicPlaylist() {
     }
   };
 
-  return { isFetching, getPlaylist };
+  useEffect(() => {
+    const initRun = async () => {
+      const lastTab = getLocalStorage()["last_playlist_tab"] as Tab;
+
+      await getPlaylist(lastTab);
+      setTab(lastTab);
+    };
+
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      initRun();
+    }
+  });
+
+  useEffect(() => {
+    if (!tab) return;
+
+    getPlaylist();
+  }, [tab]);
+
+  return { isFetching, getPlaylist, setIsFetching, tab, setTab, tabs };
 }

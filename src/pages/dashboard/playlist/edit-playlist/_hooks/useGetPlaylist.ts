@@ -22,7 +22,7 @@ export default function useGetPlaylist() {
     try {
       if (!params.id) return;
 
-      const docRef = await myGetDoc({ collectionName: "Playlists", id: params.id });
+      const docRef = await myGetDoc({ collectionName: "Playlists", id: params.id, msg: "useGetPlaylist, get playlist doc" });
 
       if (!docRef.exists()) return navigator("/dashboard/playlist");
 

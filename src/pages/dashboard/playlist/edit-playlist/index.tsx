@@ -1,22 +1,36 @@
 import Table from "@/components/ui/Table";
 import { Center, Image, NotFound, Title } from "@/components";
-import { Frame, Loading } from "../../_components";
+import { Frame, LikeBtn, Loading } from "../../_components";
 import DashboardPlaylistCta from "./_components/PlaylistCta";
 import useGetPlaylist from "./_hooks/useGetPlaylist";
 import { useMemo } from "react";
 import SingerItem from "./_components/SingerItem";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
-import PlaylistLike from "./_components/PlaylistLike";
 import { Link } from "react-router-dom";
 import DashboardSongMenu from "../../_modules/song-menu";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import DetailFrame from "../../_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import useDashboardPlaylistActions from "./_hooks/usePlaylistAction";
+import { serverTimestamp } from "firebase/firestore";
 
 export default function DashboardPlaylistDetail() {
   const { isFetching, songs, playlist } = useGetPlaylist();
 
+  const { action, isFetching: actionFetching } = useDashboardPlaylistActions();
+
+  const handleEditPlaylist = async (like: number, closeModal: () => void) => {
+    await action({
+      variant: "edit-playlist",
+      playlist: { like, updated_at: serverTimestamp() },
+    });
+
+    closeModal();
+  };
+
   const lastUpdate = useMemo(() => playlist?.updated_at, [playlist?.id]);
+
+  console.log(lastUpdate)
 
   if (isFetching)
     return (
@@ -60,11 +74,15 @@ export default function DashboardPlaylistDetail() {
               {abbreviateNumber(playlist.comment)}
             </p>
 
-            <PlaylistLike />
+            <LikeBtn
+              init={playlist.like}
+              loading={actionFetching}
+              submit={handleEditPlaylist}
+            />
 
             <p>
               <span>Last update:</span>
-              {dateFromTimestamp(lastUpdate)}
+              {lastUpdate ? dateFromTimestamp(lastUpdate) : ""}
             </p>
           </DetailFrame>
 

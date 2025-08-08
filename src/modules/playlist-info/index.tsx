@@ -160,7 +160,7 @@ export default function PLaylistInfo({
               <div className="flex space-x-3 mt-3 md:ml-3 md:mt-0 lg:mt-3 lg:ml-0 hover:[&_button]:bg-[--a-5-cl] [&_button]:p-2">
                 <PlaylistMenuBtn variant={variant} />
 
-                {variant !== "my-playlist" && isLiked !== null && (
+                {isLiked !== null && (
                   <HearBtn isLiked={isLiked} playlist={playlist} />
                 )}
 

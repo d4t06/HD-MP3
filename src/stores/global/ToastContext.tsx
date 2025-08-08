@@ -7,7 +7,7 @@ const useToast = () => {
   const setErrorToast = (message?: string) =>
     setToasts((t) => [
       ...t,
-      { variant: "error", id: Date.now() + "", desc: message || "Somethings went wrong" },
+      { variant: "error", id: Date.now() + "", desc: message || "Something went wrong" },
     ]);
 
   const setSuccessToast = (message?: string) =>

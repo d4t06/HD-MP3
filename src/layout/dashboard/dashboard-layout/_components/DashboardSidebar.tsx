@@ -55,9 +55,7 @@ export const routeList = [
 export default function DashBoardSidebar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const locationr = useLocation();
-
-  console.log(locationr, location);
+  useLocation();
 
   const classes = {
     container: `hidden md:block bg-[#f1f1f1] text-[#333] border-r border-black/10 transition-[width] relative flex-shrink-0`,

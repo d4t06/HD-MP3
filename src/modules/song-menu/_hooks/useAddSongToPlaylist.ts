@@ -1,18 +1,46 @@
-import { useState } from "react";
-import { useSongContext, useToastContext } from "@/stores";
-import { myUpdateDoc } from "@/services/firebaseService";
+import { useEffect, useRef, useState } from "react";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
+import { myUpdateDoc, playlistCollectionRef } from "@/services/firebaseService";
 import { sleep } from "@/utils/appHelpers";
+import { query, where } from "firebase/firestore";
+import { implementPlaylistQuery } from "@/services/appService";
 
 // use in song menu
 export default function useAddSongToPlaylist() {
-  const { playlists, setPlaylists } = useSongContext();
+  const { user } = useAuthContext();
+  const { shouldFetchOwnPlaylists, setOwnPlaylists } = useSongContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
 
+  const ranEffect = useRef(false);
+
   type AddToPlaylist = {
     songs: Song[];
     playlist: Playlist;
+  };
+
+  const getPlaylists = async () => {
+    try {
+      if (!user) return;
+
+      if (shouldFetchOwnPlaylists.current) {
+        shouldFetchOwnPlaylists.current = false;
+        const queryGetUserPlaylist = query(
+          playlistCollectionRef,
+          where("owner_email", "==", user.email),
+          where("is_official", "==", false),
+        );
+        const result = await implementPlaylistQuery(
+          queryGetUserPlaylist,
+          "useGetMyMusicPlaylist, get user own playlists",
+        );
+
+        setOwnPlaylists(result);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const addToPlaylist = async ({ songs, playlist }: AddToPlaylist) => {
@@ -37,7 +65,7 @@ export default function useAddSongToPlaylist() {
         song_ids: newSongIds,
       };
 
-      const newPlaylist = { ...playlist, ...newPlaylistData };
+      // const newPlaylist = { ...playlist, ...newPlaylistData };
 
       await myUpdateDoc({
         collectionName: "Playlists",
@@ -45,13 +73,13 @@ export default function useAddSongToPlaylist() {
         data: newPlaylistData,
       });
 
-      const newPlaylists = [...playlists];
-      const index = newPlaylists.findIndex((p) => p.id === playlist.id);
+      // const newPlaylists = [...playlists];
+      // const index = newPlaylists.findIndex((p) => p.id === playlist.id);
 
-      if (index !== -1) {
-        newPlaylists[index] = newPlaylist;
-        setPlaylists(newPlaylists);
-      }
+      // if (index !== -1) {
+      //   newPlaylists[index] = newPlaylist;
+      //   setPlaylists(newPlaylists);
+      // }
 
       setSuccessToast(`Song added`);
     } catch (err) {
@@ -61,6 +89,13 @@ export default function useAddSongToPlaylist() {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getPlaylists();
+    }
+  }, []);
 
   return { isFetching, addToPlaylist };
 }
