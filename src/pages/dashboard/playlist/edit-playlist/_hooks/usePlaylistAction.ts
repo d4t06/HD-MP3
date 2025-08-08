@@ -6,11 +6,11 @@ import {
   myUpdateDoc,
 } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 // import { optimizeAndGetHashImage } from "@/services/appService";
 import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useAddPlaylist } from "@/hooks";
+import { usePlaylistContext } from "../PlaylistContext";
+import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
 
 type DeletePlaylist = {
   variant: "delete-playlist";
@@ -61,22 +61,15 @@ export default function useDashboardPlaylistActions() {
   const { user } = useAuthContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
-  //   const { setPlaylists } = useSongContext();
-  const {
-    playlist,
-    shouldGetPlaylists,
-    lastDoc,
-    songs,
-    setSongs,
-    updatePlaylistData,
-  } = usePlaylistContext();
+  const { shouldGetPlaylists, lastDoc } = usePlaylistsContext();
+  const { playlist, songs, setSongs, updatePlaylistData } =
+    usePlaylistContext();
 
   // state
   const [isFetching, setIsFetching] = useState(false);
 
   // hooks
   const navigate = useNavigate();
-  const { addPlaylist } = useAddPlaylist({ setIsFetching });
 
   const updatePlaylistSinger = async (singers: Singer[], id: string) => {
     const newSingerMap: Playlist["singer_map"] = {};

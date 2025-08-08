@@ -1,34 +1,17 @@
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
-function usePlaylist() {
+function usePlaylists() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
-
-  const [playlist, setPlaylist] = useState<Playlist>();
-
-  const [imageFile, setImageFile] = useState<File>();
-  const [songs, setSongs] = useState<Song[]>([]);
 
   const [hasMore, setHasMore] = useState(true);
 
   const lastDoc = useRef<QueryDocumentSnapshot>();
   const shouldGetPlaylists = useRef(true);
 
-  const updatePlaylistData = (data?: Partial<PlaylistSchema>) => {
-    if (!playlist) return;
-    setPlaylist({ ...playlist, ...data });
-  };
-
   return {
-    imageFile,
-    setImageFile,
-    playlist,
-    setPlaylist,
     playlists,
     setPlaylists,
-    songs,
-    setSongs,
-    updatePlaylistData,
     shouldGetPlaylists,
     lastDoc,
     hasMore,
@@ -36,19 +19,19 @@ function usePlaylist() {
   };
 }
 
-type ContextType = ReturnType<typeof usePlaylist>;
+type ContextType = ReturnType<typeof usePlaylists>;
 
 const Context = createContext<ContextType | null>(null);
 
-export default function PlaylistProvider({
+export default function PlaylistsProvider({
   children,
 }: {
   children: ReactNode;
 }) {
-  return <Context.Provider value={usePlaylist()}>{children}</Context.Provider>;
+  return <Context.Provider value={usePlaylists()}>{children}</Context.Provider>;
 }
 
-export const usePlaylistContext = () => {
+export const usePlaylistsContext = () => {
   const ct = useContext(Context);
   if (!ct) throw new Error("PlaylistProvider not provided");
   return ct;

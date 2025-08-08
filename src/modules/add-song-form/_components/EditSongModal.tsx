@@ -38,8 +38,6 @@ export default function EditSongModal({ closeModal }: Props) {
     }
   }, [songData]);
 
-  console.log(localSongData);
-
   return (
     <ModalContentWrapper>
       <ModalHeader title="Edit song" closeModal={closeModal} />

@@ -1,26 +1,87 @@
-import AddAlbumForm from "@/modules/add-album-form";
 import useGetAlbum from "./_hooks/useGetAlbum";
-import { Center, Title } from "@/components";
+import { Center, Image, Title } from "@/components";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import DetailFrame from "../../_components/ui/DetailFrame";
+import { LikeBtn } from "../../_components";
+import { useMemo } from "react";
+import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import AlbumSongSelect from "@/modules/add-album-form/_components/SongSelect";
+import AddAlbumProvider from "@/modules/add-album-form/_components/AddAlbumContext";
+import AlbumCta from "./_components/AlbumCta";
+
+function Content() {
+  const { album, isFetching } = useGetAlbum();
+
+  const lastUpdate = useMemo(() => album?.updated_at, [album?.id]);
+
+  if (isFetching)
+    return (
+      <Center>
+        <ArrowPathIcon className="w-6 animate-spin" />
+      </Center>
+    );
+
+  if (!album) return <></>;
+
+  return (
+    <>
+      {/* <DashboardPageWrapper> */}
+      <Title title="Edit album" className="mb-3" />
+      {/* <AddAlbumForm variant="edit" album={album} /> */}
+
+      <div className="md:flex md:-mx-3">
+        <div className="space-y-3 md:px-3">
+          <div className="w-[200px] h-[200px] mx-auto rounded-md overflow-hidden">
+            <Image
+              className="object-cover h-full"
+              blurHashEncode={album.blurhash_encode}
+              src={album.image_url}
+            />
+          </div>
+
+          <Title variant={"h2"} title={album.name} />
+
+          <DetailFrame>
+            <p>
+              <span>Public:</span>
+              {album.is_public ? "Public" : "Private"}
+            </p>
+
+            <p>
+              <span>Comments:</span>
+              {abbreviateNumber(album.comment)}
+            </p>
+
+            <LikeBtn init={album.like} loading={false} submit={() => {}} />
+
+            <p>
+              <span>Last update:</span>
+              {lastUpdate ? dateFromTimestamp(lastUpdate) : ""}
+            </p>
+          </DetailFrame>
+
+          <AlbumCta />
+
+          {/* <DashboardPlaylistCta /> */}
+        </div>
+
+        <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3">
+          <Title title={"Songs"} variant={"h3"} className="mt-3" />
+
+          <AlbumSongSelect />
+        </div>
+      </div>
+
+      {/* </DashboardPageWrapper> */}
+    </>
+  );
+}
 
 export default function DashboardEditAlbumPage() {
-	const { album, isFetching } = useGetAlbum();
-
-	if (isFetching)
-		return (
-			<Center>
-				<ArrowPathIcon className="w-6 animate-spin" />
-			</Center>
-		);
-
-	if (!album) return <></>;
-
-	return (
-		<>
-		{/* <DashboardPageWrapper> */}
-			<Title title="Edit album" className="mb-3" />
-			<AddAlbumForm variant="edit" album={album} />
-		{/* </DashboardPageWrapper> */}
-		</>
-	);
+  return (
+    <AddAlbumProvider>
+      <Content />
+    </AddAlbumProvider>
+  );
 }

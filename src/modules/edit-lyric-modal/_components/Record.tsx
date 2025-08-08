@@ -30,7 +30,7 @@ export default function Record({ audioEle }: Props) {
             return (
               <span
                 className={`${
-                  i < localGrowList.length ? "text-[#ffed00]" : ""
+                  i < localGrowList.length ? "text-[--primary-cl]" : ""
                 } leading-[1]`}
                 key={i}
               >

@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, RefObject } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
   Button,
@@ -7,12 +7,12 @@ import {
   Label,
   LoadingOverlay,
   ModalHeader,
+  ModalRef,
   Switch,
 } from "@/components";
 import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
 
 type BaseProps = {
-  closeModal: () => void;
   submit: (p: PlaylistSchema, imageFile?: File) => void;
   isLoading: boolean;
 };
@@ -28,10 +28,11 @@ type Edit = {
   playlist: Playlist;
 };
 
-export type PlaylistModalVariantProps = Add | Edit;
+export type PlaylistModalVariantProps = (Add | Edit) & {
+  modalRef: RefObject<ModalRef>;
+};
 
 export default function AddPlaylistModal({
-  closeModal,
   isLoading,
   submit,
   ...props
@@ -64,7 +65,7 @@ export default function AddPlaylistModal({
   return (
     <>
       <ModalHeader
-        closeModal={closeModal}
+        closeModal={() => props.modalRef.current?.close()}
         title={props.variant === "add" ? "Add playlist" : "Edit playlist"}
       />
 

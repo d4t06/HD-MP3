@@ -8,7 +8,7 @@ import FullScreenPlayerContent from "./_components/FullScreenPlayerContent";
 
 export default function FullScreenPlayer() {
   // use stores
-  const { isOpenFullScreen, idle, activeTab, playerConig: {songBackground} } = usePlayerContext();
+  const { isOpenFullScreen, idle, activeTab, playerConfig: {songBackground} } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
   const classes = {

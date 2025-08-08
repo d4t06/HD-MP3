@@ -96,7 +96,7 @@ export default function useGetMyMusicPlaylist() {
       const lastTab = getLocalStorage()["last_playlist_tab"] as Tab;
 
       await getPlaylist(lastTab);
-      setTab(lastTab);
+      setTab(lastTab || 'Favorite');
     };
 
     if (!ranEffect.current) {

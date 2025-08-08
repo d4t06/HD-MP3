@@ -91,7 +91,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
       <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
-            closeModal={() => modalRef.current?.close()}
+            modalRef={modalRef}
             submit={handleAddSongToNewPlaylist}
             isLoading={isFetching || addPlaylistFetching}
             variant="add"

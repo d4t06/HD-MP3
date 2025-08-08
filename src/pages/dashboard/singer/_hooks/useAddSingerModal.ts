@@ -1,10 +1,11 @@
+import { ModalRef } from "@/components";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import { convertToEn } from "@/utils/appHelpers";
 import { initSingerObject } from "@/utils/factory";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 type Add = {
   variant: "add";
@@ -14,7 +15,9 @@ type Edit = {
   variant: "edit";
 };
 
-export type UseAddSingerModalProps = (Add | Edit) & { closeModal: () => void };
+export type UseAddSingerModalProps = (Add | Edit) & {
+  modalRef: RefObject<ModalRef>;
+};
 
 export default function useAddSingerModal(props: UseAddSingerModalProps) {
   const { setErrorToast, setSuccessToast } = useToastContext();
@@ -107,7 +110,7 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
       setErrorToast();
     } finally {
       setIsFetching(false);
-      props.closeModal();
+      props.modalRef.current?.close();
     }
   };
 
@@ -123,10 +126,20 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
   };
 
   useEffect(() => {
-    if (props.variant === "add") inputRef.current?.focus();
+    if (props.variant === "add") {
+      inputRef.current?.focus();
+      props.modalRef.current?.setModalPersist(true);
+    }
 
     setSingerData(initPlaylistData());
   }, []);
+
+  useEffect(() => {
+    if (props.variant === "edit")
+      if (isChanged || isChangeImage) {
+        props.modalRef.current?.setModalPersist(true);
+      }
+  }, [isChanged, isChangeImage]);
 
   useEffect(() => {
     if (!imageFile) return;

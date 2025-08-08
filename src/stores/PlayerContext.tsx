@@ -18,6 +18,7 @@ type PlayerConfig = {
   isEnableBeat: boolean;
   isCrossFade: boolean;
   songBackground: boolean;
+  songImage: boolean;
 };
 
 const storage = getLocalStorage();
@@ -30,12 +31,13 @@ function usePlayer() {
   const [mobileActiveTab, setMobileActiveTab] = useState<MobileTab>("Lyric");
   const [idle, setIdle] = useState(false);
 
-  const [playerConig, setPlayerConfig] = useState<PlayerConfig>({
+  const [playerConfig, setPlayerConfig] = useState<PlayerConfig>({
     lyricSize: (storage["lyricSize"] || "medium") as LyricSize,
     repeat: (storage["isRepeat"] || "no") as Repeat,
     isShuffle: storage["isShuffle"] || false,
     isCrossFade: storage["isCrossFade"] || false,
     songBackground: storage["songBackground"] || true,
+    songImage: storage["songImage"] || true,
     isEnableBeat: false,
   });
 
@@ -73,7 +75,7 @@ function usePlayer() {
     mobileActiveTab,
     setMobileActiveTab,
     mobileTabs,
-    playerConig,
+    playerConfig,
     updatePlayerConfig,
     firstTimeSongLoaded,
     timelineEleRef,

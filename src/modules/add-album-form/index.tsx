@@ -8,11 +8,9 @@ import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button, ButtonCtaFrame, Frame } from "@/pages/dashboard/_components";
 import AlbumSingerSelect from "./_components/SingerSelect";
 import AlbumSongSelect from "./_components/SongSelect";
-import DeleteAlbumBtn from "./_components/DeleteAlbumBtn";
-import EditAlbumBtn from "./_components/EditAlbumBtn";
-import { abbreviateNumber } from "@/utils/abbreviateNumber";
-import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
-import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
+// import { abbreviateNumber } from "@/utils/abbreviateNumber";
+// import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+// import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { CheckIcon } from "@heroicons/react/20/solid";
 
 type BaseProps = {
@@ -59,26 +57,26 @@ function Content({ className = "", ...props }: Props) {
     </Button>
   );
 
-  const buttonList = (
-    <>
-      <ButtonCtaFrame>
-        <Button onClick={() => labelRef.current?.click()}>
-          <PhotoIcon className="w-6" />
+  // const buttonList = (
+  //   <>
+  //     <ButtonCtaFrame>
+  //       <Button onClick={() => labelRef.current?.click()}>
+  //         <PhotoIcon className="w-6" />
 
-          <span>Change image</span>
-        </Button>
+  //         <span>Change image</span>
+  //       </Button>
 
-        {props.variant === "edit" && (
-          <>
-            <EditAlbumBtn />
-            <DeleteAlbumBtn />
-          </>
-        )}
-      </ButtonCtaFrame>
+  //       {props.variant === "edit" && (
+  //         <>
+  //           <EditAlbumBtn />
+  //           <DeleteAlbumBtn />
+  //         </>
+  //       )}
+  //     </ButtonCtaFrame>
 
-      {props.variant === "edit" && saveButton}
-    </>
-  );
+  //     {props.variant === "edit" && saveButton}
+  //   </>
+  // );
 
   if (!albumData) return <></>;
 
@@ -120,7 +118,7 @@ function Content({ className = "", ...props }: Props) {
             </Button>
           )}
 
-          {props.variant === "edit" && (
+          {/* {props.variant === "edit" && (
             <>
               <Title variant={"h2"} title={albumData.name} />
 
@@ -146,7 +144,7 @@ function Content({ className = "", ...props }: Props) {
 
               {buttonList}
             </>
-          )}
+          )} */}
         </div>
 
         <div className="md:w-3/4 mt-5 md:mt-0 md:ml-5 flex-grow flex flex-col space-y-5">
@@ -175,7 +173,7 @@ function Content({ className = "", ...props }: Props) {
               <Title variant={"h3"} className="mb-3" title="Songs" />
             )}
 
-            <AlbumSongSelect />
+            {props.variant === "add" && <AlbumSongSelect />}
           </div>
         </div>
       </div>

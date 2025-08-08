@@ -70,7 +70,8 @@ export default function Preview() {
         {isEditText ? (
           <textarea
             ref={inputRef}
-            className={`${inputClasses} w-full mt-3 bg-white/10`}
+            rows={1}
+            className={`${inputClasses} w-full mt-3 bg-[--a-5-cl]`}
           />
         ) : (
           <>
@@ -78,7 +79,7 @@ export default function Preview() {
               {text}
               <div
                 ref={eleRefs.overlayRef}
-                className="absolute  top-0 left-0 overflow-hidden text-[#ffed00] whitespace-nowrap w-0"
+                className="absolute  top-0 left-0 overflow-hidden text-[--primary-cl] whitespace-nowrap w-0"
               >
                 {text}
               </div>

@@ -13,7 +13,7 @@ interface Props {
 export default function Lyric({ className }: Props) {
   // state
   const {
-    playerConig: { lyricSize },
+    playerConfig: { lyricSize },
     audioRef,
     isOpenFullScreen,
     activeTab,
@@ -62,7 +62,7 @@ export default function Lyric({ className }: Props) {
 
   const classes = {
     container:
-      "no-scrollbar pt-[20px] mask-image overflow-y-auto overflow-x-hidden font-['Inter',system-ui]",
+      "no-scrollbar pt-10 mask-image overflow-y-auto overflow-x-hidden font-['Inter',system-ui]",
   };
 
   return (

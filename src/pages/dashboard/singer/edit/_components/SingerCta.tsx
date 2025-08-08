@@ -1,9 +1,10 @@
-import { ConfirmModal, ModalContentWrapper, ModalRef } from "@/components";
 import {
-  Button,
-  DashboardModal,
-  ButtonCtaFrame,
-} from "@/pages/dashboard/_components";
+  ConfirmModal,
+  Modal,
+  ModalContentWrapper,
+  ModalRef,
+} from "@/components";
+import { Button, ButtonCtaFrame } from "@/pages/dashboard/_components";
 import { useRef, useState } from "react";
 import AddSingerModal from "../../_components/AddSingerModal";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -24,14 +25,7 @@ export default function SingerCta() {
 
   return (
     <>
-      <button
-        onClick={() => openModal("more")}
-        className="text-sm ml-auto !mt-0"
-      >
-        See more
-      </button>
-
-      <div className="mt-3 md:!mt-auto">
+      <div className="mt-3">
         <ButtonCtaFrame>
           <Button
             onClick={() => openModal("edit")}
@@ -53,12 +47,12 @@ export default function SingerCta() {
         </ButtonCtaFrame>
       </div>
 
-      <DashboardModal ref={modalRef}>
+      <Modal variant="animation" ref={modalRef}>
         {modal === "more" && singer && (
           <ModalContentWrapper>{singer.description}</ModalContentWrapper>
         )}
         {modal === "edit" && (
-          <AddSingerModal closeModal={closeModal} variant="edit" />
+          <AddSingerModal modalRef={modalRef} variant="edit" />
         )}
         {modal === "delete" && singer && (
           <ConfirmModal
@@ -68,7 +62,7 @@ export default function SingerCta() {
             closeModal={closeModal}
           />
         )}
-      </DashboardModal>
+      </Modal>
     </>
   );
 }

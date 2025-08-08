@@ -38,7 +38,7 @@ export default function AddNewAlbumBtn({ setAlbums }: Props) {
         <div className="hidden md:block">Add new album</div>
       </Button>
 
-      <Modal ref={modalRef} variant="animation">
+      <Modal ref={modalRef} variant="animation" persisted={true}>
         <ModalContentWrapper className="w-[800px]">
           <ModalHeader
             closeModal={() => modalRef.current?.close()}

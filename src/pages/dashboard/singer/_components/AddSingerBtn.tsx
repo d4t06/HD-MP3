@@ -8,8 +8,6 @@ import AddSingerModal from "./AddSingerModal";
 export default function AddSingerBtn() {
   const modalRef = useRef<ModalRef>(null);
 
-  const closeModal = () => modalRef.current?.close();
-
   return (
     <>
       <Button
@@ -22,7 +20,7 @@ export default function AddSingerBtn() {
       </Button>
 
       <Modal ref={modalRef} variant="animation">
-          <AddSingerModal closeModal={closeModal} variant="add" />
+        <AddSingerModal modalRef={modalRef} variant="add" />
       </Modal>
     </>
   );

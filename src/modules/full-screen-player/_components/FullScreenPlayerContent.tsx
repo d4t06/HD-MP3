@@ -2,7 +2,10 @@ import useFunctionDebounce from "@/hooks/useFunctionDebounce";
 import { usePlayerContext } from "@/stores";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import LyricContextProvider from "@/stores/LyricContext";
-import { selectSongQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
+import {
+  selectSongQueue,
+  setCurrentQueueId,
+} from "@/stores/redux/songQueueSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useMemo } from "react";
 import { Button, SongThumbnail } from "@/components";
@@ -14,7 +17,8 @@ import { GetSongLyric } from "@/components";
 export default function FullScreenPlayerContent() {
   const dispatch = useDispatch();
 
-  const { activeTab, isOpenFullScreen, idle } = usePlayerContext();
+  const { activeTab, isOpenFullScreen, playerConfig, idle } =
+    usePlayerContext();
 
   const { currentSongData } = useSelector(selectSongQueue);
 
@@ -31,7 +35,10 @@ export default function FullScreenPlayerContent() {
   };
 
   const handleClickNext = useFunctionDebounce(() => handleScroll("next"), 200);
-  const handleClickPrevious = useFunctionDebounce(() => handleScroll("previous"), 200);
+  const handleClickPrevious = useFunctionDebounce(
+    () => handleScroll("previous"),
+    200,
+  );
 
   const handleScroll = (direction: string = "next") => {
     const containerEle = containerRef.current as HTMLElement;
@@ -120,15 +127,21 @@ export default function FullScreenPlayerContent() {
       <LyricContextProvider>
         <GetSongLyric
           isOpenLyricTabs={
-            isOpenFullScreen && (activeTab === "Lyric" || activeTab === "Karaoke")
+            isOpenFullScreen &&
+            (activeTab === "Lyric" || activeTab === "Karaoke")
           }
         >
           <div
             className={`absolute inset-0 z-20 ${activeTab === "Lyric" ? "" : "hidden"}`}
           >
             <div className={classes.lyricTabContainer}>
-              <SongThumbnail active={true} data={currentSongData?.song} />
-              <Lyric className={`w-full ml-[40px] h-full`} />
+              <SongThumbnail
+                classNames={playerConfig.songImage ? "" : "hidden"}
+                active={true}
+                data={currentSongData?.song}
+              />
+
+              <Lyric className={`w-full ml-[40px] h-full ${playerConfig.songImage ? "" : ''}`} />
             </div>
           </div>
 

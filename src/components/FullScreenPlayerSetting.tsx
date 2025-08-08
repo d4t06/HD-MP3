@@ -9,7 +9,7 @@ export default function FullScreenPlayerSetting() {
   // const { theme } = useThemeContext();
 
   const {
-    playerConig: { isCrossFade, isEnableBeat, lyricSize, songBackground },
+    playerConfig: { isCrossFade, songImage, isEnableBeat, lyricSize, songBackground },
     updatePlayerConfig,
     audioRef,
     shouldSyncSongDuration,
@@ -85,17 +85,25 @@ export default function FullScreenPlayerSetting() {
           </div>
 
           <div className={`${classes.itemContainer}`}>
-            <p className={classes.text}>Song background</p>
+            <p className={classes.text}>Background</p>
             <Switch
               size="thin"
               active={songBackground}
               cb={() => updatePlayerConfig({ songBackground: !songBackground })}
             />
           </div>
+           <div className={`${classes.itemContainer}`}>
+            <p className={classes.text}>Song image</p>
+            <Switch
+              size="thin"
+              active={songImage}
+              cb={() => updatePlayerConfig({ songImage: !songImage })}
+            />
+          </div>
 
           {currentSongData?.song.beat_url && (
             <div className={`${classes.itemContainer}`}>
-              <p className={classes.text}>Song beat</p>
+              <p className={classes.text}>Instrumental</p>
               <Switch size="thin" active={isEnableBeat} cb={handleToggleBeat} />
             </div>
           )}

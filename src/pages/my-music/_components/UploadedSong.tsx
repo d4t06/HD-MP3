@@ -83,7 +83,7 @@ export default function UploadedSongList() {
                 ))}
               </>
             ) : (
-              <NotFound />
+              <NotFound variant="less" />
             )}
           </>
         )}

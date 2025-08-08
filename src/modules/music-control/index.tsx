@@ -17,7 +17,7 @@ import { ProgressBar } from "@/components";
 
 export default function MusicControl() {
   const {
-    playerConig: { isShuffle, repeat },
+    playerConfig: { isShuffle, repeat },
     isOpenFullScreen,
     timelineEleRef,
     currentTimeEleRef,

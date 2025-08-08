@@ -1,15 +1,15 @@
 import { implementSongQuery } from "@/services/appService";
 import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { documentId, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { usePlaylistContext } from "../PlaylistContext";
 
 export default function useGetPlaylist() {
   const [isFetching, setIsFetching] = useState(true);
 
-  const { setSongs, setPlaylist, playlist, songs } = usePlaylistContext();
+  const { setSongs, setPlaylist } = usePlaylistContext();
 
   const ranEffect = useRef(false);
 
@@ -22,7 +22,11 @@ export default function useGetPlaylist() {
     try {
       if (!params.id) return;
 
-      const docRef = await myGetDoc({ collectionName: "Playlists", id: params.id, msg: "useGetPlaylist, get playlist doc" });
+      const docRef = await myGetDoc({
+        collectionName: "Playlists",
+        id: params.id,
+        msg: "useGetPlaylist, get playlist doc",
+      });
 
       if (!docRef.exists()) return navigator("/dashboard/playlist");
 
@@ -58,5 +62,5 @@ export default function useGetPlaylist() {
     }
   }, []);
 
-  return { songs, playlist, isFetching };
+  return { isFetching };
 }

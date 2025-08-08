@@ -2,7 +2,7 @@ import { ModalRef } from "@/components";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { deleteFile, myUpdateDoc } from "@/services/firebaseService";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
-import { RefObject, useMemo, useState } from "react";
+import { RefObject, useEffect, useMemo, useState } from "react";
 
 type Props = {
   song: Song;
@@ -82,6 +82,10 @@ export default function useEditSongModal({ song, modalRef }: Props) {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    if (isChanged) modalRef.current?.setModalPersist(true);
+  }, [songData]);
 
   return {
     isFetching,

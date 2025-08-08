@@ -25,7 +25,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
     box: `rounded-lg bg-[--a-5-cl] p-2`,
-    songItem: `rounded-md w-full p-1 text-left text-sm hover:bg-[--a-5-cl]`,
+    songItem: `rounded-md w-full p-1 font-semibold text-left hover:bg-[--a-5-cl]`,
   };
 
   const renderSongs = (s: Song[]) =>
@@ -45,7 +45,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
 
   return (
     <>
-      <ModalContentWrapper className="w-[600px]">
+      <ModalContentWrapper className="w-[600px] min-h-[400px]">
         <ModalHeader closeModal={closeModal} title="Add songs" />
 
         <SearchBar {...rest} />

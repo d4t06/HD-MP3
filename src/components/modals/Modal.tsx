@@ -44,7 +44,7 @@ function Modal(
   const [isMounted, setIsMounted] = useState(
     variant === "default" ? true : false,
   );
-  const [persist, setPersist] = useState(persisted);
+  const [persist, setPersist] = useState(false);
 
   const toggle = () => {
     if (isMounted) setIsMounted(false);
@@ -84,6 +84,10 @@ function Modal(
     open,
     setModalPersist,
   }));
+
+  useEffect(() => {
+    if (isOpen) setPersist(persisted);
+  }, [isOpen]);
 
   useEffect(() => {
     if (variant === "default") return;

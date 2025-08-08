@@ -13,7 +13,7 @@ import {
   playlistCollectionRef,
 } from "@/services/firebaseService";
 import { implementPlaylistQuery } from "@/services/appService";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
+import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
 
 const pageSize = 6;
 
@@ -23,7 +23,7 @@ type Tab = (typeof tabs)[number];
 
 export default function useDashboardPlaylist() {
   const { setPlaylists, lastDoc, setHasMore, shouldGetPlaylists } =
-    usePlaylistContext();
+    usePlaylistsContext();
 
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);

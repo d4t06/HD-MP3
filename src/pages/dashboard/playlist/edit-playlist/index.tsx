@@ -13,9 +13,12 @@ import DetailFrame from "../../_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import useDashboardPlaylistActions from "./_hooks/usePlaylistAction";
 import { serverTimestamp } from "firebase/firestore";
+import PlaylistProvider, { usePlaylistContext } from "./PlaylistContext";
 
-export default function DashboardPlaylistDetail() {
-  const { isFetching, songs, playlist } = useGetPlaylist();
+function Content() {
+  const { playlist, songs } = usePlaylistContext();
+
+  const { isFetching } = useGetPlaylist();
 
   const { action, isFetching: actionFetching } = useDashboardPlaylistActions();
 
@@ -29,8 +32,6 @@ export default function DashboardPlaylistDetail() {
   };
 
   const lastUpdate = useMemo(() => playlist?.updated_at, [playlist?.id]);
-
-  console.log(lastUpdate)
 
   if (isFetching)
     return (
@@ -159,5 +160,13 @@ export default function DashboardPlaylistDetail() {
       </div>
       {/* </DashboardPageWrapper> */}
     </>
+  );
+}
+
+export default function DashboardPlaylistDetail() {
+  return (
+    <PlaylistProvider>
+      <Content />
+    </PlaylistProvider>
   );
 }

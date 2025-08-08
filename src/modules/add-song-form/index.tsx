@@ -53,7 +53,7 @@ export default function AddSongForm(props: Props) {
 
   const { api, isFetching: getGenreLoading } = useGetGenre();
 
-  const lastUpdate = useMemo(() => (song ? song.updated_at : ""), [song?.id]);
+  const lastUpdate = useMemo(() => (song ? song.updated_at : ""), [song]);
 
   useEffect(() => {
     api();
@@ -113,9 +113,12 @@ export default function AddSongForm(props: Props) {
                   </p>
 
                   <LikeBtn
-                    init={songData?.like || 0}
+                    init={song?.like || 0}
                     loading={false}
-                    submit={(l) => updateSongData({ like: l })}
+                    submit={(l, cM) => {
+                      updateSongData({ like: l });
+                      cM();
+                    }}
                   />
                   <p>
                     <span>Comments:</span>

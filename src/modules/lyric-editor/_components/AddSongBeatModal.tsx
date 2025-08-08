@@ -31,6 +31,7 @@ export default function AddSongBeatModal({ closeModal }: Props) {
         multiple
         accept="audio"
         id="song_upload"
+        className="hidden"
       />
 
       {song && (songFile || song?.beat_url) && (
@@ -40,9 +41,11 @@ export default function AddSongBeatModal({ closeModal }: Props) {
         />
       )}
 
-      <Button onClick={() => labelRef.current?.click()} size={"clear"}>
-        <ArrowUpTrayIcon className="w-5" />
-      </Button>
+      <p className="mt-3">
+        <Button onClick={() => labelRef.current?.click()} color="primary">
+          <ArrowUpTrayIcon className="w-5" />
+        </Button>
+      </p>
 
       <Button
         disabled={!songFile}

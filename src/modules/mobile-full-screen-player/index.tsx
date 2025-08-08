@@ -24,7 +24,7 @@ export default function MobileFullScreenPlayer() {
   // use stores
   const {
     isOpenFullScreen,
-    playerConig: { songBackground },
+    playerConfig: { songBackground },
     mobileActiveTab,
   } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);

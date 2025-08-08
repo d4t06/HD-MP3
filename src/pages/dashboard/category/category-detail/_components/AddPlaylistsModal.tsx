@@ -154,7 +154,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
       <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper className="w-[650px]">
           <AddPlaylistModal
-            closeModal={() => modalRef.current?.close()}
+            modalRef={modalRef}
             isLoading={addPlaylistFetching}
             variant="add"
             submit={_handleAddPlaylist}

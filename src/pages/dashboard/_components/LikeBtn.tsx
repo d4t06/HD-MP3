@@ -8,7 +8,7 @@ import {
 } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { PencilIcon } from "@heroicons/react/24/outline";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 type Props = {
@@ -18,9 +18,13 @@ type Props = {
 };
 
 export default function LikeBtn({ init, submit, loading }: Props) {
-  const [value, setValue] = useState(init);
+  const [value, setValue] = useState(0);
 
   const modalRef = useRef<ModalRef>(null);
+
+  useEffect(() => {
+    setValue(init);
+  }, []);
 
   return (
     <>

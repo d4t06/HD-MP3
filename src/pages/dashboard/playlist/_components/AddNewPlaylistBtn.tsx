@@ -5,11 +5,11 @@ import { useAuthContext } from "@/stores";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import { useAddPlaylist } from "@/hooks";
 import { Button } from "../../_components";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
+import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
 
 export default function AddNewPlaylistBtn() {
   const { user } = useAuthContext();
-  const { setPlaylists } = usePlaylistContext();
+  const { setPlaylists } = usePlaylistsContext();
   const { addPlaylist, isFetching } = useAddPlaylist();
   const modalRef = useRef<ModalRef>(null);
 
@@ -52,7 +52,7 @@ export default function AddNewPlaylistBtn() {
       <Modal ref={modalRef} variant="animation">
         <ModalContentWrapper className="w-[600px]">
           <AddPlaylistModal
-            closeModal={closeModal}
+            modalRef={modalRef}
             isLoading={isFetching}
             variant="add"
             user={user}

@@ -42,15 +42,7 @@ export default function FavoriteSongList() {
       {isFetching && songItemSkeleton}
 
       {!isFetching && (
-        <>
-          {favoriteSongs.length ? (
-            <>
-              <SongList setSong={_handleSetSong} songs={favoriteSongs} />
-            </>
-          ) : (
-            <NotFound />
-          )}
-        </>
+        <SongList setSong={_handleSetSong} songs={favoriteSongs} />
       )}
     </SongSelectProvider>
   );

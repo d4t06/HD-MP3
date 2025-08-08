@@ -13,7 +13,7 @@ import useDashboardPlaylistActions, {
 } from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
+import { usePlaylistContext } from "../PlaylistContext";
 
 type Modal = "edit" | "delete" | "add-song-to-playlist";
 
@@ -60,7 +60,7 @@ export default function DashboardPlaylistCta() {
                 variant="edit"
                 isLoading={isFetching}
                 playlist={playlist}
-                closeModal={closeModal}
+                modalRef={modalRef}
               />
             </ModalContentWrapper>
           </>

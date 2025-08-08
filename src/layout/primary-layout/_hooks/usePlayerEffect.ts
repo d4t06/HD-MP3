@@ -24,7 +24,7 @@ import usePlayerAction from "./usePlayerAction";
 
 export default function usePlayerEffect() {
   const {
-    playerConig: { repeat, isShuffle, isCrossFade, isEnableBeat },
+    playerConfig: { repeat, isShuffle, isCrossFade, isEnableBeat },
     audioRef,
     firstTimeSongLoaded,
     startFadeWhenEnd,

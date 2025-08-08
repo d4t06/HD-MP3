@@ -17,7 +17,7 @@ export default function usePlayerAction() {
   const dispatch = useDispatch();
 
   const {
-    playerConig: { isShuffle, repeat, isCrossFade },
+    playerConfig: { isShuffle, repeat, isCrossFade },
     updatePlayerConfig,
     firstTimeSongLoaded,
     audioRef,

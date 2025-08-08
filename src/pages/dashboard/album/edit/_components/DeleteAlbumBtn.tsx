@@ -1,11 +1,11 @@
 import { ConfirmModal, Modal, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useAddAlbumContext } from "./AddAlbumContext";
 import { deleteFile, myDeleteDoc } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { useToastContext } from "@/stores";
+import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 
 export default function DeleteAlbumBtn() {
   const { album } = useAddAlbumContext();

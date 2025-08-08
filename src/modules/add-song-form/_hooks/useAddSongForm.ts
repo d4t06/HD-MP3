@@ -77,6 +77,7 @@ export default function useAddSongForm(
       !!singers.length &&
       !!genres.length &&
       !!songData.release_year &&
+      !!songData.main_genre &&
       isChanged;
 
     return props.variant === "add"

@@ -35,7 +35,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
   return (
     <ModalContentWrapper className="w-[700px]">
       <ModalHeader
-        closeModal={props.closeModal}
+        closeModal={() => props.modalRef.current?.close()}
         title={props.variant === "add" ? "Add singer" : "Edit singer"}
       />
 
@@ -94,7 +94,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
               }
             />
           </div>
-
+{/* 
           {props.variant === "edit" && (
             <div className="space-y-1">
               <Label htmlFor="like">Like</Label>
@@ -110,7 +110,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
                 }
               />
             </div>
-          )}
+          )} */}
         </div>
       </div>
       <p className="text-right mt-3">

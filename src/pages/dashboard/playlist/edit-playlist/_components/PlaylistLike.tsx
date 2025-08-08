@@ -1,10 +1,10 @@
 import { Input, Label, Modal, ModalContentWrapper, ModalRef } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
 import { PencilIcon } from "@heroicons/react/24/outline";
 import { useEffect, useRef, useState } from "react";
 import useDashboardPlaylistActions from "../_hooks/usePlaylistAction";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { usePlaylistContext } from "../PlaylistContext";
 
 export default function PlaylistLike() {
   const { playlist } = usePlaylistContext();

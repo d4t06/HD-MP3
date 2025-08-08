@@ -40,7 +40,7 @@ export default function useAddPlaylistForm(props: PlaylistModalVariantProps) {
         return initPlaylistObject({
           distributor: props.user.display_name,
           owner_email: props.user.email,
-          name: props.name
+          name: props.name,
         });
       case "edit":
         // keep created_at, update updated_at field
@@ -50,10 +50,18 @@ export default function useAddPlaylistForm(props: PlaylistModalVariantProps) {
   };
 
   useEffect(() => {
-    if (props.variant === "add") inputRef.current?.focus();
+    if (props.variant === "add") {
+      inputRef.current?.focus();
+      props.modalRef.current?.setModalPersist(true);
+    }
 
     setPlaylistData(initPlaylistData());
   }, []);
+
+  useEffect(() => {
+    if (isChanged || isChangeImage)
+      props.modalRef.current?.setModalPersist(true);
+  }, [playlistData, imageFile]);
 
   useEffect(() => {
     if (!imageFile) return;
@@ -70,6 +78,6 @@ export default function useAddPlaylistForm(props: PlaylistModalVariantProps) {
     inputRef,
     isValidToSubmit,
     isChanged,
-    isChangeImage
+    isChangeImage,
   };
 }

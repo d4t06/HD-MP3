@@ -6,12 +6,12 @@ import { Button, SearchBar } from "../_components";
 import AddNewPlaylistBtn from "./_components/AddNewPlaylistBtn";
 import DashboardTable from "../_components/ui/Table";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
-import { usePlaylistContext } from "@/stores/dashboard/PlaylistContext";
+import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
 
 export default function DashboardPlaylist() {
-  const { playlists, hasMore } = usePlaylistContext();
+  const { playlists, hasMore } = usePlaylistsContext();
 
   const { isFetching, getPlaylists, searchResult, tab, tabs, setTab, ...rest } =
     useDashboardPlaylist();

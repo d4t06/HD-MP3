@@ -1,12 +1,28 @@
-import { Image, Skeleton } from "@/components";
+import { Image, Skeleton, Title } from "@/components";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import SingerCta from "./SingerCta";
 import { useGetSingerContext } from "./GetSingerContext";
-import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
+import { LikeBtn } from "@/pages/dashboard/_components";
+import { myUpdateDoc } from "@/services/firebaseService";
 
 export default function SingerInfo() {
-  const { singer } = useSingerContext();
+  const { singer, setSinger } = useSingerContext();
   const { isFetching } = useGetSingerContext();
+
+  const handleEditSinger = async (like: number, closeModal: () => void) => {
+    if (!singer) return;
+
+    await myUpdateDoc({
+      collectionName: "Singers",
+      id: singer.id,
+      data: { like },
+    });
+
+    setSinger({ ...singer, like });
+
+    closeModal();
+  };
 
   if (!isFetching && !singer) return <></>;
 
@@ -34,15 +50,28 @@ export default function SingerInfo() {
           ) : (
             singer && (
               <>
-                <p className="text-3xl font-semibold">{singer.name}</p>
+                <DetailFrame className="space-y-3">
+                  <div>
+                    <span>Name</span>
+                    <Title variant={"h1"} title={singer.name} />
+                  </div>
 
-                <p>
-                  <span className="text-red-500 text-xl">&#10084;</span>{" "}
-                  {abbreviateNumber(singer.like)}
-                </p>
+                  {/* <p>
+                    <span className="text-red-500 text-xl">&#10084;</span>{" "}
+                    {abbreviateNumber(singer.like)}
+                  </p> */}
 
-                <p className="line-clamp-2">{singer.description}</p>
+                  <LikeBtn
+                    init={singer.like}
+                    loading={false}
+                    submit={handleEditSinger}
+                  />
 
+                  <p>
+                    <span>Description</span> <br />
+                    {singer.description}
+                  </p>
+                </DetailFrame>
                 <SingerCta />
               </>
             )
