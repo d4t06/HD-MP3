@@ -15,11 +15,11 @@ function LyricItem(
   const getClass = () => {
     switch (status) {
       case "coming":
-        return "disable";
+        return "opacity-[.4]";
       case "active":
         return `${activeColor || "text-[#ffed00]"} active-lyric`;
       case "done":
-        return "disable";
+        return "opacity-[.4]";
     }
   };
 

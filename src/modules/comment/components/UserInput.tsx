@@ -21,6 +21,7 @@ import useCommentInput from "../hooks/useCommentInput";
 
 type Props = {
   onSubmited?: () => void;
+  bg?: string;
 };
 
 type SendComment = {
@@ -36,6 +37,7 @@ type SendReply = {
 
 export default function UserInput({
   onSubmited,
+  bg = "bg-[--a-10-cl]",
   ...props
 }: (SendComment | SendReply) & Props) {
   const { user } = useAuthContext();
@@ -84,20 +86,20 @@ export default function UserInput({
         </div>
 
         <div
-          className={`rounded-lg ml-2 flex-grow  p-1.5 flex items-end bg-white/10`}
+          className={`rounded-lg ml-2 flex-grow  p-1.5 flex items-end ${bg}`}
         >
           <textarea
             ref={textareaRef}
             placeholder={inputPlaceholder}
             value={value}
             onChange={(e) => setValue(e.target.value)}
-            rows={(value.match(/\n/g) || []).length + 1}
-            className={`${inputClasses} resize-none max-h-[30vh] w-full !bg-transparent border-none text-white`}
+            rows={1}
+            className={`${inputClasses} no-scrollbar resize-none max-h-[30vh] w-full !bg-transparent border-none`}
           />
 
           <Popup appendOnPortal>
             <MyPopupTrigger>
-              <button className="text-white/50 hover p-1.5 hover:bg-white/10 rounded-full">
+              <button className="hover p-1.5 hover:bg-[--a-5-cl] rounded-full">
                 <FaceSmileIcon className="w-6" />
               </button>
             </MyPopupTrigger>

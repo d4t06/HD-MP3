@@ -58,7 +58,7 @@ export default function SongCardComment() {
             className="pr-2"
           />
 
-          {user && currentSong && <UserInput variant="comment" targetId={currentSong.id} />}
+          {user && currentSong && <UserInput bg="bg-white/10" variant="comment" targetId={currentSong.id} />}
         </div>
       </div>
     </>
