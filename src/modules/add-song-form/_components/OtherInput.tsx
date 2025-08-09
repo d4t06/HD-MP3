@@ -2,7 +2,7 @@ import { Input, Title } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 
 export default function OtherInput() {
-  const { songData, updateSongData, song, variant } = useAddSongContext();
+  const { songData, updateSongData, variant } = useAddSongContext();
 
   return (
     <>
@@ -10,7 +10,7 @@ export default function OtherInput() {
         <div>Name</div>
 
         {variant.current === "edit" ? (
-          <Title variant={"h1"} title={songData?.name} />
+          <Title variant={"h1"} title={songData?.name || ""} />
         ) : (
           <Input
             className="mt-2"

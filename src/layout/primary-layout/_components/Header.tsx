@@ -120,7 +120,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   return (
     <>
       <div
-        className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[180px] z-[20] bg-transparent  ${scroll ? "shadow-lg" : ""}`}
+        className={`h-[60px] fixed top-0 right-0  left-[80px] lg:left-[160px] z-[20] bg-transparent  ${scroll ? "shadow-lg" : ""}`}
       >
         <div
           className={`${scroll ? "" : "hidden "} absolute inset-0 bg-[--player-cl] bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] `}

@@ -1,6 +1,6 @@
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { NotFound, Skeleton } from "@/components";
+import { Skeleton } from "@/components";
 import { songItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";

@@ -5,7 +5,7 @@ import { useSongSelectContext } from "@/stores";
 import AddSongToPlaylistModal from "@/modules/song-menu/_components/AddSongToPlaylistModal";
 
 export default function AddToPlaylistBtn() {
-  const { selectedSongs } = useSongSelectContext();
+  const { selectedSongs, resetSelect } = useSongSelectContext();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -18,7 +18,10 @@ export default function AddToPlaylistBtn() {
 
       <Modal variant="animation" ref={modalRef}>
         <AddSongToPlaylistModal
-          closeModal={() => modalRef.current?.close()}
+          closeModal={() => {
+            modalRef.current?.close();
+            resetSelect();
+          }}
           songs={selectedSongs}
         />
       </Modal>

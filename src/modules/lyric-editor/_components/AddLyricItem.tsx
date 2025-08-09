@@ -14,7 +14,7 @@ type Props = {
 };
 
 function AddLyricItem(
-  { lyric, openModal, seek, isLast, status, activeColor, isPreview }: Props,
+  { lyric, openModal, seek, isLast, status, isPreview }: Props,
   ref: Ref<HTMLParagraphElement>,
 ) {
   const getClass = () => {

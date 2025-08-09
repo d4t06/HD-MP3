@@ -1,9 +1,4 @@
-import {
-  ModalRef,
-  Modal,
-  ModalContentWrapper,
-  ModalHeader,
-} from "@/components";
+import { ModalRef, Modal, ModalContentWrapper } from "@/components";
 import { PlusIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { useAuthContext } from "@/stores";

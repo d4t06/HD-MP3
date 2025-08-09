@@ -1,6 +1,11 @@
-import { ModalContentWrapper, ModalHeader, ModalRef } from "@/components";
+import {
+  Modal,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+} from "@/components";
 import AddAlbumModal from "@/modules/add-album-modal";
-import { Button, DashboardModal } from "@/pages/dashboard/_components";
+import { Button } from "@/pages/dashboard/_components";
 import { useAuthContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import { PlusIcon } from "@heroicons/react/24/outline";
@@ -27,7 +32,7 @@ export default function AddAlbumBtn() {
         <span>Add album</span>
       </Button>
 
-      <DashboardModal ref={modalRef}>
+      <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper className="w-[700px]">
           {user && singer && (
             <>
@@ -39,6 +44,7 @@ export default function AddAlbumBtn() {
               <AddAlbumModal
                 className="flex-grow overflow-auto no-scrollbar md:overflow-hidden"
                 variant="add"
+                modalRef={modalRef}
                 singer={singer}
                 afterSubmit={handleAddAlbumToList}
                 user={user}
@@ -46,7 +52,7 @@ export default function AddAlbumBtn() {
             </>
           )}
         </ModalContentWrapper>
-      </DashboardModal>
+      </Modal>
     </>
   );
 }

@@ -38,15 +38,14 @@ function ScrollTop({
   return (
     <Button
       onClick={scrollToTop}
-      variant={"circle"}
       size={"clear"}
-      className={`absolute p-[8px] hover:scale-[1.05] transition-[opacity,transform] 
+      className={`absolute p-2 transition-[transform,opacity] 
          ${className || ""} 
          w-[36px] 
-         hover:bg-[--a-5-cl] h-[36px]  
+         hover:bg-[--a-5-cl]  
       ${isShow ? "opacity-[1]" : "opacity-0 translate-y-[20px]"}`}
     >
-      <ArrowUpIcon className="w-full" />
+      <ArrowUpIcon className="w-6" />
     </Button>
   );
 }

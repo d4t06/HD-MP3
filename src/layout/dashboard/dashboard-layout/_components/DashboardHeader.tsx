@@ -27,9 +27,11 @@ export default function DashboardHeader() {
         className={`hidden md:flex px-[40px] z-[99] h-[60px] flex-shrink-0 items-center justify-between ${scroll ? " shadow-lg" : ""}`}
       >
         <div className="flex">
-          <Link to={"/dashboard"} className="text-xl font-bold">
-            HD
-            <span className={`text-[--primary-cl] uppercase`}> Dashboard</span>
+          <Link
+            to={"/dashboard"}
+            className="text-xl font-bold text-[--primary-cl]"
+          >
+            Dashboard
           </Link>
 
           <NavigationButton className="ml-5" />

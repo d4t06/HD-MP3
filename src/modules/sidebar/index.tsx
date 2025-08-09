@@ -9,6 +9,7 @@ import {
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components";
 import { useAuthContext } from "@/stores";
+import ScrollTop from "./_components/ScrollTop";
 export default function Sidebar() {
   // stores
   const { user, loading: userLoading } = useAuthContext();
@@ -38,10 +39,10 @@ export default function Sidebar() {
 
   //  define styles
   const classes = {
-    container: `w-[80px] lg:w-[180px] relative flex-shrink-0 h-screen bg-[--sidebar-collapse-cl] lg:bg-[--sidebar-cl] `,
+    container: `w-[80px] lg:w-[160px] relative flex-shrink-0 h-screen bg-[--sidebar-collapse-cl] lg:bg-[--sidebar-cl] `,
     linkList: `
       hover:[&_div:not(.ske)]:bg-[--a-5-cl]
-      [&_div]:py-2
+      [&_div]:py-1.5
       [&_div]:leading-[2.2] 
       [&_div]:flex 
       [&_div]:flex-col 
@@ -50,6 +51,8 @@ export default function Sidebar() {
       [&_span]:mt-[2px]
       [&_span]:font-semibold
 
+      lg:[&_div]:py-2
+      lg:[&_div]:pl-4
       lg:[&_span]:mt-0
       lg:[&_div]:space-x-2 
       lg:[&_div]:px-3
@@ -64,10 +67,14 @@ export default function Sidebar() {
 
   return (
     <div className={`${classes.container}`}>
-      <div className="px-[10px] h-[60px] flex items-center justify-center">
-        <Link to={"/"} className="text-xl hidden lg:block font-[500]">
-          HD
-          <span className={`text-[--primary-cl] ml-[4px]`}>MP3</span>
+      <div className="px-[10px] h-[80px] flex items-center justify-center">
+        <Link
+          to={"/"}
+          className="bg-white dark:bg-[--layout-cl] w-12 flex h-12 rounded-full justify-center items-center"
+        >
+          <span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
+            :D
+          </span>
         </Link>
       </div>
       <div className={`flex flex-col items-start ${classes.linkList}`}>
@@ -149,7 +156,7 @@ export default function Sidebar() {
           </>
         )}
       </div>
-      {/* <ScrollTop className="left-[50%] translate-x-[-50%] bottom-[80px] md:bottom-[100px]" /> */}
+      <ScrollTop className="left-[50%] translate-x-[-50%] bottom-[80px] md:bottom-[100px]" />
     </div>
   );
 }

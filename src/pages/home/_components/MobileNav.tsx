@@ -2,9 +2,6 @@ import {
   ArrowRightOnRectangleIcon,
   ArrowTrendingUpIcon,
   ChevronRightIcon,
-  ClockIcon,
-  HeartIcon,
-  MusicalNoteIcon,
   SquaresPlusIcon,
 } from "@heroicons/react/24/outline";
 import { useAuthContext } from "@/stores";

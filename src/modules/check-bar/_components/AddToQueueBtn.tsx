@@ -10,7 +10,9 @@ export default function AddToQueueCheckBarItem() {
 
 	const addSongsToQueue = () => {
 		dispatch(addSongToQueue({ songs: selectedSongs }));
-		setSuccessToast("songs added to queue");
+		setSuccessToast(
+			`${selectedSongs.length > 1 ? "Songs" : "Song"} added to queue`,
+		);
 		resetSelect();
 	};
 

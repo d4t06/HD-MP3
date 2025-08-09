@@ -70,7 +70,13 @@ export default function DashBoardSidebar() {
     <div
       className={`${classes.container} ${isOpen ? "w-[150px]" : "w-[70px]"}`}
     >
-      <div className="md:mt-[60px] [&_svg]:w-5 [&_svg]:flex-shrink-0">
+      <div className="h-[60px] flex items-center justify-center">
+        <div className="w-10 flex items-center justify-center  bg-white rounded-full">
+          <span className="font-bold text-[--primary-cl] leading-[40px] translate-y-[1px]">:D</span>
+        </div>
+      </div>
+
+      <div className="[&_svg]:w-5 [&_svg]:flex-shrink-0">
         <Link
           className={`
               ${classes.item} ${isOpen ? "!justify-start" : ""}

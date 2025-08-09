@@ -1,6 +1,4 @@
 import Footer from "@/layout/primary-layout/_components/Footer";
-// import HomePlaylist from "./_components/HomePlaylist";
-// import HomeSongList from "./_components/HomeSongList";
 import RecentPlaylist from "./_components/RecentPlaylist";
 import MobileSetting from "./_components/MobileSetting";
 import TrendingSong from "@/modules/trending-song";
@@ -47,11 +45,11 @@ export default function HomePage() {
 
         <RecommendSong />
 
-        {/*<RecentPlaylist />*/}
+        <RecentPlaylist />
 
-        {/*<TrendingSong amount={3} />*/}
+        <TrendingSong amount={5} />
 
-        {/*<NewSong amount={5} />*/}
+        <NewSong amount={5} />
 
         <MobileSetting />
       </PageWrapper>

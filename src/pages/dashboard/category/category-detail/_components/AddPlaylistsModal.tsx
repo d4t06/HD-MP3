@@ -2,7 +2,6 @@ import { useAuthContext } from "@/stores";
 import { useMemo, useRef } from "react";
 import {
   Center,
-  Label,
   Modal,
   ModalContentWrapper,
   ModalHeader,

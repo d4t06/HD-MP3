@@ -1,8 +1,6 @@
 import { useRef, useState } from "react";
-import Skeleton from "../skeleton";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
-// import songImage from '@/assets/song-image.png'
 
 type Props = {
   src?: string;
@@ -48,8 +46,12 @@ export default function Image({
     <>
       {!imageLoaded && (
         <>
-            <Blurhash hash={blurHashEncode || defaultBlurhash} className="rounded-md overflow-hidden" height={"100%"} width={"100%"} />
-          
+          <Blurhash
+            hash={blurHashEncode || defaultBlurhash}
+            className="rounded-md overflow-hidden"
+            height={"100%"}
+            width={"100%"}
+          />
         </>
       )}
       <img
