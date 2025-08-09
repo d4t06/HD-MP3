@@ -1,7 +1,7 @@
 import { useSongSelectContext } from "@/stores";
-import { ModalContentWrapper, ModalHeader, Title } from "@/components";
+import { Label, ModalContentWrapper, ModalHeader, Tab } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import useSearchSong from "./_hooks/useSearchSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 
@@ -13,7 +13,16 @@ type Props = {
 };
 
 function Content({ closeModal, submit, isLoading, current }: Props) {
-  const { songs, isFetching, ...rest } = useSearchSong();
+  const {
+    uploadedSongs,
+    result,
+    getNewestSongs,
+    isFetching,
+    setTab,
+    tabs,
+    tab,
+    ...rest
+  } = useSearchSong();
   const { selectedSongs, selectSong } = useSongSelectContext();
 
   const handleSubmit = async () => {
@@ -25,7 +34,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
     box: `rounded-lg bg-[--a-5-cl] p-2`,
-    songItem: `rounded-md w-full p-1 font-semibold text-left hover:bg-[--a-5-cl]`,
+    songItem: `rounded-md w-full p-1 text-sm font-semibold text-left hover:bg-[--a-5-cl]`,
   };
 
   const renderSongs = (s: Song[]) =>
@@ -51,20 +60,45 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
         <SearchBar className="w-fit" {...rest} />
         <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden mt-3">
           <div className={`${classes.col}`}>
+            <Tab
+              className="w-fit mb-1"
+              buttonClasses="[&_button]:px-3 [&_button]:py-1/2"
+              tabs={tabs}
+              setTab={setTab}
+              tab={tab}
+              render={(t) => t}
+            />
+
             <div className={`${classes.box} flex-grow overflow-auto`}>
               {!isFetching ? (
-                renderSongs(songs)
+                <>
+                  {tab === "Result" ? (
+                    renderSongs(result)
+                  ) : (
+                    <>
+                      {renderSongs(uploadedSongs)}
+
+                      <p className="text-center mt-3">
+                        <Button
+                          onClick={getNewestSongs}
+                          size={"clear"}
+                          className="p-1"
+                        >
+                          <ArrowPathIcon className="w-5" />
+                        </Button>
+                      </p>
+                    </>
+                  )}
+                </>
               ) : (
                 <Loading className="h-full" />
               )}
             </div>
           </div>
           <div className={`${classes.col} mt-3 md:mt-0`}>
-            <Title title="Selected" variant={'h3'} className="mb-1" />
+            <Label className="mb-1 md:h-[36px]">Selected</Label>
 
-            <div
-              className={`${classes.box} flex-grow overflow-auto space-y-2 `}
-            >
+            <div className={`${classes.box} flex-grow overflow-auto`}>
               {renderSongs(selectedSongs)}
             </div>
           </div>

@@ -8,16 +8,22 @@ import { FormEvent, useState } from "react";
 
 type Props = {
   afterSearched?: () => void;
+  setIsFetchingParent?: (v: boolean) => void;
 };
 
-export default function useSearchSinger({ afterSearched = () => {} }: Props) {
+export default function useSearchSinger({
+  afterSearched = () => {},
+  setIsFetchingParent,
+}: Props) {
+  const { setErrorToast } = useToastContext();
+
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [isShowResult, setIsShowResult] = useState(false);
 
   const [result, setResult] = useState<Singer[]>([]);
 
-  const { setErrorToast } = useToastContext();
+  const _setIsFetching = setIsFetchingParent || setIsFetching;
 
   const handleSubmit = async (e: FormEvent) => {
     try {
@@ -26,7 +32,7 @@ export default function useSearchSinger({ afterSearched = () => {} }: Props) {
 
       if (isFetching) return;
 
-      setIsFetching(true);
+      _setIsFetching(true);
       setIsShowResult(true);
 
       const q = getSearchQuery(singerCollectionRef, [], value);
@@ -39,7 +45,7 @@ export default function useSearchSinger({ afterSearched = () => {} }: Props) {
       console.log({ message: err });
       setErrorToast();
     } finally {
-      setIsFetching(false);
+      _setIsFetching(false);
     }
   };
 

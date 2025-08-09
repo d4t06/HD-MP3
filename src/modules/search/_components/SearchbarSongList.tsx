@@ -1,10 +1,10 @@
 import { NotFound } from "@/components";
-import useGetRecommend from "@/hooks/useGetRecomemded";
 import useSetSong from "@/hooks/useSetSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RecentSearch } from "../_hooks/useSearch";
+import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
 
 type Props = {
   songs: Song[];
@@ -12,7 +12,7 @@ type Props = {
 export default function SearchbarSongList({ songs }: Props) {
   const { handleSetSong } = useSetSong({ variant: "search-bar" });
 
-  const { getRecommend } = useGetRecommend();
+  const { getRelatigeSongs } = useGetRelativeSongs();
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
@@ -26,7 +26,7 @@ export default function SearchbarSongList({ songs }: Props) {
 
     setLocalStorage("recent-search", recentSearchs);
 
-    getRecommend(song);
+    getRelatigeSongs(song);
   };
 
   return (

@@ -5,7 +5,7 @@ import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { Link } from "react-router-dom";
 import useGetNewSongs from "./useGetNewSong";
-import useGetRecommend from "@/hooks/useGetRecomemded";
+import useGetRelativeSongs from "../song-queue/_hooks/useGetRelativeSongs";
 
 type Props = {
   amount: number;
@@ -13,13 +13,13 @@ type Props = {
 
 export default function NewSong(props: Props) {
   const { isFetching, currentSongs, ...rest } = useGetNewSongs(props);
-  const { getRecommend } = useGetRecommend();
+  const { getRelatigeSongs } = useGetRelativeSongs();
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
-    getRecommend(song);
+    getRelatigeSongs(song);
   };
 
   return (

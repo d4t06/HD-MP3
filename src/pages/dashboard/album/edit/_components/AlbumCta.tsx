@@ -15,7 +15,7 @@ import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 type Modal = "edit" | "delete" | "add-songs";
 
 export default function AlbumCta() {
-  const { album, songs } = useAlbumContext();
+  const { album, songs, updateAlbumData } = useAlbumContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
@@ -25,10 +25,11 @@ export default function AlbumCta() {
 
   const openModal = (m: Modal) => {
     setModal(m);
-
     modalRef.current?.open();
   };
-  const closeModal = () => modalRef.current?.close();
+  const closeModal = () => {
+    modalRef.current?.close();
+  };
 
   const handlePlaylistAction = async (props: AlbumActionProps) => {
     await action(props);
@@ -48,7 +49,9 @@ export default function AlbumCta() {
               <AddAlbumModal
                 modalRef={modalRef}
                 variant="edit"
-                afterSubmit={(al) => {}}
+                afterSubmit={(data) => {
+                  updateAlbumData(data);
+                }}
                 album={album}
               />
             </ModalContentWrapper>

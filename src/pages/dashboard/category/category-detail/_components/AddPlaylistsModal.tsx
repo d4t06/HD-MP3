@@ -2,13 +2,15 @@ import { useAuthContext } from "@/stores";
 import { useMemo, useRef } from "react";
 import {
   Center,
+  Label,
   Modal,
   ModalContentWrapper,
   ModalHeader,
   ModalRef,
+  Tab,
 } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
-import { CheckIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import PlaylistSelectProvider, {
   usePlaylistSelectContext,
 } from "@/pages/dashboard/playlist/edit-playlist/PlaylistSelectContext";
@@ -26,8 +28,18 @@ type Props = {
 function Content({ closeModal, submit, isLoading, current }: Props) {
   const { user } = useAuthContext();
 
-  const { playlists, isFetching, lastSubmit, newPlaylists, ...rest } =
-    useSearchPlaylist();
+  const {
+    playlists,
+    isFetching,
+    getNewestPlaylists,
+    result,
+    lastSubmit,
+    tabs,
+    setTab,
+    tab,
+
+    ...rest
+  } = useSearchPlaylist();
   const { selectedPlaylists, selectPlaylist } = usePlaylistSelectContext();
 
   const modalRef = useRef<ModalRef>(null);
@@ -63,13 +75,13 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   const otherPlaylists = useMemo(() => {
     const selectedSongsId = selectedPlaylists.map((s) => s.id);
 
-    return playlists.filter((s) => !selectedSongsId.includes(s.id));
-  }, [playlists, selectedPlaylists]);
+    return result.filter((s) => !selectedSongsId.includes(s.id));
+  }, [result, selectedPlaylists]);
 
   const classes = {
     col: "md:w-1/2 flex-1 flex flex-col px-2 overflow-hidden",
     box: `rounded-lg bg-black/5 p-2`,
-    boxItem: `w-full p-2.5 text-left hover:bg-[--a-5-cl] rounded-md text-sm`,
+    boxItem: `w-full px-3 py-1.5 text-left hover:bg-[--a-5-cl] rounded-md text-sm`,
   };
 
   const renderPlaylists = (playlists: Playlist[]) =>
@@ -92,22 +104,38 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
       <ModalContentWrapper className="w-[600px] h-[500px]">
         <ModalHeader closeModal={closeModal} title="Add playlists" />
 
-        <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden">
-          <div className={`${classes.col}`}>
-            <SearchBar {...rest} />
+        <SearchBar className="w-fit" {...rest} />
 
-            <div
-              className={`${classes.box} relative flex-grow overflow-auto mt-3`}
-            >
+        <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden mt-3">
+          <div className={`${classes.col}`}>
+            <Tab
+              className="w-fit mb-1"
+              buttonClasses="[&_button]:px-3 [&_button]:py-1/2"
+              tabs={tabs}
+              setTab={setTab}
+              tab={tab}
+              render={(t) => t}
+            />
+
+            <div className={`${classes.box} relative flex-grow overflow-auto`}>
               {/* <div className={`h-full overflow-auto space-y-2`}> */}
               {!isFetching ? (
                 <>
-                  {rest.value ? (
+                  {tab === "Result" ? (
                     renderPlaylists(otherPlaylists)
                   ) : (
                     <>
-                      <div className="font-bold text-[#333] my-1">New playlists</div>
-                      {renderPlaylists(newPlaylists)}
+                      {renderPlaylists(playlists)}
+
+                      <p className="mt-3 text-center">
+                        <Button
+                          onClick={getNewestPlaylists}
+                          size={"clear"}
+                          className="p-1"
+                        >
+                          <ArrowPathIcon className="w-5" />
+                        </Button>
+                      </p>
                     </>
                   )}
                 </>
@@ -129,11 +157,9 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
             </div>
           </div>
           <div className={`${classes.col} mt-3 md:mt-0`}>
-            <div className="font-[500] mb-3">Selected:</div>
+            <p className="font-bold mb-1 h-[36px]">Selected</p>
 
-            <div
-              className={`${classes.box} flex-grow overflow-auto`}
-            >
+            <div className={`${classes.box} flex-grow overflow-auto`}>
               {renderPlaylists(selectedPlaylists)}
             </div>
           </div>

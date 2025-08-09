@@ -5,9 +5,9 @@ import { getBlurHashEncode, optimizeImage } from "./imageService";
 
 export async function implementSongQuery(
   query: Query,
-  opts?: { getQueueId: (s: Song) => string },
+  opts?: { getQueueId?: (s: Song) => string; msg?: string },
 ) {
-  if (import.meta.env.DEV) console.log("Get songs");
+  if (import.meta.env.DEV) console.log(opts?.msg || "Get songs");
 
   const songsSnap = await getDocs(query);
 

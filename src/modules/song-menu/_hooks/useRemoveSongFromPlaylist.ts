@@ -12,7 +12,7 @@ export default function useRemoveSongFromPlaylist() {
   const dispatch = useDispatch();
   const { playlistSongs, currentPlaylist } = useSelector(selectCurrentPlaylist);
 
-  const { playlists, setPlaylists } = useSongContext();
+  const { shouldFetchOwnPlaylists } = useSongContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -33,7 +33,7 @@ export default function useRemoveSongFromPlaylist() {
         song_ids: newPlaylistSongs.map((s) => s.id),
       };
 
-      const newPlaylist = { ...currentPlaylist, ...newPlaylistData };
+      // const newPlaylist = { ...currentPlaylist, ...newPlaylistData };
 
       await myUpdateDoc({
         collectionName: "Playlists",
@@ -41,14 +41,16 @@ export default function useRemoveSongFromPlaylist() {
         data: newPlaylistData,
       });
 
-      // update local playlist
-      const newPlaylists = [...playlists];
-      const index = newPlaylists.findIndex((p) => p.id === currentPlaylist.id);
+      // // update local playlist
+      // const newPlaylists = [...ownPlaylists];
+      // const index = newPlaylists.findIndex((p) => p.id === currentPlaylist.id);
 
-      if (index !== -1) {
-        newPlaylists[index] = newPlaylist;
-        setPlaylists(newPlaylists);
-      }
+      // if (index !== -1) {
+      //   newPlaylists[index] = newPlaylist;
+      //   setOwnPlaylists(newPlaylists);
+      // }
+
+      shouldFetchOwnPlaylists.current = true;
 
       dispatch(setPlaylistSong(newPlaylistSongs));
 

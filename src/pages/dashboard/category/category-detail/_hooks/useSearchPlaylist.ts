@@ -1,32 +1,64 @@
-import { db } from "@/firebase";
 import { implementPlaylistQuery } from "@/services/appService";
 import {
   getSearchQuery,
   playlistCollectionRef,
 } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { collection, limit, orderBy, query, where } from "firebase/firestore";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
+import { limit, orderBy, query, where } from "firebase/firestore";
+import { FormEvent, useEffect, useState } from "react";
+
+const tabs = ["Newest", "Result"] as const;
+
+type Tab = (typeof tabs)[number];
 
 export default function useSearchPlaylist() {
   const { setErrorToast } = useToastContext();
 
-  const [newPlaylists, setNewPlaylists] = useState<Playlist[]>([]);
-  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const {
+    playlists,
+    setPlaylists,
+    setHasMore,
+    shouldGetPlaylists,
+    PAGE_SIZE,
+    lastDoc,
+  } = usePlaylistsContext();
+
+  const [result, setResult] = useState<Playlist[]>([]);
+
   const [value, setValue] = useState("");
   const [lastSubmit, setLastSubmit] = useState("");
   const [isFetching, setIsFetching] = useState(false);
-
-  const ranEffect = useRef(false);
+  const [tab, setTab] = useState<Tab>("Newest");
 
   const getNewestPlaylists = async () => {
     try {
       setIsFetching(true);
 
-      const q = query(playlistCollectionRef, where("is_official", "==", true));
+      setHasMore((prev) => {
+        const isFetchedMoreAndNoMore = lastDoc.current && !prev;
+
+        if (isFetchedMoreAndNoMore) {
+          lastDoc.current = undefined;
+          return !prev;
+        }
+
+        return prev;
+      });
+
+      // setHasMore(true);
+      // lastDoc.current = undefined;
+
+      const q = query(
+        playlistCollectionRef,
+        where("is_official", "==", true),
+        where("is_album", "==", false),
+        orderBy("updated_at", "desc"),
+        limit(PAGE_SIZE),
+      );
 
       const result = await implementPlaylistQuery(q);
-      setNewPlaylists(result);
+      setPlaylists(result);
     } catch (error) {
       console.log(error);
     } finally {
@@ -48,7 +80,7 @@ export default function useSearchPlaylist() {
 
       const result = await implementPlaylistQuery(q);
 
-      setPlaylists(result);
+      setResult(result);
       setLastSubmit(value);
     } catch (err) {
       console.log({ message: err });
@@ -59,8 +91,8 @@ export default function useSearchPlaylist() {
   };
 
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
+    if (shouldGetPlaylists.current) {
+      shouldGetPlaylists.current = false;
       getNewestPlaylists();
     }
   }, []);
@@ -69,9 +101,13 @@ export default function useSearchPlaylist() {
     isFetching,
     value,
     playlists,
-    newPlaylists,
+    result,
     setValue,
     lastSubmit,
     handleSubmit,
+    getNewestPlaylists,
+    tabs,
+    tab,
+    setTab,
   };
 }

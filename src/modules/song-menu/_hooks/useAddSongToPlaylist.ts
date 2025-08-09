@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import { myUpdateDoc, playlistCollectionRef } from "@/services/firebaseService";
 import { sleep } from "@/utils/appHelpers";
@@ -13,8 +13,6 @@ export default function useAddSongToPlaylist() {
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const ranEffect = useRef(false);
-
   type AddToPlaylist = {
     songs: Song[];
     playlist: Playlist;
@@ -24,20 +22,17 @@ export default function useAddSongToPlaylist() {
     try {
       if (!user) return;
 
-      if (shouldFetchOwnPlaylists.current) {
-        shouldFetchOwnPlaylists.current = false;
-        const queryGetUserPlaylist = query(
-          playlistCollectionRef,
-          where("owner_email", "==", user.email),
-          where("is_official", "==", false),
-        );
-        const result = await implementPlaylistQuery(
-          queryGetUserPlaylist,
-          "useGetMyMusicPlaylist, get user own playlists",
-        );
+      const queryGetUserPlaylist = query(
+        playlistCollectionRef,
+        where("owner_email", "==", user.email),
+        where("is_official", "==", false),
+      );
+      const result = await implementPlaylistQuery(
+        queryGetUserPlaylist,
+        "useGetMyMusicPlaylist, get user own playlists",
+      );
 
-        setOwnPlaylists(result);
-      }
+      setOwnPlaylists(result);
     } catch (error) {
       console.log(error);
     }
@@ -55,9 +50,8 @@ export default function useAddSongToPlaylist() {
 
       const noChangeAfterPush = newSongIds.length === playlist.song_ids.length;
       if (noChangeAfterPush) {
-        await sleep(300);
-
-        setSuccessToast(`Song added`);
+        await sleep(100);
+        setSuccessToast(`Song added to playlist`);
         return;
       }
 
@@ -65,23 +59,23 @@ export default function useAddSongToPlaylist() {
         song_ids: newSongIds,
       };
 
-      // const newPlaylist = { ...playlist, ...newPlaylistData };
-
       await myUpdateDoc({
         collectionName: "Playlists",
         id: playlist.id,
         data: newPlaylistData,
       });
 
-      // const newPlaylists = [...playlists];
+      // const newPlaylists = [...ownPlaylists];
       // const index = newPlaylists.findIndex((p) => p.id === playlist.id);
 
       // if (index !== -1) {
-      //   newPlaylists[index] = newPlaylist;
-      //   setPlaylists(newPlaylists);
+      //   Object.assign(newPlaylists[index], newPlaylistData);
+      //   setOwnPlaylists(newPlaylists);
       // }
 
-      setSuccessToast(`Song added`);
+      shouldFetchOwnPlaylists.current = true;
+
+      setSuccessToast(`Song added to playlist`);
     } catch (err) {
       console.log({ message: err });
       setErrorToast();
@@ -91,8 +85,8 @@ export default function useAddSongToPlaylist() {
   };
 
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
+    if (shouldFetchOwnPlaylists.current) {
+      shouldFetchOwnPlaylists.current = false;
       getPlaylists();
     }
   }, []);

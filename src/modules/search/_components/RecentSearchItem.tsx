@@ -2,12 +2,12 @@ import SongItem from "@/modules/song-item";
 import { useAuthContext } from "@/stores";
 import { RecentSearch } from "../_hooks/useSearch";
 import { useSetSong } from "@/hooks";
-import useGetRecommend from "@/hooks/useGetRecomemded";
 import { Link } from "react-router-dom";
 import { Image } from "@/components";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
+import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
 
 type Props = {
 	item: RecentSearch;
@@ -47,12 +47,12 @@ export default function RecentSearchItem({ item }: Props) {
 	const { currentSongData } = useSelector(selectSongQueue);
 
 	const { handleSetSong } = useSetSong({ variant: "search-bar" });
-	const { getRecommend } = useGetRecommend();
+  const { getRelatigeSongs } = useGetRelativeSongs();
 
 	const _handleSetSong = (song: Song) => {
 		handleSetSong(song.queue_id, [song]);
 
-		getRecommend(song);
+		getRelatigeSongs(song);
 	};
 
 	const renderContent = () => {

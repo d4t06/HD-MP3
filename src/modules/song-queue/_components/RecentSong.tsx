@@ -4,7 +4,7 @@ import { Skeleton } from "@/components";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useDispatch } from "react-redux";
 import { addSongToQueue, setCurrentQueueId } from "@/stores/redux/songQueueSlice";
-import useGetRecentSong from "@/hooks/useGetRecentSongs";
+import useGetRecentSong from "../_hooks/useGetRecentSongs";
 
 type Props = {
 	setTab: Dispatch<SetStateAction<QueueTab>>;

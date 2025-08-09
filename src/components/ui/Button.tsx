@@ -9,7 +9,7 @@ import {
 import { VariantProps, cva } from "class-variance-authority";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
-const buttonVariant = cva("inline-flex space-x-1 font-[500] items-center ", {
+const buttonVariant = cva("inline-flex space-x-1 font-semibold items-center ", {
   variants: {
     variant: {
       default: "",

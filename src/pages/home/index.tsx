@@ -11,6 +11,7 @@ import useGetPage from "../category/useGetPage";
 import { Center, Loading, NotFound, PageWrapper } from "@/components";
 import NewSong from "@/modules/new-song";
 import MobileNav from "./_components/MobileNav";
+import RecommendSong from "./_components/RecommendSong";
 
 export default function HomePage() {
   const { homePage } = usePageContext();
@@ -44,11 +45,13 @@ export default function HomePage() {
           />
         ))}
 
-        <RecentPlaylist />
+        <RecommendSong />
 
-        <TrendingSong amount={3} />
+        {/*<RecentPlaylist />*/}
 
-        <NewSong amount={5} />
+        {/*<TrendingSong amount={3} />*/}
+
+        {/*<NewSong amount={5} />*/}
 
         <MobileSetting />
       </PageWrapper>

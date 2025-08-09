@@ -15,14 +15,13 @@ import {
 import { implementPlaylistQuery } from "@/services/appService";
 import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
 
-const pageSize = 6;
 
 const tabs = ["All", "Result"] as const;
 
 type Tab = (typeof tabs)[number];
 
 export default function useDashboardPlaylist() {
-  const { setPlaylists, lastDoc, setHasMore, shouldGetPlaylists } =
+  const { setPlaylists, lastDoc, PAGE_SIZE, setHasMore, shouldGetPlaylists } =
     usePlaylistsContext();
 
   const [value, setValue] = useState("");
@@ -68,14 +67,14 @@ export default function useDashboardPlaylist() {
             where("is_album", "==", false),
             orderBy("updated_at", "desc"),
             startAfter(lastDoc.current),
-            limit(pageSize),
+            limit(PAGE_SIZE),
           )
         : query(
             playlistCollectionRef,
             where("is_official", "==", true),
             where("is_album", "==", false),
             orderBy("updated_at", "desc"),
-            limit(pageSize),
+            limit(PAGE_SIZE),
           );
 
       if (import.meta.env.DEV) console.log("Get playlists");
@@ -94,9 +93,9 @@ export default function useDashboardPlaylist() {
       if (lastDoc.current) setPlaylists((prev) => [...prev, ...result]);
       else setPlaylists(result);
 
-      if (result.length < pageSize) setHasMore(false);
+      if (result.length < PAGE_SIZE) setHasMore(false);
       else {
-        lastDoc.current = snap.docs[pageSize - 1];
+        lastDoc.current = snap.docs[PAGE_SIZE - 1];
       }
     } catch (err) {
       console.log({ message: err });
@@ -106,6 +105,7 @@ export default function useDashboardPlaylist() {
       setIsFetching(false);
     }
   };
+
 
   useEffect(() => {
     if (shouldGetPlaylists.current) {

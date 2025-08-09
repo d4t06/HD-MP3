@@ -1,6 +1,8 @@
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
+const PAGE_SIZE = 6;
+
 function useSong() {
   const [sysSongPlaylist, setSysSongPlaylist] = useState<{
     songs: Song[];
@@ -69,6 +71,7 @@ function useSong() {
     genres,
     setGenres,
     resetPage,
+    PAGE_SIZE,
   };
 }
 

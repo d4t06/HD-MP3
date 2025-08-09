@@ -88,9 +88,7 @@ function Content() {
             </DetailFrame>
           </div>
 
-          <SongSelectProvider>
-            <AlbumSongSection />
-          </SongSelectProvider>
+          <AlbumSongSection />
         </div>
       </div>
 
@@ -102,7 +100,9 @@ function Content() {
 export default function DashboardEditAlbumPage() {
   return (
     <AlbumProvider>
-      <Content />
+      <SongSelectProvider>
+        <Content />
+      </SongSelectProvider>
     </AlbumProvider>
   );
 }

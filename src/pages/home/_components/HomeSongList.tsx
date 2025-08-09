@@ -4,18 +4,18 @@ import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import CheckedBar from "@/modules/check-bar";
-import useGetRecommend from "@/hooks/useGetRecomemded";
 import { songItemSkeleton } from "@/components/skeleton";
+import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
 
 export default function HomeSongList() {
   const { isFetching, songMap, ...rest } = useGetHomeSong();
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
-  const { getRecommend } = useGetRecommend();
+  const { getRelatigeSongs } = useGetRelativeSongs();
 
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
-    getRecommend(song);
+    getRelatigeSongs(song);
   };
 
   return (

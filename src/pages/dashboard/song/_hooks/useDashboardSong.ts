@@ -103,8 +103,7 @@ export default function useDashboardSong() {
       else {
         lastDoc.current = songsSnap.docs[pageSize - 1];
       }
-
-      // setPage(page);
+      
     } catch (err) {
       console.log({ message: err });
       setErrorToast();

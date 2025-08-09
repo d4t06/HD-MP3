@@ -6,7 +6,7 @@ function useAlbum() {
 
   const [imageFile, setImageFile] = useState<File>();
 
-  const updatePlaylistData = (data?: Partial<PlaylistSchema>) => {
+  const updateAlbumData = (data?: Partial<PlaylistSchema>) => {
     if (!album) return;
     setAlbum({ ...album, ...data });
   };
@@ -16,7 +16,7 @@ function useAlbum() {
     setImageFile,
     album,
     setAlbum,
-    updatePlaylistData,
+    updateAlbumData,
     songs,
     setSongs,
   };

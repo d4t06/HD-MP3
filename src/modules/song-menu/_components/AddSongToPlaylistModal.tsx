@@ -1,8 +1,9 @@
 import { MusicalNoteIcon, PlusIcon } from "@heroicons/react/24/outline";
-import {  useRef } from "react";
+import { useRef } from "react";
 import { useAuthContext, useSongContext } from "@/stores";
 import {
   Button,
+  LoadingOverlay,
   Modal,
   ModalContentWrapper,
   ModalHeader,
@@ -53,11 +54,7 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
     <>
       <ModalContentWrapper>
         <ModalHeader closeModal={closeModal} title={"Playlists"} />
-        <div
-          className={`flex-grow flex flex-col overflow-auto space-y-2 ${
-            isFetching ? "disable" : ""
-          }`}
-        >
+        <div className={`flex-grow flex flex-col overflow-auto space-y-2`}>
           {ownPlaylists.length ? (
             ownPlaylists.map((playlist, index) => {
               return (
@@ -86,6 +83,8 @@ export default function AddSongToPlaylistModal({ songs, closeModal }: Props) {
             <span>Add new playlist</span>
           </Button>
         </p>
+
+        {isFetching && <LoadingOverlay />}
       </ModalContentWrapper>
 
       <Modal variant="animation" ref={modalRef}>

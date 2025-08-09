@@ -18,6 +18,15 @@ export default function AlbumSongSection() {
 
 	const modalRef = useRef<ModalRef>(null);
 
+	const handleRemoveSongs = async () => {
+		await action({
+			variant: "remove-songs",
+			songs: selectedSongs,
+		});
+
+		modalRef.current?.close();
+	};
+
 	return (
 		<>
 			<div>
@@ -89,12 +98,7 @@ export default function AlbumSongSection() {
 
 			<Modal variant="animation" ref={modalRef}>
 				<ConfirmModal
-					callback={() =>
-						action({
-							variant: "remove-songs",
-							songs: selectedSongs,
-						})
-					}
+					callback={handleRemoveSongs}
 					closeModal={() => modalRef.current?.close()}
 					loading={isFetching}
 					label="Remove selected songs ?"

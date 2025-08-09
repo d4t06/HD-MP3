@@ -1,9 +1,9 @@
 import { Label, Modal, ModalRef } from "@/components";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
-import SingerSearchModal from "@/modules/add-song-form/_components/SingerSearchModal";
 import { Button, ItemRightCtaFrame } from "@/pages/dashboard/_components";
 import { useAddAlbumContext } from "../AddAlbumContext";
+import SingerSearchModal from "@/modules/singer-search-modal";
 
 export default function AlbumSingerSelect() {
   const { singer, setSinger, albumData } = useAddAlbumContext();

@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  useAuthContext,
-  usePlayerContext,
-  useToastContext,
-} from "@/stores";
+import { usePlayerContext, useToastContext } from "@/stores";
 
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 
@@ -19,7 +15,6 @@ import {
   selectSongQueue,
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
-import { myUpdateDoc } from "@/services/firebaseService";
 import usePlayerAction from "./usePlayerAction";
 
 export default function usePlayerEffect() {
@@ -38,7 +33,6 @@ export default function usePlayerEffect() {
 
   // use stores
   const dispatch = useDispatch();
-  const { user, updateUserData } = useAuthContext();
   const { queueSongs, currentSongData, currentQueueId } =
     useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
@@ -55,7 +49,6 @@ export default function usePlayerEffect() {
   // const timelineEleRef = useRef<HTMLDivElement>(null);
   // const currentTimeEleRef = useRef<HTMLDivElement>(null);
   const playStatusRef = useRef<PlayStatus>("paused");
-  const recentSongIdsRef = useRef<string[]>([]);
 
   // use hook
   const location = useLocation();
@@ -212,42 +205,6 @@ export default function usePlayerEffect() {
 
         updateProgressElement(MEMO_STORAGE["current_time"] || 0);
         return;
-        // }
-      }
-    }
-
-    // push recent song
-    if (currentSongDataRef.current) {
-      if (user) {
-        const songId = currentSongDataRef.current.song.id;
-
-        const newUserRecentSongIds = [...recentSongIdsRef.current];
-        const founded = newUserRecentSongIds.includes(songId);
-
-        if (!founded) {
-          console.log("push recent songs");
-          const newUserData: Partial<User> = {
-            recent_song_ids: [...newUserRecentSongIds, songId],
-          };
-
-          updateUserData(newUserData);
-          myUpdateDoc({
-            collectionName: "Users",
-            data: newUserData,
-            id: user.email,
-          });
-        }
-      } else {
-        const newRecentSongs = (getLocalStorage()["recent-songs"] ||
-          []) as Song[];
-
-        const founded = newRecentSongs.find(
-          (s) => s.id === currentSongDataRef.current?.song.id,
-        );
-
-        if (!founded) newRecentSongs.unshift(currentSongDataRef.current.song);
-
-        setLocalStorage("recent-songs", newRecentSongs);
       }
     }
 
@@ -280,10 +237,6 @@ export default function usePlayerEffect() {
       next();
     } else dispatch(setPlayStatus({ playStatus: "error" }));
   };
-
-  useEffect(() => {
-    if (user) recentSongIdsRef.current = user.recent_song_ids;
-  }, [user]);
 
   //   load current song in local storage
   useEffect(() => {
@@ -376,34 +329,10 @@ export default function usePlayerEffect() {
     };
   }, [isCrossFade]);
 
-  // // update time line background color
-  // useEffect(() => {
-  //   if (isOpenFullScreen) themeCodeRef.current = "#fff";
-  //   else themeCodeRef.current = theme.content_code;
-  //   // if user no click play yet
-  //   updateProgressElement(
-  //     firstTimeSongLoaded.current ? MEMO_STORAGE["current_time"] : 0,
-  //   );
-  // }, [theme, isOpenFullScreen]);
-
   // prevent song autoplay after edit finish
   useEffect(() => {
     if (isInEdit) {
       if (playStatus === "playing") pause();
     }
   }, [isInEdit]);
-
-  // useEffect(() => {
-  //   if (!audioRef.current || !currentSongData?.song) return;
-
-  //   const newValue = !isEnableBeat;
-
-  //   const currentTime = audioRef.current.currentTime;
-
-  //   audioRef.current.src = newValue
-  //     ? currentSongData.song.beat_url
-  //     : currentSongData.song.song_url;
-
-  //   audioRef.current.currentTime = currentTime;
-  // }, [isEnableBeat]);
 }

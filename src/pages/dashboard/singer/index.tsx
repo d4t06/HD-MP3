@@ -13,12 +13,12 @@ import { useSingerContext } from "@/stores/dashboard/SingerContext";
 export default function DashboardSingerPage() {
   const { hasMore, singers } = useSingerContext();
 
-  const { isFetching, searchResult, getSingers, tabs, tab, setTab, ...rest } =
+  const { isFetching, result, getSingers, tabs, tab, setTab, ...rest } =
     useDashboardSinger();
 
   const singerSource = useMemo(
-    () => (tab === "All" ? singers : searchResult),
-    [tab, singers, searchResult],
+    () => (tab === "All" ? singers : result),
+    [tab, singers, result],
   );
 
   return (

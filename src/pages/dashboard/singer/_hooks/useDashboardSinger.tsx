@@ -1,48 +1,29 @@
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useToastContext } from "@/stores";
 import { getDocs, limit, orderBy, query, startAfter } from "firebase/firestore";
-import {
-  getSearchQuery,
-  singerCollectionRef,
-} from "@/services/firebaseService";
-import { implementSingerQuery } from "@/services/appService";
+import { singerCollectionRef } from "@/services/firebaseService";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
+import { useSearchSinger } from "../../_hooks";
 
-const pageSize = 2;
 
 const tabs = ["All", "Result"] as const;
 type Tab = (typeof tabs)[number];
 
 export default function useDashboardSinger() {
-  const { setSingers, singers, setHasMore, shouldGetSingers, lastDoc } =
+  const { setSingers, PAGE_SIZE, singers, setHasMore, shouldGetSingers, lastDoc } =
     useSingerContext();
 
-  const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
-  const [searchResult, setSearchResult] = useState<Singer[]>([]);
+
+  const { handleSubmit, result, value, setValue } = useSearchSinger({
+    afterSearched: () => {
+      setTab("Result");
+    },
+    setIsFetchingParent: setIsFetching,
+  });
 
   const { setErrorToast } = useToastContext();
-
-  const handleSubmit = async (e: FormEvent) => {
-    try {
-      e.preventDefault();
-
-      setIsFetching(true);
-
-      const q = getSearchQuery(singerCollectionRef, [], value);
-
-      const result = await implementSingerQuery(q);
-      setSearchResult(result);
-
-      setTab("Result");
-    } catch (err) {
-      console.log({ message: err });
-      setErrorToast();
-    } finally {
-      setIsFetching(false);
-    }
-  };
 
   const getSingers = async () => {
     try {
@@ -53,12 +34,12 @@ export default function useDashboardSinger() {
             singerCollectionRef,
             orderBy("created_at", "desc"),
             startAfter(lastDoc.current),
-            limit(pageSize),
+            limit(PAGE_SIZE),
           )
         : query(
             singerCollectionRef,
             orderBy("created_at", "desc"),
-            limit(pageSize),
+            limit(PAGE_SIZE),
           );
 
       if (import.meta.env.DEV) console.log("Get singers");
@@ -77,9 +58,9 @@ export default function useDashboardSinger() {
       if (lastDoc.current) setSingers((prev) => [...prev, ...result]);
       else setSingers(result);
 
-      if (result.length < pageSize) setHasMore(false);
+      if (result.length < PAGE_SIZE) setHasMore(false);
       else {
-        lastDoc.current = songsSnap.docs[pageSize - 1];
+        lastDoc.current = songsSnap.docs[PAGE_SIZE - 1];
       }
     } catch (err) {
       console.log({ message: err });
@@ -109,7 +90,7 @@ export default function useDashboardSinger() {
     tab,
     getSingers,
     setTab,
-    searchResult,
+    result,
     tabs,
   };
 }

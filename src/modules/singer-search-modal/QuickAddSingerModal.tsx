@@ -2,8 +2,8 @@ import { ModalHeader, Input, ModalContentWrapper, Label } from "@/components";
 import { initSingerObject } from "@/utils/factory";
 import { useState } from "react";
 import { CheckIcon } from "@heroicons/react/24/outline";
-import { Button } from "../../_components";
-import useQuickAddSinger from "../_hooks/useQuickAddSinger";
+import useQuickAddSinger from "./useQuickAddSinger";
+import { Button } from "@/pages/dashboard/_components";
 
 type Props = {
   closeModal: () => void;

@@ -1,12 +1,15 @@
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { ReactNode, createContext, useContext, useRef, useState } from "react";
 
+const PAGE_SIZE = 6
+
 function usePlaylists() {
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const [hasMore, setHasMore] = useState(true);
 
   const lastDoc = useRef<QueryDocumentSnapshot>();
+
   const shouldGetPlaylists = useRef(true);
 
   return {
@@ -16,6 +19,7 @@ function usePlaylists() {
     lastDoc,
     hasMore,
     setHasMore,
+    PAGE_SIZE
   };
 }
 

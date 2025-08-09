@@ -33,11 +33,11 @@ export default function useAddAlbumModal(
 
   const isChanged = useMemo(() => {
     if (props.variant === "add") return true;
-    if (!props.album || !albumData || !singer) return false;
+    if (!props.album || !albumData) return false;
 
     return (
       albumData.name !== props.album.name ||
-      singer.id !== props.album.singers[0].id ||
+      singer?.id !== props.album.singers[0].id ||
       albumData.like !== props.album.like
     );
   }, [albumData, singer]);
@@ -101,6 +101,8 @@ export default function useAddAlbumModal(
           break;
         }
       }
+
+      props.modalRef.current?.close();
     } catch (error) {
       console.log(error);
       setErrorToast();
@@ -121,7 +123,7 @@ export default function useAddAlbumModal(
         );
 
         setSinger(props.singer);
-        
+
         break;
 
       case "edit":
@@ -139,8 +141,15 @@ export default function useAddAlbumModal(
       ranEffect.current = true;
 
       initAlbumData();
+
+      if (props.variant === "add")
+        props.modalRef.current?.setModalPersist(true);
     }
   }, []);
+
+  useEffect(() => {
+    if (isChanged || imageFile) props.modalRef.current?.setModalPersist(true);
+  }, [albumData, singer, imageFile]);
 
   useEffect(() => {
     if (!imageFile) return;

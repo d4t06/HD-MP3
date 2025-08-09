@@ -1,6 +1,8 @@
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import { createContext, ReactNode, useContext, useRef, useState } from "react";
 
+const PAGE_SIZE = 6;
+
 function useSinger() {
   const [singers, setSingers] = useState<Singer[]>([]);
 
@@ -29,6 +31,7 @@ function useSinger() {
     setHasMore,
     lastDoc,
     shouldGetSingers,
+    PAGE_SIZE,
   };
 }
 

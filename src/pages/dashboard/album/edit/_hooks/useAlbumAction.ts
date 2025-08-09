@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useToastContext } from "@/stores";
+import { useSongSelectContext, useToastContext } from "@/stores";
 import {
 	commentCollectionRef,
 	deleteFile,
@@ -30,9 +30,11 @@ export type AlbumActionProps = Delete | AddSongs | RemoveSongs;
 export default function useAlbumAction() {
 	// stores
 	// const { user } = useAuthContext();
+	const { resetSelect } = useSongSelectContext();
+
 	const { setErrorToast, setSuccessToast } = useToastContext();
 
-	const { album, songs, setSongs, updatePlaylistData } = useAlbumContext();
+	const { album, songs, setSongs, updateAlbumData } = useAlbumContext();
 
 	// state
 	const [isFetching, setIsFetching] = useState(false);
@@ -95,7 +97,7 @@ export default function useAlbumAction() {
 						msg: ">>> api: update album doc",
 					});
 
-					updatePlaylistData(newAlbumData);
+					updateAlbumData(newAlbumData);
 
 					setSongs(newSongs);
 					setSuccessToast(`Songs added`);
@@ -122,7 +124,11 @@ export default function useAlbumAction() {
 					});
 
 					setSongs(newPlaylistSongs);
-					setSuccessToast(`'${props.songs.length}' removed`);
+					setSuccessToast(
+						`${props.songs.length} ${props.songs.length > 1 ? "songs" : "song"}  removed`,
+					);
+
+					resetSelect();
 
 					break;
 				}
