@@ -1,27 +1,14 @@
 import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import AddAlbumModal from "..";
-import { useAddAlbumContext } from "../_components/AddAlbumContext";
+import { useAddAlbumContext } from "../AddAlbumContext";
 import { initAlbumObject } from "@/utils/factory";
-import {
-  myAddDoc,
-  myUpdateDoc,
-  songsCollectionRef,
-} from "@/services/firebaseService";
-import {
-  documentId,
-  getDoc,
-  query,
-  serverTimestamp,
-  where,
-} from "firebase/firestore";
-import {
-  implementSongQuery,
-  optimizeAndGetHashImage,
-} from "@/services/appService";
+import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
+import { getDoc, serverTimestamp } from "firebase/firestore";
+import { optimizeAndGetHashImage } from "@/services/appService";
 import { useToastContext } from "@/stores";
 import { convertToEn } from "@/utils/appHelpers";
 
-export default function useAddAlbum(
+export default function useAddAlbumModal(
   props: ComponentProps<typeof AddAlbumModal>,
 ) {
   const {
@@ -29,11 +16,11 @@ export default function useAddAlbum(
     updateAlbumData,
     setSinger,
     albumData,
-    setSongs,
-    album,
+    // setSongs,
+    // album,
     singer,
-    songs,
-    setAlbum,
+    // songs,
+    // setAlbum,
     setImageFile,
     setAlbumData,
   } = useAddAlbumContext();
@@ -46,28 +33,23 @@ export default function useAddAlbum(
 
   const isChanged = useMemo(() => {
     if (props.variant === "add") return true;
-    if (!album || !albumData || !singer) return false;
+    if (!props.album || !albumData || !singer) return false;
 
     return (
-      albumData.name !== album.name ||
-      singer.id !== album.singers[0].id ||
-      albumData.like !== album.like ||
-      !!songs.find((s) => !album.song_ids.includes(s.id))
+      albumData.name !== props.album.name ||
+      singer.id !== props.album.singers[0].id ||
+      albumData.like !== props.album.like
     );
-  }, [albumData, album, singer, songs]);
+  }, [albumData, singer]);
 
   const isChangeImage = !!imageFile;
 
   const isValidToSubmit = useMemo(() => {
     const isValid: boolean =
-      !!isChanged &&
-      !!albumData &&
-      !!albumData.name &&
-      !!singer &&
-      !!songs.length;
+      !!isChanged && !!albumData && !!albumData.name && !!singer;
 
     return props.variant === "add" ? isValid : isValid || isChangeImage;
-  }, [isChangeImage, isChanged, albumData, singer, songs]);
+  }, [isChangeImage, isChanged, albumData, singer]);
 
   const submit = async () => {
     try {
@@ -81,7 +63,6 @@ export default function useAddAlbum(
 
       albumData.singers = [singer];
       albumData.singer_map = { [singer.id]: true };
-      albumData.song_ids = songs.map((s) => s.id);
 
       albumData.name = albumData.name.trim();
       albumData.meta = convertToEn(albumData.name).split(" ");
@@ -100,23 +81,21 @@ export default function useAddAlbum(
             id: newDocRef.id,
           };
 
-          props.callback(newAlbum);
+          props.afterSubmit(newAlbum);
           setSuccessToast(`Album created`);
 
           break;
         }
         case "edit": {
-          if (!album) return;
-
-          albumData.updated_at = serverTimestamp();
+          if (!props.album) return;
 
           await myUpdateDoc({
             collectionName: "Playlists",
-            data: albumData,
-            id: album.id,
+            data: { ...albumData, updated_at: serverTimestamp() },
+            id: props.album.id,
           });
 
-          setAlbum({ ...album, ...albumData });
+          props.afterSubmit(albumData);
           setSuccessToast(`Album edited`);
 
           break;
@@ -142,27 +121,15 @@ export default function useAddAlbum(
         );
 
         setSinger(props.singer);
-
+        
         break;
 
       case "edit":
-        const { id, song_ids, singers, ...rest } = props.album;
+        const { id, ...rest } = props.album;
 
-        if (song_ids) {
-          const queryGetSongs = query(
-            songsCollectionRef,
-            where(documentId(), "in", song_ids),
-          );
+        setSinger(rest.singers[0]);
 
-          const songs = await implementSongQuery(queryGetSongs);
-          setSongs(songs);
-        }
-
-        setAlbum(props.album);
-
-        setSinger(singers[0]);
-
-        setAlbumData(initAlbumObject({ ...rest, song_ids, singers }));
+        setAlbumData(rest);
         break;
     }
   };

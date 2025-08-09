@@ -10,7 +10,7 @@ import {
   ModalRef,
   Switch,
 } from "@/components";
-import useAddPlaylistForm from "./_hooks/useAddPlaylistForm";
+import useAddPlaylistModal from "./_hooks/useAddPlaylistModal";
 
 type BaseProps = {
   submit: (p: PlaylistSchema, imageFile?: File) => void;
@@ -46,7 +46,7 @@ export default function AddPlaylistModal({
     isChangeImage,
     inputRef,
     isValidToSubmit,
-  } = useAddPlaylistForm(props);
+  } = useAddPlaylistModal(props);
 
   const handleAddPlaylist = async () => {
     if (!playlistData) return;

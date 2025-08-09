@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuthContext, useToastContext } from "@/stores";
+import { useToastContext } from "@/stores";
 import {
   commentCollectionRef,
   deleteFile,
@@ -58,7 +58,7 @@ export type PlaylistActionProps =
 
 export default function useDashboardPlaylistActions() {
   // stores
-  const { user } = useAuthContext();
+  // const { user } = useAuthContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const { shouldGetPlaylists, lastDoc } = usePlaylistsContext();
@@ -91,7 +91,6 @@ export default function useDashboardPlaylistActions() {
 
   const action = async (props: PlaylistActionProps) => {
     try {
-      if (!user) throw new Error("User not found");
       if (!playlist) throw new Error("playlist not found");
 
       setIsFetching(true);

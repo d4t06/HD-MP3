@@ -1,5 +1,5 @@
 import { ModalContentWrapper, ModalHeader, ModalRef } from "@/components";
-import AddAlbumForm from "@/modules/add-album-form";
+import AddAlbumModal from "@/modules/add-album-modal";
 import { Button, DashboardModal } from "@/pages/dashboard/_components";
 import { useAuthContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
@@ -36,11 +36,11 @@ export default function AddAlbumBtn() {
                 closeModal={() => modalRef.current?.close()}
               />
 
-              <AddAlbumForm
+              <AddAlbumModal
                 className="flex-grow overflow-auto no-scrollbar md:overflow-hidden"
                 variant="add"
                 singer={singer}
-                callback={handleAddAlbumToList}
+                afterSubmit={handleAddAlbumToList}
                 user={user}
               />
             </>

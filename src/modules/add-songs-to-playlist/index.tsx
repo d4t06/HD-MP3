@@ -48,7 +48,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
       <ModalContentWrapper className="w-[600px] min-h-[400px]">
         <ModalHeader closeModal={closeModal} title="Add songs" />
 
-        <SearchBar {...rest} />
+        <SearchBar className="w-fit" {...rest} />
         <div className="flex-grow flex flex-col md:flex-row -mx-2 overflow-hidden mt-3">
           <div className={`${classes.col}`}>
             <div className={`${classes.box} flex-grow overflow-auto`}>

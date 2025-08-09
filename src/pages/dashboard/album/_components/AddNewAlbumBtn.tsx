@@ -8,7 +8,7 @@ import { PlusIcon } from "@heroicons/react/20/solid";
 import { Dispatch, SetStateAction, useRef } from "react";
 import { useAuthContext } from "@/stores";
 import { Button } from "../../_components";
-import AddAlbumForm from "@/modules/add-album-form";
+import AddAlbumModal from "@/modules/add-album-modal";
 
 type Props = {
   setAlbums: Dispatch<SetStateAction<Playlist[]>>;
@@ -39,16 +39,13 @@ export default function AddNewAlbumBtn({ setAlbums }: Props) {
       </Button>
 
       <Modal ref={modalRef} variant="animation" persisted={true}>
-        <ModalContentWrapper className="w-[800px]">
-          <ModalHeader
-            closeModal={() => modalRef.current?.close()}
-            title="Add album"
-          />
-          <AddAlbumForm
+        <ModalContentWrapper className="w-[600px]">
+          <AddAlbumModal
             className="overflow-auto"
             variant="add"
             user={user}
-            callback={handlePushAlbum}
+            modalRef={modalRef}
+            afterSubmit={handlePushAlbum}
           />
         </ModalContentWrapper>
       </Modal>

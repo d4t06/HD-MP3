@@ -23,8 +23,6 @@ import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import DetailFrame from "@/pages/dashboard/_components/ui/DetailFrame";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import OtherInput from "./_components/OtherInput";
-import { PencilIcon } from "@heroicons/react/24/outline";
-// import LyricEditor from "../lyric-editor";
 
 type Add = {
   variant: "add";

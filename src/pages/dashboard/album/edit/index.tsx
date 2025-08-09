@@ -6,12 +6,16 @@ import { LikeBtn } from "../../_components";
 import { useMemo } from "react";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
-import AlbumSongSelect from "@/modules/add-album-form/_components/SongSelect";
-import AddAlbumProvider from "@/modules/add-album-form/_components/AddAlbumContext";
+// import AlbumSongSelect from "@/modules/add-album-form/_components/SongSelect";
+// import AddAlbumProvider from "@/modules/add-album-form/_components/AddAlbumContext";
 import AlbumCta from "./_components/AlbumCta";
+import AlbumProvider, { useAlbumContext } from "./AlbumContext";
+import SongSelectProvider from "@/stores/SongSelectContext";
+import AlbumSongSection from "./_components/SongsSection";
 
 function Content() {
-  const { album, isFetching } = useGetAlbum();
+  const { album, songs } = useAlbumContext();
+  const { isFetching } = useGetAlbum();
 
   const lastUpdate = useMemo(() => album?.updated_at, [album?.id]);
 
@@ -31,21 +35,24 @@ function Content() {
       {/* <AddAlbumForm variant="edit" album={album} /> */}
 
       <div className="md:flex md:-mx-3">
-        <div className="space-y-3 md:px-3">
+        <div className="space-y-5 md:px-3">
           <div className="w-[200px] h-[200px] mx-auto rounded-md overflow-hidden">
             <Image
-              className="object-cover h-full"
+              className="object-cover h-full rounded-lg"
               blurHashEncode={album.blurhash_encode}
               src={album.image_url}
             />
           </div>
 
-          <Title variant={"h2"} title={album.name} />
-
-          <DetailFrame>
+          <DetailFrame className="space-y-2">
             <p>
               <span>Public:</span>
               {album.is_public ? "Public" : "Private"}
+            </p>
+
+            <p>
+              <span>Song:</span>
+              {songs.length}
             </p>
 
             <p>
@@ -62,14 +69,28 @@ function Content() {
           </DetailFrame>
 
           <AlbumCta />
-
-          {/* <DashboardPlaylistCta /> */}
         </div>
 
-        <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3">
-          <Title title={"Songs"} variant={"h3"} className="mt-3" />
+        <div className="w-full mt-3 md:mt-0 md:w-3/4 md:px-3 space-y-5">
+          <div>
+            <Title title="Info" variant={"h2"} className="mb-3" />
 
-          <AlbumSongSelect />
+            <DetailFrame>
+              <div>
+                <span>Name:</span>
+                <Title variant={"h1"} title={album.name} />
+              </div>
+
+              <div>
+                <span>Singer:</span>
+                <Title variant={"h2"} title={album.singers[0].name} />
+              </div>
+            </DetailFrame>
+          </div>
+
+          <SongSelectProvider>
+            <AlbumSongSection />
+          </SongSelectProvider>
         </div>
       </div>
 
@@ -80,8 +101,8 @@ function Content() {
 
 export default function DashboardEditAlbumPage() {
   return (
-    <AddAlbumProvider>
+    <AlbumProvider>
       <Content />
-    </AddAlbumProvider>
+    </AlbumProvider>
   );
 }

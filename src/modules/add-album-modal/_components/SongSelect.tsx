@@ -1,4 +1,3 @@
-import { useAddAlbumContext } from "@/modules/add-album-form/_components/AddAlbumContext";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Modal, ModalRef } from "@/components";
 import { useRef } from "react";
@@ -8,28 +7,28 @@ import AddSongsToPlaylistModal from "@/modules/add-songs-to-playlist";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 
 export default function AlbumSongSelect() {
-  const { songs, setSongs } = useAddAlbumContext();
+  // const { songs, setSongs } = useAddAlbumContext();
 
   const modalRef = useRef<ModalRef>(null);
 
-  const handleSetSongs = (_songs: Song[]) => {
-    const songIds = songs.map((s) => s.id);
+  // const handleSetSongs = (_songs: Song[]) => {
+  //   const songIds = songs.map((s) => s.id);
 
-    const filterdSelectedSongs = _songs.filter((s) => !songIds.includes(s.id));
+  //   const filterdSelectedSongs = _songs.filter((s) => !songIds.includes(s.id));
 
-    setSongs([...songs, ...filterdSelectedSongs]);
-  };
+  //   setSongs([...songs, ...filterdSelectedSongs]);
+  // };
 
-  const removeSong = (song: Song) => {
-    const newSongs = songs.filter((s) => s.id !== song.id);
+  // const removeSong = (song: Song) => {
+  //   const newSongs = songs.filter((s) => s.id !== song.id);
 
-    setSongs(newSongs);
-  };
+  //   setSongs(newSongs);
+  // };
 
   return (
     <>
       <DashboardTable colList={["Name", "Singer", "Like", " "]}>
-        {songs.map((s, i) => (
+        {/* {songs.map((s, i) => (
           <tr key={i}>
             <td>
               <span>{s.name}</span>
@@ -56,7 +55,7 @@ export default function AlbumSongSelect() {
               </Button>
             </td>
           </tr>
-        ))}
+        ))}*/}
 
         <tr className="!bg-white border-none">
           <td colSpan={4}>
@@ -72,10 +71,12 @@ export default function AlbumSongSelect() {
 
       <Modal variant="animation" ref={modalRef}>
         <AddSongsToPlaylistModal
-          submit={handleSetSongs}
+          // submit={handleSetSongs}
+          submit={() => {}}
           closeModal={() => modalRef.current?.close()}
           isLoading={false}
-          current={songs.map((s) => s.id)}
+          // current={songs.map((s) => s.id)}
+          current={[]}
         />
       </Modal>
     </>

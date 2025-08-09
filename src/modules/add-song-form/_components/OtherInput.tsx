@@ -2,15 +2,15 @@ import { Input, Title } from "@/components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 
 export default function OtherInput() {
-  const { songData, updateSongData, song } = useAddSongContext();
+  const { songData, updateSongData, song, variant } = useAddSongContext();
 
   return (
     <>
       <div>
         <div>Name</div>
 
-        {song ? (
-          <Title variant={"h1"} title={song.name} />
+        {variant.current === "edit" ? (
+          <Title variant={"h1"} title={songData?.name} />
         ) : (
           <Input
             className="mt-2"
@@ -24,8 +24,8 @@ export default function OtherInput() {
       <div>
         <div>Release year</div>
 
-        {song ? (
-          <Title variant={"h2"} title={song.release_year + ""} />
+        {variant.current === "edit" ? (
+          <Title variant={"h2"} title={songData?.release_year + ""} />
         ) : (
           <Input
             className="mt-2 md:w-[50%]"

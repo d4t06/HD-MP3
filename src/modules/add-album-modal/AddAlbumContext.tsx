@@ -2,10 +2,10 @@ import { ReactNode, createContext, useContext, useState } from "react";
 
 function useAddAlbum() {
 	const [singer, setSinger] = useState<Singer>();
-	const [songs, setSongs] = useState<Song[]>([]);
+	// const [songs, setSongs] = useState<Song[]>([]);
 	const [albumData, setAlbumData] = useState<PlaylistSchema>();
 	const [imageFile, setImageFile] = useState<File>();
-	const [album, setAlbum] = useState<Playlist>();
+	// const [album, setAlbum] = useState<Playlist>();
 
 	const updateAlbumData = (data?: Partial<PlaylistSchema>) => {
 		if (!albumData) return;
@@ -15,15 +15,15 @@ function useAddAlbum() {
 	return {
 		singer,
 		setSinger,
-		songs,
-		setSongs,
+		// songs,
+		// setSongs,
 		updateAlbumData,
 		albumData,
 		imageFile,
 		setImageFile,
 		setAlbumData,
-		album,
-		setAlbum,
+		// album,
+		// setAlbum,
 	};
 }
 

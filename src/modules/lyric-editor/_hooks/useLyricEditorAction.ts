@@ -83,7 +83,6 @@ export function useLyricEditorAction({ audioEle, isClickPlay }: Props) {
       setIsFetching(true);
       if (!song) return;
 
-      console.log(song);
       const batch = writeBatch(db);
 
       const newSongLyric: SongLyricSchema = {
