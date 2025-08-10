@@ -2,6 +2,7 @@ import { useAuthContext } from "@/stores";
 import { useMemo, useRef } from "react";
 import {
   Center,
+  LoadingOverlay,
   Modal,
   ModalContentWrapper,
   ModalHeader,
@@ -174,6 +175,8 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
             <span>Add</span>
           </Button>
         </p>
+
+        {isLoading && <LoadingOverlay />}
       </ModalContentWrapper>
 
       <Modal variant="animation" ref={modalRef}>

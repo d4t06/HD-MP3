@@ -43,7 +43,6 @@ type Song = {
   queue_id: string;
   today_play: number;
   week_play: number;
-  // language: string; //main_genre
   last_week_play: number;
   last_week_rank: number;
   last_week_trending_score: number;
@@ -191,27 +190,6 @@ type ImageType = {
   name: string;
   size: number;
   uploaded_at: Timestamp;
-};
-
-type DailySongMetric = {
-  id: string;
-  song_id: string;
-  play: number;
-  created_at: Timestamp;
-  main_genre: MainGenre;
-};
-
-type DailySongMetricSchema = Omit<DailySongMetric, "id">;
-
-type WeeklyTrendingSong = {
-  song_id: string;
-  play_this_week: number;
-  trending_score: number;
-};
-
-type WeeklySongMetric = {
-  id: string; //ww-yyyy
-  trending_songs: Record<string, WeeklyTrendingSong[]>;
 };
 
 type Category = {

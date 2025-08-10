@@ -1,5 +1,11 @@
 import { useSongSelectContext } from "@/stores";
-import { Label, ModalContentWrapper, ModalHeader, Tab } from "@/components";
+import {
+  Label,
+  LoadingOverlay,
+  ModalContentWrapper,
+  ModalHeader,
+  Tab,
+} from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
 import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
 import useSearchSong from "./_hooks/useSearchSong";
@@ -37,17 +43,17 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
     songItem: `rounded-md w-full p-1 text-sm font-semibold text-left hover:bg-[--a-5-cl]`,
   };
 
-  const renderSongs = (s: Song[]) =>
-    s.map((p, i) => {
-      const isCurrent = current.includes(p.id);
+  const renderSongs = (songs: Song[]) =>
+    songs.map((s, i) => {
+      const isCurrent = current.includes(s.id);
 
       return (
         <button
           key={i}
-          onClick={() => !isCurrent && selectSong(p)}
-          className={`${classes.songItem} ${isCurrent || selectedSongs.includes(p) ? `text-[--primary-cl]` : ``} `}
+          onClick={() => selectSong(s)}
+          className={`${classes.songItem} ${isCurrent || !!selectedSongs.find((song) => song.id === s.id) ? `text-[--primary-cl]` : ``} `}
         >
-          {p.name}
+          {s.name}
         </button>
       );
     });
@@ -114,6 +120,8 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
             <span>Add</span>
           </Button>
         </p>
+
+        {isLoading && <LoadingOverlay />}
       </ModalContentWrapper>
     </>
   );

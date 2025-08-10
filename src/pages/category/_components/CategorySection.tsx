@@ -11,7 +11,7 @@ export default function CategorySection({ title, category_ids }: Props) {
   const { isFetching, categories } = useGetCategories({ category_ids });
 
   const loadingElement = [...Array(3).keys()].map((i) => (
-    <Skeleton key={i} className="aspect-[4/3]" />
+    <Skeleton key={i} className="aspect-[5/3]" />
   ));
 
   return (
@@ -19,7 +19,7 @@ export default function CategorySection({ title, category_ids }: Props) {
       <div>
         <Title variant={'h2'} title={title} />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 gap-4 mt-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4   gap-4 mt-3">
           {isFetching
             ? loadingElement
             : categories.map((c, i) => <CategoryItem key={i} category={c} />)}

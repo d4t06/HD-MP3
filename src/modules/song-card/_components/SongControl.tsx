@@ -28,6 +28,7 @@ export default function SongControl({ audioEle, song }: Props) {
     statusFromParent: status,
     statusRefFromParent: statusRef,
     baseColor: "rgba(255,255,255,0.1)",
+    color: '#fff'
   });
 
   useImperativeHandle(controlRef, () => ({

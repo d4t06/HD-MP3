@@ -30,7 +30,7 @@ export default function SliderItem({ category }: Props) {
   return (
     <>
       <div>
-        <div className="aspect-[16/5]">
+        <div className="aspect-[16/4]">
           <Image
             src={category.banner_image_url}
             blurHashEncode={category.banner_blurhash_encode}

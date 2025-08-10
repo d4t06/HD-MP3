@@ -9,7 +9,7 @@ export default function CategoryItem({ category }: Props) {
   return (
     <Link
       to={`/category/${category.id}`}
-      className="aspect-[4/2]  group relative rounded-lg overflow-hidden"
+      className="aspect-[5/3]  group relative rounded-lg overflow-hidden"
     >
       <Image
         className="h-full group-hover:scale-[1.1] transition-transform duration-[.3s] object-cover"

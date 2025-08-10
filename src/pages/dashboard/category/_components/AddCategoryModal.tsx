@@ -68,7 +68,7 @@ export default function AddCategoryModal({
 
         <div className="md:flex md:space-x-3">
           <div className="space-y-2.5">
-            <div className="w-[200px] h-[200px] rounded-lg overflow-hidden">
+            <div className="w-[200px] aspect-[5/3] rounded-lg overflow-hidden">
               <Image
                 className="object-cover object-center h-full"
                 blurHashEncode={categoryData.blurhash_encode}

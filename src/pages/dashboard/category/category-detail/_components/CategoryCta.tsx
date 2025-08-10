@@ -6,12 +6,13 @@ import { useCategoryContext } from "../CategoryContext";
 import AddCategoryModal from "../../_components/AddCategoryModal";
 import CategoryBannerModal from "./CategoryBannerModal";
 import useAddCategory from "../../hooks/useAddCategory";
-import { useToastContext } from "@/stores";
+import { usePageContext, useToastContext } from "@/stores";
 import useCategoryDetailAction from "../_hooks/useCategoryDetailAction";
 
 type Modal = "edit" | "delete" | "banner";
 
 export default function CategoryCta() {
+  const { categories, setCategories } = usePageContext();
   const { setSuccessToast } = useToastContext();
   const { category, setCategory } = useCategoryContext();
 
@@ -43,9 +44,16 @@ export default function CategoryCta() {
     });
 
     if (success) {
+      const newCategories = [...categories];
       const newCategory = { ...category };
 
       Object.assign(newCategory, payload);
+
+      const index = newCategories.findIndex((c) => c.id === category.id);
+      if (index !== -1) {
+        Object.assign(newCategories[index], payload);
+        setCategories(newCategories);
+      }
 
       setCategory(newCategory);
 

@@ -9,6 +9,8 @@ import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 
 type Add = {
   variant: "add";
+  afterSubmit?: (singer: Singer) => void;
+  name?: string;
 };
 
 type Edit = {
@@ -21,7 +23,8 @@ export type UseAddSingerModalProps = (Add | Edit) & {
 
 export default function useAddSingerModal(props: UseAddSingerModalProps) {
   const { setErrorToast, setSuccessToast } = useToastContext();
-  const { singer, setSinger, setSingers } = useSingerContext();
+  const { singer, setSinger, setSingers, shouldGetSingers, lastDoc } =
+    useSingerContext();
 
   const [singerData, setSingerData] = useState<SingerSchema>();
   const [imageFile, setImageFile] = useState<File>();
@@ -87,6 +90,12 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
 
           setSingers((prev) => [newSinger, ...prev]);
 
+
+          if (props.afterSubmit) {
+            Object.assign(newSinger, { created_at: "" } as Partial<Singer>);
+            props.afterSubmit(newSinger);
+          }
+
           setSuccessToast("Add singer successful");
 
           break;
@@ -101,6 +110,9 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
           });
 
           setSinger({ ...singer, ...newSingerData });
+
+          shouldGetSingers.current = true;
+          lastDoc.current = undefined;
 
           setSuccessToast("Edit singer successful");
         }
@@ -117,7 +129,7 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
   const initPlaylistData = () => {
     switch (props.variant) {
       case "add":
-        return initSingerObject({});
+        return initSingerObject({ name: props.name });
       case "edit":
         if (!singer) throw new Error("");
         const { id, ...rest } = singer;

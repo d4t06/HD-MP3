@@ -60,7 +60,9 @@ export default function AddSongForm(props: Props) {
   return (
     <>
       {getGenreLoading ? (
-        <Loading />
+        <Center>
+          <Loading />
+        </Center>
       ) : (
         <>
           {!songFile && props.variant === "add" && (

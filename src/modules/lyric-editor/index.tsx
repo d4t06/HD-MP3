@@ -5,7 +5,7 @@ import LyricEditorControl, {
 } from "./_components/LyricEditorControl";
 import LyricEditorList from "./_components/LyricEditorList";
 // import { useThemeContext } from "@/stores";
-import { Center, Modal, ModalRef, Button } from "@/components";
+import { Center, Modal, ModalRef, Button, Title } from "@/components";
 import useLyricEditor from "./_hooks/useLyricEditor";
 import EditLyricModal from "../edit-lyric-modal";
 import EditLyricProvider from "./_components/EditLyricContext";
@@ -50,6 +50,8 @@ function Content({ children }: Props) {
         song && (
           <>
             {children}
+
+            <Title className="line-clamp-1" title={`Edit lyric - ${song.name}`} />
 
             <div className="mt-3">
               {audioRef.current && (

@@ -41,15 +41,12 @@ function usePlayer() {
     isEnableBeat: false,
   });
 
-  // const [isEnableBeat, setIsEnableBeat] = useState(false);
-  // const [lyricSize, setLyricSize] = useState<LyricSize>("medium");
-  // const [repeat, setRepeat] = useState<Repeat>("no");
-
   const firstTimeSongLoaded = useRef(true);
   const startFadeWhenEnd = useRef(0); // for cross fade
   const isPlayingNewSong = useRef(true); // for cross fade
   const themeCodeRef = useRef("");
   const shouldSyncSongDuration = useRef(false);
+  const timeLineColorRef = useRef("var(--primary-cl)");
 
   const audioRef = useRef<HTMLAudioElement>(null);
   const timelineEleRef = useRef<HTMLDivElement>(null);
@@ -83,6 +80,7 @@ function usePlayer() {
     startFadeWhenEnd,
     isPlayingNewSong,
     shouldSyncSongDuration,
+    timeLineColorRef,
   };
 }
 

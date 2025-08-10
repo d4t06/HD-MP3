@@ -39,6 +39,8 @@ export default function useSearchSinger({
 
       const singers = await implementSingerQuery(q);
 
+      console.log(singers)
+
       setResult(singers);
       afterSearched();
     } catch (err) {

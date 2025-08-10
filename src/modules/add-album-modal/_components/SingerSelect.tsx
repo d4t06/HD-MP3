@@ -23,7 +23,7 @@ export default function AlbumSingerSelect() {
         <Label>Singer</Label>
 
         {singer ? (
-          <ItemRightCtaFrame className="mt-0">
+          <ItemRightCtaFrame className="!mt-0">
             <span>{singer.name}</span>
 
             <div>

@@ -5,13 +5,18 @@ import SliderSection from "./_components/SliderSection";
 import { usePageContext } from "@/stores";
 import useGetPage from "../_hooks/useGetPage";
 import { Loading } from "../_components";
-import { Title } from "@/components";
+import { Center, Title } from "@/components";
 
 function Content() {
   const { categoryPage } = usePageContext();
   const { isFetching } = useGetPage();
 
-  if (isFetching) return <Loading />;
+  if (isFetching)
+    return (
+      <Center>
+        <Loading />
+      </Center>
+    );
 
   if (!categoryPage) return <></>;
 
@@ -42,7 +47,7 @@ export default function CategoryPage() {
   return (
     <>
       {/*<CategoryLobbyProvider>*/}
-        <Content />
+      <Content />
       {/*</CategoryLobbyProvider>*/}
     </>
   );

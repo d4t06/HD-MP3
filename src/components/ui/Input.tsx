@@ -34,7 +34,6 @@ function Input(
       ref={ref}
       className={` ${inputVariants({ variant, className })}`}
       {...rest}
-      value={rest.value || ""}
     />
   );
 }

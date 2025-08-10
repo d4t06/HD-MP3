@@ -113,7 +113,9 @@ export default function useAddSongForm(
         modalRef.current?.close();
         setTimeout(() => {
           setSongFile(undefined);
+          setImageFile(undefined);
           setImageBlob(undefined);
+          
           setSingers([]);
           setGenres([]);
           setSongData(initSongData());
@@ -130,7 +132,7 @@ export default function useAddSongForm(
     const payload = await parserSong(songFile);
     if (payload) {
       const data: Partial<SongSchema> = {
-        name: payload.name,
+        name: payload.name + " " + payload.singer,
         duration: Math.floor(payload.duration),
         size: Math.floor(songFile.size / 1024),
         image_url: "",

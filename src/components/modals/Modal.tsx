@@ -55,9 +55,18 @@ function Modal(
     setIsOpen(true);
   };
 
-  const close = () => {
+  const forceClose = () => {
     setIsMounted(false);
     setPersist(false);
+  };
+
+  const handleClose = () => {
+    if (!persist) {
+      if (variant === "default") {
+        // @ts-ignore
+        props.closeModal ? props.closeModal() : "";
+      } else forceClose();
+    }
   };
 
   const setModalPersist = (v: boolean) => {
@@ -68,19 +77,12 @@ function Modal(
     e.preventDefault();
     e.stopPropagation();
 
-    if (persist) return;
-
-    if (variant === "default") {
-      // @ts-ignore
-      props.closeModal ? props.closeModal() : "";
-    }
-
-    if (variant === "animation") close();
+    handleClose();
   };
 
   useImperativeHandle(ref, () => ({
     toggle,
-    close,
+    close: forceClose,
     open,
     setModalPersist,
   }));
@@ -98,28 +100,33 @@ function Modal(
 
         // @ts-ignore
         props.onClose && props.onClose();
-      }, 400);
+      }, 300);
     }
   }, [isMounted]);
 
   useEffect(() => {
     if (variant === "default") return;
 
-    const handleClose = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-
     if (isOpen) {
       setTimeout(() => {
         setIsMounted(true);
       }, 100);
-      window.addEventListener("keyup", handleClose);
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const handleCloseWhenPress = (e: KeyboardEvent) => {
+      if (e.key === "Escape") handleClose();
+    };
+
+    if (isOpen) {
+      window.addEventListener("keyup", handleCloseWhenPress);
     }
 
     return () => {
-      window.removeEventListener("keyup", handleClose);
+      window.removeEventListener("keyup", handleCloseWhenPress);
     };
-  }, [isOpen]);
+  }, [isOpen, persist]);
 
   const classes = {
     unMountedContent: "opacity-0 scale-[.95]",

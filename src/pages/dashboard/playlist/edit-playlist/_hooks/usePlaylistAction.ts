@@ -161,7 +161,6 @@ export default function useDashboardPlaylistActions() {
 
           break;
         }
-        // like on ly
         case "edit-playlist": {
           await myUpdateDoc({
             collectionName: "Playlists",
@@ -173,6 +172,10 @@ export default function useDashboardPlaylistActions() {
           const newPlaylist = { ...playlist, ...props.playlist };
 
           updatePlaylistData(newPlaylist);
+
+          shouldGetPlaylists.current = true;
+          lastDoc.current = undefined;
+
           setSuccessToast(`Playlist edited`);
 
           break;

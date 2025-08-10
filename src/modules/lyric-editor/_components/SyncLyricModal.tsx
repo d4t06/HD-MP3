@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useEditLyricContext } from "./EditLyricContext";
 import { Input, ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
@@ -41,11 +41,15 @@ export default function SyncLyricModal({ closeModal }: Props) {
     }
   };
 
+  useEffect(() => {
+    inputRef.current?.focus()
+  }, [])
+
   return (
     <ModalContentWrapper>
       <ModalHeader title="Sync lyric" closeModal={closeModal} />
 
-      <Input ref={inputRef} type="number" />
+      <Input step={0.2} ref={inputRef} type="number" />
 
       <p className="mt-5 text-right">
         <Button onClick={handleSyncLyric}>Save</Button>

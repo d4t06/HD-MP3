@@ -36,7 +36,7 @@ export function Content() {
 
         <div className="md:flex md:-mx-3 mt-5">
           <div className="space-y-2.5 md:px-3">
-            <div className="w-[200px] h-[200px]">
+            <div className="w-[260px] aspect-[5/3]">
               <Image
                 className="object-cover h-full rounded-lg"
                 blurHashEncode={category.blurhash_encode}

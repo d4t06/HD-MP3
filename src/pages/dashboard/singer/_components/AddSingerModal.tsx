@@ -94,23 +94,6 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
               }
             />
           </div>
-{/* 
-          {props.variant === "edit" && (
-            <div className="space-y-1">
-              <Label htmlFor="like">Like</Label>
-
-              <Input
-                id="like"
-                type="number"
-                value={singerData.like ? singerData.like + "" : "0"}
-                onChange={(e) =>
-                  updateSingerData({
-                    like: isNaN(+e.target.value) ? 1 : +e.target.value,
-                  })
-                }
-              />
-            </div>
-          )} */}
         </div>
       </div>
       <p className="text-right mt-3">

@@ -32,7 +32,11 @@ export default function useAddCategory(props?: Props) {
       _setIsFetching(true);
 
       if (imageFile) {
-        const imageData = await optimizeAndGetHashImage({ imageFile });
+        const imageData = await optimizeAndGetHashImage({
+          imageFile,
+          width: 870,
+          height: 490,
+        });
 
         Object.assign(props.category, imageData);
 

@@ -8,9 +8,10 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePageContext } from "@/stores";
 import { myGetDoc } from "@/services/firebaseService";
+import { sleep } from "@/utils/appHelpers";
 
 export default function useGetPage() {
   const { setErrorToast } = useToastContext();
@@ -19,9 +20,18 @@ export default function useGetPage() {
 
   const [isFetching, setIsFetching] = useState(true);
 
+  const ranEffect = useRef(false);
+
   const getPage = async () => {
     try {
       setIsFetching(true);
+
+      if (shouldFetch.current) {
+        shouldFetch.current = false;
+      } else {
+        await sleep(100);
+        return;
+      }
 
       const initPage = {
         category_ids: "",
@@ -85,12 +95,10 @@ export default function useGetPage() {
   };
 
   useEffect(() => {
-    if (shouldFetch.current) {
-      shouldFetch.current = false;
+    if (!ranEffect.current) {
+      ranEffect.current = false;
 
       getPage();
-    } else {
-      setTimeout(() => setIsFetching(false), 300);
     }
   }, []);
 

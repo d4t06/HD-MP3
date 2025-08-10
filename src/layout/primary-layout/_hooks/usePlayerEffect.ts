@@ -27,6 +27,8 @@ export default function usePlayerEffect() {
     timelineEleRef,
     currentTimeEleRef,
     shouldSyncSongDuration,
+    isOpenFullScreen,
+    timeLineColorRef
   } = usePlayerContext();
   if (!audioRef.current)
     throw new Error("Use Control audioRef.current is undefined");
@@ -46,8 +48,6 @@ export default function usePlayerEffect() {
   const isEndEventFired = useRef(false); // handle error
   const isShowMessageWhenSongError = useRef(false); // handle error
 
-  // const timelineEleRef = useRef<HTMLDivElement>(null);
-  // const currentTimeEleRef = useRef<HTMLDivElement>(null);
   const playStatusRef = useRef<PlayStatus>("paused");
 
   // use hook
@@ -335,4 +335,11 @@ export default function usePlayerEffect() {
       if (playStatus === "playing") pause();
     }
   }, [isInEdit]);
+
+  // update line color
+  useEffect(() => {
+    if (isOpenFullScreen) {
+      timeLineColorRef.current = "#fff";
+    } else timeLineColorRef.current = "var(--primary-cl)";
+  }, [isOpenFullScreen]);
 }

@@ -34,8 +34,6 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
 
   const modalRef = useRef<ModalRef>(null);
 
-  const closeAddSingerModal = () => modalRef.current?.close();
-
   const renderSinger = (data: Singer[]) =>
     data.map((s, i) => (
       <button
@@ -90,6 +88,13 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
                   ) : (
                     <>
                       <NotFound variant="less" />
+
+                      <p className="text-center mt-auto">
+                        <Button onClick={() => modalRef.current?.open()}>
+                          <PlusIcon className="w-6" />
+                          <span>Add new singer</span>
+                        </Button>
+                      </p>
                     </>
                   )}
                 </>
@@ -97,19 +102,13 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
             </>
           )}
         </div>
-        <p className="text-center mt-auto">
-          <Button onClick={() => modalRef.current?.open()}>
-            <PlusIcon className="w-6" />
-            <span>Add new singer</span>
-          </Button>
-        </p>
       </ModalContentWrapper>
 
       <Modal ref={modalRef} variant="animation">
         <QuickAddSingerModal
           afterSubmit={choose}
           singerName={rest.value}
-          closeModal={closeAddSingerModal}
+          modalRef={modalRef}
         />
       </Modal>
     </>

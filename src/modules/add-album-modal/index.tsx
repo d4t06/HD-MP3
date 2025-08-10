@@ -64,7 +64,7 @@ function Content({ className = "", ...props }: Props) {
     <>
       <ModalHeader
         closeModal={() => props.modalRef.current?.close()}
-        title="Add album"
+        title={props.variant === 'add' ? "Add album" : "Edit albm"}
       />
 
       <div className={`md:flex ${className} overflow-auto`}>
