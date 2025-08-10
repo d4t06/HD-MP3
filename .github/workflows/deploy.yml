@@ -30,6 +30,7 @@ jobs:
         env:
           VITE_APIKEY: ${{ secrets.VITE_APIKEY }}
           VITE_API_ENDPOINT: ${{ secrets.VITE_API_ENDPOINT }}
+          VITE_COMMENT_CHECK_ENDPOINT: ${{ secrets.VITE_COMMENT_CHECK_ENDPOINT }}
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
