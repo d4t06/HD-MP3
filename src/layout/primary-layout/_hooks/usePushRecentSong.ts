@@ -13,7 +13,7 @@ export default function usePushRecentSong() {
 			const founded = recentSongIds.includes(song.id);
 
 			if (!founded) {
-				console.log("push recent songs");
+				if (import.meta.env.DEV) console.log("push recent songs");
 				recentSongIds.unshift(song.id);
 
 				const newUserData: Partial<User> = {

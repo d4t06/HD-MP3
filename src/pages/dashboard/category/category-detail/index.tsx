@@ -25,25 +25,25 @@ export function Content() {
   return (
     <>
       {/* <DashboardPageWrapper> */}
-        <Title title="Category Detail" />
+      <Title title="Category Detail" />
 
-        <div className="aspect-[16/4] mt-5">
-          <Image
-            className="h-full object-cover rounded-lg"
-            src={category.banner_image_url}
-          />
-        </div>
+      <div className="md:flex md:-mx-3 mt-5">
+        <div className="md:px-3 md:w-2/3">
+          <div className="aspect-[16/4] mt-5 md:mt-0">
+            <Image
+              className="h-full object-cover rounded-lg"
+              src={category.banner_image_url}
+            />
+          </div>
+          <div className="w-[260px] aspect-[5/3] mt-3">
+            <Image
+              className="object-cover h-full rounded-lg"
+              blurHashEncode={category.blurhash_encode}
+              src={category.image_url}
+            />
+          </div>
 
-        <div className="md:flex md:-mx-3 mt-5">
-          <div className="space-y-2.5 md:px-3">
-            <div className="w-[260px] aspect-[5/3]">
-              <Image
-                className="object-cover h-full rounded-lg"
-                blurHashEncode={category.blurhash_encode}
-                src={category.image_url}
-              />
-            </div>
-
+          <div className="mt-5 space-y-3">
             <div className="text-2xl font-bold text-[#333]">
               {category.name}
             </div>
@@ -54,12 +54,13 @@ export function Content() {
               Last updated: {dateFromTimestamp(lastUpdate)}
             </p>
           </div>
-
-          <div className="w-full mt-3 md:mt-0 md:px-3 space-y-3">
-            <SongSection />
-            <PlaylistSection />
-          </div>
         </div>
+
+        <div className="w-full mt-3 md:mt-0 md:px-3 space-y-3">
+          <SongSection />
+          <PlaylistSection />
+        </div>
+      </div>
       {/* </DashboardPageWrapper> */}
     </>
   );

@@ -1,9 +1,9 @@
 import { Button, Title } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetTrendingSongs from "@/modules/trending-song/useGetTrending";
+import { SongSkeleton } from "@/components/skeleton";
 
 export default function Trending() {
   const { isFetching, songs } = useGetTrendingSongs({ amount: 5 });
@@ -19,7 +19,7 @@ export default function Trending() {
       <Title title="Trending" />
 
       <SongSelectProvider>
-        {isFetching && songItemSkeleton}
+        {isFetching && <SongSkeleton />}
         {!isFetching && (
           <SongList
             showIndex

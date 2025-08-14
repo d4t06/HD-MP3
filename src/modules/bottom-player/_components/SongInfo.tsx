@@ -27,7 +27,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
           ref={vinylRef}
           className={`w-[56px] h-[56px] flex-shrink-0 animate-[spin_8s_linear_infinite]`}
         >
-          <Image src={song?.image_url} className={`rounded-full h-full object-cover`} />
+          <Image src={song?.image_url} blurHashEncode={song?.blurhash_encode} className={`rounded-full h-full object-cover`} />
         </div>
 
         <div className="ml-2 flex-grow">

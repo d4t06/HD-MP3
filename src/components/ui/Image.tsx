@@ -8,6 +8,7 @@ type Props = {
   width?: string;
   blurHashEncode?: string;
   onError?: () => void;
+  fallback?: string;
 };
 
 export default function Image({
@@ -16,14 +17,13 @@ export default function Image({
   width = "w-full",
   blurHashEncode,
   onError,
+  fallback,
 }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
   const handleLoadImage = () => {
-    if (import.meta.env.DEV) {
-      setTimeout(() => setImageLoaded(true), 300);
-    } else setImageLoaded(true);
+    setTimeout(() => setImageLoaded(true), 200);
 
     if (!src) return;
     if (src?.includes("blob")) {
@@ -33,7 +33,7 @@ export default function Image({
 
   const defaultHandleError = () => {
     const imageEle = imageRef.current as HTMLImageElement;
-    imageEle.src = "https://placehold.co/400";
+    imageEle.src = fallback || "https://placehold.co/400";
     setImageLoaded(true);
   };
 
@@ -48,7 +48,7 @@ export default function Image({
         <>
           <Blurhash
             hash={blurHashEncode || defaultBlurhash}
-            className="rounded-md overflow-hidden"
+            className={`overflow-hidden ${className}`}
             height={"100%"}
             width={"100%"}
           />
@@ -58,7 +58,7 @@ export default function Image({
         onLoad={handleLoadImage}
         onError={handleError}
         className={`${className} ${width} ${!imageLoaded ? "hidden" : ""}`}
-        src={src || "https://placehold.co/400"}
+        src={src || "https://placehold.co/500"}
         ref={imageRef}
       />
     </>

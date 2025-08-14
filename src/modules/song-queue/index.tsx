@@ -82,16 +82,14 @@ function SongQueue() {
 
               {isFetching && skeleton}
 
-              <div className="text-center">
+              <div className="text-center my-3">
                 {!!queueSongs.length && (
                   <Button
                     onClick={clearSongQueue}
-                    size={"clear"}
                     color="primary"
-                    className={`rounded-full my-5 px-3 py-1 space-x-1`}
                   >
                     <TrashIcon className="w-6" />
-                    <span className="font-playwriteCU leading-[2.2]">
+                    <span className="">
                       Clear
                     </span>
                   </Button>

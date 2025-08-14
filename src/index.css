@@ -5,6 +5,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.item-info {
+  @apply text-gray-600 dark:text-gray-300;
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
   display: none;

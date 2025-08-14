@@ -20,6 +20,9 @@ import { request, setLocalStorage } from "@/utils/appHelpers";
 import { db } from "@/firebase";
 import { ModalRef } from "@/components";
 
+const CHECK_TOXIC_ENDPOINT =
+	import.meta.env.VITE_COMMENT_CHECK_ENDPOINT + "/predict";
+
 export default function useCommentAction() {
 	const { setErrorToast } = useToastContext();
 	const { user, updateUserData } = useAuthContext();
@@ -55,7 +58,7 @@ export default function useCommentAction() {
 
 	const checkToxic = async (comment: string) => {
 		const res = await request.post<{ predicted_label: "toxic" | "non-toxic" }>(
-			import.meta.env.VITE_COMMENT_CHECK_ENDPOINT,
+			CHECK_TOXIC_ENDPOINT,
 			{ comment },
 		);
 

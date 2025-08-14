@@ -1,12 +1,12 @@
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { Skeleton } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useAuthContext, useSongContext } from "@/stores";
 import { useEffect } from "react";
+import { SongSkeleton } from "@/components/skeleton";
 
 export default function FavoriteSongList() {
   const { favoriteSongs } = useSongContext();
@@ -39,7 +39,7 @@ export default function FavoriteSongList() {
       </CheckedBar>
 
       {/* song list */}
-      {isFetching && songItemSkeleton}
+      {isFetching && <SongSkeleton />}
 
       {!isFetching && (
         <SongList setSong={_handleSetSong} songs={favoriteSongs} />

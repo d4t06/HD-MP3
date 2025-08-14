@@ -1,6 +1,6 @@
 import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import { privateRoutes, protectedRoutes, publicRoutes } from "./routes";
-import { Login, NotFoundPage } from "./pages";
+import { Login, NotFoundPage, Unauthorized } from "./pages";
 import { RequireAdministrator, RequireAuth } from "./routes/RequireAuth";
 import { ReactNode } from "react";
 import DashboardLayout from "./layout/dashboard/dashboard-layout";
@@ -16,6 +16,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="*" element={<NotFoundPage />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="/login" element={<Login />} />
 
           <Route element={<PrimaryLayout />}>

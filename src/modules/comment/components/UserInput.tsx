@@ -8,6 +8,7 @@ import {
   MyPopupTrigger,
   Title,
 } from "@/components";
+import simonCat from "@/assets/simon_empty.png";
 import useCommentAction from "../hooks/useCommentAction";
 import { useAuthContext } from "@/stores";
 import {
@@ -18,6 +19,7 @@ import {
 import { inputClasses } from "@/components/ui/Input";
 import Popup from "@/components/popup/PopupContext";
 import useCommentInput from "../hooks/useCommentInput";
+import { meoVoTri } from "@/constants/app";
 
 type Props = {
   onSubmited?: () => void;
@@ -82,7 +84,12 @@ export default function UserInput({
     <>
       <div className="flex w-full">
         <div className="w-[40px] h-[40px] flex-shrink-0">
-          <Image src={user?.photo_url} className="rounded-full" />
+          <Image
+            fallback={meoVoTri.image}
+            src={user?.photo_url}
+            blurHashEncode={user?.photo_url ? "" : meoVoTri.blurhash}
+            className="rounded-full"
+          />
         </div>
 
         <div
@@ -138,8 +145,10 @@ export default function UserInput({
       <Modal variant="animation" ref={modalRef}>
         <ModalContentWrapper>
           <Image
-            className="w-[130px] mx-auto"
-            src="https://zalo-api.zadn.vn/api/emoticon/sticker/webpc?eid=46991&size=130"
+            className="mx-auto"
+            width="w-[130px]"
+            // src="https://zalo-api.zadn.vn/api/emoticon/sticker/webpc?eid=46991&size=130"
+            src={simonCat}
           />
           <Title
             variant={"h2"}

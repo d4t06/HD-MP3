@@ -2,9 +2,9 @@ import { NotFound, Tab, Title } from "@/components";
 // import { useThemeContext } from "@/stores";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useSongTable from "../useSongTable";
-import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import WeekSelect from "@/modules/week-select";
+import { SongSkeleton } from "@/components/skeleton";
 
 export default function SongTable() {
   // const { theme } = useThemeContext();
@@ -20,7 +20,7 @@ export default function SongTable() {
       </div>
 
       <SongSelectProvider>
-        {isFetching && songItemSkeleton}
+        {isFetching && <SongSkeleton />}
         {!isFetching && (
           <>
             {songMap && songMap[KEY]?.songs.length ? (

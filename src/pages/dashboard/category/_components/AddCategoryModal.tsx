@@ -4,6 +4,7 @@ import {
   Image,
   Input,
   Label,
+  LoadingOverlay,
   ModalContentWrapper,
   ModalHeader,
 } from "@/components";
@@ -118,6 +119,8 @@ export default function AddCategoryModal({
             Save
           </Button>
         </p>
+
+        {isLoading && <LoadingOverlay />}
       </ModalContentWrapper>
     </>
   );

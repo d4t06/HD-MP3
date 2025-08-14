@@ -195,7 +195,7 @@ function SongItem({
             )}
           </h5>
           <div
-            className={`opacity-[.7] font-medium line-clamp-1 ${getSongSingerSize()}`}
+            className={`${props.variant === 'queue-song' && active ? '' : 'item-info'} font-medium line-clamp-1 ${getSongSingerSize()}`}
           >
             {song.singers.map((s, i) =>
               s.id ? (

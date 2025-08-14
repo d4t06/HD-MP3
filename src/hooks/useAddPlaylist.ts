@@ -25,7 +25,7 @@ export default function useAddPlaylist(props?: Props) {
 
   type Edit = {
     variant: "edit";
-    playlist: PlaylistSchema;
+    playlist: Partial<PlaylistSchema>;
     imageFile?: File;
     id: string;
   };
@@ -76,8 +76,6 @@ export default function useAddPlaylist(props?: Props) {
           return newPlaylist;
 
         case "edit": {
-          console.log(props.playlist);
-
           const newPlaylistData: Partial<PlaylistSchema> = {
             ...props.playlist,
             name: props.playlist.name?.trim(),

@@ -41,7 +41,7 @@ export default function PlayPlaylistBtn() {
   const { handlePlayPause } = usePlayerAction();
 
   const { handleSetSong } = useSetSong({ variant: "playlist" });
-  const { updatePlaylist } = useUpdateRecentPlaylist();
+  const { pushRecentPlaylist } = useUpdateRecentPlaylist();
 
   const handlePlayPlaylist = () => {
     if (!currentPlaylist) return;
@@ -49,7 +49,7 @@ export default function PlayPlaylistBtn() {
     const firstSong = playlistSongs[0];
 
     const isSetQueue = handleSetSong(firstSong.queue_id, playlistSongs);
-    if (isSetQueue) updatePlaylist(currentPlaylist);
+    if (isSetQueue) pushRecentPlaylist(currentPlaylist);
   };
 
   // const handlePlayPause = () => {

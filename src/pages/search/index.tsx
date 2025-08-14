@@ -1,5 +1,4 @@
 import { NotFound, PageWrapper, PlaylistList, Tab, Title } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
 import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import useGetSearchResult from "./_hooks/useGetSearchResult";
@@ -9,6 +8,7 @@ import { useThemeContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import SingerList from "@/components/ui/SingerList";
 import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
+import { SongSkeleton } from "@/components/skeleton";
 
 export default function SearchResultPage() {
   const { isOnMobile } = useThemeContext();
@@ -58,7 +58,7 @@ export default function SearchResultPage() {
                 title="Songs"
               />
 
-              {isFetching && songItemSkeleton}
+              {isFetching && <SongSkeleton />}
 
               {!isFetching && (
                 <>

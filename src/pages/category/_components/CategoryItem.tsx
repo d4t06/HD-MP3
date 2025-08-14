@@ -17,10 +17,10 @@ export default function CategoryItem({ category }: Props) {
       />
 
 
-      <div className="absolute z-[0] inset-0 bg-black/10">
+      <div className="absolute z-[0] inset-0 bg-black/20">
 
       <Center>
-        <p className="text-xl font-bold text-white">{category.name}</p>
+        <p className="text-xl font-bold text-white whitespace-nowrap">{category.name}</p>
       </Center>
 
       </div>

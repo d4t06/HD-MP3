@@ -3,7 +3,7 @@ import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { getRelativeSongs } from "@/services/getRelativeSongs";
 import { useAuthContext } from "@/stores";
 import { getLocalStorage } from "@/utils/appHelpers";
-import { limit, orderBy, query } from "firebase/firestore";
+import { limit, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 
 export default function useGetRecommendSongs() {
@@ -60,6 +60,7 @@ export default function useGetRecommendSongs() {
 			if (!recomemdedSongs.length) {
 				const q = query(
 					songsCollectionRef,
+					where("is_official", "==", true),
 					orderBy("created_at", "desc"),
 					limit(8),
 				);

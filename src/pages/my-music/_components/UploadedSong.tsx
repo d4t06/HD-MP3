@@ -3,7 +3,7 @@ import useSetSong from "@/hooks/useSetSong";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useAuthContext, useSongContext, useUploadContext } from "@/stores";
 import { Button, NotFound, Skeleton } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
+import { SongSkeleton } from "@/components/skeleton";
 import UploadingSongItem from "./UploadingSongItem";
 import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";
@@ -65,7 +65,7 @@ export default function UploadedSongList() {
 
       {/* song list */}
       <div className="">
-        {isFetching && songItemSkeleton}
+        {isFetching && <SongSkeleton />}
 
         {!isFetching && (
           <>

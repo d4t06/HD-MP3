@@ -16,7 +16,7 @@ export function VolumeButton({ audioEle }: Props) {
   });
 
   return (
-    <div className="flex flex-grow items-center mr-2">
+    <div className="flex flex-grow items-center max-w-[100px] mr-2">
       <button onWheel={handleWheel} onClick={() => handleMute()}>
         {isMute ? (
           <SpeakerXMarkIcon className="w-6" />

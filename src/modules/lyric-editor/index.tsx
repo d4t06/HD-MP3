@@ -51,7 +51,7 @@ function Content({ children }: Props) {
           <>
             {children}
 
-            <Title className="line-clamp-1" title={`Edit lyric - ${song.name}`} />
+            <Title className="line-clamp-1 flex-shrink-0" title={`Edit lyric - ${song.name}`} />
 
             <div className="mt-3">
               {audioRef.current && (

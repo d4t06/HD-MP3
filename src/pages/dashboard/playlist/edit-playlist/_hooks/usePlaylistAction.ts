@@ -7,10 +7,18 @@ import {
 } from "@/services/firebaseService";
 import { useNavigate } from "react-router-dom";
 // import { optimizeAndGetHashImage } from "@/services/appService";
-import { doc, getDocs, query, where, writeBatch } from "firebase/firestore";
+import {
+  doc,
+  getDocs,
+  query,
+  serverTimestamp,
+  where,
+  writeBatch,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import { usePlaylistContext } from "../PlaylistContext";
 import { usePlaylistsContext } from "@/stores/dashboard/PlaylistContext";
+import { useAddPlaylist } from "@/hooks";
 
 type DeletePlaylist = {
   variant: "delete-playlist";
@@ -57,8 +65,6 @@ export type PlaylistActionProps =
   | AddSinger;
 
 export default function useDashboardPlaylistActions() {
-  // stores
-  // const { user } = useAuthContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const { shouldGetPlaylists, lastDoc } = usePlaylistsContext();
@@ -70,6 +76,7 @@ export default function useDashboardPlaylistActions() {
 
   // hooks
   const navigate = useNavigate();
+  const { addPlaylist, isFetching: addPlaylistFetching } = useAddPlaylist();
 
   const updatePlaylistSinger = async (singers: Singer[], id: string) => {
     const newSingerMap: Playlist["singer_map"] = {};
@@ -135,16 +142,7 @@ export default function useDashboardPlaylistActions() {
 
           const playlistData: Partial<Playlist> = {
             song_ids: newSongIds,
-            // singer_map: newPlaylistSongs.reduce(
-            //   (prev, s) => ({
-            //     ...prev,
-            //     ...s.singers.reduce(
-            //       (prev, singer) => ({ ...prev, [singer.id]: true }),
-            //       {} as Playlist["singer_map"],
-            //     ),
-            //   }),
-            //   {} as Playlist["singer_map"],
-            // ),
+            updated_at: serverTimestamp(),
           };
 
           await myUpdateDoc({
@@ -162,11 +160,11 @@ export default function useDashboardPlaylistActions() {
           break;
         }
         case "edit-playlist": {
-          await myUpdateDoc({
-            collectionName: "Playlists",
+          await addPlaylist({
+            variant: "edit",
             id: playlist.id,
-            data: props.playlist,
-            msg: ">>> api: update playlist doc",
+            playlist: props.playlist,
+            imageFile: props.imageFile,
           });
 
           const newPlaylist = { ...playlist, ...props.playlist };
@@ -185,6 +183,7 @@ export default function useDashboardPlaylistActions() {
 
           const songsData: Partial<Playlist> = {
             song_ids: newPlaylistSongs.map((s) => s.id),
+            updated_at: serverTimestamp(),
           };
 
           await myUpdateDoc({
@@ -199,29 +198,29 @@ export default function useDashboardPlaylistActions() {
 
           break;
         }
-        case "update-image": {
-          const imageData: Partial<PlaylistSchema> = {
-            image_url: props.song.image_url,
-            blurhash_encode: props.song.blurhash_encode,
-            image_file_id: "",
-          };
+        // case "update-image": {
+        //   const imageData: Partial<PlaylistSchema> = {
+        //     image_url: props.song.image_url,
+        //     blurhash_encode: props.song.blurhash_encode,
+        //     image_file_id: "",
+        //   };
 
-          if (playlist.image_file_id)
-            deleteFile({ fileId: playlist.image_file_id });
+        //   if (playlist.image_file_id)
+        //     deleteFile({ fileId: playlist.image_file_id });
 
-          await myUpdateDoc({
-            collectionName: "Playlists",
-            data: imageData,
-            id: playlist.id,
-            msg: ">>> api: set playlist doc",
-          });
+        //   await myUpdateDoc({
+        //     collectionName: "Playlists",
+        //     data: imageData,
+        //     id: playlist.id,
+        //     msg: ">>> api: set playlist doc",
+        //   });
 
-          updatePlaylistData(imageData);
+        //   updatePlaylistData(imageData);
 
-          setSuccessToast(`Playlist edited`);
+        //   setSuccessToast(`Playlist edited`);
 
-          break;
-        }
+        //   break;
+        // }
         case "remove-singer": {
           const newPlaylistSingers = playlist.singers.filter(
             (s) => s.id !== props.singer.id,
@@ -260,5 +259,6 @@ export default function useDashboardPlaylistActions() {
     isFetching,
     action,
     playlist,
+    addPlaylistFetching,
   };
 }

@@ -1,8 +1,16 @@
 import BackBtn from "@/components/BackBtn";
 import useGetUser from "./hooks/useGetUser";
-import { Center, Image, NotFound, PlaylistList, Skeleton, Title } from "@/components";
+import {
+	Center,
+	Image,
+	NotFound,
+	PlaylistList,
+	Skeleton,
+	Title,
+} from "@/components";
 import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
 import Footer from "@/layout/primary-layout/_components/Footer";
+import { choVoTri } from "@/constants/app";
 
 export default function UserPage() {
 	const { playlists, isFetching, user } = useGetUser();
@@ -23,11 +31,15 @@ export default function UserPage() {
 			<div className="space-y-5">
 				<div className="flex flex-col md:flex-row items-center">
 					{isFetching ? (
-						<Skeleton className="w-[100px] h-[100px] rounded-full" />
+						<Skeleton className="w-[160px] h-[160px] rounded-full" />
 					) : (
 						user && (
-							<div className="w-[100px] h-[100px] rounded-full overflow-hidden">
-								<Image src={user.photo_url} />
+							<div className="w-[160px] h-[160px] rounded-full overflow-hidden">
+								<Image
+									fallback={choVoTri.image}
+									blurHashEncode={user.photo_url ? "" : choVoTri.blurhash}
+									src={user.photo_url}
+								/>
 							</div>
 						)
 					)}

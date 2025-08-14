@@ -61,7 +61,7 @@ const PlaylistItem: FC<Props> = (props) => {
             <p className="font-semibold leading-[1.3] line-clamp-1 mt-1.5">
               {props.data.name}
             </p>
-            <p className="text-sm opacity-[.7] leading-[1.3] line-clamp-1">
+            <p className="text-sm item-info leading-[1.3] line-clamp-1">
               {props.data.is_album
                 ? props.data.singers[0].name
                 : props.data.distributor}

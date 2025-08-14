@@ -1,5 +1,5 @@
 import { Title } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
+import { SongSkeleton } from "@/components/skeleton";
 import { useGetSongs, useSetSong } from "@/hooks";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
@@ -15,12 +15,8 @@ export default function SongSection({ songIds }: Props) {
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
-  // const loadingElement = [...Array(4).keys()].map((i) => (
-  //   <Skeleton key={i} className="aspect-[1/1]" />
-  // ));
-
   const { isFetching } = useGetSongs({ setSongs, songIds });
-  if (isFetching) return songItemSkeleton;
+  if (isFetching) return <SongSkeleton />;
 
   if (!songs.length) return <></>;
 
@@ -28,7 +24,7 @@ export default function SongSection({ songIds }: Props) {
     <SongSelectProvider>
       <div className="mt-5">
         <CheckedBar variant="system-song">
-          <Title variant={'h2'} title="Hot songs" />
+          <Title variant={"h2"} title="Hot songs" />
         </CheckedBar>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 mt-3">

@@ -23,7 +23,14 @@ export default function useGetRecentPlaylist() {
 
           const result = await implementPlaylistQuery(queryGetRecentPlaylists);
 
-          setRecentPlaylists(result);
+          const orderedPlaylist: Playlist[] = [];
+
+          user?.recent_playlist_ids.forEach((id) => {
+            const founded = result.find((c) => c.id === id);
+            if (founded) orderedPlaylist.push(founded);
+          });
+
+          setRecentPlaylists(orderedPlaylist);
         }
       } else {
         const playlists: Playlist[] =

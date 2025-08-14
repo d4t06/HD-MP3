@@ -3,10 +3,10 @@ import SongSelectProvider from "@/stores/SongSelectContext";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import useSetSong from "@/hooks/useSetSong";
 import { Skeleton } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
 import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
+import { SongSkeleton } from "@/components/skeleton";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";
@@ -19,7 +19,7 @@ const playlistSongSkeleton = (
       <Skeleton className="h-[20px] w-[90px]" />
     </div>
 
-    {songItemSkeleton}
+    <SongSkeleton />
   </>
 );
 
@@ -27,15 +27,16 @@ export default function PlaylistSongList({ variant, loading }: Props) {
   const { playlistSongs, currentPlaylist } = useSelector(selectCurrentPlaylist);
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
-  const { updatePlaylist } = useUpdateRecentPlaylist();
+  const { pushRecentPlaylist } = useUpdateRecentPlaylist();
 
-  const isAlbumAndHasImage = currentPlaylist?.is_album && !!currentPlaylist?.image_url;
+  const isAlbumAndHasImage =
+    currentPlaylist?.is_album && !!currentPlaylist?.image_url;
 
   const _handleSetSong = (s: Song) => {
     if (!currentPlaylist) return;
 
     const isSetQueue = handleSetSong(s.queue_id, playlistSongs);
-    if (isSetQueue) updatePlaylist(currentPlaylist);
+    if (isSetQueue) pushRecentPlaylist(currentPlaylist);
   };
 
   if (loading) return playlistSongSkeleton;
@@ -45,9 +46,13 @@ export default function PlaylistSongList({ variant, loading }: Props) {
       <SongSelectProvider>
         {!!playlistSongs.length && (
           <CheckedBar
-            variant={variant === "others-playlist" ? "system-song" : "own-playlist"}
+            variant={
+              variant === "others-playlist" ? "system-song" : "own-playlist"
+            }
           >
-            <p className="font-[500] opacity-[.5]">{playlistSongs.length} Songs</p>
+            <p className="font-[500] opacity-[.5]">
+              {playlistSongs.length} Songs
+            </p>
           </CheckedBar>
         )}
 
@@ -55,7 +60,9 @@ export default function PlaylistSongList({ variant, loading }: Props) {
           imageUrl={isAlbumAndHasImage ? currentPlaylist.image_url : ""}
           songs={playlistSongs}
           setSong={(s) => _handleSetSong(s)}
-          songVariant={variant === "my-playlist" ? "own-playlist" : "system-song"}
+          songVariant={
+            variant === "my-playlist" ? "own-playlist" : "system-song"
+          }
         />
       </SongSelectProvider>
     </>

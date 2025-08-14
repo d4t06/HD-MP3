@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuthContext } from "@/stores";
-import { useEffect, useState } from "react";
-import { sleep } from "@/utils/appHelpers";
+// import { useEffect, useState } from "react";
+// import { sleep } from "@/utils/appHelpers";
 import { Center, Loading } from "@/components";
 
 export function RequireAuth() {
@@ -22,30 +22,16 @@ export function RequireAuth() {
 }
 
 export function RequireAdministrator() {
-  const [isFetching, setIsFetching] = useState(true);
-  const [isGranted, setIsGranted] = useState(false);
-
   const { user, loading } = useAuthContext();
 
-  useEffect(() => {
-    const handleValidate = async () => {
-      await sleep(1000);
-
-      setIsGranted(true);
-      setIsFetching(false);
-    };
-
-    handleValidate();
-  }, []);
-
-  if (loading || isFetching)
+  if (loading)
     return (
       <Center>
         <Loading />
       </Center>
     );
 
-  return user && isGranted ? (
+  return user && user.role === "ADMIN" ? (
     <Outlet />
   ) : (
     <Navigate replace to={"/unauthorized"} />

@@ -10,22 +10,27 @@ export default function Skeleton({ className }: Props) {
   );
 }
 
-export const songItemSkeleton = [...Array(4).keys()].map((index) => {
-  return (
-    <div
-      key={index}
-      className="flex items-center p-[10px] border-b-[1px] border-transparent"
-    >
-      <Skeleton className="h-[18px] w-[18px]" />
+export function SongSkeleton(props: {
+  variant?: "default" | "queue-song";
+  skeNum?: number;
+  hasCheckBox?: boolean;
+}) {
+  const { variant = "default", skeNum = 4, hasCheckBox = true } = props;
 
-      <Skeleton className="h-[54px] w-[54px] ml-[10px] rounded-[4px]" />
+  return [...Array(skeNum).keys()].map((index) => (
+    <div key={index} className="flex items-center px-3 py-2">
+      {hasCheckBox && <Skeleton className="h-[18px] w-[18px]" />}
+
+      <Skeleton
+        className={`${variant === "default" ? "h-[54px] w-[54px]" : "h-10 w-10"}  ml-[10px]`}
+      />
       <div className="ml-[10px]">
-        <Skeleton className="h-[20px] mb-[5px] w-[150px]" />
-        <Skeleton className="h-[12px] mt-[5px] w-[100px]" />
+        <Skeleton className="h-[16px] w-[140px] max-w-full" />
+        <Skeleton className="h-[14px] w-[80px] mt-[6px] max-w-1/2" />
       </div>
     </div>
-  );
-});
+  ));
+}
 
 export const MobileLinkSkeleton = () => {
   return (

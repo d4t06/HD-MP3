@@ -98,22 +98,24 @@ export default function CategoryCta() {
 
   return (
     <>
-      <ButtonCtaFrame>
-        <Button onClick={() => openModal("edit")} size={"clear"}>
-          <PencilIcon />
-          <span>Edit</span>
-        </Button>
+      <div>
+        <ButtonCtaFrame className="!-mt-4">
+          <Button onClick={() => openModal("edit")} size={"clear"}>
+            <PencilIcon />
+            <span>Edit</span>
+          </Button>
 
-        <Button onClick={() => openModal("banner")} size={"clear"}>
-          <PhotoIcon />
-          <span>Banner</span>
-        </Button>
+          <Button onClick={() => openModal("banner")} size={"clear"}>
+            <PhotoIcon />
+            <span>Banner</span>
+          </Button>
 
-        <Button onClick={() => openModal("delete")} size={"clear"}>
-          <TrashIcon />
-          <span>Delete</span>
-        </Button>
-      </ButtonCtaFrame>
+          <Button onClick={() => openModal("delete")} size={"clear"}>
+            <TrashIcon />
+            <span>Delete</span>
+          </Button>
+        </ButtonCtaFrame>
+      </div>
 
       <Modal variant="animation" ref={modalRef}>
         {renderModal()}

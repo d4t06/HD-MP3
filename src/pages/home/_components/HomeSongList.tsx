@@ -4,8 +4,8 @@ import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import CheckedBar from "@/modules/check-bar";
-import { songItemSkeleton } from "@/components/skeleton";
 import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
+import { SongSkeleton } from "@/components/skeleton";
 
 export default function HomeSongList() {
   const { isFetching, songMap, ...rest } = useGetHomeSong();
@@ -31,7 +31,7 @@ export default function HomeSongList() {
             <p className="font-[500] opacity-[.5]">Songs</p>
           </CheckedBar>
 
-          {isFetching && songItemSkeleton}
+          {isFetching && <SongSkeleton />}
           {!isFetching && (
             <SongList
               songs={songMap[rest.tab].songs}

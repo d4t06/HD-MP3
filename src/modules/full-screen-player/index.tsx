@@ -8,7 +8,12 @@ import FullScreenPlayerContent from "./_components/FullScreenPlayerContent";
 
 export default function FullScreenPlayer() {
   // use stores
-  const { isOpenFullScreen, idle, activeTab, playerConfig: {songBackground} } = usePlayerContext();
+  const {
+    isOpenFullScreen,
+    idle,
+    activeTab,
+    playerConfig: { songBackground },
+  } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
   const classes = {
@@ -27,16 +32,16 @@ export default function FullScreenPlayer() {
       }`}
     >
       {/* bg image */}
-      <div className={` ${classes.bg}`}>
-        {songBackground && (
+      {songBackground && (
+        <div className="absolute left-0 right-0 aspect-[1/1] -translate-y-1/2 top-1/2">
           <Blurhash
             radioGroup=""
             height={"100%"}
             width={"100%"}
             hash={currentSongData?.song?.blurhash_encode || defaultBlurhash}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       <div className={classes.container}>
         <FullScreenPlayerHeader />
@@ -51,7 +56,9 @@ export default function FullScreenPlayer() {
             {currentSongData?.song?.name || "..."}
             <span className="opacity-70 text-sm">
               {" - "}
-              {currentSongData?.song.singers.map((s, i) => (i ? ", " : "") + s.name)}
+              {currentSongData?.song.singers.map(
+                (s, i) => (i ? ", " : "") + s.name,
+              )}
             </span>
           </p>
         )}

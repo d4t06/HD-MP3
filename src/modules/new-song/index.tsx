@@ -1,11 +1,11 @@
 import { Button, Tab, Title } from "@/components";
-import { songItemSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { Link } from "react-router-dom";
 import useGetNewSongs from "./useGetNewSong";
 import useGetRelativeSongs from "../song-queue/_hooks/useGetRelativeSongs";
+import { SongSkeleton } from "@/components/skeleton";
 
 type Props = {
   amount: number;
@@ -32,7 +32,7 @@ export default function NewSong(props: Props) {
         </div>
 
         <SongSelectProvider>
-          {isFetching && songItemSkeleton}
+          {isFetching && <SongSkeleton />}
           {!isFetching && (
             <SongList
               isHasCheckBox={false}
