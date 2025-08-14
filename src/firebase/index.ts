@@ -5,9 +5,11 @@ import { getFirestore } from "firebase/firestore";
 // Initialize Firebase
 const app = initializeApp({
   apiKey: import.meta.env.VITE_APIKEY,
-  appId: import.meta.env.VITE_APPID,
-  projectId: import.meta.env.VITE_PROJECTID,
-  authDomain: import.meta.env.VITE_AUTHDOMAIN,
+  appId:
+    import.meta.env.VITE_APPID || "1:938280289868:web:e36c48cfbd55e4a8de96e",
+  projectId: import.meta.env.VITE_PROJECTID || "zingmp3-clone-61799",
+  authDomain:
+    import.meta.env.VITE_AUTHDOMAIN || "zingmp3-clone-61799.firebaseapp.com",
 });
 
 // Initialize Firestore
