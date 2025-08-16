@@ -1,18 +1,20 @@
-import { ChangeEvent } from "react";
+import { RefObject, useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
+  ChooseImageModal,
   Image,
   Input,
   Label,
   LoadingOverlay,
+  Modal,
   ModalContentWrapper,
   ModalHeader,
+  ModalRef,
 } from "@/components";
 import useAddCategoryModal from "../hooks/useAddCategoryModal";
 import { Button } from "../../_components";
 
 type BaseProps = {
-  closeModal: () => void;
   submit: (p: CategorySchema, imageFile?: File) => void;
   isLoading: boolean;
 };
@@ -26,10 +28,11 @@ type Edit = {
   category: Category;
 };
 
-export type AddCategoryModalProps = Add | Edit;
+export type AddCategoryModalProps = (Add | Edit) & {
+  modalRef?: RefObject<ModalRef>;
+};
 
 export default function AddCategoryModal({
-  closeModal,
   isLoading,
   submit,
   ...props
@@ -45,6 +48,8 @@ export default function AddCategoryModal({
     isValidToSubmit,
   } = useAddCategoryModal(props);
 
+  const modalRef = useRef<ModalRef>(null);
+
   const handleAddPlaylist = async () => {
     if (!categoryData) return;
     if (!isChanged && !isChangeImage) return;
@@ -53,17 +58,13 @@ export default function AddCategoryModal({
     submit(categoryData, imageFile);
   };
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) setImageFile(e.target.files[0]);
-  };
-
   if (!categoryData) return;
 
   return (
     <>
       <ModalContentWrapper className="w-[500px]">
         <ModalHeader
-          closeModal={closeModal}
+          closeModal={() => props.modalRef?.current?.close()}
           title={props.variant === "add" ? "Add category" : "Edit category"}
         />
 
@@ -76,23 +77,10 @@ export default function AddCategoryModal({
                 src={categoryData.image_url}
               />
             </div>
-            <input
-              ref={inputRef}
-              onChange={handleInputChange}
-              type="file"
-              multiple
-              accept="image/png, image/jpeg"
-              id="image_upload"
-              className="hidden"
-            />
 
-            <Button size={"clear"}>
-              <label
-                htmlFor="image_upload"
-                className={`px-5 py-1 cursor-pointer `}
-              >
-                <PhotoIcon className="w-5" />
-              </label>
+            <Button onClick={() => modalRef.current?.open()}>
+              <PhotoIcon className="w-6" />
+              <span>Change image</span>
             </Button>
           </div>
 
@@ -122,6 +110,14 @@ export default function AddCategoryModal({
 
         {isLoading && <LoadingOverlay />}
       </ModalContentWrapper>
+
+      <Modal variant="animation" ref={modalRef}>
+        <ChooseImageModal
+          modalRef={modalRef}
+          setImageFile={setImageFile}
+          title="Category iamge"
+        />
+      </Modal>
     </>
   );
 }

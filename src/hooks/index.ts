@@ -12,3 +12,4 @@ export { default as useHideBottomPlayer } from "./useHideBottomPlayer";
 export { default as useGetCategory } from "./useGetCategory";
 export { default as useGetSongs } from "./useGetSongs";
 export { default as useGetPlaylists } from "./useGetPlaylists";
+export { default as useReadCopiedImage } from "./useReadCopiedImage";

@@ -79,7 +79,7 @@ export default function CategoryCta() {
               variant="edit"
               isLoading={isFetching}
               category={category}
-              closeModal={closeModal}
+              modalRef={modalRef}
             />
           </>
         );

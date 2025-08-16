@@ -74,7 +74,7 @@ export default function useGetNewSong({ amount }: { amount: number }) {
     }
   };
 
-  const getSong = async () => {
+  const getSongs = async () => {
     try {
       if (!tab || !currentGenre) return;
 
@@ -89,7 +89,7 @@ export default function useGetNewSong({ amount }: { amount: number }) {
         const getSongQuery = query(
           songsCollectionRef,
           where("main_genre.id", "==", currentGenre.id),
-          orderBy("created_at", "desc"),
+          orderBy("updated_at", "desc"),
           limit(amount),
         );
 
@@ -122,7 +122,7 @@ export default function useGetNewSong({ amount }: { amount: number }) {
   useEffect(() => {
     if (!tab) return;
 
-    getSong();
+    getSongs();
   }, [tab]);
 
   return { isFetching, currentSongs, tabs, tab, setTab };

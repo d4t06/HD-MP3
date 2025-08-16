@@ -100,14 +100,15 @@ export const optimizeAndGetHashImage = async ({
   const uploadProcess = uploadFile({
     file: myFile,
     folder: "/images/",
+    msg: "upload image file",
   });
 
   const { encode } = await getBlurHashEncode(IMAGE_BLOB);
   const { fileId, url } = await uploadProcess;
 
   return {
-    image_file_id: fileId,
-    image_url: url,
+    image_file_id: fileId || "",
+    image_url: url || "",
     blurhash_encode: encode,
   };
 };

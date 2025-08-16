@@ -2,7 +2,7 @@ import { ComponentProps, useEffect, useMemo, useRef, useState } from "react";
 import AddAlbumModal from "..";
 import { useAddAlbumContext } from "../AddAlbumContext";
 import { initAlbumObject } from "@/utils/factory";
-import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
+import { deleteFile, myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { getDoc, serverTimestamp } from "firebase/firestore";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { useToastContext } from "@/stores";
@@ -57,6 +57,11 @@ export default function useAddAlbumModal(
       setIsFetching(true);
 
       if (imageFile) {
+        if (albumData.image_file_id)
+          deleteFile({
+            fileId: albumData.image_file_id,
+          });
+
         const imageData = await optimizeAndGetHashImage({ imageFile });
         Object.assign(albumData, imageData);
       }

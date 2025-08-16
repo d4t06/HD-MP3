@@ -1,6 +1,6 @@
 import { RefObject, useState } from "react";
 import { useCategoryContext } from "../CategoryContext";
-import { useToastContext } from "@/stores";
+import { usePageContext, useToastContext } from "@/stores";
 import {
   deleteFile,
   myDeleteDoc,
@@ -24,6 +24,7 @@ export default function useCategoryDetailAction(mainProps?: Props) {
     category,
     setCategory,
   } = useCategoryContext();
+  const { categories, setCategories } = usePageContext();
   const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -226,6 +227,9 @@ export default function useCategoryDetailAction(mainProps?: Props) {
             collectionName: "Categories",
             id: category.id,
           });
+
+          const newCategories = categories.filter((c) => c.id !== category.id);
+          setCategories(newCategories);
 
           setSuccessToast("Category deleted");
 

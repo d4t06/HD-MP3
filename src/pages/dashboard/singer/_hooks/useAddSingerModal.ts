@@ -1,6 +1,6 @@
 import { ModalRef } from "@/components";
 import { optimizeAndGetHashImage } from "@/services/appService";
-import { myAddDoc, myUpdateDoc } from "@/services/firebaseService";
+import { deleteFile, myAddDoc, myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
 import { useSingerContext } from "@/stores/dashboard/SingerContext";
 import { convertToEn } from "@/utils/appHelpers";
@@ -72,6 +72,9 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
       };
 
       if (imageFile) {
+        if (singerData.image_file_id)
+          deleteFile({ fileId: singerData.image_file_id });
+
         const imageData = await optimizeAndGetHashImage({
           imageFile,
         });
@@ -89,7 +92,6 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
           const newSinger = { ...singerData, id: docRef.id };
 
           setSingers((prev) => [newSinger, ...prev]);
-
 
           if (props.afterSubmit) {
             Object.assign(newSinger, { created_at: "" } as Partial<Singer>);

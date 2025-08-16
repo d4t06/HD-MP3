@@ -1,3 +1,5 @@
+import { ChooseImageModal, Modal, ModalRef } from "@/components";
+import { useReadCopiedImage } from "@/hooks";
 import { Button } from "@/pages/dashboard/_components";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
@@ -7,7 +9,13 @@ export default function UploadImageBtn() {
   const { setImageFile, songData, updateSongData, imageBlob, setImageBlob } =
     useAddSongContext();
 
+  const modalRef = useRef<ModalRef>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useReadCopiedImage({
+    setImageFileFromParent: setImageFile,
+    modalRef,
+  });
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.length) setImageFile(e.target.files[0]);
@@ -24,14 +32,9 @@ export default function UploadImageBtn() {
 
   return (
     <>
-      <Button className="except" size={"clear"}>
-        <label
-          htmlFor="image_upload"
-          className={`inline-flex p-1.5 space-x-1 md:px-3`}
-        >
-          <PhotoIcon />
-          <span>Change image</span>
-        </label>
+      <Button onClick={() => modalRef.current?.open()}>
+        <PhotoIcon />
+        <span>Change image</span>
       </Button>
 
       {imageBlob && (
@@ -41,12 +44,6 @@ export default function UploadImageBtn() {
         </Button>
       )}
 
-      {/*   {songData?.image_url && (
-        <Button onClick={() => modalRef.current?.open()} size={"clear"}>
-          <QuestionMarkCircleIcon />
-          <span>Image info</span>
-        </Button>
-      )}*/}
       <input
         ref={inputRef}
         onChange={handleInputChange}
@@ -57,14 +54,13 @@ export default function UploadImageBtn() {
         className="hidden"
       />
 
-      {/*  {songData?.image_url && (
-        <Modal variant="animation" ref={modalRef}>
-          <ModalContentWrapper>
-            <p>Url: {songData?.image_url}</p>
-            <p>Hash: {songData?.blurhash_encode}</p>
-          </ModalContentWrapper>
-        </Modal>
-      )}*/}
+      <Modal variant="animation" ref={modalRef}>
+        <ChooseImageModal
+          modalRef={modalRef}
+          setImageFile={setImageFile}
+          title="Song image"
+        />
+      </Modal>
     </>
   );
 }

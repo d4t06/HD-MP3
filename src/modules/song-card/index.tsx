@@ -41,14 +41,14 @@ function Content({
           )}
         </div>
 
-        <div className="absolute top-0 p-4 left-0 w-full z-[99]">
-          {audioRef.current && <SongLyric audioEle={audioRef.current} />}
-          {/* <div className="relative p-4"> */}
-          {/* <div className="absolute inset-0 z-[-1] bg-gradient-to-t to-black/60 from-transparent"></div> */}
-          {/* </div> */}
+        <div className="absolute top-0 left-0 w-full z-[99]">
+          <div className="relative p-4">
+            {audioRef.current && <SongLyric audioEle={audioRef.current} />}
+            <div className="absolute inset-0 z-[-1] bg-gradient-to-b from-black/20 to-transparent"></div>
+          </div>
         </div>
 
-        <div className="w-full aspect-[1/1] overflow relative mask-image">
+        <div className="w-full aspect [1/1] overflow relative mask-image">
           <img
             onClick={() => controlRef.current?.handlePlayPause()}
             className="w-full object-cover"

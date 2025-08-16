@@ -42,15 +42,18 @@ export default function MainGenreSelectModal({ closeModal, choose }: Props) {
             <>
               {mains.length ? (
                 mains.map((genre, i) => (
-                  <Frame
+                  <button
                     key={i}
                     onClick={() => {
                       choose(genre);
                       closeModal();
                     }}
+                    className="w-full text-left"
                   >
-                    <p className={`text-lg`}>{genre.name}</p>
-                  </Frame>
+                    <Frame>
+                      <p className={`text-lg`}>{genre.name}</p>
+                    </Frame>
+                  </button>
                 ))
               ) : (
                 <>

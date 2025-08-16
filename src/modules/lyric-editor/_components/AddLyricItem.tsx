@@ -1,11 +1,13 @@
-import { formatTime, getClasses } from "@/utils/appHelpers";
+import { formatTime } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import { Ref, forwardRef } from "react";
 import { LyricStatus } from "..";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   lyric: Lyric;
   seek: (time: number) => void;
+  removeLyric: () => void;
   isLast: boolean;
   openModal: () => void;
   isPreview: boolean;
@@ -14,7 +16,7 @@ type Props = {
 };
 
 function AddLyricItem(
-  { lyric, openModal, seek, isLast, status, isPreview }: Props,
+  { lyric, openModal, seek, isLast, status, isPreview, removeLyric }: Props,
   ref: Ref<HTMLParagraphElement>,
 ) {
   const getClass = () => {
@@ -29,28 +31,39 @@ function AddLyricItem(
   return (
     <>
       <div className="pt-[10px] last:mb-[30vh]">
-        <button
-          className={`hover:underline mb-[3px] text-gray-500`}
-          onClick={() => seek(lyric.start)}
+        <div
+          className={`flex ${isPreview ? "justify-center" : ""}  space-x-1.5 mb-[3px]`}
         >
-          {formatTime(+lyric.start)}
-        </button>
-
-        <p
-          ref={ref}
-          className={`font-[700] select-none relative ${getClasses(!isPreview, "pr-6")} ${getClass()}`}
-        >
-          {lyric.text}
+          <button
+            className={`hover:underline item-info`}
+            onClick={() => seek(lyric.start)}
+          >
+            {formatTime(+lyric.start)}
+          </button>
 
           {!isPreview && (
-            <button onClick={openModal} className=" absolute mt-1 ml-1">
+            <button onClick={openModal} className="">
               <PencilSquareIcon className="w-5" />
             </button>
           )}
+
+          <button onClick={removeLyric} className="">
+            <TrashIcon className="w-5" />
+          </button>
+        </div>
+
+        <p
+          ref={ref}
+          className={`font-[700] select-none relative ${getClass()}`}
+        >
+          {lyric.text}
         </p>
 
         {isLast && lyric.end !== lyric.start && (
-          <button className={`hover:underline pt-[10px]`} onClick={() => seek(lyric.end)}>
+          <button
+            className={`hover:underline pt-[10px]`}
+            onClick={() => seek(lyric.end)}
+          >
             {formatTime(+lyric.end)}
           </button>
         )}

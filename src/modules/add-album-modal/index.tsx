@@ -1,14 +1,16 @@
 import {
+  ChooseImageModal,
   Image,
   Input,
   Label,
   LoadingOverlay,
+  Modal,
   ModalHeader,
   ModalRef,
 } from "@/components";
 import AddAlbumProvider, { useAddAlbumContext } from "./AddAlbumContext";
 import useAddAlbumModal from "./_hooks/useAddAlbumModal";
-import { ChangeEvent, RefObject, useRef } from "react";
+import { RefObject, useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { Button, Frame } from "@/pages/dashboard/_components";
 import AlbumSingerSelect from "./_components/SingerSelect";
@@ -39,11 +41,7 @@ function Content({ className = "", ...props }: Props) {
   const { albumData, setImageFile, updateAlbumData } = useAddAlbumContext();
   const { submit, isFetching, isValidToSubmit } = useAddAlbumModal(props);
 
-  const labelRef = useRef<HTMLLabelElement>(null);
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) setImageFile(e.target.files[0]);
-  };
+  const modalRef = useRef<ModalRef>(null);
 
   const saveButton = (
     <Button
@@ -64,7 +62,7 @@ function Content({ className = "", ...props }: Props) {
     <>
       <ModalHeader
         closeModal={() => props.modalRef.current?.close()}
-        title={props.variant === 'add' ? "Add album" : "Edit albm"}
+        title={props.variant === "add" ? "Add album" : "Edit albm"}
       />
 
       <div className={`md:flex ${className} overflow-auto`}>
@@ -80,23 +78,9 @@ function Content({ className = "", ...props }: Props) {
             />
           </Frame>
 
-          <label ref={labelRef} htmlFor="image_upload"></label>
-          <input
-            onChange={handleInputChange}
-            type="file"
-            multiple
-            accept="image/png, image/jpeg"
-            id="image_upload"
-            className="hidden"
-          />
-
-          <Button color={"primary"} size={"clear"}>
-            <label
-              htmlFor="image_upload"
-              className={`md:px-3 p-1.5 inline-flex space-x-1 cursor-pointer `}
-            >
-              <PhotoIcon className="w-6" />
-            </label>
+          <Button onClick={() => modalRef.current?.open()}>
+            <PhotoIcon className="w-6" />
+            <span>Change image</span>
           </Button>
         </div>
 
@@ -122,6 +106,14 @@ function Content({ className = "", ...props }: Props) {
       <p className="text-right mt-3">{saveButton}</p>
 
       {isFetching && <LoadingOverlay />}
+
+      <Modal variant="animation" ref={modalRef}>
+        <ChooseImageModal
+          modalRef={modalRef}
+          title="Album image"
+          setImageFile={setImageFile}
+        />
+      </Modal>
     </>
   );
 }

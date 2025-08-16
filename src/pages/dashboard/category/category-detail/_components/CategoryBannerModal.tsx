@@ -3,6 +3,7 @@ import useCategoryBannerModal from "../_hooks/useCategoryBannerModal";
 import { Button } from "@/pages/dashboard/_components";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import { ChangeEvent, useRef } from "react";
+import { useReadCopiedImage } from "@/hooks";
 
 type Props = {
   closeModal: () => void;
@@ -13,6 +14,8 @@ export default function CategoryBannerModal({ closeModal }: Props) {
     useCategoryBannerModal({
       closeModal,
     });
+
+  useReadCopiedImage({ setImageFileFromParent: setImageFile });
 
   const labelRef = useRef<HTMLLabelElement>(null);
 

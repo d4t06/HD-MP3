@@ -38,12 +38,12 @@ export default function useAddPlaylist(props?: Props) {
       _setIsFetching(true);
 
       if (imageFile) {
-        const imageData = await optimizeAndGetHashImage({ imageFile });
-        Object.assign(props.playlist, imageData);
-
         if (props.playlist.image_file_id) {
           deleteFile({ fileId: props.playlist.image_file_id });
         }
+
+        const imageData = await optimizeAndGetHashImage({ imageFile });
+        Object.assign(props.playlist, imageData);
       }
 
       switch (props.variant) {

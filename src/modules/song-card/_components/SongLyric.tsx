@@ -25,15 +25,15 @@ export default function SongLyric({ audioEle }: Props) {
     return (
       <>
         <p
-          key={currentIndex}
-          className="transition-transform origin-bottom-left duration-[.4s] translate-y-[50px]"
+          key={currentIndex + "1"}
+          className="transition-transform origin-bottom-left duration-[.4s] translate-y-[40px]"
           ref={mainLyricRef}
         >
           {lyrics[currentIndex].text}
         </p>
         {lyrics[currentIndex + 1] && (
           <p
-            key={currentIndex + "asda"}
+            key={currentIndex + "11"}
             ref={subLyricRef}
             className="mt-3 transition-transform duration-[.4s] opacity-[.4] translate-y-[-10px]"
           >
@@ -46,7 +46,7 @@ export default function SongLyric({ audioEle }: Props) {
 
   const classes = {
     container:
-      "no-scrollbar [&_p]:w-[70%] [&_p]:select-none [&_p]:font-bold pt-4",
+      "no-scrollbar leading-[1.1] [&_p]:w-[70%] [&_p]:select-none [&_p]:font-bold pt-4",
   };
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export default function SongLyric({ audioEle }: Props) {
         Object.assign(subLyricRef.current.style, {
           transform: "translateY(0px)",
         });
-    }, 10);
+    }, 30);
   }, [currentIndex, lyrics]);
 
   return (

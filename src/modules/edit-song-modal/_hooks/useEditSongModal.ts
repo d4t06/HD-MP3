@@ -54,13 +54,12 @@ export default function useEditSongModal({ song, modalRef }: Props) {
       }
 
       if (imageFile) {
-        const imageData = await optimizeAndGetHashImage({ imageFile });
-
-        Object.assign(newSong, imageData);
-
         if (song.image_file_id) {
           deleteFile({ fileId: song.image_file_id });
         }
+
+        const imageData = await optimizeAndGetHashImage({ imageFile });
+        Object.assign(newSong, imageData);
       }
 
       // >>> api

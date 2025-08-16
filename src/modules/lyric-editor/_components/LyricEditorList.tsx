@@ -47,8 +47,14 @@ export default function LyricEditorList({
   openEditModal,
 }: Props) {
   // const { theme } = useThemeContext();
-  const { baseLyricArr, lyrics, setSelectLyricIndex, song, isPreview } =
-    useEditLyricContext();
+  const {
+    baseLyricArr,
+    lyrics,
+    setLyrics,
+    setSelectLyricIndex,
+    song,
+    isPreview,
+  } = useEditLyricContext();
 
   const { activeLyricRef } = useLyricEditorList();
 
@@ -57,6 +63,8 @@ export default function LyricEditorList({
     isActive: isPreview,
     lyrics,
   });
+
+  console.log(currentIndex)
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
@@ -70,6 +78,25 @@ export default function LyricEditorList({
     setSelectLyricIndex(index);
 
     openEditModal();
+  };
+
+  const removeLyric = (index: number) => {
+    if (!song) return;
+
+    const newLyrics = [...lyrics];
+
+    const isRemoveLastItem = newLyrics.length - 1 === index;
+
+    if (isRemoveLastItem) {
+      newLyrics.splice(index, 1);
+    } else {
+      newLyrics[index - 1].end = newLyrics[index + 1].start;
+      newLyrics.splice(index, 1);
+    }
+
+    newLyrics[newLyrics.length - 1].end = song.duration;
+
+    setLyrics(newLyrics);
   };
 
   // for sync lyrix function
@@ -99,7 +126,7 @@ export default function LyricEditorList({
                 return (
                   <LyricItem
                     ref={status === "active" ? activeLyricRef : null}
-                    className="pt-[38px] mr-[24px]"
+                    className="pt-[38px]"
                     key={index}
                     status={status}
                     text={lyric}
@@ -128,6 +155,7 @@ export default function LyricEditorList({
                   ref={(el) => (lyricRefs.current[index] = el!)}
                   openModal={() => handleOpenEditLyricModal(index)}
                   seek={handleSeek}
+                  removeLyric={() => removeLyric(index)}
                   isPreview={isPreview}
                   lyric={lyric}
                   status={status}

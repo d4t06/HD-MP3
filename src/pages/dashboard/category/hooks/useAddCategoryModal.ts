@@ -53,6 +53,11 @@ export default function useAddCategoryModal(props: AddCategoryModalProps) {
     updateData({ image_url: URL.createObjectURL(imageFile) });
   }, [imageFile]);
 
+  useEffect(() => {
+    if (isChanged) props?.modalRef?.current?.setModalPersist(true);
+    else props?.modalRef?.current?.setModalPersist(false);
+  }, [isChanged]);
+
   return {
     categoryData,
     imageFile,

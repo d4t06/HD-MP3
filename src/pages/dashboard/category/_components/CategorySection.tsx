@@ -12,7 +12,7 @@ type Props = {
 };
 
 export default function CategorySection({ section, index }: Props) {
-  const { categories } = usePageContext();
+  const { categoryPage, categories } = usePageContext();
 
   const orderedCategories = useMemo(() => {
     const result: Category[] = [];
@@ -25,14 +25,19 @@ export default function CategorySection({ section, index }: Props) {
     });
 
     return result;
-  }, [section, categories]);
+  }, [categoryPage, categories]);
 
   return (
     <>
       <div className="flex items-center">
         <h1>{section.name}</h1>
 
-        <SectionCta section={section} index={index} name={section.name} variant="category" />
+        <SectionCta
+          section={section}
+          index={index}
+          name={section.name}
+          variant="category"
+        />
       </div>
 
       <Frame>
@@ -42,9 +47,10 @@ export default function CategorySection({ section, index }: Props) {
           ))}
         </div>
 
-        <p className="text-center mt-5">
-          <CategorySectionCta sectionIndex={index} />
-        </p>
+        <CategorySectionCta
+          orderedCategories={orderedCategories}
+          sectionIndex={index}
+        />
       </Frame>
     </>
   );

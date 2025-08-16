@@ -17,6 +17,7 @@ export default function Avatar({ className }: { className?: string }) {
   return (
     <div className={classes.imageFrame}>
       <Image
+        fallback={meoVoTri.image}
         src={loggedInUser?.photoURL || meoVoTri.image}
         blurHashEncode={loggedInUser?.photoURL ? "" : meoVoTri.blurhash}
         className="w-full"

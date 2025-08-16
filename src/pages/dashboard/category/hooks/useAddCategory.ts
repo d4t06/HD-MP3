@@ -32,6 +32,10 @@ export default function useAddCategory(props?: Props) {
       _setIsFetching(true);
 
       if (imageFile) {
+        if (props.category.image_file_id) {
+          deleteFile({ fileId: props.category.image_file_id });
+        }
+
         const imageData = await optimizeAndGetHashImage({
           imageFile,
           width: 870,
@@ -39,10 +43,6 @@ export default function useAddCategory(props?: Props) {
         });
 
         Object.assign(props.category, imageData);
-
-        if (props.category.image_file_id) {
-          deleteFile({ fileId: props.category.image_file_id });
-        }
       }
 
       switch (props.variant) {

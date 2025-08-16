@@ -1,6 +1,5 @@
-import { myDeleteDoc, myUpdateDoc } from "@/services/firebaseService";
+import { myUpdateDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-// import { useCategoryLobbyContext } from "../CategoryLobbyContext";
 import { RefObject, useState } from "react";
 import { ModalRef } from "@/components";
 import { usePageContext } from "@/stores";
@@ -52,13 +51,13 @@ export default function useCategoryAction(mainProps?: Props) {
         }
 
         case "delete": {
-          await myDeleteDoc({
-            collectionName: "Categories",
-            id: props.id,
-          });
+          // await myDeleteDoc({
+          //   collectionName: "Categories",
+          //   id: props.id,
+          // });
 
-          setCategories((prev) => prev.filter((g) => g.id !== props.id));
-          setSuccessToast("Delete category successful");
+          // setCategories((prev) => prev.filter((g) => g.id !== props.id));
+          // setSuccessToast("Delete category successful");
 
           break;
         }

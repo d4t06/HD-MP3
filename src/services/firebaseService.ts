@@ -133,7 +133,7 @@ export const uploadFile = async ({
   const extension = parts.pop();
   const name = parts.join("_");
 
-  const { url, fileId } = await upload({
+  const { url = "", fileId = "" } = await upload({
     expire,
     token,
     signature,

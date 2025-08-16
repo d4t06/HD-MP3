@@ -80,7 +80,7 @@ export default function useSearch() {
     try {
       const q = query(
         collection(db, "Trending_Keywords"),
-        orderBy("week_count", "desc"),
+        orderBy("today_count", "desc"),
         limit(5),
       );
 

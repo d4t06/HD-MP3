@@ -49,9 +49,11 @@ export default function GenreSearchModal({ closeModal, choose }: Props) {
             <>
               {subs.length ? (
                 subs.map((genre, i) => (
-                  <Frame key={i} onClick={() => choose(genre)}>
-                    <p className={`text-lg`}>{genre.name}</p>
-                  </Frame>
+                  <button className="w-full text-left" key={i} onClick={() => choose(genre)}>
+                    <Frame>
+                      <p className={`text-lg`}>{genre.name}</p>
+                    </Frame>
+                  </button>
                 ))
               ) : (
                 <>

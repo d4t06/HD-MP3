@@ -1,6 +1,6 @@
-import { ConfirmModal, Modal, ModalRef } from "@/components";
+import { Modal, ModalRef } from "@/components";
 import { useRef, useState } from "react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { PencilIcon } from "@heroicons/react/24/outline";
 import ItemRightCtaFrame from "../../_components/ui/ItemRightCtaFrame";
 import AddCategoryModal from "./AddCategoryModal";
 import useCategoryAction from "../hooks/useCategoryAction";
@@ -25,8 +25,6 @@ export default function CategoryItem({ category }: Props) {
     modalRef.current?.open();
   };
 
-  const closeModal = () => modalRef.current?.close();
-
   return (
     <>
       <ItemRightCtaFrame>
@@ -41,9 +39,9 @@ export default function CategoryItem({ category }: Props) {
           <button className="" onClick={() => openModal("edit")}>
             <PencilIcon className="w-5" />
           </button>
-          <button onClick={() => openModal("delete")}>
+          {/* <button onClick={() => openModal("delete")}>
             <TrashIcon className="w-5" />
-          </button>
+          </button>*/}
         </div>
       </ItemRightCtaFrame>
 
@@ -52,7 +50,7 @@ export default function CategoryItem({ category }: Props) {
           <AddCategoryModal
             variant="edit"
             category={category}
-            closeModal={closeModal}
+            modalRef={modalRef}
             isLoading={isFetching}
             submit={(c) =>
               action({ type: "edit", category: c, id: category.id })
@@ -60,14 +58,14 @@ export default function CategoryItem({ category }: Props) {
           />
         )}
 
-        {modal === "delete" && (
+        {/*        {modal === "delete" && (
           <ConfirmModal
             callback={() => action({ type: "delete", id: category.id })}
             closeModal={closeModal}
             loading={isFetching}
             label={`Delete category '${category.name}'`}
           />
-        )}
+        )}*/}
       </Modal>
     </>
   );

@@ -22,7 +22,6 @@ export default function useAddSongForm(
   const {
     songFile,
     imageFile,
-    setSong,
     setImageFile,
     updateSongData,
     setSongData,
@@ -115,7 +114,7 @@ export default function useAddSongForm(
           setSongFile(undefined);
           setImageFile(undefined);
           setImageBlob(undefined);
-          
+
           setSingers([]);
           setGenres([]);
           setSongData(initSongData());
@@ -178,29 +177,37 @@ export default function useAddSongForm(
 
       setIsFetching(true);
 
-      if (imageFile || imageBlob) {
-        const songImageData = await optimizeAndGetHashImage({
-          imageFile,
-          blob: imageBlob,
-        });
+      let uploadImageProcess:
+        | ReturnType<typeof optimizeAndGetHashImage>
+        | undefined = undefined;
 
-        if (props.variant === "edit" && song?.image_file_id)
+      if (imageFile || imageBlob) {
+        if (song?.image_file_id)
           deleteFile({
             fileId: song.image_file_id,
             msg: ">>> api: Delete image file",
           });
-        Object.assign(newSongData, songImageData);
+
+        uploadImageProcess = optimizeAndGetHashImage({
+          imageFile,
+          blob: imageBlob,
+        });
       }
 
       switch (props.variant) {
         case "add": {
           if (!songFile) return;
 
-          const { fileId, url } = await uploadFile({
+          const uploadSongPrcess = uploadFile({
             file: songFile,
             folder: "/songs/",
-            msg: ">>> api: upload song file",
+            msg: "upload song file",
           });
+
+          const [resImageData, { fileId, url }] = await Promise.all([
+            uploadImageProcess,
+            uploadSongPrcess,
+          ]);
 
           const data: Partial<SongSchema> = {
             singers,
@@ -212,6 +219,16 @@ export default function useAddSongForm(
           };
 
           Object.assign(newSongData, data);
+
+          if (resImageData) {
+            const songImageData: Partial<SongSchema> = {
+              image_url: resImageData.image_url,
+              image_file_id: resImageData.image_file_id,
+              blurhash_encode: resImageData.blurhash_encode,
+            };
+
+            Object.assign(newSongData, songImageData);
+          }
 
           await myAddDoc({
             collectionName: "Songs",
@@ -238,15 +255,29 @@ export default function useAddSongForm(
             Object.assign(newSongData, data);
           }
 
-          // reset
-          if (song) setSong({ ...song, ...newSongData });
+          if (uploadImageProcess) {
+            const { blurhash_encode, image_file_id, image_url } =
+              await uploadImageProcess;
+
+            const songImageData: Partial<SongSchema> = {
+              image_url,
+              image_file_id,
+              blurhash_encode,
+            };
+
+            Object.assign(newSongData, songImageData);
+          }
+
           setImageFile(undefined);
+          setImageBlob(undefined);
 
           await myUpdateDoc({
             collectionName: "Songs",
             id: song.id,
             data: newSongData,
           });
+
+          updateSongData(newSongData);
 
           setSuccessToast("Song updated");
         }

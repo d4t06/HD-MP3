@@ -2,14 +2,14 @@ import { implementSongQuery } from "@/services/appService";
 import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { getRelativeSongs } from "@/services/getRelativeSongs";
 import { useAuthContext } from "@/stores";
-import { getLocalStorage } from "@/utils/appHelpers";
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { limit, orderBy, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 
 export default function useGetRecommendSongs() {
 	const [songs, setSongs] = useState<Song[]>([]);
 
-	const { user } = useAuthContext();
+	const { user, loading } = useAuthContext();
 
 	const [isFetching, setIsFetching] = useState(true);
 
@@ -22,6 +22,7 @@ export default function useGetRecommendSongs() {
 			let recomemdedSongs: Song[] = [];
 
 			if (user) {
+				setLocalStorage("recent-songs", []);
 				const recentSongIds = [...user.recent_song_ids];
 
 				const songId =
@@ -61,7 +62,7 @@ export default function useGetRecommendSongs() {
 				const q = query(
 					songsCollectionRef,
 					where("is_official", "==", true),
-					orderBy("created_at", "desc"),
+					orderBy("updated_at", "desc"),
 					limit(8),
 				);
 				const result = await implementSongQuery(q, {
@@ -80,12 +81,14 @@ export default function useGetRecommendSongs() {
 	};
 
 	useEffect(() => {
+		if (loading) return;
+
 		if (!ranEffect.current) {
 			ranEffect.current = true;
 
 			getRecomemdedSongs();
 		}
-	}, []);
+	}, [loading]);
 
 	return { songs, getRecomemdedSongs, isFetching };
 }

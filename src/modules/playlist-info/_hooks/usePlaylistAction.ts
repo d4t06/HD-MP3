@@ -116,11 +116,10 @@ export default function usePlaylistAction() {
           const newPlaylist = { ...playlist, ...data };
 
           if (imageFile) {
-            const imageData = await optimizeAndGetHashImage({ imageFile });
-
             if (playlist.image_file_id)
               deleteFile({ fileId: playlist.image_file_id });
 
+            const imageData = await optimizeAndGetHashImage({ imageFile });
             Object.assign(newPlaylist, imageData);
           }
 

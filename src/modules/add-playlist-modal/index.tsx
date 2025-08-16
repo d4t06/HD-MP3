@@ -1,11 +1,13 @@
-import { ChangeEvent, RefObject } from "react";
+import { RefObject, useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
   Button,
+  ChooseImageModal,
   Image,
   Input,
   Label,
   LoadingOverlay,
+  Modal,
   ModalHeader,
   ModalRef,
   Switch,
@@ -48,16 +50,14 @@ export default function AddPlaylistModal({
     isValidToSubmit,
   } = useAddPlaylistModal(props);
 
+  const modalRef = useRef<ModalRef>(null);
+
   const handleAddPlaylist = async () => {
     if (!playlistData) return;
     if (!isChanged && !isChangeImage) return;
 
     //  it must be change something here!!
     submit(playlistData, imageFile);
-  };
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) setImageFile(e.target.files[0]);
   };
 
   if (!playlistData) return <></>;
@@ -78,27 +78,13 @@ export default function AddPlaylistModal({
               src={playlistData.image_url}
             />
           </div>
-          <input
-            ref={inputRef}
-            onChange={handleInputChange}
-            type="file"
-            value={""}
-            multiple
-            accept="image/png, image/jpeg"
-            id="image_upload"
-            className="hidden"
-          />
 
-          <div className="space-x-2 flex">
-            <Button color="primary" size={"clear"}>
-              <label
-                htmlFor="image_upload"
-                className={`px-5 py-1 cursor-pointer `}
-              >
-                <PhotoIcon className="w-5" />
-              </label>
+          <p className="">
+            <Button onClick={() => modalRef.current?.open()} color="primary">
+              <PhotoIcon className="w-5" />
+              <span>Change image</span>
             </Button>
-          </div>
+          </p>
         </div>
 
         <div className="mt-3 md:mt-0 flex-grow flex flex-col space-y-2.5">
@@ -110,7 +96,7 @@ export default function AddPlaylistModal({
               ref={inputRef}
               type="text"
               placeholder="name..."
-              value={playlistData.name}
+              value={playlistData.name || ""}
               onChange={(e) => updatePlaylistData({ name: e.target.value })}
             />
           </div>
@@ -140,6 +126,14 @@ export default function AddPlaylistModal({
       </p>
 
       {isLoading && <LoadingOverlay />}
+
+      <Modal variant="animation" ref={modalRef}>
+        <ChooseImageModal
+          modalRef={modalRef}
+          setImageFile={setImageFile}
+          title="Playlist image"
+        />
+      </Modal>
     </>
   );
 }

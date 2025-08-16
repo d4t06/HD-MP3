@@ -1,11 +1,12 @@
 import { useGetCategory } from "@/hooks";
 import CategoryProvider, { useCategoryContext } from "./CategoryContext";
-import { Image, Loading, NotFound, Title } from "@/components";
+import { Image, Loading, Title } from "@/components";
 import CategoryCta from "./_components/CategoryCta";
 import PlaylistSection from "./_components/PlaylistSection";
 import SongSection from "./_components/SongSection";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 import { useMemo } from "react";
+import { Navigate } from "react-router-dom";
 
 export function Content() {
   const { category, setCategory } = useCategoryContext();
@@ -20,7 +21,7 @@ export function Content() {
     return <Loading />;
   }
 
-  if (!category) return <NotFound />;
+  if (!category) return <Navigate to={"/dashoboard/category"} />;
 
   return (
     <>

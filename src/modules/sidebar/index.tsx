@@ -144,7 +144,7 @@ export default function Sidebar() {
                 </Link>
 
                 {user.role === "ADMIN" && (
-                  <Link to={"/dashboard"} className={`border-transparent`}>
+                  <Link to={"/dashboard"} target="_blank" className={`border-transparent`}>
                     <div onClick={handleNavigateToDashboard}>
                       <ComputerDesktopIcon />
                       <span className="">Dashboard</span>
