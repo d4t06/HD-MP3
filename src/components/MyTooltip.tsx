@@ -31,7 +31,7 @@ function MyToolTip(
     className = "px-2 py-1 text-sm font-[500]",
     position = "bottom-[calc(100%+8px)]",
     content,
-    colorClasses = 'bg-[--popup-cl] text-[--text-cl]',
+    colorClasses = "bg-[--popup-cl] text-[--text-cl]",
     isWrapped,
     ...rest
   }: Props,
@@ -54,10 +54,6 @@ function MyToolTip(
     setOpen(false);
   };
 
-  // const handleTouchEnd: EventListener = (e) => {
-  //   e.preventDefault()
-  // };
-
   useEffect(() => {
     const cloneEle = cloneEleRef.current as HTMLButtonElement;
 
@@ -74,7 +70,6 @@ function MyToolTip(
     return () => {
       cloneEle.removeEventListener("mouseenter", handleMouseEnter);
       cloneEle.removeEventListener("mouseleave", handleMouseLeave);
-      // cloneEle.removeEventListener("touchend", handleTouchEnd);
     };
   }, []);
 
@@ -96,7 +91,9 @@ function MyToolTip(
               } as HTMLProps<HTMLButtonElement>)}
 
           {!state?.isOpen && open && (
-            <div className={`${classes.container} ${colorClasses} ${position} ${className}`}>
+            <div
+              className={`${classes.container} ${colorClasses} ${position} ${className}`}
+            >
               {content}
             </div>
           )}

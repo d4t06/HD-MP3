@@ -1,6 +1,7 @@
 import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 import { useLyricEditorContext } from "../_components/LyricEditorContext";
 import { HTMLAttributes } from "react";
+import { editLyricFormatTime } from "@/modules/lyric-editor";
 
 export default function useSlider() {
   const { currentLyric } = useEditLyricContext();
@@ -62,7 +63,7 @@ export default function useSlider() {
 
     actuallyEndRef.current = newEnd;
     if (endRefText.current) {
-      endRefText.current.textContent = `${newEnd} / ${currentLyric.end}`;
+      endRefText.current.textContent = `${editLyricFormatTime(newEnd)} / ${editLyricFormatTime(currentLyric.end)}`;
     }
     if (tempActuallyStartRef.current) {
       actuallyEndRef.current = newEnd;
@@ -78,7 +79,7 @@ export default function useSlider() {
 
     actuallyStartRef.current = newStart;
     if (startRefText.current) {
-      startRefText.current.textContent = `${currentLyric.start} / ${newStart}`;
+      startRefText.current.textContent = `${editLyricFormatTime(currentLyric.start)} / ${editLyricFormatTime(newStart)}`;
     }
   };
 

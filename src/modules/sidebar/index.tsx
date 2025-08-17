@@ -6,7 +6,7 @@ import {
   SquaresPlusIcon,
   ArrowTrendingUpIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components";
 import { useAuthContext } from "@/stores";
 import ScrollTop from "./_components/ScrollTop";
@@ -16,11 +16,6 @@ export default function Sidebar() {
 
   // hooks
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const handleNavigateToDashboard = () => {
-    navigate("/dashboard");
-  };
 
   // define skeleton
   const menuItemSkeletons = [...Array(4).keys()].map((index) => {
@@ -144,8 +139,12 @@ export default function Sidebar() {
                 </Link>
 
                 {user.role === "ADMIN" && (
-                  <Link to={"/dashboard"} target="_blank" className={`border-transparent`}>
-                    <div onClick={handleNavigateToDashboard}>
+                  <Link
+                    to={"/dashboard"}
+                    target="_blank"
+                    className={`border-transparent`}
+                  >
+                    <div>
                       <ComputerDesktopIcon />
                       <span className="">Dashboard</span>
                     </div>

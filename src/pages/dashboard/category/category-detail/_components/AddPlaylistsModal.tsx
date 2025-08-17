@@ -1,16 +1,20 @@
 import { useAuthContext } from "@/stores";
 import { useMemo, useRef } from "react";
 import {
-  Center,
   LoadingOverlay,
   Modal,
   ModalContentWrapper,
   ModalHeader,
   ModalRef,
+  NotFound,
   Tab,
 } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
-import { ArrowPathIcon, CheckIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  CheckIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import PlaylistSelectProvider, {
   usePlaylistSelectContext,
 } from "@/pages/dashboard/playlist/edit-playlist/PlaylistSelectContext";
@@ -28,6 +32,8 @@ type Props = {
 function Content({ closeModal, submit, isLoading, current }: Props) {
   const { user } = useAuthContext();
 
+  const modalRef = useRef<ModalRef>(null);
+
   const {
     playlists,
     isFetching,
@@ -37,12 +43,10 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
     tabs,
     setTab,
     tab,
-
     ...rest
   } = useSearchPlaylist();
-  const { selectedPlaylists, selectPlaylist } = usePlaylistSelectContext();
 
-  const modalRef = useRef<ModalRef>(null);
+  const { selectedPlaylists, selectPlaylist } = usePlaylistSelectContext();
 
   const { addPlaylist, isFetching: addPlaylistFetching } = useAddPlaylist();
 
@@ -85,19 +89,23 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   };
 
   const renderPlaylists = (playlists: Playlist[]) =>
-    playlists.map((p, i) => {
-      const isCurrent = current.includes(p.id);
+    playlists.length ? (
+      playlists.map((p, i) => {
+        const isCurrent = current.includes(p.id);
 
-      return (
-        <button
-          key={i}
-          onClick={() => !isCurrent && selectPlaylist(p)}
-          className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `text-[--primary-cl]` : ``} `}
-        >
-          {p.name}
-        </button>
-      );
-    });
+        return (
+          <button
+            key={i}
+            onClick={() => !isCurrent && selectPlaylist(p)}
+            className={`${classes.boxItem} ${isCurrent || selectedPlaylists.includes(p) ? `text-[--primary-cl]` : ``} `}
+          >
+            {p.name}
+          </button>
+        );
+      })
+    ) : (
+      <NotFound variant="less" />
+    );
 
   return (
     <>
@@ -113,6 +121,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
               buttonClasses="[&_button]:px-3 [&_button]:py-1/2"
               tabs={tabs}
               setTab={setTab}
+              disable={tab === "Newest"}
               tab={tab}
               render={(t) => t}
             />
@@ -147,11 +156,12 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
                 lastSubmit &&
                 rest.value == lastSubmit &&
                 !otherPlaylists.length && (
-                  <Center>
+                  <p className="mt-3 text-center">
                     <Button onClick={() => modalRef.current?.open()}>
-                      Add playlist
+                      <PlusIcon className="w-6" />
+                      <span>Add new playlist</span>
                     </Button>
-                  </Center>
+                  </p>
                 )}
               {/* </div> */}
             </div>

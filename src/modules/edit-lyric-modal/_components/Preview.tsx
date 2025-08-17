@@ -4,8 +4,16 @@ import { useLyricEditorContext } from "./LyricEditorContext";
 import { CheckIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
 export default function Preview() {
-  const { eleRefs, eventRefs, setText, mergedGrowListRef, setCut, setGrowList, text } =
-    useLyricEditorContext();
+  const {
+    eleRefs,
+    eventRefs,
+    setText,
+    mergedGrowListRef,
+    setCut,
+    setGrowList,
+    text,
+    isChangedRef,
+  } = useLyricEditorContext();
 
   const [isEditText, setIsEditText] = useState(false);
 
@@ -34,6 +42,7 @@ export default function Preview() {
     mergedGrowListRef.current = grow;
 
     setIsEditText(false);
+    isChangedRef.current = true;
   };
 
   useEffect(() => {

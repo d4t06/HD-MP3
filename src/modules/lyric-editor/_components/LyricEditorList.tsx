@@ -18,25 +18,25 @@ type Props = {
 };
 
 function useLyricEditorList() {
-  const { lyrics, isPreview } = useEditLyricContext();
+  const { lyrics, viewMode } = useEditLyricContext();
 
   const activeLyricRef = useRef<ElementRef<"p">>(null);
   const behavior = useRef<ScrollBehavior>("instant");
 
   useEffect(() => {
-    if (!activeLyricRef.current || isPreview) return;
+    if (!activeLyricRef.current || viewMode === "preview") return;
 
     scrollIntoView(activeLyricRef.current, behavior.current);
 
     behavior.current = "instant";
     if (behavior.current === "instant") behavior.current = "smooth";
-  }, [lyrics.length, isPreview]);
+  }, [lyrics.length, viewMode]);
 
   useEffect(() => {
     return () => {
       behavior.current = "instant";
     };
-  }, [isPreview]);
+  }, [viewMode]);
 
   return { activeLyricRef };
 }
@@ -53,18 +53,16 @@ export default function LyricEditorList({
     setLyrics,
     setSelectLyricIndex,
     song,
-    isPreview,
+    viewMode,
   } = useEditLyricContext();
 
   const { activeLyricRef } = useLyricEditorList();
 
   const { currentIndex, lyricRefs } = useLyric({
     audioEle,
-    isActive: isPreview,
+    isActive: viewMode !== "edit",
     lyrics,
   });
-
-  console.log(currentIndex)
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);
@@ -85,14 +83,15 @@ export default function LyricEditorList({
 
     const newLyrics = [...lyrics];
 
-    const isRemoveLastItem = newLyrics.length - 1 === index;
+    const isLast = index === lyrics.length - 1;
 
-    if (isRemoveLastItem) {
-      newLyrics.splice(index, 1);
-    } else {
+    if (index === 0) {
+      newLyrics[1].start = 0;
+    } else if (!isLast) {
       newLyrics[index - 1].end = newLyrics[index + 1].start;
-      newLyrics.splice(index, 1);
     }
+
+    newLyrics.splice(index, 1);
 
     newLyrics[newLyrics.length - 1].end = song.duration;
 
@@ -107,9 +106,11 @@ export default function LyricEditorList({
   return (
     <>
       <div
-        className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] shadow-[0_0_6px_0_rgba(0,0,0,0.15)] ${getClasses(isPreview, "justify-center")}`}
+        className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] shadow-[0_0_6px_0_rgba(0,0,0,0.15)] ${getClasses(viewMode !== "edit", "justify-center")}`}
       >
-        <div className={`w-1/2 ${getClasses(isPreview, "hidden")}`}>
+        <div
+          className={`w-1/2 ${getClasses(viewMode !== "edit", "hidden")}`}
+        >
           {!!baseLyricArr.length ? (
             <>
               {baseLyricArr.map((lyric, index) => {
@@ -139,13 +140,15 @@ export default function LyricEditorList({
           )}
         </div>
 
-        <div className={`w-1/2 ${getClasses(isPreview, "text-center")}`}>
+        <div
+          className={`w-1/2 ${getClasses(viewMode !== "edit", "text-center")}`}
+        >
           {!!lyrics?.length &&
             song &&
             lyrics.map((lyric, index) => {
               let status: LyricStatus = "coming";
 
-              if (isPreview) {
+              if (viewMode !== "edit") {
                 if (currentIndex === index) status = "active";
                 else if (index < currentIndex) status = "done";
               }
@@ -156,7 +159,7 @@ export default function LyricEditorList({
                   openModal={() => handleOpenEditLyricModal(index)}
                   seek={handleSeek}
                   removeLyric={() => removeLyric(index)}
-                  isPreview={isPreview}
+                  viewMode={viewMode}
                   lyric={lyric}
                   status={status}
                   activeColor={"text-[#ffed00]"}

@@ -29,6 +29,7 @@ export default function usePlaylistAction() {
     favoritePlaylists,
     setOwnPlaylists,
     shouldFetchFavoritePlaylists,
+    shouldFetchOwnPlaylists
   } = useSongContext();
 
   // state
@@ -130,25 +131,19 @@ export default function usePlaylistAction() {
             msg: ">>> api: update playlist doc",
           });
 
-          const newPlaylists = [...ownPlaylists];
-          const index = newPlaylists.findIndex((p) => p.id === playlist.id);
+          shouldFetchOwnPlaylists.current = true
 
-          if (index !== -1) {
-            newPlaylists[index] = newPlaylist;
-            setOwnPlaylists(newPlaylists);
+          // const newPlaylists = [...ownPlaylists];
+          // const index = newPlaylists.findIndex((p) => p.id === playlist.id);
 
+          // if (index !== -1) {
+            // newPlaylists[index] = newPlaylist;
+            // setOwnPlaylists(newPlaylists);
+
+          // }
             if (isInLikeList) {
               shouldFetchFavoritePlaylists.current = true;
-
-              // const newFavoritePlaylists = [...favoritePlaylists];
-              // const index = newFavoritePlaylists.findIndex(
-              //   (p) => p.id === playlist.id,
-              // );
-
-              // newFavoritePlaylists[index] = newPlaylist;
-              // setFavoritePlaylists(newFavoritePlaylists);
             }
-          }
 
           // eliminate updated_at field otherwise cause error
           // or get new doc of playlist

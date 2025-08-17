@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useLyricEditorContext } from "../_components/LyricEditorContext";
 import { getWordsRatio } from "@/utils/getWordsRatio";
 import { mergeGrow } from "@/utils/mergeGrow";
+import { editLyricFormatTime } from "@/modules/lyric-editor";
 
 export default function useEditLyricModalSideEffect() {
   const { selectLyricIndex, currentLyric } = useEditLyricContext();
@@ -59,7 +60,7 @@ export default function useEditLyricModalSideEffect() {
       actuallyStartRef.current = currentLyric?.tune
         ? currentLyric.tune.start
         : currentLyric.start;
-      startRefText.current.innerText = `${currentLyric.start} / ${actuallyStartRef.current}`;
+      startRefText.current.innerText = `${editLyricFormatTime(currentLyric.start)} / ${editLyricFormatTime(actuallyStartRef.current)}`;
 
       startTimeRangeRef.current.max = currentLyric.end + "";
       startTimeRangeRef.current.value = actuallyStartRef.current + "";
@@ -67,7 +68,7 @@ export default function useEditLyricModalSideEffect() {
       actuallyEndRef.current = currentLyric?.tune
         ? currentLyric.tune.end
         : currentLyric.end;
-      endRefText.current.innerText = `${actuallyEndRef.current} / ${currentLyric.end}`;
+      endRefText.current.innerText = `${editLyricFormatTime(actuallyEndRef.current)} / ${editLyricFormatTime(currentLyric.end)}`;
 
       endTimeRangeRef.current.max = currentLyric.end + "";
       endTimeRangeRef.current.value = actuallyEndRef.current + "";

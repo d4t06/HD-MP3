@@ -7,6 +7,8 @@ import {
   useState,
 } from "react";
 
+export type ViewMode = "edit" | "preview" | "import";
+
 const useEditLyric = () => {
   const [song, setSong] = useState<Song>();
   const [baseLyric, setBaseLyric] = useState<string>("");
@@ -14,8 +16,10 @@ const useEditLyric = () => {
   const [lyrics, setLyrics] = useState<Lyric[]>([]);
   const [isFetching, setIsFetching] = useState(false);
   const [isChanged, setIsChanged] = useState(false);
-  const [isPreview, setIsPreview] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("edit");
   const [selectLyricIndex, setSelectLyricIndex] = useState<number>();
+
+  // const [isImportLyric, setIsImportLyric] = useState(false);
 
   const start = useRef(0);
 
@@ -51,8 +55,12 @@ const useEditLyric = () => {
     selectLyricIndex,
     setSelectLyricIndex,
     currentLyric,
-    isPreview,
-    setIsPreview,
+    viewMode,
+    setViewMode,
+    // isPreview,
+    // setIsPreview,
+    // isImportLyric,
+    // setIsImportLyric,
   };
 };
 

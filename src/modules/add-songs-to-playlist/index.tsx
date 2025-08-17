@@ -4,6 +4,7 @@ import {
   LoadingOverlay,
   ModalContentWrapper,
   ModalHeader,
+  NotFound,
   Tab,
 } from "@/components";
 import { Button, Loading, SearchBar } from "@/pages/dashboard/_components";
@@ -44,19 +45,23 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
   };
 
   const renderSongs = (songs: Song[]) =>
-    songs.map((s, i) => {
-      const isCurrent = current.includes(s.id);
+    songs.length ? (
+      songs.map((s, i) => {
+        const isCurrent = current.includes(s.id);
 
-      return (
-        <button
-          key={i}
-          onClick={() => selectSong(s)}
-          className={`${classes.songItem} ${isCurrent || !!selectedSongs.find((song) => song.id === s.id) ? `text-[--primary-cl]` : ``} `}
-        >
-          {s.name}
-        </button>
-      );
-    });
+        return (
+          <button
+            key={i}
+            onClick={() => selectSong(s)}
+            className={`${classes.songItem} ${isCurrent || !!selectedSongs.find((song) => song.id === s.id) ? `text-[--primary-cl]` : ``} `}
+          >
+            {s.name}
+          </button>
+        );
+      })
+    ) : (
+      <NotFound variant="less" />
+    );
 
   return (
     <>
@@ -71,6 +76,7 @@ function Content({ closeModal, submit, isLoading, current }: Props) {
               buttonClasses="[&_button]:px-3 [&_button]:py-1/2"
               tabs={tabs}
               setTab={setTab}
+              disable={tab === 'Newest'}
               tab={tab}
               render={(t) => t}
             />

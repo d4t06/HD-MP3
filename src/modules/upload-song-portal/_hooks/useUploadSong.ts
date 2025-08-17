@@ -137,26 +137,46 @@ export default function useUploadSongs() {
         const fileIndex = fileIndexesNeeded[index];
         const blob = imageBlobList[index];
 
+        let uploadImageProcess:
+          | ReturnType<typeof optimizeAndGetHashImage>
+          | undefined = undefined;
+
         const targetSongData = { ...processSongsList[index] };
 
-        const { fileId, url } = await uploadFile({
+        // upload song file
+        const uploadSongProcess = uploadFile({
           file: fileLists[fileIndex],
           folder: "/songs/",
-          msg: ">>> api: upload song file",
+          msg: "upload song file",
         });
 
-        if (blob) {
-          const newSongData = await optimizeAndGetHashImage({
+        // upload image file
+        if (blob)
+          uploadImageProcess = optimizeAndGetHashImage({
             blob,
           });
 
-          Object.assign(targetSongData, newSongData);
-        }
+        const [resImageData, { fileId, url }] = await Promise.all([
+          uploadImageProcess,
+          uploadSongProcess,
+        ]);
 
+        // update song file data
         Object.assign(targetSongData, {
           song_file_id: fileId,
           song_url: url,
         });
+
+        // update image file data
+        if (resImageData) {
+          const songImageData: Partial<SongSchema> = {
+            image_url: resImageData.image_url,
+            image_file_id: resImageData.image_file_id,
+            blurhash_encode: resImageData.blurhash_encode,
+          };
+
+          Object.assign(targetSongData, songImageData);
+        }
 
         const docRef = await myAddDoc({
           collectionName: "Songs",
@@ -178,7 +198,7 @@ export default function useUploadSongs() {
 
         setUploadingSongs((prev) => {
           const rest = [...prev];
-          rest.shift;
+          rest.shift();
 
           return rest;
         });

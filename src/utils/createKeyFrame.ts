@@ -14,7 +14,8 @@ export default function createKeyFrame(
 
   let keyFrame = `@keyframes ${name}{0%{width:0%}`;
 
-  if (!growList.length) {
+const isFoundedZero = growList.findIndex(i => !i) !== -1
+  if (isFoundedZero) {
     keyFrame += "100%{width:100%}}";
     style.innerText = keyFrame;
 

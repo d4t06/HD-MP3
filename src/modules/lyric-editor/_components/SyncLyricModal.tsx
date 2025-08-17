@@ -37,27 +37,31 @@ export default function SyncLyricModal({ closeModal }: Props) {
         }
       }
 
-      // if (time > 0) {
-      //   // inValid
-      //   const isOverUp = lyrics[lyrics.length - 1].start + time > song.duration;
-      //   if (isOverUp) {
-      //     setErrorToast("Invalid number");
-      //     return;
-      //   }
-      // }
-
       newLyrics.forEach((_item, index) => {
         if (index >= currentLyricIndex) {
-          newLyrics[index].start = +(newLyrics[index].start + time).toFixed(1);
-          newLyrics[index].end = +(newLyrics[index].end + time).toFixed(1);
+          const newTimeData = {
+            start: +(newLyrics[index].start + time).toFixed(1),
+            end: +(newLyrics[index].end + time).toFixed(1),
+          };
+
+          newLyrics[index] = {
+            ...newLyrics[index],
+            ...newTimeData,
+            tune: { ...newLyrics[index].tune, ...newTimeData },
+          };
         }
       });
 
-      if (currentLyricIndex > 0)
+      if (currentLyricIndex > 0) {
         newLyrics[currentLyricIndex - 1].end =
           newLyrics[currentLyricIndex].start;
 
-      lyrics[lyrics.length - 1].end = song.duration;
+        newLyrics[currentLyricIndex - 1].tune.end =
+          newLyrics[currentLyricIndex].start;
+      }
+
+      newLyrics[lyrics.length - 1].end = song.duration;
+      newLyrics[lyrics.length - 1].tune.end = song.duration;
 
       setLyrics(newLyrics);
 

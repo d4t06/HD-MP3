@@ -1,7 +1,7 @@
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import useLyric from "../_hooks/useSongLyric";
 import { usePlayerContext } from "./PlayerContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import useGetLyric from "../_hooks/useGetLyric";
 
 type Props = {
@@ -15,51 +15,65 @@ export default function SongLyric({ audioEle }: Props) {
   const mainLyricRef = useRef<HTMLParagraphElement | null>(null);
   const subLyricRef = useRef<HTMLParagraphElement | null>(null);
 
+  const spaceFromTop = useRef(40);
+
   const { currentIndex } = useLyric({
     audioEle,
     lyrics,
     isActive: canPlay,
   });
 
-  const renderItem = () => {
-    return (
-      <>
-        <p
-          key={currentIndex + "1"}
-          className="transition-transform origin-bottom-left duration-[.4s] translate-y-[40px]"
-          ref={mainLyricRef}
-        >
-          {lyrics[currentIndex].text}
-        </p>
-        {lyrics[currentIndex + 1] && (
+  const renderItem = useMemo(() => {
+    if (lyrics[currentIndex])
+      return (
+        <>
           <p
-            key={currentIndex + "11"}
-            ref={subLyricRef}
-            className="mt-3 transition-transform duration-[.4s] opacity-[.4] translate-y-[-10px]"
+            key={currentIndex + "1"}
+            style={{
+              transform: `translateY(calc(${spaceFromTop.current}px)`,
+            }}
+            className={`transition-transform origin-bottom-left duration-[.4s]`}
+            ref={mainLyricRef}
           >
-            {lyrics[currentIndex + 1].text}
+            {lyrics[currentIndex].text}
           </p>
-        )}
-      </>
-    );
-  };
+          {lyrics[currentIndex + 1] && (
+            <p
+              key={currentIndex + "11"}
+              ref={subLyricRef}
+              className="mt-3 transition-transform duration-[.4s] opacity-[.4] translate-y-[-10px]"
+            >
+              {lyrics[currentIndex + 1].text}
+            </p>
+          )}
+        </>
+      );
+
+    return <></>;
+  }, [currentIndex, lyrics]);
 
   const classes = {
     container:
-      "no-scrollbar leading-[1.1] [&_p]:w-[70%] [&_p]:select-none [&_p]:font-bold pt-4",
+      "no-scrollbar leading-[1.1] [&_p]:w-[70%] [&_p]:select-none [&_p]:font-bold pt-3",
   };
 
   useEffect(() => {
     setTimeout(() => {
-      if (mainLyricRef.current)
+      if (mainLyricRef.current) {
         Object.assign(mainLyricRef.current.style, {
           transform: "scale(1.3) translateY(0px)",
         });
 
-      if (subLyricRef.current)
+        spaceFromTop.current = +(
+          mainLyricRef.current.offsetHeight * 1.3
+        ).toFixed(1);
+      }
+
+      if (subLyricRef.current) {
         Object.assign(subLyricRef.current.style, {
           transform: "translateY(0px)",
         });
+      }
     }, 30);
   }, [currentIndex, lyrics]);
 
@@ -71,7 +85,7 @@ export default function SongLyric({ audioEle }: Props) {
         </div>
       )}
 
-      {!isFetching && <>{lyrics.length ? renderItem() : <div>...</div>}</>}
+      {!isFetching && <>{lyrics.length ? renderItem : <div>...</div>}</>}
     </div>
   );
 }

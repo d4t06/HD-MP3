@@ -14,6 +14,15 @@ type Modal = "edit-lyric";
 
 export type LyricStatus = "active" | "done" | "coming";
 
+export const editLyricFormatTime = (time: number) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+
+  const [_, tenths = '0'] = time.toString().split(".");
+
+  return `${minutes}:${seconds.toString().padStart(2, "0")},${tenths}`;
+};
+
 function Content({ children }: Props) {
   // const { theme } = useThemeContext();
 

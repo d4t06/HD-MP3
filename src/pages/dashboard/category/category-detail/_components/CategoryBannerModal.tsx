@@ -1,8 +1,15 @@
-import { Image, ModalContentWrapper, ModalHeader } from "@/components";
+import {
+  ChooseImageModal,
+  Image,
+  Modal,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+} from "@/components";
 import useCategoryBannerModal from "../_hooks/useCategoryBannerModal";
 import { Button } from "@/pages/dashboard/_components";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import { ChangeEvent, useRef } from "react";
+import { useRef } from "react";
 import { useReadCopiedImage } from "@/hooks";
 
 type Props = {
@@ -17,24 +24,11 @@ export default function CategoryBannerModal({ closeModal }: Props) {
 
   useReadCopiedImage({ setImageFileFromParent: setImageFile });
 
-  const labelRef = useRef<HTMLLabelElement>(null);
-
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length) setImageFile(e.target.files[0]);
-  };
+  const modalRef = useRef<ModalRef>(null);
 
   return (
     <>
       <ModalContentWrapper className="w-[500px]">
-        <label ref={labelRef} htmlFor="image-input" className="hidden"></label>
-        <input
-          onChange={handleInputChange}
-          id="image-input"
-          type="file"
-          accept="image"
-          className="hidden"
-        />
-
         <ModalHeader closeModal={closeModal} title="Category banner" />
 
         <div className="overflow-auto">
@@ -46,7 +40,7 @@ export default function CategoryBannerModal({ closeModal }: Props) {
             <Button
               className="p-1"
               size={"clear"}
-              onClick={() => labelRef.current?.click()}
+              onClick={() => modalRef.current?.open()}
             >
               <PhotoIcon className="w-6" />
             </Button>
@@ -59,6 +53,14 @@ export default function CategoryBannerModal({ closeModal }: Props) {
           </p>
         </div>
       </ModalContentWrapper>
+
+      <Modal variant="animation" ref={modalRef}>
+        <ChooseImageModal
+          modalRef={modalRef}
+          setImageFile={setImageFile}
+          title="Category banner"
+        />
+      </Modal>
     </>
   );
 }

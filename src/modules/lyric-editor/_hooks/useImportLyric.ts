@@ -5,7 +5,7 @@ import { converSrt } from "./converSrt";
 
 export default function useImportLyric() {
   const { setErrorToast } = useToastContext();
-  const { setLyrics, setIsChanged, setIsPreview } = useEditLyricContext();
+  const { setLyrics, setIsChanged, setViewMode } = useEditLyricContext();
 
   const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     if (!e.target.files) return;
@@ -36,7 +36,8 @@ export default function useImportLyric() {
         }
 
         setIsChanged(true);
-        setIsPreview(true);
+        // setIsPreview(true);
+        setViewMode("import");
       } catch (error: any) {
         console.log(error);
         setErrorToast(error.message || "");

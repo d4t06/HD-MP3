@@ -1,8 +1,8 @@
-import { formatTime } from "@/utils/appHelpers";
 import { PencilSquareIcon } from "@heroicons/react/20/solid";
 import { Ref, forwardRef } from "react";
-import { LyricStatus } from "..";
+import { LyricStatus, editLyricFormatTime } from "..";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { ViewMode } from "./EditLyricContext";
 
 type Props = {
   lyric: Lyric;
@@ -10,13 +10,15 @@ type Props = {
   removeLyric: () => void;
   isLast: boolean;
   openModal: () => void;
-  isPreview: boolean;
+  viewMode: ViewMode;
   activeColor: string;
   status: LyricStatus;
 };
 
+
+
 function AddLyricItem(
-  { lyric, openModal, seek, isLast, status, isPreview, removeLyric }: Props,
+  { lyric, openModal, seek, isLast, status, viewMode, removeLyric }: Props,
   ref: Ref<HTMLParagraphElement>,
 ) {
   const getClass = () => {
@@ -32,24 +34,26 @@ function AddLyricItem(
     <>
       <div className="pt-[10px] last:mb-[30vh]">
         <div
-          className={`flex ${isPreview ? "justify-center" : ""}  space-x-1.5 mb-[3px]`}
+          className={`flex ${viewMode !== "edit" ? "justify-center" : ""}  space-x-1.5 mb-[3px]`}
         >
           <button
             className={`hover:underline item-info`}
             onClick={() => seek(lyric.start)}
           >
-            {formatTime(+lyric.start)}
+            {editLyricFormatTime(+lyric.start)}
           </button>
 
-          {!isPreview && (
-            <button onClick={openModal} className="">
-              <PencilSquareIcon className="w-5" />
-            </button>
+          <button onClick={openModal} className="">
+            <PencilSquareIcon className="w-5" />
+          </button>
+
+          {viewMode === "import" && (
+            <>
+              <button onClick={removeLyric} className="">
+                <TrashIcon className="w-5" />
+              </button>
+            </>
           )}
-
-          <button onClick={removeLyric} className="">
-            <TrashIcon className="w-5" />
-          </button>
         </div>
 
         <p
@@ -64,7 +68,7 @@ function AddLyricItem(
             className={`hover:underline pt-[10px]`}
             onClick={() => seek(lyric.end)}
           >
-            {formatTime(+lyric.end)}
+            {editLyricFormatTime(+lyric.end)}
           </button>
         )}
       </div>

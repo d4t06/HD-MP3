@@ -12,7 +12,6 @@ export default function usePlayCount({ audioEle }: Props) {
   const { currentSongData, currentQueueId } = useSelector(selectSongQueue);
 
   const { pushRecentSong } = usePushRecentSong();
-
   const prevQueueId = useRef("");
 
   const handlePlaying = async () => {
@@ -20,14 +19,14 @@ export default function usePlayCount({ audioEle }: Props) {
 
     const songId = currentSongData.song.id;
 
-    pushRecentSong(currentSongData.song);
-
     // only system songs
     if (!currentSongData.song.is_official) return;
 
     if (prevQueueId.current !== currentQueueId) {
       prevQueueId.current = currentQueueId;
+
       increaseSongPlay(songId);
+      pushRecentSong(currentSongData.song);
     }
   };
 

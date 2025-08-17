@@ -13,7 +13,7 @@ export default function Sliders() {
 	if (!currentLyric) return <></>;
 
 	return (
-		<div className="[&>div]:flex [&>div]:space-x-2 space-y-3 [&_label]:w-[150px] [&_label]:flex-shrink-0">
+		<div className="[&>div]:flex [&>div]:space-x-2 space-y-3 [&_label]:w-[160px] [&_label]:flex-shrink-0">
 			<div>
 				<Label htmlFor="start">
 					Start:&nbsp;

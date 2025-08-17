@@ -71,6 +71,7 @@ export default function useSearchPlaylist() {
       e.preventDefault();
 
       setIsFetching(true);
+      setTab("Result");
 
       const q = getSearchQuery(
         playlistCollectionRef,

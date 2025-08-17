@@ -1,4 +1,4 @@
-import { Ref, forwardRef, useImperativeHandle } from "react";
+import { Ref, forwardRef, useImperativeHandle, useRef } from "react";
 import {
   ArrowPathIcon,
   BackwardIcon,
@@ -11,10 +11,11 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import useAudioControl from "@/hooks/useAudioControl";
-import { AudioSetting, Button } from "@/components";
+import { AudioSetting, Button, Modal, ModalRef } from "@/components";
 import { useLyricEditorAction } from "../_hooks/useLyricEditorAction";
 import MenuBtn from "./MenuBtn";
 import { useEditLyricContext } from "./EditLyricContext";
+import SyncLyricModal from "./SyncLyricModal";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -30,13 +31,9 @@ function LyricEditorControl(
   { audioEle }: Props,
   ref: Ref<LyricEditorControlRef>,
 ) {
-  // const { theme, themeClass } = useThemeContext();
-  const { lyrics, isPreview, setIsPreview } = useEditLyricContext();
+  const { lyrics, viewMode, setViewMode } = useEditLyricContext();
 
-  // const PROGRESS_LINE_BG = themeClass(
-  //   "rgba(0,0,0,.15)",
-  //   "rgba(255,255,255,.15)",
-  // );
+  const modalRef = useRef<ModalRef>(null);
 
   const {
     backward,
@@ -69,12 +66,6 @@ function LyricEditorControl(
     handlePlayPause();
   };
 
-  const classes = {
-    button: `mt-2 ml-2 space-x-1 rounded-full`,
-    icon: "w-6",
-    arrow: `before:content-[''] before:absolute before:-translate-x-1/2 before:left-[27px]  before:bottom-[calc(100%-1px)] before:z-[-1] before:border-8 before:border-transparent before:border-b-amber-800`,
-  };
-
   const renderPlayPausedButton = () => {
     switch (status) {
       case "error":
@@ -92,68 +83,71 @@ function LyricEditorControl(
 
   return (
     <>
-      <div className="flex items-start flex-wrap -mt-2 -ml-2 [&_button]:outline-none">
+      <div className="flex items-start flex-wrap -mt-2 -ml-2 [&_svg]:w-6 [&_button]:outline-none [&_button]:ml-2 [&_button]:mt-2">
         <AudioSetting
           className="mt-2 ml-2"
           audioEle={audioEle}
           postLocalStorageKey="edit_lyric"
         />
 
-        <Button
-          className={classes.button}
-          color="primary"
-          onClick={_handlePlayPaused}
-        >
+        <Button color="primary" onClick={_handlePlayPaused}>
           {renderPlayPausedButton()}
         </Button>
-        <Button
-          disabled={!isEnableAddBtn || isPreview}
-          onClick={addLyric}
-          className={classes.button}
-          color="primary"
-        >
-          <PlusIcon className="w-6" />
-          <span>Add</span>
-        </Button>
-        <Button
-          disabled={!lyrics.length || isPreview}
-          onClick={removeLyric}
-          className={classes.button}
-          color="primary"
-        >
-          <MinusIcon className="w-6" />
-          <span>Remove</span>
-        </Button>
 
-        <Button
-          onClick={() => backward(2)}
-          className={classes.button}
-          color="primary"
-        >
-          <BackwardIcon className="w-6" />
-          <span>2s</span>
-        </Button>
-        <Button
-          onClick={() => forward(2)}
-          className={classes.button}
-          color="primary"
-        >
-          <span>2s</span>
-          <ForwardIcon className="w-6" />
-        </Button>
+        {viewMode === "edit" && (
+          <>
+            <Button
+              disabled={!isEnableAddBtn}
+              onClick={addLyric}
+              color="primary"
+            >
+              <PlusIcon />
+              <span>Add</span>
+            </Button>
+            <Button
+              disabled={!lyrics.length}
+              onClick={removeLyric}
+              color="primary"
+            >
+              <MinusIcon />
+              <span>Remove</span>
+            </Button>
 
-        <Button
-          disabled={!lyrics.length}
-          onClick={() => {
-            setIsPreview(!isPreview);
-            pause();
-          }}
-          className={classes.button}
-          color="primary"
-        >
-          <EyeIcon className="w-6" />
-          <span>{!isPreview ? "Preview" : "Edit"}</span>
-        </Button>
+            <Button onClick={() => backward(2)} color="primary">
+              <BackwardIcon />
+              <span>2s</span>
+            </Button>
+            <Button onClick={() => forward(2)} color="primary">
+              <span>2s</span>
+              <ForwardIcon />
+            </Button>
+          </>
+        )}
+
+        {viewMode !== "import" && (
+          <Button
+            disabled={!lyrics.length}
+            onClick={() => {
+              viewMode === "edit"
+                ? setViewMode("preview")
+                : setViewMode("edit");
+              pause();
+            }}
+            color="primary"
+          >
+            <EyeIcon />
+            <span>{viewMode === "preview" ? "Preview" : "Edit"}</span>
+          </Button>
+        )}
+
+        {viewMode === "import" && (
+          <>
+            <Button color="primary" onClick={() => modalRef.current?.open()}>
+              <ArrowPathIcon />
+              <span>Sync lyric</span>
+            </Button>
+          </>
+        )}
 
         <div className="ml-auto">
           <MenuBtn pause={pause} />
@@ -175,6 +169,10 @@ function LyricEditorControl(
           00:00
         </div>
       </div>
+
+      <Modal variant="animation" ref={modalRef}>
+        <SyncLyricModal closeModal={() => modalRef.current?.close()} />
+      </Modal>
     </>
   );
 }

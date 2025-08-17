@@ -10,6 +10,7 @@ import {
 function useSong() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [currentIndex, setCurrentIndex] = useState(999);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const firstTimeSongLoaded = useRef(true);
 
@@ -18,6 +19,8 @@ function useSong() {
   return {
     currentSong,
     songs,
+    isPlaying,
+    setIsPlaying,
     setSongs,
     currentIndex,
     setCurrentIndex,
