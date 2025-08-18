@@ -9,6 +9,7 @@ import Footer from "@/layout/primary-layout/_components/Footer";
 import SingerList from "@/components/ui/SingerList";
 import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
 import { SongSkeleton } from "@/components/skeleton";
+import { pushRecentSearch } from "@/modules/search/_hooks/pushRecentSearch";
 
 export default function SearchResultPage() {
   const { isOnMobile } = useThemeContext();
@@ -21,7 +22,15 @@ export default function SearchResultPage() {
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
     getRelatigeSongs(song);
+
+    pushRecentSearch({
+      variant: "song",
+      item: song,
+    });
   };
+
+  const isNotFoundAtAll =
+    !result.playlists.length && !result.singers.length && !result.songs.length;
 
   const getShowWhen = (t: typeof tab) => {
     return tab === "All" || tab === t ? "" : "hidden";
@@ -42,6 +51,7 @@ export default function SearchResultPage() {
             tabs={tabs}
             render={(t) => t}
             tab={tab}
+            disable={isNotFoundAtAll}
             setTab={(t) => {
               setTab(t);
               setIsFetching(true);
@@ -83,6 +93,12 @@ export default function SearchResultPage() {
                 whenEmpty={tab !== "Playlist" ? <></> : undefined}
                 loading={isFetching}
                 playlists={result.playlists}
+                onClick={(p) =>
+                  pushRecentSearch({
+                    variant: "playlist",
+                    item: p,
+                  })
+                }
               />
             </div>
 
@@ -97,11 +113,19 @@ export default function SearchResultPage() {
                 singers={result.singers}
                 loading={isFetching}
                 skeNumber={2}
+                onClick={(s) =>
+                  pushRecentSearch({
+                    variant: "singer",
+                    item: s,
+                  })
+                }
                 whenEmpty={tab === "All" ? <></> : undefined}
               />
             </div>
           </div>
         </SongSelectProvider>
+
+        {isNotFoundAtAll && <NotFound />}
       </PageWrapper>
 
       <Footer />

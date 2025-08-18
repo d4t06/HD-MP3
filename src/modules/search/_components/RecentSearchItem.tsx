@@ -14,7 +14,7 @@ type Props = {
 };
 
 const classes = {
-	itemContainer: `w-full sm:group/container flex flex-row rounded-md justify-between py-2 px-3 last:border-none hover:bg-white/10`,
+	itemContainer: `w-full hover:bg-[--a-5-cl] items-start sm:group/container flex flex-row rounded-md py-2 px-3 last:border-none`,
 };
 
 function ContentItem({ item }: Props) {
@@ -23,19 +23,20 @@ function ContentItem({ item }: Props) {
 			to={`/${item.variant}/${item.item.id}`}
 			className={`${classes.itemContainer}`}
 		>
-			<div className="w-10 h-10">
+			<div className="w-[54px] h-[54px]">
 				<Image
 					src={item.item.image_url}
 					blurHashEncode={item.item.blurhash_encode}
+					className={`${item.variant === 'singer' ? 'rounded-full' : 'rounded'}`}
 				/>
 			</div>
 
-			<div className="ml-10">
+			<div className="ml-[10px]">
 				<h5 className={`line-clamp-1 font-medium overflow-hidden text-sm`}>
 					{item.item.name}
 				</h5>
 
-				<p className="opacity-[.7] line-clamp-1 text-xs">{item.variant}</p>
+				<p className="item-info line-clamp-1 text-sm">{item.variant.charAt(0).toLocaleUpperCase()+item.variant.slice(1)}</p>
 			</div>
 		</Link>
 	);
@@ -47,7 +48,7 @@ export default function RecentSearchItem({ item }: Props) {
 	const { currentSongData } = useSelector(selectSongQueue);
 
 	const { handleSetSong } = useSetSong({ variant: "search-bar" });
-  const { getRelatigeSongs } = useGetRelativeSongs();
+	const { getRelatigeSongs } = useGetRelativeSongs();
 
 	const _handleSetSong = (song: Song) => {
 		handleSetSong(song.queue_id, [song]);
@@ -61,8 +62,8 @@ export default function RecentSearchItem({ item }: Props) {
 				return (
 					<SongItem
 						isHasCheckBox={false}
-						isLiked={user?.liked_song_ids.includes(item.item.id) || false}
-						variant="recent-song"
+						isLiked={user?.liked_song_ids.includes(item.item.id) || null}
+						variant="system-song"
 						index={0}
 						active={item.item.id === currentSongData?.song.id}
 						onClick={() => _handleSetSong(item.item)}

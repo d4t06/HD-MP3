@@ -1,5 +1,5 @@
 import { db } from "@/firebase";
-import { useToastContext } from "@/stores";
+import { useAuthContext, useSongContext, useToastContext } from "@/stores";
 import {
   collection,
   doc,
@@ -15,6 +15,9 @@ type Props = {
 };
 
 export function useLyricEditorAction({ audioEle, isClickPlay }: Props) {
+  const { user } = useAuthContext();
+  const { shouldFetchUserSongs, shouldFetchFavoriteSongs, lastDoc } =
+    useSongContext();
   const {
     start,
     baseLyricArr,
@@ -38,7 +41,7 @@ export function useLyricEditorAction({ audioEle, isClickPlay }: Props) {
     const currentTime = +audioEle.currentTime.toFixed(1);
     if (start.current === currentTime) return; // prevent double click
 
-    const text = baseLyricArr[lyrics.length];
+    const text = baseLyricArr[lyrics.length].trim();
     const lyric = initLyricObject({
       start: start.current,
       end: currentTime,
@@ -110,6 +113,12 @@ export function useLyricEditorAction({ audioEle, isClickPlay }: Props) {
       }
 
       await batch.commit();
+
+      shouldFetchUserSongs.current = true;
+      lastDoc.current = undefined;
+
+      const isLiked = user?.liked_song_ids.includes(song.id);
+      if (isLiked) shouldFetchFavoriteSongs.current = true;
 
       setSuccessToast("Edit lyric successful");
       setIsChanged(false);

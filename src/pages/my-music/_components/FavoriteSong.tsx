@@ -5,7 +5,7 @@ import CheckedBar from "@/modules/check-bar";
 import useGetMyMusicSong from "../_hooks/useGetMyMusicSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useAuthContext, useSongContext } from "@/stores";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { SongSkeleton } from "@/components/skeleton";
 
 export default function FavoriteSongList() {
@@ -15,6 +15,19 @@ export default function FavoriteSongList() {
   // hooks
   const { handleSetSong } = useSetSong({ variant: "songs" });
   const { getSongs, isFetching } = useGetMyMusicSong({ tab: "favorite" });
+
+  const orderedSongs = useMemo(() => {
+    if (!user?.liked_song_ids.length) return [];
+
+    const songs: Song[] = [];
+
+    user.liked_song_ids.forEach((id) => {
+      const song = favoriteSongs.find((s) => s.id === id);
+      if (song) songs.push(song);
+    });
+
+    return songs;
+  }, [favoriteSongs, user?.liked_song_ids]);
 
   const _handleSetSong = (s: Song) => {
     handleSetSong(s.queue_id, favoriteSongs);
@@ -32,9 +45,7 @@ export default function FavoriteSongList() {
         {isFetching ? (
           <Skeleton className="h-[20px] w-[90px]" />
         ) : (
-          <p className="font-[500] opacity-[.5]">
-            {favoriteSongs.length} Songs
-          </p>
+          <p className="font-[500] opacity-[.5]">{orderedSongs.length} Songs</p>
         )}
       </CheckedBar>
 

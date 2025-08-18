@@ -110,8 +110,12 @@ function SongItem({
               alt=""
               className={`"h-[18px] w-[18px] ${getHidden(!active)}`}
             />
-            <button onClick={onClick} className={`${getHidden(active)} `}>
-              <PlayIcon className="w-[24px] text-white" />
+            <button
+              type="button"
+              onClick={onClick}
+              className={` ${getHidden(active)} `}
+            >
+              <PlayIcon className=" w-[24px] text-white" />
             </button>
           </div>
         );
@@ -144,7 +148,7 @@ function SongItem({
       case "recent-song":
         return "text-xs";
       default:
-        return "text-xs";
+        return "text-sm";
     }
   };
 
@@ -195,7 +199,7 @@ function SongItem({
             )}
           </h5>
           <div
-            className={`${props.variant === 'queue-song' && active ? '' : 'item-info'} font-medium line-clamp-1 ${getSongSingerSize()}`}
+            className={`${props.variant === "queue-song" && active ? "" : "item-info"} font-medium line-clamp-1 ${getSongSingerSize()}`}
           >
             {song.singers.map((s, i) =>
               s.id ? (

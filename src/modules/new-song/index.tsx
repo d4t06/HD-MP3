@@ -32,14 +32,16 @@ export default function NewSong(props: Props) {
         </div>
 
         <SongSelectProvider>
-          {isFetching && <SongSkeleton />}
-          {!isFetching && (
-            <SongList
-              isHasCheckBox={false}
-              songs={currentSongs}
-              setSong={(s) => _handleSetSong(s)}
-            />
-          )}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mt-3">
+            {isFetching && <SongSkeleton hasCheckBox={false} />}
+            {!isFetching && (
+              <SongList
+                isHasCheckBox={false}
+                songs={currentSongs}
+                setSong={(s) => _handleSetSong(s)}
+              />
+            )}
+          </div>
         </SongSelectProvider>
 
         <div className="text-center mt-5 border-none">

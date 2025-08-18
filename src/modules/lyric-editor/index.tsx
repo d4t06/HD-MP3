@@ -4,7 +4,6 @@ import LyricEditorControl, {
   LyricEditorControlRef,
 } from "./_components/LyricEditorControl";
 import LyricEditorList from "./_components/LyricEditorList";
-// import { useThemeContext } from "@/stores";
 import { Center, Modal, ModalRef, Button, Title } from "@/components";
 import useLyricEditor from "./_hooks/useLyricEditor";
 import EditLyricModal from "../edit-lyric-modal";
@@ -18,9 +17,9 @@ export const editLyricFormatTime = (time: number) => {
   const minutes = Math.floor(time / 60);
   const seconds = Math.floor(time % 60);
 
-  const [_, tenths = '0'] = time.toString().split(".");
+  const [_, tenths = "0"] = time.toString().split(".");
 
-  return `${minutes}:${seconds.toString().padStart(2, "0")},${tenths}`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")},${tenths.slice(0, 1)}`;
 };
 
 function Content({ children }: Props) {
@@ -60,7 +59,10 @@ function Content({ children }: Props) {
           <>
             {children}
 
-            <Title className="line-clamp-1 flex-shrink-0" title={`Edit lyric - ${song.name}`} />
+            <Title
+              className="line-clamp-1 flex-shrink-0"
+              title={`Edit lyric - ${song.name}`}
+            />
 
             <div className="mt-3">
               {audioRef.current && (

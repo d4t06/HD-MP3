@@ -13,7 +13,7 @@ export default function useExportLyric() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `lyric_${convertToEn(song.name)}.${type}`;
+    a.download = `${convertToEn(song.name)}.${type}`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -26,6 +26,9 @@ export default function useExportLyric() {
 
       case "srt": {
         let jrc = "";
+
+        console.log(lyrics)
+        return;
 
         const getTime = (time: number) => {
           const minutes = Math.floor(time / 60);

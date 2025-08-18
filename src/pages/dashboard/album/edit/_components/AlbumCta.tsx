@@ -62,7 +62,7 @@ export default function AlbumCta() {
         return (
           <ConfirmModal
             loading={isFetching}
-            label={"Delete playlist ?"}
+            label={"Delete album ?"}
             callback={() => handlePlaylistAction({ variant: "delete" })}
             closeModal={closeModal}
           />

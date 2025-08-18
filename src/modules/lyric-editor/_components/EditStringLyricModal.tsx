@@ -1,14 +1,19 @@
-import { Button, ModalContentWrapper, ModalHeader } from "@/components";
-import { ElementRef, useEffect, useRef, useState } from "react";
+import {
+  Button,
+  ModalContentWrapper,
+  ModalHeader,
+  ModalRef,
+} from "@/components";
+import { ElementRef, RefObject, useEffect, useRef, useState } from "react";
 import { useEditLyricContext } from "./EditLyricContext";
 
 type Props = {
-  closeModal: () => void;
+  modalRef: RefObject<ModalRef>;
 };
 
 const LINE_HEIGHT = 40;
 
-export default function EditStringLyricModal({ closeModal }: Props) {
+export default function EditStringLyricModal({ modalRef }: Props) {
   const { baseLyric, setBaseLyric, baseLyricArr, setIsChanged, lyrics } =
     useEditLyricContext();
   const [value, setValue] = useState(baseLyric);
@@ -25,7 +30,7 @@ export default function EditStringLyricModal({ closeModal }: Props) {
 
     setBaseLyric(formatedLyric);
     setIsChanged(true);
-    closeModal();
+    modalRef.current?.close();
   };
 
   function applyHighlights(index: number) {
@@ -43,6 +48,8 @@ export default function EditStringLyricModal({ closeModal }: Props) {
       textareaRef.current.scrollTop = needToScroll;
       backRef.current.style.paddingBottom = needToScroll + "px";
     }
+
+    modalRef.current?.setModalPersist(true);
   }, []);
 
   useEffect(() => {
@@ -64,27 +71,32 @@ export default function EditStringLyricModal({ closeModal }: Props) {
 
   return (
     <ModalContentWrapper className="w-[500px]">
-      <ModalHeader closeModal={closeModal} title="Edit lyric" />
+      <ModalHeader
+        closeModal={() => modalRef.current?.close()}
+        title="Edit lyric"
+      />
 
       <div
         className={`relative h-[60vh] overflow-hidden rounded-md ${location.hash.includes("/dashboard") ? "bg-black/10" : "bg-white/10"} `}
       >
-        <div
-          ref={backRef}
-          className="whitespace-break-spaces text-transparent px-2 py-2 absolute leading-[40px] h-full overflow-auto top-0 left-0 w-full"
-          dangerouslySetInnerHTML={{
-            __html: applyHighlights(
-              lyrics.length === baseLyricArr.length
-                ? lyrics.length - 1
-                : lyrics.length,
-            ),
-          }}
-        ></div>
+        {baseLyric && (
+          <div
+            ref={backRef}
+            className="whitespace-break-spaces text-transparent px-3 py-2 absolute leading-[40px] h-full overflow-auto top-0 left-0 w-full"
+            dangerouslySetInnerHTML={{
+              __html: applyHighlights(
+                lyrics.length === baseLyricArr.length
+                  ? lyrics.length + 1
+                  : lyrics.length,
+              ),
+            }}
+          ></div>
+        )}
 
         <textarea
           style={{ resize: "none" }}
           ref={textareaRef}
-          className={`absolute bg-transparent top-0 outline-none w-full leading-[40px] py-2 px-3 h-full no-scrollbar`}
+          className={`absolute bg-transparent top-0 outline-none w-full leading-[40px] py-2 px-3 h-full`}
           value={value}
           onChange={(e) => setValue(e.target.value)}
         />

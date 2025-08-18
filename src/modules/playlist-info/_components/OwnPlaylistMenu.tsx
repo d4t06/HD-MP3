@@ -12,6 +12,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import usePlaylistAction from "../_hooks/usePlaylistAction";
 import AddPlaylistModal from "@/modules/add-playlist-modal";
 import { PlaylistMenuPopupContent } from "./PlaylistMenuBtn";
+import AddToQueueMenuItem from "./AddToQueueMenuItem";
 
 type Modal = "edit" | "delete";
 
@@ -86,6 +87,9 @@ export default function OwnPlaylistMenu() {
     <>
       <PlaylistMenuPopupContent>
         <CopyLinkMenuItem />
+
+        <AddToQueueMenuItem />
+
         <button onClick={() => openModal("edit")}>
           <PencilIcon />
           <span>Edit</span>

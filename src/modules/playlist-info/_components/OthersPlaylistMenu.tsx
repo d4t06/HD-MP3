@@ -1,3 +1,4 @@
+import AddToQueueMenuItem from "./AddToQueueMenuItem";
 import { PlaylistMenuPopupContent } from "./PlaylistMenuBtn";
 import { CopyLinkMenuItem } from "@/components";
 
@@ -6,6 +7,8 @@ export default function OtherPlaylistMenuBtn() {
     <>
       <PlaylistMenuPopupContent>
         <CopyLinkMenuItem />
+
+        <AddToQueueMenuItem />
       </PlaylistMenuPopupContent>
     </>
   );

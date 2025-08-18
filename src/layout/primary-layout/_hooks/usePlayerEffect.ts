@@ -28,7 +28,7 @@ export default function usePlayerEffect() {
     currentTimeEleRef,
     shouldSyncSongDuration,
     isOpenFullScreen,
-    timeLineColorRef
+    timeLineColorRef,
   } = usePlayerContext();
   if (!audioRef.current)
     throw new Error("Use Control audioRef.current is undefined");
@@ -122,8 +122,6 @@ export default function usePlayerEffect() {
   };
 
   const handleEnded = () => {
-    console.log("end");
-
     if (!currentSongDataRef.current) return;
     const storage = getLocalStorage();
     const volInStore = storage["volume"] || 1;

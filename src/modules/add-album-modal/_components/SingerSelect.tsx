@@ -5,7 +5,11 @@ import { Button, ItemRightCtaFrame } from "@/pages/dashboard/_components";
 import { useAddAlbumContext } from "../AddAlbumContext";
 import SingerSearchModal from "@/modules/singer-search-modal";
 
-export default function AlbumSingerSelect() {
+type Props = {
+  singerFromParent?: Singer;
+};
+
+export default function AlbumSingerSelect({ singerFromParent }: Props) {
   const { singer, setSinger, albumData } = useAddAlbumContext();
 
   const modalRef = useRef<ModalRef>(null);
@@ -26,11 +30,13 @@ export default function AlbumSingerSelect() {
           <ItemRightCtaFrame className="!mt-0">
             <span>{singer.name}</span>
 
-            <div>
-              <button onClick={() => setSinger(undefined)}>
-                <TrashIcon className="w-5" />
-              </button>
-            </div>
+            {!singerFromParent && (
+              <div>
+                <button onClick={() => setSinger(undefined)}>
+                  <TrashIcon className="w-5" />
+                </button>
+              </div>
+            )}
           </ItemRightCtaFrame>
         ) : (
           <Button

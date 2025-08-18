@@ -2,9 +2,9 @@ import { NotFound } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import SongList from "@/modules/song-item/_components/SongList";
 import SongSelectProvider from "@/stores/SongSelectContext";
-import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RecentSearch } from "../_hooks/useSearch";
 import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
+import { pushRecentSearch } from "../_hooks/pushRecentSearch";
 
 type Props = {
   songs: Song[];
@@ -17,30 +17,33 @@ export default function SearchbarSongList({ songs }: Props) {
   const _handleSetSong = (song: Song) => {
     handleSetSong(song.queue_id, [song]);
 
-    const recentSearchs: RecentSearch[] =
-      getLocalStorage()["recent-search"] || [];
-    recentSearchs.unshift({
+    const newRecentSerchItem: RecentSearch = {
       variant: "song",
       item: song,
-    });
+    };
 
-    setLocalStorage("recent-search", recentSearchs);
+    pushRecentSearch(newRecentSerchItem);
 
     getRelatigeSongs(song);
   };
 
   return (
-    <SongSelectProvider>
-      {!!songs.length ? (
-        <SongList
-          songVariant="recent-song"
-          isHasCheckBox={false}
-          setSong={_handleSetSong}
-          songs={songs}
-        />
-      ) : (
-        <NotFound />
-      )}
-    </SongSelectProvider>
+    <>
+      <div className="text-sm font-bold mb-2">Suggestion results</div>
+
+      <div className={`overflow-auto no-scrollbar`}>
+        <SongSelectProvider>
+          {!!songs.length ? (
+            <SongList
+              isHasCheckBox={false}
+              setSong={_handleSetSong}
+              songs={songs}
+            />
+          ) : (
+            <NotFound />
+          )}
+        </SongSelectProvider>
+      </div>
+    </>
   );
 }

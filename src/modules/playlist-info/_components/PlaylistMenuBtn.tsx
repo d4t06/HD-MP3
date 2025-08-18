@@ -18,7 +18,7 @@ export function PlaylistMenuPopupContent({
 }) {
   return (
     <MyPopupContent
-      className="left-[calc(100%)] bottom-full w-[140px]"
+      className="left-[calc(100%)] bottom-full w-[160px]"
       animationClassName="origin-top-left"
     >
       <PopupWrapper>

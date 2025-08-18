@@ -12,6 +12,7 @@ import {
 import { getSearchQuery, songsCollectionRef } from "@/services/firebaseService";
 import { implementSongQuery } from "@/services/appService";
 import { db } from "@/firebase";
+import { getLocalStorage } from "@/utils/appHelpers";
 
 type SongItem = {
   variant: "song";
@@ -38,6 +39,8 @@ export default function useSearch() {
   const [searchResult, SetSearchResult] = useState<Song[]>([]);
   const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
 
+  const [recentSearchs, setRecentSearchs] = useState<RecentSearch[]>([]);
+
   const formRef = useRef<ElementRef<"form">>(null); // for handle click outside
   const searchResultRef = useRef<ElementRef<"div">>(null); // for handle click outside
   const inputRef = useRef<ElementRef<"input">>(null); // for focus input
@@ -51,6 +54,7 @@ export default function useSearch() {
   const controller = new AbortController();
 
   const handleClickOutside = (e: Event) => {
+    const searchResultEle = document.querySelector(".search-result");
     const popupContent = document.querySelector(".popup-content");
 
     const node = e.target as Node;
@@ -69,6 +73,7 @@ export default function useSearch() {
       (formRef.current.contains(node) ||
         isClickedSongItem ||
         searchResultRef.current.contains(node) ||
+        searchResultEle?.contains(node) ||
         popupContent?.contains(node))
     )
       return;
@@ -172,6 +177,12 @@ export default function useSearch() {
       if (isFocus) shouldFetchSong.current = true;
   }, [value, isFocus]);
 
+  useEffect(() => {
+    setRecentSearchs(
+      getLocalStorage()["recent-search"] || ([] as RecentSearch[]),
+    );
+  }, [isFocus]);
+
   return {
     isFetching,
     searchResult,
@@ -182,7 +193,8 @@ export default function useSearch() {
     formRef,
     searchResultRef,
     inputRef,
-
+    recentSearchs,
+    setRecentSearchs,
     trendingKeywords,
   };
 }

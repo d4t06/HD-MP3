@@ -8,6 +8,7 @@ type SkeletonProps = {
 type Props = {
 	variant: "singer-item";
 	singer: Singer;
+  onClick?: () => void;
 };
 
 export default function SingerItem(props: SkeletonProps | Props) {
@@ -22,7 +23,7 @@ export default function SingerItem(props: SkeletonProps | Props) {
 
 			{props.variant === "singer-item" && (
 				<>
-					<Link to={`/singer/${props.singer.id}`}>
+					<Link onClick={props.onClick} to={`/singer/${props.singer.id}`}>
 						<div className="aspect-[1/1] rounded-full overflow-hidden">
 							<Image
 								blurHashEncode={props.singer.blurhash_encode}
@@ -31,7 +32,7 @@ export default function SingerItem(props: SkeletonProps | Props) {
 							/>
 						</div>
 					</Link>
-					<p className="mt-1 font-medium text-center">{props.singer.name}</p>
+					<p className="mt-1 text-center font-bold">{props.singer.name}</p>
 				</>
 			)}
 		</div>

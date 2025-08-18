@@ -1,12 +1,12 @@
 import { implementPlaylistQuery } from "@/services/appService";
-import { playlistCollectionRef } from "@/services/firebaseService";
+import { myUpdateDoc, playlistCollectionRef } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
-import { getLocalStorage } from "@/utils/appHelpers";
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
 import { useState } from "react";
 
 export default function useGetRecentPlaylist() {
-  const { user } = useAuthContext();
+  const { user, updateUserData } = useAuthContext();
 
   const [recentPlaylists, setRecentPlaylists] = useState<Playlist[]>([]);
 
@@ -44,5 +44,23 @@ export default function useGetRecentPlaylist() {
     }
   };
 
-  return { isFetching, recentPlaylists, getRecentPlaylist };
+  const clear = async () => {
+    setRecentPlaylists([]);
+    if (user) {
+      const newUserData: Partial<User> = {
+        recent_playlist_ids: [],
+      };
+
+      await myUpdateDoc({
+        collectionName: "Users",
+        data: newUserData,
+        id: user.email,
+      });
+
+      updateUserData(newUserData);
+    } else {
+      setLocalStorage("recent-playlists", []);
+    }
+  };
+  return { isFetching, recentPlaylists, getRecentPlaylist, clear };
 }

@@ -108,10 +108,8 @@ export default function LyricEditorList({
       <div
         className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar md:text-lg rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] shadow-[0_0_6px_0_rgba(0,0,0,0.15)] ${getClasses(viewMode !== "edit", "justify-center")}`}
       >
-        <div
-          className={`w-1/2 ${getClasses(viewMode !== "edit", "hidden")}`}
-        >
-          {!!baseLyricArr.length ? (
+        {!!baseLyricArr.length && (
+          <div className={`w-1/2 ${getClasses(viewMode !== "edit", "hidden")}`}>
             <>
               {baseLyricArr.map((lyric, index) => {
                 let status: LyricStatus =
@@ -127,7 +125,8 @@ export default function LyricEditorList({
                 return (
                   <LyricItem
                     ref={status === "active" ? activeLyricRef : null}
-                    className="pt-[38px]"
+                    className="pt-10"
+                    activeColor="text-[--primary-cl]"
                     key={index}
                     status={status}
                     text={lyric}
@@ -135,10 +134,8 @@ export default function LyricEditorList({
                 );
               })}
             </>
-          ) : (
-            <p>...</p>
-          )}
-        </div>
+          </div>
+        )}
 
         <div
           className={`w-1/2 ${getClasses(viewMode !== "edit", "text-center")}`}

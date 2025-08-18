@@ -55,17 +55,17 @@ export default function CommentItem({
 
           <div className="flex-grow text-[13px]">
             <div className="flex">
-              <div className="flex-grow ml-2">
+              <div className="ml-2">
                 <div
-                  className={`rounded-md ${variant === "theme-bg" ? "text-black dark:text-white" : "text-white"}`}
+                  className={`${variant === "theme-bg" ? "text-black dark:text-white" : "text-white"}`}
                 >
                   <Link
-                    className={`font-medium line-clamp-1 ${variant === "theme-bg" ? "text-[#333] dark:text-[#f1f1f1]" : "text-[#f1f1f1]"}`}
+                    className={`font-semibold inline-block hover:underline line-clamp-1 ${variant === "theme-bg" ? "text-[#333] dark:text-[#f1f1f1]" : "text-[#f1f1f1]"}`}
                     to={`/user/${comment.user_email}`}
                   >
                     {comment.user_name}
                   </Link>
-                  <div className="text-base mt-1 break-all whitespace-break-spaces">
+                  <div className="text-base break-all whitespace-break-spaces">
                     {comment.text}
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function CommentItem({
                 )}
               </div>
 
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center ml-auto">
                 <button
                   className="p-1"
                   onClick={() => {

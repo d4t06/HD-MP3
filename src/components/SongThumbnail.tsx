@@ -3,6 +3,7 @@ import Button from "./ui/Button";
 import { PauseCircleIcon } from "@heroicons/react/24/outline";
 import playingIcon from "../assets/icon-playing.gif";
 import { Image } from ".";
+import { choVoTri } from "@/constants/app";
 
 interface Props {
   data: Song | undefined;
@@ -15,7 +16,7 @@ interface Props {
 
 const SongThumbnail = (
   { data, active, onClick, hasTitle, classNames = "", idleClass = "" }: Props,
-  ref: ForwardedRef<HTMLDivElement>
+  ref: ForwardedRef<HTMLDivElement>,
 ) => {
   const classes = {
     container: "flex flex-col",
@@ -25,7 +26,8 @@ const SongThumbnail = (
     overlay: `absolute  ${
       active ? "" : "inset-0 hidden bg-black/40 items-center justify-center"
     }   group-hover:flex`,
-    playingGifFrame: "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
+    playingGifFrame:
+      "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
     title: "text-2xl text-white mt-3 font-bold text-ellipsis line-clamp-1",
   };
 
@@ -49,7 +51,11 @@ const SongThumbnail = (
               : "w-[280px] min-[1536px]:w-[330px]"
           }`}
         >
-          <Image src={data.image_url} blurHashEncode={data.blurhash_encode} />
+          <Image
+            fallback={choVoTri.image}
+            src={data.image_url || choVoTri.image}
+            blurHashEncode={data.blurhash_encode}
+          />
           {
             <div className={`${classes.overlay}`}>
               {!active && (

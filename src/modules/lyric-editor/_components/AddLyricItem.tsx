@@ -32,9 +32,9 @@ function AddLyricItem(
 
   return (
     <>
-      <div className="pt-[10px] last:mb-[30vh]">
+      <div className="pt-2 last:mb-[30vh]">
         <div
-          className={`flex ${viewMode !== "edit" ? "justify-center" : ""}  space-x-1.5 mb-[3px]`}
+          className={`flex ${viewMode !== "edit" ? "justify-center" : ""}  space-x-1.5 mb-1`}
         >
           <button
             className={`hover:underline item-info`}

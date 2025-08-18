@@ -9,6 +9,6 @@ export const meoVoTri = {
 };
 
 export const choVoTri = {
-	image: "./cho_vo_tri.png",
+	image: "./cho_vo_tri.jpg",
 	blurhash: "LDRf4[-e|,ErI7EUkv$@nK-iEVIb",
 };

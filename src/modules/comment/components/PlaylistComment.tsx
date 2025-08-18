@@ -4,12 +4,14 @@ import { Center } from "@/components";
 import { useCommentContext } from "./CommentContext";
 import useGetPlaylistComment from "../hooks/useGetPlaylistComment";
 import UserInput from "./UserInput";
+import { useAuthContext } from "@/stores";
 
 type Props = {
 	targetId: string;
 };
 
 export default function PlaylistComment({ targetId }: Props) {
+	const { user } = useAuthContext();
 	const { isFetching, comments } = useCommentContext();
 
 	useGetPlaylistComment();
@@ -23,8 +25,8 @@ export default function PlaylistComment({ targetId }: Props) {
 
 	return (
 		<>
-			<CommentList comments={comments} />
-			<UserInput variant="comment" targetId={targetId} />
+			<CommentList variant="theme-bg" comments={comments} />
+			{user && <UserInput variant="comment" targetId={targetId} />}
 		</>
 	);
 }

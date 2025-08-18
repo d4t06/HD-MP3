@@ -2,12 +2,15 @@ import { ArrowTrendingUpIcon } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { RecentSearch } from "../_hooks/useSearch";
 import RecentSearchItem from "./RecentSearchItem";
+import { Button } from "@/components";
 type Props = {
 	words: string[];
 	recentSearchs: RecentSearch[];
+	clear: () => void
 };
 
-export default function RecentSearchList({ words, recentSearchs }: Props) {
+export default function RecentSearchTab({ words, recentSearchs, clear }: Props) {
+
 
 	const classes = {
 		listWrapper:
@@ -16,7 +19,7 @@ export default function RecentSearchList({ words, recentSearchs }: Props) {
 
 	return (
 		<>
-			<div className="text-sm font-semibold mb-2">Suggestion keyword</div>
+			<div className="text-sm font-bold mb-2 ml-3">Suggestion keyword</div>
 			<div className={`${classes.listWrapper} hover:[&>*]:bg-[--a-5-cl]`}>
 				{words.map((w, i) => (
 					<Link key={i} to={`/search?q=${w}`}>
@@ -26,12 +29,24 @@ export default function RecentSearchList({ words, recentSearchs }: Props) {
 				))}
 			</div>
 
-			<div className="text-sm font-semibold my-2">Recent search</div>
-			<div className={classes.listWrapper}>
-				{recentSearchs.map((item, i) => (
-					<RecentSearchItem item={item} key={i} />
-				))}
-			</div>
+			{!!recentSearchs.length && (
+				<>
+					<div className="flex justify-between my-2 text-sm">
+						<span className="font-bold">Recent search</span>
+
+						<Button
+							onClick={clear}
+							className="text-[--primary-cl]"
+							size={"clear"}
+						>
+							Clear
+						</Button>
+					</div>
+					{recentSearchs.map((item, i) => (
+						<RecentSearchItem item={item} key={i} />
+					))}
+				</>
+			)}
 		</>
 	);
 }

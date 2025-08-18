@@ -1,4 +1,4 @@
-import { PlaylistItem, Title } from "@/components";
+import { Button, PlaylistItem, Title } from "@/components";
 import { playlistSkeleton } from "@/components/skeleton";
 import useGetRecentPlaylist from "@/hooks/useGetRecentPlaylist";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
@@ -10,7 +10,7 @@ export default function RecentPlaylist() {
 
   const ranEffect = useRef(false);
 
-  const { isFetching, getRecentPlaylist, recentPlaylists } =
+  const { isFetching, getRecentPlaylist, recentPlaylists, clear } =
     useGetRecentPlaylist();
 
   useEffect(() => {
@@ -20,25 +20,24 @@ export default function RecentPlaylist() {
     }
   }, []);
 
-  // const classes = {
-  //   playlistItem: "w-1/4 p-[8px] max-[800px]:w-1/2",
-  // };
-
   const renderPlaylists = () => {
     return recentPlaylists.map((playlist, index) => {
       const active = currentSongData?.song.queue_id.includes(playlist.id);
 
       return (
-        <PlaylistItem key={index} variant="link" active={active} data={playlist} />
+        <PlaylistItem
+          key={index}
+          variant="link"
+          active={active}
+          data={playlist}
+        />
       );
     });
   };
 
   if (isFetching)
     return (
-      <div className={`flex flex-row flex-wrap -mx-3 `}>
-        {playlistSkeleton}
-      </div>
+      <div className={`flex flex-row flex-wrap -mx-3 `}>{playlistSkeleton}</div>
     );
 
   if (!recentPlaylists.length) return <></>;
@@ -46,7 +45,17 @@ export default function RecentPlaylist() {
   return (
     <>
       <div>
-        <Title title="Recent listening" />
+        <div className="flex justify-between">
+          <Title title="Recent listening" />
+
+          <Button
+            onClick={clear}
+            size={"clear"}
+            className="text-[--primary-cl]"
+          >
+            Clear
+          </Button>
+        </div>
         <div className={`flex flex-row flex-wrap -mx-3 `}>
           {renderPlaylists()}
         </div>

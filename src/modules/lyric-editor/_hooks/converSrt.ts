@@ -2,7 +2,9 @@ function timeToSeconds(timeString: string) {
   const [_h, m, sAndMs] = timeString.split(":");
   const [s, ms] = sAndMs.split(",");
 
-  return +m * 60 + +s + +ms / 1000;
+  const tenths = Math.round(+ms.slice(0, 3) / 100);
+
+  return +m * 60 + +s + +("0." + tenths);
 }
 
 export function converSrt(content: string) {

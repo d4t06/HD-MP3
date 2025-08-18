@@ -98,7 +98,7 @@ function Content({ className = "", ...props }: Props) {
               />
             </div>
 
-            <AlbumSingerSelect />
+            <AlbumSingerSelect singerFromParent={props.variant === 'add' ? props.singer : undefined} />
           </>
         </div>
       </div>

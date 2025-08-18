@@ -11,7 +11,7 @@ type Props = {
 
 export default function useEditSongModal({ song, modalRef }: Props) {
   const { user } = useAuthContext();
-  const { updateSong } = useSongContext();
+  const { updateSong, shouldFetchFavoriteSongs } = useSongContext();
 
   const [songData, setSongData] = useState({
     name: song.name,
@@ -68,6 +68,9 @@ export default function useEditSongModal({ song, modalRef }: Props) {
         data: newSong,
         id: song.id,
       });
+
+      const isLiked = user.liked_song_ids.includes(song.id);
+      if (isLiked) shouldFetchFavoriteSongs.current = true;
 
       updateSong({ id: song.id, song: newSong });
       // >>> finish

@@ -5,11 +5,12 @@ import useSongTable from "../useSongTable";
 import SongList from "@/modules/song-item/_components/SongList";
 import WeekSelect from "@/modules/week-select";
 import { SongSkeleton } from "@/components/skeleton";
+import { useSetSong } from "@/hooks";
 
 export default function SongTable() {
-  // const { theme } = useThemeContext();
-
   const { isFetching, songMap, setWeek, KEY, ...rest } = useSongTable();
+
+  const { handleSetSong } = useSetSong({ variant: "songs" });
 
   return (
     <div>
@@ -18,19 +19,24 @@ export default function SongTable() {
         <Tab className="w-fit" render={(t) => t} {...rest} />
         <WeekSelect submit={(value) => setWeek(value)} />
       </div>
-
-      <SongSelectProvider>
-        {isFetching && <SongSkeleton />}
-        {!isFetching && (
-          <>
-            {songMap && songMap[KEY]?.songs.length ? (
-              <SongList songs={songMap[KEY].songs} setSong={() => {}} />
-            ) : (
-              <NotFound />
-            )}
-          </>
-        )}
-      </SongSelectProvider>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mt-3">
+        <SongSelectProvider>
+          {isFetching && <SongSkeleton hasCheckBox={false} />}
+          {!isFetching && (
+            <>
+              {songMap && songMap[KEY]?.songs.length ? (
+                <SongList
+                  isHasCheckBox={false}
+                  songs={songMap[KEY].songs}
+                  setSong={(s) => handleSetSong(s.queue_id, songMap[KEY].songs)}
+                />
+              ) : (
+                <NotFound />
+              )}
+            </>
+          )}
+        </SongSelectProvider>
+      </div>
     </div>
   );
 }

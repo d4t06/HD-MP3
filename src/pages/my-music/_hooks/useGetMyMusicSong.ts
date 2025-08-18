@@ -31,8 +31,11 @@ export default function useGetMyMusicSong({ tab }: Props) {
         case "favorite": {
           if (shouldFetchFavoriteSongs.current) {
             shouldFetchFavoriteSongs.current = false;
+
+            console.log(user.liked_song_ids);
+
             if (user.liked_song_ids.length) {
-              const chunkSize = 30;
+              const chunkSize = 20;
               const chunks = [];
               for (let i = 0; i < user.liked_song_ids.length; i += chunkSize) {
                 chunks.push(user.liked_song_ids.slice(i, i + chunkSize));
@@ -49,7 +52,9 @@ export default function useGetMyMusicSong({ tab }: Props) {
                     where(documentId(), "in", chunk),
                   );
 
-                  const result = await implementSongQuery(q);
+                  const result = await implementSongQuery(q, {
+                    msg: "get user favorite songs",
+                  });
 
                   favoriteSongs.push(...result);
                 }
@@ -76,7 +81,9 @@ export default function useGetMyMusicSong({ tab }: Props) {
               where("is_official", "==", false),
             );
 
-            const result = await implementSongQuery(queryGetSongs);
+            const result = await implementSongQuery(queryGetSongs, {
+              msg: "get user uploaded songs",
+            });
 
             setUploadedSongs(result);
           } else await sleep(100);
@@ -89,7 +96,6 @@ export default function useGetMyMusicSong({ tab }: Props) {
       setIsFetching(false);
     }
   };
-
 
   return { isFetching, getSongs };
 }

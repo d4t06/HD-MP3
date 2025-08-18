@@ -7,6 +7,7 @@ const useAuth = () => {
   const justRegistered = useRef(false);
 
   const updateUserData = (data: Partial<User>) => {
+    if (import.meta.env.DEV) console.log('update user data')
     setUser((prev) => (prev ? { ...prev, ...data } : null));
   };
 

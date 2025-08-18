@@ -19,10 +19,10 @@ export function SongSkeleton(props: {
 
   return [...Array(skeNum).keys()].map((index) => (
     <div key={index} className="flex items-center px-3 py-2">
-      {hasCheckBox && <Skeleton className="h-[18px] w-[18px]" />}
+      {hasCheckBox && <Skeleton className="h-[18px] w-[18px] mr-[10px]" />}
 
       <Skeleton
-        className={`${variant === "default" ? "h-[54px] w-[54px]" : "h-10 w-10"}  ml-[10px]`}
+        className={`${variant === "default" ? "h-[54px] w-[54px]" : "h-10 w-10"}`}
       />
       <div className="ml-[10px]">
         <Skeleton className="h-[16px] w-[140px] max-w-full" />

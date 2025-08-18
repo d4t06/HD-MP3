@@ -5,12 +5,14 @@ type Props = {
   className?: string;
   children: ReactNode;
   dismiss?: boolean;
+  cb?:() => void
 };
 
 export default function VertialMenu({
   children,
   dismiss = true,
   className = "",
+  cb
 }: Props) {
   const classes = {
     container:
@@ -19,7 +21,7 @@ export default function VertialMenu({
 
   if (dismiss)
     return (
-      <DismisPopupWrapper className={`${classes.container} ${className}`}>
+      <DismisPopupWrapper cb={cb} className={`${classes.container} ${className}`}>
         {children}
       </DismisPopupWrapper>
     );

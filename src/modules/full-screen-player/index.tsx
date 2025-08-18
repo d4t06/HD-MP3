@@ -17,9 +17,8 @@ export default function FullScreenPlayer() {
   const { currentSongData } = useSelector(selectSongQueue);
 
   const classes = {
-    wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900
-    } transition-transform duration-[.7s] linear delay-100`,
-    bg: `absolute inset-0 -z-10 brightness-[70%]`,
+    wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900 transition-transform duration-[.7s] linear delay-100`,
+    bg: `absolute inset-0 -z-10 brightness-[10%]`,
     container: "absolute w-full top-0 bottom-[90px] flex flex-col",
     content: `flex-grow relative overflow-hidden`,
     fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
@@ -33,7 +32,7 @@ export default function FullScreenPlayer() {
     >
       {/* bg image */}
       {songBackground && (
-        <div className="absolute left-0 right-0 aspect-[1/1] -translate-y-1/2 top-1/2">
+        <div className="absolute left-0 right-0 aspect-[1/1] brightness-[80%] -translate-y-1/2 top-1/2">
           <Blurhash
             radioGroup=""
             height={"100%"}

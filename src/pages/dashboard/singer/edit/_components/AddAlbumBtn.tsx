@@ -1,7 +1,6 @@
 import {
   Modal,
   ModalContentWrapper,
-  ModalHeader,
   ModalRef,
 } from "@/components";
 import AddAlbumModal from "@/modules/add-album-modal";
@@ -32,27 +31,20 @@ export default function AddAlbumBtn() {
         <span>Add album</span>
       </Button>
 
-      <Modal variant="animation" ref={modalRef}>
-        <ModalContentWrapper className="w-[700px]">
-          {user && singer && (
-            <>
-              <ModalHeader
-                title="Add album"
-                closeModal={() => modalRef.current?.close()}
-              />
-
-              <AddAlbumModal
-                className="flex-grow overflow-auto no-scrollbar md:overflow-hidden"
-                variant="add"
-                modalRef={modalRef}
-                singer={singer}
-                afterSubmit={handleAddAlbumToList}
-                user={user}
-              />
-            </>
-          )}
-        </ModalContentWrapper>
-      </Modal>
+      {user && singer && (
+        <Modal variant="animation" ref={modalRef}>
+          <ModalContentWrapper className="w-[700px]">
+            <AddAlbumModal
+              className="flex-grow overflow-auto no-scrollbar md:overflow-hidden"
+              variant="add"
+              modalRef={modalRef}
+              singer={singer}
+              afterSubmit={handleAddAlbumToList}
+              user={user}
+            />
+          </ModalContentWrapper>
+        </Modal>
+      )}
     </>
   );
 }

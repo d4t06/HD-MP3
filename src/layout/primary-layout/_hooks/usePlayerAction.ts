@@ -25,7 +25,7 @@ export default function usePlayerAction() {
     currentTimeEleRef,
     isPlayingNewSong,
     shouldSyncSongDuration,
-    timeLineColorRef,
+    timeLineColorRef
   } = usePlayerContext();
   const { currentSongData, queueSongs } = useSelector(selectSongQueue);
   const { playStatus } = useSelector(selectAllPlayStatusStore);
@@ -80,7 +80,7 @@ export default function usePlayerAction() {
     if (audioRef.current!.duration && timeLine) {
       const ratio = currentTime / (audioRef.current!.duration / 100);
       timeLine.style.background = getLinearBg(+ratio.toFixed(1), {
-        color: timeLineColorRef.current || undefined,
+        color: timeLineColorRef.current,
       });
     }
 

@@ -14,7 +14,6 @@ import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
 import {
   ArrowDownTrayIcon,
-  ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
   Bars3Icon,
   MagnifyingGlassIcon,
@@ -44,7 +43,6 @@ export default function MenuBtn({ pause }: Props) {
   const { exportLyric } = useExportLyric();
 
   const openModal = (m: Modal) => {
-    pause();
     setModal(m);
     modalRef.current?.open();
   };
@@ -56,7 +54,7 @@ export default function MenuBtn({ pause }: Props) {
 
     switch (modal) {
       case "lyric":
-        return <EditStringLyicModal closeModal={closeModal} />;
+        return <EditStringLyicModal modalRef={modalRef} />;
 
       case "song-beat":
         return song && <AddSongBeatModal closeModal={closeModal} />;
@@ -110,15 +108,15 @@ export default function MenuBtn({ pause }: Props) {
 
         <MyPopupContent origin="top right">
           <PopupWrapper className="w-[220px]">
-            <VerticalMenu>
-              <button
+            <VerticalMenu cb={pause}>
+              {/*           <button
                 disabled={!lyrics.length}
                 onClick={() => openModal("sync")}
               >
                 <ArrowPathIcon />
 
                 <span>Sync lyric</span>
-              </button>
+              </button>*/}
               <button onClick={() => openModal("lyric")}>
                 <PencilIcon />
 
@@ -137,15 +135,17 @@ export default function MenuBtn({ pause }: Props) {
                 <span>Song beat</span>
               </button>
 
-              <button className="!p-0">
-                <label
-                  className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
-                  htmlFor="import_lyric"
-                >
-                  <ArrowDownTrayIcon />
-                  <span>Import (JSON or SRT)</span>
-                </label>
-              </button>
+              {!!lyrics.length && (
+                <button className="!p-0">
+                  <label
+                    className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
+                    htmlFor="import_lyric"
+                  >
+                    <ArrowDownTrayIcon />
+                    <span>Import (JSON or SRT)</span>
+                  </label>
+                </button>
+              )}
 
               <button
                 disabled={!lyrics.length}

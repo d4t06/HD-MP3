@@ -1,10 +1,7 @@
-import { Ref, forwardRef, useImperativeHandle, useRef } from "react";
+import { Ref, forwardRef, useImperativeHandle, useRef, useState } from "react";
 import {
   ArrowPathIcon,
-  BackwardIcon,
   ExclamationCircleIcon,
-  EyeIcon,
-  ForwardIcon,
   MinusIcon,
   PauseIcon,
   PlayIcon,
@@ -16,10 +13,13 @@ import { useLyricEditorAction } from "../_hooks/useLyricEditorAction";
 import MenuBtn from "./MenuBtn";
 import { useEditLyricContext } from "./EditLyricContext";
 import SyncLyricModal from "./SyncLyricModal";
+import EditStringLyricModal from "./EditStringLyricModal";
 
 type Props = {
   audioEle: HTMLAudioElement;
 };
+
+type Modal = "lyric" | "sync";
 
 export type LyricEditorControlRef = {
   seek: (second: number) => void;
@@ -31,13 +31,20 @@ function LyricEditorControl(
   { audioEle }: Props,
   ref: Ref<LyricEditorControlRef>,
 ) {
-  const { lyrics, viewMode, setViewMode } = useEditLyricContext();
+  const { lyrics, viewMode, baseLyric, setViewMode } = useEditLyricContext();
+
+  const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
 
+  const openModal = (m: Modal) => {
+    setModal(m);
+    modalRef.current?.open();
+
+    pause();
+  };
+
   const {
-    backward,
-    forward,
     handlePlayPause,
     currentTimeRef,
     durationRef,
@@ -89,12 +96,10 @@ function LyricEditorControl(
           audioEle={audioEle}
           postLocalStorageKey="edit_lyric"
         />
-
         <Button color="primary" onClick={_handlePlayPaused}>
           {renderPlayPausedButton()}
         </Button>
-
-        {viewMode === "edit" && (
+        {viewMode === "edit" && !!baseLyric && (
           <>
             <Button
               disabled={!isEnableAddBtn}
@@ -112,18 +117,14 @@ function LyricEditorControl(
               <MinusIcon />
               <span>Remove</span>
             </Button>
-
-            <Button onClick={() => backward(2)} color="primary">
-              <BackwardIcon />
-              <span>2s</span>
-            </Button>
-            <Button onClick={() => forward(2)} color="primary">
-              <span>2s</span>
-              <ForwardIcon />
-            </Button>
           </>
         )}
 
+        {viewMode === "edit" && !!baseLyric && (
+          <Button onClick={() => openModal("lyric")} color="primary">
+            <span>Lyric</span>
+          </Button>
+        )}
         {viewMode !== "import" && (
           <Button
             disabled={!lyrics.length}
@@ -135,20 +136,22 @@ function LyricEditorControl(
             }}
             color="primary"
           >
-            <EyeIcon />
             <span>{viewMode === "preview" ? "Preview" : "Edit"}</span>
           </Button>
         )}
-
         {viewMode === "import" && (
           <>
-            <Button color="primary" onClick={() => modalRef.current?.open()}>
+            <Button
+              color="primary"
+              onClick={() => {
+                openModal("sync");
+              }}
+            >
               <ArrowPathIcon />
               <span>Sync lyric</span>
             </Button>
           </>
         )}
-
         <div className="ml-auto">
           <MenuBtn pause={pause} />
         </div>
@@ -171,7 +174,11 @@ function LyricEditorControl(
       </div>
 
       <Modal variant="animation" ref={modalRef}>
-        <SyncLyricModal closeModal={() => modalRef.current?.close()} />
+        {modal === "sync" && (
+          <SyncLyricModal closeModal={() => modalRef.current?.close()} />
+        )}
+
+        {modal === "lyric" && <EditStringLyricModal modalRef={modalRef} />}
       </Modal>
     </>
   );

@@ -10,6 +10,7 @@ type Props = {
   playlists: Playlist[];
   skeNumber?: number;
   whenEmpty?: ReactNode;
+  onClick?: (p: Playlist) => void;
 };
 
 export default function PlaylistList({
@@ -18,6 +19,7 @@ export default function PlaylistList({
   loading,
   skeNumber = 2,
   whenEmpty,
+  onClick,
 }: Props) {
   const { currentSongData } = useSelector(selectSongQueue);
 
@@ -34,6 +36,7 @@ export default function PlaylistList({
           key={index}
           active={active}
           data={playlist}
+          onClick={() => onClick && onClick(playlist)}
         />
       );
     });

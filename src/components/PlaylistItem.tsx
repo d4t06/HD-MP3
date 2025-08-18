@@ -14,6 +14,7 @@ type BaseProps = {
   variant: "link" | "image";
   active?: boolean;
   link?: string;
+  onClick?: () => void;
 };
 
 type Props = SkeProps | BaseProps;
@@ -51,10 +52,7 @@ const PlaylistItem: FC<Props> = (props) => {
       case "link":
         return (
           <div className="p-3 w-1/2 sm:w-1/3 md:w-1/4">
-            <Link
-              to={`${props.link || "/playlist/" + props.data.id}`}
-              className=""
-            >
+            <Link onClick={() => props.onClick && props.onClick()} to={`${props.link || "/playlist/" + props.data.id}`}>
               {imageContent}
             </Link>
 

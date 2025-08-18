@@ -34,6 +34,8 @@ export default function Lyric({ className }: Props) {
     lyrics: songLyrics,
   });
 
+  console.log(currentIndex)
+
   const lyricSizeMap = {
     small: "text-[16px] sm:text-[26px]",
     medium: "text-[20px] sm:text-[30px]",
@@ -54,7 +56,7 @@ export default function Lyric({ className }: Props) {
           key={index}
           text={l.text}
           activeColor="scale-[1.3]"
-          className={`leading-[1.3] mb-5 w-[70%] last:mb-[50vh]`}
+          className={`leading-[1.3] mb-8 w-[70%] last:mb-[50vh]`}
         />
       );
     });

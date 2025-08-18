@@ -20,7 +20,7 @@ export default function SingerInfo() {
         >
           <div className="relative h-full w-full">
             <div
-              className={`absolute z-[-5] inset-0 bg-white/50 dark:bg-black/50  `}
+              className={`absolute z-[-5] inset-0 bg-white/70 dark:bg-black/60  `}
             ></div>
             <img
               src={singer?.image_url || simonCat}
