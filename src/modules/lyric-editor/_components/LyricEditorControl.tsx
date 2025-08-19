@@ -2,6 +2,7 @@ import { Ref, forwardRef, useImperativeHandle, useRef, useState } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
+  EyeIcon,
   MinusIcon,
   PauseIcon,
   PlayIcon,
@@ -136,6 +137,7 @@ function LyricEditorControl(
             }}
             color="primary"
           >
+            <EyeIcon />
             <span>{viewMode === "preview" ? "Preview" : "Edit"}</span>
           </Button>
         )}

@@ -27,6 +27,7 @@ import MyTooltip from "@/components/MyTooltip";
 import useAuthAction from "@/hooks/useAuthActiont";
 import NavigationButton from "@/modules/navigation-button";
 import Search from "@/modules/search";
+import { useLocation } from "react-router-dom";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -43,6 +44,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
 
   //  use hooks
   const { action } = useAuthAction();
+  const location = useLocation();
 
   const openModal = (modal: HeaderModal) => {
     setModal(modal);
@@ -109,6 +111,12 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
       document.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTo(0, 0);
+    }
+  }, [location]);
 
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,

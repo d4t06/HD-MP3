@@ -4,8 +4,14 @@ import useKaraoke from "./_hooks/useKaraoke";
 import KaraokeItem from "./_components/KaraokeItem";
 
 export default function Karaoke() {
-  const { loading, evenOverlay, oddOverlay, tempEventText, tempOddText, textData } =
-    useKaraoke();
+  const {
+    loading,
+    evenOverlay,
+    oddOverlay,
+    tempEventText,
+    tempOddText,
+    textData,
+  } = useKaraoke({ bounded: 0 });
 
   if (loading)
     return (

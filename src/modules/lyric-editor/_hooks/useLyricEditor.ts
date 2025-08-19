@@ -2,15 +2,18 @@ import { myGetDoc } from "@/services/firebaseService";
 // import { useAuthContext } from "@/stores";
 // import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { RefObject, useEffect, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEditLyricContext } from "../_components/EditLyricContext";
+import { useAuthContext } from "@/stores";
 
 type Props = {
   audioRef: RefObject<HTMLAudioElement>;
 };
 
+const isAdmin = location.hash.includes("/dashboard");
+
 export default function useLyricEditor({ audioRef }: Props) {
-  // const { user } = useAuthContext();
+  const { user } = useAuthContext();
 
   const {
     baseLyric,
@@ -29,7 +32,7 @@ export default function useLyricEditor({ audioRef }: Props) {
   const ranUseEffect = useRef(false);
 
   const params = useParams<{ id: string }>();
-  // const navigate = useNavigate();
+  const navigator = useNavigate();
 
   const updateIndex = (lyrics: Lyric[]) => {
     if (!lyrics.length) return;
@@ -40,12 +43,13 @@ export default function useLyricEditor({ audioRef }: Props) {
       const latestEndTime = lyrics[latestIndex].end;
 
       start.current = latestEndTime;
+      audioRef.current.currentTime = latestEndTime
     }
   };
 
   const getSong = async () => {
     try {
-      if (!params.id) throw new Error("");
+      if (!params.id || !user) throw new Error("");
 
       const songSnapshot = await myGetDoc({
         collectionName: "Songs",
@@ -59,6 +63,14 @@ export default function useLyricEditor({ audioRef }: Props) {
         id: songSnapshot.id,
         queue_id: "",
       };
+
+      // check if user manual type url
+      if (isAdmin) {
+        if (!song.is_official) {
+          navigator("/dashboard/song");
+          return;
+        }
+      } else if (song.is_official || song.owner_email !== user.email) return;
 
       if (song.lyric_id) {
         const lyricSnapshot = await myGetDoc({

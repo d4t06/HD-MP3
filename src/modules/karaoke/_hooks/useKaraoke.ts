@@ -1,7 +1,10 @@
 import createKeyFrame from "@/utils/createKeyFrame";
 import { getWordsRatio } from "@/utils/getWordsRatio";
 import { ElementRef, useEffect, useMemo, useRef, useState } from "react";
-import { PlayStatus, selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
+import {
+  PlayStatus,
+  selectAllPlayStatusStore,
+} from "@/stores/redux/PlayStatusSlice";
 import { useLyricContext, usePlayerContext } from "@/stores";
 import { mergeGrow } from "@/utils/mergeGrow";
 import { useSelector } from "react-redux";
@@ -12,7 +15,11 @@ const isOdd = (n: number) => {
   return n % 2 !== 0;
 };
 
-export default function useKaraoke() {
+type Props = {
+  bounded?: number;
+};
+
+export default function useKaraoke(props?: Props) {
   const { songLyrics, loading } = useLyricContext();
   const { audioRef, isOpenFullScreen, activeTab } = usePlayerContext();
   if (!audioRef.current) throw new Error("useKaraoke !audioRef.current");
@@ -91,19 +98,23 @@ export default function useKaraoke() {
     if (!songLyrics.length) return;
 
     const direction =
-      audioRef.current!.currentTime >= currentTimeRef.current ? "forward" : "backward";
+      audioRef.current!.currentTime >= currentTimeRef.current
+        ? "forward"
+        : "backward";
 
     currentTimeRef.current = audioRef.current!.currentTime;
 
     let nextIndex = currentIndexRef.current;
+
+    const _bounded = props?.bounded || LYRIC_TIME_BOUNDED;
 
     switch (direction) {
       case "forward":
         while (
           nextIndex < songLyrics.length &&
           songLyrics[nextIndex + 1] &&
-          songLyrics[nextIndex + 1].start - LYRIC_TIME_BOUNDED <
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          songLyrics[nextIndex + 1].start - _bounded <
+            currentTimeRef.current + _bounded
         ) {
           nextIndex += 1;
         }
@@ -113,8 +124,8 @@ export default function useKaraoke() {
         while (
           nextIndex > 0 &&
           songLyrics[nextIndex - 1] &&
-          songLyrics[nextIndex - 1].end - LYRIC_TIME_BOUNDED >
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          songLyrics[nextIndex - 1].end - _bounded >
+            currentTimeRef.current + _bounded
         ) {
           nextIndex -= 1;
         }
@@ -145,7 +156,7 @@ export default function useKaraoke() {
       const nextLyric = songLyrics[nextIndex];
       const { tune, text, cut } = nextLyric;
 
-      const past = currentTimeRef.current + LYRIC_TIME_BOUNDED - tune.start;
+      const past = currentTimeRef.current + _bounded - tune.start;
       const words = text.split(" ");
 
       const _isOdd = isOdd(nextIndex);

@@ -7,9 +7,10 @@ type Props = {
   lyrics: Lyric[];
   audioEle: HTMLAudioElement;
   isActive: boolean;
+  bounded?:number
 };
 
-export default function useLyric({ audioEle, lyrics, isActive }: Props) {
+export default function useLyric({ audioEle, lyrics, isActive, bounded }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const currentTimeRef = useRef(0);
@@ -23,12 +24,14 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
 
     let nextIndex = currentIndexRef.current;
 
+    const BOUNDNED = bounded || LYRIC_TIME_BOUNDED
+
     switch (direction) {
       case "forward":
         while (
           lyrics[nextIndex + 1] &&
-          lyrics[nextIndex + 1].start - LYRIC_TIME_BOUNDED <
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          lyrics[nextIndex + 1].start - BOUNDNED <
+            currentTimeRef.current + BOUNDNED
         ) {
           nextIndex += 1;
         }
@@ -37,8 +40,8 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
       case "backward":
         while (
           lyrics[nextIndex - 1] &&
-          lyrics[nextIndex - 1].end - LYRIC_TIME_BOUNDED >
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          lyrics[nextIndex - 1].end - BOUNDNED >
+            currentTimeRef.current + BOUNDNED
         ) {
           nextIndex -= 1;
         }

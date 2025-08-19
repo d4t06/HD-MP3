@@ -4,7 +4,7 @@ import LyricEditorControl, {
   LyricEditorControlRef,
 } from "./_components/LyricEditorControl";
 import LyricEditorList from "./_components/LyricEditorList";
-import { Center, Modal, ModalRef, Button, Title } from "@/components";
+import { Center, Modal, ModalRef, Button, Title, NotFound } from "@/components";
 import useLyricEditor from "./_hooks/useLyricEditor";
 import EditLyricModal from "../edit-lyric-modal";
 import EditLyricProvider from "./_components/EditLyricContext";
@@ -54,58 +54,60 @@ function Content({ children }: Props) {
         <Center>
           <ArrowPathIcon className="w-6 animate-spin" />
         </Center>
-      ) : (
-        song && (
-          <>
-            {children}
+      ) : song ? (
+        <>
+          {children}
 
-            <Title
-              className="line-clamp-1 flex-shrink-0"
-              title={`Edit lyric - ${song.name}`}
-            />
+          <Title
+            className="line-clamp-1 flex-shrink-0"
+            title={`Edit lyric - ${song.name}`}
+          />
 
-            <div className="mt-3">
-              {audioRef.current && (
-                <>
-                  <LyricEditorControl
-                    audioEle={audioRef.current}
-                    ref={controlRef}
-                  />
-
-                  <Modal persisted variant="animation" ref={modalRef}>
-                    {modal === "edit-lyric" && (
-                      <EditLyricModal closeModal={closeModal} />
-                    )}
-                  </Modal>
-                </>
-              )}
-            </div>
-
+          <div className="mt-3">
             {audioRef.current && (
-              <LyricEditorList
-                controlRef={controlRef}
-                audioEle={audioRef.current}
-                openEditModal={() => {
-                  openModal("edit-lyric");
-                }}
-              />
+              <>
+                <LyricEditorControl
+                  audioEle={audioRef.current}
+                  ref={controlRef}
+                />
+
+                <Modal persisted variant="animation" ref={modalRef}>
+                  {modal === "edit-lyric" && (
+                    <EditLyricModal closeModal={closeModal} />
+                  )}
+                </Modal>
+              </>
             )}
+          </div>
 
-            <p className="mt-5 text-right">
-              <Button
-                className={`rounded-full `}
-                color="primary"
-                disabled={!isChanged}
-                isLoading={isSubmitting}
-                onClick={handleSubmit}
-              >
-                Save
-              </Button>
-            </p>
+          {audioRef.current && (
+            <LyricEditorList
+              controlRef={controlRef}
+              audioEle={audioRef.current}
+              openEditModal={() => {
+                openModal("edit-lyric");
+              }}
+            />
+          )}
 
-            {/*</div>*/}
-          </>
-        )
+          <p className="mt-5 text-right">
+            <Button
+              className={`rounded-full `}
+              color="primary"
+              disabled={!isChanged}
+              isLoading={isSubmitting}
+              onClick={handleSubmit}
+            >
+              Save
+            </Button>
+          </p>
+
+          {/*</div>*/}
+        </>
+      ) : (
+        <Center>
+          <NotFound />
+        </Center>
       )}
     </>
   );

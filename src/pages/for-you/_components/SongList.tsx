@@ -35,6 +35,7 @@ export default function SongList() {
 
   return (
     <div
+      style={{ overflowAnchor: "none" }}
       className={`h-full snap-y snap-mandatory overflow-auto no-scrollbar flex flex-col md:items-center`}
     >
       {isFetching && (

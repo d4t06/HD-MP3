@@ -109,14 +109,6 @@ export default function MenuBtn({ pause }: Props) {
         <MyPopupContent origin="top right">
           <PopupWrapper className="w-[220px]">
             <VerticalMenu cb={pause}>
-              {/*           <button
-                disabled={!lyrics.length}
-                onClick={() => openModal("sync")}
-              >
-                <ArrowPathIcon />
-
-                <span>Sync lyric</span>
-              </button>*/}
               <button onClick={() => openModal("lyric")}>
                 <PencilIcon />
 
@@ -135,17 +127,15 @@ export default function MenuBtn({ pause }: Props) {
                 <span>Song beat</span>
               </button>
 
-              {!!lyrics.length && (
-                <button className="!p-0">
-                  <label
-                    className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
-                    htmlFor="import_lyric"
-                  >
-                    <ArrowDownTrayIcon />
-                    <span>Import (JSON or SRT)</span>
-                  </label>
-                </button>
-              )}
+              <button className="!p-0">
+                <label
+                  className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
+                  htmlFor="import_lyric"
+                >
+                  <ArrowDownTrayIcon />
+                  <span>Import (JSON or SRT)</span>
+                </label>
+              </button>
 
               <button
                 disabled={!lyrics.length}

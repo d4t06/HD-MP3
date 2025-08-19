@@ -7,9 +7,17 @@ type Props = {
   lyrics: Lyric[];
   audioEle: HTMLAudioElement;
   isActive: boolean;
+  noReset?: boolean;
+  bounded?: number;
 };
 
-export default function useLyric({ audioEle, lyrics, isActive }: Props) {
+export default function useLyric({
+  audioEle,
+  lyrics,
+  isActive,
+  noReset = false,
+  bounded,
+}: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const scrollBehavior = useRef<ScrollBehavior>("instant");
@@ -27,12 +35,14 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
 
     let nextIndex = currentIndexRef.current;
 
+    const _bounded = bounded || LYRIC_TIME_BOUNDED;
+
     switch (direction) {
       case "forward":
         while (
           lyrics[nextIndex + 1] &&
-          lyrics[nextIndex + 1].start - LYRIC_TIME_BOUNDED <
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          lyrics[nextIndex + 1].start - _bounded <
+            currentTimeRef.current + _bounded
         ) {
           nextIndex += 1;
         }
@@ -41,8 +51,8 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
       case "backward":
         while (
           lyrics[nextIndex - 1] &&
-          lyrics[nextIndex - 1].end - LYRIC_TIME_BOUNDED >
-            currentTimeRef.current + LYRIC_TIME_BOUNDED
+          lyrics[nextIndex - 1].end - _bounded >
+            currentTimeRef.current + _bounded
         ) {
           nextIndex -= 1;
         }
@@ -98,7 +108,7 @@ export default function useLyric({ audioEle, lyrics, isActive }: Props) {
   //  reset when change song
   useEffect(() => {
     return () => {
-      reset();
+      if (!noReset) reset();
     };
   }, [lyrics]);
 

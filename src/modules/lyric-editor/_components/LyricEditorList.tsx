@@ -18,7 +18,7 @@ type Props = {
 };
 
 function useLyricEditorList() {
-  const { lyrics, viewMode } = useEditLyricContext();
+  const { viewMode, lyrics, baseLyricArr } = useEditLyricContext();
 
   const activeLyricRef = useRef<ElementRef<"p">>(null);
   const behavior = useRef<ScrollBehavior>("instant");
@@ -30,7 +30,7 @@ function useLyricEditorList() {
 
     behavior.current = "instant";
     if (behavior.current === "instant") behavior.current = "smooth";
-  }, [lyrics.length, viewMode]);
+  }, [lyrics.length, viewMode, baseLyricArr.length]);
 
   useEffect(() => {
     return () => {
@@ -46,7 +46,6 @@ export default function LyricEditorList({
   audioEle,
   openEditModal,
 }: Props) {
-  // const { theme } = useThemeContext();
   const {
     baseLyricArr,
     lyrics,
@@ -56,13 +55,15 @@ export default function LyricEditorList({
     viewMode,
   } = useEditLyricContext();
 
-  const { activeLyricRef } = useLyricEditorList();
-
   const { currentIndex, lyricRefs } = useLyric({
     audioEle,
     isActive: viewMode !== "edit",
     lyrics,
+    noReset: true,
+    bounded: 0,
   });
+
+  const { activeLyricRef } = useLyricEditorList();
 
   const handleSeek = (second: number) => {
     controlRef.current?.seek(second);

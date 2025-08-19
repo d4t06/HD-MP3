@@ -21,7 +21,7 @@ export default function useGetRecommendSongs() {
 
 			let recomemdedSongs: Song[] = [];
 
-			if (user) {
+			if (user && user.recent_song_ids.length) {
 				setLocalStorage("recent-songs", []);
 				const recentSongIds = [...user.recent_song_ids];
 

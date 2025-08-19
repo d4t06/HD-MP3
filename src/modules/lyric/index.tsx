@@ -32,8 +32,8 @@ export default function Lyric({ className }: Props) {
     audioEle: audioRef.current,
     isActive: isOpenLyricTab,
     lyrics: songLyrics,
+    bounded: 0,
   });
-
 
   const lyricSizeMap = {
     small: "text-[16px] sm:text-[26px]",

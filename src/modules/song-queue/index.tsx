@@ -12,6 +12,7 @@ import { usePlayerContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
 import RecentSong from "./_components/RecentSong";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
+import useHideSongQueue from "./_hooks/useHideQueue";
 
 const tabs = ["Queue", "Recent"] as const;
 
@@ -25,6 +26,7 @@ function SongQueue() {
     useSelector(selectSongQueue);
 
   const { resetForNewSong } = usePlayerAction();
+  useHideSongQueue()
 
   const [tab, setTab] = useState<QueueTab>("Queue");
 

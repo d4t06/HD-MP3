@@ -103,8 +103,6 @@ export default function useSearch() {
   };
 
   useEffect(() => {
-    console.log(shouldFetchTrendingKeywords.current);
-
     if (shouldFetchTrendingKeywords.current) {
       shouldFetchTrendingKeywords.current = false;
       getTrendingKeyword();

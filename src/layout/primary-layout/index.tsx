@@ -39,7 +39,7 @@ function Content({ children }: Props) {
       else body.classList.remove("full-screen");
 
       if (isOnMobile) {
-        body.style.backgroundColor = 'var(--layout-cl)'
+        body.style.backgroundColor = "var(--layout-cl)";
       }
     }
     if (meta) meta.setAttribute("content", theme.container);

@@ -3,8 +3,6 @@ import { songsCollectionRef } from "./firebaseService";
 import { implementSongQuery } from "./appService";
 
 export async function getRelativeSongs(song: Song) {
-  console.log(song);
-
   if (!song.main_genre?.id || !song.genre_ids || !song.release_year) return [];
 
   const q = query(

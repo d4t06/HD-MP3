@@ -11,7 +11,9 @@ export default function PageWrapper({
 }: Props) {
   return (
     <div
-      className={"min-h-[calc(100vh-127px-10px)] md:min-h-[unset] md:pt-10 " + className}
+      className={
+        "min-h-[calc(100vh-127px-10px)] md:min-h-[unset] md:pt-10 " + className
+      }
     >
       {children}
     </div>

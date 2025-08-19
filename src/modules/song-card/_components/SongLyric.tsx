@@ -21,6 +21,7 @@ export default function SongLyric({ audioEle }: Props) {
     audioEle,
     lyrics,
     isActive: canPlay,
+    bounded: 0,
   });
 
   const renderItem = useMemo(() => {
@@ -41,7 +42,7 @@ export default function SongLyric({ audioEle }: Props) {
             <p
               key={currentIndex + "11"}
               ref={subLyricRef}
-              className="mt-3 transition-transform duration-[.4s] opacity-[.4] translate-y-[-10px]"
+              className="mt-3 transition-[transform,opacity] duration-[.4s] opacity-0 translate-y-[-10px]"
             >
               {lyrics[currentIndex + 1].text}
             </p>
@@ -72,6 +73,7 @@ export default function SongLyric({ audioEle }: Props) {
       if (subLyricRef.current) {
         Object.assign(subLyricRef.current.style, {
           transform: "translateY(0px)",
+          opacity: "0.4",
         });
       }
     }, 30);

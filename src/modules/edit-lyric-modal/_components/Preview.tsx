@@ -2,6 +2,7 @@ import { ElementRef, useEffect, useRef, useState } from "react";
 import { inputClasses } from "@/components/ui/Input";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import { CheckIcon, PencilIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useEditLyricContext } from "@/modules/lyric-editor/_components/EditLyricContext";
 
 export default function Preview() {
   const {
@@ -14,6 +15,8 @@ export default function Preview() {
     text,
     isChangedRef,
   } = useLyricEditorContext();
+
+  const { currentLyric } = useEditLyricContext();
 
   const [isEditText, setIsEditText] = useState(false);
 
@@ -49,12 +52,19 @@ export default function Preview() {
     if (isEditText) {
       eventRefs.playWhenSpaceRef.current = false;
       eventRefs.moveArrowToGrowRef.current = false;
-      if (inputRef.current) inputRef.current.value = text;
+      if (inputRef.current) {
+        inputRef.current.value = text;
+        inputRef.current.focus();
+      }
     } else {
       eventRefs.playWhenSpaceRef.current = true;
       eventRefs.moveArrowToGrowRef.current = true;
     }
   }, [isEditText]);
+
+  useEffect(() => {
+    if (isEditText) setIsEditText(false);
+  }, [currentLyric]);
 
   return (
     <div className="mt-3 relative pt-5 font-[Inter,system-ui]">
