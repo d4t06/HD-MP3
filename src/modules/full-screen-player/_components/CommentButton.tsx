@@ -3,7 +3,9 @@ import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import FullScreenComment from "@/modules/comment/components/FullScreenComment";
 import SongComment from "@/modules/comment/components/SongComment";
 import UserInput from "@/modules/comment/components/UserInput";
+import { useAuthContext, usePlayerContext } from "@/stores";
 import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
 type Props = {
@@ -11,7 +13,13 @@ type Props = {
 };
 
 export default function CommentButton({ song }: Props) {
-	const { setIsOpenComment } = useCommentContext();
+	const { setIsOpenComment, isOpenComment } = useCommentContext();
+	const { isOpenFullScreen } = usePlayerContext();
+	const { user } = useAuthContext();
+
+	useEffect(() => {
+		if (!isOpenFullScreen && isOpenComment) setIsOpenComment(false);
+	}, [isOpenFullScreen]);
 
 	return (
 		<>
@@ -29,7 +37,7 @@ export default function CommentButton({ song }: Props) {
 				<FullScreenComment>
 					<SongComment />
 
-					<UserInput variant="comment" targetId={song.id} />
+					{user && <UserInput variant="comment" targetId={song.id} />}
 				</FullScreenComment>,
 				document.getElementById("portals")!,
 			)}

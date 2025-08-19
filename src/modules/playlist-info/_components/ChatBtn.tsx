@@ -40,7 +40,7 @@ export default function ChatBtn({ playlist }: Props) {
           ref={modalRef}
         >
           <ModalContentWrapper className="h-[400px] w-[500px]">
-            <PlaylistComment targetId={playlist.id} />
+            <PlaylistComment variant="theme-bg" targetId={playlist.id} />
           </ModalContentWrapper>
         </Modal>
       )}
@@ -48,7 +48,7 @@ export default function ChatBtn({ playlist }: Props) {
       {isOnMobile && (
         <SlideModal ref={modalRef} onClose={() => setIsOpenComment(false)}>
           <MobileComment>
-            <PlaylistComment targetId={playlist.id} />
+            <PlaylistComment variant="dark-bg" targetId={playlist.id} />
           </MobileComment>
         </SlideModal>
       )}

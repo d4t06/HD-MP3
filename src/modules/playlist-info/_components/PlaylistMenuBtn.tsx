@@ -7,9 +7,9 @@ import {
   PopupWrapper,
 } from "@/components";
 import { ReactNode } from "react";
-import { AdjustmentsHorizontalIcon } from "@heroicons/react/24/outline";
 import OtherPlaylistMenu from "./OthersPlaylistMenu";
 import OwnPlaylistMenu from "./OwnPlaylistMenu";
+import { threeDotsIcon } from "@/assets/icon";
 
 export function PlaylistMenuPopupContent({
   children,
@@ -38,7 +38,7 @@ export default function PlaylistMenuBtn({ variant }: Props) {
       <MyPopup>
         <MyPopupTrigger>
           <Button size={"clear"}>
-            <AdjustmentsHorizontalIcon className="w-5" />
+            <p className="w-5">{threeDotsIcon}</p>
           </Button>
         </MyPopupTrigger>
 

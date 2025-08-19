@@ -13,7 +13,7 @@ import { pushRecentSearch } from "@/modules/search/_hooks/pushRecentSearch";
 
 export default function SearchResultPage() {
   const { isOnMobile } = useThemeContext();
-  const { isFetching, setIsFetching, result, tab, setTab, tabs } =
+  const { isFetching, key, setIsFetching, result, tab, setTab, tabs } =
     useGetSearchResult();
 
   const { handleSetSong } = useSetSong({ variant: "search-bar" });
@@ -51,7 +51,7 @@ export default function SearchResultPage() {
             tabs={tabs}
             render={(t) => t}
             tab={tab}
-            disable={isNotFoundAtAll}
+            disable={isNotFoundAtAll || !key}
             setTab={(t) => {
               setTab(t);
               setIsFetching(true);
@@ -125,7 +125,7 @@ export default function SearchResultPage() {
           </div>
         </SongSelectProvider>
 
-        {isNotFoundAtAll && <NotFound />}
+        {isNotFoundAtAll && key && <NotFound />}
       </PageWrapper>
 
       <Footer />

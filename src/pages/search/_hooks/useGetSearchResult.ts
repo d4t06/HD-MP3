@@ -11,7 +11,7 @@ import {
 } from "@/services/firebaseService";
 import { sleep } from "@/utils/appHelpers";
 import { limit, where } from "firebase/firestore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const tabs = ["All", "Song", "Playlist", "Singer"] as const;
@@ -30,6 +30,8 @@ export default function useGetSearchResult() {
 
   const searchParams = useSearchParams();
 
+  const key = useMemo(() => searchParams[0].get("q")?.trim(), [searchParams]);
+
   const [result, setResult] = useState<typeof initResult>(initResult);
 
   const shouldGetAll = useRef(true);
@@ -46,14 +48,11 @@ export default function useGetSearchResult() {
 
   const getResult = async () => {
     try {
-      const key = searchParams[0].get("q");
-
       if (!key) return;
 
       setIsFetching(true);
 
-
-      await sleep(500)
+      await sleep(500);
 
       switch (tab) {
         case "All": {
@@ -157,5 +156,6 @@ export default function useGetSearchResult() {
     getResult,
     result,
     tabs,
+    key,
   };
 }

@@ -1,4 +1,4 @@
-import { Center, Loading, PageWrapper } from "@/components";
+import { PageWrapper, Skeleton } from "@/components";
 import useGetPage from "./useGetPage";
 import CategorySection from "./_components/CategorySection";
 import PlaylistSection from "./category-detail/_components/PlaylistSection";
@@ -10,16 +10,22 @@ export default function CategoryPage() {
   const { categoryPage } = usePageContext();
   const { isFetching } = useGetPage();
 
-  if (isFetching)
-    return (
-      <Center>
-        <Loading />
-      </Center>
-    );
+  const renderContent = () => {
+    if (isFetching)
+      return (
+        <>
+          <Skeleton className="aspect-[16/4] rounded-lg" />
 
-  return (
-    <>
-      <PageWrapper>
+          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4   gap-4 mt-3">
+            {[...Array(3).keys()].map((i) => (
+              <Skeleton key={i} className="aspect-[5/3] rounded-lg" />
+            ))}
+          </div>
+        </>
+      );
+
+    return (
+      <>
         <SliderSection
           categoryIds={
             categoryPage?.category_ids
@@ -43,7 +49,13 @@ export default function CategoryPage() {
             playlistIds={c.target_ids ? c.target_ids.split("_") : []}
           />
         ))}
-      </PageWrapper>
+      </>
+    );
+  };
+
+  return (
+    <>
+      <PageWrapper>{renderContent()}</PageWrapper>
 
       <Footer />
     </>

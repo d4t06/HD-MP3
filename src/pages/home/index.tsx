@@ -6,7 +6,7 @@ import SliderSection from "../category/_components/SliderSection";
 import { usePageContext } from "@/stores";
 import PlaylistSection from "../category/category-detail/_components/PlaylistSection";
 import useGetPage from "../category/useGetPage";
-import { Center, Loading, NotFound, PageWrapper } from "@/components";
+import { NotFound, PageWrapper, PlaylistItem, Skeleton } from "@/components";
 import NewSong from "@/modules/new-song";
 import MobileNav from "./_components/MobileNav";
 import RecommendSong from "./_components/RecommendSong";
@@ -16,18 +16,24 @@ export default function HomePage() {
 
   const { isFetching } = useGetPage();
 
-  if (isFetching)
+  const renderContent = () => {
+    if (isFetching)
+      return (
+        <>
+          <Skeleton className="aspect-[16/4] rounded-lg" />
+
+          <div className={`flex flex-row flex-wrap -mx-3`}>
+            {[...Array(4).keys()].map((index) => (
+              <PlaylistItem key={index} variant="skeleton" />
+            ))}
+          </div>
+        </>
+      );
+
+    if (!homePage) return <NotFound />;
+
     return (
-      <Center>
-        <Loading />
-      </Center>
-    );
-
-  if (!homePage) return <NotFound />;
-
-  return (
-    <>
-      <PageWrapper>
+      <>
         <SliderSection
           categoryIds={
             homePage?.category_ids ? homePage?.category_ids.split("_") : []
@@ -52,7 +58,13 @@ export default function HomePage() {
         <NewSong amount={5} />
 
         <MobileSetting />
-      </PageWrapper>
+      </>
+    );
+  };
+
+  return (
+    <>
+      <PageWrapper>{renderContent()}</PageWrapper>
       <Footer />
     </>
   );

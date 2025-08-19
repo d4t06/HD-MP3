@@ -1,7 +1,7 @@
 import { implementSongQuery } from "@/services/appService";
 import { myUpdateDoc, songsCollectionRef } from "@/services/firebaseService";
 import { useAuthContext } from "@/stores";
-import { getLocalStorage } from "@/utils/appHelpers";
+import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { documentId, query, where } from "firebase/firestore";
 import { useState } from "react";
 
@@ -44,21 +44,23 @@ export default function useGetRecentSong() {
   };
 
   const clearRecentSongs = async () => {
-    if (!user) return;
+    if (user) {
+      const newUserData: Partial<User> = {
+        recent_song_ids: [],
+      };
+
+      myUpdateDoc({
+        collectionName: "Users",
+        data: newUserData,
+        id: user.email,
+      });
+
+      updateUserData(newUserData);
+    } else {
+      setLocalStorage("recent-songs", []);
+    }
 
     setRecentSongs([]);
-
-    const newUserData: Partial<User> = {
-      recent_song_ids: [],
-    };
-
-    await myUpdateDoc({
-      collectionName: "Users",
-      data: newUserData,
-      id: user.email,
-    });
-
-    updateUserData(newUserData);
   };
 
   return { isFetching, recentSongs, getRecentSongs, clearRecentSongs };

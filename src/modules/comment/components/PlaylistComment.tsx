@@ -5,12 +5,14 @@ import { useCommentContext } from "./CommentContext";
 import useGetPlaylistComment from "../hooks/useGetPlaylistComment";
 import UserInput from "./UserInput";
 import { useAuthContext } from "@/stores";
+import { ComponentProps } from "react";
 
 type Props = {
 	targetId: string;
+	variant: ComponentProps<typeof CommentList>["variant"];
 };
 
-export default function PlaylistComment({ targetId }: Props) {
+export default function PlaylistComment({ targetId, variant }: Props) {
 	const { user } = useAuthContext();
 	const { isFetching, comments } = useCommentContext();
 
@@ -25,7 +27,7 @@ export default function PlaylistComment({ targetId }: Props) {
 
 	return (
 		<>
-			<CommentList variant="theme-bg" comments={comments} />
+			<CommentList variant={variant} comments={comments} />
 			{user && <UserInput variant="comment" targetId={targetId} />}
 		</>
 	);

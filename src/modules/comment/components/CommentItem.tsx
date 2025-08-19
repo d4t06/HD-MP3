@@ -2,7 +2,7 @@ import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
-import { useAuthContext } from "@/stores";
+import { useAuthContext, usePlayerContext } from "@/stores";
 import useCommentAction from "../hooks/useCommentAction";
 import { useRef, useState } from "react";
 import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
@@ -22,6 +22,7 @@ export default function CommentItem({
   level,
   variant = "dark-bg",
 }: Props) {
+  const { setIsOpenFullScreen, isOpenFullScreen } = usePlayerContext();
   const { user } = useAuthContext();
 
   const { action, isFetching } = useCommentAction();
@@ -33,6 +34,10 @@ export default function CommentItem({
 
   const isLiked = user?.liked_comment_ids.includes(comment.id);
   const isOwner = user?.email === comment.user_email;
+
+  const closeFullScreen = () => {
+    if (isOpenFullScreen) setIsOpenFullScreen(false);
+  };
 
   const handleDeleteComment = async () => {
     await action({
@@ -60,6 +65,7 @@ export default function CommentItem({
                   className={`${variant === "theme-bg" ? "text-black dark:text-white" : "text-white"}`}
                 >
                   <Link
+                    onClick={closeFullScreen}
                     className={`font-semibold inline-block hover:underline line-clamp-1 ${variant === "theme-bg" ? "text-[#333] dark:text-[#f1f1f1]" : "text-[#f1f1f1]"}`}
                     to={`/user/${comment.user_email}`}
                   >
@@ -103,26 +109,30 @@ export default function CommentItem({
               </div>
 
               <div className="flex flex-col items-center ml-auto">
-                <button
-                  className="p-1"
-                  onClick={() => {
-                    currentAction.current = "like";
-                    action({ type: "like", id: comment.id });
-                  }}
-                >
-                  {isFetching && currentAction.current === "like" ? (
-                    <ArrowPathIcon className="w-6 animate-spin" />
-                  ) : (
-                    <>
-                      {isLiked ? (
-                        <HeartIconSolid className={`w-6 text-red-500`} />
-                      ) : (
-                        <HeartIcon className="w-6" />
-                      )}
-                    </>
-                  )}
-                </button>
-                <span>{comment.like}</span>
+                {user ? (
+                  <button
+                    className="p-1"
+                    onClick={() => {
+                      currentAction.current = "like";
+                      action({ type: "like", id: comment.id });
+                    }}
+                  >
+                    {isFetching && currentAction.current === "like" ? (
+                      <ArrowPathIcon className="w-6 animate-spin" />
+                    ) : (
+                      <>
+                        {isLiked ? (
+                          <HeartIconSolid className={`w-6 text-red-500`} />
+                        ) : (
+                          <HeartIcon className="w-6" />
+                        )}
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  <span className="text-lg">❤️</span>
+                )}
+                <span className="font-semibold">{comment.like}</span>
               </div>
             </div>
 

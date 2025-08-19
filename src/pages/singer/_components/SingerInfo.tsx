@@ -43,9 +43,8 @@ export default function SingerInfo() {
         <div className="flex-grow z-0 relative flex flex-col mt-5 space-y-2.5  md:mt-0 md:ml-5">
           {isFetching ? (
             <>
-              <Skeleton className="h-[60px] w-full md:w-[200px]" />
-              <Skeleton className="h-[24px] w-[200px]" />
-              <Skeleton className="h-[120px] w-full md:w-[100%]" />
+              <Skeleton className="h-[36px] w-full md:w-[200px]" />
+              <Skeleton className="h-[48px] w-full md:w-[100%]" />
             </>
           ) : (
             singer && (

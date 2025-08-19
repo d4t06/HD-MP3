@@ -5,9 +5,11 @@ export function daysSinceTimestamp(timestamp: Timestamp) {
 	const now = new Date();
 
 	const differenceInMilliseconds = now.getTime() - date.getTime();
-	const differenceInDays = Math.floor(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+	const differenceInDays = Math.floor(
+		differenceInMilliseconds / (1000 * 60 * 60 * 24),
+	);
 
-	if (differenceInDays)
-		return differenceInDays +( differenceInDays > 1 ? " days ago" : " day ago");
+	if (differenceInDays > 0)
+		return differenceInDays + (differenceInDays > 1 ? " days ago" : " day ago");
 	return "Today";
 }

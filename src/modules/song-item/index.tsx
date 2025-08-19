@@ -176,7 +176,7 @@ function SongItem({
       )}
       {showIndex && (
         <div
-          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 text-center text-[32px] ${showDiff ? "" : 'mr-2'} ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
+          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 text-center text-[32px] ${showDiff ? "" : "mr-2"} ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
         >
           {index + 1}
         </div>
@@ -210,7 +210,7 @@ function SongItem({
               s.id ? (
                 <Link
                   to={`/singer/${s.id}`}
-                  className={`hover:text-[--primary-cl]  hover:underline`}
+                  className={`${props.variant === "queue-song" ? "" : "hover:text-[--primary-cl]"} hover:underline`}
                   key={i}
                 >
                   {(i ? ", " : "") + s.name}

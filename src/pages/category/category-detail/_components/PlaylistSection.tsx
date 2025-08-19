@@ -1,4 +1,4 @@
-import { PlaylistList, Title } from "@/components";
+import { PlaylistItem, PlaylistList, Title } from "@/components";
 import { useGetPlaylists } from "@/hooks";
 import { useState } from "react";
 
@@ -16,7 +16,14 @@ export default function PlaylistSection({ playlistIds, title }: Props) {
 
   const { isFetching } = useGetPlaylists({ setPlaylists, playlistIds });
 
-  
+  if (isFetching)
+    return (
+      <div className={`flex flex-row flex-wrap -mx-3"}`}>
+        {[...Array(4).keys()].map((index) => (
+          <PlaylistItem key={index} variant="skeleton" />
+        ))}
+      </div>
+    );
 
   if (!playlists.length) return <></>;
 

@@ -10,16 +10,18 @@ import {
   VerticalMenu,
 } from "@/components";
 import { useRef, useState } from "react";
-import { Bars3Icon } from "@heroicons/react/24/outline";
 import PlaySingerSongBtn from "./PlayBtn";
 import { useSingerContext } from "./SingerContext";
 import HearBtn from "./HearBtn";
+import { threeDotsIcon } from "@/assets/icon";
+import { useAuthContext } from "@/stores";
 
 export default function SingerCta() {
+  const { singer } = useSingerContext();
+  const { user } = useAuthContext();
+
   const [modal, setModal] = useState<"edit" | "delete" | "more" | "">("");
   const modalRef = useRef<ModalRef>(null);
-
-  const { singer } = useSingerContext();
 
   const openModal = (m: typeof modal) => {
     setModal(m);
@@ -40,13 +42,11 @@ export default function SingerCta() {
           <PlaySingerSongBtn />
 
           <div className="flex space-x-2 ml-3 [&_button]:p-2 [&_svg]:w-6 hover:[&_button]:bg-[--a-5-cl] [&_button]:rounded-full">
-            <HearBtn />
+            {user && <HearBtn />}
 
             <MyPopup appendOnPortal>
               <MyPopupTrigger>
-                <button>
-                  <Bars3Icon />
-                </button>
+                <button>{threeDotsIcon}</button>
               </MyPopupTrigger>
 
               <MyPopupContent position="right-bottom" origin="top left">

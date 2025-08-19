@@ -71,12 +71,12 @@ export default function MobileFullScreenPlayer() {
               <SongThumbnail imageUrl={currentSongData?.song.image_url} />
 
               <div
-                className={`ml-2 ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
+                className={`ml-2 font-semibold h-full ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
-                <p className="font-playwriteCU translate-y-[-6px] leading-[2.4] line-clamp-1">
+                <p className="line-clamp-1">
                   {currentSongData?.song.name}
                 </p>
-                <div className={`opacity-[.7] line-clamp-1 text-sm`}>
+                <div className={`text-gray-300 line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) => (
                     <span key={i}> {(i ? ", " : "") + s.name}</span>
                   ))}

@@ -11,13 +11,6 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import CommentProvider from "@/modules/comment/components/CommentContext";
 import { ProgressBar } from "@/components";
 
-// export type ControlRef = {
-// 	handlePlayPause: () => void;
-// 	handleNext: () => void;
-// 	pause: () => void;
-// 	resetForNewSong: () => void;
-// };
-
 export default function MobileFullScreenControl() {
   const { timelineEleRef, currentTimeEleRef } = usePlayerContext();
 
@@ -43,7 +36,11 @@ export default function MobileFullScreenControl() {
           </span>
         </div>
 
-        <ProgressBar onClick={handleSeek} elelRef={timelineEleRef} className="h-1.5" />
+        <ProgressBar
+          onClick={handleSeek}
+          elelRef={timelineEleRef}
+          className="h-1.5"
+        />
 
         <div className="w-[44px] flex-shrink-0 sm:w-9 text-right">
           <span className={"text-lg sm:text-sm"}>

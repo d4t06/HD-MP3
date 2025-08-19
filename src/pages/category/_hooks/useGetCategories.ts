@@ -14,7 +14,7 @@ type Props = {
 
 export default function useGetCategories({ category_ids }: Props) {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
 
   const ranEffect = useRef(false);
 
