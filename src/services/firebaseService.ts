@@ -25,7 +25,7 @@ type collectionVariant =
   | "Genres"
   | "Granted_Accounts"
   | "Comments"
-  | "Trending_Metrics"
+  | "Trending_Songs"
   | "Categories"
   | "Page_Config"
   | "Search_Logs";
@@ -42,7 +42,7 @@ export const commentCollectionRef = collection(db, "Comments");
 export const dailySongCollectionRef = collection(db, "DailySong");
 export const weeklySongCollectionRef = collection(db, "DailySong");
 export const genresCollectionRef = collection(db, "Genres");
-export const trendingCollectionRef = collection(db, "Trending_Metrics");
+export const trendingCollectionRef = collection(db, "Trending_Songs");
 export const categoriesCollectionRef = collection(db, "Categories");
 
 export const myDeleteDoc = async ({

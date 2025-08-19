@@ -1,34 +1,17 @@
 import Footer from "@/layout/primary-layout/_components/Footer";
-import { Title, Tab, Loading, Center, PageWrapper } from "@/components";
-import { useState } from "react";
-import FavoriteSongList from "./_components/FavoriteSong";
-import UploadedSongList from "./_components/UploadedSong";
+import { Loading, Center, PageWrapper } from "@/components";
 import SingerSection from "./_components/SingerSection";
 import useMySongPage from "./_hooks/useMySongPage";
 import MyMusicPlaylistSection from "./_components/PlaylistSection";
-
-const tabs = ["Favorite", "Uploaded"] as const;
-type Tab = (typeof tabs)[number];
+import SongSection from "./_components/SongSectiont";
 
 function Content() {
-  const [tab, setTab] = useState<Tab>("Favorite");
-
   return (
     <>
       <PageWrapper>
         <MyMusicPlaylistSection />
-
         <SingerSection />
-
-        <div>
-          <Title title="Songs" />
-
-          <div className="flex space-x-2 my-3">
-            <Tab render={(t) => t} setTab={setTab} tab={tab} tabs={tabs} />
-          </div>
-
-          {tab === "Favorite" ? <FavoriteSongList /> : <UploadedSongList />}
-        </div>
+        <SongSection />
       </PageWrapper>
       <Footer />
     </>

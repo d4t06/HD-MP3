@@ -43,9 +43,8 @@ type Song = {
   queue_id: string;
   today_play: number;
   week_play: number;
-  last_week_play: number;
   last_week_rank: number;
-  last_week_trending_score: number;
+  rank: number;
   release_year: number;
   updated_at: Timestamp;
   created_at: Timestamp;

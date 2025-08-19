@@ -11,6 +11,7 @@ import { getClasses, getHidden } from "@/utils/appHelpers";
 import { Image } from "@/components";
 import HearBtn from "./_components/HearBtn";
 import { Link } from "react-router-dom";
+import SongRankDiff from "./_components/SongRankDiff";
 
 type Props = {
   className?: string;
@@ -22,6 +23,7 @@ type Props = {
   isLiked: boolean | null;
   showIndex?: boolean;
   isHasCheckBox: boolean;
+  showDiff?: boolean;
   imageUrl?: string;
   variant:
     | "system-song"
@@ -73,6 +75,7 @@ function SongItem({
   index,
   className = "",
   imageUrl,
+  showDiff,
   showIndex,
   ...props
 }: Props) {
@@ -173,11 +176,13 @@ function SongItem({
       )}
       {showIndex && (
         <div
-          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 md:w-[60px] text-center text-[32px] ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
+          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 text-center text-[32px] ${showDiff ? "" : 'mr-2'} ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
         >
           {index + 1}
         </div>
       )}
+
+      {showDiff && <SongRankDiff song={song} />}
 
       <div className="flex-grow flex" onClick={handleMobileClick}>
         <div className={`${classes.imageFrame} ${getSongImageSize()}`}>

@@ -2,7 +2,7 @@ import { Modal, ModalRef } from "@/components";
 import AddSongToPlaylistModal from "./AddSongToPlaylistModal";
 import { RefObject } from "react";
 import { useAuthContext } from "@/stores";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { plusIcon } from "@/assets/icon";
 
 type Props = {
   modalRef: RefObject<ModalRef>;
@@ -36,7 +36,7 @@ export default function AddToPlaylistMenuItem({ modalRef }: Props) {
 
   return (
     <button onClick={() => modalRef.current?.open()}>
-      <PlusIcon />
+      <p className="">{plusIcon}</p>
       <span>Add to playlist</span>
     </button>
   );

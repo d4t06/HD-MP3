@@ -1,7 +1,7 @@
 import {
+  ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
   ComputerDesktopIcon,
-  InformationCircleIcon,
   PaintBrushIcon,
 } from "@heroicons/react/24/outline";
 import {
@@ -96,14 +96,6 @@ export default function MobileSetting() {
             <span>Theme</span>
           </button>
 
-          <button
-            className={classes.linkItem}
-            onClick={() => openModal("info")}
-          >
-            <InformationCircleIcon className={classes.icon} />
-            <span>Info</span>
-          </button>
-
           {user?.role === "ADMIN" && (
             <Link to={"/dashboard"} className={classes.linkItem}>
               <ComputerDesktopIcon className={classes.icon} />
@@ -111,13 +103,21 @@ export default function MobileSetting() {
             </Link>
           )}
 
-          {user && (
+          {user ? (
             <button
               className={classes.linkItem}
               onClick={() => openModal("logout")}
             >
               <ArrowRightOnRectangleIcon className={classes.icon} />
               <span>Logout</span>
+            </button>
+          ) : (
+            <button
+              className={classes.linkItem}
+              onClick={() => action("login")}
+            >
+              <ArrowLeftOnRectangleIcon className={classes.icon} />
+              <span>Sign in</span>
             </button>
           )}
         </div>

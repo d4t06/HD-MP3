@@ -1,9 +1,9 @@
-import BackBtn from "@/components/BackBtn";
 import useGetUser from "./hooks/useGetUser";
 import {
 	Center,
 	Image,
 	NotFound,
+	PageWrapper,
 	PlaylistList,
 	Skeleton,
 	Title,
@@ -24,17 +24,13 @@ export default function UserPage() {
 
 	return (
 		<>
-			<div className="mb-5">
-				<BackBtn />
-			</div>
-
-			<div className="space-y-5">
-				<div className="flex flex-col md:flex-row items-center">
+			<PageWrapper>
+				<div className="flex flex-col md:flex-row items-center md:items-start">
 					{isFetching ? (
-						<Skeleton className="w-[160px] h-[160px] rounded-full" />
+						<Skeleton className="w-3/5 md:w-[200px] aspect-[1/1] rounded-full" />
 					) : (
 						user && (
-							<div className="w-[160px] h-[160px] rounded-full overflow-hidden">
+							<div className="w-3/5 md:w-[200px] aspect-[1/1] rounded-full overflow-hidden">
 								<Image
 									fallback={choVoTri.image}
 									blurHashEncode={user.photo_url ? "" : choVoTri.blurhash}
@@ -53,8 +49,8 @@ export default function UserPage() {
 						) : (
 							user && (
 								<>
-									<p className="font-semibold text-2xl">{user.display_name}</p>
-									<p className="text-[#666]">
+									<Title title={user.display_name} />
+									<p className="item-info">
 										Last seen: {daysSinceTimestamp(user.last_seen)}
 									</p>
 								</>
@@ -67,7 +63,7 @@ export default function UserPage() {
 					<Title title="Playlists" />
 					<PlaylistList loading={isFetching} playlists={playlists} />
 				</div>
-			</div>
+			</PageWrapper>
 
 			<Footer />
 		</>

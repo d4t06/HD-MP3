@@ -16,19 +16,22 @@ type SongData = {
 
 type TrendingSong = {
   song_id: string;
-  week_play: number;
-  trending_score: number;
+  rank: number;
+  last_week_rank: number;
 };
-type SongMap = Record<string, SongData>;
+type SongMapByGenre = Record<string, SongData>;
 
-type TrendingMap = Record<string, TrendingSong[]>;
+type TrendingSongMapByGenre = Record<string, TrendingSong[]>;
+
+type Trending = { trending_songs: TrendingSongMapByGenre };
 
 export default function useSongTable() {
   const { setErrorToast } = useToastContext();
   const { genres, setGenres } = useSongContext();
 
-  const [songMap, setSongMap] = useState<SongMap>();
-  const [trendingMap, setTrendingMap] = useState<TrendingMap>();
+  const [songMapByGenre, setSongDataMapByGenre] = useState<SongMapByGenre>();
+  const [trendingSongMapByGenre, setTrendingSongMapByGenre] =
+    useState<TrendingSongMapByGenre>();
 
   const [tab, setTab] = useState("");
   const [week, setWeek] = useState("");
@@ -42,19 +45,19 @@ export default function useSongTable() {
     return genres.map((g) => g.name);
   }, [genres]);
 
-  const getCurrentGenre = (label: string) =>
+  const getCurrentGenreId = (label: string) =>
     genres.find((g) => convertToEn(label) === convertToEn(g.name))?.id || "";
 
-  const KEY = useMemo(() => getCurrentGenre(tab), [genres, tab]);
+  const KEY = useMemo(() => getCurrentGenreId(tab), [genres, tab]);
 
   const initSongMap = () => {
     return tabs.reduce((r, name) => {
       const data: SongData = { songs: [], shouldFetching: true };
       return {
         ...r,
-        [getCurrentGenre(name)]: data,
+        [getCurrentGenreId(name)]: data,
       };
-    }, {} as SongMap);
+    }, {} as SongMapByGenre);
   };
 
   const ranEffect = useRef(false);
@@ -87,53 +90,51 @@ export default function useSongTable() {
 
       setIsFetching(true);
 
-      const newSongMap = songMap ? { ...songMap } : initSongMap();
-      const newSongData = { ...newSongMap[KEY] };
+      let newSongDataMapByGenre = songMapByGenre
+        ? { ...songMapByGenre }
+        : undefined;
 
-      let newTrendingMap = trendingMap ? { ...trendingMap } : undefined;
+      let newTrendingSongMapByGenre = trendingSongMapByGenre
+        ? { ...trendingSongMapByGenre }
+        : undefined;
+
       // get new trending data
       if (lastWeekRef.current !== week) {
         lastWeekRef.current = week;
-
-        type TrendingData = { trending_songs: TrendingMap };
+        newSongDataMapByGenre = initSongMap();
 
         const newTrendingSnap = await myGetDoc({
-          collectionName: "Trending_Metrics",
+          collectionName: "Trending_Songs",
           id: week,
           msg: "Get trending data",
         });
 
-        // if got trending metric
         if (newTrendingSnap.exists()) {
-          newTrendingMap = (newTrendingSnap.data() as TrendingData)
+          newTrendingSongMapByGenre = (newTrendingSnap.data() as Trending)
             .trending_songs;
-          // else
-        } else newTrendingMap = undefined;
+        } else newTrendingSongMapByGenre = undefined;
       }
 
-      if (!newTrendingMap) {
-        setTrendingMap(undefined);
-        if (newSongMap) setSongMap(undefined);
+      if (!newTrendingSongMapByGenre || !newSongDataMapByGenre) return;
 
-        return;
-      }
+      const currentSongData = newSongDataMapByGenre[KEY];
 
-      if (newSongData.shouldFetching) {
-        newSongData.shouldFetching = false;
+      if (currentSongData.shouldFetching) {
+        currentSongData.shouldFetching = false;
 
-        const songs = newTrendingMap[KEY];
+        const currentTrendingSongs = newTrendingSongMapByGenre[KEY];
 
         // if no trending songs
-        if (!songs || !songs.length) {
-          newSongData.songs = [];
+        if (!currentTrendingSongs || !currentTrendingSongs.length) {
+          currentSongData.songs = [];
 
-          Object.assign(newSongMap, { [KEY]: newSongData });
-          setSongMap(newSongMap);
+          Object.assign(newSongDataMapByGenre, { [KEY]: currentSongData });
+          setSongDataMapByGenre(newSongDataMapByGenre);
 
           return;
         }
 
-        const songIds = songs.map((s) => s.song_id);
+        const songIds = currentTrendingSongs.map((s) => s.song_id);
 
         const getSongQuery = query(
           songsCollectionRef,
@@ -141,12 +142,26 @@ export default function useSongTable() {
         );
 
         const result = await implementSongQuery(getSongQuery);
-        newSongData.songs = result;
 
-        Object.assign(newSongMap, { [KEY]: newSongData });
+        const orderedSongs: Song[] = [];
 
-        setSongMap(newSongMap);
-        setTrendingMap(newTrendingMap);
+        currentTrendingSongs.forEach((s) => {
+          const founded = result.find((song) => song.id === s.song_id);
+
+          if (founded) {
+            founded.rank = s.rank;
+            founded.last_week_rank = s.last_week_rank;
+
+            orderedSongs.push(founded);
+          }
+        });
+
+        currentSongData.songs = orderedSongs;
+
+        Object.assign(newSongDataMapByGenre, { [KEY]: currentSongData });
+
+        setSongDataMapByGenre(newSongDataMapByGenre);
+        setTrendingSongMapByGenre(newTrendingSongMapByGenre);
       } else await sleep(100);
     } catch (error) {
       console.log({ message: error });
@@ -173,5 +188,11 @@ export default function useSongTable() {
     getSong();
   }, [week, tab]);
 
-  return { isFetching, songMap, tabs, KEY, tab, setTab, setWeek };
+  useEffect(() => {
+    if (!genres.length) return;
+
+    setSongDataMapByGenre(initSongMap());
+  }, [week, genres]);
+
+  return { isFetching, songMapByGenre, tabs, KEY, tab, setTab, setWeek };
 }

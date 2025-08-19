@@ -32,7 +32,7 @@ function AddLyricItem(
 
   return (
     <>
-      <div className="pt-2 last:mb-[30vh]">
+      <div className="pt-3 last:mb-[30vh]">
         <div
           className={`flex ${viewMode !== "edit" ? "justify-center" : ""}  space-x-1.5 mb-1`}
         >

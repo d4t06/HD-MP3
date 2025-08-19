@@ -18,7 +18,7 @@ export function SongSkeleton(props: {
   const { variant = "default", skeNum = 4, hasCheckBox = true } = props;
 
   return [...Array(skeNum).keys()].map((index) => (
-    <div key={index} className="flex items-center px-3 py-2">
+    <div key={index} className="flex px-3 py-2">
       {hasCheckBox && <Skeleton className="h-[18px] w-[18px] mr-[10px]" />}
 
       <Skeleton

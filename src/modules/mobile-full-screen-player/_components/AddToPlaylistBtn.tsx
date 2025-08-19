@@ -1,6 +1,6 @@
+import { plusIcon } from "@/assets/icon";
 import { Modal, ModalRef } from "@/components";
 import AddSongToPlaylistModal from "@/modules/song-menu/_components/AddSongToPlaylistModal";
-import { PlusIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 
 type Props = {
@@ -14,7 +14,7 @@ export default function AddToPlaylistBtn({ song }: Props) {
 		<>
 			<div>
 				<button onClick={() => modalRef.current?.open()}>
-					<PlusIcon className="w-6" />
+					<p className="w-6">{plusIcon}</p>
 				</button>
 				<span>Add to playlist</span>
 			</div>

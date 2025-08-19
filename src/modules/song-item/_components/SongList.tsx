@@ -12,6 +12,7 @@ type Props = {
   songVariant?: ComponentProps<typeof SongItem>["variant"];
   isHasCheckBox?: boolean;
   showIndex?: boolean;
+  showDiff?: boolean;
   imageUrl?: string;
   whenEmpty?: ReactNode;
 };
@@ -22,9 +23,9 @@ export default function SongList({
   getActive,
   songVariant,
   imageUrl,
-  showIndex,
   isHasCheckBox = true,
   whenEmpty,
+  ...props
 }: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
@@ -38,7 +39,7 @@ export default function SongList({
 
     return (
       <SongItem
-        showIndex={showIndex}
+        key={song.queue_id}
         active={
           currentSongData
             ? getActive
@@ -48,12 +49,12 @@ export default function SongList({
         }
         onClick={() => setSong(song)}
         variant={songVariant || (isOwnSong ? "own-song" : "system-song")}
-        isHasCheckBox={isHasCheckBox}
         isLiked={user ? user.liked_song_ids.includes(song.id) : null}
         song={song}
         imageUrl={imageUrl}
         index={index}
-        key={song.queue_id}
+        isHasCheckBox={isHasCheckBox}
+        {...props}
       />
     );
   });

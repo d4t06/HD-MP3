@@ -1,4 +1,3 @@
-import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ComponentProps, ReactNode, useState } from "react";
 import { formatTime } from "@/utils/appHelpers";
 
@@ -16,6 +15,7 @@ import OwnSongMenu from "./_components/OwnSongMenu";
 import SystemSongMenu from "./_components/SystemSongMenu";
 import OwnPlaylistMenu from "./_components/OwnPlaylistMenu";
 import SongItem from "../song-item";
+import { threeDotsIcon } from "@/assets/icon";
 
 function SongInfo({ song }: { song: Song }) {
   return (
@@ -121,7 +121,7 @@ function SongMenu({ song, index, variant }: Props) {
               classes.button
             } ${getTriggerClass()}`}
           >
-            <Bars3Icon className="w-5" />
+            <span className="w-5 block">{threeDotsIcon}</span>
           </button>
           {/*</MyTooltip>*/}
         </MyPopupTrigger>

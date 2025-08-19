@@ -16,6 +16,7 @@ import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import useHideMobileBottomPlayer from "./_hooks/useHideMobileBottomPlayer";
 import MyMusicNavItem from "./_components/MyMusicNavItem";
 import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
+import ScrollText from "../scroll-text";
 
 export default function MobileBottomPlayer() {
   const { isOpenFullScreen, setIsOpenFullScreen, audioRef } =
@@ -54,7 +55,7 @@ export default function MobileBottomPlayer() {
   };
 
   const classes = {
-    wrapper: `block  ${shouldHidePlayer ? 'bg-[--layout-cl]' : 'bg-transparent'}  md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
+    wrapper: `block  ${shouldHidePlayer ? "bg-[--layout-cl]" : "bg-transparent"}  md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] z-[9]`,
     container: `absolute inset-0 bg-[--player-cl] bg-opacity-[0.7] backdrop-blur-[15px] z-[-1]`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
@@ -92,14 +93,23 @@ export default function MobileBottomPlayer() {
             <div className="flex-grow ml-2">
               {currentSongData?.song.song_url && (
                 <>
-                  <p className="font-playwriteCU line-clamp-1">
-                    {currentSongData?.song.name || "..."}
-                  </p>
-                  <p className={`opacity-70 text-sm line-clamp-1`}>
-                    {currentSongData?.song.singers.map(
-                      (s, i) => (i ? ", " : "") + s.name,
-                    )}
-                  </p>
+                  <div className="h-6">
+                    <ScrollText
+                      className="font-semibold"
+                      content={currentSongData?.song.name || "..."}
+                    />
+                  </div>
+
+                  <div className="h-5">
+                    <ScrollText
+                      className="item-info"
+                      content={
+                        currentSongData?.song.singers
+                          .map((s, i) => (i ? ", " : "") + s.name)
+                          .join("") || "..."
+                      }
+                    />
+                  </div>
                 </>
               )}
             </div>
@@ -110,7 +120,7 @@ export default function MobileBottomPlayer() {
         <div
           className={`${classes.cta} ${!currentSongData?.song.name && "disable"}`}
         >
-          <button className={`p-1.5 [&_svg]:w-9 text-[--primary-cl]`} onClick={handlePlayPause}>
+          <button className={`p-1.5 [&_svg]:w-9`} onClick={handlePlayPause}>
             {renderIcon}
           </button>
         </div>

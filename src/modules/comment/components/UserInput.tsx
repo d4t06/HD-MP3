@@ -20,6 +20,7 @@ import { inputClasses } from "@/components/ui/Input";
 import Popup from "@/components/popup/PopupContext";
 import useCommentInput from "../hooks/useCommentInput";
 import { meoVoTri } from "@/constants/app";
+import { getDisable } from "@/utils/appHelpers";
 
 type Props = {
   onSubmited?: () => void;
@@ -93,7 +94,7 @@ export default function UserInput({
         </div>
 
         <div
-          className={`rounded-lg ml-2 flex-grow  p-1.5 flex items-end ${bg}`}
+          className={`rounded-lg ml-2 flex-grow  p-1.5 flex items-end ${getDisable(isFetching)} ${bg}`}
         >
           <textarea
             ref={textareaRef}
@@ -131,7 +132,7 @@ export default function UserInput({
 
           <button
             onClick={handleAddComment}
-            className={`text-[--primary-cl] p-1.5 hover:bg-white/10 rounded-full`}
+            className={`p-1.5 hover:bg-white/10 rounded-full`}
           >
             {isFetching ? (
               <ArrowPathIcon className="w-6 animate-spin" />

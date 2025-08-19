@@ -34,7 +34,7 @@ export default function WeekList({ weekOptions, submit, currentIndex }: Props) {
           <button
             key={i}
             ref={active ? activeButtonRef : undefined}
-            className={`${active ? `text-[--primary-cl] font-bold` : ""}`}
+            className={`${active ? `text-[--primary-cl] font-bold bg-[--a-5-cl]` : ""}`}
             onClick={() => submit(i)}
           >
             {option.label}

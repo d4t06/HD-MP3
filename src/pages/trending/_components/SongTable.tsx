@@ -8,7 +8,7 @@ import { SongSkeleton } from "@/components/skeleton";
 import { useSetSong } from "@/hooks";
 
 export default function SongTable() {
-  const { isFetching, songMap, setWeek, KEY, ...rest } = useSongTable();
+  const { isFetching, songMapByGenre, setWeek, KEY, ...rest } = useSongTable();
 
   const { handleSetSong } = useSetSong({ variant: "songs" });
 
@@ -24,11 +24,13 @@ export default function SongTable() {
           {isFetching && <SongSkeleton hasCheckBox={false} />}
           {!isFetching && (
             <>
-              {songMap && songMap[KEY]?.songs.length ? (
+              {songMapByGenre && songMapByGenre[KEY]?.songs.length ? (
                 <SongList
+                  showIndex
+                  showDiff
                   isHasCheckBox={false}
-                  songs={songMap[KEY].songs}
-                  setSong={(s) => handleSetSong(s.queue_id, songMap[KEY].songs)}
+                  songs={songMapByGenre[KEY].songs}
+                  setSong={(s) => handleSetSong(s.queue_id, songMapByGenre[KEY].songs)}
                 />
               ) : (
                 <NotFound />

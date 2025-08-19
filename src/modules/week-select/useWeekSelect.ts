@@ -6,18 +6,16 @@ type WeekOption = {
   value: string;
 };
 
-function getCurrentWeek() {
-  const currentDate = new Date(Date.now());
-
-  const currentYear = currentDate.getFullYear();
-  const startOfYear = new Date(currentYear, 0, 1);
-
-  startOfYear.setDate(startOfYear.getDate() + (startOfYear.getDay() % 7));
-  const currentWeek = Math.round(
-    (currentDate.getTime() - startOfYear.getTime()) / (7 * 24 * 3600 * 1000),
+function getWeekAndYear(date: Date) {
+  const d = new Date(
+    Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()),
   );
-
-  return { currentWeek, currentYear };
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7));
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  const currentWeek = Math.ceil(
+    ((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7,
+  );
+  return { currentWeek, year: d.getUTCFullYear() };
 }
 
 export default function useWeekSelect({
@@ -34,11 +32,12 @@ export default function useWeekSelect({
   useEffect(() => {
     const options: WeekOption[] = [];
 
-    const { currentWeek, currentYear } = getCurrentWeek();
-    for (let w = 1; w <= currentWeek; w++) {
+    const { currentWeek, year } = getWeekAndYear(new Date());
+
+    for (let w = 1; w <= currentWeek - 1; w++) {
       options.push({
-        label: `Week ${w}, ${currentYear}`,
-        value: `${currentYear}-W${w}`, // Format: "YYYY-WW"
+        label: `Week ${w}, ${year}`,
+        value: `${year}-W${w}`, // Format: "YYYY-WW"
       });
     }
     setWeekOptions(options);

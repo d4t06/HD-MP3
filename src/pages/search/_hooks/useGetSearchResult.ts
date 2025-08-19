@@ -26,7 +26,7 @@ const initResult = {
 
 export default function useGetSearchResult() {
   const [isFetching, setIsFetching] = useState(false);
-  const [tab, setTab] = useState<Tab>("Song");
+  const [tab, setTab] = useState<Tab>("All");
 
   const searchParams = useSearchParams();
 

@@ -25,7 +25,7 @@ export default function TrendingSong(props: Props) {
   return (
     <>
       <div>
-        <Title title="Trending" className="mb-3" />
+        <Title title="Trending 🔥" className="mb-3" />
         <SongSelectProvider>
           {isFetching && <SongSkeleton />}
           {!isFetching && (

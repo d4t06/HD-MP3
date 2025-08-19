@@ -34,7 +34,6 @@ export default function Lyric({ className }: Props) {
     lyrics: songLyrics,
   });
 
-  console.log(currentIndex)
 
   const lyricSizeMap = {
     small: "text-[16px] sm:text-[26px]",

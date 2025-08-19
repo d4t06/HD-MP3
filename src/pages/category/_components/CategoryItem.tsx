@@ -14,15 +14,15 @@ export default function CategoryItem({ category }: Props) {
       <Image
         className="h-full group-hover:scale-[1.1] transition-transform duration-[.3s] object-cover"
         src={category.image_url}
+        blurHashEncode={category.blurhash_encode}
       />
 
-
       <div className="absolute z-[0] inset-0 bg-black/20">
-
-      <Center>
-        <p className="text-xl font-bold text-white whitespace-nowrap">{category.name}</p>
-      </Center>
-
+        <Center>
+          <p className="text-xl font-bold text-white whitespace-nowrap">
+            {category.name}
+          </p>
+        </Center>
       </div>
     </Link>
   );
