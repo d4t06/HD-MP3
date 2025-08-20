@@ -8,7 +8,10 @@ import {
   songsCollectionRef,
 } from "@/services/firebaseService";
 import { useParams } from "react-router-dom";
-import { implementPlaylistQuery, implementSongQuery } from "@/services/appService";
+import {
+  implementPlaylistQuery,
+  implementSongQuery,
+} from "@/services/appService";
 import { nanoid } from "nanoid/non-secure";
 
 export default function useGetSinger() {
@@ -31,10 +34,16 @@ export default function useGetSinger() {
     try {
       if (!params.id) return;
 
-      const singerSnap = await myGetDoc({ collectionName: "Singers", id: params.id });
+      const singerSnap = await myGetDoc({
+        collectionName: "Singers",
+        id: params.id,
+      });
       if (!singerSnap.exists()) return;
 
-      const singer: Singer = { ...(singerSnap.data() as SingerSchema), id: params.id };
+      const singer: Singer = {
+        ...(singerSnap.data() as SingerSchema),
+        id: params.id,
+      };
 
       const queryGetSongs = query(
         songsCollectionRef,
@@ -48,7 +57,8 @@ export default function useGetSinger() {
         playlistCollectionRef,
         where(`singer_map.${singer.id}`, "==", true),
       );
-      const playlistsAndAlbums = await implementPlaylistQuery(queryGetPlaylists);
+      const playlistsAndAlbums =
+        await implementPlaylistQuery(queryGetPlaylists);
 
       const playlists: Playlist[] = [];
       const albums: Playlist[] = [];
@@ -76,6 +86,10 @@ export default function useGetSinger() {
       getSinger();
     }
   }, []);
+
+  useEffect(() => {
+    if (singer) document.title = singer.name;
+  }, [singer]);
 
   return { singer, isFetching };
 }

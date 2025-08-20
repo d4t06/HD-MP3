@@ -35,6 +35,8 @@ export default function useGetPlaylist() {
         id: docRef.id,
       };
 
+      if (!playlist.is_official) return navigator("/dashboard/playlist");
+
       if (playlist.song_ids.length) {
         const queryGetSongs = query(
           songsCollectionRef,

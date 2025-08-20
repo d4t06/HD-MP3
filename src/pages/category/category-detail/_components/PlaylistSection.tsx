@@ -18,7 +18,7 @@ export default function PlaylistSection({ playlistIds, title }: Props) {
 
   if (isFetching)
     return (
-      <div className={`flex flex-row flex-wrap -mx-3"}`}>
+      <div className={`flex flex-row flex-wrap -mx-3`}>
         {[...Array(4).keys()].map((index) => (
           <PlaylistItem key={index} variant="skeleton" />
         ))}
