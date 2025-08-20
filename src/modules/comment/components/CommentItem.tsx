@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
 import UserInput from "./UserInput";
 import GetReplyBtn from "./GetReplyBtn";
+import { choVoTri, meoVoTri } from "@/constants/app";
 
 type Props = {
   comment: UserComment;
@@ -55,7 +56,7 @@ export default function CommentItem({
           <div
             className={`flex-shrink-0 ${level === 1 ? "w-[40px] h-[40px]" : "w-[36px] h-[36px]"} rounded-full overflow-hidden`}
           >
-            <Image src={comment.user_image_url} />
+            <Image fallback={comment.user_email === user?.email ? meoVoTri.image : choVoTri.image} src={comment.user_image_url} />
           </div>
 
           <div className="flex-grow text-[13px]">

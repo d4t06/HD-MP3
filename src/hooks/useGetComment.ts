@@ -32,6 +32,7 @@ export default function useGetComment(props?: Props) {
         ? query(
             commentCollectionRef,
             where("target_id", "==", target_id),
+            where("comment_id", "==", ""),
             orderBy("created_at", "desc"),
           )
         : query(
