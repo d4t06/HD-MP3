@@ -45,10 +45,6 @@ export default function ChooseImageModal({
 				title={title || "Choose image"}
 				closeModal={() => modalRef.current?.close()}
 			/>
-			<label
-				htmlFor="image_upload"
-				className={`inline-flex p-1.5 space-x-1 md:px-3`}
-			></label>
 
 			<p className="text-center">
 				<Button onClick={() => labelRef.current?.click()} color="primary">

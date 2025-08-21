@@ -63,14 +63,14 @@ export default function Sidebar() {
   return (
     <div className={`${classes.container}`}>
       <div className="px-[10px] h-[80px] flex items-center justify-center">
-        <Link
-          to={"/"}
-          className="bg-white dark:bg-[--layout-cl] w-12 flex h-12 rounded-full justify-center items-center"
-        >
-          <span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
-            :D
-          </span>
-        </Link>
+          <Link
+            to={"/"}
+            className="bg-[#f1f1f1] w-12 flex h-12 rounded-full justify-center items-center"
+          >
+            <span className="text-[#cd1818] text-xl font-bold translate-y-[1px]">
+              :D
+            </span>
+          </Link>
       </div>
       <div className={`flex flex-col items-start ${classes.linkList}`}>
         {userLoading && menuItemSkeletons}
