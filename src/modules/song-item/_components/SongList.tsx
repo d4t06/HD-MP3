@@ -11,8 +11,6 @@ type Props = {
   getActive?: (song: Song, currentSong: Song) => boolean;
   songVariant?: ComponentProps<typeof SongItem>["variant"];
   isHasCheckBox?: boolean;
-  showIndex?: boolean;
-  showDiff?: boolean;
   imageUrl?: string;
   whenEmpty?: ReactNode;
 };
@@ -25,14 +23,16 @@ export default function SongList({
   imageUrl,
   isHasCheckBox = true,
   whenEmpty,
-  ...props
 }: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
+
+console.log(songVariant)
+
   if (!songs.length) return whenEmpty || <NotFound variant="less" />;
 
-  return songs.map((song, index) => {
+  const content = songs.map((song, index) => {
     const isOwnSong = user
       ? song.owner_email === user.email && song.is_official === false
       : false;
@@ -54,8 +54,9 @@ export default function SongList({
         imageUrl={imageUrl}
         index={index}
         isHasCheckBox={isHasCheckBox}
-        {...props}
       />
     );
   });
+
+  return content;
 }

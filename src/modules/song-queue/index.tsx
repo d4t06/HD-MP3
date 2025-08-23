@@ -6,7 +6,6 @@ import {
   selectSongQueue,
   setCurrentQueueId,
 } from "@/stores/redux/songQueueSlice";
-import SongSelectProvider from "@/stores/SongSelectContext";
 import { Button, Skeleton, Tab } from "@/components";
 import { usePlayerContext } from "@/stores";
 import SongList from "../song-item/_components/SongList";
@@ -26,7 +25,7 @@ function SongQueue() {
     useSelector(selectSongQueue);
 
   const { resetForNewSong } = usePlayerAction();
-  useHideSongQueue()
+  useHideSongQueue();
 
   const [tab, setTab] = useState<QueueTab>("Queue");
 
@@ -57,53 +56,46 @@ function SongQueue() {
   };
 
   return (
-    <SongSelectProvider>
-      <div
-        className={`${classes.mainContainer} ${
-          isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
-        }     `}
-      >
-        <Tab
-          className="w-fit mx-auto text-sm"
-          tab={tab}
-          setTab={setTab}
-          tabs={tabs}
-          render={(t) => t}
-        />
+    <div
+      className={`${classes.mainContainer} ${
+        isOpenSongQueue ? "translate-x-0---" : "translate-x-full"
+      }     `}
+    >
+      <Tab
+        className="w-fit mx-auto text-sm"
+        tab={tab}
+        setTab={setTab}
+        tabs={tabs}
+        render={(t) => t}
+      />
 
-        <div className={classes.songListContainer}>
-          {tab === "Queue" ? (
-            <>
-              <SongList
-                isHasCheckBox={false}
-                songs={queueSongs}
-                setSong={(s) => handleSetSong(s.queue_id)}
-                songVariant="queue-song"
-                getActive={(s, cur) => s.queue_id === cur.queue_id}
-              />
+      <div className={classes.songListContainer}>
+        {tab === "Queue" ? (
+          <>
+            <SongList
+              isHasCheckBox={false}
+              songs={queueSongs}
+              setSong={(s) => handleSetSong(s.queue_id)}
+              songVariant="queue-song"
+              getActive={(s, cur) => s.queue_id === cur.queue_id}
+            />
 
-              {isFetching && skeleton}
+            {isFetching && skeleton}
 
-              <div className="text-center my-3">
-                {!!queueSongs.length && (
-                  <Button
-                    onClick={clearSongQueue}
-                    color="primary"
-                  >
-                    <TrashIcon className="w-6" />
-                    <span className="">
-                      Clear
-                    </span>
-                  </Button>
-                )}
-              </div>
-            </>
-          ) : (
-            <RecentSong setTab={setTab} />
-          )}
-        </div>
+            <div className="text-center my-3">
+              {!!queueSongs.length && (
+                <Button onClick={clearSongQueue} color="primary">
+                  <TrashIcon className="w-6" />
+                  <span className="">Clear</span>
+                </Button>
+              )}
+            </div>
+          </>
+        ) : (
+          <RecentSong setTab={setTab} />
+        )}
       </div>
-    </SongSelectProvider>
+    </div>
   );
 }
 

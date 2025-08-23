@@ -19,7 +19,7 @@ export const triangleIcon = (
 );
 
 export const threeDotsIcon = (
-	<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={'100%'}>
+	<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" width={"100%"}>
 		<g strokeWidth="0"></g>
 		<g strokeLinecap="round" strokeLinejoin="round"></g>
 		<g>

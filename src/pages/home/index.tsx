@@ -20,7 +20,7 @@ export default function HomePage() {
     if (isFetching)
       return (
         <>
-          <Skeleton className="aspect-[16/4] rounded-lg" />
+          <Skeleton className="pt-[25%] w-full rounded-lg" />
 
           <div className={`flex flex-row flex-wrap -mx-3`}>
             {[...Array(4).keys()].map((index) => (
@@ -49,7 +49,7 @@ export default function HomePage() {
           />
         ))}
 
-        <RecommendSong />
+      {/*  <RecommendSong />
 
         <RecentPlaylist />
 
@@ -57,7 +57,7 @@ export default function HomePage() {
 
         <NewSong amount={5} />
 
-        <MobileSetting />
+        <MobileSetting />*/}
       </>
     );
   };

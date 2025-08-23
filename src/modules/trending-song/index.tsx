@@ -26,17 +26,17 @@ export default function TrendingSong(props: Props) {
     <>
       <div>
         <Title title="Trending 🔥" className="mb-3" />
-        <SongSelectProvider>
-          {isFetching && <SongSkeleton />}
-          {!isFetching && (
-            <SongList
-              showIndex
-              isHasCheckBox={false}
-              songs={songs}
-              setSong={(s) => _handleSetSong(s)}
-            />
-          )}
-        </SongSelectProvider>
+        {isFetching && (
+          <SongSkeleton hasCheckBox={false} className="ml-[62px]" />
+        )}
+        {!isFetching && (
+          <SongList
+            songVariant="trending"
+            isHasCheckBox={false}
+            songs={songs}
+            setSong={(s) => _handleSetSong(s)}
+          />
+        )}
 
         <div className="text-center mt-5 border-none">
           <Link to={"/trending"}>

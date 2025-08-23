@@ -21,6 +21,7 @@ import Popup from "@/components/popup/PopupContext";
 import useCommentInput from "../hooks/useCommentInput";
 import { meoVoTri } from "@/constants/app";
 import { getDisable } from "@/utils/appHelpers";
+import Twemoji from "react-twemoji";
 
 type Props = {
   onSubmited?: () => void;
@@ -114,15 +115,12 @@ export default function UserInput({
 
             <MyPopupContent>
               <PopupWrapper className="w-[270px]">
-                <div className="p-1.5 grid grid-cols-5 justify-items-center max-h-60 overflow-y-auto pr-2">
+                <div className="p-1.5 grid grid-cols-5 justify-items-center max-h-60 overflow-y-auto pr-2 [&_button]:p-1  [&_button]:rounded-md  [&_img]:w-7  hover:[&_button]:bg-gray-200">
                   {EMOJIS.map((emoji, index) => (
-                    <button
-                      onClick={() => addEmoji(emoji)}
-                      key={index}
-                      className="p-1 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-300  text-2xl"
-                      aria-label={`Insert emoji ${emoji}`}
-                    >
-                      {emoji}
+                    <button onClick={() => addEmoji(emoji)} key={index}>
+                      <Twemoji options={{ className: "twemoji" }}>
+                        {emoji}
+                      </Twemoji>
                     </button>
                   ))}
                 </div>

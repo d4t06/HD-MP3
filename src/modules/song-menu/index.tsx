@@ -16,6 +16,7 @@ import SystemSongMenu from "./_components/SystemSongMenu";
 import OwnPlaylistMenu from "./_components/OwnPlaylistMenu";
 import SongItem from "../song-item";
 import { threeDotsIcon } from "@/assets/icon";
+import { choVoTri } from "@/constants/app";
 
 function SongInfo({ song }: { song: Song }) {
   return (
@@ -23,14 +24,16 @@ function SongInfo({ song }: { song: Song }) {
       <div className={`p-2 bg-white/10 rounded-md flex`}>
         <div className="w-[50px] h-[50px] rounded overflow-hidden flex-shrink-0">
           <Image
+            fallback={choVoTri.image}
             src={song.image_url}
+            blurHashEncode={song.blurhash_encode}
             className="object-cover object-center w-full"
           />
         </div>
 
         <div className="ml-2 text-sm">
-          <h5 className="line-clamp-1 font-[500]">{song.name}</h5>
-          <p className="opacity-70 line-clamp-1">
+          <h5 className="line-clamp-1 font-semibold">{song.name}</h5>
+          <p className="item-info line-clamp-1">
             {song.singers.map((s, i) => s.name + (!!i ? ", " : ""))}
           </p>
         </div>
@@ -52,9 +55,9 @@ export function SongMenuContent({
         <SongInfo song={song} />
         <VerticalMenu>{children}</VerticalMenu>
 
-        <p className="text-xs text-center opacity-70 mt-3">
+        {/* <p className="text-xs text-center opacity-70 mt-3">
           By {song.distributor}
-        </p>
+        </p>*/}
       </PopupWrapper>
     </MyPopupContent>
   );

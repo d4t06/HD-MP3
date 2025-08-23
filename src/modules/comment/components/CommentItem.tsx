@@ -1,4 +1,4 @@
-import { ConfirmModal, Image, Modal, ModalRef } from "@/components";
+import { ConfirmModal, Image, Modal, ModalRef, PEmoji } from "@/components";
 import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
@@ -9,6 +9,7 @@ import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
 import UserInput from "./UserInput";
 import GetReplyBtn from "./GetReplyBtn";
 import { choVoTri, meoVoTri } from "@/constants/app";
+import Twemoji from "react-twemoji";
 
 type Props = {
   comment: UserComment;
@@ -56,12 +57,19 @@ export default function CommentItem({
           <div
             className={`flex-shrink-0 ${level === 1 ? "w-[40px] h-[40px]" : "w-[36px] h-[36px]"} rounded-full overflow-hidden`}
           >
-            <Image fallback={comment.user_email === user?.email ? meoVoTri.image : choVoTri.image} src={comment.user_image_url} />
+            <Image
+              fallback={
+                comment.user_email === user?.email
+                  ? meoVoTri.image
+                  : choVoTri.image
+              }
+              src={comment.user_image_url}
+            />
           </div>
 
           <div className="flex-grow text-[13px]">
-            <div className="flex">
-              <div className="ml-2">
+            <div className="flex items-center">
+              <div className="mx-2">
                 <div
                   className={`${variant === "theme-bg" ? "text-black dark:text-white" : "text-white"}`}
                 >
@@ -72,9 +80,10 @@ export default function CommentItem({
                   >
                     {comment.user_name}
                   </Link>
-                  <div className="text-base break-all whitespace-break-spaces">
+
+                  <PEmoji className="text-base break-all whitespace-break-spaces ">
                     {comment.text}
-                  </div>
+                  </PEmoji>
                 </div>
 
                 <div className="flex space-x-2 mt-1">
@@ -109,7 +118,7 @@ export default function CommentItem({
                 )}
               </div>
 
-              <div className="flex flex-col items-center ml-auto">
+              <div className="flex flex-col items-center ml-auto flex-shrink-0">
                 {user ? (
                   <button
                     className="p-1"
@@ -131,7 +140,7 @@ export default function CommentItem({
                     )}
                   </button>
                 ) : (
-                  <span className="text-lg">❤️</span>
+                  <PEmoji>❤️</PEmoji>
                 )}
                 <span className="font-semibold">{comment.like}</span>
               </div>

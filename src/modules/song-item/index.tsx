@@ -1,17 +1,15 @@
 import { MouseEventHandler, useMemo } from "react";
-
-import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
 import { PlayIcon } from "@heroicons/react/24/solid";
 import playingIcon from "@/assets/icon-playing.gif";
-
-import { CheckIcon } from "@heroicons/react/20/solid";
 import SongMenu from "@/modules/song-menu";
-import { useSongSelectContext, useThemeContext } from "@/stores";
-import { getClasses, getHidden } from "@/utils/appHelpers";
+import { useThemeContext } from "@/stores";
+import { getHidden } from "@/utils/appHelpers";
 import { Image } from "@/components";
 import HearBtn from "./_components/HearBtn";
 import { Link } from "react-router-dom";
 import SongRankDiff from "./_components/SongRankDiff";
+import { CheckBox } from "./_components/CheckBox";
+import RankNumber from "./_components/RankNumber";
 
 type Props = {
   className?: string;
@@ -19,52 +17,51 @@ type Props = {
   onClick: () => void;
   song: Song;
   index: number;
-  // null if user is null
-  isLiked: boolean | null;
-  showIndex?: boolean;
+  isLiked: boolean | null; // null if user is null
   isHasCheckBox: boolean;
-  showDiff?: boolean;
   imageUrl?: string;
   variant:
     | "system-song"
     | "own-song"
     | "queue-song"
     | "recent-song"
-    | "own-playlist";
+    | "own-playlist"
+    | "trending"
+    | "table";
 };
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-type CheckBoxProps = {
-  onClick: () => void;
-  isChecked: boolean;
-  isSelected: boolean;
-};
+// type CheckBoxProps = {
+//   onClick: () => void;
+//   isChecked: boolean;
+//   isSelected: boolean;
+// };
 
-function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
-  return (
-    <>
-      <button
-        onClick={onClick}
-        className={`mr-2 md:mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
-      >
-        {!isSelected ? (
-          <StopIcon className="w-[18px]" />
-        ) : (
-          <CheckIcon className="w-[18px]" />
-        )}
-      </button>
-      <button
-        className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClasses(
-          isChecked,
-          "md:hidden",
-        )}`}
-      >
-        <MusicalNoteIcon className="w-[18px]" />
-      </button>
-    </>
-  );
-}
+// function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
+//   return (
+//     <>
+//       <button
+//         onClick={onClick}
+//         className={`mr-2 md:mr-3 selected ${isSelected ? "selected" : ""} group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
+//       >
+//         {!isSelected ? (
+//           <StopIcon className="w-[18px]" />
+//         ) : (
+//           <CheckIcon className="w-[18px]" />
+//         )}
+//       </button>
+//       <button
+//         className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClasses(
+//           isChecked,
+//           "md:hidden",
+//         )}`}
+//       >
+//         <MusicalNoteIcon className="w-[18px]" />
+//       </button>
+//     </>
+//   );
+// }
 
 function SongItem({
   song,
@@ -75,23 +72,21 @@ function SongItem({
   index,
   className = "",
   imageUrl,
-  showDiff,
-  showIndex,
   ...props
 }: Props) {
   // stores
   const { isOnMobile } = useThemeContext();
-  const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
+  // const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
 
-  const isSelected = useMemo(() => {
-    if (!selectedSongs) return false;
-    return selectedSongs.indexOf(song) != -1;
-  }, [selectedSongs]);
+  // const isSelected = useMemo(() => {
+  //   if (!selectedSongs) return false;
+  //   return selectedSongs.indexOf(song) != -1;
+  // }, [selectedSongs]);
 
-  const handleSelect = () => {
-    if (isChecked === undefined) return;
-    selectSong(song);
-  };
+  // const handleSelect = () => {
+  //   if (isChecked === undefined) return;
+  //   selectSong(song);
+  // };
 
   // define style
   const classes = {
@@ -167,22 +162,7 @@ function SongItem({
 
   const leftContent = (
     <>
-      {isHasCheckBox && (
-        <CheckBox
-          isChecked={isChecked}
-          isSelected={isSelected}
-          onClick={handleSelect}
-        />
-      )}
-      {showIndex && (
-        <div
-          className={`song-index font-bold w-[50px] leading-[54px] flex-shrink-0 text-center text-[32px] ${showDiff ? "" : "mr-2"} ${index <= 2 ? "is-top-" + (index + 1) : ""}`}
-        >
-          {index + 1}
-        </div>
-      )}
-
-      {showDiff && <SongRankDiff song={song} />}
+      {isHasCheckBox && <CheckBox song={song} />}
 
       <div className="flex-grow flex" onClick={handleMobileClick}>
         <div className={`${classes.imageFrame} ${getSongImageSize()}`}>
@@ -230,10 +210,24 @@ function SongItem({
       case "queue-song":
       case "recent-song":
         return leftContent;
-      default:
+
+      case "trending":
         return (
-          <div className="flex flex-grow overflow-hidden">{leftContent}</div>
+          <>
+            <RankNumber className="mr-3" rank={index + 1} />
+            {leftContent}
+          </>
         );
+      case "table":
+        return (
+          <>
+            <RankNumber rank={index + 1} />
+            <SongRankDiff song={song} />
+            {leftContent}
+          </>
+        );
+      default:
+        return <div className="flex flex-grow items-center">{leftContent}</div>;
     }
   };
 
@@ -284,8 +278,8 @@ function SongItem({
       default:
         return (
           <div
-            className={`${classes.itemContainer} ${className} group/main ${
-              active || isSelected ? `bg-[--a-5-cl]` : `hover:bg-[--a-5-cl]`
+            className={`${classes.itemContainer} ${className} has-[:checked]:bg-[--a-5-cl] group/main ${
+              active ? `bg-[--a-5-cl]` : `hover:bg-[--a-5-cl]`
             }`}
           >
             {renderLeftContent()}

@@ -14,11 +14,11 @@ export default function CategoryPage() {
     if (isFetching)
       return (
         <>
-          <Skeleton className="aspect-[16/4] rounded-lg" />
+          <Skeleton className="pt-[25%] rounded-lg" />
 
           <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4   gap-4 mt-3">
             {[...Array(3).keys()].map((i) => (
-              <Skeleton key={i} className="aspect-[5/3] rounded-lg" />
+              <Skeleton key={i} className="pt-[60%] rounded-lg" />
             ))}
           </div>
         </>

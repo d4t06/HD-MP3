@@ -85,7 +85,7 @@ const SongThumbnail = (
           <h2 className={classes.title}>{data?.name || "Some song"}</h2>
           <p className="text-md opacity-50 line-clamp-1">
             {data.singers.map((s, i) => (
-              <span key={i}>{s.name}</span>
+              <span key={i}>{!!i && ', '}{s.name}</span>
             ))}
           </p>
         </div>

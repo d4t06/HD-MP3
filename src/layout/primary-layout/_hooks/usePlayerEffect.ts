@@ -336,8 +336,13 @@ export default function usePlayerEffect() {
 
   // update line color
   useEffect(() => {
+    if (!audioRef.current) return;
+
     if (isOpenFullScreen) {
       timeLineColorRef.current = "#fff";
     } else timeLineColorRef.current = "var(--primary-cl)";
+
+    const currentTime = audioRef.current.currentTime;
+    if (playStatusRef.current === "paused") updateProgressElement(currentTime);
   }, [isOpenFullScreen]);
 }

@@ -2,6 +2,7 @@ import { Skeleton } from "@/components";
 import useGetCategories from "../_hooks/useGetCategories";
 import ImageSlider from "@/modules/slider";
 import { useMemo } from "react";
+import RatioFrame from "@/components/ui/RatioFrame";
 
 type Props = {
   categoryIds: string[];
@@ -23,17 +24,19 @@ export default function SliderSection({ categoryIds }: Props) {
     return result;
   }, [categories]);
 
-  if (isFetching) return <Skeleton className="aspect-[16/4]" />;
+  if (isFetching) return <Skeleton className="pt-[25%] rounded-lg" />;
   if (!categories.length) return <></>;
 
   return (
-    <ImageSlider
-      className="aspect-[16/4]"
-      images={orderedCategories.map((c) => ({
-        imageUrl: c.banner_image_url,
-        link: `/category/${c.id}`,
-        hash: c.banner_blurhash_encode,
-      }))}
-    />
+    <RatioFrame className="pt-[25%] overflow-hidden rounded-lg">
+      <ImageSlider
+        className="h-full"
+        images={orderedCategories.map((c) => ({
+          imageUrl: c.banner_image_url,
+          link: `/category/${c.id}`,
+          hash: c.banner_blurhash_encode,
+        }))}
+      />
+    </RatioFrame>
   );
 }

@@ -20,6 +20,8 @@ export { default as Label } from "./ui/Label";
 export { default as LoadingOverlay } from "./ui/LoadingOverlay";
 export { default as ProgressBar } from "./ui/ProgressBar";
 export { default as PageWrapper } from "./ui/PageWrapper";
+export { default as RatioFrame } from "./ui/RatioFrame";
+export { default as PEmoji } from "./ui/PEmoji";
 export { default as PlaylistItem } from "./PlaylistItem";
 export { default as SettingMenu } from "./SettingMenu";
 export { default as SongThumbnail } from "./SongThumbnail";

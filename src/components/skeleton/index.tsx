@@ -1,3 +1,6 @@
+import SongItem from "@/modules/song-item";
+import { ComponentProps } from "react";
+
 type Props = {
   className: string;
 };
@@ -10,23 +13,29 @@ export default function Skeleton({ className }: Props) {
   );
 }
 
-export function SongSkeleton(props: {
-  variant?: "default" | "queue-song";
+export function SongSkeleton({
+  variant = "system-song",
+  skeNum = 4,
+  hasCheckBox = true,
+  className,
+}: {
+  variant?: ComponentProps<typeof SongItem>["variant"];
   skeNum?: number;
   hasCheckBox?: boolean;
+  className?: string;
 }) {
-  const { variant = "default", skeNum = 4, hasCheckBox = true } = props;
-
   return [...Array(skeNum).keys()].map((index) => (
-    <div key={index} className="flex px-3 py-2">
+    <div key={index} className={`flex items-center px-3 py-2 ${className}`}>
       {hasCheckBox && <Skeleton className="h-[18px] w-[18px] mr-[10px]" />}
 
-      <Skeleton
-        className={`${variant === "default" ? "h-[54px] w-[54px]" : "h-10 w-10"}`}
-      />
-      <div className="ml-[10px]">
-        <Skeleton className="h-[16px] w-[140px] max-w-full" />
-        <Skeleton className="h-[14px] w-[80px] mt-[6px] max-w-1/2" />
+      <div className="flex">
+        <Skeleton
+          className={`${variant === "queue-song" ? "h-10 w-10" : "h-[54px] w-[54px]"}`}
+        />
+        <div className="ml-[10px]">
+          <Skeleton className="h-[16px] w-[140px] max-w-full" />
+          <Skeleton className="h-[14px] w-[80px] mt-[6px] max-w-1/2" />
+        </div>
       </div>
     </div>
   ));

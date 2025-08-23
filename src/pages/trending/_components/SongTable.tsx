@@ -1,6 +1,4 @@
 import { NotFound, Tab, Title } from "@/components";
-// import { useThemeContext } from "@/stores";
-import SongSelectProvider from "@/stores/SongSelectContext";
 import useSongTable from "../useSongTable";
 import SongList from "@/modules/song-item/_components/SongList";
 import WeekSelect from "@/modules/week-select";
@@ -20,24 +18,25 @@ export default function SongTable() {
         <WeekSelect submit={(value) => setWeek(value)} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-4 mt-3">
-        <SongSelectProvider>
-          {isFetching && <SongSkeleton hasCheckBox={false} />}
-          {!isFetching && (
-            <>
-              {songMapByGenre && songMapByGenre[KEY]?.songs.length ? (
-                <SongList
-                  showIndex
-                  showDiff
-                  isHasCheckBox={false}
-                  songs={songMapByGenre[KEY].songs}
-                  setSong={(s) => handleSetSong(s.queue_id, songMapByGenre[KEY].songs)}
-                />
-              ) : (
-                <NotFound />
-              )}
-            </>
-          )}
-        </SongSelectProvider>
+        {isFetching && (
+          <SongSkeleton className="ml-[82px]" hasCheckBox={false} />
+        )}
+        {!isFetching && (
+          <>
+            {songMapByGenre && songMapByGenre[KEY]?.songs.length ? (
+              <SongList
+                songVariant="table"
+                isHasCheckBox={false}
+                songs={songMapByGenre[KEY].songs}
+                setSong={(s) =>
+                  handleSetSong(s.queue_id, songMapByGenre[KEY].songs)
+                }
+              />
+            ) : (
+              <NotFound />
+            )}
+          </>
+        )}
       </div>
     </div>
   );

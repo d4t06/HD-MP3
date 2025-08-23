@@ -10,6 +10,7 @@ import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
 import CommentProvider from "../comment/components/CommentContext";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+import Twemoji from "react-twemoji";
 
 type Props = {
   playlist: Playlist | null;
@@ -50,7 +51,7 @@ export default function PLaylistInfo({
           {playlist.singers[0].name}
         </Link>
         <p className="text-sm">
-          <span>❤️ </span>
+          <Twemoji>❤️</Twemoji>
           {abbreviateNumber(playlist.like)}
         </p>
       </>
@@ -72,9 +73,8 @@ export default function PLaylistInfo({
       case "others-playlist":
         return (
           <>
-            <p>
-              <span className="text-base">❤️ </span>
-              {abbreviateNumber(playlist.like)}
+            <p className="[&_img]:w-5 [&_img]:inline text-base font-semibold">
+              <Twemoji>❤️ {abbreviateNumber(playlist.like)}</Twemoji>
             </p>
             {!!playlist.singers.length && (
               <p className={classes.smallText}>
