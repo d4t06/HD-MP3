@@ -6,7 +6,7 @@ import { mergeGrow } from "@/utils/mergeGrow";
 import { editLyricFormatTime } from "@/modules/lyric-editor";
 
 export default function useEditLyricModalSideEffect() {
-  const { selectLyricIndex, currentLyric } = useEditLyricContext();
+  const { selectLyricIndex, currentLyric, lyrics } = useEditLyricContext();
 
   const {
     eleRefs,
@@ -73,7 +73,7 @@ export default function useEditLyricModalSideEffect() {
       endTimeRangeRef.current.max = currentLyric.end + "";
       endTimeRangeRef.current.value = actuallyEndRef.current + "";
     }
-  }, [selectLyricIndex]);
+  }, [selectLyricIndex, lyrics.length]);
 
   // useEffect(() => {//   setLoacalLyricIndex(selectLyricIndex);
   // }, [selectLyricIndex]);

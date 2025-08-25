@@ -74,7 +74,7 @@ function MyToolTip(
   }, []);
 
   const classes = {
-    container: ` shadow-[0_0_6px_0_rgba(0,0,0,.15)] font-semibold absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md z-[999]`,
+    container: `popup-shadow font-bold text-sm absolute whitespace-nowrap -translate-x-1/2 left-1/2 rounded-md z-[999]`,
   };
 
   const jsxContent = (

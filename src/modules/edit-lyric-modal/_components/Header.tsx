@@ -2,6 +2,7 @@ import { AudioSetting, Tab } from "@/components";
 import { useLyricEditorContext } from "./LyricEditorContext";
 import EditLyricModalPlayer from "./Player";
 import PlayBtn from "./PlayBtn";
+import SplitBtn from "./SplitBtn";
 
 type Props = {
   audioEle: HTMLAudioElement;
@@ -19,6 +20,8 @@ export default function Header({ audioEle }: Props) {
 
         <div className="flex space-x-2">
           <PlayBtn />
+
+          <SplitBtn />
 
           <AudioSetting
             positions="left"

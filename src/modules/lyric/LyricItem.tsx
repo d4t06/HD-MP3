@@ -15,11 +15,11 @@ function LyricItem(
   const getClass = () => {
     switch (status) {
       case "coming":
-        return "opacity-[.4]";
+        return "";
       case "active":
         return `${activeColor || "text-[#ffed00]"} active-lyric`;
       case "done":
-        return "opacity-[.4]";
+        return "";
     }
   };
 
@@ -30,10 +30,11 @@ function LyricItem(
   // }, [status]);
 
   return (
-    <p ref={ref} className={`${className} transition-transform duration-[.3s] origin-left select-none font-[700] ${getClass()}`}>
+    <p ref={ref} className={`${className} ${getClass()}`}>
       {text}
     </p>
   );
 }
 
 export default forwardRef(LyricItem);
+

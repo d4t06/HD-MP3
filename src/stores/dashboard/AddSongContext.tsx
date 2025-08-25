@@ -9,6 +9,8 @@ function useAddSong() {
   const [imageFile, setImageFile] = useState<File>();
   const [song, setSong] = useState<Song>();
   const [imageBlob, setImageBlob] = useState<Blob>();
+  // const [imageSize, setImageSize] = useState("");
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
 
   const variant = useRef<"add" | "edit">("add");
 
@@ -22,6 +24,13 @@ function useAddSong() {
     else newSingers.splice(index, 1);
 
     setSingers(newSingers);
+  };
+
+  const removePlaylist = (index: number) => {
+    const newPlaylists = [...playlists];
+    newPlaylists.splice(index, 1);
+
+    setPlaylists(newPlaylists);
   };
 
   const selectGenre = (genre: Genre) => {
@@ -68,6 +77,11 @@ function useAddSong() {
     audioRef,
     mainGenre,
     setMainGenre,
+    // imageSize,
+    // setImageSize,
+    playlists,
+    setPlaylists,
+    removePlaylist,
   };
 }
 

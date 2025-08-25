@@ -52,19 +52,6 @@ export default function PlayPlaylistBtn() {
     if (isSetQueue) pushRecentPlaylist(currentPlaylist);
   };
 
-  // const handlePlayPause = () => {
-  //   switch (playStatus) {
-  //     case "playing":
-  //       return dispatch(setPlayStatus({ triggerPlayStatus: "paused" }));
-  //     case "paused":
-  //       return dispatch(setPlayStatus({ triggerPlayStatus: "playing" }));
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   dispatch(setPlayStatus({ triggerPlayStatus: playStatus }));
-  // }, [playStatus]);
-
   if (!currentPlaylist) return <></>;
 
   if (currentSongData?.song.queue_id.includes(currentPlaylist.id)) {

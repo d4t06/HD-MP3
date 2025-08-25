@@ -27,9 +27,6 @@ export default function SongList({
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
-
-console.log(songVariant)
-
   if (!songs.length) return whenEmpty || <NotFound variant="less" />;
 
   const content = songs.map((song, index) => {

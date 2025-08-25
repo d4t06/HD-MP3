@@ -107,7 +107,7 @@ export default function LyricEditorList({
   return (
     <>
       <div
-        className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] shadow-[0_0_6px_0_rgba(0,0,0,0.15)] ${getClasses(viewMode !== "edit", "justify-center")}`}
+        className={`flex-grow overflow-auto flex font-[Inter,system-ui] no-scrollbar rounded-xl px-2 pt-3 mt-3 bg-[--popup-cl] popup-shadow ${getClasses(viewMode !== "edit", "justify-center")}`}
       >
         {!!baseLyricArr.length && (
           <div className={`w-1/2 ${getClasses(viewMode !== "edit", "hidden")}`}>

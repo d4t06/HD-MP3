@@ -32,37 +32,6 @@ type Props = {
 
 export type SongItemModal = "edit" | "delete" | "add-to-playlist";
 
-// type CheckBoxProps = {
-//   onClick: () => void;
-//   isChecked: boolean;
-//   isSelected: boolean;
-// };
-
-// function CheckBox({ onClick, isChecked, isSelected }: CheckBoxProps) {
-//   return (
-//     <>
-//       <button
-//         onClick={onClick}
-//         className={`mr-2 md:mr-3 selected ${isSelected ? "selected" : ""} group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
-//       >
-//         {!isSelected ? (
-//           <StopIcon className="w-[18px]" />
-//         ) : (
-//           <CheckIcon className="w-[18px]" />
-//         )}
-//       </button>
-//       <button
-//         className={`mr-3 hidden group-hover/main:hidden group-hover/main:mr-[0px] md:block ${getClasses(
-//           isChecked,
-//           "md:hidden",
-//         )}`}
-//       >
-//         <MusicalNoteIcon className="w-[18px]" />
-//       </button>
-//     </>
-//   );
-// }
-
 function SongItem({
   song,
   onClick,
@@ -76,17 +45,6 @@ function SongItem({
 }: Props) {
   // stores
   const { isOnMobile } = useThemeContext();
-  // const { isChecked, selectedSongs, selectSong } = useSongSelectContext();
-
-  // const isSelected = useMemo(() => {
-  //   if (!selectedSongs) return false;
-  //   return selectedSongs.indexOf(song) != -1;
-  // }, [selectedSongs]);
-
-  // const handleSelect = () => {
-  //   if (isChecked === undefined) return;
-  //   selectSong(song);
-  // };
 
   // define style
   const classes = {

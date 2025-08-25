@@ -8,6 +8,8 @@
 
 	--primary-cl: #5a9e87;
 
+	--popup-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.15);
+
 	--text-cl: #333;
 	--a-5-cl: rgba(0, 0, 0, 0.05);
 	--a-10-cl: rgba(0, 0, 0, 0.1);

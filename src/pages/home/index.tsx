@@ -1,15 +1,15 @@
 import Footer from "@/layout/primary-layout/_components/Footer";
-import RecentPlaylist from "./_components/RecentPlaylist";
-import MobileSetting from "./_components/MobileSetting";
-import TrendingSong from "@/modules/trending-song";
+// import RecentPlaylist from "./_components/RecentPlaylist";
+// import MobileSetting from "./_components/MobileSetting";
+// import TrendingSong from "@/modules/trending-song";
 import SliderSection from "../category/_components/SliderSection";
 import { usePageContext } from "@/stores";
 import PlaylistSection from "../category/category-detail/_components/PlaylistSection";
 import useGetPage from "../category/useGetPage";
 import { NotFound, PageWrapper, PlaylistItem, Skeleton } from "@/components";
-import NewSong from "@/modules/new-song";
+// import NewSong from "@/modules/new-song";
 import MobileNav from "./_components/MobileNav";
-import RecommendSong from "./_components/RecommendSong";
+// import RecommendSong from "./_components/RecommendSong";
 
 export default function HomePage() {
   const { homePage } = usePageContext();

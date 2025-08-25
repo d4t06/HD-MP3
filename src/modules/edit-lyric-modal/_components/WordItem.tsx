@@ -38,7 +38,7 @@ export function WordItem({ text, openModal, isShowScissor, index }: Props) {
         <Button
           onClick={openModal}
           size={"clear"}
-          className="!absolute bottom-0 translate-y-[16px] bg-[--popup-cl] text-[--text-cl] shadow-[0_0_6px__rgba(0,0,0,0.3)] p-1.5"
+          className="!absolute bottom-0 translate-y-[16px] bg-[--popup-cl] text-[--text-cl] popup-shadow p-1.5"
         >
           <ScissorsIcon className="w-5" />
         </Button>

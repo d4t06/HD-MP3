@@ -116,6 +116,7 @@ export function MyPopupContent(props: ContentProps) {
     state: { isMounted, isOpen },
     appendOnPortal,
     setContentRef,
+    persist,
   } = usePopoverContext();
 
   const classes = {
@@ -141,7 +142,7 @@ export function MyPopupContent(props: ContentProps) {
     </div>
   );
 
-  if (!isOpen) return <></>;
+  if (!isOpen && !persist) return <></>;
 
   return (
     <>

@@ -1,6 +1,7 @@
-import { ChooseImageModal, Modal, ModalRef } from "@/components";
+import { Modal, ModalRef } from "@/components";
 import { useReadCopiedImage } from "@/hooks";
 import { Button } from "@/pages/dashboard/_components";
+import DashboardChooseImageModal from "@/pages/dashboard/_modules/choose-image-modal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
@@ -34,6 +35,13 @@ export default function UploadImageBtn() {
     setImageFile(f);
   };
 
+  const chooseImageFromUrl = (url: string) => {
+    setImageFile(undefined);
+    setImageBlob(undefined);
+
+    updateSongData({ image_url: url });
+  };
+
   return (
     <>
       <Button onClick={() => modalRef.current?.open()}>
@@ -49,10 +57,11 @@ export default function UploadImageBtn() {
       )}
 
       <Modal variant="animation" ref={modalRef}>
-        <ChooseImageModal
+        <DashboardChooseImageModal
           modalRef={modalRef}
           setImageFile={handleSetImageFile}
           title="Song image"
+          setUrl={chooseImageFromUrl}
         />
       </Modal>
     </>

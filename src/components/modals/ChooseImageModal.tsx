@@ -1,4 +1,4 @@
-import { ChangeEvent, RefObject, useRef } from "react";
+import { ChangeEvent, ReactNode, RefObject, useRef } from "react";
 import { ModalContentWrapper, ModalHeader, ModalRef } from ".";
 import { useReadCopiedImage } from "@/hooks";
 import { FolderOpenIcon } from "@heroicons/react/24/outline";
@@ -8,14 +8,15 @@ type Props = {
 	title?: string;
 	modalRef: RefObject<ModalRef>;
 	setImageFile: (f: File) => void;
+	children?: ReactNode;
 };
 
 export default function ChooseImageModal({
 	title,
 	modalRef,
 	setImageFile,
+	children,
 }: Props) {
-	
 	useReadCopiedImage({ modalRef, setImageFileFromParent: setImageFile });
 
 	const labelRef = useRef<HTMLLabelElement>(null);
@@ -46,12 +47,14 @@ export default function ChooseImageModal({
 				closeModal={() => modalRef.current?.close()}
 			/>
 
-			<p className="text-center">
+			<p>
 				<Button onClick={() => labelRef.current?.click()} color="primary">
 					<FolderOpenIcon className="w-6" />
 					<span>Choose from computer</span>
 				</Button>
 			</p>
+
+			{children}
 		</ModalContentWrapper>
 	);
 }

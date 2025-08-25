@@ -2,7 +2,7 @@ import { VariantProps, cva } from "class-variance-authority";
 import { ReactNode } from "react";
 import Twemoji from "react-twemoji";
 
-const emojiVariants = cva("[&_img]:w-5 [&_img]:inline", {
+const emojiVariants = cva("[&_img]:w-5 [&_img]:mr-[2px] [&_img]:inline", {
 	variants: {
 		size: {
 			"6": "[&_img]:w-6",

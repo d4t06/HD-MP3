@@ -36,8 +36,7 @@ export default function useAddSongForm(
     setImageBlob,
     audioRef,
     setSongFile,
-    // mainGenre,
-    // setMainGenre,
+    playlists,
   } = useAddSongContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -171,7 +170,9 @@ export default function useAddSongForm(
 
   const handleSubmit = async () => {
     try {
-      if (!isValidToSubmit || !songData) return;
+      if (!isValidToSubmit || !songData || !audioRef.current) return;
+
+      audioRef.current.pause();
 
       const newSongData = { ...songData };
 
@@ -181,7 +182,7 @@ export default function useAddSongForm(
         | ReturnType<typeof optimizeAndGetHashImage>
         | undefined = undefined;
 
-      if (imageFile || imageBlob) {
+      if (imageFile || imageBlob || songData.image_url) {
         if (song?.image_file_id)
           deleteFile({
             fileId: song.image_file_id,
@@ -191,6 +192,7 @@ export default function useAddSongForm(
         uploadImageProcess = optimizeAndGetHashImage({
           imageFile,
           blob: imageBlob,
+          fromUrl: imageBlob ? "" : songData.image_url,
         });
       }
 
@@ -230,11 +232,26 @@ export default function useAddSongForm(
             Object.assign(newSongData, songImageData);
           }
 
-          await myAddDoc({
+          const docRef = await myAddDoc({
             collectionName: "Songs",
             data: newSongData,
             msg: ">>> api: set song doc",
           });
+
+          if (playlists.length) {
+            playlists.forEach((p) => {
+              const newPlaylistData: Partial<Playlist> = {
+                song_ids: [...p.song_ids, docRef.id],
+              };
+
+              myUpdateDoc({
+                collectionName: "Playlists",
+                data: newPlaylistData,
+                id: p.id,
+                msg: ">>> update playlist doc",
+              });
+            });
+          }
 
           setSuccessToast();
           modalRef.current?.open();

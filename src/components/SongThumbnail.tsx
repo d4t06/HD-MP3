@@ -28,7 +28,6 @@ const SongThumbnail = (
     }   group-hover:flex`,
     playingGifFrame:
       "absolute h-[30px] w-[30px] bottom-[15px] left-[15px] -z-1",
-    title: "text-2xl text-white mt-3 font-bold text-ellipsis line-clamp-1",
   };
 
   if (!data) return;
@@ -81,11 +80,14 @@ const SongThumbnail = (
       </div>
 
       {hasTitle && (
-        <div className="text-center">
-          <h2 className={classes.title}>{data?.name || "Some song"}</h2>
-          <p className="text-md opacity-50 line-clamp-1">
+        <div className="text-center font-bold">
+          <p className="text-ellipsis line-clamp-1 text-lg">{data?.name || "Some song"}</p>
+          <p className="opacity-70 line-clamp-1 text-sm">
             {data.singers.map((s, i) => (
-              <span key={i}>{!!i && ', '}{s.name}</span>
+              <span key={i}>
+                {!!i && ", "}
+                {s.name}
+              </span>
             ))}
           </p>
         </div>

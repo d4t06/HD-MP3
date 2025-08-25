@@ -12,7 +12,6 @@ interface ImageSliderProps {
 export default function ImageSlider({
   images,
   autoPlay = false,
-  className = "",
 }: ImageSliderProps) {
   const { next, previous, currentIndex } = useSlider({
     images,

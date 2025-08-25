@@ -3,12 +3,13 @@ import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch } from "react-redux";
 import { useAuthContext, useToastContext } from "../stores";
-import { useEffect, useState } from "react";
-import { documentId, getDocs, query, where } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+import { documentId, query, where } from "firebase/firestore";
 import {
   resetCurrentPlaylist,
   setCurrentPlaylist,
 } from "@/stores/redux/currentPlaylistSlice";
+import { implementSongQuery } from "@/services/appService";
 import { nanoid } from "nanoid";
 
 export default function useGetPlaylist() {
@@ -16,6 +17,8 @@ export default function useGetPlaylist() {
   const dispatch = useDispatch();
   const { setErrorToast } = useToastContext();
   const { user, loading } = useAuthContext();
+
+  const ranEffect = useRef(false);
 
   // hooks
   const params = useParams<PlaylistParamsType>();
@@ -45,30 +48,36 @@ export default function useGetPlaylist() {
   const getSongs = async (playlist: Playlist) => {
     if (!playlist.song_ids.length) return [];
 
-    const queryGetSongs = query(
-      songsCollectionRef,
-      where(documentId(), "in", playlist.song_ids),
-    );
-    const songsSnap = await getDocs(queryGetSongs);
-
-    if (songsSnap.docs.length) {
-      const songs = songsSnap.docs.map((doc) => {
-        const song: Song = {
-          id: doc.id,
-          ...(doc.data() as SongSchema),
-          queue_id: `${nanoid(4)}_${playlist.id}}`,
-        };
-
-        return song;
-      });
-
-      return songs;
+    const chunkSize = 20;
+    const chunks = [];
+    for (let i = 0; i < playlist.song_ids.length; i += chunkSize) {
+      chunks.push(playlist.song_ids.slice(i, i + chunkSize));
     }
 
-    return [];
+    const playlistSongs: Song[] = [];
+
+    if (import.meta.env.DEV) console.log(chunks.length, "chunks");
+
+    for (const chunk of chunks) {
+      if (chunk.length > 0) {
+        const queryGetSongs = query(
+          songsCollectionRef,
+          where(documentId(), "in", chunk),
+        );
+
+        const result = await implementSongQuery(queryGetSongs, {
+          msg: "get playlist songs",
+          getQueueId: () => `${playlist.id}_${nanoid(4)}`
+        });
+
+        playlistSongs.push(...result);
+      }
+    }
+
+    return playlistSongs;
   };
 
-  const init = async () => {
+  const getPlaylistData = async () => {
     try {
       if (!params.id) return;
 
@@ -102,7 +111,10 @@ export default function useGetPlaylist() {
   useEffect(() => {
     if (loading) return;
 
-    init();
+    if (!ranEffect.current) {
+      ranEffect.current = true;
+      getPlaylistData();
+    }
 
     return () => {
       dispatch(resetCurrentPlaylist());

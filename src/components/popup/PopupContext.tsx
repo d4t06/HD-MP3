@@ -3,9 +3,10 @@ import { createContext, ReactNode, useContext, useRef, useState } from "react";
 // context
 type PopupProps = {
    appendOnPortal?: boolean;
+   persist?:boolean
 };
 
-const usePopup = ({ appendOnPortal }: PopupProps) => {
+const usePopup = ({ appendOnPortal, persist }: PopupProps) => {
    const [isOpen, setIsOpen] = useState(false);
    const [isMounted, setIsMounted] = useState(false);
 
@@ -37,6 +38,7 @@ const usePopup = ({ appendOnPortal }: PopupProps) => {
       setIsMounted,
       setIsOpen,
       appendOnPortal,
+      persist,
       close,
       toggle,
    };

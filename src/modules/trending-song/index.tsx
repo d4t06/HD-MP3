@@ -1,9 +1,8 @@
-import { Button, Title } from "@/components";
+import { Button, PEmoji } from "@/components";
 import useGetTrendingSongs from "./useGetTrending";
 import { SongSkeleton } from "@/components/skeleton";
 import SongList from "@/modules/song-item/_components/SongList";
 import { useSetSong } from "@/hooks";
-import SongSelectProvider from "@/stores/SongSelectContext";
 import { Link } from "react-router-dom";
 import useGetRelativeSongs from "../song-queue/_hooks/useGetRelativeSongs";
 
@@ -25,7 +24,7 @@ export default function TrendingSong(props: Props) {
   return (
     <>
       <div>
-        <Title title="Trending 🔥" className="mb-3" />
+        <PEmoji size={'6'} className="text-2xl font-bold mb-3">Trending 🔥</PEmoji>
         {isFetching && (
           <SongSkeleton hasCheckBox={false} className="ml-[62px]" />
         )}

@@ -44,9 +44,9 @@ export default function FullScreenPlayerHeader() {
 	};
 
 	const classes = {
-		rightCta:
-			"[&_button.btn]:h-[38px] [&_button.btn]:w-[38px] [&_button.btn]:bg-white/5 [&_button.btn]:p-2 [&_button.btn]:rounded-full  hover:[&_button]:bg-[--primary-cl]",
 		button: `btn`,
+		rightCta:
+			"absolute flex right-4 space-x-3 [&_button.btn]:h-[38px] [&_button.btn]:w-[38px] hover:[&_button.btn]:bg-white/5 [&_button.btn]:p-2 [&_button.btn]:rounded-full",
 		headerWrapper: `relative z-[90] flex py-[25px] px-[40px] w-full items-center`,
 		fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
 	};
@@ -58,13 +58,11 @@ export default function FullScreenPlayerHeader() {
 			>
 				{/* left */}
 				{idle && currentSongData && (
-					<div className={`absolute left-4`}>
+					<div className={`absolute left-4 text-sm`}>
 						{activeTab !== "Songs" && (
 							<>
-								<p className={`font-playwriteCU text-sm`}>
-									{currentSongData.song.name}
-								</p>
-								<p className="opacity-70 text-sm">
+								<p>{currentSongData.song.name}</p>
+								<p className="opacity-70">
 									{currentSongData.song.singers.map(
 										(s, i) => (i ? ", " : "") + s.name,
 									)}

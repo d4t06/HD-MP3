@@ -32,8 +32,6 @@ export default function useGetMyMusicSong({ tab }: Props) {
           if (shouldFetchFavoriteSongs.current) {
             shouldFetchFavoriteSongs.current = false;
 
-            console.log(user.liked_song_ids);
-
             if (user.liked_song_ids.length) {
               const chunkSize = 20;
               const chunks = [];

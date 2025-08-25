@@ -54,8 +54,7 @@ export default function Lyric({ className }: Props) {
           status={status}
           key={index}
           text={l.text}
-          activeColor="scale-[1.3]"
-          className={`leading-[1.3] mb-8 w-[70%] last:mb-[50vh]`}
+          activeColor="text-[#fff]"
         />
       );
     });
@@ -63,7 +62,7 @@ export default function Lyric({ className }: Props) {
 
   const classes = {
     container:
-      "no-scrollbar pt-10 mask-image overflow-y-auto overflow-x-hidden font-['Inter',system-ui]",
+      "no-scrollbar pt-10 mask-image overflow-y-auto overflow-x-hidden font-['Inter',system-ui] [&_p:not(.active-lyric)]:opacity-40 [&_p]:mb-5 [&_p:last-child]:mb-[50vh]",
   };
 
   return (

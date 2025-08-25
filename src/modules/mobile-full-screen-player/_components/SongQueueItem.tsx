@@ -23,8 +23,8 @@ export default function SongQueueItem({ song, onClick, active }: Props) {
         </div>
 
         {/* song info */}
-        <div className={`ml-[10px]`}>
-          <p className={`text-lg line-clamp-1 text-sm`}>{song.name}</p>
+        <div className={`ml-[10px] font-bold`}>
+          <p className={`line-clamp-1`}>{song.name}</p>
           <p className="text-gray-300 line-clamp-1 text-sm">
             {song.singers.map((s, i) => (
               <span key={i}> {(i ? ", " : "") + s.name}</span>

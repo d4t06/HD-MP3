@@ -93,7 +93,7 @@ export default function MusicControl() {
           isOpenFullScreen ? "mb-0" : "mb-5 sm:mb-2"
         } ${playStatus === "error" || playStatus === "loading" ? "disable" : ""}`}
       >
-        <div className="w-[44px] sm:w-9">
+        <div className="w-[44px] flex-shrink-0 sm:w-9 font-bold">
           <span ref={currentTimeEleRef} className={`text-lg sm:text-sm`}>
             0:00
           </span>
@@ -105,7 +105,7 @@ export default function MusicControl() {
           elelRef={timelineEleRef}
         />
 
-        <div className="w-[44px] sm:w-9 text-right">
+        <div className="w-[44px] flex-shrink-0 sm:w-9 text-right font-bold">
           <span className={"text-lg sm:text-sm"}>
             {currentSongData?.song
               ? formatTime(currentSongData.song?.duration)

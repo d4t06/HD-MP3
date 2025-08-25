@@ -13,7 +13,7 @@ export default function PopupWrapper({
 }: Props) {
   return (
     <div
-      className={`rounded-md py-2 shadow-[0_0_6px_0_rgba(0,0,0,0.2)]  transition-[color] ${colorClasses}  ${className}`}
+      className={`rounded-md py-2 popup-shadow transition-[color] ${colorClasses}  ${className}`}
     >
       {children}
     </div>

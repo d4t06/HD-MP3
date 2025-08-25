@@ -15,9 +15,10 @@ export default function useReadCopiedImage(props?: Props) {
     try {
       const fileLists = e.clipboardData?.files;
 
-      if (!fileLists) return;
+      if (!fileLists?.length) return;
 
       _setImageFile(fileLists[0]);
+
       props?.modalRef?.current?.close();
     } catch (error) {
       console.log(error);

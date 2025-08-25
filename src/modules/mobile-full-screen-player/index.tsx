@@ -71,16 +71,16 @@ export default function MobileFullScreenPlayer() {
               <SongThumbnail imageUrl={currentSongData?.song.image_url} />
 
               <div
-                className={`ml-2 font-semibold h-full ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
+                className={`ml-2 font-bold h-full ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
                 <p className="line-clamp-1">
                   {currentSongData?.song.name}
                 </p>
-                <div className={`text-gray-300 line-clamp-1`}>
+                <p className={`opacity-70 line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) => (
                     <span key={i}> {(i ? ", " : "") + s.name}</span>
                   ))}
-                </div>
+                </p>
               </div>
 
               {mobileActiveTab === "Lyric" && (
@@ -104,18 +104,18 @@ export default function MobileFullScreenPlayer() {
 
             {/* >>> song name */}
             <div
-              className={`mt-2 justify-between items-center ${
+              className={`mt-4 justify-between items-center ${
                 mobileActiveTab != "Playing" ? "hidden" : "flex sm:hidden"
               }`}
             >
-              <div className="flex-grow">
-                <div className={"h-[40px]"}>
+              <div className="flex-grow font-bold">
+                <div className={"h-7"}>
                   <ScrollText
-                    className={`text-xl leading-[1.5] font-playwriteCU`}
+                    className={`text-xl`}
                     content={currentSongData?.song.name || "..."}
                   />
                 </div>
-                <div className={`opacity-[.7] line-clamp-1 text-sm`}>
+                <div className={`opacity-[.7] text-lg line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) =>
                     s.id ? (
                       <Link to={`/singer/${s.id}`} key={i}>

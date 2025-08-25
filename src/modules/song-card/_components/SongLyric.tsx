@@ -55,7 +55,7 @@ export default function SongLyric({ audioEle }: Props) {
 
   const classes = {
     container:
-      "no-scrollbar leading-[1.2] [&_p]:w-[90%] [&_p]:select-none [&_p]:font-bold pt-3",
+      "no-scrollbar leading-[1.2] [&_p]:w-[80%] [&_p]:select-none [&_p]:font-bold pt-3",
   };
 
   useEffect(() => {

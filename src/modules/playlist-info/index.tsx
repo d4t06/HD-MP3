@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 // import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { PlaylistItem, Skeleton, Title } from "@/components";
+import { PEmoji, PlaylistItem, Skeleton, Title } from "@/components";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
@@ -10,7 +10,6 @@ import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
 import CommentProvider from "../comment/components/CommentContext";
 import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
-import Twemoji from "react-twemoji";
 
 type Props = {
   playlist: Playlist | null;
@@ -27,7 +26,6 @@ export default function PLaylistInfo({
 }: Props) {
   // stores
   const { currentSongData } = useSelector(selectSongQueue);
-  // const { playStatus } = useSelector(selectAllPlayStatusStore);
 
   const isActivePlaylist = playlist
     ? currentSongData?.song.queue_id.includes(`${playlist.id}`)
@@ -50,10 +48,11 @@ export default function PLaylistInfo({
         >
           {playlist.singers[0].name}
         </Link>
-        <p className="text-sm">
-          <Twemoji>❤️</Twemoji>
+
+        <PEmoji className="font-bold text-lg">
+          ❤️
           {abbreviateNumber(playlist.like)}
-        </p>
+        </PEmoji>
       </>
     );
   };
@@ -73,9 +72,9 @@ export default function PLaylistInfo({
       case "others-playlist":
         return (
           <>
-            <p className="[&_img]:w-5 [&_img]:inline text-base font-semibold">
-              <Twemoji>❤️ {abbreviateNumber(playlist.like)}</Twemoji>
-            </p>
+            <PEmoji className="font-bold text-lg">
+              ❤️ {abbreviateNumber(playlist.like)}
+            </PEmoji>
             {!!playlist.singers.length && (
               <p className={classes.smallText}>
                 {playlist.singers.map((s, i) => (

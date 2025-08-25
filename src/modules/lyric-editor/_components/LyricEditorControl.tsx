@@ -141,7 +141,7 @@ function LyricEditorControl(
             <span>{viewMode === "preview" ? "Preview" : "Edit"}</span>
           </Button>
         )}
-        {viewMode === "import" && (
+        {viewMode === "import" || viewMode === "preview"   && (
           <>
             <Button
               color="primary"

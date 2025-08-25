@@ -5,6 +5,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/*@layer components {
+  .popup-shadow {
+    @apply shadow-[0_0_6px_0_rgba(0,0,0,.15)];
+  }
+}
+*/
 .item-info {
   @apply text-gray-600 dark:text-gray-300;
 }
@@ -99,4 +105,8 @@ button[disabled] {
 
 .song-index.is-top-3 {
   -webkit-text-stroke: 1px #e35050;
+}
+
+.popup-shadow {
+  box-shadow: var(--popup-shadow);
 }

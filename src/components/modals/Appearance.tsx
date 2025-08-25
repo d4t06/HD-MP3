@@ -17,7 +17,7 @@ function ThemeItem({ onClick, theme, active }: Props) {
       <div className="w-[25%] px-2 mt-3 max-[549px]:w-[50%]">
         <div
           onClick={() => onClick(theme)}
-          className={`relative shadow-[0_0_6px_0_rgba(0,0,0,.15)] border-l-[20px] ${theme.container} ${theme.border}  pt-[100%] rounded-xl`}
+          className={`relative popup-shadow border-l-[20px] ${theme.container} ${theme.border}  pt-[100%] rounded-xl`}
         >
           {active && (
             <div className="absolute bottom-[10px] right-[10px]">

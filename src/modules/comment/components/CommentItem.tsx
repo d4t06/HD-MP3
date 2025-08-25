@@ -9,7 +9,6 @@ import { daysSinceTimestamp } from "@/utils/daysSinceTimestamp";
 import UserInput from "./UserInput";
 import GetReplyBtn from "./GetReplyBtn";
 import { choVoTri, meoVoTri } from "@/constants/app";
-import Twemoji from "react-twemoji";
 
 type Props = {
   comment: UserComment;

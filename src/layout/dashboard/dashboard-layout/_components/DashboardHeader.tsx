@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 
 import NavigationButton from "@/modules/navigation-button";
+import SpotifySearch from "@/pages/dashboard/_modules/spotify-search";
 
 export default function DashboardHeader() {
   const [scroll, setScroll] = useState(0);
@@ -36,6 +37,23 @@ export default function DashboardHeader() {
 
           <NavigationButton className="ml-5" />
         </div>
+
+
+        <SpotifySearch />
+
+       {/* <MyPopup appendOnPortal persist>
+          <MyPopupTrigger>
+            <button>
+              <MagnifyingGlassIcon className="w-6" />
+            </button>
+          </MyPopupTrigger>
+
+          <MyPopupContent>
+            <PopupWrapper className="!p-4 ">
+              <SpotifySearch />
+            </PopupWrapper>
+          </MyPopupContent>
+        </MyPopup>*/}
       </div>
     </>
   );

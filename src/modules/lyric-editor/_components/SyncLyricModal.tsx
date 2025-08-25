@@ -1,6 +1,6 @@
-import { FormEvent, useEffect, useRef } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useEditLyricContext } from "./EditLyricContext";
-import { Input, ModalContentWrapper, ModalHeader } from "@/components";
+import { Input, Label, ModalContentWrapper, ModalHeader } from "@/components";
 import { Button } from "@/pages/dashboard/_components";
 import { getLocalStorage } from "@/utils/appHelpers";
 import { useToastContext } from "@/stores";
@@ -15,6 +15,7 @@ export default function SyncLyricModal({ closeModal }: Props) {
   const { setErrorToast } = useToastContext();
 
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isForThisLine, setIsForThisLine] = useState(false);
 
   const handleSyncLyric = (e: FormEvent) => {
     e.preventDefault();
@@ -27,6 +28,19 @@ export default function SyncLyricModal({ closeModal }: Props) {
     if (!isNaN(currentLyricIndex)) {
       const newLyrics = [...lyrics];
 
+      const moveOffSet = (index: number) => {
+        const newTimeData = {
+          start: +(newLyrics[index].start + time).toFixed(1),
+          end: +(newLyrics[index].end + time).toFixed(1),
+        };
+
+        newLyrics[index] = {
+          ...newLyrics[index],
+          ...newTimeData,
+          tune: { ...newLyrics[index].tune, ...newTimeData },
+        };
+      };
+
       if (time < 0) {
         const isOverDownSync =
           lyrics[currentLyricIndex].start + time <
@@ -37,20 +51,11 @@ export default function SyncLyricModal({ closeModal }: Props) {
         }
       }
 
-      newLyrics.forEach((_item, index) => {
-        if (index >= currentLyricIndex) {
-          const newTimeData = {
-            start: +(newLyrics[index].start + time).toFixed(1),
-            end: +(newLyrics[index].end + time).toFixed(1),
-          };
-
-          newLyrics[index] = {
-            ...newLyrics[index],
-            ...newTimeData,
-            tune: { ...newLyrics[index].tune, ...newTimeData },
-          };
-        }
-      });
+      let i = currentLyricIndex;
+      for (; i < lyrics.length; i++) {
+        moveOffSet(i);
+        if (isForThisLine) break;
+      }
 
       if (currentLyricIndex > 0) {
         newLyrics[currentLyricIndex - 1].end =
@@ -81,6 +86,19 @@ export default function SyncLyricModal({ closeModal }: Props) {
 
       <form action="" onSubmit={handleSyncLyric}>
         <Input step={0.2} ref={inputRef} type="number" />
+
+        <div className="flex items-center mt-3">
+          <input
+            checked={isForThisLine}
+            onChange={() => setIsForThisLine((prev) => !prev)}
+            type="checkbox"
+            id="for-this-line"
+            className=""
+          />
+          <Label htmlFor="for-this-line" className="ml-2">
+            For this line only
+          </Label>
+        </div>
 
         <p className="mt-5 text-right">
           <Button type="submit">Save</Button>

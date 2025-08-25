@@ -78,10 +78,12 @@ export async function implementUserQuery(query: Query) {
 export const optimizeAndGetHashImage = async ({
   imageFile,
   blob,
+  fromUrl,
   ...props
 }: {
   imageFile?: File;
   blob?: Blob;
+  fromUrl?: string;
   height?: number;
   width?: number;
 }) => {
@@ -89,6 +91,9 @@ export const optimizeAndGetHashImage = async ({
 
   if (imageFile) {
     IMAGE_BLOB = await optimizeImage(imageFile, props);
+  } else if (fromUrl) {
+    const response = await fetch(fromUrl);
+    IMAGE_BLOB = await response.blob();
   }
 
   if (!IMAGE_BLOB) throw new Error("File not found");

@@ -86,16 +86,16 @@ export default function SingerSearchModal({ choose, closeModal }: Props) {
                   {result.length ? (
                     renderSinger(result)
                   ) : (
-                    <>
-                      <NotFound variant="less" />
+                    <NotFound variant="less" />
+                  )}
 
-                      <p className="text-center mt-auto">
-                        <Button onClick={() => modalRef.current?.open()}>
-                          <PlusIcon className="w-6" />
-                          <span>Add new singer</span>
-                        </Button>
-                      </p>
-                    </>
+                  {rest.value && (
+                    <p className="text-center mt-auto mt-5">
+                      <Button onClick={() => modalRef.current?.open()}>
+                        <PlusIcon className="w-6" />
+                        <span>Add new singer</span>
+                      </Button>
+                    </p>
                   )}
                 </>
               )}

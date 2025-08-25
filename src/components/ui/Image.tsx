@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import {  ReactEventHandler, useRef, useState } from "react";
 import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
 
@@ -8,6 +8,7 @@ type Props = {
   width?: string;
   blurHashEncode?: string;
   onError?: () => void;
+  onLoad?: ReactEventHandler<HTMLImageElement>;
   fallback?: string;
 };
 
@@ -17,18 +18,21 @@ export default function Image({
   width = "w-full",
   blurHashEncode,
   onError,
+  onLoad,
   fallback,
 }: Props) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const imageRef = useRef<HTMLImageElement>(null);
 
-  const handleLoadImage = () => {
+  const handleLoadImage: ReactEventHandler<HTMLImageElement> = (e) => {
     setTimeout(() => setImageLoaded(true), 200);
 
     if (!src) return;
     if (src?.includes("blob")) {
       URL.revokeObjectURL(src);
     }
+
+    onLoad && onLoad(e)
   };
 
   const defaultHandleError = () => {
