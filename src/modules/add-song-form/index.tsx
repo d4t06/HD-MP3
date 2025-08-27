@@ -169,7 +169,7 @@ export default function AddSongForm(props: Props) {
               </DetailFrame>
 
               <div className="ml-3 md:ml-0 md:mt-3">
-                <ButtonGroup isEdit={props.variant === "edit"} />
+                <ButtonGroup isValidToSubmit={isValidToSubmit}  isEdit={props.variant === "edit"} />
               </div>
             </div>
           </div>

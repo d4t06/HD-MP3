@@ -7,17 +7,22 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EditSongModal from "./EditSongModal";
 import { useAddSongContext } from "@/stores/dashboard/AddSongContext";
 import ChangeSongFileModal from "./ChangeSongFileModal";
 import useDashboardSongItemAction from "../_hooks/useSongItemAction";
 
-type Modal = "edit" | "change-file" | "delete";
+type Modal = "edit" | "change-file" | "delete" | "navigate";
 
-export default function EditSongBtn() {
+type Prosp = {
+  isValidToSubmit: boolean;
+};
+
+export default function EditSongBtn({ isValidToSubmit }: Prosp) {
   const { song } = useAddSongContext();
 
+  const navigator = useNavigate();
   const { actions, isFetching } = useDashboardSongItemAction();
 
   const [modal, setModal] = useState<Modal | "">("");
@@ -31,6 +36,14 @@ export default function EditSongBtn() {
 
   const closeModal = () => modalRef.current?.close();
 
+  const handleNavigate = () => {
+    if (!song) return;
+
+    if (isValidToSubmit) {
+      openModal("navigate");
+    } else navigator(`/dashboard/lyric/${song.id}`);
+  };
+
   return (
     <>
       <Button onClick={() => openModal("edit")} size={"clear"}>
@@ -38,12 +51,10 @@ export default function EditSongBtn() {
         <span>Edit</span>
       </Button>
 
-      <Link to={`/dashboard/lyric/${song?.id}`}>
-        <Button size={"clear"}>
-          <ClipboardDocumentIcon />
-          <span>Lyric</span>
-        </Button>
-      </Link>
+      <Button onClick={handleNavigate} size={"clear"}>
+        <ClipboardDocumentIcon />
+        <span>Lyric</span>
+      </Button>
 
       <Button onClick={() => openModal("change-file")} size={"clear"}>
         <MusicalNoteIcon />
@@ -72,6 +83,16 @@ export default function EditSongBtn() {
                 song,
               })
             }
+            closeModal={closeModal}
+          />
+        )}
+
+        {modal === "navigate" && song && (
+          <ConfirmModal
+            loading={isFetching}
+            label={`Dischard change ?`}
+            desc={"This action cannot be undone"}
+            callback={() => navigator(`/dashboard/lyric/${song.id}`)}
             closeModal={closeModal}
           />
         )}

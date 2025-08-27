@@ -28,7 +28,7 @@ export default function useSearchImage() {
       setIsFetching(true);
 
       const res = await axios.get<{ items: Item[] }>(
-        `https://www.googleapis.com/customsearch/v1?q=${value}&cx=a473bfb57f63b40ef&key=AIzaSyDi0Ryr4ULjQ09GfJNZF2Cm612YYnEQYJY&searchType=image`,
+        `https://www.googleapis.com/customsearch/v1?q=${value}&cx=a473bfb57f63b40ef&key=${import.meta.env.VITE_GOOGLE_APIKEY}&searchType=image`,
       );
 
       if (res.data?.items) {

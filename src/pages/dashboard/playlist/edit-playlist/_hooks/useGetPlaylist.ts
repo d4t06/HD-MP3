@@ -1,7 +1,5 @@
-import { implementSongQuery } from "@/services/appService";
-import { myGetDoc, songsCollectionRef } from "@/services/firebaseService";
+import { getSongInList, myGetDoc } from "@/services/firebaseService";
 import { useToastContext } from "@/stores";
-import { documentId, query, where } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { usePlaylistContext } from "../PlaylistContext";
@@ -37,16 +35,9 @@ export default function useGetPlaylist() {
 
       if (!playlist.is_official) return navigator("/dashboard/playlist");
 
-      if (playlist.song_ids.length) {
-        const queryGetSongs = query(
-          songsCollectionRef,
-          where(documentId(), "in", playlist.song_ids),
-        );
+      const playlistSongs = await getSongInList(playlist.song_ids, playlist.id);
 
-        const result = await implementSongQuery(queryGetSongs);
-        setSongs(result);
-      }
-
+      setSongs(playlistSongs);
       setPlaylist(playlist);
     } catch (error) {
       console.log(error);

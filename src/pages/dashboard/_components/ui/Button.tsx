@@ -22,7 +22,7 @@ const ButtonVariant = cva("inline-flex relative hover:brightness-95 space-x-1 it
       clear: "",
     },
     fontWeight: {
-      primary: "",
+      primary: "font-semibold",
       clear: "",
     },
     border: {

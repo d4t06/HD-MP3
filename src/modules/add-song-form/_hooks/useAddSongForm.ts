@@ -2,6 +2,7 @@ import { ModalRef } from "@/components";
 import {
   deleteFile,
   myAddDoc,
+  myGetDoc,
   myUpdateDoc,
   uploadFile,
 } from "@/services/firebaseService";
@@ -13,6 +14,8 @@ import AddSongForm from "..";
 import { initSongObject } from "@/utils/factory";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { convertToEn } from "@/utils/appHelpers";
+import { writeBatch } from "firebase/firestore";
+import { db } from "@/firebase";
 
 export default function useAddSongForm(
   props: ComponentProps<typeof AddSongForm>,
@@ -37,6 +40,9 @@ export default function useAddSongForm(
     audioRef,
     setSongFile,
     playlists,
+    imageUrl,
+    setImageUrl,
+    setSong,
   } = useAddSongContext();
 
   const [isFetching, setIsFetching] = useState(false);
@@ -50,24 +56,23 @@ export default function useAddSongForm(
     const firstCheck =
       songData.name !== song.name ||
       singers.length !== song.singers.length ||
+      singers.length !== song.singers.length ||
       songData.like !== song.like ||
       genres.length !== song.genres.length ||
       songData.release_year !== song.release_year ||
+      songData.blurhash_encode !== song.blurhash_encode ||
       songData.main_genre?.id !== song.main_genre?.id;
 
     if (firstCheck) return true;
 
-    const isChangeSinger = singers.find((s) =>
-      song.singers.find((_s) => _s.id !== s.id),
-    );
-    const isChangeGenre = genres.find((g) =>
-      song.genres.find((_g) => _g.id !== g.id),
-    );
+    const songSingerIds = song.singers.map((s) => s.id);
+    const songGenreIds = song.genres.map((s) => s.id);
 
-    return isChangeSinger || isChangeGenre;
+    const isChangeSinger = singers.find((s) => !songSingerIds.includes(s.id));
+    const isChangeGenre = genres.find((g) => !songGenreIds.includes(g.id));
+
+    return !!isChangeSinger || !!isChangeGenre;
   }, [songData, song, singers, genres]);
-
-  const isChangeImage = !!imageFile;
 
   const isValidToSubmit = useMemo(() => {
     const isValidSongData =
@@ -80,8 +85,10 @@ export default function useAddSongForm(
 
     return props.variant === "add"
       ? isValidSongData
-      : isValidSongData || isChangeImage;
-  }, [isChangeImage, isChanged, singers, genres, songData]);
+      : isValidSongData && (isChanged || !!imageFile || !!imageUrl);
+  }, [imageFile, imageUrl, isChanged, singers, genres, songData]);
+
+  console.log(isChanged);
 
   const initSongData = () => {
     switch (props.variant) {
@@ -113,6 +120,7 @@ export default function useAddSongForm(
           setSongFile(undefined);
           setImageFile(undefined);
           setImageBlob(undefined);
+          setImageUrl("");
 
           setSingers([]);
           setGenres([]);
@@ -182,7 +190,7 @@ export default function useAddSongForm(
         | ReturnType<typeof optimizeAndGetHashImage>
         | undefined = undefined;
 
-      if (imageFile || imageBlob || songData.image_url) {
+      if (imageFile || imageBlob || imageUrl) {
         if (song?.image_file_id)
           deleteFile({
             fileId: song.image_file_id,
@@ -192,7 +200,7 @@ export default function useAddSongForm(
         uploadImageProcess = optimizeAndGetHashImage({
           imageFile,
           blob: imageBlob,
-          fromUrl: imageBlob ? "" : songData.image_url,
+          fromUrl: imageBlob ? "" : imageUrl,
         });
       }
 
@@ -239,18 +247,29 @@ export default function useAddSongForm(
           });
 
           if (playlists.length) {
-            playlists.forEach((p) => {
+            const batch = writeBatch(db);
+
+            const addSongToPlaylist = async (id: string) => {
+              const playlistDoc = await myGetDoc({
+                collectionName: "Playlists",
+                id,
+              });
+
+              if (!playlistDoc.exists()) return;
+
               const newPlaylistData: Partial<Playlist> = {
-                song_ids: [...p.song_ids, docRef.id],
+                song_ids: [
+                  ...(playlistDoc.data() as PlaylistSchema).song_ids,
+                  docRef.id,
+                ],
               };
 
-              myUpdateDoc({
-                collectionName: "Playlists",
-                data: newPlaylistData,
-                id: p.id,
-                msg: ">>> update playlist doc",
-              });
-            });
+              batch.update(playlistDoc.ref, newPlaylistData);
+            };
+
+            await Promise.all(playlists.map((p) => addSongToPlaylist(p.id)));
+
+            batch.commit();
           }
 
           setSuccessToast();
@@ -287,6 +306,7 @@ export default function useAddSongForm(
 
           setImageFile(undefined);
           setImageBlob(undefined);
+          setImageUrl("");
 
           await myUpdateDoc({
             collectionName: "Songs",
@@ -295,6 +315,7 @@ export default function useAddSongForm(
           });
 
           updateSongData(newSongData);
+          setSong({ ...song, ...newSongData });
 
           setSuccessToast("Song updated");
         }
@@ -336,6 +357,13 @@ export default function useAddSongForm(
     updateSongData({ image_url: URL.createObjectURL(imageFile) });
   }, [imageFile]);
 
+  // update song data when choose external image
+  useEffect(() => {
+    if (!imageUrl) return;
+
+    updateSongData({ image_url: imageUrl });
+  }, [imageUrl]);
+
   //  warn user when reload page without save change
   useEffect(() => {
     if (!isChanged) return;
@@ -357,5 +385,6 @@ export default function useAddSongForm(
     updateSongData,
     handleCloseModalAfterFinished,
     modalRef,
+    isChanged,
   };
 }

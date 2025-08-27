@@ -7,8 +7,14 @@ import { PhotoIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 
 export default function UploadImageBtn() {
-  const { setImageFile, songData, updateSongData, imageBlob, setImageBlob } =
-    useAddSongContext();
+  const {
+    setImageFile,
+    songData,
+    setImageUrl,
+    updateSongData,
+    imageBlob,
+    setImageBlob,
+  } = useAddSongContext();
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -38,8 +44,7 @@ export default function UploadImageBtn() {
   const chooseImageFromUrl = (url: string) => {
     setImageFile(undefined);
     setImageBlob(undefined);
-
-    updateSongData({ image_url: url });
+    setImageUrl(url);
   };
 
   return (

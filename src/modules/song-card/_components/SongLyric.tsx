@@ -73,7 +73,7 @@ export default function SongLyric({ audioEle }: Props) {
       if (subLyricRef.current) {
         Object.assign(subLyricRef.current.style, {
           transform: "translateY(0px)",
-          opacity: "0.4",
+          opacity: "1",
         });
       }
     }, 30);

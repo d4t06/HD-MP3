@@ -9,8 +9,8 @@ function useAddSong() {
   const [imageFile, setImageFile] = useState<File>();
   const [song, setSong] = useState<Song>();
   const [imageBlob, setImageBlob] = useState<Blob>();
-  // const [imageSize, setImageSize] = useState("");
   const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [imageUrl, setImageUrl] = useState("");
 
   const variant = useRef<"add" | "edit">("add");
 
@@ -82,6 +82,8 @@ function useAddSong() {
     playlists,
     setPlaylists,
     removePlaylist,
+    imageUrl,
+    setImageUrl,
   };
 }
 

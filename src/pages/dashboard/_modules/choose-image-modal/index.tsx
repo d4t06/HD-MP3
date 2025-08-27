@@ -23,7 +23,10 @@ export default function DashboardChooseImageModal({
 						<div className="grid grid-cols-2 sm:grid-cols-3 overflow-auto">
 							{items.map((item, i) => (
 								<button
-									onClick={() => setUrl && setUrl(item.link)}
+									onClick={() => {
+										setUrl && setUrl(item.link);
+										props.modalRef.current?.close();
+									}}
 									key={i}
 									className="p-1"
 								>

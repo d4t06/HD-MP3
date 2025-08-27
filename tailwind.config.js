@@ -3,10 +3,6 @@
 export default {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
-  corePlugins: {
-    boxShadow: false,
-    boxShadowColor: false
-  },
   theme: {
     container: {
       center: true,

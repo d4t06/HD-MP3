@@ -6,6 +6,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  documentId,
   getDoc,
   increment,
   query,
@@ -15,6 +16,8 @@ import {
 } from "firebase/firestore";
 import { convertToEn, request } from "@/utils/appHelpers";
 import { upload } from "@imagekit/react";
+import { implementSongQuery } from "./appService";
+import { nanoid } from "nanoid";
 
 type collectionVariant =
   | "Songs"
@@ -242,3 +245,35 @@ export function getSearchQuery(
 
   return searchQuery;
 }
+
+export const getSongInList = async (songIds: string[], playlistId: string) => {
+  if (!songIds.length) return [];
+
+  const chunkSize = 20;
+  const chunks = [];
+  for (let i = 0; i < songIds.length; i += chunkSize) {
+    chunks.push(songIds.slice(i, i + chunkSize));
+  }
+
+  const playlistSongs: Song[] = [];
+
+  if (import.meta.env.DEV) console.log(chunks.length, "chunks");
+
+  for (const chunk of chunks) {
+    if (chunk.length > 0) {
+      const queryGetSongs = query(
+        songsCollectionRef,
+        where(documentId(), "in", chunk),
+      );
+
+      const result = await implementSongQuery(queryGetSongs, {
+        msg: "get playlist songs",
+        getQueueId: () => `${playlistId}_${nanoid(4)}`,
+      });
+
+      playlistSongs.push(...result);
+    }
+  }
+
+  return playlistSongs;
+};
