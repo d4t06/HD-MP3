@@ -3,7 +3,18 @@
 	--layout-cl: #fff;
 	--sidebar-cl: rgba(0, 0, 0, 0.05);
 	--sidebar-collapse-cl: #f2f2f2;
-	--player-cl: rgba(255, 255, 255, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(255, 255, 255);
 	--popup-cl: #fff;
 
 	--primary-cl: #5a9e87;
@@ -24,7 +35,18 @@
 
 [data-theme="light_green"] {
 	--layout-cl: #ced9d9;
-	--player-cl: rgba(192, 216, 216, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(192, 216, 216);
 	--sidebar-cl: rgba(255, 255, 255, 0.2);
 	--sidebar-collapse-cl: #cce0e0;
 	--popup-cl: #e0ebeb;
@@ -32,7 +54,18 @@
 
 [data-theme="brown"] {
 	--layout-cl: #e5e3df;
-	--player-cl: rgba(222, 218, 209, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(222, 218, 209);
 	/*--sidebar-cl: #f2f2f2; */
 	/*--sidebar-collapse-cl: #f2f2f2;*/
 	--popup-cl: #f7f5f3;
@@ -42,7 +75,18 @@
 
 [data-theme="black"] {
 	--layout-cl: #1e1e1e;
-	--player-cl: rgba(24, 24, 24, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(24, 24, 24);
 	--sidebar-cl: #333;
 	--sidebar-collapse-cl: #333;
 	--popup-cl: #333;
@@ -50,7 +94,18 @@
 
 [data-theme="deep_blue"] {
 	--layout-cl: #0f1a2e;
-	--player-cl: rgba(17, 31, 59, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(17, 31, 59);
 	/*--sidebar-cl: #1b2639;*/
 	--sidebar-collapse-cl: #1d2a49;
 	--popup-cl: #173b45;
@@ -60,7 +115,18 @@
 
 [data-theme="red"] {
 	--layout-cl: #2e0f10;
-	--player-cl: rgba(59, 17, 19, 0.7);
+	--a-player-cl: rgba(255, 255, 255, 0.7);
+
+	--a-player-cl: rgba(192, 216, 216, 0.7);
+
+	--a-player-cl: rgba(222, 218, 209, 0.7);
+
+	--a-player-cl: rgba(24, 24, 24, 0.7);
+
+	--a-player-cl: rgba(17, 31, 59, 0.7);
+
+	--a-player-cl: rgba(59, 17, 19, 0.7);
+	--player-cl: rgb(59, 17, 19);
 	/*--sidebar-cl: rgba(0, 0, 0, 0.05);*/
 	--sidebar-collapse-cl: #7a2922;
 	--popup-cl: #522325;

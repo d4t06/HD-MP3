@@ -5,7 +5,7 @@ import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { PauseIcon, PlayIcon } from "@heroicons/react/24/outline";
+import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 

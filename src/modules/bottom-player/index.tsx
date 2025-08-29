@@ -57,7 +57,7 @@ export default function BottomPlayer() {
         isOpenFullScreen
           ? "border-transparent"
           : theme.image
-            ? 'bg-[--player-cl]'
+            ? 'bg-[--a-player-cl]'
             : ""
       } ${shouldHide && "translate-y-[100%] "} `}
     >
@@ -86,7 +86,7 @@ export default function BottomPlayer() {
           <VolumeButton audioEle={audioRef.current} />
 
           <div className={`flex items-center ${!currentQueueId ? "disable" : ""}`}>
-            <MyTooltip content="Fullscreen mode">
+            <MyTooltip content="Lyrics">
               <button
                 onClick={handleOpenFullScreen}
                 className={`rounded-[99px]  hover:bg-[--a-5-cl]  p-[5px]`}

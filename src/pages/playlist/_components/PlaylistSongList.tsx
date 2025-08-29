@@ -7,6 +7,7 @@ import CheckedBar from "@/modules/check-bar";
 import SongList from "@/modules/song-item/_components/SongList";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
 import { SongSkeleton } from "@/components/skeleton";
+import usePlaylistSongList from "../_hooks/usePlaylistSongList";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";
@@ -28,6 +29,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
   const { pushRecentPlaylist } = useUpdateRecentPlaylist();
+  usePlaylistSongList()
 
   const isAlbumAndHasImage =
     currentPlaylist?.is_album && !!currentPlaylist?.image_url;
@@ -58,6 +60,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
 
         <SongList
           imageUrl={isAlbumAndHasImage ? currentPlaylist.image_url : ""}
+          attributes={s => ({'data-first_letter':s.name.charAt(0).toLowerCase()})}
           songs={playlistSongs}
           setSong={(s) => _handleSetSong(s)}
           songVariant={

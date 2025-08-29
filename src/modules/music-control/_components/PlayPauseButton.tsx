@@ -1,10 +1,11 @@
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
-  PlayCircleIcon,
-  PauseCircleIcon,
 } from "@heroicons/react/24/outline";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
+// import { PlayIcon } from "@heroicons/react/20/solid";
+// import { playIcon } from "@/assets/icon";
 
 type Props = {
   handlePlayPause: () => void;
@@ -12,28 +13,28 @@ type Props = {
 };
 
 function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
-  const classes = {
-    icon: "w-[50px] sm:w-10",
-  };
+  // const classes = {
+  //   icon: "w-[50px] sm:w-10",
+  // };
 
   const renderIcon = () => {
     switch (playStatus) {
       case "playing":
-        return <PauseCircleIcon className={`${classes.icon}`} />;
+        return <PauseIcon  />;
       case "error":
-        return <ExclamationCircleIcon className={`${classes.icon}`} />;
+        return <ExclamationCircleIcon  />;
       case "loading":
       case "waiting":
-        return <ArrowPathIcon className={`${classes.icon} animate-spin`} />;
+        return <ArrowPathIcon className={`animate-spin`} />;
       case "paused":
-        return <PlayCircleIcon className={`${classes.icon}`} />;
+        return <PlayIcon  />;
     }
   };
 
   return (
     <>
       <button
-        className={`inline-flex items-center justify-center`}
+        className={`rounded-full  inline-flex items-center w-10 h-10 p-1 justify-center [&_svg]:w-full`}
         onClick={() => handlePlayPause()}
       >
         {renderIcon()}

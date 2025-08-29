@@ -14,7 +14,7 @@ export default function uesAudioEffect({ audioEle }: Props) {
     setStatus("loading");
   };
 
-  const handleLoaded = () => {
+  const handleLoaded = async () => {
     // when the page first load
     if (firstTimeSongLoaded.current) {
       firstTimeSongLoaded.current = false;
@@ -26,7 +26,8 @@ export default function uesAudioEffect({ audioEle }: Props) {
     // when song item just active
     if (shouldPlayAfterLoaded.current) {
       shouldPlayAfterLoaded.current = false;
-      audioEle?.play();
+
+      await audioEle?.play();
     }
   };
 

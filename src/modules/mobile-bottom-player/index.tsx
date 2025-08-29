@@ -100,7 +100,7 @@ export default function MobileBottomPlayer() {
                     />
                   </div>
 
-                  <div className="h-5">
+                  <div className="h-6">
                     <ScrollText
                       className="item-info"
                       content={
@@ -131,7 +131,8 @@ export default function MobileBottomPlayer() {
       [&_div]:flex-col 
       [&_div]:items-center
       [&_svg]:w-6
-      [&_span]:text-[10px]
+      [&_span]:text-xs
+      [&_span]:font-semibold
       ${!shouldHidePlayer ? "border-t border-[--a-5-cl]" : ""}
       `}
       >

@@ -198,29 +198,29 @@ export default function useDashboardPlaylistActions() {
 
           break;
         }
-        // case "update-image": {
-        //   const imageData: Partial<PlaylistSchema> = {
-        //     image_url: props.song.image_url,
-        //     blurhash_encode: props.song.blurhash_encode,
-        //     image_file_id: "",
-        //   };
+        case "update-image": {
+          const imageData: Partial<PlaylistSchema> = {
+            image_url: props.song.image_url,
+            blurhash_encode: props.song.blurhash_encode,
+            image_file_id: "",
+          };
 
-        //   if (playlist.image_file_id)
-        //     deleteFile({ fileId: playlist.image_file_id });
+          if (playlist.image_file_id)
+            deleteFile({ fileId: playlist.image_file_id });
 
-        //   await myUpdateDoc({
-        //     collectionName: "Playlists",
-        //     data: imageData,
-        //     id: playlist.id,
-        //     msg: ">>> api: set playlist doc",
-        //   });
+          await myUpdateDoc({
+            collectionName: "Playlists",
+            data: imageData,
+            id: playlist.id,
+            msg: ">>> api: set playlist doc",
+          });
 
-        //   updatePlaylistData(imageData);
+          updatePlaylistData(imageData);
 
-        //   setSuccessToast(`Playlist edited`);
+          setSuccessToast(`Playlist edited`);
 
-        //   break;
-        // }
+          break;
+        }
         case "remove-singer": {
           const newPlaylistSingers = playlist.singers.filter(
             (s) => s.id !== props.singer.id,

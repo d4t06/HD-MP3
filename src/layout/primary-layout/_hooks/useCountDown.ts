@@ -1,5 +1,8 @@
 import { usePlayerContext } from "@/stores";
-import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
+import {
+  selectAllPlayStatusStore,
+  setPlayStatus,
+} from "@/stores/redux/PlayStatusSlice";
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -46,18 +49,6 @@ export default function useCountDown() {
       audioRef.current?.removeEventListener("ended", handleSongEnd);
     };
   }, [!!countDown]);
-
-  // handle user click
-  // useEffect(() => {
-  //   /** loadLocalStorage:  loadStorage() => setActive(), setCountDown() */
-  //   /** manual: user choose timer => setIsActive() => setCountDown() */
-  //   if (!isActive) return;
-
-  //   if (!countDown) {
-  //     setLocalStorage("timer", countDown);
-  //     if (playStatus === "paused") controlRef.current?.handlePlayPause();
-  //   }
-  // }, [isActive]);
 
   useEffect(() => {
     countDownRef.current = countDown;

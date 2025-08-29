@@ -13,6 +13,8 @@ type Props = {
   isHasCheckBox?: boolean;
   imageUrl?: string;
   whenEmpty?: ReactNode;
+  attributes?:(s: Song) => Record<string, string>;
+
 };
 
 export default function SongList({
@@ -23,6 +25,7 @@ export default function SongList({
   imageUrl,
   isHasCheckBox = true,
   whenEmpty,
+  attributes
 }: Props) {
   const { user } = useAuthContext();
   const { currentSongData } = useSelector(selectSongQueue);
@@ -37,6 +40,7 @@ export default function SongList({
     return (
       <SongItem
         key={song.queue_id}
+        attributes={attributes}
         active={
           currentSongData
             ? getActive

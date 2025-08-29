@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { usePlayerContext, useToastContext } from "@/stores";
+import { usePlayerContext, useThemeContext, useToastContext } from "@/stores";
 
 import { getLocalStorage, setLocalStorage } from "@/utils/appHelpers";
 
@@ -30,6 +30,9 @@ export default function usePlayerEffect() {
     isOpenFullScreen,
     timeLineColorRef,
   } = usePlayerContext();
+  const { setErrorToast } = useToastContext();
+  const { isOnMobile } = useThemeContext();
+
   if (!audioRef.current)
     throw new Error("Use Control audioRef.current is undefined");
 
@@ -52,7 +55,6 @@ export default function usePlayerEffect() {
 
   // use hook
   const location = useLocation();
-  const { setErrorToast } = useToastContext();
   const { next, updateProgressElement, play, pause } = usePlayerAction();
 
   const isInEdit = useMemo(
@@ -127,12 +129,26 @@ export default function usePlayerEffect() {
     const volInStore = storage["volume"] || 1;
     const timer = storage["timer"];
 
-    if (repeat === "one" && !!timer && timer !== 1) {
-      return play();
+    if (repeat === "one") {
+      if (!!timer) {
+        if (timer !== 1) return play();
+        else return pause();
+      } else return play();
     }
 
     audioRef.current!.volume = volInStore;
     isEndEventFired.current = true;
+
+    const isPlayLastSong =
+      currentSongDataRef.current.index === queueSongs.length - 1;
+
+    if (timer === 0 && storage["is_timer"]) {
+      isEndOfList.current = true;
+      setLocalStorage("is_timer", false);
+    } else if (isPlayLastSong) {
+      if (repeat === "all" || timer >= 1) isEndOfList.current = false;
+      else isEndOfList.current = true;
+    }
 
     if (isShuffle) {
       let randomIndex: number = currentSongDataRef.current.index;
@@ -142,14 +158,6 @@ export default function usePlayerEffect() {
 
       const newSong = getNewSong(randomIndex);
       return dispatch(setCurrentQueueId(newSong.queue_id));
-    }
-
-    if (timer === 0 && storage["is_timer"]) {
-      isEndOfList.current = true;
-      setLocalStorage("is_timer", false);
-    } else if (currentSongDataRef.current.index === queueSongs.length - 1) {
-      if (repeat === "all" || timer >= 1) isEndOfList.current = false;
-      else isEndOfList.current = true;
     }
 
     if (queueSongs.length === 1) return resetForNewSong();
@@ -336,6 +344,12 @@ export default function usePlayerEffect() {
 
   // update line color
   useEffect(() => {
+    if (isOnMobile) {
+      timeLineColorRef.current = "#fff";
+
+      return;
+    }
+
     if (!audioRef.current) return;
 
     if (isOpenFullScreen) {

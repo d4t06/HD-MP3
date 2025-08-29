@@ -7,7 +7,7 @@ import { getClasses } from "@/utils/appHelpers";
 import AddToPlaylistBtn from "./AddToPlaylistBtn";
 import HearBtn from "./HeartBtn";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
-import { repeatIcon } from "@/assets/icon";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function ControlMenu() {
 	const { user } = useAuthContext();
@@ -33,9 +33,7 @@ export default function ControlMenu() {
 							className={`${getClasses(repeat !== "no", "active")}`}
 							onClick={toggleRepeat}
 						>
-							<p className="w-6">
-								{repeatIcon}
-							</p>
+							<ArrowPathIcon className="w-6" />
 						</button>
 						<span className="break-word">
 							{repeat === "one"
@@ -51,7 +49,9 @@ export default function ControlMenu() {
 							<AddToPlaylistBtn song={currentSongData.song} />
 							<HearBtn
 								song={currentSongData.song}
-								isLiked={!!user?.liked_song_ids.includes(currentSongData.song.id)}
+								isLiked={
+									!!user?.liked_song_ids.includes(currentSongData.song.id)
+								}
 							/>
 						</>
 					)}
@@ -60,7 +60,9 @@ export default function ControlMenu() {
 				</div>
 
 				<div className="flex-grow overflow-auto mt-3 border-t border-white/60 pt-3">
-					{currentSongData && <MobileSongQueue currentIndex={currentSongData.index} />}
+					{currentSongData && (
+						<MobileSongQueue currentIndex={currentSongData.index} />
+					)}
 				</div>
 			</div>
 		</>

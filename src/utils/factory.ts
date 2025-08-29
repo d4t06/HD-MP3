@@ -8,6 +8,7 @@ export const initSongObject = (
 ) => {
   const song: SongSchema = {
     name: "",
+    first_letter: "",
     meta: [],
     image_url: "",
     song_url: "",

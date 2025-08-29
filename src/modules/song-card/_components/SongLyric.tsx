@@ -42,7 +42,7 @@ export default function SongLyric({ audioEle }: Props) {
             <p
               key={currentIndex + "11"}
               ref={subLyricRef}
-              className="mt-3 transition-[transform,opacity] duration-[.4s] opacity-0 translate-y-[-10px]"
+              className="mt-3 transition-[transform,opacity] text-[#e1e1e1] duration-[.4s] opacity-0 translate-y-[-10px]"
             >
               {lyrics[currentIndex + 1].text}
             </p>

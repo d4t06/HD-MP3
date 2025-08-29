@@ -9,6 +9,7 @@ import useGetPage from "../category/useGetPage";
 import { NotFound, PageWrapper, PlaylistItem, Skeleton } from "@/components";
 // import NewSong from "@/modules/new-song";
 import MobileNav from "./_components/MobileNav";
+import MobileSetting from "./_components/MobileSetting";
 // import RecommendSong from "./_components/RecommendSong";
 
 export default function HomePage() {
@@ -49,15 +50,15 @@ export default function HomePage() {
           />
         ))}
 
-      {/*  <RecommendSong />
+   {/*     <RecommendSong />
 
         <RecentPlaylist />
 
         <TrendingSong amount={5} />
 
-        <NewSong amount={5} />
+        <NewSong amount={5} />*/}
 
-        <MobileSetting />*/}
+        <MobileSetting />
       </>
     );
   };

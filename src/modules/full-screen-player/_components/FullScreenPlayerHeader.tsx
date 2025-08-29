@@ -58,7 +58,7 @@ export default function FullScreenPlayerHeader() {
 			>
 				{/* left */}
 				{idle && currentSongData && (
-					<div className={`absolute left-4 text-sm`}>
+					<div className={`absolute left-4 text-sm font-bold`}>
 						{activeTab !== "Songs" && (
 							<>
 								<p>{currentSongData.song.name}</p>

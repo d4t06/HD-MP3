@@ -8,9 +8,16 @@ type Props = {
 const COUNT_LIST = [3, 5, 7, 10];
 
 function TimerModal({ closeModal, active }: Props) {
-
   const classes = {
-    button: `bg-[--a-5-cl] hover:bg-[--primary-cl] ml-2 mt-2 px-3  py-1 rounded-[99px]`,
+    list: `flex flex-wrap mt-2 -ml-2 mb-3 [&>button]:bg-[--a-5-cl]
+    hover:[&>button]:bg-[--primary-cl]
+    hover:[&>button]:text-white
+    [&>button]:ml-2
+    [&>button]:mt-2
+    [&>button]:px-3
+    [&>button]:py-1
+    [&>button]:font-semibold
+    [&>button]:rounded-[99px]`,
   };
 
   const handleSetTimer = (songCount: number) => {
@@ -20,12 +27,7 @@ function TimerModal({ closeModal, active }: Props) {
 
   const renderItems = COUNT_LIST.map((count) => {
     return (
-      <button
-        key={count}
-        type="button"
-        onClick={() => handleSetTimer(count)}
-        className={`${classes.button} `}
-      >
+      <button key={count} type="button" onClick={() => handleSetTimer(count)}>
         {count} songs
       </button>
     );
@@ -34,9 +36,7 @@ function TimerModal({ closeModal, active }: Props) {
   return (
     <ModalContentWrapper>
       <ModalHeader closeModal={closeModal} title="Sleep timer" />
-      <div>
-        <div className="flex flex-wrap -mt-2 -ml-2 mb-3">{renderItems}</div>
-      </div>
+      <div className={classes.list}>{renderItems}</div>
     </ModalContentWrapper>
   );
 }

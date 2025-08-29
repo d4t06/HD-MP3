@@ -9,6 +9,7 @@ import {
   documentId,
   getDoc,
   increment,
+  orderBy,
   query,
   serverTimestamp,
   updateDoc,
@@ -18,6 +19,7 @@ import { convertToEn, request } from "@/utils/appHelpers";
 import { upload } from "@imagekit/react";
 import { implementSongQuery } from "./appService";
 import { nanoid } from "nanoid";
+import { sortMultiSongLists } from "@/utils/mergeSortSongList";
 
 type collectionVariant =
   | "Songs"
@@ -255,7 +257,7 @@ export const getSongInList = async (songIds: string[], playlistId: string) => {
     chunks.push(songIds.slice(i, i + chunkSize));
   }
 
-  const playlistSongs: Song[] = [];
+  const playlistSongs: Song[][] = [];
 
   if (import.meta.env.DEV) console.log(chunks.length, "chunks");
 
@@ -264,6 +266,7 @@ export const getSongInList = async (songIds: string[], playlistId: string) => {
       const queryGetSongs = query(
         songsCollectionRef,
         where(documentId(), "in", chunk),
+        orderBy("first_letter"),
       );
 
       const result = await implementSongQuery(queryGetSongs, {
@@ -271,9 +274,11 @@ export const getSongInList = async (songIds: string[], playlistId: string) => {
         getQueueId: () => `${playlistId}_${nanoid(4)}`,
       });
 
-      playlistSongs.push(...result);
+      playlistSongs.push(result);
     }
   }
 
-  return playlistSongs;
+  if (playlistSongs.length === 1) return playlistSongs[0];
+
+  return sortMultiSongLists(playlistSongs);
 };

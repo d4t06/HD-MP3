@@ -40,7 +40,7 @@ export const MyPopupTrigger = forwardRef(function (
     if (!isMounted) {
       setTimeout(() => {
         setIsOpen(false);
-      }, 400);
+      }, 200);
     }
   }, [isMounted]);
 
@@ -133,7 +133,7 @@ export function MyPopupContent(props: ContentProps) {
     >
       <div
         ref={animationRef}
-        className={` transition-[transform,opacity] duration-[.25s] ease-linear ${
+        className={` transition-[transform,opacity] duration-[.2s] ease-linear ${
           props.animationClassName || ""
         } ${isMounted ? classes.mountedContent : classes.unMountedContent}`}
       >

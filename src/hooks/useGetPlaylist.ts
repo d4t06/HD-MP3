@@ -1,20 +1,13 @@
 import { useParams } from "react-router-dom";
-import {
-  getSongInList,
-  myGetDoc,
-  // songsCollectionRef,
-} from "@/services/firebaseService";
+import { getSongInList, myGetDoc } from "@/services/firebaseService";
 import { PlaylistParamsType } from "../routes";
 import { useDispatch } from "react-redux";
 import { useAuthContext, useToastContext } from "../stores";
 import { useEffect, useRef, useState } from "react";
-// import { documentId, query, where } from "firebase/firestore";
 import {
   resetCurrentPlaylist,
   setCurrentPlaylist,
 } from "@/stores/redux/currentPlaylistSlice";
-// import { implementSongQuery } from "@/services/appService";
-// import { nanoid } from "nanoid";
 
 export default function useGetPlaylist() {
   // stores
@@ -49,38 +42,6 @@ export default function useGetPlaylist() {
     }
   };
 
-  // const getSongs = async (playlist: Playlist) => {
-  //   if (!playlist.song_ids.length) return [];
-
-  //   const chunkSize = 20;
-  //   const chunks = [];
-  //   for (let i = 0; i < playlist.song_ids.length; i += chunkSize) {
-  //     chunks.push(playlist.song_ids.slice(i, i + chunkSize));
-  //   }
-
-  //   const playlistSongs: Song[] = [];
-
-  //   if (import.meta.env.DEV) console.log(chunks.length, "chunks");
-
-  //   for (const chunk of chunks) {
-  //     if (chunk.length > 0) {
-  //       const queryGetSongs = query(
-  //         songsCollectionRef,
-  //         where(documentId(), "in", chunk),
-  //       );
-
-  //       const result = await implementSongQuery(queryGetSongs, {
-  //         msg: "get playlist songs",
-  //         getQueueId: () => `${playlist.id}_${nanoid(4)}`,
-  //       });
-
-  //       playlistSongs.push(...result);
-  //     }
-  //   }
-
-  //   return playlistSongs;
-  // };
-
   const getPlaylistData = async () => {
     try {
       if (!params.id) return;
@@ -96,10 +57,7 @@ export default function useGetPlaylist() {
 
       if (!isOwnerOfPlaylist && !playlist.is_public) return;
 
-      const playlistSongs = await getSongInList(
-        playlist.song_ids,
-        playlist.id
-      );
+      const playlistSongs = await getSongInList(playlist.song_ids, playlist.id);
 
       dispatch(
         setCurrentPlaylist({

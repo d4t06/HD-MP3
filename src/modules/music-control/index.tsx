@@ -1,9 +1,4 @@
-import {
-  ArrowPathRoundedSquareIcon,
-  ArrowTrendingUpIcon,
-  BackwardIcon,
-  ForwardIcon,
-} from "@heroicons/react/24/outline";
+
 
 import PlayPauseButton from "./_components/PlayPauseButton";
 import { formatTime } from "@/utils/appHelpers";
@@ -13,7 +8,12 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
 import { ProgressBar } from "@/components";
-
+import {
+  forwardIcon,
+  repeatIcon,
+  repeatOneIcon,
+  shuffleIcon,
+} from "@/assets/icon";
 
 export default function MusicControl() {
   const {
@@ -35,10 +35,10 @@ export default function MusicControl() {
   } = usePlayerAction();
 
   const classes = {
-    button: `p-1 rounded-full md:bg-transparent `,
-    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3`,
+    button: ``,
+    buttonsContainer: `w-full flex justify-center items-center mb-3 sm:mb-0 space-x-3 [&_button]:w-10 [&_button]:h-10`,
     progressContainer: `flex w-full flex-row items-center `,
-    icon: `w-[44px] sm:w-7`,
+    icon: `w-full`,
     before: `before:content-[''] before:w-[100%] before:h-[24px] before:absolute before:top-[50%] before:translate-y-[-50%]`,
   };
 
@@ -53,17 +53,14 @@ export default function MusicControl() {
           }`}
           onClick={toggleRepeat}
         >
-          <ArrowPathRoundedSquareIcon className={classes.icon} />
-          <span className="absolute font-bold text-[12px] top-1/2 left-1/2 -translate-x-[50%] -translate-y-[50%] ">
-            {repeat === "one" ? "1" : repeat === "all" ? "-" : ""}
-          </span>
+          {repeat === "one" ? repeatOneIcon : repeatIcon}
         </button>
         <button
           disabled={queueSongs.length <= 1}
-          className={classes.button}
+          className={`${classes.button} rotate-180`}
           onClick={previous}
         >
-          <BackwardIcon className={classes.icon} />
+          {forwardIcon}
         </button>
 
         <PlayPauseButton
@@ -76,14 +73,14 @@ export default function MusicControl() {
           className={`${classes.button}`}
           onClick={next}
         >
-          <ForwardIcon className={classes.icon} />
+          {forwardIcon}
         </button>
         <button
           disabled={queueSongs.length <= 1}
           className={`${classes.button} ${isShuffle && "text-[--primary-cl]"}`}
           onClick={toggleShuffle}
         >
-          <ArrowTrendingUpIcon className={classes.icon} />
+          {shuffleIcon}
         </button>
       </div>
 

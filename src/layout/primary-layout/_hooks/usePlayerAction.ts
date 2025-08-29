@@ -67,6 +67,9 @@ export default function usePlayerAction() {
   };
 
   const handlePlayPause = () => {
+
+console.log(playStatus)
+
     if (playStatus === "playing") pause();
     if (playStatus === "paused") play();
   };
@@ -129,13 +132,13 @@ export default function usePlayerAction() {
     let value: typeof repeat;
     switch (repeat) {
       case "no":
-        value = "one";
-        break;
-      case "one":
         value = "all";
         break;
-      case "all":
+      case "one":
         value = "no";
+        break;
+      case "all":
+        value = "one";
         break;
       default:
         value = "no";

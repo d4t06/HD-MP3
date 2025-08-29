@@ -10,7 +10,7 @@ type Props = {
 // alway in state ready for select
 export default function SongQueueItem({ song, onClick, active }: Props) {
   const classes = {
-    itemContainer: `border-b 
+    itemContainer: `queue-item ${active ? 'active' : ''} border-b 
     last:border-none font-semibold border-white/5 rounded-md flex p-2 ${active ? "bg-white/10" : ""}`,
     imageFrame: `w-[54px] h-[54px] relative rounded-md overflow-hidden flex-shrink-0`,
   };

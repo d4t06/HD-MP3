@@ -18,6 +18,7 @@ type Song = {
   id: string;
   meta: string[];
   name: string;
+  first_letter: string;
   image_url: string;
   image_file_id: string;
   song_url: string;

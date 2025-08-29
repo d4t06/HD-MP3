@@ -11,6 +11,8 @@ export default function ForYouPage() {
     if (!ranEffect.current) {
       ranEffect.current = true;
       window.history.scrollRestoration = "manual";
+
+      document.title = "Dmusic";
     }
   }, []);
 

@@ -24,6 +24,14 @@ export default function MenuButton() {
 		setIsOpenComment(true);
 	};
 
+	const handlAfterOpenSongQueue = () => {
+		const activeItem = document.querySelector(".queue-item.active");
+
+		if (activeItem) {
+			activeItem.scrollIntoView();
+		}
+	};
+
 	return (
 		<>
 			<div className="flex space-x-1 items-center">
@@ -40,7 +48,7 @@ export default function MenuButton() {
 				</button>
 			</div>
 
-			<SlideModal ref={modalRef}>
+			<SlideModal onOpen={handlAfterOpenSongQueue} ref={modalRef}>
 				<ControlMenu />
 			</SlideModal>
 

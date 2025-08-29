@@ -3,52 +3,27 @@
 import { DashboardSongPopupWrapper } from "..";
 import { Link } from "react-router-dom";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
+import { plusIcon } from "@/assets/icon";
+import { Modal, ModalRef } from "@/components";
+import AddPlaylistsModal from "@/pages/dashboard/category/category-detail/_components/AddPlaylistsModal";
+import { useRef, useState } from "react";
+import useSongMenuAction from "../useSongMenuAction";
 
-// type SongsMenuModal = "edit" | "delete";
+type SongsMenuModal = "add-to-playlists";
 
 export default function SongMenu({ song }: { song: Song }) {
-  // const { actions, isFetching } = useDashboardSongItemAction();
+  const { action, isFetching } = useSongMenuAction();
 
-  // const [modal, setModal] = useState<SongsMenuModal | "">("");
+  const [modal, setModal] = useState<SongsMenuModal | "">("");
 
-  // const modalRef = useRef<ModalRef>(null);
+  const modalRef = useRef<ModalRef>(null);
 
-  // const closeModal = () => modalRef.current?.close();
-  // const openModal = (m: SongsMenuModal) => {
-  //   setModal(m);
+  const closeModal = () => modalRef.current?.close();
+  const openModal = (m: SongsMenuModal) => {
+    setModal(m);
 
-  //   modalRef.current?.open();
-  // };
-
-  // const handleSongAction = async (props: SongItemActionProps) => {
-  //   switch (props.variant) {
-  //     case "delete":
-  //       await actions({ variant: "delete", song });
-  //   }
-  // };
-
-  // const renderModal = () => {
-  //   switch (modal) {
-  //     case "":
-  //       return <></>;
-  //     case "edit":
-  //     case "delete":
-  //       return (
-  //         <ConfirmModal
-  //           loading={isFetching}
-  //           label={`Delete '${song.name}' ?`}
-  //           desc={"This action cannot be undone"}
-  //           callback={() =>
-  //             handleSongAction({
-  //               variant: "delete",
-  //               song,
-  //             })
-  //           }
-  //           closeModal={closeModal}
-  //         />
-  //       );
-  //   }
-  // };
+    modalRef.current?.open();
+  };
 
   return (
     <>
@@ -58,16 +33,25 @@ export default function SongMenu({ song }: { song: Song }) {
 
           <span>Lyric</span>
         </Link>
-        {/* <button onClick={() => openModal("delete")}>
-          <TrashIcon className={`w-5`} />
+        <button onClick={() => openModal("add-to-playlists")}>
+          <span className="w-5">{plusIcon}</span>
 
-          <span>Delete</span>
-        </button>*/}
+          <span>Add to playlists</span>
+        </button>
       </DashboardSongPopupWrapper>
 
-     {/* <Modal ref={modalRef} variant="animation">
-        {renderModal()}
-      </Modal>*/}
+      <Modal ref={modalRef} variant="animation">
+        {modal === "add-to-playlists" && (
+          <AddPlaylistsModal
+            closeModal={closeModal}
+            current={[]}
+            isLoading={isFetching}
+            submit={(playlists) =>
+              action({ variant: "add-to-playlists", playlists, song })
+            }
+          />
+        )}
+      </Modal>
     </>
   );
 }

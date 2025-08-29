@@ -22,14 +22,14 @@ export function CheckBox({ song }: Props) {
 	};
 
 	return (
-		<p className="[&_svg]:w-5">
+		<>
 			<input readOnly checked={isSelected} className="hidden" type="checkbox" />
 
 			<button
 				onClick={handleSelect}
 				className={`mr-2 md:mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
 			>
-				{!isSelected ? <StopIcon /> : <CheckIcon />}
+				{!isSelected ? <StopIcon className="w-5" /> : <CheckIcon className="w-5" />}
 			</button>
 
 			<button
@@ -38,8 +38,8 @@ export function CheckBox({ song }: Props) {
 					"md:hidden",
 				)}`}
 			>
-				<MusicalNoteIcon />
+				<MusicalNoteIcon  className="w-5"/>
 			</button>
-		</p>
+		</>
 	);
 }

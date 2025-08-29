@@ -20,6 +20,7 @@ type Props = {
   isLiked: boolean | null; // null if user is null
   isHasCheckBox: boolean;
   imageUrl?: string;
+  attributes?: (s: Song) => Record<string, string>;
   variant:
     | "system-song"
     | "own-song"
@@ -236,6 +237,7 @@ function SongItem({
       default:
         return (
           <div
+            {...(props.attributes ? props.attributes(song) : {})}
             className={`${classes.itemContainer} ${className} has-[:checked]:bg-[--a-5-cl] group/main ${
               active ? `bg-[--a-5-cl]` : `hover:bg-[--a-5-cl]`
             }`}

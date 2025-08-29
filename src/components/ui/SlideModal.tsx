@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 type Props = {
 	children: ReactNode;
 	onClose?: () => void;
+	onOpen?: () => void;
 };
 
 export type ModalRef = {
@@ -21,7 +22,7 @@ export type ModalRef = {
 	setModalPersist: (v: boolean) => void;
 };
 
-function SlideModal({ children, onClose }: Props, ref: Ref<ModalRef>) {
+function SlideModal({ children, onClose, onOpen }: Props, ref: Ref<ModalRef>) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -64,6 +65,7 @@ function SlideModal({ children, onClose }: Props, ref: Ref<ModalRef>) {
 	useEffect(() => {
 		if (isOpen) {
 			setTimeout(() => {
+				onOpen && onOpen();
 				setIsMounted(true);
 			}, 100);
 		}

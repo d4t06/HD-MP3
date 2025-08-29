@@ -224,6 +224,7 @@ export default function useAddSongForm(
             genres,
             song_url: url,
             song_file_id: fileId,
+            first_letter: convertToEn(newSongData.name.charAt(0)),
             ...getSongGenreAndSinger(),
             meta: getSongMeta(),
           };
@@ -284,6 +285,7 @@ export default function useAddSongForm(
             const data: Partial<SongSchema> = {
               singers,
               genres,
+              first_letter: convertToEn(newSongData.name.charAt(0)),
               ...getSongGenreAndSinger(),
               meta: getSongMeta(),
             };

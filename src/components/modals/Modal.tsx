@@ -100,7 +100,7 @@ function Modal(
 
         // @ts-ignore
         props.onClose && props.onClose();
-      }, 300);
+      }, 200);
     }
   }, [isMounted]);
 
@@ -142,12 +142,12 @@ function Modal(
           <div className="fixed inset-0 z-[99]">
             <div
               onClick={handleOverlayClick}
-              className={`transition-opacity duration-300 absolute bg-black inset-0 z-[90]
+              className={`transition-opacity duration-200 absolute bg-black inset-0 z-[90]
                              ${isMounted ? classes.mountedLayer : classes.unMountedLayer}
                         `}
             ></div>
             <div
-              className={`modal-content absolute duration-300 transition-[transform,opacity] z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+              className={`modal-content absolute duration-200 transition-[transform,opacity] z-[99] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                             ${
                               isMounted
                                 ? classes.mountedContent
