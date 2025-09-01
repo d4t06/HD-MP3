@@ -58,7 +58,7 @@ function SlideModal({ children, onClose, onOpen }: Props, ref: Ref<ModalRef>) {
 			setTimeout(() => {
 				setIsOpen(false);
 				onClose && onClose();
-			}, 400);
+			}, 200);
 		}
 	}, [isMounted]);
 
@@ -85,12 +85,12 @@ function SlideModal({ children, onClose, onOpen }: Props, ref: Ref<ModalRef>) {
 					<div className="fixed inset-0 z-[99]">
 						<div
 							onClick={handleOverlayClick}
-							className={`transition-opacity duration-300 absolute bg-black inset-0 z-[90]
+							className={`transition-opacity duration-200 absolute bg-black inset-0 z-[90]
                              ${isMounted ? classes.mountedLayer : classes.unMountedLayer}
                         `}
 						></div>
 						<div
-							className={`modal-content absolute bottom-0 left-0 right-0 duration-300 transition-[transform,opacity] z-[99]
+							className={`modal-content absolute bottom-0 left-0 right-0 duration-200 transition-[transform,opacity] z-[99]
                             ${
 															isMounted
 																? classes.mountedContent

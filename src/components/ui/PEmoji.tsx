@@ -2,12 +2,13 @@ import { VariantProps, cva } from "class-variance-authority";
 import { ReactNode } from "react";
 import Twemoji from "react-twemoji";
 
-const emojiVariants = cva("[&_img]:w-5 [&_img]:mr-[2px] [&_img]:inline", {
+const emojiVariants = cva("[&_img]:mr-[2px] [&_img]:inline", {
 	variants: {
 		size: {
 			"6": "[&_img]:w-6",
 			"5": "[&_img]:w-5",
 			"4": "[&_img]:w-4",
+			"3": "[&_img]:w-3",
 		},
 		align: {
 			bottom: "[&_img]:align-text-bottom",
