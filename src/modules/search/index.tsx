@@ -1,5 +1,10 @@
 import useSearch from "./_hooks/useSearch";
-import { convertToEn, getDisable, getHidden, setLocalStorage } from "@/utils/appHelpers";
+import {
+  convertToEn,
+  getDisable,
+  getHidden,
+  setLocalStorage,
+} from "@/utils/appHelpers";
 import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
@@ -10,8 +15,9 @@ import { useNavigate } from "react-router-dom";
 import SearchResult from "./_components/SearchResult";
 import RecentSearchTab from "./_components/RecentSearchTab";
 import { myAddDoc } from "@/services/firebaseService";
+import SearchProvider from "./SearchContext";
 
-export default function Search() {
+function Content() {
   const navigator = useNavigate();
 
   const {
@@ -27,6 +33,7 @@ export default function Search() {
     trendingKeywords,
     recentSearchs,
     setRecentSearchs,
+    handleFocus,
   } = useSearch();
 
   const classes = {
@@ -71,7 +78,7 @@ export default function Search() {
         <input
           ref={inputRef}
           value={value}
-          onFocus={() => setIsFocus(true)}
+          onFocus={handleFocus}
           onChange={(e) => setValue(e.target.value)}
           placeholder="Search song, singer..."
           className={classes.input}
@@ -108,5 +115,13 @@ export default function Search() {
         </div>
       </form>
     </>
+  );
+}
+
+export default function Search() {
+  return (
+    <SearchProvider>
+      <Content />
+    </SearchProvider>
   );
 }

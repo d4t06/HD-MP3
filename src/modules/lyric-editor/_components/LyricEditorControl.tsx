@@ -5,6 +5,7 @@ import {
   EyeIcon,
   MinusIcon,
   PauseIcon,
+  PencilIcon,
   PlayIcon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
@@ -66,7 +67,7 @@ function LyricEditorControl(
 
   const _handlePlayPaused = () => {
     if (!isClickPlay) {
-      if (!!lyrics.length) {
+      if (viewMode === "edit" && !!lyrics.length) {
         const latestTime = lyrics[lyrics.length - 1].end;
         audioEle.currentTime = latestTime;
       }
@@ -123,6 +124,7 @@ function LyricEditorControl(
 
         {viewMode === "edit" && !!baseLyric && (
           <Button onClick={() => openModal("lyric")} color="primary">
+            <PencilIcon />
             <span>Lyric</span>
           </Button>
         )}
@@ -141,7 +143,7 @@ function LyricEditorControl(
             <span>{viewMode === "preview" ? "Preview" : "Edit"}</span>
           </Button>
         )}
-        {viewMode === "import" || viewMode === "preview"   && (
+        {viewMode !== "edit" && (
           <>
             <Button
               color="primary"

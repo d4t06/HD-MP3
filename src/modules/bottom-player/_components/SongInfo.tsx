@@ -4,6 +4,7 @@ import useVinyl from "../_hooks/useVinyl";
 import { Image } from "@/components";
 import ScrollText from "@/modules/scroll-text";
 import { Link } from "react-router-dom";
+import { choVoTri } from "@/constants/app";
 
 type Props = {
   isOpenFullScreen: boolean;
@@ -30,7 +31,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
           className={`w-[56px] h-[56px] flex-shrink-0 animate-[spin_8s_linear_infinite]`}
         >
           <Image
-            src={song?.image_url}
+            src={song?.image_url || choVoTri.image}
             blurHashEncode={song?.blurhash_encode}
             className={`rounded-full h-full object-cover`}
           />
@@ -38,7 +39,7 @@ export default function SongInfo({ isOpenFullScreen, song }: Props) {
 
         <div className="ml-2 font-bold flex-grow">
           <div className="h-6">
-            <ScrollText className="" content={song?.name || "Name"} />
+            <ScrollText className="" content={song?.name || "..."} />
           </div>
           {song && (
             <div className="leading-[1.2] text-sm opacity-70 line-clamp-1">

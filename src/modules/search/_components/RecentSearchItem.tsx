@@ -2,12 +2,13 @@ import SongItem from "@/modules/song-item";
 import { useAuthContext } from "@/stores";
 import { RecentSearch } from "../_hooks/useSearch";
 import { useSetSong } from "@/hooks";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Image } from "@/components";
 import SongSelectProvider from "@/stores/SongSelectContext";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import useGetRelativeSongs from "@/modules/song-queue/_hooks/useGetRelativeSongs";
+import { useSearchContext } from "../SearchContext";
 
 type Props = {
 	item: RecentSearch;
@@ -18,27 +19,39 @@ const classes = {
 };
 
 function ContentItem({ item }: Props) {
+	const { setIsFocus } = useSearchContext();
+
+	const navigator = useNavigate();
+
+	const handleNavigate = (path: string) => {
+		setIsFocus(false);
+
+		navigator(path);
+	};
+
 	return (
-		<Link
-			to={`/${item.variant}/${item.item.id}`}
+		<button
+			onClick={() => handleNavigate(`/${item.variant}/${item.item.id}`)}
 			className={`${classes.itemContainer}`}
 		>
 			<div className="w-[54px] h-[54px]">
 				<Image
 					src={item.item.image_url}
 					blurHashEncode={item.item.blurhash_encode}
-					className={`${item.variant === 'singer' ? 'rounded-full' : 'rounded'}`}
+					className={`${item.variant === "singer" ? "rounded-full" : "rounded"}`}
 				/>
 			</div>
 
-			<div className="ml-[10px]">
-				<h5 className={`line-clamp-1 font-medium overflow-hidden text-sm`}>
+			<div className="ml-[10px] font-medium  text-left">
+				<h5 className={`line-clamp-1 overflow-hidden text-sm`}>
 					{item.item.name}
 				</h5>
 
-				<p className="item-info line-clamp-1 text-sm">{item.variant.charAt(0).toLocaleUpperCase()+item.variant.slice(1)}</p>
+				<p className="item-info line-clamp-1 text-sm">
+					{item.variant.charAt(0).toLocaleUpperCase() + item.variant.slice(1)}
+				</p>
 			</div>
-		</Link>
+		</button>
 	);
 }
 

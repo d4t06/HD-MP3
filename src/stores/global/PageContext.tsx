@@ -13,6 +13,7 @@ function usePage() {
   const [categories, setCategories] = useState<Category[]>([]);
 
   const shouldFetch = useRef(true);
+  const playlistKeyPress = useRef(true);
 
   const categorySliders = useMemo(() => {
     const result: Category[] = [];
@@ -54,6 +55,7 @@ function usePage() {
     categorySliders,
     homeSliders,
     shouldFetch,
+    playlistKeyPress,
   };
 }
 

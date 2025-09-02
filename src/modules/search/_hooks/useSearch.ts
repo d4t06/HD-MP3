@@ -13,6 +13,8 @@ import { getSearchQuery, songsCollectionRef } from "@/services/firebaseService";
 import { implementSongQuery } from "@/services/appService";
 import { db } from "@/firebase";
 import { getLocalStorage } from "@/utils/appHelpers";
+import { useSearchContext } from "../SearchContext";
+import { usePageContext } from "@/stores";
 
 type SongItem = {
   variant: "song";
@@ -32,9 +34,11 @@ type SingerItem = {
 export type RecentSearch = SongItem | PlaylistItem | SingerItem;
 
 export default function useSearch() {
+  const { playlistKeyPress } = usePageContext();
+  const { isFocus, setIsFocus } = useSearchContext();
+
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(false);
-  const [isFocus, setIsFocus] = useState(false);
 
   const [searchResult, SetSearchResult] = useState<Song[]>([]);
   const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
@@ -52,6 +56,11 @@ export default function useSearch() {
   const searchKey = useDebounce(value, 700);
 
   const controller = new AbortController();
+
+  const handleFocus = () => {
+    playlistKeyPress.current = false;
+    setIsFocus(true);
+  };
 
   const handleClickOutside = (e: Event) => {
     const searchResultEle = document.querySelector(".search-result");
@@ -79,6 +88,7 @@ export default function useSearch() {
       return;
 
     setIsFocus(false);
+    playlistKeyPress.current = true;
   };
 
   const getTrendingKeyword = async () => {
@@ -194,5 +204,6 @@ export default function useSearch() {
     recentSearchs,
     setRecentSearchs,
     trendingKeywords,
+    handleFocus,
   };
 }

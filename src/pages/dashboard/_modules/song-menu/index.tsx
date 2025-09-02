@@ -18,7 +18,7 @@ function SongInfo({ song }: { song: Song }) {
   return (
     <div className="px-2 mb-3">
       <div className={`p-2 bg-white/10 rounded-md flex`}>
-        <div className="w-[60px] h-[60px] flex-shrink-0 rounded overflow-hidden">
+        <div className="w-14 h-14 flex-shrink-0 rounded overflow-hidden">
           <Image className="object-cover h-full" src={song.image_url} />
         </div>
 

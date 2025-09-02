@@ -1,7 +1,6 @@
 import { useRef } from "react";
 import { PhotoIcon } from "@heroicons/react/24/outline";
 import {
-  ChooseImageModal,
   Image,
   Input,
   Label,
@@ -15,6 +14,7 @@ import useAddSingerModal, {
 } from "../_hooks/useAddSingerModal";
 import { inputClasses } from "@/components/ui/Input";
 import { Button } from "../../_components";
+import DashboardChooseImageModal from "../../_modules/choose-image-modal";
 
 export default function AddSingerModal(props: UseAddSingerModalProps) {
   const {
@@ -25,6 +25,7 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
     isValidToSubmit,
     updateSingerData,
     inputRef,
+    setImageUrl,
   } = useAddSingerModal(props);
 
   const modalRef = useRef<ModalRef>(null);
@@ -96,11 +97,12 @@ export default function AddSingerModal(props: UseAddSingerModalProps) {
         </p>
       </ModalContentWrapper>
       <Modal variant="animation" ref={modalRef}>
-        <ChooseImageModal
+        <DashboardChooseImageModal
           modalRef={modalRef}
           title="Album image"
           setImageFile={setImageFile}
-        />
+          setUrl={setImageUrl}
+        />    
       </Modal>
     </>
   );

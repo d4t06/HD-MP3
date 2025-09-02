@@ -9,6 +9,7 @@ import {
   MyPopupContent,
   MyPopupTrigger,
   VerticalMenu,
+  ConfirmModal,
 } from "@/components";
 import { useRef, useState } from "react";
 import AddSongBeatModal from "./AddSongBeatModal";
@@ -16,9 +17,9 @@ import {
   ArrowDownTrayIcon,
   ArrowTopRightOnSquareIcon,
   Bars3Icon,
-  MagnifyingGlassIcon,
   MusicalNoteIcon,
   PencilIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import EditStringLyicModal from "./EditStringLyricModal";
 import { useEditLyricContext } from "./EditLyricContext";
@@ -26,18 +27,26 @@ import useImportLyric from "../_hooks/useImportLyric";
 import useExportLyric from "../_hooks/useExportLyric";
 import SyncLyricModal from "./SyncLyricModal";
 
-type Modal = "lyric" | "song-beat" | "export" | "search" | "sync";
+type Modal =
+  | "lyric"
+  | "song-beat"
+  | "export"
+  | "search"
+  | "sync"
+  | "discard"
+  | "warning-import";
 
 type Props = {
   pause: () => void;
 };
 
 export default function MenuBtn({ pause }: Props) {
-  const { song, lyrics } = useEditLyricContext();
+  const { song, lyrics, viewMode, discard } = useEditLyricContext();
 
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
+  const labelRef = useRef<HTMLLabelElement>(null);
 
   const { handleInputChange } = useImportLyric();
   const { exportLyric } = useExportLyric();
@@ -83,11 +92,35 @@ export default function MenuBtn({ pause }: Props) {
 
       case "sync":
         return <SyncLyricModal closeModal={closeModal} />;
+      case "discard":
+        return (
+          <ConfirmModal
+            closeModal={closeModal}
+            callback={discard}
+            loading={false}
+            label="Discard current lyrics"
+          />
+        );
+      case "warning-import":
+        return (
+          <ConfirmModal
+            closeModal={closeModal}
+            callback={() => {
+              closeModal();
+              labelRef.current?.click();
+            }}
+            loading={false}
+            label="Import lyrics ?"
+            desc="Your current lyrics will discard"
+          />
+        );
     }
   };
 
   return (
     <>
+      <label ref={labelRef} htmlFor="import_lyric" className="hidden"></label>
+
       <input
         id="import_lyric"
         onChange={handleInputChange}
@@ -109,32 +142,34 @@ export default function MenuBtn({ pause }: Props) {
         <MyPopupContent origin="top right">
           <PopupWrapper className="w-[220px]">
             <VerticalMenu cb={pause}>
-              <button onClick={() => openModal("lyric")}>
-                <PencilIcon />
+              {viewMode === "edit" && (
+                <button onClick={() => openModal("lyric")}>
+                  <PencilIcon />
 
-                <span>Edit lyric</span>
-              </button>
-              {!song?.is_official && (
-                <button onClick={() => openModal("search")}>
-                  <MagnifyingGlassIcon />
-
-                  <span>Search lyric</span>
+                  <span>Edit lyric</span>
                 </button>
               )}
+
+              <button onClick={() => openModal("discard")}>
+                <XMarkIcon />
+
+                <span>Discard lyric</span>
+              </button>
 
               <button onClick={() => openModal("song-beat")}>
                 <MusicalNoteIcon />
                 <span>Song beat</span>
               </button>
 
-              <button className="!p-0">
-                <label
-                  className="flex w-full px-3 py-2 cursor-pointer items-center space-x-2"
-                  htmlFor="import_lyric"
-                >
-                  <ArrowDownTrayIcon />
-                  <span>Import (JSON or SRT)</span>
-                </label>
+              <button
+                onClick={() =>
+                  lyrics.length
+                    ? openModal("warning-import")
+                    : labelRef.current?.click()
+                }
+              >
+                <ArrowDownTrayIcon />
+                <span>Import (JSON or SRT)</span>
               </button>
 
               <button

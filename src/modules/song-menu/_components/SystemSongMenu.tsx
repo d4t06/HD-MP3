@@ -22,7 +22,7 @@ export default function SystemSongMenu({ song }: Props) {
 
         <AddToNewPlaylistMenuItem modalRef={modalRef} />
 
-        <a target="_blank" href={song.song_url}>
+        <a download={'sdfsf.mp3'} href={song.song_url}>
           <ArrowDownTrayIcon />
           <span>Download</span>
         </a>

@@ -19,8 +19,6 @@ const useEditLyric = () => {
   const [viewMode, setViewMode] = useState<ViewMode>("edit");
   const [selectLyricIndex, setSelectLyricIndex] = useState<number>();
 
-  // const [isImportLyric, setIsImportLyric] = useState(false);
-
   const start = useRef(0);
 
   const currentLyric = useMemo(
@@ -35,6 +33,12 @@ const useEditLyric = () => {
       prev[index] = target;
       return [...prev];
     });
+  };
+
+  const discard = () => {
+    setLyrics([]);
+    setIsChanged(true);
+    setViewMode("edit");
   };
 
   return {
@@ -57,6 +61,7 @@ const useEditLyric = () => {
     currentLyric,
     viewMode,
     setViewMode,
+    discard,
     // isPreview,
     // setIsPreview,
     // isImportLyric,

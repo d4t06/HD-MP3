@@ -80,15 +80,12 @@ export default function useAddSongForm(
       !!singers.length &&
       !!genres.length &&
       !!songData.release_year &&
-      !!songData.main_genre &&
-      isChanged;
+      !!songData.main_genre;
 
     return props.variant === "add"
       ? isValidSongData
       : isValidSongData && (isChanged || !!imageFile || !!imageUrl);
   }, [imageFile, imageUrl, isChanged, singers, genres, songData]);
-
-  console.log(isChanged);
 
   const initSongData = () => {
     switch (props.variant) {

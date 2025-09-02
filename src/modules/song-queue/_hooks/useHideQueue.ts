@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export default function useHideSongQueue() {
-  const { setIsOpenSongQueue } = usePlayerContext();
+  const { setIsOpenSongQueue, isOpenSongQueue } = usePlayerContext();
 
   const location = useLocation();
 
@@ -12,4 +12,13 @@ export default function useHideSongQueue() {
       setIsOpenSongQueue(false);
     }
   }, [location]);
+
+  useEffect(() => {
+    if (isOpenSongQueue) {
+      const activeSongItem = document.querySelector(".queue-songlist .active");
+
+      if (activeSongItem)
+        activeSongItem.scrollIntoView({ behavior: "instant" });
+    }
+  }, [isOpenSongQueue]);
 }

@@ -226,8 +226,8 @@ function SongItem({
       case "queue-song":
         return (
           <div
-            className={`${classes.itemContainer} group/main ${
-              active ? `bg-[--primary-cl] text-white` : `hover:bg-[--a-5-cl]`
+            className={`${classes.itemContainer}  group/main ${
+              active ? `bg-[--primary-cl] text-white active` : `hover:bg-[--a-5-cl]`
             }`}
           >
             {renderLeftContent()}

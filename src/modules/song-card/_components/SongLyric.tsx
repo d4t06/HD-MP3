@@ -42,7 +42,7 @@ export default function SongLyric({ audioEle }: Props) {
             <p
               key={currentIndex + "11"}
               ref={subLyricRef}
-              className="mt-3 transition-[transform,opacity] text-[#e1e1e1] duration-[.4s] opacity-0 translate-y-[-10px]"
+              className="mt-3 transition-[transform,opacity] text-[#f1f1f1] duration-[.4s] opacity-0 translate-y-[-10px]"
             >
               {lyrics[currentIndex + 1].text}
             </p>
@@ -62,11 +62,11 @@ export default function SongLyric({ audioEle }: Props) {
     setTimeout(() => {
       if (mainLyricRef.current) {
         Object.assign(mainLyricRef.current.style, {
-          transform: "scale(1.3) translateY(0px)",
+          transform: "scale(1.2) translateY(0px)",
         });
 
         spaceFromTop.current = +(
-          mainLyricRef.current.offsetHeight * 1.3
+          mainLyricRef.current.offsetHeight * 1.2
         ).toFixed(1);
       }
 

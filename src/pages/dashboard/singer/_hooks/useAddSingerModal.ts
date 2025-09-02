@@ -28,6 +28,7 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
 
   const [singerData, setSingerData] = useState<SingerSchema>();
   const [imageFile, setImageFile] = useState<File>();
+  const [imageUrl, setImageUrl] = useState<string>();
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -49,7 +50,7 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
     );
   }, [singerData]);
 
-  const isChangeImage = !!imageFile;
+  const isChangeImage = !!imageFile || !!imageUrl;
 
   const isValidToSubmit = useMemo(() => {
     const isValidPlaylistData = !!singerData?.name && isChanged;
@@ -71,12 +72,13 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
         meta: convertToEn(singerData.name.trim()).split(" "),
       };
 
-      if (imageFile) {
+      if (isChangeImage) {
         if (singerData.image_file_id)
           deleteFile({ fileId: singerData.image_file_id });
 
         const imageData = await optimizeAndGetHashImage({
           imageFile,
+          fromUrl: imageUrl,
         });
 
         Object.assign(newSingerData, imageData);
@@ -162,6 +164,12 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
   }, [imageFile]);
 
   useEffect(() => {
+    if (!imageUrl) return;
+
+    updateSingerData({ image_url: imageUrl });
+  }, [imageUrl]);
+
+  useEffect(() => {
     inputRef.current?.focus();
   }, []);
 
@@ -175,5 +183,6 @@ export default function useAddSingerModal(props: UseAddSingerModalProps) {
     handleSubmit,
     isFetching,
     isValidToSubmit,
+    setImageUrl
   };
 }

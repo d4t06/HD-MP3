@@ -25,6 +25,7 @@ export default function useLyricEditor({ audioRef }: Props) {
     isChanged,
     isFetching: isSubmitting,
     start,
+    setViewMode,
   } = useEditLyricContext();
 
   const [isFetching, setIsFetching] = useState(true);
@@ -43,11 +44,11 @@ export default function useLyricEditor({ audioRef }: Props) {
       const latestEndTime = lyrics[latestIndex].end;
 
       start.current = latestEndTime;
-      audioRef.current.currentTime = latestEndTime
+      audioRef.current.currentTime = latestEndTime;
     }
   };
 
-  const getSong = async () => {
+  const getSongAndLyric = async () => {
     try {
       if (!params.id || !user) throw new Error("");
 
@@ -85,6 +86,8 @@ export default function useLyricEditor({ audioRef }: Props) {
           setBaseLyric(base);
           setLyrics(parseLyrics);
           updateIndex(parseLyrics);
+
+          if (parseLyrics.length && !base) setViewMode("import");
         }
       }
 
@@ -101,7 +104,7 @@ export default function useLyricEditor({ audioRef }: Props) {
     if (!ranUseEffect.current) {
       ranUseEffect.current = true;
 
-      if (!song) getSong();
+      if (!song) getSongAndLyric();
       else {
         setIsFetching(false);
       }

@@ -31,7 +31,7 @@ export default function SongMenu({ song }: { song: Song }) {
         <Link to={`/dashboard/lyric/${song.id}`}>
           <DocumentTextIcon className={`w-5`} />
 
-          <span>Lyric</span>
+          <span>{song.lyric_id ? 'Add' : 'Edit'} lyric</span>
         </Link>
         <button onClick={() => openModal("add-to-playlists")}>
           <span className="w-5">{plusIcon}</span>

@@ -1,16 +1,37 @@
 import { db } from "@/firebase";
 import { useToastContext } from "@/stores";
+import { request } from "@/utils/appHelpers";
 import { collection, getDocs, limit, orderBy, query } from "firebase/firestore";
 import { useEffect, useRef, useState } from "react";
 
 export default function useGetKeyword() {
-  const { setErrorToast } = useToastContext();
+  const { setErrorToast, setSuccessToast } = useToastContext();
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const [actionFetching, setActionFetching] = useState(false);
 
   const [trendingKeywords, setTrendingKeywords] = useState<string[]>([]);
 
   const shouldFetchTrendingKeywords = useRef(true);
+
+  const refreshSearchLog = async (variant: "Reset" | "Refresh") => {
+    try {
+      setActionFetching(true);
+
+      await request.get(
+        "/trending-summary" +
+          (variant === "Reset" ? "/search-daily" : "/search-log"),
+      );
+
+      setSuccessToast(`${variant} search logs successful`);
+    } catch (error) {
+      console.log(error);
+      setErrorToast();
+    } finally {
+      setActionFetching(false);
+    }
+  };
 
   const getTrendingKeyword = async () => {
     try {
@@ -39,13 +60,11 @@ export default function useGetKeyword() {
   };
 
   useEffect(() => {
-    console.log(shouldFetchTrendingKeywords.current);
-
     if (shouldFetchTrendingKeywords.current) {
       shouldFetchTrendingKeywords.current = false;
       getTrendingKeyword();
     }
   }, []);
 
-  return { trendingKeywords, isFetching };
+  return { trendingKeywords, isFetching, refreshSearchLog, actionFetching };
 }
