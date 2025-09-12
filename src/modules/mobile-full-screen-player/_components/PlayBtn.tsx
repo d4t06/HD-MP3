@@ -5,40 +5,42 @@ import {
   PlayIcon,
 } from "@heroicons/react/20/solid";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
+import { forwardIcon } from "@/assets/icon";
 
 type Props = {
   handlePlayPause: () => void;
+  next: () => void;
   playStatus: PlayStatus;
 };
 
-export default function PlayBtn({ handlePlayPause, playStatus }: Props) {
-  const classes = {
-    icon: "w-10",
-  };
+export default function PlayBtn({ handlePlayPause, next, playStatus }: Props) {
 
   const renderIcon = () => {
     switch (playStatus) {
       case "playing":
-        return <PauseIcon className={`${classes.icon}`} />;
+        return <PauseIcon  />;
       case "error":
-        return <ExclamationCircleIcon className={`${classes.icon}`} />;
+        return <ExclamationCircleIcon  />;
       case "loading":
       case "waiting":
-        return <ArrowPathIcon className={`${classes.icon} animate-spin`} />;
+        return <ArrowPathIcon className={`animate-spin`} />;
       case "paused":
-        return <PlayIcon className={`${classes.icon}`} />;
+        return <PlayIcon  />;
     }
   };
 
   return (
     <>
-      <button
-        className={`inline-flex items-center justify-center`}
-        onClick={() => handlePlayPause()}
-      >
-        {renderIcon()}
-      </button>
+      <div className="flex">
+        <button
+          className="[&_svg]:w-10"
+          onClick={handlePlayPause}
+        >
+          {renderIcon()}
+        </button>
+
+        <button onClick={next} className="w-10 ml-3">{forwardIcon}</button>
+      </div>
     </>
   );
 }
-

@@ -1,7 +1,7 @@
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
-} from "@heroicons/react/24/outline";
+} from "@heroicons/react/24/solid";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 // import { PlayIcon } from "@heroicons/react/20/solid";

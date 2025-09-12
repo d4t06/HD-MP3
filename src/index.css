@@ -5,14 +5,55 @@
 @tailwind components;
 @tailwind utilities;
 
-/*@layer components {
-  .popup-shadow {
-    @apply shadow-[0_0_6px_0_rgba(0,0,0,.15)];
+@layer components {
+  .full-screen-player {
+    @apply fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-transform duration-[.3s] ease-in-out;
+  }
+
+  .item-info {
+    @apply text-gray-600 dark:text-gray-300;
+  }
+
+  .song-item {
+    @apply w-full flex flex-row rounded-md justify-between py-2 px-3 last:border-none has-[:checked]:bg-[--a-5-cl];
+  }
+
+  .song-item:not(.active) {
+    @apply hover:bg-[--a-5-cl];
+  }
+
+  .sidebar-item {
+    @apply hover:bg-[--a-5-cl] leading-[2.2] py-1.5 flex flex-col items-center [&_span]:text-xs [&_span]:mt-[2px] [&_span]:font-semibold lg:py-2 lg:pl-4 lg:[&_span]:mt-0 lg:space-x-2  lg:px-3 lg:flex-row lg:items-center [&_svg]:w-6 w-full lg:[&_span]:text-[14px] lg:[&_span]:inline-block;
+  }
+
+  .db-sidebar-item {
+    @apply hover:bg-[--a-5-cl] flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 text-sm;
+  }
+
+  .song-thumb .image-container {
+    @apply flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] xl:w-[450px] xl:h-[450px];
+  }
+
+  .song-thumb .image-frame {
+    @apply border-4 rounded-md overflow-hidden border-transparent relative transition-[width] duration-[.3s] origin-center rounded-xl overflow-hidden;
   }
 }
-*/
-.item-info {
-  @apply text-gray-600 dark:text-gray-300;
+
+body.full-screen {
+  overflow: hidden;
+}
+
+.full-screen-player {
+  transform: translateY(100%);
+  z-index: 90;
+}
+
+.full-screen .full-screen-player {
+  transform: translateY(0);
+}
+
+.no-animation .full-screen-player {
+  transition: none !important;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

@@ -49,7 +49,7 @@ function SongItem({
 
   // define style
   const classes = {
-    itemContainer: `w-full sm:group/container flex flex-row rounded-md justify-between py-2 px-3 last:border-none`,
+    itemContainer: `song-item sm:group/container`,
     imageFrame: ` relative rounded overflow-hidden flex-shrink-0`,
     overlay: "absolute flex items-center justify-center inset-0 bg-black/40",
   };
@@ -132,9 +132,9 @@ function SongItem({
           {imageOverlay}
         </div>
 
-        <div className={`ml-[10px]`}>
+        <div className={`ml-[10px] font-bold`}>
           <h5
-            className={`line-clamp-1 font-semibold overflow-hidden ${getSongNameSize()}`}
+            className={`line-clamp-1 overflow-hidden ${getSongNameSize()}`}
           >
             {song.name}
 
@@ -226,8 +226,10 @@ function SongItem({
       case "queue-song":
         return (
           <div
-            className={`${classes.itemContainer}  group/main ${
-              active ? `bg-[--primary-cl] text-white active` : `hover:bg-[--a-5-cl]`
+            className={`${classes.itemContainer} group/main ${
+              active
+                ? `bg-[--primary-cl] text-white active`
+                : ``
             }`}
           >
             {renderLeftContent()}
@@ -238,8 +240,8 @@ function SongItem({
         return (
           <div
             {...(props.attributes ? props.attributes(song) : {})}
-            className={`${classes.itemContainer} ${className} has-[:checked]:bg-[--a-5-cl] group/main ${
-              active ? `bg-[--a-5-cl]` : `hover:bg-[--a-5-cl]`
+            className={`${classes.itemContainer} ${className} group/main ${
+              active ? `bg-[--a-5-cl] active` : ``
             }`}
           >
             {renderLeftContent()}

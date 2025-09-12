@@ -1,8 +1,9 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useToastContext } from "@/stores";
 import useInterceptRequest from "./useInterceptRequest";
+import { isAxiosError } from "axios";
 
-type Track = {
+export type Track = {
   name: string;
   album: {
     images: {
@@ -17,16 +18,38 @@ type Track = {
   }[];
 };
 
+export type Artist = {
+  name: string;
+  images: {
+    url: string;
+    height: number;
+    width: number;
+  }[];
+};
+
+const tabs = ["Track", "Artist"] as const;
+type Tab = (typeof tabs)[number];
+
+type SongResult = Record<(typeof tabs)[0], Track[]>;
+type SingerResult = Record<(typeof tabs)[1], Artist[]>;
+
+type ResultMap = SongResult & SingerResult;
+
 export default function useSpotifySearch() {
   const { setErrorToast } = useToastContext();
 
-  const [items, setItems] = useState<Track[]>([]);
+  const [tab, setTab] = useState<Tab>("Track");
+  const [resutMap, setResultMap] = useState<ResultMap>({
+    Track: [],
+    Artist: [],
+  });
   const [value, setValue] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
 
   const formRef = useRef<HTMLFormElement>(null); // for handle click outside
+  const controllerRef = useRef<AbortController>();
 
   const interceptRequest = useInterceptRequest();
 
@@ -34,22 +57,48 @@ export default function useSpotifySearch() {
     try {
       e.preventDefault();
 
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+
+      controllerRef.current = new AbortController();
+
       if (!value.trim() || isFetching) return;
 
       setIsFetching(true);
 
-      const res = await interceptRequest.get<{ tracks: { items: Track[] } }>(
-        `https://api.spotify.com/v1/search?q=${value}&limit=3&type=track`,
+      const res = await interceptRequest.get(
+        `https://api.spotify.com/v1/search?q=${value}&limit=3&type=${tab.toLowerCase()}`,
+        { signal: controllerRef.current.signal },
       );
 
-      if (res.data?.tracks?.items) {
-        console.log(res.data.tracks.items);
-        setItems(res.data.tracks.items);
-        setShowResult(true);
+      switch (tab) {
+        case "Track":
+          setResultMap((prev) => ({
+            ...prev,
+            [tab]: res.data?.tracks?.items,
+          }));
+          break;
+        case "Artist":
+          setResultMap((prev) => ({
+            ...prev,
+            [tab]: res.data?.artists?.items,
+          }));
+          break;
       }
-    } catch (err) {
-      console.log({ message: err });
-      setErrorToast();
+
+      setShowResult(true);
+    } catch (err: any) {
+      if (isAxiosError(err)) {
+        if (err.code === "ERR_CANCELED") {
+          console.log("abort");
+        } else {
+          console.log({ message: err });
+          setErrorToast();
+        }
+      } else {
+        setErrorToast("Unexpected Error");
+      }
     } finally {
       setIsFetching(false);
     }
@@ -81,17 +130,28 @@ export default function useSpotifySearch() {
     };
   }, [isFocus]);
 
+  useEffect(() => {
+    return () => {
+      if (controllerRef.current) {
+        controllerRef.current.abort();
+      }
+    };
+  }, [tab]);
+
   return {
     isFetching,
     value,
     setValue,
     handleSubmit,
-    items,
+    resutMap,
     showResult,
     isFocus,
     setIsFocus,
     handleClickOutside,
     formRef,
     setShowResult,
+    tabs,
+    tab,
+    setTab,
   };
 }

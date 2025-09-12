@@ -62,7 +62,7 @@ export default function DashBoardSidebar() {
     head: "h-[60px] flex items-center justify-center",
     logoText: "text-[22px] font-[500] whitespace-nowrap tracking-[-1px]",
     logoImage: "max-w-[50px] p-[4px]",
-    item: `hover:bg-[--a-5-cl] flex whitespace-nowrap space-x-2 items-center justify-center p-2.5 text-sm`,
+    item: `db-sidebar-item`,
     icon: "w-[24px] flex-shrink-0",
   };
 
@@ -76,7 +76,7 @@ export default function DashBoardSidebar() {
         </div>
       </div>
 
-      <div className="[&_svg]:w-5 [&_svg]:flex-shrink-0">
+      <div className="[&_svg]:w-5 [&_svg]:flex-shrink-0 font-semibold">
         <Link
           className={`
               ${classes.item} ${isOpen ? "!justify-start" : ""}

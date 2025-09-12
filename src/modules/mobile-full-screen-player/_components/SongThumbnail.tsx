@@ -14,10 +14,10 @@ export default function SongThumbnail({ imageUrl }: Props) {
   return (
     <div
       onClick={() => setMobileActiveTab(isPlayingTab ? "Lyric" : "Playing")}
-      className={` ${
+      className={` transition-all duration-[.2s] flex-shrink-0 ${
         isPlayingTab
-          ? "w-full h-auto px-2 sm:w-[60px] sm:h-[60px] sm:px-0"
-          : "w-[60px] h-[60px] p-0 flex-shrink-0"
+          ? "w-full h-auto sm:w-20 sm:h-20 sm:px-0"
+          : "w-20 h-20 p-0"
       }`}
     >
       <Image src={imageUrl} className="w-full rounded-md" />

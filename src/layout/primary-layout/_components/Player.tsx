@@ -17,8 +17,6 @@ export default function Player() {
 
   const [_hasAudio, setHasAudio] = useState(false);
 
-  // useAuthContext(); // for update audioRef
-
   const desktopContent = audioRef.current && (
     <>
       <FullScreenPlayer />

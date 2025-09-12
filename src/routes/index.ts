@@ -32,7 +32,7 @@ import AddSongLayout from "@/layout/dashboard/add-song-layout";
 import DashboardEditAlbumPage from "@/pages/dashboard/album/edit";
 import ForYouPage from "@/pages/for-you";
 
-const pubicRouteMap = {
+export const pubicRouteMap = {
   home: "/",
   discorver: "/discover",
   catogory: "/category",

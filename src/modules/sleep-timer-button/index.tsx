@@ -20,7 +20,7 @@ export default function SleepTimerButton() {
 
   const classes = {
     container: "w-[54px] sm:w-[50px] flex justify-center",
-    button: `rounded-[99px] p-[5px] hover:bg-[--a-5-cl]`,
+    button: `rounded-[99px] p-1 hover:bg-[--a-5-cl]`,
     itemContainer: "flex justify-between items-center min-h-[30px]",
     text: "text-base text-[#ccc]",
   };

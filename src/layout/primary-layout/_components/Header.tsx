@@ -28,6 +28,7 @@ import useAuthAction from "@/hooks/useAuthActiont";
 import NavigationButton from "@/modules/navigation-button";
 import Search from "@/modules/search";
 import { useLocation } from "react-router-dom";
+import { usePersistState } from "@/hooks";
 
 export type HeaderModal = "theme" | "info" | "confirm";
 
@@ -39,6 +40,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   // const [isOpenMenu, setIsOpenMenu] = useState(false);
   const settingTriggerRef = useRef<TriggerRef>(null);
   const avatarTriggerRef = useRef<TriggerRef>(null);
+
+  const [animation, setAnimation] = usePersistState("animation", true);
 
   const modalRef = useRef<ModalRef>(null);
 
@@ -118,6 +121,11 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
     }
   }, [location]);
 
+  useEffect(() => {
+    if (!animation) document.documentElement.classList.add("no-animation");
+    else document.documentElement.classList.remove("no-animation");
+  }, [animation]);
+
   const classes = {
     userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
     button: `h-[40px] w-[40px] rounded-full hover:bg-[--a-5-cl]`,
@@ -159,7 +167,11 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                 className="top-[calc(100%+8px)] right-0"
                 animationClassName="origin-top-right"
               >
-                <SettingMenu openModal={openModal} variant="client" />
+                <SettingMenu
+                  openModal={openModal}
+                  animation={animation}
+                  setAnimation={() => setAnimation(!animation)}
+                />
               </MyPopupContent>
             </MyPopup>
 

@@ -10,6 +10,49 @@ import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components";
 import { useAuthContext } from "@/stores";
 import ScrollTop from "./_components/ScrollTop";
+import { pubicRouteMap } from "@/routes";
+import { ReactNode } from "react";
+
+const routeList = [
+  {
+    path: pubicRouteMap.discorver,
+    title: "Discover",
+    icon: <GlobeAsiaAustraliaIcon />,
+  },
+
+  {
+    path: pubicRouteMap.catogory,
+    title: "Category",
+    icon: <SquaresPlusIcon />,
+  },
+  {
+    path: pubicRouteMap.trending,
+    title: "Trending",
+    icon: <ArrowTrendingUpIcon />,
+  },
+];
+
+function LinkItem({
+  active,
+  children,
+  to,
+}: {
+  children: ReactNode;
+  to: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      className={`sidebar-item
+              ${active ? "text-[--primary-cl]" : ""}
+            `}
+      to={to}
+    >
+      {children}
+    </Link>
+  );
+}
+
 export default function Sidebar() {
   // stores
   const { user, loading: userLoading } = useAuthContext();
@@ -27,127 +70,62 @@ export default function Sidebar() {
     );
   });
 
-  const getActiveClasses = (condition: boolean) => {
-    if (condition) return `text-[--primary-cl]`;
-    return "";
-  };
-
   //  define styles
   const classes = {
     container: `w-[80px] lg:w-[160px] relative flex-shrink-0 h-screen bg-[--sidebar-collapse-cl] lg:bg-[--sidebar-cl] `,
-    linkList: `
-      hover:[&_div:not(.ske)]:bg-[--a-5-cl]
-      [&_div]:py-1.5
-      [&_div]:leading-[2.2] 
-      [&_div]:flex 
-      [&_div]:flex-col 
-      [&_div]:items-center
-      [&_span]:text-xs
-      [&_span]:mt-[2px]
-      [&_span]:font-semibold
-
-      lg:[&_div]:py-2
-      lg:[&_div]:pl-4
-      lg:[&_span]:mt-0
-      lg:[&_div]:space-x-2 
-      lg:[&_div]:px-3
-      lg:[&_div]:flex-row 
-      lg:[&_div]:items-center
-      [&_svg]:w-6
-      [&_a]:w-full
-      lg:[&_span]:text-[14px]
-      lg:[&_span]:inline-block
-      `,
   };
 
   return (
     <div className={`${classes.container}`}>
       <div className="px-[10px] h-[80px] flex items-center justify-center">
-          <Link
-            to={"/"}
-            className="bg-white dark:bg-[--layout-cl] w-12 flex h-12 rounded-full justify-center items-center"
-          >
-            <span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
-              :D
-            </span>
-          </Link>
+        <Link
+          to={"/"}
+          className="bg-white dark:bg-[--layout-cl] w-12 flex h-12 rounded-full justify-center items-center"
+        >
+          <span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
+            :D
+          </span>
+        </Link>
       </div>
-      <div className={`flex flex-col items-start ${classes.linkList}`}>
+      <div className={`flex flex-col items-start`}>
         {userLoading && menuItemSkeletons}
 
         {!userLoading && (
           <>
-            <Link
-              className={`
-              ${getActiveClasses(location.pathname === "/")}
-            `}
-              to={"/"}
-            >
-              <div>
-                <HomeIcon />
-                <span>For You</span>
-              </div>
-            </Link>
+            <LinkItem active={location.pathname === "/"} to={"/"}>
+              <HomeIcon />
+              <span>For You</span>
+            </LinkItem>
 
-            <Link
-              className={`
-              ${getActiveClasses(location.pathname.includes("/discover"))}
-            `}
-              to={"/discover"}
-            >
-              <div>
-                <GlobeAsiaAustraliaIcon />
-                <span>Discover</span>
-              </div>
-            </Link>
-
-            <Link
-              className={`
-              ${getActiveClasses(location.pathname.includes("/category"))}
-            `}
-              to={"/category"}
-            >
-              <div>
-                <SquaresPlusIcon />
-                <span>Category</span>
-              </div>
-            </Link>
-
-            <Link
-              className={`
-              ${getActiveClasses(location.pathname.includes("/trending"))}
-            `}
-              to={"/trending"}
-            >
-              <div>
-                <ArrowTrendingUpIcon />
-                <span>Trending</span>
-              </div>
-            </Link>
+            {routeList.map((item, i) => (
+              <LinkItem
+                key={i}
+                active={location.pathname.includes(item.path)}
+                to={item.path}
+              >
+                {item.icon}
+                <span>{item.title}</span>
+              </LinkItem>
+            ))}
 
             {user && (
               <>
-                <Link
-                  className={`
-                  ${getActiveClasses(location.pathname.includes("/my-music"))}`}
+                <LinkItem
+                  active={location.pathname.includes("/my-music")}
                   to={"/my-music"}
                 >
-                  <div>
-                    <MusicalNoteIcon />
-                    <span>My Song</span>
-                  </div>
-                </Link>
+                  <MusicalNoteIcon />
+                  <span>My Song</span>
+                </LinkItem>
 
                 {user.role === "ADMIN" && (
                   <Link
                     to={"/dashboard"}
                     target="_blank"
-                    className={`border-transparent`}
+                    className={`sidebar-item`}
                   >
-                    <div>
-                      <ComputerDesktopIcon />
-                      <span className="">Dashboard</span>
-                    </div>
+                    <ComputerDesktopIcon />
+                    <span className="">Dashboard</span>
                   </Link>
                 )}
               </>

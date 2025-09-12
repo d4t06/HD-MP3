@@ -10,7 +10,7 @@ export default function usePersistState<T>(
   const isGetStorage = useRef(false);
 
   useEffect(() => {
-    const storedState = (getLocalStorage()[key] as T) || init;
+    const storedState = (getLocalStorage()[key] as T) ?? init;
     setValue(storedState);
   }, []);
 

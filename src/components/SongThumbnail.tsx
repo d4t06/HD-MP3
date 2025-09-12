@@ -20,8 +20,6 @@ const SongThumbnail = (
 ) => {
   const classes = {
     container: "flex flex-col",
-    imageFrame:
-      "group relative transition-[width] duration-[.3s] origin-center rounded-xl overflow-hidden",
     image: "select-none object-cover object-center rounded w-full",
     overlay: `absolute  ${
       active ? "" : "inset-0 hidden bg-black/40 items-center justify-center"
@@ -38,16 +36,12 @@ const SongThumbnail = (
       queue-id={data.queue_id}
       className={`song-thumb ${active ? "active" : ""} ${classes.container} ${idleClass}`}
     >
-      <div
-        className={`${classNames} flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] min-[1536px]:w-[450px] min-[1536px]:h-[450px] `}
-      >
+      <div className={`${classNames} image-container`}>
         <div
-          className={`border-[4px] rounded-[6px] overflow-hidden border-transparent ${
-            classes.imageFrame
-          } ${
+          className={`image-frame group ${
             active
-              ? "w-[350px] min-[1536px]:w-[450px]"
-              : "w-[280px] min-[1536px]:w-[330px]"
+              ? "w-[350px] xl:w-[450px]"
+              : "w-[280px] xl:w-[330px]"
           }`}
         >
           <Image
@@ -81,7 +75,9 @@ const SongThumbnail = (
 
       {hasTitle && (
         <div className="text-center font-bold">
-          <p className="text-ellipsis line-clamp-1 text-lg">{data?.name || "Some song"}</p>
+          <p className="text-ellipsis line-clamp-1 text-lg">
+            {data?.name || "Some song"}
+          </p>
           <p className="opacity-70 line-clamp-1 text-sm">
             {data.singers.map((s, i) => (
               <span key={i}>

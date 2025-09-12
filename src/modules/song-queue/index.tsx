@@ -50,7 +50,7 @@ function SongQueue() {
   ));
 
   const classes = {
-    mainContainer: `hidden fixed w-[300px] md:flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 bg-[--layout-cl] border-l-[1px] border-[--a-5-cl] transition-[transform] duration-[.5s] linear delay-100`,
+    mainContainer: `hidden fixed w-[300px] md:flex flex-col bottom-[80px] right-[0] top-[0] z-20 px-3 pt-4 bg-[--layout-cl] border-l-[1px] border-[--a-5-cl] transition-[transform] duration-[.3s] ease-in-out`,
     songListContainer:
       "flex-grow queue-songlist overflow-y-auto pb-[10px] overflow-x-hidden no-scrollbar mt-3",
   };

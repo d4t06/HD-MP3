@@ -39,7 +39,7 @@ export default function DashBoardLayout() {
           <PlaylistProvider>
             <GenreProvider>
               <div
-                className={`bg-[--layout-cl] text-[--text-cl] fixed inset-full flex `}
+                className={`bg-[--layout-cl] text-[--text-cl] fixed inset-0 flex `}
               >
                 {isOnMobile ? <DashboardNavigation /> : <DashBoardSidebar />}
 

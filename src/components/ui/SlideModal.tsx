@@ -13,6 +13,7 @@ type Props = {
 	children: ReactNode;
 	onClose?: () => void;
 	onOpen?: () => void;
+	reRender?: boolean;
 };
 
 export type ModalRef = {
@@ -22,7 +23,10 @@ export type ModalRef = {
 	setModalPersist: (v: boolean) => void;
 };
 
-function SlideModal({ children, onClose, onOpen }: Props, ref: Ref<ModalRef>) {
+function SlideModal(
+	{ children, onClose, onOpen, reRender }: Props,
+	ref: Ref<ModalRef>,
+) {
 	const [isOpen, setIsOpen] = useState(false);
 	const [isMounted, setIsMounted] = useState(false);
 
@@ -80,9 +84,11 @@ function SlideModal({ children, onClose, onOpen }: Props, ref: Ref<ModalRef>) {
 
 	return (
 		<>
-			{isOpen &&
+			{(isOpen || reRender) &&
 				createPortal(
-					<div className="fixed inset-0 z-[99]">
+					<div
+						className={`fixed inset-0 z-[99] ${reRender ? (isOpen ? "" : "hidden") : ""}`}
+					>
 						<div
 							onClick={handleOverlayClick}
 							className={`transition-opacity duration-200 absolute bg-black inset-0 z-[90]

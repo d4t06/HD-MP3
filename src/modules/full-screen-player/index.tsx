@@ -7,9 +7,7 @@ import FullScreenPlayerHeader from "./_components/FullScreenPlayerHeader";
 import FullScreenPlayerContent from "./_components/FullScreenPlayerContent";
 
 export default function FullScreenPlayer() {
-  // use stores
   const {
-    isOpenFullScreen,
     idle,
     activeTab,
     playerConfig: { songBackground },
@@ -17,7 +15,6 @@ export default function FullScreenPlayer() {
   const { currentSongData } = useSelector(selectSongQueue);
 
   const classes = {
-    wrapper: `fixed inset-0 z-50 overflow-hidden text-white bg-zinc-900 transition-transform duration-[.7s] linear delay-100`,
     bg: `absolute inset-0 -z-10 brightness-[10%]`,
     container: "absolute w-full top-0 bottom-[90px] flex flex-col",
     content: `flex-grow relative overflow-hidden`,
@@ -25,14 +22,10 @@ export default function FullScreenPlayer() {
   };
 
   return (
-    <div
-      className={`${classes.wrapper}  ${
-        isOpenFullScreen ? "translate-y-0" : "translate-y-full"
-      }`}
-    >
+    <div className={`full-screen-player`}>
       {/* bg image */}
       {songBackground && (
-        <div className="absolute left-0 top-0 h-full w-full  brightness-[80%] ">
+        <div className="absolute left-0 top-0 h-full w-full brightness-[90%] ">
           <Blurhash
             radioGroup=""
             height={"100%"}
@@ -51,7 +44,9 @@ export default function FullScreenPlayer() {
         </div>
 
         {activeTab !== "Songs" && (
-          <p className={`text-center text-sm font-bold ${idle && classes.fadeTransition}`}>
+          <p
+            className={`text-center text-sm font-bold ${idle && classes.fadeTransition}`}
+          >
             {currentSongData?.song?.name || "..."}
             <span className="opacity-70">
               {" - "}

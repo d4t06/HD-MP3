@@ -1,7 +1,4 @@
-// import { useMemo } from "react";
 import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
-// import { useLocation } from "react-router-dom";
-
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext, useThemeContext } from "@/stores";
@@ -18,7 +15,6 @@ export default function BottomPlayer() {
   const { audioRef, idle } = usePlayerContext();
   if (!audioRef.current) throw new Error("BottomPlayer !audioRef.current");
 
-
   const { theme } = useThemeContext();
   const {
     isOpenFullScreen,
@@ -29,8 +25,7 @@ export default function BottomPlayer() {
   const { currentQueueId, currentSongData } = useSelector(selectSongQueue);
 
   const { containerRef } = useThemeBgImage();
-  const {shouldHide} = useHideBottomPlayer({audioEle: audioRef.current})
-
+  const { shouldHide } = useHideBottomPlayer({ audioEle: audioRef.current });
 
   const handleOpenFullScreen = () => {
     if (isOpenSongQueue) setIsOpenSongQueue(false);
@@ -38,16 +33,15 @@ export default function BottomPlayer() {
   };
 
   const classes = {
-    wrapper: `bottom-player hidden md:block border-[--a-5-cl] fixed bottom-0 w-full border-t transition-transform z-50 md:px-3 lg:px-6 h-[90px]`,
+    wrapper: `bottom-player transition-transform border-[--a-5-cl] fixed bottom-0 w-full border-t z-[99] md:px-3 lg:px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
-
     controlWrapper: `flex max-w-[420px] flex-grow ${
       isOpenFullScreen
         ? "max-w-[600px] flex-col-reverse pb-[10px]"
         : "flex-col justify-center"
     }`,
     right: `w-1/4 flex items-center justify-end`,
-    blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 bg-[--player-cl]`,
+    blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 bg-[--a-player-cl]`,
   };
 
   return (
@@ -57,14 +51,14 @@ export default function BottomPlayer() {
         isOpenFullScreen
           ? "border-transparent"
           : theme.image
-            ? 'bg-[--a-player-cl]'
+            ? "bg-[--player-cl]"
             : ""
-      } ${shouldHide && "translate-y-[100%] "} `}
+      } ${shouldHide ? "translate-y-full" : ""} `}
     >
       {!theme.image && (
         <div
           className={`${classes.blurBg} ${
-            isOpenFullScreen ? "opacity-0 transition-opacity delay-[.2s]" : ""
+            isOpenFullScreen ? "opacity-0 transition-opacity" : ""
           }`}
         ></div>
       )}
@@ -73,7 +67,10 @@ export default function BottomPlayer() {
           isOpenFullScreen ? "justify-center text-white" : "justify-between"
         } ${idle && "transition-opacity duration-[.3s] opacity-0"}`}
       >
-        <SongInfo song={currentSongData?.song} isOpenFullScreen={isOpenFullScreen} />
+        <SongInfo
+          song={currentSongData?.song}
+          isOpenFullScreen={isOpenFullScreen}
+        />
 
         {/* control */}
         <div
@@ -82,14 +79,18 @@ export default function BottomPlayer() {
           <MusicControl />
         </div>
 
-        <div className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}>
+        <div
+          className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}
+        >
           <VolumeButton audioEle={audioRef.current} />
 
-          <div className={`flex items-center ${!currentQueueId ? "disable" : ""}`}>
+          <div
+            className={`flex items-center ${!currentQueueId ? "disable" : ""}`}
+          >
             <MyTooltip content="Lyrics">
               <button
                 onClick={handleOpenFullScreen}
-                className={`rounded-[99px]  hover:bg-[--a-5-cl]  p-[5px]`}
+                className={`rounded-[99px] hover:bg-[--a-5-cl] p-1`}
               >
                 <ChevronUpIcon className="w-6" />
               </button>
@@ -98,13 +99,13 @@ export default function BottomPlayer() {
             <MyTooltip content="Queue">
               <button
                 onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                className={`ml-1 hover:bg-[--a-5-cl] rounded-md p-[5px]`}
+                className={`ml-1 hover:bg-[--a-5-cl] rounded-md p-1`}
               >
                 <QueueListIcon className="w-6" />
               </button>
             </MyTooltip>
 
-            <div className={`w-[2px] h-[26px] ml-2 bg-[--a-5-cl]`}></div>
+            <div className={`w-0.5 h-6 ml-2 bg-[--a-5-cl]`}></div>
 
             <SleepTimerButton />
           </div>

@@ -48,7 +48,7 @@ export default function MenuButton() {
 				</button>
 			</div>
 
-			<SlideModal onOpen={handlAfterOpenSongQueue} ref={modalRef}>
+			<SlideModal reRender onOpen={handlAfterOpenSongQueue} ref={modalRef}>
 				<ControlMenu />
 			</SlideModal>
 

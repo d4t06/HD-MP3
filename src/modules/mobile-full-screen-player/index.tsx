@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import {
@@ -13,7 +12,6 @@ import { defaultBlurhash } from "@/constants/app";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import LyricContextProvider from "@/stores/LyricContext";
 import { usePlayerContext } from "@/stores";
-import useMobileFullScreenPlayer from "./_hooks/useMobileFullScreenPlayer";
 import SongThumbnail from "./_components/SongThumbnail";
 import Lyric from "../lyric";
 import ScrollText from "../scroll-text";
@@ -29,28 +27,16 @@ export default function MobileFullScreenPlayer() {
   } = usePlayerContext();
   const { currentSongData } = useSelector(selectSongQueue);
 
-  // ref
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  // use hooks
-  const { wrapperRef } = useMobileFullScreenPlayer({ isOpenFullScreen });
-
   const classes = {
     headerWrapper: "flex mb-4",
     container: "flex-grow flex flex-col relative overflow-hidden",
     control: "mt-auto",
-
-    bgImage:
-      "absolute inset-0 z-[-9] brightness-[70%] blur-[4px] translate-3d-0",
+    bgImage: "absolute inset-0 -z-10 brightness-[90%] translate-3d-0",
   };
 
   return (
     <>
-      <div
-        ref={wrapperRef}
-        style={{ transform: "translate(0, 100%)", zIndex: "-10" }}
-        className={`block md:hidden fixed inset-0 bg-zinc-900 text-white overflow-hidden transition-[transform] duration-[.3s] ease-linear`}
-      >
+      <div className={`full-screen-player`}>
         {songBackground && (
           <div className={classes.bgImage}>
             <Blurhash
@@ -63,7 +49,7 @@ export default function MobileFullScreenPlayer() {
 
         <div className="h-full z-10 p-4 flex flex-col">
           {/* container */}
-          <div ref={containerRef} className={classes.container}>
+          <div className={classes.container}>
             {/* >>> song image */}
             <div
               className={`${mobileActiveTab != "Playing" ? "flex items-center" : "sm:flex"}`}
@@ -73,10 +59,8 @@ export default function MobileFullScreenPlayer() {
               <div
                 className={`ml-2 font-bold h-full ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
-                <p className="line-clamp-1">
-                  {currentSongData?.song.name}
-                </p>
-                <p className={`opacity-70 line-clamp-1`}>
+                <p className="line-clamp-1 text-lg">{currentSongData?.song.name}</p>
+                <p className={`opacity-80 text-sm line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) => (
                     <span key={i}> {(i ? ", " : "") + s.name}</span>
                   ))}
@@ -115,7 +99,7 @@ export default function MobileFullScreenPlayer() {
                     content={currentSongData?.song.name || "..."}
                   />
                 </div>
-                <div className={`opacity-[.7] text-lg line-clamp-1`}>
+                <div className={`opacity-80 line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) =>
                     s.id ? (
                       <Link to={`/singer/${s.id}`} key={i}>
