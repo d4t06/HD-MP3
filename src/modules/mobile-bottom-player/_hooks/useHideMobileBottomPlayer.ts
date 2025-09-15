@@ -16,6 +16,8 @@ export default function useHideMobileBottomPlayer({ audioEle }: Props) {
   );
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     if (shouldHidePlayer || shouldHideAll) {
       audioEle.pause();
     }

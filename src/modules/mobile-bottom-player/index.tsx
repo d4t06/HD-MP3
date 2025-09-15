@@ -68,7 +68,7 @@ export default function MobileBottomPlayer() {
     >
       <div
         className={`${classes.container} ${
-          isOpenFullScreen ? "opacity-0 transition-opacity delay-[.3s]" : ""
+          isOpenFullScreen ? "opacity-0 transition-opacity" : ""
         }`}
       ></div>
 

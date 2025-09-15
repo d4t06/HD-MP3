@@ -31,23 +31,27 @@ export default function MobileFullScreenPlayer() {
     headerWrapper: "flex mb-4",
     container: "flex-grow flex flex-col relative overflow-hidden",
     control: "mt-auto",
-    bgImage: "absolute inset-0 -z-10 brightness-[90%] translate-3d-0",
+    // when set to absolute, the container move a little when lyric scroll on iphone
+    bgImage:
+      "fixed left-0 right-0 top-1/2 pt-[100%] -z-10 brightness-[90%] origin-top pointer-events-none",
   };
 
   return (
     <>
       <div className={`full-screen-player`}>
         {songBackground && (
-          <div className={classes.bgImage}>
-            <Blurhash
-              width={"100%"}
-              height={"100%"}
-              hash={currentSongData?.song.blurhash_encode || defaultBlurhash}
-            />
+          <div style={{transform: 'translate3d(0, -50%, 0)', scale: '2.5'}} className={classes.bgImage}>
+            <div className="absolute inset-0">
+              <Blurhash
+                width={"100%"}
+                height={"100%"}
+                hash={currentSongData?.song.blurhash_encode || defaultBlurhash}
+              />
+            </div>
           </div>
         )}
 
-        <div className="h-full z-10 p-4 flex flex-col">
+        <div className="h-full z-10 p-4 flex flex-col w-full">
           {/* container */}
           <div className={classes.container}>
             {/* >>> song image */}
@@ -59,7 +63,9 @@ export default function MobileFullScreenPlayer() {
               <div
                 className={`ml-2 font-bold h-full ${mobileActiveTab != "Playing" ? "block" : "hidden sm:block"}`}
               >
-                <p className="line-clamp-1 text-lg">{currentSongData?.song.name}</p>
+                <p className="line-clamp-1 text-lg">
+                  {currentSongData?.song.name}
+                </p>
                 <p className={`opacity-80 text-sm line-clamp-1`}>
                   {currentSongData?.song.singers.map((s, i) => (
                     <span key={i}> {(i ? ", " : "") + s.name}</span>
@@ -120,7 +126,7 @@ export default function MobileFullScreenPlayer() {
                 isOpenLyricTabs={isOpenFullScreen && mobileActiveTab == "Lyric"}
               >
                 <Lyric
-                  className={`text-left ${
+                  className={`text-center ${
                     mobileActiveTab === "Lyric" ? "flex-1 block" : "hidden"
                   }`}
                 />

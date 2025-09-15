@@ -80,28 +80,28 @@ export default function BottomPlayer() {
         </div>
 
         <div
-          className={`${classes.right}  ${isOpenFullScreen ? "hidden" : ""}`}
+          className={`${classes.right} hover:[&_button]:bg-[--a-5-cl] [&_button]:p-1.5 ${isOpenFullScreen ? "hidden" : ""}`}
         >
           <VolumeButton audioEle={audioRef.current} />
 
           <div
             className={`flex items-center ${!currentQueueId ? "disable" : ""}`}
           >
-            <MyTooltip content="Lyrics">
-              <button
-                onClick={handleOpenFullScreen}
-                className={`rounded-[99px] hover:bg-[--a-5-cl] p-1`}
-              >
-                <ChevronUpIcon className="w-6" />
-              </button>
-            </MyTooltip>
-
             <MyTooltip content="Queue">
               <button
                 onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                className={`ml-1 hover:bg-[--a-5-cl] rounded-md p-1`}
+                className={`ml-1 rounded-md`}
               >
-                <QueueListIcon className="w-6" />
+                <QueueListIcon className="w-5" />
+              </button>
+            </MyTooltip>
+
+            <MyTooltip content="Lyrics">
+              <button
+                onClick={handleOpenFullScreen}
+                className={`rounded-full`}
+              >
+                <ChevronUpIcon className="w-5" />
               </button>
             </MyTooltip>
 

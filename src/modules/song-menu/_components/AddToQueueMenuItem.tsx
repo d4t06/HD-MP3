@@ -1,5 +1,5 @@
 import { useSongQueueAction } from "@/hooks";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   song: Song;
@@ -17,7 +17,7 @@ export default function AddToQueueMenuItem({ song }: Props) {
 
   return (
     <button onClick={handleAddSongToQueue}>
-      <PlusIcon />
+      <PlusCircleIcon />
       <span>Add to queue</span>
     </button>
   );

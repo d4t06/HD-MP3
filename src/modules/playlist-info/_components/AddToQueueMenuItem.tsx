@@ -1,7 +1,8 @@
 import { useToastContext } from "@/stores";
 import { selectCurrentPlaylist } from "@/stores/redux/currentPlaylistSlice";
 import { addSongToQueue } from "@/stores/redux/songQueueSlice";
-import { PlusIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
+// import { PlusIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function AddToQueueMenuItem() {
@@ -21,7 +22,7 @@ export default function AddToQueueMenuItem() {
 				setSuccessToast("Song added to queue");
 			}}
 		>
-			<PlusIcon />
+			<PlusCircleIcon className="w-5" />
 			<span>Add to queue</span>
 		</button>
 	);

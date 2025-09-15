@@ -2,7 +2,6 @@ import { ConfirmModal, Modal, ModalRef } from "@/components";
 import EditSongModal from "@/modules/edit-song-modal";
 import {
   AdjustmentsHorizontalIcon,
-  ArrowDownTrayIcon,
   DocumentTextIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
@@ -15,6 +14,7 @@ import AddToNewPlaylistMenuItem, {
   AddToPlaylistMenuModal,
 } from "./AddToPlaylistMenuItem";
 import AddToQueueMenuItem from "./AddToQueueMenuItem";
+import DownloadSongMenuItem from "./DownloadSongMenuItem";
 
 type Props = {
   song: Song;
@@ -22,7 +22,6 @@ type Props = {
 type Modal = "edit" | "delete" | "add-to-playlist";
 
 export default function OwnSongMenu({ song }: Props) {
-
   const [modal, setModal] = useState<Modal | "">("");
 
   const modalRef = useRef<ModalRef>(null);
@@ -64,7 +63,9 @@ export default function OwnSongMenu({ song }: Props) {
       case "edit":
         return <EditSongModal modalRef={modalRef} song={song} />;
       case "add-to-playlist":
-        return <AddSongToPlaylistModal closeModal={closeModal} songs={[song]} />;
+        return (
+          <AddSongToPlaylistModal closeModal={closeModal} songs={[song]} />
+        );
     }
   };
 
@@ -78,22 +79,19 @@ export default function OwnSongMenu({ song }: Props) {
         <AddToNewPlaylistMenuItem modalRef={addToPlaylistModalRef} />
 
         <button onClick={() => handleOpenModal("edit")}>
-          <AdjustmentsHorizontalIcon  />
+          <AdjustmentsHorizontalIcon />
           <span>Edit</span>
         </button>
         <Link to={`lyric/${song.id}`}>
-          <DocumentTextIcon  />
+          <DocumentTextIcon />
           <span>{song.lyric_id ? "Edit lyric" : "Add lyric"}</span>
         </Link>
         <button onClick={() => handleOpenModal("delete")}>
-          <TrashIcon  />
+          <TrashIcon />
           <span>Delete</span>
         </button>
 
-        <a target="_blank" href={song.song_url}>
-          <ArrowDownTrayIcon  />
-          <span>Download</span>
-        </a>
+        <DownloadSongMenuItem song={song} />
       </SongMenuContent>
 
       <Modal variant="animation" ref={modalRef}>

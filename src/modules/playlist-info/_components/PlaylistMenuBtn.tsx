@@ -18,8 +18,10 @@ export function PlaylistMenuPopupContent({
 }) {
   return (
     <MyPopupContent
-      className="left-[calc(100%)] bottom-full w-[160px]"
-      animationClassName="origin-top-left"
+      className="w-[160px]"
+      position="right-bottom"
+      origin="top left"
+      // animationClassName="origin-top-left"
     >
       <PopupWrapper>
         <VerticalMenu>{children}</VerticalMenu>
@@ -35,7 +37,7 @@ type Props = {
 export default function PlaylistMenuBtn({ variant }: Props) {
   return (
     <>
-      <MyPopup>
+      <MyPopup appendOnPortal>
         <MyPopupTrigger>
           <Button size={"clear"}>
             <p className="w-5">{threeDotsIcon}</p>

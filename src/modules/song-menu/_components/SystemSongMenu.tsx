@@ -1,4 +1,3 @@
-import { ArrowDownTrayIcon } from "@heroicons/react/24/outline";
 import { SongMenuContent } from "..";
 import AddToNewPlaylistMenuItem, {
   AddToPlaylistMenuModal,
@@ -6,6 +5,7 @@ import AddToNewPlaylistMenuItem, {
 import { useRef } from "react";
 import { ModalRef } from "@/components";
 import AddToQueueMenuItem from "./AddToQueueMenuItem";
+import DownloadSongMenuItem from "./DownloadSongMenuItem";
 
 type Props = {
   song: Song;
@@ -22,10 +22,7 @@ export default function SystemSongMenu({ song }: Props) {
 
         <AddToNewPlaylistMenuItem modalRef={modalRef} />
 
-        <a download={'sdfsf.mp3'} href={song.song_url}>
-          <ArrowDownTrayIcon />
-          <span>Download</span>
-        </a>
+        <DownloadSongMenuItem song={song} />
       </SongMenuContent>
 
       <AddToPlaylistMenuModal song={song} modalRef={modalRef} />

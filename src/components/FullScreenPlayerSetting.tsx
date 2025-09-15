@@ -1,4 +1,4 @@
-import { usePlayerContext } from "@/stores";
+import { usePlayerContext, useThemeContext } from "@/stores";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { PopupWrapper, Switch } from ".";
 import { useSelector } from "react-redux";
@@ -6,10 +6,16 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import VertialMenu from "./popup/VerticalMenu";
 
 export default function FullScreenPlayerSetting() {
-  // const { theme } = useThemeContext();
+  const { isOnMobile } = useThemeContext();
 
   const {
-    playerConfig: { isCrossFade, songImage, isEnableBeat, lyricSize, songBackground },
+    playerConfig: {
+      isCrossFade,
+      songImage,
+      isEnableBeat,
+      lyricSize,
+      songBackground,
+    },
     updatePlayerConfig,
     audioRef,
     shouldSyncSongDuration,
@@ -92,14 +98,16 @@ export default function FullScreenPlayerSetting() {
               cb={() => updatePlayerConfig({ songBackground: !songBackground })}
             />
           </div>
-           <div className={`${classes.itemContainer}`}>
-            <p className={classes.text}>Song image</p>
-            <Switch
-              size="thin"
-              active={songImage}
-              cb={() => updatePlayerConfig({ songImage: !songImage })}
-            />
-          </div>
+          {!isOnMobile && (
+            <div className={`${classes.itemContainer}`}>
+              <p className={classes.text}>Song image</p>
+              <Switch
+                size="thin"
+                active={songImage}
+                cb={() => updatePlayerConfig({ songImage: !songImage })}
+              />
+            </div>
+          )}
 
           {currentSongData?.song.beat_url && (
             <div className={`${classes.itemContainer}`}>
@@ -108,14 +116,16 @@ export default function FullScreenPlayerSetting() {
             </div>
           )}
 
-          <div className={`${classes.itemContainer}`}>
-            <p className={classes.text}>Cross fade</p>
-            <Switch
-              size="thin"
-              active={isCrossFade}
-              cb={() => updatePlayerConfig({ isCrossFade: !isCrossFade })}
-            />
-          </div>
+          {!isOnMobile && (
+            <div className={`${classes.itemContainer}`}>
+              <p className={classes.text}>Cross fade</p>
+              <Switch
+                size="thin"
+                active={isCrossFade}
+                cb={() => updatePlayerConfig({ isCrossFade: !isCrossFade })}
+              />
+            </div>
+          )}
         </VertialMenu>
       </PopupWrapper>
     </>

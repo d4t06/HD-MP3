@@ -41,7 +41,7 @@ export default function Appearance({ closeModal }: { closeModal: () => void }) {
 
   // define styles
   const classes = {
-    themeContainer: "overflow-auto flex-grow no-scrollbar space-y-5 pb-[5vh]",
+    themeContainer: "overflow-y-auto overflow-x-hidden flex-grow space-y-5 pb-[5vh]",
     themeList: "flex flex-row -mx-2 -mt-3 flex-wrap",
   };
 

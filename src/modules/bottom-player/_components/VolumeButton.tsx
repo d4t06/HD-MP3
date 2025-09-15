@@ -16,16 +16,28 @@ export function VolumeButton({ audioEle }: Props) {
   });
 
   return (
-    <div className="flex flex-grow items-center max-w-[100px] mr-2">
-      <button onWheel={handleWheel} onClick={() => handleMute()}>
-        {isMute ? (
-          <SpeakerXMarkIcon className="w-6" />
-        ) : (
-          <SpeakerWaveIcon className="w-6" />
-        )}
-      </button>
+    <>
+      <div className="relative group before:absolute before:left-0 before:w-full before:bottom-full before:h-2">
+        <button
+          className=" rounded-full"
+          onWheel={handleWheel}
+          onClick={() => handleMute()}
+        >
+          {isMute ? (
+            <SpeakerXMarkIcon className="w-5" />
+          ) : (
+            <SpeakerWaveIcon className="w-5" />
+          )}
+        </button>
 
-      <ProgressBar className="h-1 ml-1" onClick={handleSetVolume} elelRef={volumeLineRef} />
-    </div>
+        <div className="absolute hidden group-hover:block rounded-full py-2 px-3 bg-[--popup-cl] bottom-[calc(100%+4px)] left-1/2 -translate-x-1/2 w-[100px]">
+          <ProgressBar
+            className="h-1 w-full"
+            onClick={handleSetVolume}
+            elelRef={volumeLineRef}
+          />
+        </div>
+      </div>
+    </>
   );
 }

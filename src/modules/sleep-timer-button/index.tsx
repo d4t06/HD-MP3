@@ -20,7 +20,7 @@ export default function SleepTimerButton() {
 
   const classes = {
     container: "w-[54px] sm:w-[50px] flex justify-center",
-    button: `rounded-[99px] p-1 hover:bg-[--a-5-cl]`,
+    button: `rounded-[99px]`,
     itemContainer: "flex justify-between items-center min-h-[30px]",
     text: "text-base text-[#ccc]",
   };
@@ -38,14 +38,14 @@ export default function SleepTimerButton() {
                 {countDown.toString().padStart(2, "0")}
               </span>
               <span className={`hidden group-hover:block ${classes.button}`}>
-                <XMarkIcon className="w-8 sm:w-6" />
+                <XMarkIcon className="w-8 sm:w-5" />
               </span>
             </button>
           </MyTooltip>
         ) : (
           <MyTooltip content="Sleep timer">
             <button onClick={handleTriggerClick} className={classes.button}>
-              <ClockIcon className="w-8 sm:w-6" />
+              <ClockIcon className="w-8 sm:w-5" />
             </button>
           </MyTooltip>
         )}

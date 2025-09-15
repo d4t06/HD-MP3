@@ -9,13 +9,16 @@ export default function usePrimayLayout() {
 
 	useEffect(() => {
 		const meta = document.querySelector(".my-tag");
+
 		const htmlEle = document.documentElement;
 
 		htmlEle.setAttribute("data-theme", theme.id);
 
 		if (theme.type === "dark") htmlEle.classList.add("dark");
 		else htmlEle.classList.remove("dark");
-		if (isOnMobile) htmlEle.style.backgroundColor = "var(--layout-cl)";
+
+		const body = document.body;
+		if (isOnMobile) body.style.backgroundColor = "var(--layout-cl)";
 
 		if (meta) meta.setAttribute("content", theme.container);
 	}, [theme]);
