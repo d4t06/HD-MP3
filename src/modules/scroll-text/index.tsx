@@ -15,7 +15,10 @@ function ScrollText({ content, className }: Props) {
 
   return (
     <div ref={textWrapperRef} className="overflow-hidden relative h-full ">
-      <div ref={textRef} className={`absolute left-0 whitespace-nowrap ${className}`}>
+      <div
+        ref={textRef}
+        className={`absolute left-0 whitespace-nowrap ${className}`}
+      >
         {content || "..."}
       </div>
     </div>

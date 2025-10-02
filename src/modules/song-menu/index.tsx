@@ -8,6 +8,7 @@ import {
   MyPopupTrigger,
   VerticalMenu,
   PopupWrapper,
+  SingerLinkList,
 } from "@/components";
 
 import QueueSongMenu from "./_components/QueueSongMenu";
@@ -20,8 +21,8 @@ import { choVoTri } from "@/constants/app";
 
 function SongInfo({ song }: { song: Song }) {
   return (
-    <div className="px-2 mb-3">
-      <div className={`p-2 bg-white/10 rounded-md flex`}>
+    <div className="px-2 mb-2">
+      <div className={`p-3 bg-[--a-5-cl] rounded-md flex`}>
         <div className="w-[50px] h-[50px] rounded overflow-hidden flex-shrink-0">
           <Image
             fallback={choVoTri.image}
@@ -31,11 +32,12 @@ function SongInfo({ song }: { song: Song }) {
           />
         </div>
 
-        <div className="ml-2 text-sm">
-          <h5 className="line-clamp-1 font-semibold">{song.name}</h5>
-          <p className="item-info line-clamp-1">
-            {song.singers.map((s, i) => s.name + (!!i ? ", " : ""))}
-          </p>
+        <div className="ml-2 font-bold">
+          <h5 className="line-clamp-1 text-sm">{song.name}</h5>
+
+          <div className="text-xs item-info mt-0.5">
+            <SingerLinkList singers={song.singers} />
+          </div>
         </div>
       </div>
     </div>
@@ -93,7 +95,7 @@ function SongMenu({ song, index, variant }: Props) {
       default:
         return (
           <span
-            className={`text-sm font-[500] hidden p-2 group-hover/main:hidden ${
+            className={`text-xs font-bold hidden p-2 group-hover/main:hidden ${
               isOpenPopup ? "hidden" : "md:block"
             }`}
           >

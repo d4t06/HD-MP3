@@ -87,7 +87,11 @@ export const scrollIntoView = (
 
 export const getDisable = (v: boolean) => (v ? "disable" : "");
 export const getHidden = (v: boolean) => (v ? "hidden" : "");
-export const getClasses = (v: boolean, classes?: string) => (v ? classes : "");
+export const getClasses = (
+  v: boolean,
+  trueCasses?: string,
+  falseClasses?: string,
+) => (v ? trueCasses || "" : falseClasses || "");
 
 export const formatSize = (size: number) => {
   const units = ["Kb", "Mb"];

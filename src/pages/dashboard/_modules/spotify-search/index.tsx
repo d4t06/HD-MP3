@@ -86,7 +86,7 @@ export default function SpotifySearch() {
 				>
 					<div className={`w-fit mb-2 self-start`}>
 						<Tab
-							buttonClasses="[&_button]:py-1/2 [&_button]:px-2"
+							buttonClasses="[&_button]:py-0.5 [&_button]:px-2 [&_button]:font-bold text-sm "
 							tabs={tabs}
 							render={(t) => t}
 							tab={tab}

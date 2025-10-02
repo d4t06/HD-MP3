@@ -60,12 +60,12 @@ function Content({
           <div className="relative p-4">
             <div className="absolute inset-0 z-[-1] bg-gradient-to-b to-black/60 from-transparent"></div>
 
-            <div className="font-bold">{song.name}</div>
-            <div className="font-semibold opacity-[.8] text-sm">
+            <p className="font-bold line-clamp-1">{song.name}</p>
+            <p className="font-bold opacity-80 text-xs">
               {song.singers.map((s, i) => (
                 <span key={i}> {(i ? ", " : "") + s.name}</span>
               ))}
-            </div>
+            </p>
             <div className="mt-2">
               {audioRef.current && (
                 <SongControl song={song} audioEle={audioRef.current} />

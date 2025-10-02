@@ -27,7 +27,7 @@ export default function SettingMenu({
   return (
     <>
       <PopupWrapper className="w-[220px] px-2">
-        <VertialMenu className="[&>button]:rounded-md">
+        <VertialMenu size="[&_svg]:w-6 [&>*]:text-sm" className="[&>button]:rounded-md">
           <button className={``} onClick={() => handleOpenModal("theme")}>
             <PaintBrushIcon />
             <span>Themes</span>

@@ -14,7 +14,7 @@ import AddSongForm from "..";
 import { initSongObject } from "@/utils/factory";
 import { optimizeAndGetHashImage } from "@/services/appService";
 import { convertToEn } from "@/utils/appHelpers";
-import { writeBatch } from "firebase/firestore";
+import { serverTimestamp, writeBatch } from "firebase/firestore";
 import { db } from "@/firebase";
 
 export default function useAddSongForm(
@@ -260,6 +260,7 @@ export default function useAddSongForm(
                   ...(playlistDoc.data() as PlaylistSchema).song_ids,
                   docRef.id,
                 ],
+                updated_at: serverTimestamp(),
               };
 
               batch.update(playlistDoc.ref, newPlaylistData);

@@ -1,11 +1,10 @@
-import {
-  ArrowPathIcon,
-  ExclamationCircleIcon,
-} from "@heroicons/react/24/solid";
 import { PlayStatus } from "@/stores/redux/PlayStatusSlice";
-import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
-// import { PlayIcon } from "@heroicons/react/20/solid";
-// import { playIcon } from "@/assets/icon";
+import {
+  PauseIcon,
+  ExclamationCircleIcon,
+  ArrowPathIcon,
+  PlayIcon,
+} from "@heroicons/react/20/solid";
 
 type Props = {
   handlePlayPause: () => void;
@@ -13,21 +12,17 @@ type Props = {
 };
 
 function PlayPauseButton({ handlePlayPause, playStatus }: Props) {
-  // const classes = {
-  //   icon: "w-[50px] sm:w-10",
-  // };
-
   const renderIcon = () => {
     switch (playStatus) {
       case "playing":
-        return <PauseIcon  />;
+        return <PauseIcon />;
       case "error":
-        return <ExclamationCircleIcon  />;
+        return <ExclamationCircleIcon />;
       case "loading":
       case "waiting":
         return <ArrowPathIcon className={`animate-spin`} />;
       case "paused":
-        return <PlayIcon  />;
+        return <PlayIcon />;
     }
   };
 

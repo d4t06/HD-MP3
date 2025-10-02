@@ -29,7 +29,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
   const { handleSetSong } = useSetSong({ variant: "playlist" });
 
   const { pushRecentPlaylist } = useUpdateRecentPlaylist();
-  usePlaylistSongList()
+  usePlaylistSongList();
 
   const isAlbumAndHasImage =
     currentPlaylist?.is_album && !!currentPlaylist?.image_url;
@@ -52,15 +52,15 @@ export default function PlaylistSongList({ variant, loading }: Props) {
               variant === "others-playlist" ? "system-song" : "own-playlist"
             }
           >
-            <p className="font-[500] opacity-[.5]">
-              {playlistSongs.length} Songs
-            </p>
+            <p className="font-bold opacity-70 text-sm">{playlistSongs.length} Songs</p>
           </CheckedBar>
         )}
 
         <SongList
           imageUrl={isAlbumAndHasImage ? currentPlaylist.image_url : ""}
-          attributes={s => ({'data-first_letter':s.name.charAt(0).toLowerCase()})}
+          attributes={(s) => ({
+            "data-first_letter": s.name.charAt(0).toLowerCase(),
+          })}
           songs={playlistSongs}
           setSong={(s) => _handleSetSong(s)}
           songVariant={

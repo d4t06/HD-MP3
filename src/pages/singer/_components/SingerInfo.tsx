@@ -1,9 +1,9 @@
-import { Image, Skeleton } from "@/components";
+import { Image, PEmoji, Skeleton } from "@/components";
 import { useSingerContext } from "./SingerContext";
 import SingerCta from "./SingerCta";
 
-import simonCat from "@/assets/simon_empty.png";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
+import { choVoTri } from "@/constants/app";
 
 export default function SingerInfo() {
   const { isFetching, singer } = useSingerContext();
@@ -20,11 +20,11 @@ export default function SingerInfo() {
         >
           <div className="relative h-full w-full">
             <div
-              className={`absolute z-[-5] inset-0 bg-white/70 dark:bg-black/60  `}
+              className={`absolute z-[-5] inset-0 bg-white/60 dark:bg-black/60  `}
             ></div>
             <img
-              src={singer?.image_url || simonCat}
-              className="blur-[50px] absolute z-[-10] w-full h-full object-center object-cover"
+              src={singer?.image_url || choVoTri.image}
+              className="blur-[20px] absolute z-[-10] w-full h-full object-center object-cover"
             />
           </div>
         </div>
@@ -49,13 +49,15 @@ export default function SingerInfo() {
           ) : (
             singer && (
               <>
-                <div>
-                  <span className="text-3xl font-bold">{singer.name}</span>
+                <div className="flex items-center font-bold">
+                  <span className="text-2xl">{singer.name}</span>
 
-                  <span className="ml-4">❤️ {abbreviateNumber(singer.like)}</span>
+                  <PEmoji size={'5'} className="ml-4 text-sm">
+                    ❤️ {abbreviateNumber(singer.like)}
+                  </PEmoji>
                 </div>
 
-                <p className="line-clamp-2">{singer.description}</p>
+                <p className="line-clamp-2 font-bold text-sm">{singer.description}</p>
 
                 <SingerCta />
               </>

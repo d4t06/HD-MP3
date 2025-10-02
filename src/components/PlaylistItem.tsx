@@ -52,7 +52,7 @@ const PlaylistItem: FC<Props> = (props) => {
         );
       case "link":
         return (
-          <div className="p-3 w-1/2 sm:w-1/3 md:w-1/4">
+          <div className="p-3 w-1/2 sm:w-1/3 md:w-1/4 font-bold">
             <Link
               onClick={() => props.onClick && props.onClick()}
               to={`${props.link || "/playlist/" + props.data.id}`}
@@ -60,10 +60,10 @@ const PlaylistItem: FC<Props> = (props) => {
               {imageContent}
             </Link>
 
-            <p className="font-semibold leading-[1.3] line-clamp-1 mt-1.5">
+            <p className="text-sm line-clamp-1 mt-1.5">
               {props.data.name}
             </p>
-            <p className="text-sm item-info leading-[1.3] line-clamp-1">
+            <p className="text-xs item-info line-clamp-1">
               {props.data.is_album
                 ? props.data.singers[0].name
                 : props.data.distributor}

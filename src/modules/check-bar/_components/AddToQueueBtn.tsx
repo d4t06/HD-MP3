@@ -19,7 +19,7 @@ export default function AddToQueueCheckBarItem() {
 	return (
 		<button onClick={addSongsToQueue}>
 			<PlusIcon className="w-5" />
-			<span className="">Add to queue</span>
+			<span>Add to queue</span>
 		</button>
 	);
 }

@@ -63,9 +63,9 @@ export default function Sidebar() {
   // define skeleton
   const menuItemSkeletons = [...Array(4).keys()].map((index) => {
     return (
-      <div key={index} className="h-[55px] lg:h-[55px] w-full ske">
+      <div key={index} className="sidebar-item">
         <Skeleton className="w-6 h-6 flex-shrink-0" />
-        <Skeleton className="w-[60px] h-[22px] md:h-[14px] md:mt-[2px] lg:h-[16px] lg:w-[70px]" />
+        <Skeleton className="w-[60px] h-[22px] md:h-[14px] md:mt-1 lg:h-[16px] lg:w-[70px]" />
       </div>
     );
   });

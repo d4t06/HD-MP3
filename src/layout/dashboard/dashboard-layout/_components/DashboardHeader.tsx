@@ -27,7 +27,7 @@ export default function DashboardHeader() {
       <div
         className={`hidden md:flex px-[40px] z-[99] h-[60px] flex-shrink-0 items-center justify-between ${scroll ? " shadow-lg" : ""}`}
       >
-        <div className="flex">
+        <div className="flex items-center">
           <Link
             to={"/dashboard"}
             className="text-xl font-bold text-[--primary-cl]"

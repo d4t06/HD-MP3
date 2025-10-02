@@ -1,9 +1,8 @@
 import { ForwardedRef, forwardRef } from "react";
-import Button from "./ui/Button";
-import { PauseCircleIcon } from "@heroicons/react/24/outline";
 import playingIcon from "../assets/icon-playing.gif";
 import { Image } from ".";
 import { choVoTri } from "@/constants/app";
+import { PauseIcon } from "@heroicons/react/20/solid";
 
 interface Props {
   data: Song | undefined;
@@ -20,8 +19,8 @@ const SongThumbnail = (
 ) => {
   const classes = {
     container: "flex flex-col",
-    image: "select-none object-cover object-center rounded w-full",
-    overlay: `absolute  ${
+    image: "select-none object-cover w-full",
+    overlay: `absolute cursor-pointer ${
       active ? "" : "inset-0 hidden bg-black/40 items-center justify-center"
     }   group-hover:flex`,
     playingGifFrame:
@@ -37,31 +36,15 @@ const SongThumbnail = (
       className={`song-thumb ${active ? "active" : ""} ${classes.container} ${idleClass}`}
     >
       <div className={`${classNames} image-container`}>
-        <div
-          className={`image-frame group ${
-            active
-              ? "w-[350px] xl:w-[450px]"
-              : "w-[280px] xl:w-[330px]"
-          }`}
-        >
+        <div className={`image-frame group ${active ? "w-full" : "w-[80%]"}`}>
           <Image
             fallback={choVoTri.image}
             src={data.image_url || choVoTri.image}
             blurHashEncode={data.blurhash_encode}
           />
           {
-            <div className={`${classes.overlay}`}>
-              {!active && (
-                <Button
-                  onClick={onClick}
-                  variant={"circle"}
-                  hover={"scale"}
-                  size={"clear"}
-                  className={`p-2 hover:bg-[#fff]/10`}
-                >
-                  <PauseCircleIcon className="w-10" />
-                </Button>
-              )}
+            <div className={`${classes.overlay} `} onClick={onClick}>
+              {!active && <PauseIcon className="w-7" />}
             </div>
           }
 
@@ -74,11 +57,11 @@ const SongThumbnail = (
       </div>
 
       {hasTitle && (
-        <div className="text-center font-bold">
+        <div className="text-center font-bold mt-3">
           <p className="text-ellipsis line-clamp-1 text-lg">
-            {data?.name || "Some song"}
+            {data?.name || "..."}
           </p>
-          <p className="opacity-70 line-clamp-1 text-sm">
+          <p className="line-clamp-1 text-sm">
             {data.singers.map((s, i) => (
               <span key={i}>
                 {!!i && ", "}

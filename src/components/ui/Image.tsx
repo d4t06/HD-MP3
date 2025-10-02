@@ -1,6 +1,6 @@
-import {  ReactEventHandler, useRef, useState } from "react";
+import { ReactEventHandler, useRef, useState } from "react";
 import { Blurhash } from "react-blurhash";
-import { defaultBlurhash } from "@/constants/app";
+import { choVoTri } from "@/constants/app";
 
 type Props = {
   src?: string;
@@ -32,7 +32,7 @@ export default function Image({
       URL.revokeObjectURL(src);
     }
 
-    onLoad && onLoad(e)
+    onLoad && onLoad(e);
   };
 
   const defaultHandleError = () => {
@@ -51,7 +51,7 @@ export default function Image({
       {!imageLoaded && (
         <>
           <Blurhash
-            hash={blurHashEncode || defaultBlurhash}
+            hash={blurHashEncode || choVoTri.blurhash}
             className={`overflow-hidden ${className}`}
             height={"100%"}
             width={"100%"}
@@ -62,7 +62,7 @@ export default function Image({
         onLoad={handleLoadImage}
         onError={handleError}
         className={`${className} ${width} ${!imageLoaded ? "hidden" : ""}`}
-        src={src || "https://placehold.co/500"}
+        src={src || choVoTri.image}
         ref={imageRef}
       />
     </>

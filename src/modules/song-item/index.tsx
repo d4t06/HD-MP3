@@ -4,9 +4,8 @@ import playingIcon from "@/assets/icon-playing.gif";
 import SongMenu from "@/modules/song-menu";
 import { useThemeContext } from "@/stores";
 import { getHidden } from "@/utils/appHelpers";
-import { Image } from "@/components";
+import { Image, SingerLinkList } from "@/components";
 import HearBtn from "./_components/HearBtn";
-import { Link } from "react-router-dom";
 import SongRankDiff from "./_components/SongRankDiff";
 import { CheckBox } from "./_components/CheckBox";
 import RankNumber from "./_components/RankNumber";
@@ -105,7 +104,7 @@ function SongItem({
       case "recent-song":
         return "text-xs";
       default:
-        return "text-sm";
+        return "text-xs";
     }
   };
 
@@ -133,31 +132,22 @@ function SongItem({
         </div>
 
         <div className={`ml-[10px] font-bold`}>
-          <h5
-            className={`line-clamp-1 overflow-hidden ${getSongNameSize()}`}
-          >
+          <h5 className={`line-clamp-1 overflow-hidden ${getSongNameSize()}`}>
             {song.name}
 
-            {import.meta.env.DEV && (
-              <span className="text-sm"> ({props.variant})</span>
-            )}
+            {import.meta.env.DEV && <span> ({props.variant})</span>}
           </h5>
           <div
-            className={`${props.variant === "queue-song" && active ? "" : "item-info"} font-medium line-clamp-1 ${getSongSingerSize()}`}
+            className={`${props.variant === "queue-song" && active ? "" : "item-info"} mt-0.5 line-clamp-1 ${getSongSingerSize()}`}
           >
-            {song.singers.map((s, i) =>
-              s.id ? (
-                <Link
-                  to={`/singer/${s.id}`}
-                  className={`${props.variant === "queue-song" ? "" : "hover:text-[--primary-cl]"} hover:underline`}
-                  key={i}
-                >
-                  {(i ? ", " : "") + s.name}
-                </Link>
-              ) : (
-                <span key={i}> {(i ? ", " : "") + s.name}</span>
-              ),
-            )}
+            <SingerLinkList
+              className={
+                props.variant === "queue-song" && active
+                  ? ""
+                  : "hover:text-[--primary-cl]"
+              }
+              singers={song.singers}
+            />
           </div>
         </div>
       </div>
@@ -227,9 +217,7 @@ function SongItem({
         return (
           <div
             className={`${classes.itemContainer} group/main ${
-              active
-                ? `bg-[--primary-cl] text-white active`
-                : ``
+              active ? `bg-[--primary-cl] text-white active` : ``
             }`}
           >
             {renderLeftContent()}

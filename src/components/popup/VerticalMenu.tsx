@@ -5,23 +5,28 @@ type Props = {
   className?: string;
   children: ReactNode;
   dismiss?: boolean;
-  cb?:() => void
+  cb?: () => void;
+  size?: string;
 };
 
 export default function VertialMenu({
   children,
   dismiss = true,
   className = "",
-  cb
+  size = "[&_svg]:w-5 [&>*]:text-[13px]",
+  cb,
 }: Props) {
   const classes = {
     container:
-      "hover:[&>*:not(div.absolute)]:bg-[--a-5-cl] [&>*]:px-3 [&>*]:py-2 [&>*]:w-full [&>*]:space-x-2 [&>*]:text-sm [&>*]:flex [&>*]:items-center [&_svg]:w-6 [&_svg]:flex-shrink-0 [&_span]:font-semibold",
+      "hover:[&>*:not(div.absolute)]:bg-[--a-5-cl] [&>*]:px-3 [&>*]:py-1.5 [&>*]:w-full [&>*]:space-x-2 [&>*]:flex [&>*]:items-center  [&_svg]:flex-shrink-0  [&_span]:font-bold",
   };
 
   if (dismiss)
     return (
-      <DismisPopupWrapper cb={cb} className={`${classes.container} ${className}`}>
+      <DismisPopupWrapper
+        cb={cb}
+        className={`${classes.container} ${size} ${className}`}
+      >
         {children}
       </DismisPopupWrapper>
     );

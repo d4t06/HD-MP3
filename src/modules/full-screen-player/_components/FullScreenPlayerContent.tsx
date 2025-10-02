@@ -52,10 +52,10 @@ export default function FullScreenPlayerContent() {
   };
 
   const classes = {
-    songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[calc(50%-350px/2)]`,
-    absoluteButton: `absolute top-[50%] -translate-y-[50%] p-[8px] bg-white/5 rounded-full`,
+    songsListTab: ` relative h-full no-scrollbar flex items-center flex-row overflow-auto scroll-smooth px-[50vw]`,
+    absoluteButton: `absolute top-1/2 -translate-y-1/2 p-2 bg-[--a-10-cl] rounded-full`,
     lyricTabContainer:
-      "px-[40px] min-[1536px]:container  min-[1536px]:px-[200px] h-full flex items-center justify-center flex-row",
+      "px-10 xl:container  xl:px-[200px] h-full flex items-center justify-center flex-row",
     fadeTransition: "opacity-0 transition-opacity duration-[.3s]",
   };
 

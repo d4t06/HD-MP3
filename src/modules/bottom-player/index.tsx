@@ -35,10 +35,10 @@ export default function BottomPlayer() {
   const classes = {
     wrapper: `bottom-player transition-transform border-[--a-5-cl] fixed bottom-0 w-full border-t z-[99] md:px-3 lg:px-6 h-[90px]`,
     container: `flex flex-row gap-[10px] h-full items-center`,
-    controlWrapper: `flex max-w-[420px] flex-grow ${
+    controlWrapper: `flex flex-grow ${
       isOpenFullScreen
         ? "max-w-[600px] flex-col-reverse pb-[10px]"
-        : "flex-col justify-center"
+        : "flex-col justify-center max-w-[340px]"
     }`,
     right: `w-1/4 flex items-center justify-end`,
     blurBg: `bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] absolute inset-0 bg-[--a-player-cl]`,

@@ -32,7 +32,7 @@ export default function SingerCta() {
     <>
       <button
         onClick={() => openModal("more")}
-        className="text-sm ml-auto !mt-0"
+        className="text-sm font-bold ml-auto !mt-1"
       >
         See more
       </button>

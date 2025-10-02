@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-// import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { PEmoji, PlaylistItem, Skeleton, Title } from "@/components";
+import { PEmoji, PlaylistItem, Skeleton } from "@/components";
 import PlayPlaylistBtn from "./_components/PlayPlaylistBtn";
 import HearBtn from "./_components/HearBtn";
 import PlaylistMenuBtn from "./_components/PlaylistMenuBtn";
@@ -72,7 +71,7 @@ export default function PLaylistInfo({
       case "others-playlist":
         return (
           <>
-            <PEmoji className="font-bold text-lg">
+            <PEmoji size={"4"} className="font-bold text-sm">
               ❤️ {abbreviateNumber(playlist.like)}
             </PEmoji>
             {!!playlist.singers.length && (
@@ -132,21 +131,18 @@ export default function PLaylistInfo({
           className={`flex flex-col items-center mt-3 md:items-start md:ml-5 md:mt-0 lg:ml-0 lg:mt-3 lg:items-center`}
         >
           {showSkeleton ? (
-            <div className="space-y-1 flex flex-col items-center">
+            <div className="space-y-1 flex flex-col items-center md:items-start lg:items-center">
               <Skeleton className="h-[24px] w-[170px]" />
-              <Skeleton className="h-[17px] w-[170px]" />
+              {/*<Skeleton className="h-[17px] w-[170px]" />*/}
               <Skeleton className="h-[17px] w-[60px]" />
               <Skeleton className="h-[17px] w-[100px]" />
             </div>
           ) : (
             playlist && (
               <>
-                <Title
-                  className="text-center"
-                  variant={"h2"}
-                  title={playlist.name}
-                />
-                <div className="mt-2.5 text-center md:text-left lg:text-center text-sm item-info">
+                <p className="text-lg font-bold">{playlist.name}</p>
+
+                <div className="mt-2.5 text-center md:text-left lg:text-center text-xs item-info">
                   {playlist.is_album ? renderAlbumInfo() : renderPlaylistInfo()}
                 </div>
               </>

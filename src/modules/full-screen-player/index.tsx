@@ -25,7 +25,7 @@ export default function FullScreenPlayer() {
     <div className={`full-screen-player`}>
       {/* bg image */}
       {songBackground && (
-        <div className="absolute left-0 top-0 h-full w-full brightness-[90%] ">
+        <div className="absolute left-0 top-0 h-full w-full brightness-[80%] ">
           <Blurhash
             radioGroup=""
             height={"100%"}

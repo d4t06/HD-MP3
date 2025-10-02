@@ -10,7 +10,7 @@ export default function FullScreenComment({ children }: Props) {
 	const { isOpenComment, setIsOpenComment } = useCommentContext();
 
 	const classes = {
-		mainContainer: `hidden fixed w-[400px] md:flex flex-col bottom-0 right-[0] top-0 z-[99] p-3 pb-5 text-white border-l-[1px] border-[--a-5-cl] transition-[transform] duration-[.5s] linear delay-100`,
+		mainContainer: `hidden fixed w-[350px] md:flex flex-col bottom-0 right-0 top-0 z-[99] p-3 pb-5 text-white border-l-1 border-[--a-5-cl] transition-transform duration-[.25s] ease-in-out`,
 	};
 
 	return (
@@ -20,7 +20,7 @@ export default function FullScreenComment({ children }: Props) {
 			}     `}
 		>
 			<div
-				className={`bg-opacity-[0.8] backdrop-blur-[15px] z-[-1] bg-[#333] absolute inset-0`}
+				className={`backdrop-blur-[15px] z-[-1] bg-black/60 absolute inset-0`}
 			></div>
 
 			<p>

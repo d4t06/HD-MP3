@@ -1,6 +1,6 @@
 import { useToastContext } from "@/stores";
 import { useSingerContext } from "../_components/SingerContext";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { query, where } from "firebase/firestore";
 import {
   myGetDoc,
@@ -26,23 +26,24 @@ export default function useGetSinger() {
   } = useSingerContext();
   const { setErrorToast } = useToastContext();
 
-  const params = useParams();
+  const [singerId, setSingeId] = useState<string>();
 
-  const ranEffect = useRef(false);
+  const params = useParams();
 
   const getSinger = async () => {
     try {
-      if (!params.id) return;
+      if (!singerId) return;
+      setIsFetching(true);
 
       const singerSnap = await myGetDoc({
         collectionName: "Singers",
-        id: params.id,
+        id: singerId,
       });
       if (!singerSnap.exists()) return;
 
       const singer: Singer = {
         ...(singerSnap.data() as SingerSchema),
-        id: params.id,
+        id: singerId,
       };
 
       const queryGetSongs = query(
@@ -80,12 +81,14 @@ export default function useGetSinger() {
   };
 
   useEffect(() => {
-    if (!ranEffect.current) {
-      ranEffect.current = true;
+    setSingeId(params.id);
+  }, [params]);
 
-      getSinger();
-    }
-  }, []);
+  useEffect(() => {
+    if (!singerId) return;
+
+    getSinger();
+  }, [singerId]);
 
   useEffect(() => {
     if (singer) document.title = singer.name;

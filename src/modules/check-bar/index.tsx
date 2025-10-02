@@ -29,9 +29,9 @@ export default function CheckedBar({ children, selectAll }: Props) {
           )}
         </button>
       )}
-      <span className="font-semibold opacity-[.5]">{selectedSongs.length}</span>
+      <span className="font-bold text-sm">{selectedSongs.length}</span>
       <div
-        className={`flex space-x-2 items-center [&>button]:bg-[--a-5-cl]  [&>button]:inline-flex [&>button]:space-x-1.5 [&_span]:text-sm [&_span]:font-medium [&>button]:py-1 [&>button]:px-3 [&>button]:rounded-full`}
+        className={`flex space-x-2 items-center [&>button]:bg-[--a-5-cl] [&>button]:inline-flex [&>button]:items-center [&>button]:space-x-1.5 [&_span]:text-xs [&_span]:font-bold [&>button]:py-1 [&>button]:px-3 [&>button]:rounded-full`}
       >
         <AddToQueueBtn />
 

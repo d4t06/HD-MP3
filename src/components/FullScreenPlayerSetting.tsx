@@ -1,4 +1,4 @@
-import { usePlayerContext, useThemeContext } from "@/stores";
+import { usePlayerContext } from "@/stores";
 import { setLocalStorage } from "@/utils/appHelpers";
 import { PopupWrapper, Switch } from ".";
 import { useSelector } from "react-redux";
@@ -6,12 +6,12 @@ import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import VertialMenu from "./popup/VerticalMenu";
 
 export default function FullScreenPlayerSetting() {
-  const { isOnMobile } = useThemeContext();
+  // const { isOnMobile } = useThemeContext();
 
   const {
     playerConfig: {
-      isCrossFade,
-      songImage,
+      // isCrossFade,
+      // songImage,
       isEnableBeat,
       lyricSize,
       songBackground,
@@ -98,17 +98,7 @@ export default function FullScreenPlayerSetting() {
               cb={() => updatePlayerConfig({ songBackground: !songBackground })}
             />
           </div>
-          {!isOnMobile && (
-            <div className={`${classes.itemContainer}`}>
-              <p className={classes.text}>Song image</p>
-              <Switch
-                size="thin"
-                active={songImage}
-                cb={() => updatePlayerConfig({ songImage: !songImage })}
-              />
-            </div>
-          )}
-
+          
           {currentSongData?.song.beat_url && (
             <div className={`${classes.itemContainer}`}>
               <p className={classes.text}>Instrumental</p>
@@ -116,7 +106,7 @@ export default function FullScreenPlayerSetting() {
             </div>
           )}
 
-          {!isOnMobile && (
+        {/*  {!isOnMobile && (
             <div className={`${classes.itemContainer}`}>
               <p className={classes.text}>Cross fade</p>
               <Switch
@@ -125,7 +115,7 @@ export default function FullScreenPlayerSetting() {
                 cb={() => updatePlayerConfig({ isCrossFade: !isCrossFade })}
               />
             </div>
-          )}
+          )}*/}
         </VertialMenu>
       </PopupWrapper>
     </>

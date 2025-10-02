@@ -31,11 +31,11 @@
   }
 
   .song-thumb .image-container {
-    @apply flex items-end justify-center flex-shrink-0 w-[350px] h-[350px] xl:w-[450px] xl:h-[450px];
+    @apply flex items-end relative justify-center flex-shrink-0 w-[300px] h-[300px] xl:w-[400px] xl:h-[400px];
   }
 
   .song-thumb .image-frame {
-    @apply border-4 rounded-md overflow-hidden border-transparent relative transition-[width] duration-[.3s] origin-center rounded-xl overflow-hidden;
+    @apply border-4 rounded-md overflow-hidden border-transparent ease-in-out relative transition-[width] duration-[.2s] origin-center rounded-xl overflow-hidden;
   }
 }
 

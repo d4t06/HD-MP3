@@ -8,7 +8,7 @@ type Props = {
 export default function Skeleton({ className }: Props) {
   return (
     <div
-      className={`animate-pulse rounded-[4px] bg-[#e0e0e0] dark:bg-[#3a3a3a]  ${className}`}
+      className={`animate-pulse rounded-md bg-[#e0e0e0] dark:bg-[#3a3a3a]  ${className}`}
     ></div>
   );
 }

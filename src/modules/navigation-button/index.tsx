@@ -1,6 +1,6 @@
+import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/20/solid";
 import useNavigationButton from "./_hooks/useNavigationButton";
-import { getDisable } from "@/utils/appHelpers";
-import { ArrowLeftIcon, ArrowRightIcon } from "@heroicons/react/24/outline";
+import { getClasses } from "@/utils/appHelpers";
 
 type Props = {
   className?: string;
@@ -10,12 +10,20 @@ export default function NavigationButton({ className = "" }: Props) {
   const { behind, ahead, backward, forward } = useNavigationButton();
 
   return (
-    <div className={`"flex space-x-3 [&>button]:p-1 ${className}`}>
-      <button onClick={backward} className={`relative ${getDisable(!behind.length)}`}>
+    <div
+      className={`space-x-3 [&>button]:p-2 [&>button]:rounded-full [&>button]:bg-[--a-5-cl] ${className}`}
+    >
+      <button
+        onClick={backward}
+        className={`relative ${getClasses(!!behind.length, "hover:text-[--primary-cl]", "disable")} `}
+      >
         <ArrowLeftIcon className="w-5" />
       </button>
 
-      <button onClick={forward} className={`relative ${getDisable(!ahead.length)}`}>
+      <button
+        onClick={forward}
+        className={`relative ${getClasses(!!ahead.length, "hover:text-[--primary-cl]", "disable")}`}
+      >
         <ArrowRightIcon className="w-5" />
       </button>
     </div>
