@@ -34,7 +34,7 @@ import ForYouPage from "@/pages/for-you";
 
 export const pubicRouteMap = {
   home: "/",
-  discorver: "/discover",
+  for_you: "/for_you",
   catogory: "/category",
   search: "/search",
   playlist: "/playlist/:id",
@@ -43,7 +43,7 @@ export const pubicRouteMap = {
   singer: "/singer/:id",
   user: "/user/:id",
   trending: "/trending",
-  catogoryDetail: "/category/:id",
+  catogory_detail: "/category/:id",
 };
 
 const protectedRouteMap = {
@@ -73,8 +73,8 @@ export type PlaylistParamsType = {
   id: string;
 };
 const publicRoutes = [
-  { path: pubicRouteMap.home, component: ForYouPage, layout: "" },
-  { path: pubicRouteMap.discorver, component: Home, layout: "" },
+  { path: pubicRouteMap.home, component: Home, layout: "" },
+  { path: pubicRouteMap.for_you, component: ForYouPage, layout: "" },
   { path: pubicRouteMap.playlist, component: Playlist, layout: "" },
   { path: pubicRouteMap.search, component: Search, layout: "" },
   { path: pubicRouteMap.singer, component: SingerPage, layout: "" },
@@ -82,7 +82,7 @@ const publicRoutes = [
   { path: pubicRouteMap.catogory, component: CategoryPage, layout: "" },
   { path: pubicRouteMap.trending, component: TrendingPage, layout: "" },
   {
-    path: pubicRouteMap.catogoryDetail,
+    path: pubicRouteMap.catogory_detail,
     component: CategoryDetailPage,
     layout: "",
   },

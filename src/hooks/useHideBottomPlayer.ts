@@ -9,7 +9,7 @@ export default function useHideBottomPlayer({ audioEle }: Props) {
   const location = useLocation();
 
   const shouldHide = useMemo(
-    () => location.pathname.includes("lyric") || location.pathname === "/",
+    () => location.pathname.includes("lyric") || location.pathname === "/for_you",
     [location],
   );
 

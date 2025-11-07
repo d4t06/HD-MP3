@@ -25,7 +25,7 @@ const initResult = {
 };
 
 export default function useGetSearchResult() {
-  const [isFetching, setIsFetching] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [tab, setTab] = useState<Tab>("All");
 
   const searchParams = useSearchParams();
@@ -42,6 +42,8 @@ export default function useGetSearchResult() {
 
   const shouldGetSingers = useRef(true);
 
+  const isFetchingRef = useRef(false);
+
   const updateResult = (data: Partial<typeof initResult>) => {
     setResult((prev) => ({ ...prev, ...data }));
   };
@@ -51,8 +53,9 @@ export default function useGetSearchResult() {
       if (!key) return;
 
       setIsFetching(true);
+      isFetchingRef.current = true;
 
-      await sleep(500);
+      if (import.meta.env.DEV) await sleep(300);
 
       switch (tab) {
         case "All": {
@@ -128,11 +131,14 @@ export default function useGetSearchResult() {
       console.log({ message: error });
     } finally {
       setIsFetching(false);
+      isFetchingRef.current = false;
     }
   };
 
   // run get result
   useEffect(() => {
+    if (isFetchingRef.current) return;
+
     getResult();
   }, [searchParams[0].get("q"), tab]);
 

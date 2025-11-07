@@ -125,7 +125,7 @@ export default function SearchResultPage() {
           </div>
         </SongSelectProvider>
 
-        {isNotFoundAtAll && key && <NotFound />}
+        {!isFetching && isNotFoundAtAll && key && <NotFound />}
       </PageWrapper>
 
       <Footer />

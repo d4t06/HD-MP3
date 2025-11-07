@@ -1,10 +1,10 @@
 import {
-  HomeIcon,
   MusicalNoteIcon,
   ComputerDesktopIcon,
   GlobeAsiaAustraliaIcon,
   SquaresPlusIcon,
   ArrowTrendingUpIcon,
+  HeartIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components";
@@ -15,9 +15,9 @@ import { ReactNode } from "react";
 
 const routeList = [
   {
-    path: pubicRouteMap.discorver,
-    title: "Discover",
-    icon: <GlobeAsiaAustraliaIcon />,
+    path: pubicRouteMap.for_you,
+    title: "For You",
+    icon: <HeartIcon />,
   },
 
   {
@@ -93,8 +93,8 @@ export default function Sidebar() {
         {!userLoading && (
           <>
             <LinkItem active={location.pathname === "/"} to={"/"}>
-              <HomeIcon />
-              <span>For You</span>
+              <GlobeAsiaAustraliaIcon />
+              <span>Discover</span>
             </LinkItem>
 
             {routeList.map((item, i) => (
