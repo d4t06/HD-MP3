@@ -11,6 +11,7 @@ import { Blurhash } from "react-blurhash";
 import SongLyric from "./_components/SongLyric";
 import useSongCardEffect from "./_hooks/useSongCardEffect";
 import { useCommentContext } from "../comment/components/CommentContext";
+import { choVoTri } from "@/constants/app";
 
 type Props = {
   song: Song;
@@ -32,13 +33,11 @@ function Content({
     <>
       <div className="relative z-0 flex items-center flex-shrink-0 text-white h-full w-full sm:w-auto sm:aspect-[3/5] rounded-xl overflow-hidden">
         <div className="absolute inset-0 z-[-1] overflow-hidden ">
-          {song.blurhash_encode && (
             <Blurhash
-              hash={song.blurhash_encode}
+              hash={song.blurhash_encode || choVoTri.blurhash}
               height={"100%"}
               width={"100%"}
             />
-          )}
         </div>
 
         <div className="absolute top-0 left-0 w-full z-[99]">
@@ -52,7 +51,7 @@ function Content({
           <img
             onClick={() => controlRef.current?.handlePlayPause()}
             className="w-full object-cover"
-            src={song.image_url}
+            src={song.image_url || choVoTri.image}
           />
         </div>
 

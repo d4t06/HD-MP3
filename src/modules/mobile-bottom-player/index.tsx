@@ -3,7 +3,7 @@ import {
   ArrowPathIcon,
   ExclamationCircleIcon,
   GlobeAsiaAustraliaIcon,
-  HomeIcon,
+  HeartIcon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
@@ -143,20 +143,20 @@ export default function MobileBottomPlayer() {
           to={"/"}
         >
           <div>
-            <HomeIcon />
-            <span>For You</span>
+            <GlobeAsiaAustraliaIcon />
+            <span>Discover</span>
           </div>
         </Link>
 
         <Link
           className={`
-              ${getActiveClasses(location.pathname === "/discover")}
+              ${getActiveClasses(location.pathname === "/for_you")}
             `}
-          to={"/discover"}
+          to={"/for_you"}
         >
           <div>
-            <GlobeAsiaAustraliaIcon />
-            <span>Discover</span>
+            <HeartIcon />
+            <span>For you</span>
           </div>
         </Link>
 

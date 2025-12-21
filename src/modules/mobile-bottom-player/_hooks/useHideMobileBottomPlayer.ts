@@ -8,7 +8,7 @@ type Props = {
 export default function useHideMobileBottomPlayer({ audioEle }: Props) {
   const location = useLocation();
 
-  const shouldHidePlayer = useMemo(() => location.pathname === "/", [location]);
+  const shouldHidePlayer = useMemo(() => location.pathname === "/for_you", [location]);
 
   const shouldHideAll = useMemo(
     () => location.pathname.includes("lyric"),
