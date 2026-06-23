@@ -24,9 +24,9 @@ export function VolumeButton({ audioEle }: Props) {
           onClick={() => handleMute()}
         >
           {isMute ? (
-            <img src="/icons/speaker_off.png" className="w-5" />
+            <img src="./icons/speaker_off.png" className="w-5" />
           ) : (
-            <img src="/icons/speaker_on.png" className="w-5" />
+            <img src="./icons/speaker_on.png" className="w-5" />
           )}
         </button>
 

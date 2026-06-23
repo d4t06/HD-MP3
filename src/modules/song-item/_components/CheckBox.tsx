@@ -32,7 +32,7 @@ export function CheckBox({ song }: Props) {
 				{!isSelected ? (
 					<StopIcon className="w-5" />
 				) : (
-					<img src="/icons/check.png" className="w-5" />
+					<img src="./icons/check.png" className="w-5" />
 				)}
 			</button>
 
@@ -42,7 +42,7 @@ export function CheckBox({ song }: Props) {
 					"md:hidden",
 				)}`}
 			>
-				<img src="/icons/music_note.png" className="w-5" />
+				<img src="./icons/music_note.png" className="w-5" />
 			</button>
 		</>
 	);

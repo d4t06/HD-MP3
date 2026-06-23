@@ -45,7 +45,8 @@ export default function SearchResultPage() {
         {isOnMobile && <Search />}
 
         <div className="md:flex items-center">
-          <Title title="Result" className="mt-1 md:mt-0" />
+          {/*<Title title="Result" className="mt-1 md:mt-0" />*/}
+          {/*<img src="./icons/list.png" className="w-8" />*/}
           <Tab
             className="w-fit [&_button]:text-sm mt-3 md:[&_button]:text-base md:mt-0 md:ml-4"
             tabs={tabs}

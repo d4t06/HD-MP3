@@ -8,6 +8,7 @@ import SongList from "@/modules/song-item/_components/SongList";
 import useUpdateRecentPlaylist from "@/hooks/useUpdateRecentPlaylis";
 import { SongSkeleton } from "@/components/skeleton";
 import usePlaylistSongList from "../_hooks/usePlaylistSongList";
+import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 
 type Props = {
   variant: "others-playlist" | "my-playlist";
@@ -52,7 +53,9 @@ export default function PlaylistSongList({ variant, loading }: Props) {
               variant === "others-playlist" ? "system-song" : "own-playlist"
             }
           >
-            <p className="font-bold opacity-70 text-sm">{playlistSongs.length} Songs</p>
+            <p className="font-bold opacity-70 text-sm">
+              {playlistSongs.length} Songs
+            </p>
           </CheckedBar>
         )}
 
@@ -67,6 +70,15 @@ export default function PlaylistSongList({ variant, loading }: Props) {
             variant === "my-playlist" ? "own-playlist" : "system-song"
           }
         />
+
+        {currentPlaylist && (
+          <p className={"text-xs mt-3 text-gray-300"}>
+            Last update:{" "}
+            {dateFromTimestamp(currentPlaylist.updated_at, {
+              type: "date",
+            })}
+          </p>
+        )}
       </SongSelectProvider>
     </>
   );

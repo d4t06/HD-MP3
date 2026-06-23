@@ -30,7 +30,7 @@ export default function ChatBtn({ playlist }: Props) {
   return (
     <>
       <Button size={"clear"} onClick={() => openModal()}>
-        <img src="/icons/chat.png" className="w-6" />
+        <img src="./icons/chat.png" className="w-6" />
       </Button>
 
       {!isOnMobile && (

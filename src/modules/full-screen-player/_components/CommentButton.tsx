@@ -28,7 +28,7 @@ export default function CommentButton({ song }: Props) {
 				content="Comment"
 			>
 				<button onClick={() => setIsOpenComment(true)} className={`btn`}>
-					<img src="/icons/chat.png" />
+					<img src="./icons/chat.png" />
 				</button>
 			</MyTooltip>
 

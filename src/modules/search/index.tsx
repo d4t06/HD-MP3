@@ -73,7 +73,7 @@ function Content() {
         }`}
       >
         <button className="mr-2 text-[#757575]">
-          <img src="/icons/magnifying.png" className="w-6" />
+          <img src="./icons/magnifying.png" className="w-6" />
         </button>
         <input
           ref={inputRef}

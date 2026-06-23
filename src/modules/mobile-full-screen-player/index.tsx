@@ -1,4 +1,4 @@
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+// import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import {
   FullScreenPlayerSetting,
@@ -11,15 +11,17 @@ import { Blurhash } from "react-blurhash";
 import { defaultBlurhash } from "@/constants/app";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import LyricContextProvider from "@/stores/LyricContext";
-import { usePlayerContext } from "@/stores";
+import { useAuthContext, usePlayerContext } from "@/stores";
 import SongThumbnail from "./_components/SongThumbnail";
 import Lyric from "../lyric";
 import ScrollText from "../scroll-text";
 import { Link } from "react-router-dom";
 import MobileFullScreenControl from "./_components/Control";
+import HearBtn from "./_components/HeartBtn";
 
 export default function MobileFullScreenPlayer() {
   // use stores
+  const { user } = useAuthContext();
   const {
     isOpenFullScreen,
     playerConfig: { songBackground },
@@ -40,7 +42,10 @@ export default function MobileFullScreenPlayer() {
     <>
       <div className={`full-screen-player`}>
         {songBackground && (
-          <div style={{transform: 'translate3d(0, -50%, 0)', scale: '2.5'}} className={classes.bgImage}>
+          <div
+            style={{ transform: "translate3d(0, -50%, 0)", scale: "2.5" }}
+            className={classes.bgImage}
+          >
             <div className="absolute inset-0">
               <Blurhash
                 width={"100%"}
@@ -77,9 +82,9 @@ export default function MobileFullScreenPlayer() {
                 <MyPopup appendOnPortal>
                   <MyPopupTrigger>
                     <button
-                      className={` p-[6px] rounded-full ml-auto  bg-white/10`}
+                      className={` p-[6px] rounded-full ml-auto  bg-white/60`}
                     >
-                      <Cog6ToothIcon className="w-6" />
+                      <img src="./icons/gear.png" className="w-6" />
                     </button>
                   </MyPopupTrigger>
 
@@ -98,7 +103,7 @@ export default function MobileFullScreenPlayer() {
                 mobileActiveTab != "Playing" ? "hidden" : "flex sm:hidden"
               }`}
             >
-              <div className="flex-grow font-bold">
+              <div className="flex-grow font-bold pl-2">
                 <div className={"h-7"}>
                   <ScrollText
                     className={`text-xl`}
@@ -117,6 +122,14 @@ export default function MobileFullScreenPlayer() {
                   )}
                 </div>
               </div>
+              {mobileActiveTab === "Playing" && currentSongData && (
+                <HearBtn
+                  song={currentSongData.song}
+                  isLiked={
+                    !!user?.liked_song_ids.includes(currentSongData.song.id)
+                  }
+                />
+              )}
             </div>
             {/* <<< end song name */}
 

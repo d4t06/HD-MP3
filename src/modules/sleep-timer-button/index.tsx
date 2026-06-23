@@ -45,7 +45,7 @@ export default function SleepTimerButton() {
         ) : (
           <MyTooltip content="Sleep timer">
             <button onClick={handleTriggerClick} className={classes.button}>
-              <img src="/icons/clock.png" className="w-8 sm:w-5" />
+              <img src="./icons/clock.png" className="w-8 sm:w-5" />
             </button>
           </MyTooltip>
         )}

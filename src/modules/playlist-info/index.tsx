@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { abbreviateNumber } from "@/utils/abbreviateNumber";
 import ChatBtn from "./_components/ChatBtn";
 import CommentProvider from "../comment/components/CommentContext";
-import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
+// import { dateFromTimestamp } from "@/utils/dateFromTimestamp";
 
 type Props = {
   playlist: Playlist | null;
@@ -49,7 +49,7 @@ export default function PLaylistInfo({
         </Link>
 
         <PEmoji className="font-bold text-lg">
-          <img src="/icons/heart.png" alt="" />
+          <img src="./icons/heart.png" alt="" />
           {abbreviateNumber(playlist.like)}
         </PEmoji>
       </>
@@ -72,7 +72,7 @@ export default function PLaylistInfo({
         return (
           <>
             <PEmoji size={"4"} className="font-bold text-sm">
-              <img src="/icons/heart.png" alt="" />
+              <img src="./icons/heart.png" alt="" />
               {abbreviateNumber(playlist.like)}
             </PEmoji>
             {!!playlist.singers.length && (
@@ -100,12 +100,6 @@ export default function PLaylistInfo({
                 </Link>
               </p>
             )}
-            <p className={classes.smallText}>
-              Last update:{" "}
-              {dateFromTimestamp(playlist.updated_at, {
-                type: "date",
-              })}
-            </p>
           </>
         );
     }

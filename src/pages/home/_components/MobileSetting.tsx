@@ -1,10 +1,4 @@
 import {
-  ArrowLeftOnRectangleIcon,
-  ArrowRightOnRectangleIcon,
-  ComputerDesktopIcon,
-  PaintBrushIcon,
-} from "@heroicons/react/24/outline";
-import {
   AppInfo,
   Appearance,
   Avatar,
@@ -72,10 +66,11 @@ export default function MobileSetting() {
 
   return (
     <div className="md:hidden">
-      <div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>
+      {/*<div className="text-xl font-playwriteCU leading-[2.2] mb-3">Setting</div>*/}
+
 
       {user && (
-        <div className={`bg-[--a-5-cl] p-3 rounded-md flex mb-3`}>
+        <div className={`bg-[--a-5-cl] p-3 rounded-lg flex mb-3`}>
           <Avatar className="h-[65px] w-[65px]" />
           <div className="ml-3">
             <p className="text-lg font-[500]">{user.display_name}</p>
@@ -87,18 +82,18 @@ export default function MobileSetting() {
       {userLoading ? (
         [...Array(3).keys()].map((key) => <MobileLinkSkeleton key={key} />)
       ) : (
-        <div className="">
+        <div className="[&_span]:text-sm font-semibold">
           <button
             className={classes.linkItem}
             onClick={() => openModal("theme")}
           >
-            <PaintBrushIcon className={classes.icon} />
+            <img src="./icons/theme.png" className={classes.icon} />
             <span>Theme</span>
           </button>
 
           {user?.role === "ADMIN" && (
             <Link to={"/dashboard"} className={classes.linkItem}>
-              <ComputerDesktopIcon className={classes.icon} />
+              <img src="./icons/computer.png" className={classes.icon} />
               <span>Dashboard</span>
             </Link>
           )}
@@ -108,7 +103,7 @@ export default function MobileSetting() {
               className={classes.linkItem}
               onClick={() => openModal("logout")}
             >
-              <ArrowRightOnRectangleIcon className={classes.icon} />
+              <img src="./icons/lock.png" className={classes.icon} />
               <span>Logout</span>
             </button>
           ) : (
@@ -116,7 +111,7 @@ export default function MobileSetting() {
               className={classes.linkItem}
               onClick={() => action("login")}
             >
-              <ArrowLeftOnRectangleIcon className={classes.icon} />
+              <img src="./icons/lock.png" className={classes.icon} />
               <span>Sign in</span>
             </button>
           )}

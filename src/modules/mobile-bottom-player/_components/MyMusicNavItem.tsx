@@ -7,7 +7,6 @@ import {
 } from "@/components";
 import useAuthAction from "@/hooks/useAuthActiont";
 import { useAuthContext } from "@/stores";
-import { UserIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -42,7 +41,7 @@ export default function MyMusicNavItem({ ActiveClass }: Props) {
         to={"/my-music"}
       >
         <div>
-          <UserIcon />
+          <img src="./icons/music_note.png" />
           <span>My song</span>
         </div>
       </Link>
@@ -57,7 +56,7 @@ export default function MyMusicNavItem({ ActiveClass }: Props) {
                 `}
       >
         <div>
-          <UserIcon />
+          <img src="./icons/music_note.png" />
           <span>Login</span>
         </div>
       </button>

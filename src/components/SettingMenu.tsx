@@ -32,20 +32,20 @@ export default function SettingMenu({
           className="[&>button]:rounded-md [&_img]:w-6"
         >
           <button className={``} onClick={() => handleOpenModal("theme")}>
-            <img src="/icons/theme.png" />
+            <img src="./icons/theme.png" />
             <span>Themes</span>
           </button>
 
           <div className="flex items-center justify-between">
             <button className="flex items-center space-x-2">
-              <img src="/icons/start.png" />
+              <img src="./icons/start.png" />
               <span>Animation</span>
             </button>
             <Switch active={animation} cb={setAnimation} />
           </div>
 
           <button onClick={() => handleOpenModal("info")}>
-            <img src="/icons/info.png" />
+            <img src="./icons/info.png" />
             <span>Info</span>
           </button>
         </VertialMenu>

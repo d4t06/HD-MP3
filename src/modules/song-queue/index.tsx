@@ -85,7 +85,7 @@ function SongQueue() {
             <div className="text-center my-3">
               {!!queueSongs.length && (
                 <Button onClick={clearSongQueue} color="primary" size={'clear'} className="py-2 px-6">
-                  <img src="/icons/bin.png" className="w-5 mr-1" />
+                  <img src="./icons/bin.png" className="w-5 mr-1" />
                   <span className="text-sm">Clear</span>
                 </Button>
               )}

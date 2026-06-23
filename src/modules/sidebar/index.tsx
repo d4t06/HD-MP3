@@ -23,7 +23,7 @@ const routeList = [
   {
     path: pubicRouteMap.catogory,
     title: "Category",
-    icon: <img src="/icons/sparkles.png" className="w-6" />,
+    icon: <img src="./icons/sparkles.png" className="w-6" />,
   },
   // {
   //   path: pubicRouteMap.trending,
@@ -82,7 +82,7 @@ export default function Sidebar() {
           to={"/"}
           className="bg-white dark:bg-[--layout-cl] p-3 w-14 flex h-14 rounded-full justify-center items-center"
         >
-          <img src="/icons/vietnamese_flag.png"/>
+          <img src="./icons/vietnamese_flag.png"/>
           {/*<span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
             :D
           </span>*/}
@@ -94,7 +94,7 @@ export default function Sidebar() {
         {!userLoading && (
           <>
             <LinkItem active={location.pathname === "/"} to={"/"}>
-              <img src="/icons/globe.png" className="w-6" />
+              <img src="./icons/globe.png" className="w-6" />
               <span>Discover</span>
             </LinkItem>
 

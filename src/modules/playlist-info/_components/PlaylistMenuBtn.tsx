@@ -40,7 +40,7 @@ export default function PlaylistMenuBtn({ variant }: Props) {
       <MyPopup appendOnPortal>
         <MyPopupTrigger>
           <Button size={"clear"}>
-            <img src="/icons/gear.png" className="w-6" alt=""/>
+            <img src="./icons/gear.png" className="w-6" alt=""/>
           </Button>
         </MyPopupTrigger>
 

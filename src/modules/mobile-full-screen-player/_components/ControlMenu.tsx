@@ -1,16 +1,11 @@
 import MobileSongQueue from "./SongQueue";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
-import { useAuthContext } from "@/stores";
 import TimerButton from "./TimerButton";
 import { getClasses } from "@/utils/appHelpers";
-import AddToPlaylistBtn from "./AddToPlaylistBtn";
-import HearBtn from "./HeartBtn";
 import usePlayerAction from "@/layout/primary-layout/_hooks/usePlayerAction";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function ControlMenu() {
-	const { user } = useAuthContext();
 
 	const { currentSongData, queueSongs } = useSelector(selectSongQueue);
 
@@ -33,7 +28,7 @@ export default function ControlMenu() {
 							className={`${getClasses(repeat !== "no", "active")}`}
 							onClick={toggleRepeat}
 						>
-							<ArrowPathIcon className="w-6" />
+							<img src="./icons/shuffle.png" className="w-6" />
 						</button>
 						<span className="break-word">
 							{repeat === "one"
@@ -44,17 +39,11 @@ export default function ControlMenu() {
 						</span>
 					</div>
 
-					{user && (
+				{/*	{user && (
 						<>
 							<AddToPlaylistBtn song={currentSongData.song} />
-							<HearBtn
-								song={currentSongData.song}
-								isLiked={
-									!!user?.liked_song_ids.includes(currentSongData.song.id)
-								}
-							/>
 						</>
-					)}
+					)}*/}
 
 					<TimerButton />
 				</div>

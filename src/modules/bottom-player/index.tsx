@@ -93,7 +93,7 @@ export default function BottomPlayer() {
                 className={`rounded-md ml-1`}
               >
                 {/*<QueueListIcon className="w-5" />*/}
-                <img src="/icons/list.png" className="w-5"/>
+                <img src="./icons/list.png" className="w-5"/>
               </button>
             </MyTooltip>
 
@@ -102,7 +102,7 @@ export default function BottomPlayer() {
                 onClick={handleOpenFullScreen}
                 className={`rounded-md ml-1`}
               >
-                <img src="/icons/arrow_up.png" className="w-5" />
+                <img src="./icons/arrow_up.png" className="w-5" />
               </button>
             </MyTooltip>
 

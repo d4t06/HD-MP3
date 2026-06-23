@@ -8,7 +8,7 @@ import PlaylistSection from "../category/category-detail/_components/PlaylistSec
 import useGetPage from "../category/useGetPage";
 import { NotFound, PageWrapper, PlaylistItem, Skeleton } from "@/components";
 // import NewSong from "@/modules/new-song";
-import MobileNav from "./_components/MobileNav";
+// import MobileNav from "./_components/MobileNav";
 import MobileSetting from "./_components/MobileSetting";
 // import RecommendSong from "./_components/RecommendSong";
 
@@ -41,7 +41,9 @@ export default function HomePage() {
           }
         />
 
-        <MobileNav />
+        {/*<MobileNav />*/}
+
+        <img src="./icons/music_note.png" className="w-8 md:hidden" />
 
         {homePage?.playlist_sections.map((s, i) => (
           <PlaylistSection
@@ -50,13 +52,15 @@ export default function HomePage() {
           />
         ))}
 
-   {/*     <RecommendSong />
+        {/*     <RecommendSong />
 
         <RecentPlaylist />
 
         <TrendingSong amount={5} />
 
         <NewSong amount={5} />*/}
+
+        <img src="./icons/gear.png" className="w-8 md:hidden" />
 
         <MobileSetting />
       </>

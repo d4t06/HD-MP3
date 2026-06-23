@@ -1,8 +1,8 @@
 import { Modal, ModalRef, TimerModal } from "@/components";
 import { selectAllPlayStatusStore, setPlayStatus } from "@/stores/redux/PlayStatusSlice";
 import { getClasses } from "@/utils/appHelpers";
-import { ClockIcon } from "@heroicons/react/20/solid";
-import { ClockIcon as ClockIconOutline } from "@heroicons/react/24/outline";
+// import { ClockIcon } from "@heroicons/react/20/solid";
+// import { ClockIcon as ClockIconOutline } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -24,11 +24,8 @@ export default function TimerButton() {
 					className={getClasses(!!countDown, "active")}
 					onClick={handleTriggerClick}
 				>
-					{!!countDown ? (
-						<ClockIcon className="w-6" />
-					) : (
-						<ClockIconOutline className="w-6" />
-					)}
+				
+				<img src="./icons/clock.png" className="w-6"/>
 				</button>
 				<span>
 					{countDown ? countDown.toString().padStart(2, "") + " songs" : "Timer"}

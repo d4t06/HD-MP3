@@ -54,7 +54,7 @@ export default function Searchbar({
         rounded={"md"}
         className="p-2 flex-shrink-0 bg-white/20"
       >
-        <img src="/icons/magnifying.png" className="w-6" />
+        <img src="./icons/magnifying.png" className="w-6" />
       </Button>
     </form>
   );

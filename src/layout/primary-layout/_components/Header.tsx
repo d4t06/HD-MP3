@@ -159,7 +159,7 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                   <button
                     className={`flex p-2 items-center ${classes.button} `}
                   >
-                    <img src="/icons/gear.png" className="w-full" />
+                    <img src="./icons/gear.png" className="w-full" />
                   </button>
                 </MyTooltip>
               </MyPopupTrigger>

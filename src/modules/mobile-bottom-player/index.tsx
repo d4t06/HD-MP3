@@ -2,9 +2,6 @@ import { useMemo } from "react";
 import {
   ArrowPathIcon,
   ExclamationCircleIcon,
-  GlobeAsiaAustraliaIcon,
-  HeartIcon,
-  MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -131,6 +128,7 @@ export default function MobileBottomPlayer() {
       [&_div]:flex-col 
       [&_div]:items-center
       [&_svg]:w-6
+      [&_img]:w-6
       [&_span]:text-xs
       [&_span]:font-semibold
       ${!shouldHidePlayer ? "border-t border-[--a-5-cl]" : ""}
@@ -143,12 +141,12 @@ export default function MobileBottomPlayer() {
           to={"/"}
         >
           <div>
-            <GlobeAsiaAustraliaIcon />
+            <img src="./icons/globe.png" />
             <span>Discover</span>
           </div>
         </Link>
 
-        <Link
+        {/*<Link
           className={`
               ${getActiveClasses(location.pathname === "/for_you")}
             `}
@@ -158,7 +156,7 @@ export default function MobileBottomPlayer() {
             <HeartIcon />
             <span>For you</span>
           </div>
-        </Link>
+        </Link>*/}
 
         <Link
           className={`
@@ -167,7 +165,7 @@ export default function MobileBottomPlayer() {
           to={"/search"}
         >
           <div>
-            <MagnifyingGlassIcon />
+            <img src="./icons/magnifying.png" />
             <span>Search</span>
           </div>
         </Link>

@@ -1,5 +1,4 @@
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import usePlaylistAction from "../_hooks/usePlaylistAction";
 import { Button } from "@/components";
 
@@ -27,9 +26,9 @@ export default function HearBtn({
       ) : (
         <>
           {isLiked ? (
-            <HeartIconSolid className={`w-5 text-[--primary-cl]`} />
+            <img src="./icons/heart.png" className="w-6" />
           ) : (
-            <HeartIcon className="w-5" />
+            <img src="./icons/grey_heart.png" className="w-6" />
           )}
         </>
       )}

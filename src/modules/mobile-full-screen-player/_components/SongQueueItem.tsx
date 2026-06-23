@@ -12,7 +12,7 @@ export default function SongQueueItem({ song, onClick, active }: Props) {
   const classes = {
     itemContainer: `queue-item ${active ? 'active' : ''} border-b 
     last:border-none font-semibold border-white/5 rounded-md flex p-2 ${active ? "bg-white/10" : ""}`,
-    imageFrame: `w-[54px] h-[54px] relative rounded-md overflow-hidden flex-shrink-0`,
+    imageFrame: `w-12 h-12 relative rounded-md overflow-hidden flex-shrink-0`,
   };
 
   return (
@@ -23,9 +23,9 @@ export default function SongQueueItem({ song, onClick, active }: Props) {
         </div>
 
         {/* song info */}
-        <div className={`ml-[10px] font-bold`}>
+        <div className={`ml-2 text-sm font-bold`}>
           <p className={`line-clamp-1`}>{song.name}</p>
-          <p className="text-gray-300 line-clamp-1 text-sm">
+          <p className="text-gray-300 line-clamp-1 text-xs">
             {song.singers.map((s, i) => (
               <span key={i}> {(i ? ", " : "") + s.name}</span>
             ))}

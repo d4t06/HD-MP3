@@ -40,7 +40,7 @@ export default function PlaylistCta() {
       <MyPopup>
         <MyPopupTrigger>
           <Button size={"clear"} className={`p-1`}>
-            <img src="/icons/gear.png" className="w-6" />
+            <img src="./icons/gear.png" className="w-6" />
             <span className="hidden md:block">Menu</span>
           </Button>
         </MyPopupTrigger>

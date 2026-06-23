@@ -108,7 +108,7 @@ export default function FullScreenPlayerHeader() {
 								content="Setting"
 							>
 								<button className={`${classes.button} `}>
-									<img src="/icons/gear.png" />
+									<img src="./icons/gear.png" />
 								</button>
 							</MyTooltip>
 						</MyPopupTrigger>
@@ -129,7 +129,7 @@ export default function FullScreenPlayerHeader() {
 							onClick={() => setIsOpenFullScreen(false)}
 							className={`p-2 ${classes.button}`}
 						>
-							<img src="/icons/arrow_down.png" />
+							<img src="./icons/arrow_down.png" />
 						</button>
 					</MyTooltip>
 				</div>
