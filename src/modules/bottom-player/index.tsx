@@ -1,4 +1,4 @@
-import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
+// import { ChevronUpIcon, QueueListIcon } from "@heroicons/react/24/outline";
 import { useSelector } from "react-redux";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { usePlayerContext, useThemeContext } from "@/stores";
@@ -90,18 +90,19 @@ export default function BottomPlayer() {
             <MyTooltip content="Queue">
               <button
                 onClick={() => setIsOpenSongQueue(!isOpenSongQueue)}
-                className={`ml-1 rounded-md`}
+                className={`rounded-md ml-1`}
               >
-                <QueueListIcon className="w-5" />
+                {/*<QueueListIcon className="w-5" />*/}
+                <img src="/icons/list.png" className="w-5"/>
               </button>
             </MyTooltip>
 
             <MyTooltip content="Lyrics">
               <button
                 onClick={handleOpenFullScreen}
-                className={`rounded-full`}
+                className={`rounded-md ml-1`}
               >
-                <ChevronUpIcon className="w-5" />
+                <img src="/icons/arrow_up.png" className="w-5" />
               </button>
             </MyTooltip>
 

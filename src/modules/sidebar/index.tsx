@@ -1,10 +1,10 @@
 import {
   MusicalNoteIcon,
   ComputerDesktopIcon,
-  GlobeAsiaAustraliaIcon,
-  SquaresPlusIcon,
-  ArrowTrendingUpIcon,
-  HeartIcon,
+  // GlobeAsiaAustraliaIcon,
+  // SquaresPlusIcon,
+  // ArrowTrendingUpIcon,
+  // HeartIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components";
@@ -14,22 +14,22 @@ import { pubicRouteMap } from "@/routes";
 import { ReactNode } from "react";
 
 const routeList = [
-  {
-    path: pubicRouteMap.for_you,
-    title: "For You",
-    icon: <HeartIcon />,
-  },
+  // {
+  //   path: pubicRouteMap.for_you,
+  //   title: "For You",
+  //   icon: <HeartIcon />,
+  // },
 
   {
     path: pubicRouteMap.catogory,
     title: "Category",
-    icon: <SquaresPlusIcon />,
+    icon: <img src="/icons/sparkles.png" className="w-6" />,
   },
-  {
-    path: pubicRouteMap.trending,
-    title: "Trending",
-    icon: <ArrowTrendingUpIcon />,
-  },
+  // {
+  //   path: pubicRouteMap.trending,
+  //   title: "Trending",
+  //   icon: <ArrowTrendingUpIcon />,
+  // },
 ];
 
 function LinkItem({
@@ -80,11 +80,12 @@ export default function Sidebar() {
       <div className="px-[10px] h-[80px] flex items-center justify-center">
         <Link
           to={"/"}
-          className="bg-white dark:bg-[--layout-cl] w-12 flex h-12 rounded-full justify-center items-center"
+          className="bg-white dark:bg-[--layout-cl] p-3 w-14 flex h-14 rounded-full justify-center items-center"
         >
-          <span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
+          <img src="/icons/vietnamese_flag.png"/>
+          {/*<span className="text-[--primary-cl] text-xl font-bold translate-y-[1px]">
             :D
-          </span>
+          </span>*/}
         </Link>
       </div>
       <div className={`flex flex-col items-start`}>
@@ -93,7 +94,7 @@ export default function Sidebar() {
         {!userLoading && (
           <>
             <LinkItem active={location.pathname === "/"} to={"/"}>
-              <GlobeAsiaAustraliaIcon />
+              <img src="/icons/globe.png" className="w-6" />
               <span>Discover</span>
             </LinkItem>
 

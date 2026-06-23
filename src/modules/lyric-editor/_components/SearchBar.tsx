@@ -1,5 +1,5 @@
 import { Dispatch, FormEventHandler, RefObject, SetStateAction } from "react";
-import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button, Input } from "@/components";
 
 type Props = {
@@ -48,8 +48,13 @@ export default function Searchbar({
           </button>
         )}
       </div>
-      <Button type="submit" size={"clear"} rounded={'md'} className="p-2 flex-shrink-0 bg-white/20">
-        <MagnifyingGlassIcon className="w-6" />
+      <Button
+        type="submit"
+        size={"clear"}
+        rounded={"md"}
+        className="p-2 flex-shrink-0 bg-white/20"
+      >
+        <img src="/icons/magnifying.png" className="w-6" />
       </Button>
     </form>
   );

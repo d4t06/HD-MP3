@@ -11,7 +11,7 @@ import {
 import { Button } from "@/pages/dashboard/_components";
 import {
   ArrowPathIcon,
-  Bars3Icon,
+  // Bars3Icon,
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import { useRef, useState } from "react";
@@ -40,7 +40,7 @@ export default function PlaylistCta() {
       <MyPopup>
         <MyPopupTrigger>
           <Button size={"clear"} className={`p-1`}>
-            <Bars3Icon className="w-6" />
+            <img src="/icons/gear.png" className="w-6" />
             <span className="hidden md:block">Menu</span>
           </Button>
         </MyPopupTrigger>

@@ -1,4 +1,4 @@
-import { ClockIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 import { Modal, TimerModal, ModalRef, MyTooltip } from "@/components";
 import { useDispatch, useSelector } from "react-redux";
@@ -45,7 +45,7 @@ export default function SleepTimerButton() {
         ) : (
           <MyTooltip content="Sleep timer">
             <button onClick={handleTriggerClick} className={classes.button}>
-              <ClockIcon className="w-8 sm:w-5" />
+              <img src="/icons/clock.png" className="w-8 sm:w-5" />
             </button>
           </MyTooltip>
         )}

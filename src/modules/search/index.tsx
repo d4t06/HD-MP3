@@ -7,7 +7,7 @@ import {
 } from "@/utils/appHelpers";
 import {
   ArrowPathIcon,
-  MagnifyingGlassIcon,
+  // MagnifyingGlassIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { FormEvent } from "react";
@@ -40,7 +40,7 @@ function Content() {
     container: `relative z-[9] h-[40px] flex px-3 w-full md:w-[300px] shadow-md`,
     unFocusContainer: `bg-[--a-5-cl] rounded-[20px]`,
     focusedContainer: `bg-[--popup-cl] rounded-[20px_20px_0_0]`,
-    input: `bg-transparent font-semibold outline-none placeholder:text-[#757575] w-full`,
+    input: `bg-transparent font-semibold ml-2 outline-none placeholder:text-[#757575] w-full`,
     searchResultContainer: `overflow-auto bg-[--popup-cl] shadow-md  rounded-[0_0_20px_20px] p-3 position absolute top-full left-0 w-full max-h-[60vh] flex flex-col`,
   };
 
@@ -73,7 +73,7 @@ function Content() {
         }`}
       >
         <button className="mr-2 text-[#757575]">
-          <MagnifyingGlassIcon className="w-6" />
+          <img src="/icons/magnifying.png" className="w-6" />
         </button>
         <input
           ref={inputRef}

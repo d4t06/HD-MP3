@@ -4,7 +4,6 @@ import FullScreenComment from "@/modules/comment/components/FullScreenComment";
 import SongComment from "@/modules/comment/components/SongComment";
 import UserInput from "@/modules/comment/components/UserInput";
 import { useAuthContext, usePlayerContext } from "@/stores";
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 
@@ -29,7 +28,7 @@ export default function CommentButton({ song }: Props) {
 				content="Comment"
 			>
 				<button onClick={() => setIsOpenComment(true)} className={`btn`}>
-					<ChatBubbleLeftRightIcon />
+					<img src="/icons/chat.png" />
 				</button>
 			</MyTooltip>
 

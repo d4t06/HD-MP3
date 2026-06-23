@@ -9,7 +9,7 @@ import {
 import { ReactNode } from "react";
 import OtherPlaylistMenu from "./OthersPlaylistMenu";
 import OwnPlaylistMenu from "./OwnPlaylistMenu";
-import { threeDotsIcon } from "@/assets/icon";
+// import { threeDotsIcon } from "@/assets/icon";
 
 export function PlaylistMenuPopupContent({
   children,
@@ -40,7 +40,7 @@ export default function PlaylistMenuBtn({ variant }: Props) {
       <MyPopup appendOnPortal>
         <MyPopupTrigger>
           <Button size={"clear"}>
-            <p className="w-5">{threeDotsIcon}</p>
+            <img src="/icons/gear.png" className="w-6" alt=""/>
           </Button>
         </MyPopupTrigger>
 

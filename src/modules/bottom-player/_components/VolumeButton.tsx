@@ -1,6 +1,6 @@
 import { ProgressBar } from "@/components";
 import useVolume from "../_hooks/useVolume";
-import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
+// import { SpeakerWaveIcon, SpeakerXMarkIcon } from "@heroicons/react/24/outline";
 import { ElementRef, useRef } from "react";
 
 type Props = {
@@ -24,9 +24,9 @@ export function VolumeButton({ audioEle }: Props) {
           onClick={() => handleMute()}
         >
           {isMute ? (
-            <SpeakerXMarkIcon className="w-5" />
+            <img src="/icons/speaker_off.png" className="w-5" />
           ) : (
-            <SpeakerWaveIcon className="w-5" />
+            <img src="/icons/speaker_on.png" className="w-5" />
           )}
         </button>
 

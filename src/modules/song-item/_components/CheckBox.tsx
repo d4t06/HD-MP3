@@ -1,7 +1,7 @@
 import { useSongSelectContext } from "@/stores";
 import { getClasses } from "@/utils/appHelpers";
-import { CheckIcon } from "@heroicons/react/20/solid";
-import { MusicalNoteIcon, StopIcon } from "@heroicons/react/24/outline";
+// import { CheckIcon } from "@heroicons/react/20/solid";
+import { StopIcon } from "@heroicons/react/24/outline";
 import { useMemo } from "react";
 
 type Props = {
@@ -29,7 +29,11 @@ export function CheckBox({ song }: Props) {
 				onClick={handleSelect}
 				className={`mr-2 md:mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
 			>
-				{!isSelected ? <StopIcon className="w-5" /> : <CheckIcon className="w-5" />}
+				{!isSelected ? (
+					<StopIcon className="w-5" />
+				) : (
+					<img src="/icons/check.png" className="w-5" />
+				)}
 			</button>
 
 			<button
@@ -38,7 +42,7 @@ export function CheckBox({ song }: Props) {
 					"md:hidden",
 				)}`}
 			>
-				<MusicalNoteIcon  className="w-5"/>
+				<img src="/icons/music_note.png" className="w-5" />
 			</button>
 		</>
 	);

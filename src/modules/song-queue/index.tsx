@@ -1,5 +1,5 @@
 import { memo, useCallback, useState } from "react";
-import { TrashIcon } from "@heroicons/react/24/outline";
+// import { TrashIcon } from "@heroicons/react/24/outline";
 import { useDispatch, useSelector } from "react-redux";
 import {
   resetSongQueue,
@@ -84,9 +84,9 @@ function SongQueue() {
 
             <div className="text-center my-3">
               {!!queueSongs.length && (
-                <Button onClick={clearSongQueue} color="primary">
-                  <TrashIcon className="w-6" />
-                  <span className="">Clear</span>
+                <Button onClick={clearSongQueue} color="primary" size={'clear'} className="py-2 px-6">
+                  <img src="/icons/bin.png" className="w-5 mr-1" />
+                  <span className="text-sm">Clear</span>
                 </Button>
               )}
             </div>

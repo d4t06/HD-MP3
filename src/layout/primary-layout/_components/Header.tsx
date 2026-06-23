@@ -18,7 +18,7 @@ import {
   VerticalMenu,
 } from "@/components";
 import {
-  AdjustmentsHorizontalIcon,
+  // AdjustmentsHorizontalIcon,
   ArrowLeftOnRectangleIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
@@ -127,8 +127,8 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
   }, [animation]);
 
   const classes = {
-    userName: `text-[16px] font-[500] ml-[8px] line-clamp-1`,
-    button: `h-[40px] w-[40px] rounded-full hover:bg-[--a-5-cl]`,
+    userName: `text-[16px] font-[500] ml-2 line-clamp-1`,
+    button: `h-10 w-10 rounded-full hover:bg-[--a-5-cl]`,
     icon: "w-5 mr-1",
     divide: `h-[1px]  w-[calc(100%-20px)] mb-[10px] mt-[20px] mx-auto bg-[--a-5-cl]`,
   };
@@ -157,9 +157,9 @@ function Header({ contentRef }: { contentRef: RefObject<HTMLDivElement> }) {
                   content="Settings"
                 >
                   <button
-                    className={`flex px-[6px] items-center ${classes.button} `}
+                    className={`flex p-2 items-center ${classes.button} `}
                   >
-                    <AdjustmentsHorizontalIcon className="w-full" />
+                    <img src="/icons/gear.png" className="w-full" />
                   </button>
                 </MyTooltip>
               </MyPopupTrigger>

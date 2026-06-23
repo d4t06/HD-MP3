@@ -2,8 +2,8 @@ import { useAuthContext, usePlayerContext } from "@/stores";
 import { selectSongQueue } from "@/stores/redux/songQueueSlice";
 import { useSelector } from "react-redux";
 import {
-	ChevronDownIcon,
-	Cog6ToothIcon,
+	// ChevronDownIcon,
+	// Cog6ToothIcon,
 	DocumentTextIcon,
 } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
@@ -108,7 +108,7 @@ export default function FullScreenPlayerHeader() {
 								content="Setting"
 							>
 								<button className={`${classes.button} `}>
-									<Cog6ToothIcon />
+									<img src="/icons/gear.png" />
 								</button>
 							</MyTooltip>
 						</MyPopupTrigger>
@@ -129,7 +129,7 @@ export default function FullScreenPlayerHeader() {
 							onClick={() => setIsOpenFullScreen(false)}
 							className={`p-2 ${classes.button}`}
 						>
-							<ChevronDownIcon />
+							<img src="/icons/arrow_down.png" />
 						</button>
 					</MyTooltip>
 				</div>

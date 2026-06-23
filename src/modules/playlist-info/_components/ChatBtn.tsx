@@ -9,7 +9,7 @@ import { useCommentContext } from "@/modules/comment/components/CommentContext";
 import MobileComment from "@/modules/comment/components/MobileComment";
 import PlaylistComment from "@/modules/comment/components/PlaylistComment";
 import { useThemeContext } from "@/stores";
-import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
+// import { ChatBubbleLeftRightIcon } from "@heroicons/react/24/outline";
 import { useRef } from "react";
 
 type Props = {
@@ -30,7 +30,7 @@ export default function ChatBtn({ playlist }: Props) {
   return (
     <>
       <Button size={"clear"} onClick={() => openModal()}>
-        <ChatBubbleLeftRightIcon className="w-5" />
+        <img src="/icons/chat.png" className="w-6" />
       </Button>
 
       {!isOnMobile && (

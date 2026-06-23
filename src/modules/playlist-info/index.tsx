@@ -49,7 +49,7 @@ export default function PLaylistInfo({
         </Link>
 
         <PEmoji className="font-bold text-lg">
-          ❤️
+          <img src="/icons/heart.png" alt="" />
           {abbreviateNumber(playlist.like)}
         </PEmoji>
       </>
@@ -72,7 +72,8 @@ export default function PLaylistInfo({
         return (
           <>
             <PEmoji size={"4"} className="font-bold text-sm">
-              ❤️ {abbreviateNumber(playlist.like)}
+              <img src="/icons/heart.png" alt="" />
+              {abbreviateNumber(playlist.like)}
             </PEmoji>
             {!!playlist.singers.length && (
               <p className={classes.smallText}>
