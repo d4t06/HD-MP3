@@ -130,7 +130,7 @@ export default function PLaylistInfo({
               <Skeleton className="h-[24px] w-[170px]" />
               {/*<Skeleton className="h-[17px] w-[170px]" />*/}
               <Skeleton className="h-[17px] w-[60px]" />
-              <Skeleton className="h-[17px] w-[100px]" />
+              {/*<Skeleton className="h-[17px] w-[100px]" />*/}
             </div>
           ) : (
             playlist && (

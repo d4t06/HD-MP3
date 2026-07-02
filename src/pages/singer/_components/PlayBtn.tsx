@@ -1,7 +1,6 @@
 import { Button } from "@/components";
 import useSetSong from "@/hooks/useSetSong";
 import { selectAllPlayStatusStore } from "@/stores/redux/PlayStatusSlice";
-import { PauseIcon, PlayIcon } from "@heroicons/react/20/solid";
 import { ReactNode } from "react";
 import { useSelector } from "react-redux";
 import { useSingerContext } from "./SingerContext";
@@ -21,8 +20,7 @@ function PlayBtn({ onClick, children }: PlayBtnProps) {
       onClick={onClick}
       disabled={!songs.length}
       size={"clear"}
-      color="primary"
-      className={`p-3`}
+      className={`p-2 [&_img]:w-10`}
     >
       {children}
     </Button>
@@ -57,20 +55,20 @@ export default function PlaySingerSongBtn() {
       case "paused":
         return (
           <PlayBtn onClick={handlePlayPause}>
-            <PlayIcon className="w-7" />
+            <img src="./icons/play.png" />
           </PlayBtn>
         );
       default:
         return (
           <PlayBtn onClick={handlePlayPause}>
-            <PauseIcon className="w-7" />
+            <img src="./icons/pause.png" />
           </PlayBtn>
         );
     }
   } else {
     return (
       <PlayBtn onClick={handlePlaySingerSong}>
-        <PlayIcon className="w-7" />
+        <img src="./icons/pause.png" />
       </PlayBtn>
     );
   }

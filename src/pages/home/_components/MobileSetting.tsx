@@ -92,7 +92,7 @@ export default function MobileSetting() {
           </button>
 
           {user?.role === "ADMIN" && (
-            <Link to={"/dashboard"} className={classes.linkItem}>
+            <Link to={"/dashboard"} target="_blank" className={classes.linkItem}>
               <img src="./icons/computer.png" className={classes.icon} />
               <span>Dashboard</span>
             </Link>

@@ -1,5 +1,4 @@
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import useSongItemAction from "../_hooks/useSongItemAction";
 import { ComponentProps } from "react";
 import SongMenu from "@/modules/song-menu";
@@ -55,7 +54,7 @@ export default function HearBtn({
 
   // define style
   const classes = {
-    button: `hover:bg-[--a-5-cl] rounded-full`,
+    button: `hover:bg-[--a-5-cl] rounded-full [&_img]:w-5`,
   };
 
   return (
@@ -68,9 +67,9 @@ export default function HearBtn({
       ) : (
         <>
           {isLiked ? (
-            <HeartIconSolid className={`w-5 ${likedHeartIconClass()}`} />
+            <img src="./icons/heart.png" className={`${likedHeartIconClass()}`} />
           ) : (
-            <HeartIcon className="w-5" />
+            <img src="./icons/grey_heart.png"  />
           )}
         </>
       )}

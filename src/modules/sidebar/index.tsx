@@ -1,11 +1,3 @@
-import {
-  MusicalNoteIcon,
-  ComputerDesktopIcon,
-  // GlobeAsiaAustraliaIcon,
-  // SquaresPlusIcon,
-  // ArrowTrendingUpIcon,
-  // HeartIcon,
-} from "@heroicons/react/24/outline";
 import { Link, useLocation } from "react-router-dom";
 import { Skeleton } from "@/components";
 import { useAuthContext } from "@/stores";
@@ -23,7 +15,7 @@ const routeList = [
   {
     path: pubicRouteMap.catogory,
     title: "Category",
-    icon: <img src="./icons/sparkles.png" className="w-6" />,
+    icon: <img src="./icons/sparkles.png" />,
   },
   // {
   //   path: pubicRouteMap.trending,
@@ -88,13 +80,13 @@ export default function Sidebar() {
           </span>*/}
         </Link>
       </div>
-      <div className={`flex flex-col items-start`}>
+      <div className={`flex flex-col items-start [&_img]:w-6`}>
         {userLoading && menuItemSkeletons}
 
         {!userLoading && (
           <>
             <LinkItem active={location.pathname === "/"} to={"/"}>
-              <img src="./icons/globe.png" className="w-6" />
+              <img src="./icons/globe.png" />
               <span>Discover</span>
             </LinkItem>
 
@@ -115,7 +107,7 @@ export default function Sidebar() {
                   active={location.pathname.includes("/my-music")}
                   to={"/my-music"}
                 >
-                  <MusicalNoteIcon />
+                  <img src="./icons/music_note.png" />
                   <span>My Song</span>
                 </LinkItem>
 
@@ -125,7 +117,7 @@ export default function Sidebar() {
                     target="_blank"
                     className={`sidebar-item`}
                   >
-                    <ComputerDesktopIcon />
+                    <img src="./icons/computer.png" />
                     <span className="">Dashboard</span>
                   </Link>
                 )}

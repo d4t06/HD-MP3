@@ -196,7 +196,7 @@ function SongItem({
   };
 
   const renderRightContent = (
-    <div className="flex items-center">
+    <div className="flex items-center flex-shrink-0">
       {isLiked != null && (
         <HearBtn
           className="p-2"

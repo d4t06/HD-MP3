@@ -1,5 +1,4 @@
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/20/solid";
-import { ArrowPathIcon, HeartIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import useLikeSinger from "../_hooks/useLikeSinger";
 import { useMemo } from "react";
 import { useSingerContext } from "./SingerContext";
@@ -28,12 +27,12 @@ export default function HearBtn() {
           singer,
         })
       }
-      className={`${isLiked ? "text-[--primary-cl]" : ""}`}
+      className={`${isLiked ? "text-[--primary-cl]" : ""} [&_img]:w-6`}
     >
       {isFetching ? (
         <ArrowPathIcon className="animate-spin" />
       ) : (
-        <>{isLiked ? <HeartIconSolid /> : <HeartIcon />}</>
+        <>{isLiked ? <img src="./icons/heart.png" /> : <img src="./icons/grey_heart.png" />}</>
       )}
     </button>
   );
