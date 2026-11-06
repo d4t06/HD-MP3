@@ -27,7 +27,7 @@ export function CheckBox({ song }: Props) {
 
 			<button
 				onClick={handleSelect}
-				className={`mr-2 md:mr-3 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
+				className={`mr-2 flex-shrink-0 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
 			>
 				{!isSelected ? (
 					<StopIcon className="w-5" />
@@ -37,7 +37,7 @@ export function CheckBox({ song }: Props) {
 			</button>
 
 			<button
-				className={`mr-3 hidden group-hover/main:hidden md:block ${getClasses(
+				className={`mr-2 hidden group-hover/main:hidden md:block ${getClasses(
 					isChecked,
 					"md:hidden",
 				)}`}

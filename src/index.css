@@ -15,7 +15,7 @@
   }
 
   .song-item {
-    @apply w-full flex flex-row rounded-md justify-between py-2 px-3 last:border-none has-[:checked]:bg-[--a-5-cl];
+    @apply w-full flex flex-row rounded-md justify-between px-1 py-2 md:px-3 last:border-none has-[:checked]:bg-[--a-5-cl];
   }
 
   .song-item:not(.active) {
@@ -141,3 +141,15 @@ button[disabled] {
 .popup-shadow {
   box-shadow: var(--popup-shadow);
 }
+
+.has-backdrop-blur {
+  backdrop-filter: blur(10px);
+  /*-webkit-backdrop-filter: blur(10px);*/
+}
+
+@media (pointer: coarse) {
+  .has-backdrop-blur {
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+

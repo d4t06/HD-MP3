@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import appConfig from "../config/app";
 
 export default function useFunctionDebounce(cb: () => void, delay: number) {
-  const timerId = useRef<NodeJS.Timeout>();
+  const timerId = useRef<number>();
 
   const [someThingToTrigger, setSomeThingToTrigger] = useState(0);
   const [someThingToRun, setSomeThingToRun] = useState(0);

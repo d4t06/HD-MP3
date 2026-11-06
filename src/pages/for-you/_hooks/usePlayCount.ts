@@ -8,7 +8,7 @@ export default function usePlayCount() {
 
   const { pushRecentSong } = usePushRecentSong();
 
-  const timerId = useRef<NodeJS.Timeout>();
+  const timerId = useRef<number>();
 
   useEffect(() => {
     if (!currentSong) return;

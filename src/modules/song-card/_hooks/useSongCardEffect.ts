@@ -13,7 +13,7 @@ export default function useSongCardEffect({ index, songItemRef }: Props) {
   const { setCanPlay, canPlay, controlRef, statusRef } = usePlayerContext();
   const [isIntoView, setIsIntoView] = useState(false);
 
-  const timerId = useRef<NodeJS.Timeout>();
+  const timerId = useRef<number>();
 
   const isActive = useMemo(() => currentIndex === index, [currentIndex]);
 

@@ -25,7 +25,7 @@ function Content({ children }: Props) {
 
   const classes = {
     page: `md:flex md:h-screen bg-[--layout-cl] text-[--text-cl] transition-[color]`,
-    container: `main-container  pt-5 overflow-x-hidden md:pt-0 md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] md:pt-[60px] md:overflow-auto `,
+    container: `main-container  pt-5 md:pt-0 md:h-full md:w-full md:flex md:flex-col px-[10px] md:px-[40px] md:pt-[60px] md:overflow-auto `,
   };
 
   return (

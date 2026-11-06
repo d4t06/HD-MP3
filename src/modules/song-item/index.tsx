@@ -94,7 +94,7 @@ function SongItem({
       case "recent-song":
         return "w-10 h-10";
       default:
-        return "h-[54px] w-[54px]";
+        return "h-12 w-12";
     }
   };
 
@@ -131,7 +131,7 @@ function SongItem({
           {imageOverlay}
         </div>
 
-        <div className={`ml-[10px] font-bold`}>
+        <div className={`ml-2 font-bold`}>
           <h5 className={`line-clamp-1 overflow-hidden ${getSongNameSize()}`}>
             {song.name}
 

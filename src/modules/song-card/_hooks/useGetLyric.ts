@@ -7,7 +7,7 @@ export default function useGetLyric() {
   const { canPlay, setLyrics, shouldGetLyric } = usePlayerContext();
   const { currentSong } = useSongsContext();
 
-  const timerId = useRef<NodeJS.Timeout>();
+  const timerId = useRef<number>();
 
   const { loading, getLyric } = useGetSongLyric({});
 

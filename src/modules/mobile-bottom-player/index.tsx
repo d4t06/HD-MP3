@@ -53,7 +53,7 @@ export default function MobileBottomPlayer() {
 
   const classes = {
     wrapper: `md:hidden fixed bottom-0 w-full transition-transform overflow-hidden border-t border-[--a-5-cl] ${isOpenFullScreen ? "z-[9]" : "z-[99]"}`,
-    container: `absolute inset-0 bg-[--a-player-cl] backdrop-blur-[15px] -z-10`,
+    container: `absolute inset-0 bg-[--a-player-cl] has-backdrop-blur -z-10`,
     songImageWrapper: `flex flex-row items-center flex-grow h-full`,
     image: `w-[54px] h-[54px] flex-shrink-0`,
     cta: `ml-2 flex-shrink-0`,

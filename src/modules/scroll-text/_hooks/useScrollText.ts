@@ -7,8 +7,8 @@ type Props = {
 };
 
 export default function useScrollText({ textRef, textWrapperRef, content }: Props) {
-  const autoScrollTimerId = useRef<NodeJS.Timeout>();
-  const unScrollTimerId = useRef<NodeJS.Timeout>();
+  const autoScrollTimerId = useRef<number>();
+  const unScrollTimerId = useRef<number>();
 
   const isOverflow = useRef(false); // prevent unNecessary method call
 

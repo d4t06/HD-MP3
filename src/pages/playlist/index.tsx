@@ -6,6 +6,7 @@ import { useAuthContext } from "@/stores";
 import Footer from "@/layout/primary-layout/_components/Footer";
 import PlaylistSongList from "./_components/PlaylistSongList";
 import PLaylistInfo from "@/modules/playlist-info";
+import FirstLetterCol from "./_components/FirtLetterCol";
 // import BackBtn from "@/components/BackBtn";
 
 export default function PlaylistDetail() {
@@ -52,13 +53,15 @@ export default function PlaylistDetail() {
               isLiked={isLiked}
             />
           </div>
-          <div className="w-full lg:w-3/4 lg:px-3">
-            <div className="mt-[30px] lg:mt-0">
+          <div className="flex w-full lg:w-3/4 lg:px-3">
+            <div className="mt-3 lg:mt-0 flex-grow mr-2">
               <PlaylistSongList
                 loading={isFetching}
                 variant={isOwnerOfPlaylist ? "my-playlist" : "others-playlist"}
               />
             </div>
+
+            <FirstLetterCol />
           </div>
         </div>
       </PageWrapper>

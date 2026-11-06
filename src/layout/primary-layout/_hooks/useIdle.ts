@@ -12,8 +12,8 @@ export default function useIdle(delay: number, isOnMobile: boolean) {
 
   // state
   const [someThingToTrigger, setSomeThingToTriggerIdle] = useState(0);
-  const timerIdFocus = useRef<NodeJS.Timeout>();
-  const timerIdScrollSong = useRef<NodeJS.Timeout>();
+  const timerIdFocus = useRef<number>();
+  const timerIdScrollSong = useRef<number>();
 
   const handleMouseMove = () => {
     setIdle(false);

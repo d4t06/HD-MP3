@@ -17,7 +17,7 @@ export default function GetSongLyric({ isOpenLyricTabs, children }: Props) {
 
   const { setLoading, shouldGetLyric, setSongLyrics } = useLyricContext();
 
-  const timerId = useRef<NodeJS.Timeout>();
+  const timerId = useRef<number>();
 
   const { getLyric } = useGetSongLyric({ setLoadingFromParent: setLoading });
 
