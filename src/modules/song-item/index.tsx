@@ -131,16 +131,17 @@ function SongItem({
           {imageOverlay}
         </div>
 
-        <div className={`ml-2 font-bold`}>
+        <div className={`ml-1 font-bold`}>
           <h5 className={`line-clamp-1 overflow-hidden ${getSongNameSize()}`}>
             {song.name}
 
             {import.meta.env.DEV && <span> ({props.variant})</span>}
           </h5>
           <div
-            className={`${props.variant === "queue-song" && active ? "" : "item-info"} mt-0.5 line-clamp-1 ${getSongSingerSize()}`}
+            className={`${props.variant === "queue-song" && active ? "" : "item-info"} line-clamp-1 ${getSongSingerSize()}`}
           >
             <SingerLinkList
+              link={false}
               className={
                 props.variant === "queue-song" && active
                   ? ""

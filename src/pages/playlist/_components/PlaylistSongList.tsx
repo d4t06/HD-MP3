@@ -72,7 +72,7 @@ export default function PlaylistSongList({ variant, loading }: Props) {
         />
 
         {currentPlaylist && (
-          <p className={"text-xs mt-3 text-gray-300"}>
+          <p className={"text-xs mt-3 text-gray-400"}>
             Last update:{" "}
             {dateFromTimestamp(currentPlaylist.updated_at, {
               type: "date",

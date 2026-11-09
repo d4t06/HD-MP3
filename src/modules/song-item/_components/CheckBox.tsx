@@ -27,22 +27,22 @@ export function CheckBox({ song }: Props) {
 
 			<button
 				onClick={handleSelect}
-				className={`mr-2 flex-shrink-0 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
+				className={`w-5 mr-1 flex-shrink-0 group-hover/main:block ${isChecked ? "block" : "md:hidden "}`}
 			>
 				{!isSelected ? (
-					<StopIcon className="w-5" />
+					<StopIcon className="w-full opacity-60" />
 				) : (
-					<img src="./icons/check.png" className="w-5" />
+					<img src="./icons/check.png" className="w-4 mx-auto" />
 				)}
 			</button>
 
 			<button
-				className={`mr-2 hidden group-hover/main:hidden md:block ${getClasses(
+				className={`w-5 mr-1 hidden group-hover/main:hidden md:block ${getClasses(
 					isChecked,
 					"md:hidden",
 				)}`}
 			>
-				<img src="./icons/music_note.png" className="w-5" />
+				<img src="./icons/music_note.png" className="w-4 mx-auto opacity-70" />
 			</button>
 		</>
 	);

@@ -10,10 +10,11 @@ import { forwardIcon } from "@/assets/icon";
 type Props = {
   handlePlayPause: () => void;
   next: () => void;
+  previou: () => void;
   playStatus: PlayStatus;
 };
 
-export default function PlayBtn({ handlePlayPause, next, playStatus }: Props) {
+export default function PlayBtn({ handlePlayPause, next, previou, playStatus }: Props) {
 
   const renderIcon = () => {
     switch (playStatus) {
@@ -39,7 +40,8 @@ export default function PlayBtn({ handlePlayPause, next, playStatus }: Props) {
           {renderIcon()}
         </button>
 
-        <button onClick={next} className="w-10 ml-3">{forwardIcon}</button>
+        <button onClick={previou} className="w-10 ml-3 rotate-180">{forwardIcon}</button>
+        <button onClick={next} className="w-10">{forwardIcon}</button>
       </div>
     </>
   );

@@ -16,7 +16,7 @@ export default function MobileFullScreenControl() {
   const { playStatus } = useSelector(selectAllPlayStatusStore);
   const { currentSongData } = useSelector(selectSongQueue);
 
-  const { handleSeek, handlePlayPause, next } = usePlayerAction();
+  const { handleSeek, handlePlayPause, next, previous } = usePlayerAction();
 
   const classes = {
     buttonsContainer: `w-full flex items-center justify-between space-x-2 mt-2`,
@@ -52,7 +52,7 @@ export default function MobileFullScreenControl() {
 
       {/* buttons */}
       <div className={`${classes.buttonsContainer}`}>
-        <PlayBtn playStatus={playStatus} next={next} handlePlayPause={handlePlayPause} />
+        <PlayBtn playStatus={playStatus} next={next} previou={previous} handlePlayPause={handlePlayPause} />
 
         <CommentProvider target="song">
           <MenuButton />
